@@ -94,7 +94,7 @@ class DiCompileCommand extends Command
     {
         $this->setName(self::NAME)
             ->setDescription(
-                'Generates DI configuration and all non-existing interceptors and factories'
+                'Generates DI configuration and all missing classes that can be auto-generated'
             );
         parent::configure();
     }
@@ -113,18 +113,6 @@ class DiCompileCommand extends Command
              . ' running the \'module:enable --all\' command.';
         }
 
-        /**
-         * By the time the command is able to execute, the Object Management configuration is already contaminated
-         * by old config info, and it's too late to just clear the files in code.
-         *
-         * TODO: reconfigure OM in runtime so DI resources can be cleared after command launches
-         *
-         */
-        $path = $this->directoryList->getPath(DirectoryList::DI);
-        if ($this->fileDriver->isExists($path)) {
-            $messages[] = "DI configuration must be cleared before running compiler. Please delete '$path'.";
-        }
-
         return $messages;
     }
 
@@ -138,7 +126,8 @@ class DiCompileCommand extends Command
             foreach ($errors as $line) {
                 $output->writeln($line);
             }
-            return;
+            // we must have an exit code higher than zero to indicate something was wrong
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
 
         $modulePaths = $this->componentRegistrar->getPaths(ComponentRegistrar::MODULE);
@@ -211,6 +200,8 @@ class DiCompileCommand extends Command
             $output->writeln('<info>Generated code and dependency injection configuration successfully.</info>');
         } catch (OperationException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+            // we must have an exit code higher than zero to indicate something was wrong
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
     }
 

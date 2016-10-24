@@ -12,16 +12,12 @@ use Magento\Framework\App\ObjectManager;
 
 class SaveHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  \Magento\Framework\Session\Config\ConfigInterface */
-    private $sessionConfig;
-
-    /** @var  \Magento\Framework\App\DeploymentConfig */
-    private $deploymentConfig;
+    /** @var string Original session.save_handler ini config value */
+    private $originalSaveHandler;
 
     public function setUp()
     {
-        $this->sessionConfig = ObjectManager::getInstance()->get(ConfigInterface::class);
-        $this->deploymentConfig = ObjectManager::getInstance()->get(DeploymentConfig::class);
+        $this->originalSaveHandler = ini_get('session.save_handler');
     }
 
     /**
@@ -33,7 +29,6 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSaveHandler($deploymentConfigHandler, $iniHandler)
     {
-        $this->markTestSkipped('MAGETWO-56529');
         // Set expected session.save_handler config
         if ($deploymentConfigHandler) {
             if ($deploymentConfigHandler !== 'files') {
@@ -49,7 +44,7 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
 
         // Set ini configuration
         if ($iniHandler) {
-            $oldIni = ini_set('session.save_handler', $iniHandler);
+            ini_set('session.save_handler', $iniHandler);
         }
 
         /** @var DeploymentConfig | \PHPUnit_Framework_MockObject_MockObject $deploymentConfigMock */
@@ -71,10 +66,12 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
             $expected,
             ObjectManager::getInstance()->get(ConfigInterface::class)->getOption('session.save_handler')
         );
+    }
 
-        // Reset ini configuration
-        if (isset($oldIni)) {
-            ini_set('session.save_handler', $oldIni);
+    public function tearDown()
+    {
+        if (isset($this->originalSaveHandler)) {
+            ini_set('session.save_handler', $this->originalSaveHandler);
         }
     }
 

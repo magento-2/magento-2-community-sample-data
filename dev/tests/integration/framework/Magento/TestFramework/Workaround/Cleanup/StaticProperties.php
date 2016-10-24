@@ -33,6 +33,7 @@ class StaticProperties
      * @var array
      */
     protected static $_classesToSkip = [
+        'Mage',
         'Magento\Framework\App\ObjectManager',
         'Magento\TestFramework\Helper\Bootstrap',
         'Magento\TestFramework\Event\Magento',
@@ -41,11 +42,6 @@ class StaticProperties
         'Magento\TestFramework\Workaround\Cleanup\StaticProperties',
         'Magento\Framework\Phrase',
     ];
-
-    /**
-     * @var \ReflectionClass[]
-     */
-    static protected $classes = [];
 
     /**
      * Constructor
@@ -77,11 +73,10 @@ class StaticProperties
     {
         // do not process blacklisted classes from integration framework
         foreach (self::$_classesToSkip as $notCleanableClass) {
-            if ($reflectionClass->getName() == $notCleanableClass ||
-                is_subclass_of(
-                    $reflectionClass->getName(),
-                    $notCleanableClass
-                )
+            if ($reflectionClass->getName() == $notCleanableClass || is_subclass_of(
+                $reflectionClass->getName(),
+                $notCleanableClass
+            )
             ) {
                 return false;
             }
@@ -112,18 +107,6 @@ class StaticProperties
         return false; // File is not in an "include" directory
     }
 
-    /**
-     * @param string $class
-     * @return \ReflectionClass
-     */
-    private static function getReflectionClass($class)
-    {
-        if (!isset(self::$classes[$class])) {
-            self::$classes[$class] = new \ReflectionClass($class);
-        }
-
-        return self::$classes[$class];
-    }
 
     /**
      * Restore static variables (after running controller test case)
@@ -132,7 +115,7 @@ class StaticProperties
     public static function restoreStaticVariables()
     {
         foreach (array_keys(self::$backupStaticVariables) as $class) {
-            $reflectionClass = self::getReflectionClass($class);
+            $reflectionClass = new \ReflectionClass($class);
             $staticProperties = $reflectionClass->getProperties(\ReflectionProperty::IS_STATIC);
             foreach ($staticProperties as $staticProperty) {
                 $staticProperty->setAccessible(true);
@@ -147,52 +130,43 @@ class StaticProperties
      */
     public static function backupStaticVariables()
     {
-        if (count(self::$backupStaticVariables) > 0) {
-            return;
-        }
-
-        $classFiles = array_filter(
-            Files::init()->getPhpFiles(
-                Files::INCLUDE_APP_CODE
-                | Files::INCLUDE_LIBS
-                | Files::INCLUDE_TESTS
-            ),
-            function ($classFile) {
-                return StaticProperties::_isClassInCleanableFolders($classFile)
-                && strpos(file_get_contents($classFile), ' static ') > 0;
-            }
+        $classFiles = Files::init()->getPhpFiles(
+            Files::INCLUDE_APP_CODE
+            | Files::INCLUDE_LIBS
+            | Files::INCLUDE_TESTS
         );
-
         $namespacePattern = '/namespace [a-zA-Z0-9\\\\]+;/';
         $classPattern = '/\nclass [a-zA-Z0-9_]+/';
-
         foreach ($classFiles as $classFile) {
-            $code = file_get_contents($classFile);
-            preg_match($namespacePattern, $code, $namespace);
-            preg_match($classPattern, $code, $class);
-
-            if (!isset($namespace[0]) || !isset($class[0])) {
-                continue;
-            }
-
-            // trim namespace and class name
-            $namespace = substr($namespace[0], 10, strlen($namespace[0]) - 11);
-            $class = substr($class[0], 7, strlen($class[0]) - 7);
-            $className = $namespace . '\\' . $class;
-
-            try {
-                $reflectionClass = self::getReflectionClass($className);
-            } catch (\Exception $e) {
-                continue;
-            }
-
-            if (self::_isClassCleanable($reflectionClass)) {
-                $staticProperties = $reflectionClass->getProperties(\ReflectionProperty::IS_STATIC);
-                foreach ($staticProperties as $staticProperty) {
-                    $staticProperty->setAccessible(true);
-                    $value = $staticProperty->getValue();
-                    self::$backupStaticVariables[$className][$staticProperty->getName()] = $value;
+            if (self::_isClassInCleanableFolders($classFile)) {
+                $file = @fopen($classFile, 'r');
+                $code = fread($file, 4096);
+                preg_match($namespacePattern, $code, $namespace);
+                preg_match($classPattern, $code, $class);
+                if (!isset($namespace[0]) || !isset($class[0])) {
+                    fclose($file);
+                    continue;
                 }
+                // trim namespace and class name
+                $namespace = substr($namespace[0], 10, strlen($namespace[0]) - 11);
+                $class = substr($class[0], 7, strlen($class[0]) - 7);
+                $className = $namespace . '\\' . $class;
+
+                try {
+                    $reflectionClass = new \ReflectionClass($className);
+                } catch (\Exception $e) {
+                    fclose($file);
+                    continue;
+                }
+                if (self::_isClassCleanable($reflectionClass)) {
+                    $staticProperties = $reflectionClass->getProperties(\ReflectionProperty::IS_STATIC);
+                    foreach ($staticProperties as $staticProperty) {
+                        $staticProperty->setAccessible(true);
+                        $value = $staticProperty->getValue();
+                        self::$backupStaticVariables[$className][$staticProperty->getName()] = $value;
+                    }
+                }
+                fclose($file);
             }
         }
     }

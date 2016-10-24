@@ -41,9 +41,9 @@ $order->setIncrementId(
     $order->getConfig()->getStateDefaultStatus(\Magento\Sales\Model\Order::STATE_PROCESSING)
 )->setSubtotal(
     100
-)->setBaseSubtotal(
-    100
 )->setGrandTotal(
+    100
+)->setBaseSubtotal(
     100
 )->setBaseGrandTotal(
     100

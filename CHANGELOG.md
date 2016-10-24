@@ -1,114 +1,10 @@
-2.0.9
+2.1.1
 =============
-To get detailed information about changes in Magento 2.0.9, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.0/release-notes/ReleaseNotes2.0.9CE.html "Magento Community Edition (CE) Release Notes")
+To get detailed information about changes in Magento 2.1.1, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.1/release-notes/ReleaseNotes2.1.1CE.html "Magento Community Edition (CE) Release Notes")
 
-2.0.8
+2.1.0
 =============
-* Fixed bugs:
-    * Fixed exception when merchant resets "Product Attributes mass update" Admin form.
-    * Fixed fatal error in CLI command after compilation on some environments.
-    * Fixed duplicate URL keys on creating configurable product.
-    * Fixed issue with Magento sending emails from Admin using default configuration instead of a store-specific email address.
-    * Fixed issue with delayed session messages.
-* GitHub requests:
-    * [#3490](https://github.com/magento/magento2/pull/3490) -- Fix support for GLOB_BRACE on non-GNU Linux systems
-    * [#3018](https://github.com/magento/magento2/issues/3018) -- Magento\Sales\Model\OrderRepository::getList() is incomplete
-
-2.0.7
-=============
-* GitHub requests:
-    * [#2984](https://github.com/magento/magento2/issues/2984) -- Payment config settings not decrypted when used?
-
-2.0.6
-=============
-* Functional fixes:
-    * Fixed issue with Redis sessions.
-    * Fixed issue with Varnish cache on GoDaddy.
-
-* Security fixes:
-    * This release contains several security fixes. We describe each issue in detail in the Magento Security Center (https://www.magento.com/security).
-
-* Enhancements:
-    * Management of file ownership and permissions have been made more flexible.
-    * Support for using the Redis adapter to provide session storage.
-
-2.0.5
-=============
-* Fixed bugs:
-    * Fixed issue with HTML minification and comments
-    * Fixed issue with cached CAPTCHA
-    * Fixed issue with images not changing on swatches
-    * Fixed issue with admin URL being indexed in search engines
-    * Fixed issue with viewing products from shared wishlists
-    * Fixed inconsistent data during installation
-    * Fixed issue with saving custom customer attributes during checkout
-    * Fixed issue with multiple newsletter subscriptions for same email
-    * Fixed import issue for products with store code
-* GitHub requests:
-    * [#2795](https://github.com/magento/magento2/pull/2795) -- Fix Notice: Undefined property: Magento\Backend\Helper\Dashboard\Order::$_storeManager
-    * [#2989](https://github.com/magento/magento2/issues/2989) -- Custom Options not working after editing product
-* Various improvements:
-    * Improved export performance
-    * Fixed several performance issue with duplicated queries on category and CMS pages
-
-2.0.3
-=============
-* Fixed bugs:
-    * Fixed HTML escaping issue on user account
-    * Fixed fatal error during import
-    * Fixed aggregation of sales rule report data by cron
-    * Fixed an issue with showing HTML tags in messages
-    * Fixed an issue with adding product swatch attributes through the SOAP
-    * Fixed an issue with Admin Action Log archive
-    * Fixed an issue when Rule-based free shipping doesn't work
-* GitHub requests:
-    * [#2453](https://github.com/magento/magento2/issues/2453) -- Fixed an issue when long street addresses are truncated after checkout
-    * [#2628](https://github.com/magento/magento2/issues/2628) -- Fixed an issue with missing shipping data in orders API
-    * [#2852](https://github.com/magento/magento2/issues/2852) -- Fixed an issue where "magento setup:config:set" cleans data
-    * [#2957](https://github.com/magento/magento2/issues/2957) -- Fixed performance issue with products import
-    * [#3233](https://github.com/magento/magento2/issues/3233) -- Fixed an issue with arbitrary PHP code execution in phrases
-    * [#3786](https://github.com/magento/magento2/issues/3786) -- Fixed an issue with ability to brute force API access token
-* Various improvements:
-    * Fixed performance issue with swatches functionality
-    * Fixed issue with redundant requests when customer has shopping cart items
-    * Fixed several security-related issues
-
-2.0.1
-=============
-* Fixed bugs:
-    * Fixed an issue to allow deployment of sample data after running "composer create-project"
-    * Fixed an issue that made it possible for someone to edit someone else's reviews
-    * Fixed an issue that made it possible to view order details for certain orders that were created by someone else
-    * Fixed an issue where catalog price rule isn't applied to a product that is created when using Web API
-    * Fixed an issue where an empty file was uploaded to custom option
-    * Fixed an issue where minicart does not clears after completing an order via PayPal
-    * Fixed an issue plugin incorrect calls when proxy exists
-    * Fixed an issue when travis CI builds fail due to authentication
-    * Fixed an issue when custom options for configurable products were calculated incorrectly
-    * Fixed an issue with modifying a category form on store view level
-    * Fixed an issue where URL rewrites worked incorrectly for sample data
-    * Fixed an issue with BaseURL in static files
-    * Fixed an issue where a customer's custom attribute of 'file' type isn't supported by UI Form Component
-    * Fixed an issue when bin/magento setup:upgrade does not clear cache properly
-    * Fixed an issue where category creation from product page fails if Google Chrome Experiments are enabled
-    * Fixed an issue where information about the country selected in address is not presented in checkout flow
-    * Fixed an issue where customer segments prevent page from caching
-    * Fixed an issue where an imported product with replace behaviour causes an error for multi-store implementations.
-    * Fixed an issue with validation of url_key during import
-    * Fixed an issue with "Learn More" link for Payments Pro goes to Payflow Pro
-    * Fixed an issue in which a JS error appears if loading a product grid after clearing cache and static files
-* GitHub requests:
-    * [#2519](https://github.com/magento/magento2/issues/2519) -- Fixed an issue where synonyms don't work with Magento 2.0
-    * [#2675](https://github.com/magento/magento2/issues/2675) -- Fixed an issue with admin order creation when config "Include Tax In Order Total is set to yes
-    * [#2471](https://github.com/magento/magento2/issues/2471) -- Fixed an issue with incorrect prices on configurable product page when catalog prices include tax
-    * [#2674](https://github.com/magento/magento2/issues/2674) -- Fixed an issue where plugins/interceptors don't work with early stage single instance objects
-    * [#2888](https://github.com/magento/magento2/issues/2888) -- Fixed an issue where not all files are pre-compiled
-* Various improvements:
-    * Fixed performance issue on customer edit form
-    * Fixed performance issue related to swatch module
-    * Fixed several security-related issues
-    * Added support of latest USPS API
-    * Added support of PHP 7.0.2
+To get detailed information about changes in Magento 2.1.0, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.1/release-notes/ReleaseNotes2.1.0CE.html "Magento Community Edition (CE) Release Notes")
 
 2.0.0
 =============
@@ -220,7 +116,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
    * Added the ability of inline and bulk inline editing in data grids
 * WebApi Framework improvements:
     * Added the support for store codes in API calls
-    * Added the ability to update the Magento system to a particular version of Magento
+    * Added the ability to update the Magento system to a particular version of Magento 
     * Added the ability to enable/disable modules for Magento application
     * Added the ability to use maintenance mode
     * Introduced the common interface for Webapi payload processors
@@ -258,7 +154,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
     * Updated the extensions styles in the Web Installation Wizard
     * Added the ability to control access to the setup tool
     * Added the Install Components functionality for Web Installation Wizard
-    * Updated styles
+    * Updated styles 
 * Sample Data:
     * Improved sample data installation UX
     * Updated sample data with Product Heros, color swatches, MAP and rule based product relations
@@ -344,7 +240,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
     * [#1418](https://github.com/magento/magento2/issue/1418) -- Items in minicart are not cleared after successful placing an order
     * [#1408](https://github.com/magento/magento2/issue/1408) -- Error command cli setup:static-content:deploy
     * [#1396](https://github.com/magento/magento2/issue/1396) -- Products are not shown in category right after import
-
+    
 1.0.0-beta
 =============
 * Framework improvements:
@@ -2980,7 +2876,7 @@ Tests:
   * Fixed a 404 error after saving mass update product attributes form
   * Fixed an issue when it was impossible to perform search by all tax classes on the Advanced Search page
   * Fixed an issue when attribute order for configurable product was not preserved after saving product
-  * Fixed an issue with no results for the Product Best Sellers report
+  * Fixed an issue with no results for the Product Bestsellers report
   * Fixed a fatal error when opening tax configuration page in the backend
   * Fixed an error occurring when opening the Tax Zones and Rates page in the backend
   * Fixed a 404 error occurring while searching products on the New Review page
