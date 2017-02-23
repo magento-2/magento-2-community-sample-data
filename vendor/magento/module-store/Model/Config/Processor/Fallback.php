@@ -60,8 +60,11 @@ class Fallback implements PostProcessorInterface
     private $deploymentConfig;
 
     /**
-     * Fallback constructor.
      * @param Scopes $scopes
+     * @param ResourceConnection $resourceConnection
+     * @param Store $storeResource
+     * @param Website $websiteResource
+     * @param DeploymentConfig $deploymentConfig
      */
     public function __construct(
         Scopes $scopes,
@@ -79,6 +82,7 @@ class Fallback implements PostProcessorInterface
 
     /**
      * @inheritdoc
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function process(array $data)
     {
@@ -158,9 +162,9 @@ class Fallback implements PostProcessorInterface
     }
 
     /**
-     * Retrieve Website Config
+     * Find by id specific information about website.
      *
-     * @param array $websites
+     * @param array $websites Has next format: (website_code => [website_data])
      * @param int $id
      * @return array
      */
@@ -168,10 +172,11 @@ class Fallback implements PostProcessorInterface
     {
         foreach ($this->websiteData as $website) {
             if ($website['website_id'] == $id) {
-                $code = $website['website_id'];
+                $code = $website['code'];
                 return isset($websites[$code]) ? $websites[$code] : [];
             }
         }
+
         return [];
     }
 }

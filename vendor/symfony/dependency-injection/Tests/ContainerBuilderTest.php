@@ -29,6 +29,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Scope;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Tests\Fixtures\CustomDefinition;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
@@ -257,12 +258,24 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($foo, $builder->get('alias'), '->set() replaces an existing alias');
     }
 
+    public function testAliasesKeepInvalidBehavior()
+    {
+        $builder = new ContainerBuilder();
+
+        $aliased = new Definition('stdClass');
+        $aliased->addMethodCall('setBar', array(new Reference('bar', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)));
+        $builder->setDefinition('aliased', $aliased);
+        $builder->setAlias('alias', 'aliased');
+
+        $this->assertEquals(new \stdClass(), $builder->get('alias'));
+    }
+
     public function testAddGetCompilerPass()
     {
         $builder = new ContainerBuilder();
         $builder->setResourceTracking(false);
         $builderCompilerPasses = $builder->getCompiler()->getPassConfig()->getPasses();
-        $builder->addCompilerPass($this->getMock('Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface'));
+        $builder->addCompilerPass($this->getMockBuilder('Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface')->getMock());
 
         $this->assertCount(count($builder->getCompiler()->getPassConfig()->getPasses()) - 1, $builderCompilerPasses);
     }
@@ -321,6 +334,9 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($builder->get('baz')->called, '->createService() uses another service as factory');
     }
 
+    /**
+     * @group legacy
+     */
     public function testLegacyCreateServiceFactory()
     {
         $builder = new ContainerBuilder();
@@ -337,6 +353,9 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo' => 'bar', 'bar' => 'foo', $builder->get('bar')), $builder->get('foo1')->arguments, '->createService() passes the arguments to the factory method');
     }
 
+    /**
+     * @group legacy
+     */
     public function testLegacyCreateServiceFactoryService()
     {
         $builder = new ContainerBuilder();
@@ -433,7 +452,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
-     * @expectedExceptionMessage Constructing service "foo" from a Symfony\Component\DependencyInjection\DefinitionDecorator is not supported at build time.
+     * @expectedExceptionMessage Constructing service "foo" from a parent definition is not supported at build time.
      */
     public function testResolveServicesWithDecoratedDefinition()
     {
@@ -443,6 +462,14 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
         $builder->setDefinition('foo', new DefinitionDecorator('parent'));
 
         $builder->get('foo');
+    }
+
+    public function testResolveServicesWithCustomDefinitionClass()
+    {
+        $builder = new ContainerBuilder();
+        $builder->setDefinition('foo', new CustomDefinition('stdClass'));
+
+        $this->assertInstanceOf('stdClass', $builder->get('foo'));
     }
 
     public function testMerge()
@@ -637,7 +664,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testRegisteredButNotLoadedExtension()
     {
-        $extension = $this->getMock('Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface');
+        $extension = $this->getMockBuilder('Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface')->getMock();
         $extension->expects($this->once())->method('getAlias')->will($this->returnValue('project'));
         $extension->expects($this->never())->method('load');
 
@@ -649,7 +676,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testRegisteredAndLoadedExtension()
     {
-        $extension = $this->getMock('Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface');
+        $extension = $this->getMockBuilder('Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface')->getMock();
         $extension->expects($this->exactly(2))->method('getAlias')->will($this->returnValue('project'));
         $extension->expects($this->once())->method('load')->with(array(array('foo' => 'bar')));
 
@@ -835,6 +862,20 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($classInList);
+    }
+
+    public function testInitializePropertiesBeforeMethodCalls()
+    {
+        $container = new ContainerBuilder();
+        $container->register('foo', 'stdClass');
+        $container->register('bar', 'MethodCallClass')
+            ->setProperty('simple', 'bar')
+            ->setProperty('complex', new Reference('foo'))
+            ->addMethodCall('callMe');
+
+        $container->compile();
+
+        $this->assertTrue($container->get('bar')->callPassed(), '->compile() initializes properties before method calls');
     }
 
     public function testAutowiring()
