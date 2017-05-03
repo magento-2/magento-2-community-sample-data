@@ -2,7 +2,7 @@
     "name": "magento/magento2-base",
     "description": "Magento 2 Base (Community Edition)",
     "type": "magento2-component",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "require": {
         "magento/magento-composer-installer": "*",
         "php": "~5.6.5|7.0.2|7.0.4|~7.0.6",
@@ -252,6 +252,10 @@
             [
                 "dev/tests/functional/bootstrap.php",
                 "dev/tests/functional/bootstrap.php"
+            ],
+            [
+                "dev/tests/functional/.htaccess.sample",
+                "dev/tests/functional/.htaccess.sample"
             ],
             [
                 "dev/tests/integration/testsuite/Magento",

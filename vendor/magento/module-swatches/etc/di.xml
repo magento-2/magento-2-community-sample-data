@@ -12,6 +12,9 @@
     <type name="Magento\Catalog\Block\Product\AbstractProduct">
         <plugin name="add_product_object_to_image_data_array" type="Magento\Swatches\Model\Plugin\ProductImage" />
     </type>
+    <type name="Magento\Catalog\Block\Product\ImageBlockBuilder">
+        <plugin name="add_product_object_to_image_data_array_for_builder" type="Magento\Swatches\Model\Plugin\ProductImageBuilder" />
+    </type>
     <type name="Magento\Catalog\Model\Product">
         <plugin name="exclude_swatch_attribute" type="Magento\Swatches\Model\Plugin\Product" />
     </type>
@@ -70,6 +73,14 @@
                     <item name="path" xsi:type="string">design/watermark/swatch_image_position</item>
                     <item name="fieldset" xsi:type="string">other_settings/watermark/swatch_image</item>
                 </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Swatches\Model\SwatchAttributeCodes">
+        <arguments>
+            <argument name="cacheKey" xsi:type="string">swatch-attribute-list</argument>
+            <argument name="cacheTags" xsi:type="array">
+                <item name="0" xsi:type="const">Magento\Eav\Model\Entity\Attribute::CACHE_TAG</item>
             </argument>
         </arguments>
     </type>
