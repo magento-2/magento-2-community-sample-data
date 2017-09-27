@@ -2,16 +2,13 @@
 /**
  * Catalog product copier. Creates product duplicate
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Product;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 
-/**
- * Catalog product copier.
- */
 class Copier
 {
     /**
@@ -62,7 +59,9 @@ class Copier
 
         /** @var \Magento\Catalog\Model\Product $duplicate */
         $duplicate = $this->productFactory->create();
-        $duplicate->setData($product->getData());
+        $productData = $product->getData();
+        $productData = $this->removeStockItem($productData);
+        $duplicate->setData($productData);
         $duplicate->setOptions([]);
         $duplicate->setIsDuplicate(true);
         $duplicate->setOriginalLinkId($product->getData($metadata->getLinkField()));
@@ -91,13 +90,12 @@ class Copier
             $product->getData($metadata->getLinkField()),
             $duplicate->getData($metadata->getLinkField())
         );
-
         return $duplicate;
     }
 
     /**
      * @return Option\Repository
-     * @deprecated
+     * @deprecated 101.0.0
      */
     private function getOptionRepository()
     {
@@ -105,13 +103,12 @@ class Copier
             $this->optionRepository = \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Magento\Catalog\Model\Product\Option\Repository::class);
         }
-        
         return $this->optionRepository;
     }
 
     /**
      * @return \Magento\Framework\EntityManager\MetadataPool
-     * @deprecated
+     * @deprecated 101.0.0
      */
     private function getMetadataPool()
     {
@@ -119,7 +116,23 @@ class Copier
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Magento\Framework\EntityManager\MetadataPool::class);
         }
-        
         return $this->metadataPool;
+    }
+
+    /**
+     * Remove stock item
+     *
+     * @param array $productData
+     * @return array
+     */
+    private function removeStockItem(array $productData)
+    {
+        if (isset($productData[ProductInterface::EXTENSION_ATTRIBUTES_KEY])) {
+            $extensionAttributes = $productData[ProductInterface::EXTENSION_ATTRIBUTES_KEY];
+            if (null !== $extensionAttributes->getStockItem()) {
+                $extensionAttributes->setData('stock_item', null);
+            }
+        }
+        return $productData;
     }
 }

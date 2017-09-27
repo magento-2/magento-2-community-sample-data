@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -14,6 +14,7 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
 {
     /**
      * @var \Magento\Quote\Api\BillingAddressManagementInterface
+     * @deprecated 100.2.0 This call was substituted to eliminate extra quote::save call
      */
     protected $billingAddressManagement;
 
@@ -38,18 +39,21 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
     protected $cartTotalsRepository;
 
     /**
-     * Logger instance.
-     *
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
+     * @var \Magento\Quote\Api\CartRepositoryInterface
+     */
+    private $cartRepository;
+
+    /**
      * @param \Magento\Quote\Api\BillingAddressManagementInterface $billingAddressManagement
-     * @param \Magento\Quote\Api\PaymentMethodManagementInterface  $paymentMethodManagement
-     * @param \Magento\Quote\Api\CartManagementInterface           $cartManagement
-     * @param PaymentDetailsFactory                                $paymentDetailsFactory
-     * @param \Magento\Quote\Api\CartTotalRepositoryInterface      $cartTotalsRepository
+     * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
+     * @param \Magento\Quote\Api\CartManagementInterface $cartManagement
+     * @param PaymentDetailsFactory $paymentDetailsFactory
+     * @param \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalsRepository
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -89,7 +93,6 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
                 $e
             );
         }
-
         return $orderId;
     }
 
@@ -102,10 +105,21 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         \Magento\Quote\Api\Data\AddressInterface $billingAddress = null
     ) {
         if ($billingAddress) {
-            $this->billingAddressManagement->assign($cartId, $billingAddress);
+            /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+            $quoteRepository = $this->getCartRepository();
+            /** @var \Magento\Quote\Model\Quote $quote */
+            $quote = $quoteRepository->getActive($cartId);
+            $quote->removeAddress($quote->getBillingAddress()->getId());
+            $quote->setBillingAddress($billingAddress);
+            $quote->setDataChanges(true);
+            $shippingAddress = $quote->getShippingAddress();
+            if ($shippingAddress && $shippingAddress->getShippingMethod()) {
+                $shippingDataArray = explode('_', $shippingAddress->getShippingMethod());
+                $shippingCarrier = array_shift($shippingDataArray);
+                $shippingAddress->setLimitCarrier($shippingCarrier);
+            }
         }
         $this->paymentMethodManagement->set($cartId, $paymentMethod);
-
         return true;
     }
 
@@ -118,22 +132,35 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         $paymentDetails = $this->paymentDetailsFactory->create();
         $paymentDetails->setPaymentMethods($this->paymentMethodManagement->getList($cartId));
         $paymentDetails->setTotals($this->cartTotalsRepository->get($cartId));
-
         return $paymentDetails;
     }
 
     /**
-     * Get logger instance.
+     * Get logger instance
      *
      * @return \Psr\Log\LoggerInterface
-     * @deprecated
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {
         if (!$this->logger) {
             $this->logger = \Magento\Framework\App\ObjectManager::getInstance()->get(\Psr\Log\LoggerInterface::class);
         }
-
         return $this->logger;
+    }
+
+    /**
+     * Get Cart repository
+     *
+     * @return \Magento\Quote\Api\CartRepositoryInterface
+     * @deprecated 100.2.0
+     */
+    private function getCartRepository()
+    {
+        if (!$this->cartRepository) {
+            $this->cartRepository = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Quote\Api\CartRepositoryInterface::class);
+        }
+        return $this->cartRepository;
     }
 }

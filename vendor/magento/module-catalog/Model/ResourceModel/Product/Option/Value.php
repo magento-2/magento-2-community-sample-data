@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Option;
@@ -86,7 +86,7 @@ class Value extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Save option value price data.
+     * Save option value price data
      *
      * @param \Magento\Framework\Model\AbstractModel $object
      * @return void
@@ -237,6 +237,11 @@ class Value extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
             $optionTypeId = $this->getConnection()->fetchOne($select);
             $existInCurrentStore = $this->getOptionIdFromOptionTable($titleTable, (int)$object->getId(), (int)$storeId);
+
+            if ($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID && $object->getData('is_delete_store_title')) {
+                $object->unsetData('title');
+            }
+
             if ($object->getTitle()) {
                 if ($existInCurrentStore) {
                     if ($storeId == $object->getStoreId()) {
@@ -418,10 +423,10 @@ class Value extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Get FormatInterface to convert price from string to number format.
+     * Get FormatInterface to convert price from string to number format
      *
      * @return \Magento\Framework\Locale\FormatInterface
-     * @deprecated
+     * @deprecated 101.0.8
      */
     private function getLocaleFormatter()
     {
@@ -429,7 +434,6 @@ class Value extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $this->localeFormat = \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Magento\Framework\Locale\FormatInterface::class);
         }
-        
         return $this->localeFormat;
     }
 }

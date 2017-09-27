@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -99,7 +99,11 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
             }
         } else {
             $name = substr($this->getName(), strrpos($this->getName(), '\\')+1);
-            preg_match('#function\s+' . preg_quote($name) . '\s*\([^\)]*\)\s*{([^{}]+({[^}]+})*[^}]+)?}#', $functionLine, $matches);
+            preg_match(
+                '#function\s+' . preg_quote($name) . '\s*\([^\)]*\)\s*{([^{}]+({[^}]+})*[^}]+)?}#',
+                $functionLine,
+                $matches
+            );
             if (isset($matches[0])) {
                 $content = $matches[0];
             }
@@ -125,28 +129,30 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
             $returnType = count($returnTypes) > 1 ? implode('|', $returnTypes) : $returnTypes[0];
         }
 
-        $prototype = array(
+        $prototype = [
             'namespace' => $this->getNamespaceName(),
             'name'      => substr($this->getName(), strlen($this->getNamespaceName()) + 1),
             'return'    => $returnType,
-            'arguments' => array(),
-        );
+            'arguments' => [],
+        ];
 
         $parameters = $this->getParameters();
         foreach ($parameters as $parameter) {
-            $prototype['arguments'][$parameter->getName()] = array(
-                'type'     => $parameter->getType(),
+            $prototype['arguments'][$parameter->getName()] = [
+                'type'     => $parameter->detectType(),
                 'required' => !$parameter->isOptional(),
                 'by_ref'   => $parameter->isPassedByReference(),
                 'default'  => $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
-            );
+            ];
         }
 
         if ($format == FunctionReflection::PROTOTYPE_AS_STRING) {
             $line = $prototype['return'] . ' ' . $prototype['name'] . '(';
-            $args = array();
+            $args = [];
             foreach ($prototype['arguments'] as $name => $argument) {
-                $argsLine = ($argument['type'] ? $argument['type'] . ' ' : '') . ($argument['by_ref'] ? '&' : '') . '$' . $name;
+                $argsLine = ($argument['type']
+                    ? $argument['type'] . ' '
+                    : '') . ($argument['by_ref'] ? '&' : '') . '$' . $name;
                 if (!$argument['required']) {
                     $argsLine .= ' = ' . var_export($argument['default'], true);
                 }
@@ -169,7 +175,7 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
     public function getParameters()
     {
         $phpReflections  = parent::getParameters();
-        $zendReflections = array();
+        $zendReflections = [];
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
             $instance          = new ParameterReflection($this->getName(), $phpReflection->getName());
             $zendReflections[] = $instance;

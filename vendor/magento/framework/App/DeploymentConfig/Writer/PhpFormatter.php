@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,11 +21,15 @@ class PhpFormatter implements FormatterInterface
     public function format($data, array $comments = [])
     {
         if (!empty($comments) && is_array($data)) {
-            $elements = array();
+            $elements = [];
             foreach ($data as $key => $value) {
                 $comment = '  ';
                 if (!empty($comments[$key])) {
-                    $comment = "  /**\n * " . str_replace("\n", "\n * ", var_export($comments[$key], true)) . "\n */\n";
+                    $section = " * For the section: " . $key . "\n";
+                    $exportedComment = is_string($comments[$key])
+                        ? $comments[$key]
+                        : var_export($comments[$key], true);
+                    $comment = "  /**\n" . $section . " * " . str_replace("\n", "\n * ", $exportedComment) . "\n */\n";
                 }
                 $space = is_array($value) ? " \n" : ' ';
                 $elements[] = $comment . var_export($key, true) . ' =>' . $space . var_export($value, true);

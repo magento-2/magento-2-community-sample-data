@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,9 @@ namespace Magento\Sales\Helper;
 
 use Magento\Framework\App as App;
 use Magento\Framework\Exception\InputException;
-use Magento\Sales\Model\Order;
+use Magento\Framework\Stdlib\Cookie\CookieSizeLimitReachedException;
+use Magento\Framework\Stdlib\Cookie\FailureToSendException;
+use \Magento\Sales\Model\Order;
 
 /**
  * Sales module base helper
@@ -128,17 +130,20 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
             ->get(\Magento\Sales\Api\OrderRepositoryInterface::class);
         $this->searchCriteriaBuilder = $searchCriteria?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-
         parent::__construct(
             $context
         );
     }
 
     /**
-     * Try to load valid order by $_POST or $_COOKIE.
+     * Try to load valid order by $_POST or $_COOKIE
      *
      * @param App\RequestInterface $request
      * @return \Magento\Framework\Controller\Result\Redirect|bool
+     * @throws \RuntimeException
+     * @throws InputException
+     * @throws CookieSizeLimitReachedException
+     * @throws FailureToSendException
      */
     public function loadValidOrder(App\RequestInterface $request)
     {
@@ -147,7 +152,6 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $post = $request->getPostValue();
         $fromCookie = $this->cookieManager->getCookie(self::COOKIE_NAME);
-
         if (empty($post) && !$fromCookie) {
             return $this->resultRedirectFactory->create()->setPath('sales/guest/form');
         }
@@ -158,11 +162,9 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
                 ? $this->loadFromPost($post) : $this->loadFromCookie($fromCookie);
             $this->validateOrderStoreId($order->getStoreId());
             $this->coreRegistry->register('current_order', $order);
-
             return true;
         } catch (InputException $e) {
             $this->messageManager->addError($e->getMessage());
-
             return $this->resultRedirectFactory->create()->setPath('sales/guest/form');
         }
     }
@@ -191,10 +193,13 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Set guest-view cookie.
+     * Set guest-view cookie
      *
      * @param string $cookieValue
      * @return void
+     * @throws InputException
+     * @throws CookieSizeLimitReachedException
+     * @throws FailureToSendException
      */
     private function setGuestViewCookie($cookieValue)
     {
@@ -205,11 +210,13 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Load order from cookie.
+     * Load order from cookie
      *
      * @param string $fromCookie
      * @return Order
      * @throws InputException
+     * @throws CookieSizeLimitReachedException
+     * @throws FailureToSendException
      */
     private function loadFromCookie($fromCookie)
     {
@@ -220,7 +227,6 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
             $order = $this->getOrderRecord($incrementId);
             if (hash_equals((string)$order->getProtectCode(), $protectCode)) {
                 $this->setGuestViewCookie($fromCookie);
-
                 return $order;
             }
         }
@@ -228,11 +234,13 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Load order data from post.
+     * Load order data from post
      *
      * @param array $postData
      * @return Order
      * @throws InputException
+     * @throws CookieSizeLimitReachedException
+     * @throws FailureToSendException
      */
     private function loadFromPost(array $postData)
     {
@@ -241,52 +249,50 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
         }
         /** @var $order \Magento\Sales\Model\Order */
         $order = $this->getOrderRecord($postData['oar_order_id']);
-        if (!$this->compareStoredBillingDataWithInput($order, $postData)) {
+        if (!$this->compareSoredBillingDataWithInput($order, $postData)) {
             throw new InputException(__('You entered incorrect data. Please try again.'));
         }
         $toCookie = base64_encode($order->getProtectCode() . ':' . $postData['oar_order_id']);
         $this->setGuestViewCookie($toCookie);
-
         return $order;
     }
 
     /**
-     * Check that billing data from the order and from the input are equal.
+     * Check that billing data from the order and from the input are equal
      *
      * @param Order $order
      * @param array $postData
      * @return bool
      */
-    private function compareStoredBillingDataWithInput(Order $order, array $postData)
+    private function compareSoredBillingDataWithInput(Order $order, array $postData)
     {
         $type = $postData['oar_type'];
         $email = $postData['oar_email'];
         $lastName = $postData['oar_billing_lastname'];
         $zip = $postData['oar_zip'];
         $billingAddress = $order->getBillingAddress();
-
-        return strtolower($lastName) === strtolower($billingAddress->getLastname())
-            && ($type === 'email' && strtolower($email) === strtolower($billingAddress->getEmail())
-            || $type === 'zip' && strtolower($zip) === strtolower($billingAddress->getPostcode()));
+        return strtolower($lastName) === strtolower($billingAddress->getLastname()) &&
+            ($type === 'email' && strtolower($email) === strtolower($billingAddress->getEmail()) ||
+                $type === 'zip' && strtolower($zip) === strtolower($billingAddress->getPostcode()));
     }
 
     /**
-     * Check post data for empty fields.
+     * Check post data for empty fields
      *
      * @param array $postData
      * @return bool
      */
     private function hasPostDataEmptyFields(array $postData)
     {
-        return empty($postData['oar_order_id']) || empty($postData['oar_billing_lastname'])
-            || empty($postData['oar_type']) || empty($this->_storeManager->getStore()->getId())
-            || !in_array($postData['oar_type'], ['email', 'zip'], true)
-            || ('email' === $postData['oar_type'] && empty($postData['oar_email']))
-            || ('zip' === $postData['oar_type'] && empty($postData['oar_zip']));
+        return empty($postData['oar_order_id']) || empty($postData['oar_billing_lastname']) ||
+            empty($postData['oar_type']) || empty($this->_storeManager->getStore()->getId()) ||
+            !in_array($postData['oar_type'], ['email', 'zip'], true) ||
+            ('email' === $postData['oar_type'] && empty($postData['oar_email'])) ||
+            ('zip' === $postData['oar_type'] && empty($postData['oar_zip']));
     }
 
     /**
-     * Get order by increment_id and store_id.
+     * Get order by increment_id and store_id
      *
      * @param string $incrementId
      * @return \Magento\Sales\Api\Data\OrderInterface
@@ -303,12 +309,11 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
             throw new InputException(__($this->inputExceptionMessage));
         }
         $items = $records->getItems();
-
         return array_shift($items);
     }
 
     /**
-     * Check that store_id from order are equals with system.
+     * Check that store_id from order are equals with system
      *
      * @param int $orderStoreId
      * @return void

@@ -1,40 +1,42 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Magento\Catalog\Api\ProductAttributeGroupRepositoryInterface;
-use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
-use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav;
-use Magento\Eav\Api\Data\AttributeGroupInterface;
 use Magento\Eav\Model\Config;
-use Magento\Eav\Model\Entity\Attribute\Group;
-use Magento\Eav\Model\Entity\Type as EntityType;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\EntityManager\EventManager;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\Collection as GroupCollection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\CollectionFactory as GroupCollectionFactory;
-use Magento\Framework\Api\AttributeInterface;
-use Magento\Framework\Api\SearchCriteria;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SearchResultsInterface;
-use Magento\Framework\Api\SortOrderBuilder;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Currency;
-use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Locale\Currency as CurrencyLocale;
-use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Store\Api\Data\StoreInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Ui\DataProvider\EavValidationRules;
+use Magento\Eav\Model\Entity\Attribute\Group;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
+use Magento\Eav\Model\Entity\Type as EntityType;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 use Magento\Ui\DataProvider\Mapper\FormElement as FormElementMapper;
 use Magento\Ui\DataProvider\Mapper\MetaProperties as MetaPropertiesMapper;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Catalog\Api\ProductAttributeGroupRepositoryInterface;
+use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
+use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Framework\Api\AttributeInterface;
+use Magento\Eav\Api\Data\AttributeGroupInterface;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Framework\Currency;
+use Magento\Framework\Locale\Currency as CurrencyLocale;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Stdlib\ArrayManager;
+use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
+use Magento\Framework\Event\ManagerInterface;
 
 /**
  * Class EavTest
@@ -163,7 +165,7 @@ class EavTest extends AbstractModifierTest
     /**
      * @var ProductAttributeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $productAttributeMock;
+    protected $productAttributeMock;
 
     /**
      * @var ArrayManager|\PHPUnit_Framework_MockObject_MockObject
@@ -173,12 +175,12 @@ class EavTest extends AbstractModifierTest
     /**
      * @var EavAttributeFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $eavAttributeFactoryMock;
+    protected $eavAttributeFactoryMock;
 
     /**
      * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $eventManagerMock;
+    protected $eventManagerMock;
 
     /**
      * @var ObjectManager
@@ -258,7 +260,8 @@ class EavTest extends AbstractModifierTest
             ->disableOriginalConstructor()
             ->getMock();
         $this->productAttributeMock = $this->getMockBuilder(ProductAttributeInterface::class)
-            ->getMock();
+            ->setMethods(['getValue'])
+            ->getMockForAbstractClass();
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
             ->getMock();
         $this->eavAttributeFactoryMock = $this->getMockBuilder(EavAttributeFactory::class)
@@ -320,7 +323,7 @@ class EavTest extends AbstractModifierTest
         $this->eavAttributeMock->expects($this->any())
             ->method('load')
             ->willReturnSelf();
-
+        
         $this->eav =$this->getModel();
         $this->objectManager->setBackwardCompatibleProperty(
             $this->eav,
@@ -349,7 +352,7 @@ class EavTest extends AbstractModifierTest
             'attributeRepository' => $this->attributeRepositoryMock,
             'arrayManager' => $this->arrayManagerMock,
             'eavAttributeFactory' => $this->eavAttributeFactoryMock,
-            '_eventManager' => $this->eventManagerMock,
+            '_eventManager' => $this->eventManagerMock
         ]);
     }
 
@@ -395,7 +398,7 @@ class EavTest extends AbstractModifierTest
         $this->sortOrderBuilderMock->expects($this->once())
             ->method('setAscendingDirection')
             ->willReturnSelf();
-        $dataObjectMock = $this->getMock('\Magento\Framework\Api\AbstractSimpleObject', [], [], '', false);
+        $dataObjectMock = $this->createMock(\Magento\Framework\Api\AbstractSimpleObject::class);
         $this->sortOrderBuilderMock->expects($this->once())
             ->method('create')
             ->willReturn($dataObjectMock);
@@ -482,8 +485,9 @@ class EavTest extends AbstractModifierTest
             ->willReturn('value');
 
         $attributeMock = $this->getMockBuilder(AttributeInterface::class)
+            ->setMethods(['getValue'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $attributeMock->expects($this->any())
             ->method('getValue')
@@ -520,8 +524,6 @@ class EavTest extends AbstractModifierTest
     }
 
     /**
-     * Setup attribute meta data provider.
-     *
      * @return array
      */
     public function setupAttributeMetaDataProvider()
@@ -543,9 +545,9 @@ class EavTest extends AbstractModifierTest
                     'source' => 'product-details',
                     'scopeLabel' => '',
                     'globalScope' => false,
-                    'sortOrder' => 0,
+                    'sortOrder' => 0
+                    ],
                 ],
-            ],
             'default_null_prod_not_new_and_not_required' => [
                 'productId' => 1,
                 'productRequired' => false,
@@ -562,9 +564,9 @@ class EavTest extends AbstractModifierTest
                     'source' => 'product-details',
                     'scopeLabel' => '',
                     'globalScope' => false,
-                    'sortOrder' => 0,
+                    'sortOrder' => 0
+                    ],
                 ],
-            ],
             'default_null_prod_new_and_not_required' => [
                 'productId' => null,
                 'productRequired' => false,
@@ -581,7 +583,7 @@ class EavTest extends AbstractModifierTest
                     'source' => 'product-details',
                     'scopeLabel' => '',
                     'globalScope' => false,
-                    'sortOrder' => 0,
+                    'sortOrder' => 0
                 ],
             ],
             'default_null_prod_new_and_required' => [
@@ -600,7 +602,7 @@ class EavTest extends AbstractModifierTest
                     'source' => 'product-details',
                     'scopeLabel' => '',
                     'globalScope' => false,
-                    'sortOrder' => 0,
+                    'sortOrder' => 0
                 ],
             ]
         ];

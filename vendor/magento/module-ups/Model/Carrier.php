@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -739,13 +739,9 @@ XMLRequest;
                 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, (bool)$this->getConfigFlag('mode_xml'));
                 $xmlResponse = curl_exec($ch);
-                if ($xmlResponse !== false) {
-                    $debugData['result'] = $xmlResponse;
-                    $this->_setCachedQuotes($xmlRequest, $xmlResponse);
-                } else {
-                    $debugData['result'] = ['error' => curl_error($ch)];
-                }
-                curl_close($ch);
+
+                $debugData['result'] = $xmlResponse;
+                $this->_setCachedQuotes($xmlRequest, $xmlResponse);
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
                 $xmlResponse = '';
@@ -1006,11 +1002,7 @@ XMLAuth;
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
                 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                 $xmlResponse = curl_exec($ch);
-                if ($xmlResponse !== false) {
-                    $debugData['result'] = $xmlResponse;
-                } else {
-                    $debugData['result'] = ['error' => curl_error($ch)];
-                }
+                $debugData['result'] = $xmlResponse;
                 curl_close($ch);
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];

@@ -17,9 +17,9 @@ class RealPath extends AbstractFilter
     /**
      * @var array $options
      */
-    protected $options = array(
+    protected $options = [
         'exists' => true
-    );
+    ];
 
     /**
      * Class constructor
@@ -29,7 +29,7 @@ class RealPath extends AbstractFilter
     public function __construct($existsOrOptions = true)
     {
         if ($existsOrOptions !== null) {
-            if (!static::isOptions($existsOrOptions)) {
+            if (! static::isOptions($existsOrOptions)) {
                 $this->setExists($existsOrOptions);
             } else {
                 $this->setOptions($existsOrOptions);
@@ -73,7 +73,7 @@ class RealPath extends AbstractFilter
      */
     public function filter($value)
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return $value;
         }
         $path = (string) $value;
@@ -105,7 +105,7 @@ class RealPath extends AbstractFilter
             $path = getcwd() . DIRECTORY_SEPARATOR . $path;
         }
 
-        $stack = array();
+        $stack = [];
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         foreach ($parts as $dir) {
             if (strlen($dir) && $dir !== '.') {

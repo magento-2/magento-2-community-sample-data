@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\Stock;
@@ -23,9 +23,9 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 
 /**
- * Class StockItemRepository
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StockItemRepository implements StockItemRepositoryInterface
@@ -77,6 +77,7 @@ class StockItemRepository implements StockItemRepositoryInterface
 
     /**
      * @var Processor
+     * @deprecated 100.2.0
      */
     protected $indexProcessor;
 
@@ -90,10 +91,14 @@ class StockItemRepository implements StockItemRepositoryInterface
      */
     protected $stockRegistryStorage;
 
-    /** @var  \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory */
+    /**
+     * @var  \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     */
     protected $productCollectionFactory;
 
     /**
+     * Constructor
+     *
      * @param StockConfigurationInterface $stockConfiguration
      * @param StockStateProviderInterface $stockStateProvider
      * @param StockItemResource $resource
@@ -105,6 +110,7 @@ class StockItemRepository implements StockItemRepositoryInterface
      * @param TimezoneInterface $localeDate
      * @param Processor $indexProcessor
      * @param DateTime $dateTime
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory|null $collectionFactory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -118,7 +124,8 @@ class StockItemRepository implements StockItemRepositoryInterface
         MapperFactory $mapperFactory,
         TimezoneInterface $localeDate,
         Processor $indexProcessor,
-        DateTime $dateTime
+        DateTime $dateTime,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory = null
     ) {
         $this->stockConfiguration = $stockConfiguration;
         $this->stockStateProvider = $stockStateProvider;
@@ -131,21 +138,8 @@ class StockItemRepository implements StockItemRepositoryInterface
         $this->localeDate = $localeDate;
         $this->indexProcessor = $indexProcessor;
         $this->dateTime = $dateTime;
-    }
-
-    /**
-     * @deprecated
-     * @return  \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
-     */
-    private function getProductCollectionFactory()
-    {
-        if ($this->productCollectionFactory === null) {
-            $this->productCollectionFactory = ObjectManager::getInstance()->get(
-                \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class
-            );
-        }
-
-        return $this->productCollectionFactory;
+        $this->productCollectionFactory = $productCollectionFactory ?: ObjectManager::getInstance()
+            ->get(CollectionFactory::class);
     }
 
     /**
@@ -155,7 +149,7 @@ class StockItemRepository implements StockItemRepositoryInterface
     {
         try {
             /** @var \Magento\Catalog\Model\Product $product */
-            $product = $this->getProductCollectionFactory()->create()
+            $product = $this->productCollectionFactory->create()
                 ->setFlag('has_stock_status_filter')
                 ->addIdFilter($stockItem->getProductId())
                 ->addFieldToSelect('type_id')
@@ -188,10 +182,6 @@ class StockItemRepository implements StockItemRepositoryInterface
             $stockItem->setStockId($stockItem->getStockId());
 
             $this->resource->save($stockItem);
-
-            $this->indexProcessor->reindexRow($stockItem->getProductId());
-            $this->getStockRegistryStorage()->removeStockItem($stockItem->getProductId());
-            $this->getStockRegistryStorage()->removeStockStatus($stockItem->getProductId());
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__('Unable to save Stock Item'), $exception);
         }
@@ -266,7 +256,7 @@ class StockItemRepository implements StockItemRepositoryInterface
     {
         if (null === $this->stockRegistryStorage) {
             $this->stockRegistryStorage = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\CatalogInventory\Model\StockRegistryStorage');
+                ->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
         }
         return $this->stockRegistryStorage;
     }

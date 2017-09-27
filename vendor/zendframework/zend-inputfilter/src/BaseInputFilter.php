@@ -28,7 +28,7 @@ class BaseInputFilter implements
     /**
      * @var InputInterface[]|InputFilterInterface[]
      */
-    protected $inputs = array();
+    protected $inputs = [];
 
     /**
      * @var InputInterface[]|InputFilterInterface[]
@@ -77,12 +77,12 @@ class BaseInputFilter implements
      */
     public function add($input, $name = null)
     {
-        if (!$input instanceof InputInterface && !$input instanceof InputFilterInterface) {
+        if (! $input instanceof InputInterface && ! $input instanceof InputFilterInterface) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an instance of %s or %s as its first argument; received "%s"',
                 __METHOD__,
-                'Zend\InputFilter\InputInterface',
-                'Zend\InputFilter\InputFilterInterface',
+                InputInterface::class,
+                InputFilterInterface::class,
                 (is_object($input) ? get_class($input) : gettype($input))
             ));
         }
@@ -113,7 +113,7 @@ class BaseInputFilter implements
      */
     public function replace($input, $name)
     {
-        if (!array_key_exists($name, $this->inputs)) {
+        if (! array_key_exists($name, $this->inputs)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s: no input found matching "%s"',
                 __METHOD__,
@@ -136,7 +136,7 @@ class BaseInputFilter implements
      */
     public function get($name)
     {
-        if (!array_key_exists($name, $this->inputs)) {
+        if (! array_key_exists($name, $this->inputs)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s: no input found matching "%s"',
                 __METHOD__,
@@ -154,7 +154,7 @@ class BaseInputFilter implements
      */
     public function has($name)
     {
-        return (array_key_exists($name, $this->inputs));
+        return array_key_exists($name, $this->inputs);
     }
 
     /**
@@ -181,7 +181,7 @@ class BaseInputFilter implements
         if ($data instanceof Traversable) {
             $data = ArrayUtils::iteratorToArray($data);
         }
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array or Traversable argument; received %s',
                 __METHOD__,
@@ -221,12 +221,12 @@ class BaseInputFilter implements
      * @param  mixed|null $context
      * @return bool
      */
-    protected function validateInputs(array $inputs, $data = array(), $context = null)
+    protected function validateInputs(array $inputs, $data = [], $context = null)
     {
         $inputContext = $context ?: (array_merge($this->getRawValues(), (array) $data));
 
-        $this->validInputs   = array();
-        $this->invalidInputs = array();
+        $this->validInputs   = [];
+        $this->invalidInputs = [];
         $valid               = true;
 
         foreach ($inputs as $name) {
@@ -234,7 +234,7 @@ class BaseInputFilter implements
 
             // Validate an input filter
             if ($input instanceof InputFilterInterface) {
-                if (!$input->isValid($context)) {
+                if (! $input->isValid($context)) {
                     $this->invalidInputs[$name] = $input;
                     $valid = false;
                     continue;
@@ -244,19 +244,19 @@ class BaseInputFilter implements
             }
 
             // If input is not InputInterface then silently continue (BC safe)
-            if (!$input instanceof InputInterface) {
+            if (! $input instanceof InputInterface) {
                 continue;
             }
 
             // If input is optional (not required), and value is not set, then ignore.
-            if (!array_key_exists($name, $data)
-                && !$input->isRequired()
+            if (! array_key_exists($name, $data)
+                && ! $input->isRequired()
             ) {
                 continue;
             }
 
             // Validate an input
-            if (!$input->isValid($inputContext)) {
+            if (! $input->isValid($inputContext)) {
                 // Validation failure
                 $this->invalidInputs[$name] = $input;
                 $valid = false;
@@ -300,7 +300,7 @@ class BaseInputFilter implements
         }
 
         if (is_array($name)) {
-            $inputs = array();
+            $inputs = [];
             foreach ($name as $key => $value) {
                 if (! $this->has($key)) {
                     $inputs[] = $value;
@@ -343,7 +343,7 @@ class BaseInputFilter implements
      */
     public function getInvalidInput()
     {
-        return (is_array($this->invalidInputs) ? $this->invalidInputs : array());
+        return is_array($this->invalidInputs) ? $this->invalidInputs : [];
     }
 
     /**
@@ -356,7 +356,7 @@ class BaseInputFilter implements
      */
     public function getValidInput()
     {
-        return (is_array($this->validInputs) ? $this->validInputs : array());
+        return is_array($this->validInputs) ? $this->validInputs : [];
     }
 
     /**
@@ -368,7 +368,7 @@ class BaseInputFilter implements
      */
     public function getValue($name)
     {
-        if (!array_key_exists($name, $this->inputs)) {
+        if (! array_key_exists($name, $this->inputs)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects a valid input name; "%s" was not found in the filter',
                 __METHOD__,
@@ -395,7 +395,7 @@ class BaseInputFilter implements
     public function getValues()
     {
         $inputs = $this->validationGroup ?: array_keys($this->inputs);
-        $values = array();
+        $values = [];
         foreach ($inputs as $name) {
             $input = $this->inputs[$name];
 
@@ -417,7 +417,7 @@ class BaseInputFilter implements
      */
     public function getRawValue($name)
     {
-        if (!array_key_exists($name, $this->inputs)) {
+        if (! array_key_exists($name, $this->inputs)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects a valid input name; "%s" was not found in the filter',
                 __METHOD__,
@@ -441,7 +441,7 @@ class BaseInputFilter implements
      */
     public function getRawValues()
     {
-        $values = array();
+        $values = [];
         foreach ($this->inputs as $name => $input) {
             if ($input instanceof InputFilterInterface) {
                 $values[$name] = $input->getRawValues();
@@ -463,7 +463,7 @@ class BaseInputFilter implements
      */
     public function getMessages()
     {
-        $messages = array();
+        $messages = [];
         foreach ($this->getInvalidInput() as $name => $input) {
             $messages[$name] = $input->getMessages();
         }
@@ -481,7 +481,7 @@ class BaseInputFilter implements
     protected function validateValidationGroup(array $inputs)
     {
         foreach ($inputs as $name) {
-            if (!array_key_exists($name, $this->inputs)) {
+            if (! array_key_exists($name, $this->inputs)) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'setValidationGroup() expects a list of valid input names; "%s" was not found',
                     $name
@@ -505,15 +505,10 @@ class BaseInputFilter implements
                 $input->clearRawValues();
             }
 
-            if (!array_key_exists($name, $this->data)) {
+            if (! array_key_exists($name, $this->data)) {
                 // No value; clear value in this input
                 if ($input instanceof InputFilterInterface) {
-                    $input->setData(array());
-                    continue;
-                }
-
-                if ($input instanceof ArrayInput) {
-                    $input->setValue(array());
+                    $input->setData([]);
                     continue;
                 }
 
@@ -545,21 +540,7 @@ class BaseInputFilter implements
      */
     public function hasUnknown()
     {
-        if (null === $this->data) {
-            throw new Exception\RuntimeException(sprintf(
-                '%s: no data present!',
-                __METHOD__
-            ));
-        }
-
-        $data   = array_keys($this->data);
-        $inputs = array_keys($this->inputs);
-        $diff   = array_diff($data, $inputs);
-        if (!empty($diff)) {
-            return count(array_intersect($diff, $inputs)) == 0;
-        }
-
-        return false;
+        return count($this->getUnknown()) > 0;
     }
 
     /**
@@ -581,9 +562,9 @@ class BaseInputFilter implements
         $inputs = array_keys($this->inputs);
         $diff   = array_diff($data, $inputs);
 
-        $unknownInputs = array();
+        $unknownInputs = [];
         $intersect     = array_intersect($diff, $data);
-        if (!empty($intersect)) {
+        if (! empty($intersect)) {
             foreach ($intersect as $key) {
                 $unknownInputs[$key] = $this->data[$key];
             }

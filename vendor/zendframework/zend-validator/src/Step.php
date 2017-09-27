@@ -19,10 +19,10 @@ class Step extends AbstractValidator
     /**
      * @var array
      */
-    protected $messageTemplates = array(
+    protected $messageTemplates = [
         self::INVALID => "Invalid value given. Scalar expected",
         self::NOT_STEP => "The input is not a valid step"
-    );
+    ];
 
     /**
      * @var mixed
@@ -39,14 +39,14 @@ class Step extends AbstractValidator
      *
      * @param array $options
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if ($options instanceof Traversable) {
             $options = iterator_to_array($options);
-        } elseif (!is_array($options)) {
+        } elseif (! is_array($options)) {
             $options = func_get_args();
             $temp['baseValue'] = array_shift($options);
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $temp['step'] = array_shift($options);
             }
 
@@ -115,7 +115,7 @@ class Step extends AbstractValidator
      */
     public function isValid($value)
     {
-        if (!is_numeric($value)) {
+        if (! is_numeric($value)) {
             $this->error(self::INVALID);
             return false;
         }

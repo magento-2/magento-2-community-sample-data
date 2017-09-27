@@ -1,159 +1,141 @@
 <?php
 /**
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Ui\Component\MassAction\Filter;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Catalog\Model\Indexer\Product\Price\Processor;
 use Magento\Catalog\Controller\Adminhtml\Product\Builder;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Catalog\Model\Product\Action;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
-use Magento\Catalog\Controller\Adminhtml\Product\MassStatus;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
-use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\App\Request\Http;
-use Magento\Catalog\Model\Product;
-use Magento\Framework\ObjectManager\ObjectManager as Manager;
 
 /**
+ * Class MassStatusTest
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MassStatusTest extends \PHPUnit_Framework_TestCase
+class MassStatusTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\ProductTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var Processor|\PHPUnit_Framework_MockObject_MockObject
      */
     private $priceProcessorMock;
 
     /**
-     * @var \Magento\Catalog\Controller\Adminhtml\Product\MassStatus
+     * @var Redirect|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $action;
+    private $resultRedirectMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $abstractDbMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var Filter|\PHPUnit_Framework_MockObject_MockObject
      */
     private $filterMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var Builder|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $requestMock;
+    private $productBuilderMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractDb|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $abstractDbMock;
+
+    /**
+     * @var Action|\PHPUnit_Framework_MockObject_MockObject
      */
     private $actionMock;
 
     protected function setUp()
     {
-        $objectManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $objectManagerHelper = new ObjectManager($this);
         $this->priceProcessorMock = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()->getMock();
-
-        $productBuilderMock = $this->getMockBuilder(Builder::class)->setMethods([
-                'build',
-            ])->disableOriginalConstructor()->getMock();
-
-        $this->requestMock = $this->getMockBuilder(Http::class)->setMethods(
-            ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
-        )->disableOriginalConstructor()->getMock();
-
-        $productMock = $this->getMockBuilder(Product::class)->disableOriginalConstructor()
-            ->setMethods(['getTypeId', 'getStoreId', '__sleep', '__wakeup'])->getMock();
-        $productMock->expects($this->any())->method('getTypeId')->will($this->returnValue('simple'));
-        $productMock->expects($this->any())->method('getStoreId')->will($this->returnValue('1'));
-        $productBuilderMock->expects($this->any())->method('build')->will($this->returnValue($productMock));
-
-        $resultRedirectMock = $this->getMockBuilder(Redirect::class)
+        $this->productBuilderMock = $this->getMockBuilder(Builder::class)
+            ->setMethods(['build'])
             ->disableOriginalConstructor()
             ->getMock();
-        $resultFactory = $this->getMockBuilder(ResultFactory::class)
+
+        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getTypeId', 'getStoreId', '__sleep', '__wakeup'])
+            ->getMock();
+        $productMock->expects($this->any())
+            ->method('getTypeId')
+            ->willReturn('simple');
+        $productMock->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn('1');
+        $this->productBuilderMock->expects($this->any())
+            ->method('build')
+            ->willReturn($productMock);
+
+        $this->resultRedirectMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $resultFactory = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $resultFactory->expects($this->atLeastOnce())
             ->method('create')
-            ->with(ResultFactory::TYPE_REDIRECT)
-            ->willReturn($resultRedirectMock);
+            ->with(\Magento\Framework\Controller\ResultFactory::TYPE_REDIRECT)
+            ->willReturn($this->resultRedirectMock);
 
         $this->abstractDbMock = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()
             ->setMethods(['getAllIds', 'getResource'])
             ->getMock();
-        $this->abstractDbMock->expects($this->any())
-            ->method('getAllIds')
-            ->willReturn([]);
-
-        $this->filterMock = $this->getMockBuilder(Filter::class)
+        $this->filterMock = $this->getMockBuilder(\Magento\Ui\Component\MassAction\Filter::class)
             ->disableOriginalConstructor()
             ->setMethods(['getCollection'])
             ->getMock();
-        $this->filterMock->expects($this->any())
-            ->method('getCollection')
-            ->willReturn($this->abstractDbMock);
         $this->actionMock = $this->getMockBuilder(Action::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $objectManagerMock->expects($this->any())->method('get')->willReturn($this->actionMock);
-        $collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
+
+        $collectionFactoryMock =
+            $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $collectionFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->abstractDbMock);
-        $this->requestMock = $this->getMockBuilder(Http::class)->setMethods(
-            ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
-        )->disableOriginalConstructor()->getMock();
 
-        $this->action = $objectManagerHelper->getObject(
-            MassStatus::class,
-            [
-                'objectManager' => $objectManagerMock,
-                'request' => $this->requestMock,
-                'productBuilder' => $productBuilderMock,
-                'filter' => $this->filterMock,
-                'productPriceIndexerProcessor' => $this->priceProcessorMock,
-                'collectionFactory' => $collectionFactoryMock,
-                'resultFactory' => $resultFactory
-            ]
+        $additionalParams = [
+            'resultFactory' => $resultFactory
+        ];
+        /** @var \Magento\Backend\App\Action\Context $context */
+        $context = $this->initContext($additionalParams, [[Action::class, $this->actionMock]]);
+
+        $this->action = new \Magento\Catalog\Controller\Adminhtml\Product\MassStatus(
+            $context,
+            $this->productBuilderMock,
+            $this->priceProcessorMock,
+            $this->filterMock,
+            $collectionFactoryMock
         );
-
     }
 
     public function testMassStatusAction()
     {
         $storeId = 1;
-        $status = Status::STATUS_DISABLED;
+        $status = \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED;
         $filters = [
             'store_id' => 2,
         ];
-
-        $productIds = [3];
 
         $this->filterMock->expects($this->once())
             ->method('getCollection')
             ->willReturn($this->abstractDbMock);
         $this->abstractDbMock->expects($this->once())
             ->method('getAllIds')
-            ->willReturn($productIds);
-        $this->requestMock->expects($this->exactly(3))
+            ->willReturn([3]);
+        $this->request->expects($this->exactly(3))
             ->method('getParam')
             ->willReturnMap([
                 ['store', 0, $storeId],
@@ -161,7 +143,8 @@ class MassStatusTest extends \PHPUnit_Framework_TestCase
                 ['filters', [], $filters]
             ]);
         $this->actionMock->expects($this->once())
-            ->method('updateAttributes');
+            ->method('updateAttributes')
+            ->with([3], ['status' => $status], 2);
         $this->priceProcessorMock->expects($this->once())
             ->method('reindexList');
 

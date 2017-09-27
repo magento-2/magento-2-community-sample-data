@@ -31,12 +31,12 @@ class Headers implements Countable, Iterator
     /**
      * @var array key names for $headers array
      */
-    protected $headersKeys = array();
+    protected $headersKeys = [];
 
     /**
      * @var array Array of header array information or Header instances
      */
-    protected $headers = array();
+    protected $headers = [];
 
     /**
      * Populates headers from string representation
@@ -52,7 +52,7 @@ class Headers implements Countable, Iterator
     public static function fromString($string)
     {
         $headers   = new static();
-        $current   = array();
+        $current   = [];
         $emptyLine = 0;
 
         // iterate the header lines, some might be continuations
@@ -79,10 +79,10 @@ class Headers implements Countable, Iterator
                     $headers->headersKeys[] = static::createKey($current['name']);
                     $headers->headers[]     = $current;
                 }
-                $current = array(
+                $current = [
                     'name' => $matches['name'],
                     'line' => trim($line)
-                );
+                ];
 
                 continue;
             }
@@ -142,7 +142,7 @@ class Headers implements Countable, Iterator
      */
     public function addHeaders($headers)
     {
-        if (!is_array($headers) && !$headers instanceof Traversable) {
+        if (! is_array($headers) && ! $headers instanceof Traversable) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Expected array or Traversable; received "%s"',
                 (is_object($headers) ? get_class($headers) : gettype($headers))
@@ -200,7 +200,7 @@ class Headers implements Countable, Iterator
         }
 
         $this->headersKeys[] = $headerKey;
-        $this->headers[]     = array('name' => $headerName, 'line' => $line);
+        $this->headers[]     = ['name' => $headerName, 'line' => $line];
 
         return $this;
     }
@@ -246,7 +246,7 @@ class Headers implements Countable, Iterator
      */
     public function clearHeaders()
     {
-        $this->headers = $this->headersKeys = array();
+        $this->headers = $this->headersKeys = [];
         return $this;
     }
 
@@ -259,14 +259,14 @@ class Headers implements Countable, Iterator
     public function get($name)
     {
         $key = static::createKey($name);
-        if (!in_array($key, $this->headersKeys)) {
+        if (! in_array($key, $this->headersKeys)) {
             return false;
         }
 
         $class = ($this->getPluginClassLoader()->load($key)) ?: 'Zend\Http\Header\GenericHeader';
 
         if (in_array('Zend\Http\Header\MultipleHeaderInterface', class_implements($class, true))) {
-            $headers = array();
+            $headers = [];
             foreach (array_keys($this->headersKeys, $key) as $index) {
                 if (is_array($this->headers[$index])) {
                     $this->lazyLoadHeader($index);
@@ -398,13 +398,13 @@ class Headers implements Countable, Iterator
      */
     public function toArray()
     {
-        $headers = array();
+        $headers = [];
         /* @var $header Header\HeaderInterface */
         foreach ($this->headers as $header) {
             if ($header instanceof Header\MultipleHeaderInterface) {
                 $name = $header->getFieldName();
-                if (!isset($headers[$name])) {
-                    $headers[$name] = array();
+                if (! isset($headers[$name])) {
+                    $headers[$name] = [];
                 }
                 $headers[$name][] = $header->getFieldValue();
             } elseif ($header instanceof Header\HeaderInterface) {
@@ -467,6 +467,6 @@ class Headers implements Countable, Iterator
      */
     protected static function createKey($name)
     {
-        return str_replace(array('-', '_', ' ', '.'), '', strtolower($name));
+        return str_replace(['-', '_', ' ', '.'], '', strtolower($name));
     }
 }

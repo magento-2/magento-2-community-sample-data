@@ -2,12 +2,12 @@
 /**
  * Test Webapi Json Deserializer Request Rest Controller.
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit\Rest\Request\Deserializer;
 
-class JsonTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $_helperFactoryMock;
@@ -24,11 +24,11 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         /** Prepare mocks for SUT constructor. */
-        $this->decoderMock = $this->getMockBuilder('Magento\Framework\Json\Decoder')
+        $this->decoderMock = $this->getMockBuilder(\Magento\Framework\Json\Decoder::class)
             ->disableOriginalConstructor()
             ->setMethods(['decode'])
             ->getMock();
-        $this->_appStateMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
+        $this->_appStateMock = $this->createMock(\Magento\Framework\App\State::class);
         /** Initialize SUT. */
         $this->_jsonDeserializer = new \Magento\Framework\Webapi\Rest\Request\Deserializer\Json(
             $this->decoderMock,
@@ -47,7 +47,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
 
     public function testDeserializerInvalidArgumentException()
     {
-        $this->setExpectedException('InvalidArgumentException', '"boolean" data type is invalid. String is expected.');
+        $this->expectException('InvalidArgumentException', '"boolean" data type is invalid. String is expected.');
         $this->_jsonDeserializer->deserialize(false);
     }
 
@@ -90,7 +90,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
             $this->_jsonDeserializer->deserialize($inputInvalidJson);
             $this->fail("Exception is expected to be raised");
         } catch (\Magento\Framework\Webapi\Exception $e) {
-            $this->assertInstanceOf('Magento\Framework\Webapi\Exception', $e, 'Exception type is invalid');
+            $this->assertInstanceOf(\Magento\Framework\Webapi\Exception::class, $e, 'Exception type is invalid');
             $this->assertEquals('Decoding error.', $e->getMessage(), 'Exception message is invalid');
             $this->assertEquals(
                 \Magento\Framework\Webapi\Exception::HTTP_BAD_REQUEST,
@@ -121,7 +121,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
             $this->_jsonDeserializer->deserialize($inputInvalidJson);
             $this->fail("Exception is expected to be raised");
         } catch (\Magento\Framework\Webapi\Exception $e) {
-            $this->assertInstanceOf('Magento\Framework\Webapi\Exception', $e, 'Exception type is invalid');
+            $this->assertInstanceOf(\Magento\Framework\Webapi\Exception::class, $e, 'Exception type is invalid');
             $this->assertContains('Decoding error:', $e->getMessage(), 'Exception message is invalid');
             $this->assertEquals(
                 \Magento\Framework\Webapi\Exception::HTTP_BAD_REQUEST,

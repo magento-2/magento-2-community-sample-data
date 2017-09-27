@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -120,30 +120,32 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
         }
 
         $declaringClass = $this->getDeclaringClass();
-        $prototype = array(
+        $prototype = [
             'namespace'  => $declaringClass->getNamespaceName(),
             'class'      => substr($declaringClass->getName(), strlen($declaringClass->getNamespaceName()) + 1),
             'name'       => $this->getName(),
             'visibility' => ($this->isPublic() ? 'public' : ($this->isPrivate() ? 'private' : 'protected')),
             'return'     => $returnType,
-            'arguments'  => array(),
-        );
+            'arguments'  => [],
+        ];
 
         $parameters = $this->getParameters();
         foreach ($parameters as $parameter) {
-            $prototype['arguments'][$parameter->getName()] = array(
-                'type'     => $parameter->getType(),
+            $prototype['arguments'][$parameter->getName()] = [
+                'type'     => $parameter->detectType(),
                 'required' => !$parameter->isOptional(),
                 'by_ref'   => $parameter->isPassedByReference(),
                 'default'  => $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
-            );
+            ];
         }
 
         if ($format == MethodReflection::PROTOTYPE_AS_STRING) {
             $line = $prototype['visibility'] . ' ' . $prototype['return'] . ' ' . $prototype['name'] . '(';
-            $args = array();
+            $args = [];
             foreach ($prototype['arguments'] as $name => $argument) {
-                $argsLine = ($argument['type'] ? $argument['type'] . ' ' : '') . ($argument['by_ref'] ? '&' : '') . '$' . $name;
+                $argsLine = ($argument['type'] ?
+                    $argument['type'] . ' '
+                    : '') . ($argument['by_ref'] ? '&' : '') . '$' . $name;
                 if (!$argument['required']) {
                     $argsLine .= ' = ' . var_export($argument['default'], true);
                 }
@@ -166,10 +168,10 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
     public function getParameters()
     {
         $phpReflections  = parent::getParameters();
-        $zendReflections = array();
+        $zendReflections = [];
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
             $instance = new ParameterReflection(
-                array($this->getDeclaringClass()->getName(), $this->getName()),
+                [$this->getDeclaringClass()->getName(), $this->getName()],
                 $phpReflection->getName()
             );
             $zendReflections[] = $instance;
@@ -343,7 +345,7 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
             return $content;
         }
 
-        for ($i = $position-1;$i >= 0;$i--) {
+        for ($i = $position-1; $i >= 0; $i--) {
             $tokenType = (is_array($haystack[$i])) ? token_name($haystack[$i][0]) : $haystack[$i];
             $tokenValue = (is_array($haystack[$i])) ? $haystack[$i][1] : $haystack[$i];
 
@@ -376,7 +378,7 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
             return true;
         }
 
-        for ($i = $position;$i < $count; $i++) {
+        for ($i = $position; $i < $count; $i++) {
             $tokenType = (is_array($haystack[$i])) ? token_name($haystack[$i][0]) : $haystack[$i];
             switch ($tokenType) {
                 case "T_FINAL":
@@ -396,7 +398,7 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                     return false;
 
                 case "}":
-                case ";";
+                case ";":
                 case "T_BREAK":
                 case "T_CATCH":
                 case "T_DO":
@@ -420,7 +422,6 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                 case "T_VARIABLE":
                 case "T_WHILE":
                 case "T_YIELD":
-
                     return false;
             }
         }

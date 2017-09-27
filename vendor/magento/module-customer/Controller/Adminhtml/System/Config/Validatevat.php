@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\System\Config;
@@ -13,7 +13,7 @@ namespace Magento\Customer\Controller\Adminhtml\System\Config;
 abstract class Validatevat extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */
@@ -26,7 +26,7 @@ abstract class Validatevat extends \Magento\Backend\App\Action
      */
     protected function _validate()
     {
-        return $this->_objectManager->get('Magento\Customer\Model\Vat')
+        return $this->_objectManager->get(\Magento\Customer\Model\Vat::class)
             ->checkVatNumber(
                 $this->getRequest()->getParam('country'),
                 $this->getRequest()->getParam('vat')

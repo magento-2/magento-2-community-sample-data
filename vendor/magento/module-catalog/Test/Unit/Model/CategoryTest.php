@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,34 +8,19 @@
 
 namespace Magento\Catalog\Test\Unit\Model;
 
-use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Indexer;
+use Magento\Catalog\Model\Category;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CategoryTest extends \PHPUnit_Framework_TestCase
+class CategoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Category
      */
     private $category;
-
-    /**
-     * @var \Magento\Framework\Model\Context|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $context;
-
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $eventManager;
-
-    /**
-     * @var \Magento\Framework\App\CacheInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $cacheManager;
 
     /**
      * @var \Magento\Framework\Registry|\PHPUnit_Framework_MockObject_MockObject
@@ -137,96 +122,31 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
      */
     private $objectManager;
 
-
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->context = $this->getMock(
-            \Magento\Framework\Model\Context::class,
-            ['getEventDispatcher', 'getCacheManager'],
-            [],
-            '',
-            false
-        );
-        $this->eventManager = $this->getMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->context->expects($this->any())->method('getEventDispatcher')
-            ->will($this->returnValue($this->eventManager));
-        $this->cacheManager = $this->getMock(\Magento\Framework\App\CacheInterface::class);
-        $this->context->expects($this->any())->method('getCacheManager')
-            ->will($this->returnValue($this->cacheManager));
-        $this->registry = $this->getMock(\Magento\Framework\Registry::class);
-        $this->storeManager = $this->getMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->categoryTreeResource = $this->getMock(
-            \Magento\Catalog\Model\ResourceModel\Category\Tree::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->categoryTreeFactory = $this->getMock(
-            \Magento\Catalog\Model\ResourceModel\Category\TreeFactory::class,
-            ['create'],
-            [],
-            '',
-            false);
-        $this->categoryRepository = $this->getMock(\Magento\Catalog\Api\CategoryRepositoryInterface::class);
-        $this->storeCollectionFactory = $this->getMock(
-            \Magento\Store\Model\ResourceModel\Store\CollectionFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
-        $this->url = $this->getMock(\Magento\Framework\UrlInterface::class);
-        $this->productCollectionFactory = $this->getMock(
-            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
-        $this->catalogConfig = $this->getMock(\Magento\Catalog\Model\Config::class, [], [], '', false);
-        $this->filterManager = $this->getMock(
-            \Magento\Framework\Filter\FilterManager::class,
-            ['translitUrl'],
-            [],
-            '',
-            false
-        );
-        $this->flatState = $this->getMock(
-            \Magento\Catalog\Model\Indexer\Category\Flat\State::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->flatIndexer = $this->getMock(\Magento\Framework\Indexer\IndexerInterface::class);
-        $this->productIndexer = $this->getMock(\Magento\Framework\Indexer\IndexerInterface::class);
-        $this->categoryUrlPathGenerator = $this->getMock(
-            \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->urlFinder = $this->getMock(\Magento\UrlRewrite\Model\UrlFinderInterface::class);
-        $this->resource = $this->getMock(
-            \Magento\Catalog\Model\ResourceModel\Category::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->indexerRegistry = $this->getMock(
-            \Magento\Framework\Indexer\IndexerRegistry::class,
-            ['get'],
-            [],
-            '',
-            false
-        );
-        $this->metadataServiceMock = $this->getMock(\Magento\Catalog\Api\CategoryAttributeRepositoryInterface::class);
+        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
+        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->categoryTreeResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Tree::class);
+        $this->categoryTreeFactory = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Category\TreeFactory::class, ['create']);
+        $this->categoryRepository = $this->createMock(\Magento\Catalog\Api\CategoryRepositoryInterface::class);
+        $this->storeCollectionFactory = $this->createPartialMock(\Magento\Store\Model\ResourceModel\Store\CollectionFactory::class, ['create']);
+        $this->url = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->productCollectionFactory = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class, ['create']);
+        $this->catalogConfig = $this->createMock(\Magento\Catalog\Model\Config::class);
+        $this->filterManager = $this->createPartialMock(\Magento\Framework\Filter\FilterManager::class, ['translitUrl']);
+        $this->flatState = $this->createMock(\Magento\Catalog\Model\Indexer\Category\Flat\State::class);
+        $this->flatIndexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $this->productIndexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $this->categoryUrlPathGenerator = $this->createMock(\Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator::class);
+        $this->urlFinder = $this->createMock(\Magento\UrlRewrite\Model\UrlFinderInterface::class);
+        $this->resource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
+        $this->indexerRegistry = $this->createPartialMock(\Magento\Framework\Indexer\IndexerRegistry::class, ['get']);
+
+        $this->metadataServiceMock = $this->createMock(\Magento\Catalog\Api\CategoryAttributeRepositoryInterface::class);
         $this->attributeValueFactory = $this->getMockBuilder(\Magento\Framework\Api\AttributeValueFactory::class)
             ->disableOriginalConstructor()->getMock();
+
         $this->category = $this->getCategoryModel();
     }
 
@@ -250,18 +170,12 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testMoveWhenCannotFindParentCategory()
     {
         $this->markTestIncomplete('MAGETWO-31165');
-        $parentCategory = $this->getMock(
-            \Magento\Catalog\Model\Category::class,
-            ['getId', 'setStoreId', 'load'],
-            [],
-            '',
-            false
-        );
+        $parentCategory = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['getId', 'setStoreId', 'load']);
         $parentCategory->expects($this->any())->method('setStoreId')->will($this->returnSelf());
         $parentCategory->expects($this->any())->method('load')->will($this->returnSelf());
         $this->categoryRepository->expects($this->any())->method('get')->will($this->returnValue($parentCategory));
 
-        $store = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
+        $store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
         $this->category->move(1, 2);
@@ -275,19 +189,13 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testMoveWhenCannotFindNewCategory()
     {
-        $parentCategory = $this->getMock(
-            \Magento\Catalog\Model\Category::class,
-            ['getId', 'setStoreId', 'load'],
-            [],
-            '',
-            false
-        );
+        $parentCategory = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['getId', 'setStoreId', 'load']);
         $parentCategory->expects($this->any())->method('getId')->will($this->returnValue(5));
         $parentCategory->expects($this->any())->method('setStoreId')->will($this->returnSelf());
         $parentCategory->expects($this->any())->method('load')->will($this->returnSelf());
         $this->categoryRepository->expects($this->any())->method('get')->will($this->returnValue($parentCategory));
 
-        $store = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
+        $store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
         $this->category->move(1, 2);
@@ -302,19 +210,13 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testMoveWhenParentCategoryIsSameAsChildCategory()
     {
         $this->markTestIncomplete('MAGETWO-31165');
-        $parentCategory = $this->getMock(
-            \Magento\Catalog\Model\Category::class,
-            ['getId', 'setStoreId', 'load'],
-            [],
-            '',
-            false
-        );
+        $parentCategory = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['getId', 'setStoreId', 'load']);
         $parentCategory->expects($this->any())->method('getId')->will($this->returnValue(5));
         $parentCategory->expects($this->any())->method('setStoreId')->will($this->returnSelf());
         $parentCategory->expects($this->any())->method('load')->will($this->returnSelf());
         $this->categoryRepository->expects($this->any())->method('get')->will($this->returnValue($parentCategory));
 
-        $store = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
+        $store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
         $this->category->setId(5);
@@ -323,25 +225,19 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
     public function testMovePrimaryWorkflow()
     {
-        $indexer = $this->getMock('stdClass', ['isScheduled']);
+        $indexer = $this->createPartialMock(\stdClass::class, ['isScheduled']);
         $indexer->expects($this->once())->method('isScheduled')->will($this->returnValue(true));
         $this->indexerRegistry->expects($this->once())
             ->method('get')
             ->with('catalog_category_product')
             ->will($this->returnValue($indexer));
-        $parentCategory = $this->getMock(
-            \Magento\Catalog\Model\Category::class,
-            ['getId', 'setStoreId', 'load'],
-            [],
-            '',
-            false
-        );
+        $parentCategory = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['getId', 'setStoreId', 'load']);
         $parentCategory->expects($this->any())->method('getId')->will($this->returnValue(5));
         $parentCategory->expects($this->any())->method('setStoreId')->will($this->returnSelf());
         $parentCategory->expects($this->any())->method('load')->will($this->returnSelf());
         $this->categoryRepository->expects($this->any())->method('get')->will($this->returnValue($parentCategory));
 
-        $store = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
+        $store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
         $this->category->setId(3);
@@ -363,19 +259,11 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $category->getUseFlatResource());
     }
 
-    /**
-     * Create \Magento\Catalog\Model\Category instance.
-     *
-     * @return \Magento\Catalog\Model\Category
-     */
-    private function getCategoryModel()
+    protected function getCategoryModel()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        /** @var Category $category */
-        $category = $objectManager->getObject(
+        return $this->objectManager->getObject(
             \Magento\Catalog\Model\Category::class,
             [
-                'context' => $this->context,
                 'registry' => $this->registry,
                 'storeManager' => $this->storeManager,
                 'categoryTreeResource' => $this->categoryTreeResource,
@@ -397,15 +285,8 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
                 'customAttributeFactory' => $this->attributeValueFactory,
             ]
         );
-
-        return $category;
     }
 
-    /**
-     * Test data for testReindexFlatEnabled.
-     *
-     * @return array
-     */
     public function reindexFlatEnabledTestDataProvider()
     {
         return [
@@ -455,11 +336,6 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $this->category->reindex();
     }
 
-    /**
-     * Test data for testReindexFlatDisabled.
-     *
-     * @return array
-     */
     public function reindexFlatDisabledTestDataProvider()
     {
         return [
@@ -521,11 +397,11 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     {
         $nameAttributeCode = 'name';
         $descriptionAttributeCode = 'description';
-        $interfaceAttribute = $this->getMock(\Magento\Framework\Api\MetadataObjectInterface::class);
+        $interfaceAttribute = $this->createMock(\Magento\Framework\Api\MetadataObjectInterface::class);
         $interfaceAttribute->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn($nameAttributeCode);
-        $descriptionAttribute = $this->getMock(\Magento\Framework\Api\MetadataObjectInterface::class);
+        $descriptionAttribute = $this->createMock(\Magento\Framework\Api\MetadataObjectInterface::class);
         $descriptionAttribute->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn($descriptionAttributeCode);
@@ -560,46 +436,6 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test get image url by attribute code.
-     *
-     * @param string|bool $value
-     * @param string|bool $url
-     * @return void
-     *
-     * @dataProvider getImageWithAttributeCodeDataProvider
-     */
-    public function testGetImageWithAttributeCode($value, $url)
-    {
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getStore'])
-            ->getMock();
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getBaseUrl'])
-            ->getMock();
-        $storeManager->expects($this->any())
-            ->method('getStore')
-            ->will($this->returnValue($store));
-        $store->expects($this->any())
-            ->method('getBaseUrl')
-            ->with(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
-            ->will($this->returnValue('http://www.example.com/'));
-        /** @var \Magento\Catalog\Model\Category $model */
-        $model = $this->objectManager->getObject(
-            \Magento\Catalog\Model\Category::class,
-            [
-                'storeManager' => $storeManager
-            ]
-        );
-        $model->setData('attribute1', $value);
-        $result = $model->getImageUrl('attribute1');
-        $this->assertEquals($url, $result);
-    }
-
-    /**
-     * Test data for testGetImageWithAttributeCode.
-     *
      * @return array
      */
     public function getImageWithAttributeCodeDataProvider()
@@ -611,33 +447,63 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test get image url without specifying attribute code.
+     * @param string|bool $value
+     * @param string|bool $url
      *
-     * @return void
+     * @dataProvider getImageWithAttributeCodeDataProvider
      */
-    public function testGetImageWithoutAttributeCode()
+    public function testGetImageWithAttributeCode($value, $url)
     {
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getStore'])
-            ->getMock();
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getBaseUrl'])
-            ->getMock();
+        $storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getBaseUrl']);
+
         $storeManager->expects($this->any())
             ->method('getStore')
             ->will($this->returnValue($store));
+
         $store->expects($this->any())
             ->method('getBaseUrl')
             ->with(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
             ->will($this->returnValue('http://www.example.com/'));
+
+        /** @var \Magento\Catalog\Model\Category $model */
+        $model = $this->objectManager->getObject(
+            \Magento\Catalog\Model\Category::class,
+            [
+                'storeManager' => $storeManager
+            ]
+        );
+
+        $model->setData('attribute1', $value);
+
+        $result = $model->getImageUrl('attribute1');
+
+        $this->assertEquals($url, $result);
+    }
+
+    public function testGetImageWithoutAttributeCode()
+    {
+        $storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getBaseUrl']);
+
+        $storeManager->expects($this->any())
+            ->method('getStore')
+            ->will($this->returnValue($store));
+
+        $store->expects($this->any())
+            ->method('getBaseUrl')
+            ->with(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
+            ->will($this->returnValue('http://www.example.com/'));
+
         /** @var \Magento\Catalog\Model\Category $model */
         $model = $this->objectManager->getObject(\Magento\Catalog\Model\Category::class, [
             'storeManager' => $storeManager
         ]);
+
         $model->setData('image', 'myimage');
+
         $result = $model->getImageUrl();
+
         $this->assertEquals('http://www.example.com/catalog/category/myimage', $result);
     }
 }

@@ -1,24 +1,26 @@
 <!--
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
 <div class="billing-address-details" data-bind="if: isAddressDetailsVisible() && currentBillingAddress()">
-    <!-- ko text: currentBillingAddress().prefix --><!-- /ko --> <!-- ko text: currentBillingAddress().firstname --><!-- /ko -->
+    <!-- ko text: currentBillingAddress().prefix --><!-- /ko --> <!-- ko text: currentBillingAddress().firstname --><!-- /ko --> <!-- ko text: currentBillingAddress().middlename --><!-- /ko -->
     <!-- ko text: currentBillingAddress().lastname --><!-- /ko --> <!-- ko text: currentBillingAddress().suffix --><!-- /ko --><br/>
     <!-- ko text: currentBillingAddress().street --><!-- /ko --><br/>
-    <!-- ko text: currentBillingAddress().city --><!-- /ko -->, <!-- ko text: currentBillingAddress().region --><!-- /ko --> <!-- ko text: currentBillingAddress().postcode --><!-- /ko --><br/>
+    <!-- ko text: currentBillingAddress().city --><!-- /ko -->, <span data-bind="html: currentBillingAddress().region"></span> <!-- ko text: currentBillingAddress().postcode --><!-- /ko --><br/>
     <!-- ko text: getCountryName(currentBillingAddress().countryId) --><!-- /ko --><br/>
-    <!-- ko text: currentBillingAddress().telephone --><!-- /ko --><br/>
+    <!-- ko if: (currentBillingAddress().telephone) -->
+    <a data-bind="text: currentBillingAddress().telephone, attr: {'href': 'tel:' + currentBillingAddress().telephone}"></a>
+    <!-- /ko --><br/>
     <!-- ko foreach: { data: currentBillingAddress().customAttributes, as: 'element' } -->
         <!-- ko foreach: { data: Object.keys(element), as: 'attribute' } -->
-            <!-- ko if: element[attribute].value != null -->
+            <!-- ko if: (typeof element[attribute] === "object") -->
                 <!-- ko text: element[attribute].value --><!-- /ko -->
             <!-- /ko -->
-            <!-- ko if: element[attribute].value == null -->
+            <!-- ko if: (typeof element[attribute] === "string") -->
                 <!-- ko text: element[attribute] --><!-- /ko -->
-            <!-- /ko -->
+            <!-- /ko --><br/>
         <!-- /ko -->
     <!-- /ko -->
     <button type="button"

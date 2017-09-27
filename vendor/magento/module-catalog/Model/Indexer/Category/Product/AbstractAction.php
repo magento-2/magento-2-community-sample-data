@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,7 +14,11 @@ use Magento\Framework\EntityManager\MetadataPool;
 
 /**
  * Class AbstractAction
+ *
+ * @api
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 abstract class AbstractAction
 {
@@ -95,11 +99,13 @@ abstract class AbstractAction
 
     /**
      * @var MetadataPool
+     * @since 101.0.0
      */
     protected $metadataPool;
 
     /**
      * @var string
+     * @since 101.0.0
      */
     protected $tempTreeIndexTableName;
 
@@ -164,6 +170,9 @@ abstract class AbstractAction
 
     /**
      * Return main index table name
+     *
+     * This table should be used on frontend(clients)
+     * The name is switched between 'catalog_category_product_index' and 'catalog_category_product_index_replica'
      *
      * @return string
      */
@@ -312,7 +321,7 @@ abstract class AbstractAction
     }
 
     /**
-     * Return selects cut by min and max.
+     * Return selects cut by min and max
      *
      * @param \Magento\Framework\DB\Select $select
      * @param string $field
@@ -336,10 +345,8 @@ abstract class AbstractAction
             foreach ($iterator as $query) {
                 $queries[] = $query;
             }
-
             return $queries;
         }
-
         return [$select];
     }
 
@@ -492,6 +499,7 @@ abstract class AbstractAction
      * Temp table name is NOT shared between action instances and each action has it's own temp tree index
      *
      * @return string
+     * @since 101.0.0
      */
     protected function getTemporaryTreeIndexTableName()
     {
@@ -510,6 +518,7 @@ abstract class AbstractAction
      * Returns the name of the temporary table to use in queries.
      *
      * @return string
+     * @since 101.0.0
      */
     protected function makeTempCategoryTreeIndex()
     {
@@ -549,6 +558,7 @@ abstract class AbstractAction
      * Populate the temporary category tree index table
      *
      * @param string $temporaryName
+     * @since 101.0.0
      */
     protected function fillTempCategoryTreeIndex($temporaryName)
     {
@@ -748,7 +758,7 @@ abstract class AbstractAction
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\Framework\EntityManager\MetadataPool');
+                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
         }
         return $this->metadataPool;
     }

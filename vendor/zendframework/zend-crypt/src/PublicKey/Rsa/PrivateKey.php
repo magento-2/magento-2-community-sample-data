@@ -103,6 +103,7 @@ class PrivateKey extends AbstractKey
 
     /**
      * Decrypt using this key
+     *
      * Starting in 2.4.9/2.5.2, we changed the default padding to
      * OPENSSL_PKCS1_OAEP_PADDING to prevent Bleichenbacher's chosen-ciphertext
      * attack.

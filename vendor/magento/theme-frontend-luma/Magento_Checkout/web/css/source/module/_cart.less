@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+//  * Copyright © Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -149,6 +149,12 @@
         }
 
         &:extend(.abs-adjustment-incl-excl-tax all);
+
+        .action {
+            &.multicheckout {
+                color: @color-blue2;
+            }
+        }
     }
 
     //  Totals block
@@ -339,7 +345,7 @@
         }
     }
 
-    // Products pager
+    //  Products pager
     .cart-products-toolbar {
         .toolbar-amount {
             left: inherit;
@@ -634,7 +640,7 @@
         }
     }
 
-    // Products pager
+    //  Products pager
     .cart-products-toolbar {
         margin: 2px 0 0;
 

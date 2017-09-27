@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Image\Adapter;
@@ -8,7 +8,7 @@ namespace Magento\Framework\Image\Adapter;
 /**
  * @magentoAppIsolation enabled
  */
-class InterfaceTest extends \PHPUnit_Framework_TestCase
+class InterfaceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Adapter classes for test

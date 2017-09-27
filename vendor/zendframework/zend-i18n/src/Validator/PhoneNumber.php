@@ -25,11 +25,11 @@ class PhoneNumber extends AbstractValidator
      *
      * @var array
      */
-    protected $messageTemplates = array(
+    protected $messageTemplates = [
         self::NO_MATCH    => 'The input does not match a phone number format',
         self::UNSUPPORTED => 'The country provided is currently unsupported',
         self::INVALID     => 'Invalid type given. String expected',
-    );
+    ];
 
     /**
      * Phone Number Patterns
@@ -37,7 +37,7 @@ class PhoneNumber extends AbstractValidator
      * @link http://code.google.com/p/libphonenumber/source/browse/trunk/resources/PhoneNumberMetadata.xml
      * @var array
      */
-    protected static $phone = array();
+    protected static $phone = [];
 
     /**
      * ISO 3611 Country Code
@@ -58,7 +58,7 @@ class PhoneNumber extends AbstractValidator
      *
      * @var array
      */
-    protected $allowedTypes = array(
+    protected $allowedTypes = [
         'general',
         'fixed',
         'tollfree',
@@ -66,7 +66,7 @@ class PhoneNumber extends AbstractValidator
         'mobile',
         'voip',
         'uan',
-    );
+    ];
 
     /**
      * Constructor for the PhoneNumber validator
@@ -78,7 +78,7 @@ class PhoneNumber extends AbstractValidator
      *
      * @param array|Traversable $options
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -154,7 +154,7 @@ class PhoneNumber extends AbstractValidator
      */
     public function setCountry($country)
     {
-        $this->country = strtoupper($country);
+        $this->country = $country;
 
         return $this;
     }
@@ -167,13 +167,13 @@ class PhoneNumber extends AbstractValidator
      */
     protected function loadPattern($code)
     {
-        if (!isset(static::$phone[$code])) {
-            if (!preg_match('/^[A-Z]{2}$/D', $code)) {
+        if (! isset(static::$phone[$code])) {
+            if (! preg_match('/^[A-Z]{2}$/D', $code)) {
                 return false;
             }
 
             $file = __DIR__ . '/PhoneNumber/' . $code . '.php';
-            if (!file_exists($file)) {
+            if (! file_exists($file)) {
                 return false;
             }
 
@@ -192,7 +192,7 @@ class PhoneNumber extends AbstractValidator
      */
     public function isValid($value = null, $context = null)
     {
-        if (!is_scalar($value)) {
+        if (! is_scalar($value)) {
             $this->error(self::INVALID);
 
             return false;
@@ -201,12 +201,12 @@ class PhoneNumber extends AbstractValidator
 
         $country = $this->getCountry();
 
-        if (!$countryPattern = $this->loadPattern($country)) {
+        if (! $countryPattern = $this->loadPattern(strtoupper($country))) {
             if (isset($context[$country])) {
                 $country = $context[$country];
             }
 
-            if (!$countryPattern = $this->loadPattern($country)) {
+            if (! $countryPattern = $this->loadPattern(strtoupper($country))) {
                 $this->error(self::UNSUPPORTED);
 
                 return false;

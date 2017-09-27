@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Model;
@@ -25,7 +25,8 @@ class SwatchAttributesProvider
     private $swatchAttributeCodes;
 
     /**
-     * @var [productId => Attribute[]]
+     * Key is productId, value is list of attributes
+     * @var Attribute[]
      */
     private $attributesPerProduct;
 
@@ -42,7 +43,8 @@ class SwatchAttributesProvider
     }
 
     /**
-     * Provide list of swatch attributes for product. If product is not configurable return empty array.
+     * Provide list of swatch attributes for product. If product is not configurable return empty array
+     * Key is productId, value is list of attributes
      *
      * @param Product $product
      * @return Attribute[]
@@ -54,10 +56,11 @@ class SwatchAttributesProvider
         }
         if (!isset($this->attributesPerProduct[$product->getId()])) {
             $configurableAttributes = $this->typeConfigurable->getConfigurableAttributes($product);
-            $swatchAttributeIds = array_keys($this->swatchAttributeCodes->getCodes());
+            $swatchAttributeCodeMap = $this->swatchAttributeCodes->getCodes();
+
             $swatchAttributes = [];
             foreach ($configurableAttributes as $configurableAttribute) {
-                if (in_array($configurableAttribute->getAttributeId(), $swatchAttributeIds)) {
+                if (array_key_exists($configurableAttribute->getAttributeId(), $swatchAttributeCodeMap)) {
                     $swatchAttributes[$configurableAttribute->getAttributeId()]
                         = $configurableAttribute->getProductAttribute();
                 }

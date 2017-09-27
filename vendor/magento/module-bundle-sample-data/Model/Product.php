@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\BundleSampleData\Model;
@@ -75,7 +75,11 @@ class Product extends \Magento\CatalogSampleData\Model\Product
         $product
             ->setCanSaveConfigurableAttributes(true)
             ->setCanSaveBundleSelections(true)
-            ->setPriceType(0);
+            ->setPriceType(0)
+            ->setShipmentType(0)
+            ->setSkuType(0)
+            ->setWeightType(0)
+            ->setPriceView(0);
         $bundleOptionsData = $product->getBundleOptionsData();
         $options = [];
         foreach ($bundleOptionsData as $key => $optionData) {

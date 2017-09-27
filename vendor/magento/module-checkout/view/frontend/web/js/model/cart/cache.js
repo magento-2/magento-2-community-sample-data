@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -73,7 +73,7 @@ define([
         cartData: cartData,
 
         /**
-         * Array of required address fields.
+         * Array of required address fields
          */
         requiredFields: ['countryId', 'region', 'regionId', 'postcode'],
 
@@ -188,6 +188,19 @@ define([
         _isAddressChanged: function (address) {
             return JSON.stringify(_.pick(this.get('address'), this.requiredFields)) !==
                 JSON.stringify(_.pick(address, this.requiredFields));
+        },
+
+        /**
+         * Compare cached subtotal with provided.
+         * Custom method for check object equality.
+         *
+         * @param {float} subtotal
+         * @returns {Boolean}
+         */
+        _isSubtotalChanged: function (subtotal) {
+            var cached = parseFloat(this.get('totals').subtotal);
+
+            return subtotal !== cached;
         }
     };
 });

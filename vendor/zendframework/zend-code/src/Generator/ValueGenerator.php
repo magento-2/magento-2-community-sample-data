@@ -3,33 +3,37 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Code\Generator;
 
-use Zend\Stdlib\ArrayObject;
+use ArrayObject as SplArrayObject;
+use Zend\Code\Exception\InvalidArgumentException;
+use Zend\Stdlib\ArrayObject as StdlibArrayObject;
 
 class ValueGenerator extends AbstractGenerator
 {
     /**#@+
      * Constant values
      */
-    const TYPE_AUTO     = 'auto';
-    const TYPE_BOOLEAN  = 'boolean';
-    const TYPE_BOOL     = 'bool';
-    const TYPE_NUMBER   = 'number';
-    const TYPE_INTEGER  = 'integer';
-    const TYPE_INT      = 'int';
-    const TYPE_FLOAT    = 'float';
-    const TYPE_DOUBLE   = 'double';
-    const TYPE_STRING   = 'string';
-    const TYPE_ARRAY    = 'array';
-    const TYPE_CONSTANT = 'constant';
-    const TYPE_NULL     = 'null';
-    const TYPE_OBJECT   = 'object';
-    const TYPE_OTHER    = 'other';
+    const TYPE_AUTO        = 'auto';
+    const TYPE_BOOLEAN     = 'boolean';
+    const TYPE_BOOL        = 'bool';
+    const TYPE_NUMBER      = 'number';
+    const TYPE_INTEGER     = 'integer';
+    const TYPE_INT         = 'int';
+    const TYPE_FLOAT       = 'float';
+    const TYPE_DOUBLE      = 'double';
+    const TYPE_STRING      = 'string';
+    const TYPE_ARRAY       = 'array';
+    const TYPE_ARRAY_SHORT = 'array_short';
+    const TYPE_ARRAY_LONG  = 'array_long';
+    const TYPE_CONSTANT    = 'constant';
+    const TYPE_NULL        = 'null';
+    const TYPE_OBJECT      = 'object';
+    const TYPE_OTHER       = 'other';
     /**#@-*/
 
     const OUTPUT_MULTIPLE_LINE = 'multipleLine';
@@ -61,18 +65,22 @@ class ValueGenerator extends AbstractGenerator
     protected $allowedTypes = null;
     /**
      * Autodetectable constants
-     * @var ArrayObject
+     * @var SplArrayObject|StdlibArrayObject
      */
-    protected $constants = null;
+    protected $constants;
 
     /**
      * @param mixed       $value
      * @param string      $type
      * @param string      $outputMode
-     * @param ArrayObject $constants
+     * @param null|SplArrayObject|StdlibArrayObject $constants
      */
-    public function __construct($value = null, $type = self::TYPE_AUTO, $outputMode = self::OUTPUT_MULTIPLE_LINE, ArrayObject $constants = null)
-    {
+    public function __construct(
+        $value = null,
+        $type = self::TYPE_AUTO,
+        $outputMode = self::OUTPUT_MULTIPLE_LINE,
+        $constants = null
+    ) {
         // strict check is important here if $type = AUTO
         if ($value !== null) {
             $this->setValue($value);
@@ -83,11 +91,14 @@ class ValueGenerator extends AbstractGenerator
         if ($outputMode !== self::OUTPUT_MULTIPLE_LINE) {
             $this->setOutputMode($outputMode);
         }
-        if ($constants !== null) {
-            $this->constants = $constants;
-        } else {
-            $this->constants = new ArrayObject();
+        if ($constants === null) {
+            $constants = new SplArrayObject();
+        } elseif (!(($constants instanceof SplArrayObject) || ($constants instanceof StdlibArrayObject))) {
+            throw new InvalidArgumentException(
+                '$constants must be an instance of ArrayObject or Zend\Stdlib\ArrayObject'
+            );
         }
+        $this->constants = $constants;
     }
 
     /**
@@ -95,7 +106,7 @@ class ValueGenerator extends AbstractGenerator
      */
     public function initEnvironmentConstants()
     {
-        $constants   = array(
+        $constants   = [
             '__DIR__',
             '__FILE__',
             '__LINE__',
@@ -105,7 +116,7 @@ class ValueGenerator extends AbstractGenerator
             '__FUNCTION__',
             '__NAMESPACE__',
             '::'
-        );
+        ];
         $constants = array_merge($constants, array_keys(get_defined_constants()), $this->constants->getArrayCopy());
         $this->constants->exchangeArray($constants);
     }
@@ -143,7 +154,7 @@ class ValueGenerator extends AbstractGenerator
     /**
      * Return constant list
      *
-     * @return ArrayObject
+     * @return SplArrayObject|StdlibArrayObject
      */
     public function getConstants()
     {
@@ -161,8 +172,10 @@ class ValueGenerator extends AbstractGenerator
             $type = $this->type;
         }
 
-        // valid types for constants
-        $scalarTypes = array(
+        $validConstantTypes = [
+            self::TYPE_ARRAY,
+            self::TYPE_ARRAY_LONG,
+            self::TYPE_ARRAY_SHORT,
             self::TYPE_BOOLEAN,
             self::TYPE_BOOL,
             self::TYPE_NUMBER,
@@ -173,9 +186,9 @@ class ValueGenerator extends AbstractGenerator
             self::TYPE_STRING,
             self::TYPE_CONSTANT,
             self::TYPE_NULL
-        );
+        ];
 
-        return in_array($type, $scalarTypes);
+        return in_array($type, $validConstantTypes);
     }
 
     /**
@@ -238,7 +251,7 @@ class ValueGenerator extends AbstractGenerator
      */
     protected function getValidatedType($type)
     {
-        $types = array(
+        $types = [
             self::TYPE_AUTO,
             self::TYPE_BOOLEAN,
             self::TYPE_BOOL,
@@ -249,11 +262,13 @@ class ValueGenerator extends AbstractGenerator
             self::TYPE_DOUBLE,
             self::TYPE_STRING,
             self::TYPE_ARRAY,
+            self::TYPE_ARRAY_SHORT,
+            self::TYPE_ARRAY_LONG,
             self::TYPE_CONSTANT,
             self::TYPE_NULL,
             self::TYPE_OBJECT,
             self::TYPE_OTHER
-        );
+        ];
 
         if (in_array($type, $types)) {
             return $type;
@@ -312,12 +327,21 @@ class ValueGenerator extends AbstractGenerator
             $type = $this->getAutoDeterminedType($value);
         }
 
-        if ($type == self::TYPE_ARRAY) {
+        $isArrayType = in_array($type, [self::TYPE_ARRAY, self::TYPE_ARRAY_LONG, self::TYPE_ARRAY_SHORT]);
+
+        if ($isArrayType) {
             foreach ($value as &$curValue) {
                 if ($curValue instanceof self) {
                     continue;
                 }
-                $curValue = new self($curValue, self::TYPE_AUTO, self::OUTPUT_MULTIPLE_LINE, $this->getConstants());
+
+                if (is_array($curValue)) {
+                    $newType = $type;
+                } else {
+                    $newType = self::TYPE_AUTO;
+                }
+
+                $curValue = new self($curValue, $newType, self::OUTPUT_MULTIPLE_LINE, $this->getConstants());
             }
         }
 
@@ -343,11 +367,21 @@ class ValueGenerator extends AbstractGenerator
                 $output .= $value;
                 break;
             case self::TYPE_ARRAY:
-                $output .= 'array(';
+            case self::TYPE_ARRAY_LONG:
+            case self::TYPE_ARRAY_SHORT:
+                if ($type == self::TYPE_ARRAY_SHORT) {
+                    $startArray = '[';
+                    $endArray   = ']';
+                } else {
+                    $startArray = 'array(';
+                    $endArray = ')';
+                }
+
+                $output .= $startArray;
                 if ($this->outputMode == self::OUTPUT_MULTIPLE_LINE) {
                     $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth + 1);
                 }
-                $outputParts = array();
+                $outputParts = [];
                 $noKeyIndex  = 0;
                 foreach ($value as $n => $v) {
                     /* @var $v ValueGenerator */
@@ -379,7 +413,7 @@ class ValueGenerator extends AbstractGenerator
                     }
                     $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth);
                 }
-                $output .= ')';
+                $output .= $endArray;
                 break;
             case self::TYPE_OTHER:
             default:

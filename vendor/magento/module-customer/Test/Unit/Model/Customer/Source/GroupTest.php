@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Customer\Source;
@@ -12,7 +12,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Customer\Api\Data\GroupSearchResultsInterface;
 
-class GroupTest extends \PHPUnit_Framework_TestCase
+class GroupTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Group
@@ -90,7 +90,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
             ->with($this->searchCriteriaMock)
             ->willReturn($this->searchResultMock);
 
-        $groupTest = $this->getMockBuilder('\Magento\Customer\Api\Data\GroupInterface')
+        $groupTest = $this->getMockBuilder(\Magento\Customer\Api\Data\GroupInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['getCode', 'getId'])
             ->getMockForAbstractClass();

@@ -2,44 +2,44 @@
     "name": "magento/magento2-base",
     "description": "Magento 2 Base (Community Edition)",
     "type": "magento2-component",
-    "version": "2.1.9",
+    "version": "2.2.0",
     "require": {
         "magento/magento-composer-installer": "*",
-        "php": "~5.6.5|7.0.2|7.0.4|~7.0.6",
-        "zendframework/zend-stdlib": "~2.4.6",
-        "zendframework/zend-code": "~2.4.6",
-        "zendframework/zend-server": "~2.4.6",
-        "zendframework/zend-soap": "~2.4.6",
-        "zendframework/zend-uri": "~2.4.6",
-        "zendframework/zend-validator": "~2.4.6",
-        "zendframework/zend-crypt": "~2.4.6",
-        "zendframework/zend-console": "~2.4.6",
-        "zendframework/zend-modulemanager": "~2.4.6",
-        "zendframework/zend-mvc": "~2.4.6",
-        "zendframework/zend-text": "~2.4.6",
-        "zendframework/zend-i18n": "~2.4.6",
-        "zendframework/zend-eventmanager": "~2.4.6",
-        "zendframework/zend-view": "~2.4.6",
-        "zendframework/zend-servicemanager": "~2.4.6",
-        "zendframework/zend-json": "~2.4.6",
-        "zendframework/zend-config": "~2.4.6",
-        "zendframework/zend-form": "~2.4.6",
-        "zendframework/zend-di": "~2.4.6",
-        "zendframework/zend-serializer": "~2.4.6",
-        "zendframework/zend-log": "~2.4.6",
-        "zendframework/zend-http": "~2.4.6",
-        "magento/zendframework1": "~1.12.16",
-        "composer/composer": "<=1.0.0-beta1",
-        "monolog/monolog": "1.16.0",
+        "php": "7.0.2|7.0.4|~7.0.6|~7.1.0",
+        "zendframework/zend-stdlib": "^2.7.7",
+        "zendframework/zend-code": "^3.1.0",
+        "zendframework/zend-server": "^2.6.1",
+        "zendframework/zend-soap": "^2.6.0",
+        "zendframework/zend-uri": "^2.5.1",
+        "zendframework/zend-validator": "^2.6.0",
+        "zendframework/zend-crypt": "^2.6.0",
+        "zendframework/zend-console": "^2.6.0",
+        "zendframework/zend-modulemanager": "^2.7",
+        "zendframework/zend-mvc": "~2.6.3",
+        "zendframework/zend-text": "^2.6.0",
+        "zendframework/zend-i18n": "^2.7.3",
+        "zendframework/zend-eventmanager": "^2.6.3",
+        "zendframework/zend-view": "^2.8.1",
+        "zendframework/zend-servicemanager": "^2.7.8",
+        "zendframework/zend-json": "^2.6.1",
+        "zendframework/zend-config": "^2.6.0",
+        "zendframework/zend-form": "^2.10.0",
+        "zendframework/zend-di": "^2.6.1",
+        "zendframework/zend-serializer": "^2.7.2",
+        "zendframework/zend-log": "^2.9.1",
+        "zendframework/zend-http": "^2.6.0",
+        "magento/zendframework1": "~1.13.0",
+        "composer/composer": "1.4.1",
+        "monolog/monolog": "^1.17",
         "oyejorge/less.php": "~1.7.0",
         "pelago/emogrifier": "0.1.1",
-        "tubalmartin/cssmin": "2.4.8-p4",
-        "braintree/braintree_php": "3.7.0",
-        "symfony/console": "~2.3 <2.7",
+        "tubalmartin/cssmin": "4.1.0",
+        "braintree/braintree_php": "3.22.0",
+        "symfony/console": "~2.3, !=2.7.0",
         "symfony/event-dispatcher": "~2.1",
         "phpseclib/phpseclib": "2.0.*",
-        "tedivm/jshrink": "~1.0.1",
-        "magento/composer": "~1.0.0",
+        "tedivm/jshrink": "~1.1.0",
+        "magento/composer": "~1.2.0",
         "ext-intl": "*",
         "ext-mbstring": "*"
     },
@@ -78,8 +78,8 @@
                 ".htaccess.sample"
             ],
             [
-                ".php_cs",
-                ".php_cs"
+                ".php_cs.dist",
+                ".php_cs.dist"
             ],
             [
                 ".travis.yml",
@@ -118,6 +118,10 @@
                 "LICENSE_AFL.txt"
             ],
             [
+                "PULL_REQUEST_TEMPLATE.md",
+                "PULL_REQUEST_TEMPLATE.md"
+            ],
+            [
                 "app/.htaccess",
                 "app/.htaccess"
             ],
@@ -148,6 +152,10 @@
             [
                 "app/functions.php",
                 "app/functions.php"
+            ],
+            [
+                "auth.json.sample",
+                "auth.json.sample"
             ],
             [
                 "bin/.htaccess",
@@ -236,6 +244,10 @@
             [
                 "dev/tests/integration/.gitignore",
                 "dev/tests/integration/.gitignore"
+            ],
+            [
+                "dev/tests/integration/_files",
+                "dev/tests/integration/_files"
             ],
             [
                 "dev/tests/integration/etc",
@@ -336,6 +348,14 @@
             [
                 "dev/travis",
                 "dev/travis"
+            ],
+            [
+                "generated",
+                "generated"
+            ],
+            [
+                "grunt-config.json.sample",
+                "grunt-config.json.sample"
             ],
             [
                 "index.php",
@@ -502,6 +522,10 @@
                 "pub/get.php"
             ],
             [
+                "pub/health_check.php",
+                "pub/health_check.php"
+            ],
+            [
                 "pub/index.php",
                 "pub/index.php"
             ],
@@ -549,6 +573,12 @@
                 "vendor/.htaccess",
                 "vendor/.htaccess"
             ]
+        ],
+        "chmod": [
+            {
+                "mask": "0755",
+                "path": "bin/magento"
+            }
         ]
     }
 }

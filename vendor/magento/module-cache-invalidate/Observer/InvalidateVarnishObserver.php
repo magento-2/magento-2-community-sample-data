@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CacheInvalidate\Observer;
@@ -64,12 +64,11 @@ class InvalidateVarnishObserver implements ObserverInterface
             if (!empty($tags)) {
                 $this->purgeCache->sendPurgeRequest(implode('|', array_unique($tags)));
             }
-
         }
     }
 
     /**
-     * @deprecated
+     * @deprecated 100.1.2
      * @return \Magento\Framework\App\Cache\Tag\Resolver
      */
     private function getTagResolver()

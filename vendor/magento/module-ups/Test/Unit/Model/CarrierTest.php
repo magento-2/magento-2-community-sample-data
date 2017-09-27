@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ups\Test\Unit\Model;
@@ -10,7 +10,10 @@ use Magento\Ups\Model\Carrier;
 use Magento\Directory\Model\Country;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class CarrierTest extends \PHPUnit_Framework_TestCase
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class CarrierTest extends \PHPUnit\Framework\TestCase
 {
     const FREE_METHOD_NAME = 'free_method';
 
@@ -75,7 +78,7 @@ class CarrierTest extends \PHPUnit_Framework_TestCase
         $this->helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->scope = $this->getMockBuilder(
-            '\Magento\Framework\App\Config\ScopeConfigInterface'
+            \Magento\Framework\App\Config\ScopeConfigInterface::class
         )->disableOriginalConstructor()->getMock();
 
         $this->scope->expects(
@@ -86,35 +89,35 @@ class CarrierTest extends \PHPUnit_Framework_TestCase
             $this->returnCallback([$this, 'scopeConfiggetValue'])
         );
 
-        $this->error = $this->getMockBuilder('\Magento\Quote\Model\Quote\Address\RateResult\Error')
+        $this->error = $this->getMockBuilder(\Magento\Quote\Model\Quote\Address\RateResult\Error::class)
             ->setMethods(['setCarrier', 'setCarrierTitle', 'setErrorMessage'])
             ->getMock();
 
-        $this->errorFactory = $this->getMockBuilder('Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory')
+        $this->errorFactory = $this->getMockBuilder(\Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
         $this->errorFactory->expects($this->any())->method('create')->willReturn($this->error);
 
-        $this->rate = $this->getMock('Magento\Shipping\Model\Rate\Result', ['getError'], [], '', false);
-        $rateFactory = $this->getMock('Magento\Shipping\Model\Rate\ResultFactory', ['create'], [], '', false);
+        $this->rate = $this->createPartialMock(\Magento\Shipping\Model\Rate\Result::class, ['getError']);
+        $rateFactory = $this->createPartialMock(\Magento\Shipping\Model\Rate\ResultFactory::class, ['create']);
 
         $rateFactory->expects($this->any())->method('create')->willReturn($this->rate);
 
-        $this->country = $this->getMockBuilder('\Magento\Directory\Model\Country')
+        $this->country = $this->getMockBuilder(\Magento\Directory\Model\Country::class)
             ->disableOriginalConstructor()
-            ->setMethods(['load'])
+            ->setMethods(['load', 'getData'])
             ->getMock();
 
-        $this->abstractModel = $this->getMockBuilder('Magento\Framework\Model\AbstractModel')
+        $this->abstractModel = $this->getMockBuilder(\Magento\Framework\Model\AbstractModel::class)
             ->disableOriginalConstructor()
             ->setMethods(['getData'])
             ->getMock();
 
         $this->country->expects($this->any())->method('load')->willReturn($this->abstractModel);
 
-        $this->countryFactory = $this->getMockBuilder('\Magento\Directory\Model\CountryFactory')
+        $this->countryFactory = $this->getMockBuilder(\Magento\Directory\Model\CountryFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -122,7 +125,7 @@ class CarrierTest extends \PHPUnit_Framework_TestCase
         $this->countryFactory->expects($this->any())->method('create')->willReturn($this->country);
 
         $this->model = $this->helper->getObject(
-            'Magento\Ups\Model\Carrier',
+            \Magento\Ups\Model\Carrier::class,
             [
                 'scopeConfig' => $this->scope,
                 'rateErrorFactory' => $this->errorFactory,

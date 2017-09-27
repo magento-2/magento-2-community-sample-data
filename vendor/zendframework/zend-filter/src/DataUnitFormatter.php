@@ -24,10 +24,10 @@ final class DataUnitFormatter extends AbstractFilter
      *
      * @var array
      */
-    private static $modes = array(
+    private static $modes = [
         self::MODE_BINARY,
         self::MODE_DECIMAL,
-    );
+    ];
 
     /**
      * A list of standardized binary prefix formats for decimal and binary mode
@@ -35,35 +35,35 @@ final class DataUnitFormatter extends AbstractFilter
      *
      * @var array
      */
-    private static $standardizedPrefixes = array(
+    private static $standardizedPrefixes = [
         // binary IEC units:
-        self::MODE_BINARY => array('', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'),
+        self::MODE_BINARY => ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'],
         // decimal SI units:
-        self::MODE_DECIMAL => array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'),
-    );
+        self::MODE_DECIMAL => ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
+    ];
 
     /**
      * Default options:
      *
      * @var array
      */
-    protected $options = array(
+    protected $options = [
         'mode'         => self::MODE_DECIMAL,
         'unit'         => '',
         'precision'    => 2,
-        'prefixes'     => array(),
-    );
+        'prefixes'     => [],
+    ];
 
     /**
      * @param array $options
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
-        if (!static::isOptions($options)) {
+        if (! static::isOptions($options)) {
             throw new InvalidArgumentException('The unit filter needs options to work.');
         }
 
-        if (!isset($options['unit'])) {
+        if (! isset($options['unit'])) {
             throw new InvalidArgumentException('The unit filter needs a unit to work with.');
         }
 
@@ -80,7 +80,7 @@ final class DataUnitFormatter extends AbstractFilter
     protected function setMode($mode)
     {
         $mode = strtolower($mode);
-        if (!in_array($mode, self::$modes)) {
+        if (! in_array($mode, self::$modes)) {
             throw new InvalidArgumentException(sprintf('Invalid binary mode: %s', $mode));
         }
         $this->options['mode'] = $mode;
@@ -206,7 +206,7 @@ final class DataUnitFormatter extends AbstractFilter
      */
     public function filter($value)
     {
-        if (!is_numeric($value)) {
+        if (! is_numeric($value)) {
             return $value;
         }
 

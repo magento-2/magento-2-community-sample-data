@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Shipment\Sender;
@@ -11,7 +11,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Shipment\Sender;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EmailSenderTest extends \PHPUnit_Framework_TestCase
+class EmailSenderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Shipment\Sender\EmailSender

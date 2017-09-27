@@ -1,18 +1,16 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Test\Unit\Block\Product\Renderer\Listing;
 
-use \Magento\Swatches\Block\Product\Renderer\Listing\Configurable;
-use Magento\Swatches\Model\SwatchAttributesProvider;
+use Magento\Swatches\Block\Product\Renderer\Configurable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class ConfigurableTest extends \PHPUnit_Framework_TestCase
+class ConfigurableTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Configurable */
     private $configurable;
@@ -59,129 +57,29 @@ class ConfigurableTest extends \PHPUnit_Framework_TestCase
     /** @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject  */
     private $urlBuilder;
 
-    /** @var SwatchAttributesProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $swatchAttributesProvider;
-
-    /** @var \Magento\Catalog\Block\Product\Context|\PHPUnit_Framework_MockObject_MockObject */
-    private $contextMock;
-
-    /** @var \Magento\Framework\View\Element\Template\File\Resolver|\PHPUnit_Framework_MockObject_MockObject */
-    private $resolver;
-
-    /** @var \Magento\Framework\Event\Manager|\PHPUnit_Framework_MockObject_MockObject */
-    private $eventManager;
-
-    /** @var \Magento\Framework\App\Cache\StateInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $cacheState;
-
-    /** @var \Magento\Framework\Filesystem\Directory\ReadInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $directory;
-
-    /** @var \Magento\Framework\View\Element\Template\File\Validator|\PHPUnit_Framework_MockObject_MockObject */
-    private $validator;
-
-    /** @var  \Magento\Framework\View\TemplateEnginePool|\PHPUnit_Framework_MockObject_MockObject */
-    private $templateEnginePool;
-
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function setUp()
     {
+        $this->arrayUtils = $this->createMock(\Magento\Framework\Stdlib\ArrayUtils::class);
+        $this->jsonEncoder = $this->createMock(\Magento\Framework\Json\EncoderInterface::class);
+        $this->helper = $this->createMock(\Magento\ConfigurableProduct\Helper\Data::class);
+        $this->swatchHelper = $this->createMock(\Magento\Swatches\Helper\Data::class);
+        $this->swatchMediaHelper = $this->createMock(\Magento\Swatches\Helper\Media::class);
+        $this->catalogProduct = $this->createMock(\Magento\Catalog\Helper\Product::class);
+        $this->currentCustomer = $this->createMock(\Magento\Customer\Helper\Session\CurrentCustomer::class);
+        $this->priceCurrency = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $this->configurableAttributeData = $this->createMock(
+            \Magento\ConfigurableProduct\Model\ConfigurableAttributeData::class
+        );
+        $this->product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->typeInstance = $this->createMock(\Magento\Catalog\Model\Product\Type\AbstractType::class);
+        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->imageHelper = $this->createMock(\Magento\Catalog\Helper\Image::class);
+        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-
-        $this->arrayUtils = $this->getMock(\Magento\Framework\Stdlib\ArrayUtils::class, [], [], '', false);
-        $this->jsonEncoder = $this->getMock(\Magento\Framework\Json\EncoderInterface::class, [], [], '', false);
-        $this->helper = $this->getMock(\Magento\ConfigurableProduct\Helper\Data::class, [], [], '', false);
-        $this->swatchHelper = $this->getMock(\Magento\Swatches\Helper\Data::class, [], [], '', false);
-        $this->swatchMediaHelper = $this->getMock(\Magento\Swatches\Helper\Media::class, [], [], '', false);
-        $this->catalogProduct = $this->getMock(\Magento\Catalog\Helper\Product::class, [], [], '', false);
-        $this->currentCustomer = $this->getMock(
-            \Magento\Customer\Helper\Session\CurrentCustomer::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->priceCurrency = $this->getMock(
-            \Magento\Framework\Pricing\PriceCurrencyInterface::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->configurableAttributeData = $this->getMock(
-            \Magento\ConfigurableProduct\Model\ConfigurableAttributeData::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->product = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
-        $this->typeInstance = $this->getMock(
-            \Magento\Catalog\Model\Product\Type\AbstractType::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->scopeConfig = $this->getMock(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->imageHelper = $this->getMock(\Magento\Catalog\Helper\Image::class, [], [], '', false);
-        $this->urlBuilder = $this->getMock(\Magento\Framework\UrlInterface::class);
-
-        $this->swatchAttributesProvider = self::getMockBuilder(SwatchAttributesProvider::class)
-            ->setMethods(['provide'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->contextMock = self::getMockBuilder(\Magento\Catalog\Block\Product\Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->eventManager =  self::getMockBuilder(\Magento\Framework\Event\Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->resolver = self::getMockBuilder(\Magento\Framework\View\Element\Template\File\Resolver::class)
-            ->setMethods(['getTemplateFileName'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->cacheState = self::getMockBuilder(\Magento\Framework\App\Cache\StateInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->directory = self::getMockBuilder(\Magento\Framework\Filesystem\Directory\ReadInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->validator = self::getMockBuilder(\Magento\Framework\View\Element\Template\File\Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->templateEnginePool = self::getMockBuilder(
-            \Magento\Framework\View\TemplateEnginePool::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->contextMock->expects($this->once())->method('getResolver')->willReturn($this->resolver);
-        $this->contextMock->expects($this->once())->method('getEventManager')->willReturn($this->eventManager);
-        $this->contextMock->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfig);
-        $this->contextMock->expects($this->once())->method('getCacheState')->willReturn($this->cacheState);
-        $this->contextMock->expects($this->once())->method('getValidator')->willReturn($this->validator);
-        $this->contextMock->expects($this->once())->method('getEnginePool')->willReturn($this->templateEnginePool);
-
         $this->configurable = $objectManagerHelper->getObject(
             \Magento\Swatches\Block\Product\Renderer\Listing\Configurable::class,
             [
-                'context' => $this->contextMock,
                 'scopeConfig' => $this->scopeConfig,
                 'imageHelper' => $this->imageHelper,
                 'urlBuilder' => $this->urlBuilder,
@@ -194,12 +92,9 @@ class ConfigurableTest extends \PHPUnit_Framework_TestCase
                 'currentCustomer' => $this->currentCustomer,
                 'priceCurrency' => $this->priceCurrency,
                 'configurableAttributeData' => $this->configurableAttributeData,
-                'swatchAttributesProvider' => $this->swatchAttributesProvider,
                 'data' => [],
             ]
         );
-
-        $objectManagerHelper->setBackwardCompatibleProperty($this->configurable, 'directory', $this->directory);
     }
 
     /**
@@ -277,118 +172,33 @@ class ConfigurableTest extends \PHPUnit_Framework_TestCase
         $this->configurable->getJsonSwatchConfig();
     }
 
-    /**
-     * @return void
-     */
     private function prepareGetJsonSwatchConfig()
     {
-        $product1 = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
+        $product1 = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product1->expects($this->atLeastOnce())->method('isSaleable')->willReturn(true);
         $product1->expects($this->any())->method('getData')->with('code')->willReturn(1);
 
-        $product2 = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
+        $product2 = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product2->expects($this->atLeastOnce())->method('isSaleable')->willReturn(true);
         $product2->expects($this->any())->method('getData')->with('code')->willReturn(3);
 
         $simpleProducts = [$product1, $product2];
-        $configurableType = $this->getMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $configurableType->expects($this->atLeastOnce())->method('getSalableUsedProducts')
-            ->with($this->product, null)
+        $configurableType = $this->createMock(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::class);
+        $configurableType->expects($this->atLeastOnce())->method('getUsedProducts')->with($this->product, null)
             ->willReturn($simpleProducts);
         $this->product->expects($this->any())->method('getTypeInstance')->willReturn($configurableType);
 
-        $productAttribute1 = $this->getMock(
-            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
-            [],
-            [],
-            '',
-            false
-        );
+        $productAttribute1 = $this->createMock(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class);
         $productAttribute1->expects($this->any())->method('getId')->willReturn(1);
         $productAttribute1->expects($this->any())->method('getAttributeCode')->willReturn('code');
 
-        $attribute1 = $this->getMock(
+        $attribute1 = $this->createPartialMock(
             \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class,
-            ['getProductAttribute'],
-            [],
-            '',
-            false
+            ['getProductAttribute']
         );
         $attribute1->expects($this->any())->method('getProductAttribute')->willReturn($productAttribute1);
 
         $this->helper->expects($this->any())->method('getAllowAttributes')->with($this->product)
             ->willReturn([$attribute1]);
-    }
-
-    /**
-     * @return void
-     */
-    public function testToHtmlNoSwatches()
-    {
-        $this->swatchAttributesProvider->expects(self::atLeastOnce())
-            ->method('provide')
-            ->with($this->product)
-            ->willReturn([]);
-
-        $this->configurable->setProduct($this->product);
-
-        self::assertEmpty($this->configurable->toHtml());
-    }
-
-    /**
-     * @return void
-     */
-    public function testToHtmlSwatches()
-    {
-        $attribute = self::getMockBuilder(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->swatchAttributesProvider->expects(self::atLeastOnce())
-            ->method('provide')
-            ->with($this->product)
-            ->willReturn([$attribute]);
-
-        $engine = self::getMockBuilder(\Magento\Framework\View\TemplateEngineInterface::class)
-            ->getMockForAbstractClass();
-
-        $engine->expects(self::atLeastOnce())
-            ->method('render')
-            ->with($this->configurable, 'product/listing/renderer.phtml')
-            ->willReturn('<li>Swatches listing</li>');
-
-        $this->templateEnginePool->expects(self::atLeastOnce())
-            ->method('get')
-            ->withAnyParameters()
-            ->willReturn($engine);
-
-        $this->configurable->setProduct($this->product);
-        $this->configurable->setTemplate('product/listing/renderer.phtml');
-        $this->configurable->setArea('frontend');
-
-        $this->resolver->expects(self::atLeastOnce())
-            ->method('getTemplateFileName')
-            ->willReturn('product/listing/renderer.phtml');
-
-        $this->directory->expects(self::atLeastOnce())
-            ->method('getRelativePath')
-            ->with('product/listing/renderer.phtml')
-            ->willReturn('product/listing/renderer.phtml');
-
-        $this->validator->expects(self::atLeastOnce())
-            ->method('isValid')
-            ->with('product/listing/renderer.phtml')
-            ->willReturn(true);
-
-        $html = $this->configurable->toHtml();
-
-        self::assertNotEmpty($html);
-        self::assertEquals('<li>Swatches listing</li>', $html);
     }
 }

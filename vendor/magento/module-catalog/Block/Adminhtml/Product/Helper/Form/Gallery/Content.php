@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -62,7 +62,7 @@ class Content extends \Magento\Backend\Block\Widget
      */
     protected function _prepareLayout()
     {
-        $this->addChild('uploader', 'Magento\Backend\Block\Media\Uploader');
+        $this->addChild('uploader', \Magento\Backend\Block\Media\Uploader::class);
 
         $this->getUploader()->getConfig()->setUrl(
             $this->_urlBuilder->addSessionParam()->getUrl('catalog/product_gallery/upload')
@@ -242,13 +242,13 @@ class Content extends \Magento\Backend\Block\Widget
 
     /**
      * @return \Magento\Catalog\Helper\Image
-     * @deprecated
+     * @deprecated 101.0.3
      */
     private function getImageHelper()
     {
         if ($this->imageHelper === null) {
             $this->imageHelper = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\Catalog\Helper\Image');
+                ->get(\Magento\Catalog\Helper\Image::class);
         }
         return $this->imageHelper;
     }

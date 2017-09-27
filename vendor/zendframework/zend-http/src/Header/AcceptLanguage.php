@@ -86,14 +86,14 @@ class AcceptLanguage extends AbstractAccept
         }
 
         if (strpos($fieldValuePart, '-')) {
-            $subtypeWhole = $format = $subtype = trim(substr($fieldValuePart, strpos($fieldValuePart, '-')+1));
+            $subtypeWhole = $format = $subtype = trim(substr($fieldValuePart, strpos($fieldValuePart, '-') + 1));
         } else {
             $subtypeWhole = '';
             $format = '*';
             $subtype = '*';
         }
 
-        $aggregated = array(
+        $aggregated = [
                 'typeString' => trim($fieldValuePart),
                 'type'       => $type,
                 'subtype'    => $subtype,
@@ -102,7 +102,7 @@ class AcceptLanguage extends AbstractAccept
                 'priority'   => isset($params['q']) ? $params['q'] : 1,
                 'params'     => $params,
                 'raw'        => trim($raw)
-        );
+        ];
 
         return new FieldValuePart\LanguageFieldValuePart((object) $aggregated);
     }

@@ -7,7 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Zend_' => array($vendorDir . '/magento/zendframework1/library'),
-    'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
+    'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'PHPMD\\' => array($vendorDir . '/phpmd/phpmd/src/main/php'),
     'OAuth\\Unit' => array($vendorDir . '/lusitanian/oauth/tests'),
     'OAuth' => array($vendorDir . '/lusitanian/oauth/src'),

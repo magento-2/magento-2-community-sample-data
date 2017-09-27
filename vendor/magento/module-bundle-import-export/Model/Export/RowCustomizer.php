@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\BundleImportExport\Model\Export;
@@ -356,7 +356,7 @@ class RowCustomizer implements RowCustomizerInterface
     }
 
     /**
-     * Retrieves additional attributes as array code=>value
+     * Retrieves additional attributes as array code=>value.
      *
      * @param string $additionalAttributes
      * @return array
@@ -367,6 +367,7 @@ class RowCustomizer implements RowCustomizerInterface
         $preparedAttributes = [];
         $code = '';
         foreach ($attributeNameValuePairs as $attributeData) {
+            //process case when attribute has ImportModel::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR inside its value
             if (strpos($attributeData, ImportProductModel::PAIR_NAME_VALUE_SEPARATOR) === false) {
                 if (!$code) {
                     continue;

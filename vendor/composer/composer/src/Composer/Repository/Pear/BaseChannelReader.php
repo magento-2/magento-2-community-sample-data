@@ -57,7 +57,7 @@ abstract class BaseChannelReader
             throw new \UnexpectedValueException('The PEAR channel at ' . $url . ' did not respond.');
         }
 
-        return $content;
+        return str_replace('http://pear.php.net/rest/', 'https://pear.php.net/rest/', $content);
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class BaseChannelReader
         // http://components.ez.no/p/packages.xml is malformed. to read it we must ignore parsing errors.
         $xml = simplexml_load_string($this->requestContent($origin, $path), "SimpleXMLElement", LIBXML_NOERROR);
 
-        if (false == $xml) {
+        if (false === $xml) {
             throw new \UnexpectedValueException(sprintf('The PEAR channel at ' . $origin . ' is broken. (Invalid XML at file `%s`)', $path));
         }
 

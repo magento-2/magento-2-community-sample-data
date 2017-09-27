@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,9 +15,6 @@ use Magento\Framework\Exception\IntegrationException;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Framework\Exception\AuthenticationException;
 
-/**
- * Class SaveTest.
- */
 class SaveTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     public function testSaveAction()

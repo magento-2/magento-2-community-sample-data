@@ -1,12 +1,13 @@
 <?php
 /**
- * Placeholder configuration values processor. Replace placeholders in configuration with config values
- *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Model\Config;
 
+/**
+ * Placeholder configuration values processor. Replace placeholders in configuration with config values
+ */
 class Placeholder
 {
     /**
@@ -70,7 +71,7 @@ class Placeholder
     }
 
     /**
-     * Replace placeholders with config values.
+     * Replace placeholders with config values
      *
      * @param string $value
      * @param array $data
@@ -98,7 +99,6 @@ class Placeholder
                 $value = $this->_processPlaceholders($value, $data);
             }
         }
-
         return $value;
     }
 

@@ -1,19 +1,16 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Model\Design\Backend;
 
 use Magento\Theme\Model\Design\Backend\Logo as DesignLogo;
 
-/**
- * Class to handle email logo image
- */
 class Logo extends DesignLogo
 {
     /**
-     * The tail part of directory path for uploading.
+     * The tail part of directory path for uploading
      */
     const UPLOAD_DIR = 'email/logo';
 
@@ -25,7 +22,7 @@ class Logo extends DesignLogo
     protected $maxFileSize = 2048;
 
     /**
-     * Getter for allowed extensions of uploaded files.
+     * Getter for allowed extensions of uploaded files
      *
      * @return string[]
      */

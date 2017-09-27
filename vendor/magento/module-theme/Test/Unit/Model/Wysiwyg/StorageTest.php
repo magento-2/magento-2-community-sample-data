@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Theme\Test\Unit\Model\Wysiwyg;
 
-class StorageTest extends \PHPUnit_Framework_TestCase
+class StorageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -56,33 +56,27 @@ class StorageTest extends \PHPUnit_Framework_TestCase
      */
     protected $urlDecoder;
 
-    /**
-     * @var \Magento\MediaStorage\Model\File\UploaderFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uploaderFactory;
-
     protected function setUp()
     {
-        $this->_filesystem = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
-        $this->_helperStorage = $this->getMock(\Magento\Theme\Helper\Storage::class, [], [], '', false);
-        $this->_objectManager = $this->getMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->_imageFactory = $this->getMock(\Magento\Framework\Image\AdapterFactory::class, [], [], '', false);
-        $this->directoryWrite = $this->getMock(
-            \Magento\Framework\Filesystem\Directory\Write::class,
-            [],
-            [],
-            '',
-            false
+        $this->_filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->_helperStorage = $this->createPartialMock(
+            \Magento\Theme\Helper\Storage::class,
+            [
+                'urlEncode',
+                'getStorageType',
+                'getCurrentPath',
+                'getStorageRoot',
+                'getShortFilename',
+                'getSession',
+                'convertPathToId',
+                'getRequestParams'
+            ]
         );
-        $this->urlEncoder = $this->getMock(\Magento\Framework\Url\EncoderInterface::class, ['encode'], [], '', false);
-        $this->urlDecoder = $this->getMock(\Magento\Framework\Url\DecoderInterface::class, ['decode'], [], '', false);
-        $this->uploaderFactory = $this->getMock(
-            \Magento\MediaStorage\Model\File\UploaderFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
+        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_imageFactory = $this->createMock(\Magento\Framework\Image\AdapterFactory::class);
+        $this->directoryWrite = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
+        $this->urlEncoder = $this->createPartialMock(\Magento\Framework\Url\EncoderInterface::class, ['encode']);
+        $this->urlDecoder = $this->createPartialMock(\Magento\Framework\Url\DecoderInterface::class, ['decode']);
 
         $this->_filesystem->expects(
             $this->once()
@@ -98,8 +92,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
             $this->_objectManager,
             $this->_imageFactory,
             $this->urlEncoder,
-            $this->urlDecoder,
-            $this->uploaderFactory
+            $this->urlDecoder
         );
 
         $this->_storageRoot = '/root';
@@ -125,7 +118,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
         $uploader->expects($this->once())->method('save')->will($this->returnValue(['not_empty', 'path' => 'absPath']));
 
         $this->_helperStorage->expects(
-            $this->once()
+            $this->any()
         )->method(
             'getStorageType'
         )->will(
@@ -140,7 +133,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
 
         /** Prepare image */
 
-        $image = $this->getMock(\Magento\Framework\Image\Adapter\Gd2::class, [], [], '', false);
+        $image = $this->createMock(\Magento\Framework\Image\Adapter\Gd2::class);
 
         $image->expects($this->once())->method('open')->will($this->returnValue(true));
 
@@ -154,7 +147,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
 
         /** Prepare session */
 
-        $session = $this->getMock(\Magento\Backend\Model\Session::class, [], [], '', false);
+        $session = $this->createMock(\Magento\Backend\Model\Session::class);
 
         $this->_helperStorage->expects($this->any())->method('getSession')->will($this->returnValue($session));
 
@@ -172,29 +165,24 @@ class StorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testUploadInvalidFile()
     {
-        $uploader = $this->_prepareUploader();
+        $uplaoder = $this->_prepareUploader();
 
-        $uploader->expects($this->once())->method('save')->will($this->returnValue(null));
+        $uplaoder->expects($this->once())->method('save')->will($this->returnValue(null));
 
         $this->_storageModel->uploadFile($this->_storageRoot);
     }
 
     protected function _prepareUploader()
     {
-        $uploader = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Uploader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uploader = $this->createMock(\Magento\MediaStorage\Model\File\Uploader::class);
+
+        $this->_objectManager->expects($this->once())->method('create')->will($this->returnValue($uploader));
 
         $uploader->expects($this->once())->method('setAllowedExtensions')->will($this->returnValue($uploader));
 
         $uploader->expects($this->once())->method('setAllowRenameFiles')->will($this->returnValue($uploader));
 
         $uploader->expects($this->once())->method('setFilesDispersion')->will($this->returnValue($uploader));
-
-        $this->uploaderFactory->expects($this->once())
-            ->method('create')
-            ->with(['fileId' => 'file'])
-            ->willReturn($uploader);
 
         return $uploader;
     }

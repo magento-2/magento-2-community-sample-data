@@ -1,15 +1,15 @@
 <!--
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
 <div data-bind="attr: {class: 'payment-method payment-method-' + getCode()}, css: {'_active': isActive()}">
     <div class="payment-method-title field choice">
         <input type="radio"
-            name="payment[method]"
-            class="radio"
-            data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        name="payment[method]"
+        class="radio"
+        data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
         <label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
         </label>
@@ -139,9 +139,12 @@
                 <button class="action primary checkout"
                         type="submit"
                         data-bind="
-                        click: placeOrderClick,
-                        attr: {title: $t('Place Order')}
-                ">
+                            click: placeOrderClick,
+                            attr: {title: $t('Place Order')},
+                            css: {disabled: !isPlaceOrderActionAllowed()},
+                            enable: isActive()
+                        "
+                        disabled>
                     <span data-bind="i18n: 'Place Order'"></span>
                 </button>
             </div>

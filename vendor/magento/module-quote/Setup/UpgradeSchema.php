@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Setup;
@@ -55,35 +55,47 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 $setup->getFkName('quote_item', 'product_id', 'catalog_product_entity', 'entity_id')
             );
         }
-        if (version_compare($context->getVersion(), '2.0.4', '<')) {
-            $setup->getConnection(self::$connectionName)->changeColumn(
+        if (version_compare($context->getVersion(), '2.0.5', '<')) {
+            $connection = $setup->getConnection();
+            $connection->modifyColumn(
+                $setup->getTable('quote_address'),
+                'shipping_method',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 120
+                ]
+            );
+        }
+        if (version_compare($context->getVersion(), '2.0.6', '<')) {
+            $connection = $setup->getConnection(self::$connectionName);
+            $connection->modifyColumn(
                 $setup->getTable('quote_address', self::$connectionName),
-                'firstname',
                 'firstname',
                 [
                     'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                     'length' => 255,
-                    'comment' => 'Firstname'
                 ]
-            );
-            $setup->getConnection(self::$connectionName)->changeColumn(
+            )->modifyColumn(
                 $setup->getTable('quote_address', self::$connectionName),
-                'middlename',
                 'middlename',
                 [
                     'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                     'length' => 40,
-                    'comment' => 'Middlename'
                 ]
-            );
-            $setup->getConnection(self::$connectionName)->changeColumn(
+            )->modifyColumn(
                 $setup->getTable('quote_address', self::$connectionName),
-                'lastname',
                 'lastname',
                 [
                     'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                     'length' => 255,
-                    'comment' => 'Lastname'
+                ]
+            )->modifyColumn(
+                $setup->getTable('quote', self::$connectionName),
+                'updated_at',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                    'nullable' => false,
+                    'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT_UPDATE,
                 ]
             );
         }

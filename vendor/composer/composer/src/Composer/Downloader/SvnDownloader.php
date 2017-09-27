@@ -40,7 +40,7 @@ class SvnDownloader extends VcsDownloader
             }
         }
 
-        $this->io->writeError("    Checking out ".$package->getSourceReference());
+        $this->io->writeError(" Checking out ".$package->getSourceReference());
         $this->execute($url, "svn co", sprintf("%s/%s", $url, $ref), null, $path);
     }
 
@@ -63,7 +63,7 @@ class SvnDownloader extends VcsDownloader
             }
         }
 
-        $this->io->writeError("    Checking out " . $ref);
+        $this->io->writeError(" Checking out " . $ref);
         $this->execute($url, "svn switch" . $flags, sprintf("%s/%s", $url, $ref), $path);
     }
 
@@ -73,7 +73,7 @@ class SvnDownloader extends VcsDownloader
     public function getLocalChanges(PackageInterface $package, $path)
     {
         if (!$this->hasMetadataRepository($path)) {
-            return;
+            return null;
         }
 
         $this->process->execute('svn status --ignore-externals', $output, $path);

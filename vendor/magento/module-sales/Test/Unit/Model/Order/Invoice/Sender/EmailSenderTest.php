@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Invoice\Sender;
@@ -10,7 +10,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Invoice\Sender;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EmailSenderTest extends \PHPUnit_Framework_TestCase
+class EmailSenderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Invoice\Sender\EmailSender
@@ -258,7 +258,7 @@ class EmailSenderTest extends \PHPUnit_Framework_TestCase
                 'payment_html' => 'Payment Info Block',
                 'store' => $this->storeMock,
                 'formattedShippingAddress' => 'Formatted address',
-                'formattedBillingAddress' => 'Formatted address'
+                'formattedBillingAddress' => 'Formatted address',
             ];
 
             $this->eventManagerMock->expects($this->once())
@@ -267,7 +267,7 @@ class EmailSenderTest extends \PHPUnit_Framework_TestCase
                     'email_invoice_set_template_vars_before',
                     [
                         'sender' => $this->subject,
-                        'transport' => $transport
+                        'transport' => $transport,
                     ]
                 );
 
@@ -353,7 +353,7 @@ class EmailSenderTest extends \PHPUnit_Framework_TestCase
             'Successful sync sending without comment' => [0, false, false, true],
             'Failed sync sending with comment' => [0, false, true, false],
             'Successful forced sync sending with comment' => [1, true, true, true],
-            'Async sending' => [1, false, false, false]
+            'Async sending' => [1, false, false, false],
         ];
     }
 }

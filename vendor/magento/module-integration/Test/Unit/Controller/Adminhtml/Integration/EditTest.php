@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,9 +11,6 @@ namespace Magento\Integration\Test\Unit\Controller\Adminhtml\Integration;
 use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Framework\Exception\IntegrationException;
 
-/**
- * Class EditTest.
- */
 class EditTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     public function testEditAction()

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product;
@@ -16,7 +16,7 @@ use Magento\Backend\App\Action\Context;
 class Wizard extends Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */
@@ -45,9 +45,7 @@ class Wizard extends Action
         $this->productBuilder->build($this->getRequest());
 
         /** @var \Magento\Framework\View\Result\Layout $resultLayout */
-        $resultLayout = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-        $resultLayout->getLayout()->getUpdate()->removeHandle('default');
-
+        $resultLayout = $this->resultFactory->create(ResultFactory::TYPE_LAYOUT);
         return $resultLayout;
     }
 }

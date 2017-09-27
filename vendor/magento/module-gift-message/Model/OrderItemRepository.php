@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -153,16 +153,14 @@ class OrderItemRepository implements \Magento\GiftMessage\Api\OrderItemRepositor
         if (!isset($this->orders[$orderId])) {
             $this->orders[$orderId] = $this->orderFactory->create()->load($orderId);
         }
-
-        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
+        /** @var \Magento\Sales\Api\Data\OrderInterface $item */
         $order = $this->orders[$orderId];
         /** @var \Magento\Sales\Api\Data\OrderItemInterface $item */
         $item = $order->getItemById($orderItemId);
-        
+
         if ($item !== null) {
             return $item;
         }
-
         return false;
     }
 }

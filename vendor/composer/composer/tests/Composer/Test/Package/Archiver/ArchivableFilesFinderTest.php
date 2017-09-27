@@ -16,7 +16,6 @@ use Composer\Package\Archiver\ArchivableFilesFinder;
 use Composer\TestCase;
 use Composer\Util\Filesystem;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ExecutableFinder;
 
 class ArchivableFilesFinderTest extends TestCase
 {
@@ -146,10 +145,7 @@ class ArchivableFilesFinderTest extends TestCase
 
     public function testGitExcludes()
     {
-        // Ensure that git is available for testing.
-        if (!$this->isProcessAvailable('git')) {
-            return $this->markTestSkipped('git is not available.');
-        }
+        $this->skipIfNotExecutable('git');
 
         file_put_contents($this->sources.'/.gitignore', implode("\n", array(
             '# gitignore rules with comments and blank lines',
@@ -202,10 +198,7 @@ class ArchivableFilesFinderTest extends TestCase
 
     public function testHgExcludes()
     {
-        // Ensure that Mercurial is available for testing.
-        if (!$this->isProcessAvailable('hg')) {
-            return $this->markTestSkipped('Mercurial is not available.');
-        }
+        $this->skipIfNotExecutable('hg');
 
         file_put_contents($this->sources.'/.hgignore', implode("\n", array(
             '# hgignore rules with comments, blank lines and syntax changes',
@@ -240,6 +233,61 @@ class ArchivableFilesFinderTest extends TestCase
         array_splice($expectedFiles, $archiveKey, 1);
 
         $this->assertArchivableFiles($expectedFiles);
+    }
+
+    public function testSkipExcludes()
+    {
+        $excludes = array(
+            'prefixB.foo',
+        );
+
+        $this->finder = new ArchivableFilesFinder($this->sources, $excludes, true);
+
+        $this->assertArchivableFiles(array(
+            '/!important!.txt',
+            '/!important_too!.txt',
+            '/#weirdfile',
+            '/A/prefixA.foo',
+            '/A/prefixB.foo',
+            '/A/prefixC.foo',
+            '/A/prefixD.foo',
+            '/A/prefixE.foo',
+            '/A/prefixF.foo',
+            '/B/sub/prefixA.foo',
+            '/B/sub/prefixB.foo',
+            '/B/sub/prefixC.foo',
+            '/B/sub/prefixD.foo',
+            '/B/sub/prefixE.foo',
+            '/B/sub/prefixF.foo',
+            '/C/prefixA.foo',
+            '/C/prefixB.foo',
+            '/C/prefixC.foo',
+            '/C/prefixD.foo',
+            '/C/prefixE.foo',
+            '/C/prefixF.foo',
+            '/D/prefixA',
+            '/D/prefixB',
+            '/D/prefixC',
+            '/D/prefixD',
+            '/D/prefixE',
+            '/D/prefixF',
+            '/E/subtestA.foo',
+            '/F/subtestA.foo',
+            '/G/subtestA.foo',
+            '/H/subtestA.foo',
+            '/I/J/subtestA.foo',
+            '/K/dirJ/subtestA.foo',
+            '/parameters.yml',
+            '/parameters.yml.dist',
+            '/prefixA.foo',
+            '/prefixB.foo',
+            '/prefixC.foo',
+            '/prefixD.foo',
+            '/prefixE.foo',
+            '/prefixF.foo',
+            '/toplevelA.foo',
+            '/toplevelB.foo',
+        ));
     }
 
     protected function getArchivableFiles()
@@ -280,19 +328,5 @@ class ArchivableFilesFinderTest extends TestCase
         $actualFiles = $this->getArchivableFiles();
 
         $this->assertEquals($expectedFiles, $actualFiles);
-    }
-
-    /**
-     * Check whether or not the given process is available.
-     *
-     * @param string $process The name of the binary to test.
-     *
-     * @return bool True if the process is available, false otherwise.
-     */
-    protected function isProcessAvailable($process)
-    {
-        $finder = new ExecutableFinder();
-
-        return (bool) $finder->find($process);
     }
 }

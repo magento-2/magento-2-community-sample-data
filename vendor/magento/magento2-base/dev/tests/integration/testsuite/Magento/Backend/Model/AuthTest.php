@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model;
@@ -15,7 +15,7 @@ use Magento\Framework\Exception\AuthenticationException;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
-class AuthTest extends \PHPUnit_Framework_TestCase
+class AuthTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth
@@ -56,7 +56,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         // by default \Magento\Backend\Model\Auth\Session class will instantiate as a Authentication Storage
         $this->assertInstanceOf(\Magento\Backend\Model\Auth\Session::class, $this->_model->getAuthStorage());
 
-        $mockStorage = $this->getMock(\Magento\Backend\Model\Auth\StorageInterface::class);
+        $mockStorage = $this->createMock(\Magento\Backend\Model\Auth\StorageInterface::class);
         $this->_model->setAuthStorage($mockStorage);
         $this->assertInstanceOf(\Magento\Backend\Model\Auth\StorageInterface::class, $this->_model->getAuthStorage());
 
@@ -89,6 +89,19 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $this->assertGreaterThan(time() - 10, $this->_model->getAuthStorage()->getUpdatedAt());
     }
 
+    public function testLoginFlushesFormKey()
+    {
+        /** @var FormKey $dataFormKey */
+        $dataFormKey = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(FormKey::class);
+        $beforeKey = $dataFormKey->getFormKey();
+        $this->_model->login(
+            \Magento\TestFramework\Bootstrap::ADMIN_NAME,
+            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
+        );
+        $afterKey = $dataFormKey->getFormKey();
+        $this->assertNotEquals($beforeKey, $afterKey);
+    }
+
     /**
      * @magentoAppIsolation enabled
      */
@@ -104,8 +117,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Disabled form security in order to prevent exit from the app.
-     *
+     * Disabled form security in order to prevent exit from the app
      * @magentoAdminConfigFixture admin/security/session_lifetime 100
      */
     public function testIsLoggedIn()

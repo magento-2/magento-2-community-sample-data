@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Block\Product\Renderer;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Product as CatalogProduct;
+use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Helper\Data;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeData;
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Framework\Stdlib\ArrayUtils;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Swatches\Helper\Data as SwatchData;
@@ -24,7 +24,9 @@ use Magento\Swatches\Model\SwatchAttributesProvider;
 /**
  * Swatch renderer block
  *
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable implements
     \Magento\Framework\DataObject\IdentityInterface
@@ -62,7 +64,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     /**
      * Indicate if product has one or more Swatch attributes
      *
-     * @deprecated unused
+     * @deprecated 100.1.5 unused
      *
      * @var boolean
      */
@@ -123,6 +125,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
      * Get Key for caching block content
      *
      * @return string
+     * @since 100.1.0
      */
     public function getCacheKey()
     {
@@ -133,6 +136,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
      * Get block cache life time
      *
      * @return int
+     * @since 100.1.0
      */
     protected function getCacheLifetime()
     {
@@ -213,8 +217,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     }
 
     /**
-     * @deprecated unused
-     * @see isProductHasSwatchAttribute().
+     * @deprecated 100.1.5 Method isProductHasSwatchAttribute() is used instead of this.
      *
      * @codeCoverageIgnore
      * @return void
@@ -225,8 +228,10 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     }
 
     /**
-     * @codeCoverageIgnore
+     * Check that product has at least one swatch attribute
+     *
      * @return bool
+     * @since 100.1.5
      */
     protected function isProductHasSwatchAttribute()
     {
@@ -269,8 +274,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
      */
     protected function addAdditionalMediaData(array $swatch, $optionId, array $attributeDataArray)
     {
-        if (
-            isset($attributeDataArray['use_product_image_for_swatch'])
+        if (isset($attributeDataArray['use_product_image_for_swatch'])
             && $attributeDataArray['use_product_image_for_swatch']
         ) {
             $variationMedia = $this->getVariationMedia($attributeDataArray['attribute_code'], $optionId);
@@ -372,6 +376,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     /**
      * @param array $attributeData
      * @return array
+     * @since 100.0.3
      */
     protected function getConfigurableOptionsIds(array $attributeData)
     {
@@ -390,20 +395,35 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     }
 
     /**
-     * Produce and return block's html output.
+     * Produce and return block's html output
+     *
+     * @return string
+     * @since 100.2.0
+     */
+    public function toHtml()
+    {
+        $this->setTemplate(
+            $this->getRendererTemplate()
+        );
+
+        return parent::toHtml();
+    }
+
+    /**
+     * Return HTML code
      *
      * @return string
      */
     protected function _toHtml()
     {
-        $this->setTemplate(
-            $this->getRendererTemplate()
-        );
-        return parent::_toHtml();
+        return $this->getHtmlOutput();
     }
 
     /**
-     * @codeCoverageIgnore
+     * Return renderer template
+     *
+     * Template for product with swatches is different from product without swatches
+     *
      * @return string
      */
     protected function getRendererTemplate()
@@ -413,8 +433,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
     }
 
     /**
-     * @deprecated
-     * @codeCoverageIgnore
+     * @deprecated 100.1.5 Now is used _toHtml() directly
      * @return string
      */
     protected function getHtmlOutput()
@@ -434,6 +453,7 @@ class Configurable extends \Magento\ConfigurableProduct\Block\Product\View\Type\
      * Return unique ID(s) for each object in system
      *
      * @return string[]
+     * @since 100.1.0
      */
     public function getIdentities()
     {

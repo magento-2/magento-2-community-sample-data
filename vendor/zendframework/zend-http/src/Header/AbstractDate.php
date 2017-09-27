@@ -57,11 +57,11 @@ abstract class AbstractDate implements HeaderInterface
      *
      * @var array
      */
-    protected static $dateFormats = array(
+    protected static $dateFormats = [
         self::DATE_RFC1123 => 'D, d M Y H:i:s \G\M\T',
         self::DATE_RFC1036 => 'D, d M y H:i:s \G\M\T',
         self::DATE_ANSIC   => 'D M j H:i:s Y',
-    );
+    ];
 
     /**
      * Create date-based header from string
@@ -134,7 +134,7 @@ abstract class AbstractDate implements HeaderInterface
      */
     public static function setDateFormat($format)
     {
-        if (!isset(static::$dateFormats[$format])) {
+        if (! isset(static::$dateFormats[$format])) {
             throw new Exception\InvalidArgumentException(
                 "No constant defined for provided date format: {$format}"
             );
@@ -172,7 +172,7 @@ abstract class AbstractDate implements HeaderInterface
                     $e
                 );
             }
-        } elseif (!($date instanceof DateTime)) {
+        } elseif (! ($date instanceof DateTime)) {
             throw new Exception\InvalidArgumentException('Date must be an instance of \DateTime or a string');
         }
 
@@ -226,7 +226,7 @@ abstract class AbstractDate implements HeaderInterface
                     $e
                 );
             }
-        } elseif (!($date instanceof DateTime)) {
+        } elseif (! ($date instanceof DateTime)) {
             throw new Exception\InvalidArgumentException('Date must be an instance of \DateTime or a string');
         }
 

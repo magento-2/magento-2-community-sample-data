@@ -31,7 +31,7 @@ class RemoteAddress
      *
      * @var array
      */
-    protected $trustedProxies = array();
+    protected $trustedProxies = [];
 
     /**
      * HTTP header to introspect for proxies
@@ -118,14 +118,14 @@ class RemoteAddress
      */
     protected function getIpAddressFromProxy()
     {
-        if (!$this->useProxy
-            || (isset($_SERVER['REMOTE_ADDR']) && !in_array($_SERVER['REMOTE_ADDR'], $this->trustedProxies))
+        if (! $this->useProxy
+            || (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $this->trustedProxies))
         ) {
             return false;
         }
 
         $header = $this->proxyHeader;
-        if (!isset($_SERVER[$header]) || empty($_SERVER[$header])) {
+        if (! isset($_SERVER[$header]) || empty($_SERVER[$header])) {
             return false;
         }
 

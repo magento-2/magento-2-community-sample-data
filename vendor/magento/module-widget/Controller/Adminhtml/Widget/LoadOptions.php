@@ -1,21 +1,17 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ *
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Widget\Controller\Adminhtml\Widget;
 
 use Magento\Framework\App\ObjectManager;
 
-/**
- * Loading widget options
- */
 class LoadOptions extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
-     *
-     * @see _isAllowed()
+     * Authorization level of a basic admin session
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 
@@ -62,7 +58,7 @@ class LoadOptions extends \Magento\Backend\App\Action
 
     /**
      * @return \Magento\Widget\Helper\Conditions
-     * @deprecated
+     * @deprecated 100.1.4
      */
     private function getConditionsHelper()
     {

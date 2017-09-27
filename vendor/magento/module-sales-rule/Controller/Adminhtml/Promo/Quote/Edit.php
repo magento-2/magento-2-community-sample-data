@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Controller\Adminhtml\Promo\Quote;
@@ -43,7 +43,7 @@ class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = $this->_objectManager->create('Magento\SalesRule\Model\Rule');
+        $model = $this->_objectManager->create(\Magento\SalesRule\Model\Rule::class);
 
         $this->_coreRegistry->register(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE, $model);
 
@@ -68,7 +68,7 @@ class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
         }
 
         // set entered data if was error when we do save
-        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getPageData(true);
+        $data = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getPageData(true);
         if (!empty($data)) {
             $model->addData($data);
         }

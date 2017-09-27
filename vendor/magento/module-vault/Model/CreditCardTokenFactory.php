@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Vault\Model;
 
 /**
  * Class CreditCardTokenFactory
+ * @deprecated 100.3.0
+ * @see PaymentTokenFactoryInterface
  */
 class CreditCardTokenFactory extends AbstractPaymentTokenFactory
 {

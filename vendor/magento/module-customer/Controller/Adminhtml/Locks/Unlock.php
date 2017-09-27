@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\Locks;
@@ -16,7 +16,7 @@ use Magento\Backend\App\Action;
 class Unlock extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

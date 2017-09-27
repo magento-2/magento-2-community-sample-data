@@ -92,6 +92,15 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     /** @var bool */
     protected $_useLua = false;
 
+    /** @var integer */
+    protected $_autoExpireLifetime = 0;
+
+    /** @var string */
+    protected $_autoExpirePattern = '/REQEST/';
+
+    /** @var boolean */
+    protected $_autoExpireRefreshOnLoad = false;
+
     /**
      * Lua's unpack() has a limit on the size of the table imposed by
      * the number of Lua stack slots that a C function can use.
@@ -103,7 +112,32 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     protected $_luaMaxCStack = 5000;
 
     /**
-     * Contruct Zend_Cache Redis backend
+     * @var stdClass
+     */
+    protected $_clientOptions;
+
+    /**
+     * If 'load_from_slaves' is truthy then reads are performed on a randomly selected slave server
+     *
+     * @var Credis_Client
+     */
+    protected $_slave;
+
+    protected function getClientOptions($options = array())
+    {
+        $clientOptions = new stdClass();
+        $clientOptions->forceStandalone = isset($options['force_standalone']) && $options['force_standalone'];
+        $clientOptions->connectRetries = isset($options['connect_retries']) ? (int) $options['connect_retries'] : self::DEFAULT_CONNECT_RETRIES;
+        $clientOptions->readTimeout = isset($options['read_timeout']) ? (float) $options['read_timeout'] : NULL;
+        $clientOptions->password = isset($options['password']) ? $options['password'] : NULL;
+        $clientOptions->database = isset($options['database']) ? (int) $options['database'] : 0;
+        $clientOptions->persistent = isset($options['persistent']) ? $options['persistent'] : '';
+        $clientOptions->timeout = isset($options['timeout']) ? $options['timeout'] : self::DEFAULT_CONNECT_TIMEOUT;
+        return $clientOptions;
+    }
+
+    /**
+     * Construct Zend_Cache Redis backend
      * @param array $options
      * @return \Cm_Cache_Backend_Redis
      */
@@ -113,35 +147,119 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
             Zend_Cache::throwException('Redis \'server\' not specified.');
         }
 
-        if ( empty($options['port']) && substr($options['server'],0,1) != '/' ) {
-            Zend_Cache::throwException('Redis \'port\' not specified.');
+        $port = isset($options['port']) ? $options['port'] : 6379;
+        $slaveSelect = isset($options['slave_select_callable']) && is_callable($options['slave_select_callable']) ? $options['slave_select_callable'] : null;
+        $sentinelMaster =  empty($options['sentinel_master']) ? NULL : $options['sentinel_master'];
+
+        $this->_clientOptions = $this->getClientOptions($options);
+
+        // If 'sentinel_master' is specified then server is actually sentinel and master address should be fetched from server.
+        if ($sentinelMaster) {
+            $sentinelClientOptions = isset($options['sentinel']) && is_array($options['sentinel']) 
+                                     ? $this->getClientOptions($options['sentinel'] + $options)
+                                     : $this->_clientOptions;
+            $servers = preg_split('/\s*,\s*/', trim($options['server']), NULL, PREG_SPLIT_NO_EMPTY);
+            $sentinel = NULL;
+            $exception = NULL;
+            for ($i = 0; $i <= $sentinelClientOptions->connectRetries; $i++) // Try each sentinel in round-robin fashion
+            foreach ($servers as $server) {
+                try {
+                    $sentinelClient = new Credis_Client($server, NULL, $sentinelClientOptions->timeout, $sentinelClientOptions->persistent);
+                    $sentinelClient->forceStandalone();
+                    $sentinelClient->setMaxConnectRetries(0);
+                    if ($sentinelClientOptions->readTimeout) {
+                        $sentinelClient->setReadTimeout($sentinelClientOptions->readTimeout);
+                    }
+                    // Sentinel currently doesn't support AUTH
+                    //if ($password) {
+                    //    $sentinelClient->auth($password) or Zend_Cache::throwException('Unable to authenticate with the redis sentinel.');
+                    //}
+                    $sentinel = new Credis_Sentinel($sentinelClient);
+                    $sentinel
+                        ->setClientTimeout($this->_clientOptions->timeout)
+                        ->setClientPersistent($this->_clientOptions->persistent);
+                    $redisMaster = $sentinel->getMasterClient($sentinelMaster);
+                    $this->_applyClientOptions($redisMaster);
+
+                    // Verify connected server is actually master as per Sentinel client spec
+                    if ( ! empty($options['sentinel_master_verify'])) {
+                        $roleData = $redisMaster->role();
+                        if ( ! $roleData || $roleData[0] != 'master') {
+                            usleep(100000); // Sleep 100ms and try again
+                            $redisMaster = $sentinel->getMasterClient($sentinelMaster);
+                            $this->_applyClientOptions($redisMaster);
+                            $roleData = $redisMaster->role();
+                            if ( ! $roleData || $roleData[0] != 'master') {
+                                Zend_Cache::throwException('Unable to determine master redis server.');
+                            }
+                        }
+                    }
+
+                    $this->_redis = $redisMaster;
+                    break 2;
+                } catch (Exception $e) {
+                    unset($sentinelClient);
+                    $exception = $e;
+                }
+            }
+            if ( ! $this->_redis) {
+                Zend_Cache::throwException('Unable to connect to a redis sentinel: '.$exception->getMessage(), $exception);
+            }
+
+            // Optionally use read slaves - will only be used for 'load' operation
+            if ( ! empty($options['load_from_slaves'])) {
+                $slaves = $sentinel->getSlaveClients($sentinelMaster);
+                if ($slaves) {
+                    if ($options['load_from_slaves'] == 2) {
+                        array_push($slaves, $this->_redis); // Also send reads to the master
+                    }
+                    if ($slaveSelect) {
+                        $slave = $slaveSelect($slaves, $this->_redis);
+                    } else {
+                        $slaveKey = array_rand($slaves, 1);
+                        $slave = $slaves[$slaveKey]; /* @var $slave Credis_Client */
+                    }
+                    if ($slave instanceof Credis_Client && $slave != $this->_redis) {
+                        try {
+                            $this->_applyClientOptions($slave, TRUE);
+                            $this->_slave = $slave;
+                        } catch (Exception $e) {
+                            // If there is a problem with first slave then skip 'load_from_slaves' option
+                        }
+                    }
+                }
+            }
+            unset($sentinel);
         }
 
-        $port = isset($options['port']) ? $options['port'] : NULL;
-        $timeout = isset($options['timeout']) ? $options['timeout'] : self::DEFAULT_CONNECT_TIMEOUT;
-        $persistent = isset($options['persistent']) ? $options['persistent'] : '';
-        $this->_redis = new Credis_Client($options['server'], $port, $timeout, $persistent);
+        // Direct connection to single Redis server
+        else {
+            $this->_redis = new Credis_Client($options['server'], $port, $this->_clientOptions->timeout, $this->_clientOptions->persistent);
+            $this->_applyClientOptions($this->_redis);
 
-        if ( isset($options['force_standalone']) && $options['force_standalone']) {
-            $this->_redis->forceStandalone();
+            // Support loading from a replication slave
+            if (isset($options['load_from_slave'])) {
+                if (is_array($options['load_from_slave'])) {
+                    $server = $options['load_from_slave']['server'];
+                    $port = $options['load_from_slave']['port'];
+
+                    $clientOptions = $this->getClientOptions($options['load_from_slave'] + $options);
+                } else {
+                    $server = $options['load_from_slave'];
+                    $port = 6379;
+                    $clientOptions = $this->_clientOptions;
+                }
+                if (is_string($server)) {
+                    try {
+                        $slave = new Credis_Client($server, $port, $clientOptions->timeout, $clientOptions->persistent);
+                        $this->_applyClientOptions($slave, TRUE, $clientOptions);
+                        $this->_slave = $slave;
+                    } catch (Exception $e) {
+                        // Slave will not be used
+                    }
+                }
+            }
         }
-
-        $connectRetries = isset($options['connect_retries']) ? (int)$options['connect_retries'] : self::DEFAULT_CONNECT_RETRIES;
-        $this->_redis->setMaxConnectRetries($connectRetries);
-
-        if ( ! empty($options['read_timeout']) && $options['read_timeout'] > 0) {
-            $this->_redis->setReadTimeout((float) $options['read_timeout']);
-        }
-
-        if ( ! empty($options['password'])) {
-            $this->_redis->auth($options['password']) or Zend_Cache::throwException('Unable to authenticate with the redis server.');
-        }
-
-        // Always select database on startup in case persistent connection is re-used by other code
-        if (empty($options['database'])) {
-            $options['database'] = 0;
-        }
-        $this->_redis->select( (int) $options['database']) or Zend_Cache::throwException('The redis database could not be selected.');
 
         if ( isset($options['notMatchingTags']) ) {
             $this->_notMatchingTags = (bool) $options['notMatchingTags'];
@@ -197,6 +315,49 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
         if (isset($options['lua_max_c_stack'])) {
             $this->_luaMaxCStack = (int) $options['lua_max_c_stack'];
         }
+
+        if (isset($options['auto_expire_lifetime'])) {
+            $this->_autoExpireLifetime = (int) $options['auto_expire_lifetime'];
+        }
+
+        if (isset($options['auto_expire_pattern'])) {
+            $this->_autoExpirePattern = (string) $options['auto_expire_pattern'];
+        }
+
+        if (isset($options['auto_expire_refresh_on_load'])) {
+            $this->_autoExpireRefreshOnLoad = (bool) $options['auto_expire_refresh_on_load'];
+        }
+    }
+
+    /**
+     * Apply common configuration to client instances.
+     *
+     * @param Credis_Client $client
+     */
+    protected function _applyClientOptions(Credis_Client $client, $forceSelect = FALSE, $clientOptions = null)
+    {
+        if ($clientOptions === null) {
+            $clientOptions = $this->_clientOptions;
+        }
+
+        if ($clientOptions->forceStandalone) {
+            $client->forceStandalone();
+        }
+
+        $client->setMaxConnectRetries($clientOptions->connectRetries);
+
+        if ($clientOptions->readTimeout) {
+            $client->setReadTimeout($clientOptions->readTimeout);
+        }
+
+        if ($clientOptions->password) {
+            $client->auth($clientOptions->password) or Zend_Cache::throwException('Unable to authenticate with the redis server.');
+        }
+
+        // Always select database when persistent is used in case connection is re-used by other clients
+        if ($forceSelect || $clientOptions->database || $client->getPersistence()) {
+            $client->select($clientOptions->database) or Zend_Cache::throwException('The redis database could not be selected.');
+        }
     }
 
     /**
@@ -208,11 +369,29 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function load($id, $doNotTestCacheValidity = false)
     {
-        $data = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
+        if ($this->_slave) {
+            $data = $this->_slave->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
+        } else {
+            $data = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
+        }
         if ($data === NULL) {
             return FALSE;
         }
-        return $this->_decodeData($data);
+
+        $decoded = $this->_decodeData($data);
+
+        if ($this->_autoExpireLifetime === 0 || !$this->_autoExpireRefreshOnLoad) {
+            return $decoded;
+        }
+
+        $matches = $this->_matchesAutoExpiringPattern($id);
+        if (!$matches) {
+            return $decoded;
+        }
+
+        $this->_redis->expire(self::PREFIX_KEY.$id, min($this->_autoExpireLifetime, self::MAX_LIFETIME));
+
+        return $decoded;
     }
 
     /**
@@ -223,6 +402,7 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function test($id)
     {
+        // Don't use slave for this since `test` is usually used for locking
         $mtime = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_MTIME);
         return ($mtime ? $mtime : FALSE);
     }
@@ -247,7 +427,7 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
         else
             $tags = array_flip(array_flip($tags));
 
-        $lifetime = $this->getLifetime($specificLifetime);
+        $lifetime = $this->_getAutoExpiringLifetime($this->getLifetime($specificLifetime), $id);
 
         if ($this->_useLua) {
             $sArgs = array(
@@ -697,6 +877,46 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
         if ($lifetime > self::MAX_LIFETIME) {
             Zend_Cache::throwException('Redis backend has a limit of 30 days (2592000 seconds) for the lifetime');
         }
+    }
+
+    /**
+     * Get the auto expiring lifetime.
+     *
+     * Mainly a workaround for the issues that arise due to the fact that
+     * Magento's Enterprise_PageCache module doesn't set any expiry.
+     *
+     * @param  int $specificLifetime
+     * @param  string $id
+     * @return int Cache life time
+     */
+    protected function _getAutoExpiringLifetime($lifetime, $id)
+    {
+        if ($lifetime || !$this->_autoExpireLifetime) {
+            // If it's already truthy, or there's no auto expire go with it.
+            return $lifetime;
+        }
+
+        $matches = $this->_matchesAutoExpiringPattern($id);
+        if (!$matches) {
+            // Only apply auto expire for keys that match the pattern
+            return $lifetime;
+        }
+
+        if ($this->_autoExpireLifetime > 0) {
+            // Return the auto expire lifetime if set
+            return $this->_autoExpireLifetime;
+        }
+
+        // Return whatever it was set to.
+        return $lifetime;
+    }
+
+    protected function _matchesAutoExpiringPattern($id)
+    {
+        $matches = array();
+        preg_match($this->_autoExpirePattern, $id, $matches);
+
+        return !empty($matches);
     }
 
     /**

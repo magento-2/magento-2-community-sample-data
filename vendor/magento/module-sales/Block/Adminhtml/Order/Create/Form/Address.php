@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Form;
 
 use Magento\Backend\Model\Session\Quote;
-use Magento\Directory\Model\CountryHandlerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * Order create address form
@@ -277,14 +275,13 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
                 $this->directoryHelper->getDefaultCountry($this->getStore())
             );
         }
-
         $this->processCountryOptions($this->_form->getElement('country_id'));
         // Set custom renderer for VAT field if needed
         $vatIdElement = $this->_form->getElement('vat_id');
         if ($vatIdElement && $this->getDisplayVatValidationButton() !== false) {
             $vatIdElement->setRenderer(
                 $this->getLayout()->createBlock(
-                    'Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat'
+                    \Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat::class
                 )->setJsVariablePrefix(
                     $this->getJsVariablePrefix()
                 )
@@ -310,7 +307,7 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
 
     /**
      * Retrieve Directiry Countries collection
-     * @deprecated
+     * @deprecated 100.1.3
      * @return \Magento\Directory\Model\ResourceModel\Country\Collection
      */
     private function getCountriesCollection()
@@ -325,7 +322,7 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
 
     /**
      * Retrieve Backend Quote Session
-     * @deprecated
+     * @deprecated 100.1.3
      * @return Quote
      */
     private function getBackendQuoteSession()

@@ -358,10 +358,11 @@ class Filesystem
      * @param  string                    $from
      * @param  string                    $to
      * @param  bool                      $directories if true, the source/target are considered to be directories
+     * @param  bool                      $staticCode
      * @throws \InvalidArgumentException
      * @return string
      */
-    public function findShortestPathCode($from, $to, $directories = false)
+    public function findShortestPathCode($from, $to, $directories = false, $staticCode = false)
     {
         if (!$this->isAbsolutePath($from) || !$this->isAbsolutePath($to)) {
             throw new \InvalidArgumentException(sprintf('$from (%s) and $to (%s) must be absolute paths.', $from, $to));
@@ -388,7 +389,11 @@ class Filesystem
             return '__DIR__ . '.var_export(substr($to, strlen($from)), true);
         }
         $sourcePathDepth = substr_count(substr($from, strlen($commonPath)), '/') + $directories;
-        $commonPathCode = str_repeat('dirname(', $sourcePathDepth).'__DIR__'.str_repeat(')', $sourcePathDepth);
+        if ($staticCode) {
+            $commonPathCode = "__DIR__ . '".str_repeat('/..', $sourcePathDepth)."'";
+        } else {
+            $commonPathCode = str_repeat('dirname(', $sourcePathDepth).'__DIR__'.str_repeat(')', $sourcePathDepth);
+        }
         $relTarget = substr($to, strlen($commonPath));
 
         return $commonPathCode . (strlen($relTarget) ? '.' . var_export('/' . $relTarget, true) : '');
@@ -439,7 +444,8 @@ class Filesystem
         $prefix = '';
         $absolute = false;
 
-        if (preg_match('{^([0-9a-z]+:(?://(?:[a-z]:)?)?)}i', $path, $match)) {
+        // extract a prefix being a protocol://, protocol:, protocol://drive: or simply drive:
+        if (preg_match('{^( [0-9a-z]{2,}+: (?: // (?: [a-z]: )? )? | [a-z]: )}ix', $path, $match)) {
             $prefix = $match[1];
             $path = substr($path, strlen($prefix));
         }
@@ -471,13 +477,13 @@ class Filesystem
      */
     public static function isLocalPath($path)
     {
-        return (bool) preg_match('{^(file://|/|[a-z]:[\\\\/]|\.\.[\\\\/]|[a-z0-9_.-]+[\\\\/])}i', $path);
+        return (bool) preg_match('{^(file://(?!//)|/(?!/)|/?[a-z]:[\\\\/]|\.\.[\\\\/]|[a-z0-9_.-]+[\\\\/])}i', $path);
     }
 
     public static function getPlatformPath($path)
     {
         if (Platform::isWindows()) {
-            $path = preg_replace('{^(?:file:///([a-z])/)}i', 'file://$1:/', $path);
+            $path = preg_replace('{^(?:file:///([a-z]):?/)}i', 'file://$1:/', $path);
         }
 
         return preg_replace('{^file://}i', '', $path);
@@ -613,6 +619,7 @@ class Filesystem
         if ($this->getProcess()->execute($cmd, $output) !== 0) {
             throw new IOException(sprintf('Failed to create junction to "%s" at "%s".', $target, $junction), 0, null, $target);
         }
+        clearstatcache(true, $junction);
     }
 
     /**
@@ -637,7 +644,10 @@ class Filesystem
          *
          * #define	_S_IFDIR	0x4000
          * #define	_S_IFREG	0x8000
+         *
+         * Stat cache should be cleared before to avoid accidentally reading wrong information from previous installs.
          */
+        clearstatcache(true, $junction);
         $stat = lstat($junction);
 
         return !($stat['mode'] & 0xC000);
@@ -659,6 +669,7 @@ class Filesystem
             throw new IOException(sprintf('%s is not a junction and thus cannot be removed as one', $junction));
         }
         $cmd = sprintf('rmdir /S /Q %s', ProcessExecutor::escape($junction));
+        clearstatcache(true, $junction);
 
         return ($this->getProcess()->execute($cmd, $output) === 0);
     }
