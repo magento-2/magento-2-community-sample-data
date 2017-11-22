@@ -47,6 +47,7 @@ class Date extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
      * Retrieve date format
      *
      * @return string
+     * @deprecated
      */
     protected function _getFormat()
     {
@@ -74,19 +75,18 @@ class Date extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        if ($data = $row->getData($this->getColumn()->getIndex())) {
-            $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone() : 'UTC';
-            if (!($data instanceof \DateTime)) {
-                $localeDate = new \DateTime($data, new \DateTimeZone($timezone));
-            } else {
-                $data->setTimezone(new \DateTimeZone($timezone));
-                $localeDate = $data;
+        $format = $this->getColumn()->getFormat();
+        $date = $this->_getValue($row);
+        if ($date) {
+            if (!($date instanceof \DateTimeInterface)) {
+                $date = new \DateTime($date);
             }
-            return $this->dateTimeFormatter->formatObject(
-                $this->_localeDate->date(
-                    $localeDate
-                ),
-                $this->_getFormat()
+            return $this->_localeDate->formatDateTime(
+                $date,
+                $format ?: \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::NONE,
+                null,
+                $this->getColumn()->getTimezone() === false ? 'UTC' : null
             );
         }
         return $this->getColumn()->getDefault();

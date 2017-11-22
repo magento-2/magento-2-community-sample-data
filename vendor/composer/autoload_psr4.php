@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'phpseclib\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'Zend\\View\\' => array($vendorDir . '/zendframework/zend-view/src'),
     'Zend\\Validator\\' => array($vendorDir . '/zendframework/zend-validator/src'),
     'Zend\\Uri\\' => array($vendorDir . '/zendframework/zend-uri/src'),
@@ -48,6 +49,7 @@ return array(
     'Seld\\CliPrompt\\' => array($vendorDir . '/seld/cli-prompt/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Pelago\\' => array($vendorDir . '/pelago/emogrifier/Classes'),
+    'PDepend\\' => array($vendorDir . '/pdepend/pdepend/src/main/php/PDepend'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Magento\\Wishlist\\' => array($vendorDir . '/magento/module-wishlist'),
     'Magento\\WishlistSampleData\\' => array($vendorDir . '/magento/module-wishlist-sample-data'),
@@ -57,6 +59,7 @@ return array(
     'Magento\\Webapi\\' => array($vendorDir . '/magento/module-webapi'),
     'Magento\\WebapiSecurity\\' => array($vendorDir . '/magento/module-webapi-security'),
     'Magento\\Version\\' => array($vendorDir . '/magento/module-version'),
+    'Magento\\Vault\\' => array($vendorDir . '/magento/module-vault'),
     'Magento\\Variable\\' => array($vendorDir . '/magento/module-variable'),
     'Magento\\Usps\\' => array($vendorDir . '/magento/module-usps'),
     'Magento\\User\\' => array($vendorDir . '/magento/module-user'),
@@ -75,6 +78,7 @@ return array(
     'Magento\\TaxImportExport\\' => array($vendorDir . '/magento/module-tax-import-export'),
     'Magento\\Swatches\\' => array($vendorDir . '/magento/module-swatches'),
     'Magento\\SwatchesSampleData\\' => array($vendorDir . '/magento/module-swatches-sample-data'),
+    'Magento\\SwatchesLayeredNavigation\\' => array($vendorDir . '/magento/module-swatches-layered-navigation'),
     'Magento\\Swagger\\' => array($vendorDir . '/magento/module-swagger'),
     'Magento\\Store\\' => array($vendorDir . '/magento/module-store'),
     'Magento\\Sniffs\\' => array($baseDir . '/dev/tests/static/framework/Magento/Sniffs'),
@@ -82,6 +86,7 @@ return array(
     'Magento\\Shipping\\' => array($vendorDir . '/magento/module-shipping'),
     'Magento\\Setup\\' => array($baseDir . '/setup/src/Magento/Setup'),
     'Magento\\SendFriend\\' => array($vendorDir . '/magento/module-send-friend'),
+    'Magento\\Security\\' => array($vendorDir . '/magento/module-security'),
     'Magento\\Search\\' => array($vendorDir . '/magento/module-search'),
     'Magento\\SampleData\\' => array($vendorDir . '/magento/module-sample-data'),
     'Magento\\Sales\\' => array($vendorDir . '/magento/module-sales'),
@@ -183,4 +188,5 @@ return array(
     'Composer\\Spdx\\' => array($vendorDir . '/composer/spdx-licenses/src'),
     'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
     'Composer\\' => array($vendorDir . '/composer/composer/src/Composer'),
+    'Braintree\\' => array($vendorDir . '/braintree/braintree_php/lib/Braintree'),
 );

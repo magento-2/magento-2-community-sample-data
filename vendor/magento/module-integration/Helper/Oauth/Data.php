@@ -6,7 +6,7 @@
 namespace Magento\Integration\Helper\Oauth;
 
 /**
- * OAuth View Helper for Controllers.
+ * OAuth View Helper for Controllers
  */
 class Data
 {
@@ -56,7 +56,7 @@ class Data
     /**#@-*/
 
     /**
-     * Calculate cleanup possibility for data with lifetime property.
+     * Calculate cleanup possibility for data with lifetime property
      *
      * @return bool
      */
@@ -64,12 +64,12 @@ class Data
     {
         // Safe get cleanup probability value from system configuration
         $configValue = (int)$this->_scopeConfig->getValue(self::XML_PATH_CLEANUP_PROBABILITY);
-
         return $configValue > 0 ? 1 == \Magento\Framework\Math\Random::getRandomNumber(1, $configValue) : false;
+        
     }
 
     /**
-     * Get cleanup expiration period value from system configuration in minutes.
+     * Get cleanup expiration period value from system configuration in minutes
      *
      * @return int
      */
@@ -81,7 +81,7 @@ class Data
     }
 
     /**
-     * Get consumer expiration period value from system configuration in seconds.
+     * Get consumer expiration period value from system configuration in seconds
      *
      * @return int
      */
@@ -93,7 +93,7 @@ class Data
     }
 
     /**
-     * Get the number of consumer post maximum redirects.
+     * Get the number of consumer post maximum redirects
      *
      * @return int
      */
@@ -105,7 +105,7 @@ class Data
     }
 
     /**
-     * Get the number seconds for the consumer post timeout.
+     * Get the number seconds for the consumer post timeout
      *
      * @return int
      */

@@ -11,7 +11,10 @@ define(
     ],
     function ($) {
         'use strict';
-        var agreementsConfig = window.checkoutConfig.checkoutAgreements;
+        var checkoutConfig = window.checkoutConfig,
+            agreementsConfig = checkoutConfig ? checkoutConfig.checkoutAgreements : {},
+            agreementsInputPath = '.payment-method._active div.checkout-agreements input';
+
         return {
             /**
              * Validate checkout agreements
@@ -19,13 +22,11 @@ define(
              * @returns {boolean}
              */
             validate: function() {
-                if (!agreementsConfig.isEnabled) {
+                if (!agreementsConfig.isEnabled || $(agreementsInputPath).length == 0) {
                     return true;
                 }
 
-                var form = $('.payment-method._active form[data-role=checkout-agreements]');
-                form.validation();
-                return form.validation('isValid');
+                return $.validator.validateSingleElement(agreementsInputPath, {errorElement: 'div'});
             }
         }
     }

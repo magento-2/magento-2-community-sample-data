@@ -1,114 +1,169 @@
-2.0.9
+2.1.10
 =============
-To get detailed information about changes in Magento 2.0.9, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.0/release-notes/ReleaseNotes2.0.9CE.html "Magento Community Edition (CE) Release Notes")
+* GitHub issues:
+    * [#6718](https://github.com/magento/magento2/issues/6718) -- Custom composer modules break Component Manager (fixed in [#9692](https://github.com/magento/magento2/pull/9692))
+    * [#4170](https://github.com/magento/magento2/issues/4170) -- Magento2 Mini Cart Items Issue (fixed in [#10050](https://github.com/magento/magento2/pull/10050))
+    * [#5377](https://github.com/magento/magento2/issues/5377) -- "No items" in minicart in 2.1 (fixed in [#10050](https://github.com/magento/magento2/pull/10050))
+    * [#6999](https://github.com/magento/magento2/issues/6999) -- Performance: getConfigurableAttributes cache is broken (fixed in [#9809](https://github.com/magento/magento2/pull/9809))
+    * [#6882](https://github.com/magento/magento2/issues/6882) -- Minicart empty if FPC disabled in Magneto 2.1.1 (fixed in [#10050](https://github.com/magento/magento2/pull/10050))
+    * [#4731](https://github.com/magento/magento2/issues/4731) -- developer mode throws an exception, but production mode is good (fixed in [#9718](https://github.com/magento/magento2/pull/9718))
+    * [#7827](https://github.com/magento/magento2/issues/7827) -- DOM schema validation error (fixed in [#9718](https://github.com/magento/magento2/pull/9718))
+    * [#3872](https://github.com/magento/magento2/issues/3872) -- Slash as category URL suffix gives 404 error on all category pages (fixed in [#10164](https://github.com/magento/magento2/pull/10164))
+    * [#4660](https://github.com/magento/magento2/issues/4660) -- Multiple URLs causes duplicated content (fixed in [#10164](https://github.com/magento/magento2/pull/10164))
+    * [#4876](https://github.com/magento/magento2/issues/4876) -- Product URL Suffix "/" results in 404 error (fixed in [#10164](https://github.com/magento/magento2/pull/10164))
+    * [#8264](https://github.com/magento/magento2/issues/8264) -- Custom URL Rewrite where the request path ends with a forward slash is not matched (fixed in [#10164](https://github.com/magento/magento2/pull/10164))
+    * [#1980](https://github.com/magento/magento2/issues/1980) -- Product attributes' labels are not translated on product edit page (fixed in [#10184](https://github.com/magento/magento2/pull/10184))
+    * [#6818](https://github.com/magento/magento2/issues/6818) -- PageCache gives error "Uncaught TypeError: element.prop is not a function" when there is an iframe (fixed in [#10218](https://github.com/magento/magento2/pull/10218))
+    * [#6175](https://github.com/magento/magento2/issues/6175) -- Unable to generate unsecure URL if current URL is secure (fixed in [#10188](https://github.com/magento/magento2/pull/10188))
+    * [#5651](https://github.com/magento/magento2/issues/5651) -- Purchase date on admin screen is always *:07:00 (fixed in [#10260](https://github.com/magento/magento2/pull/10260))
+    * [#9619](https://github.com/magento/magento2/issues/9619) -- Impossible to create Text Swatch 0 (Zero) (fixed in [#10282](https://github.com/magento/magento2/pull/10282))
+    * [#10266](https://github.com/magento/magento2/issues/10266) -- Product Attributes - Size 0 (fixed in [#10282](https://github.com/magento/magento2/pull/10282))
+    * [#6622](https://github.com/magento/magento2/issues/6622) -- String wont translate: "Please enter a valid number in this field." (fixed in [#10745](https://github.com/magento/magento2/pull/10745))
+    * [#4883](https://github.com/magento/magento2/issues/4883) -- Not translated "Please enter a valid email address (Ex: johndoe@domain.com)." (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5883](https://github.com/magento/magento2/issues/5883) -- Untranslatable string "Minimum length of this field must be equal..." (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5861](https://github.com/magento/magento2/issues/5861) -- [Magento 2.1.0] Translation (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5820](https://github.com/magento/magento2/issues/5820) -- js validation messages translation not working in customer account (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5509](https://github.com/magento/magento2/issues/5509) -- Translate messages on password strength (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#6022](https://github.com/magento/magento2/issues/6022) -- Translation Issue on Magento 2.1v (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5995](https://github.com/magento/magento2/issues/5995) -- JS translation not working for some fields (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#7525](https://github.com/magento/magento2/issues/7525) -- Magento 2.1.0 Js Translations Not Working (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#9967](https://github.com/magento/magento2/issues/9967) -- Some messages in Customer Account Create not translated (fixed in [#10747](https://github.com/magento/magento2/pull/10747))
+    * [#5519](https://github.com/magento/magento2/issues/5519) -- Getting PHP Fatal Error on  getPrice()  (fixed in [#10750](https://github.com/magento/magento2/pull/10750))
+    * [#10206](https://github.com/magento/magento2/issues/10206) -- Getting PHP Fatal Error on getPrice() (fixed in [#10750](https://github.com/magento/magento2/pull/10750))
+    * [#4387](https://github.com/magento/magento2/issues/4387) -- News From Date and Design Active From is set when setting Special Price for product. (fixed in [#10751](https://github.com/magento/magento2/pull/10751))
+    * [#7448](https://github.com/magento/magento2/issues/7448) -- Can't remove "Set Product as New From" value (fixed in [#10751](https://github.com/magento/magento2/pull/10751))
+    * [#3754](https://github.com/magento/magento2/issues/3754) -- Must override at least one static content file or custom theme static content won't deploy  (fixed in [#10753](https://github.com/magento/magento2/pull/10753))
+    * [#4725](https://github.com/magento/magento2/issues/4725) -- Static files are not generated for custom theme (fixed in [#10753](https://github.com/magento/magento2/pull/10753))
+    * [#7569](https://github.com/magento/magento2/issues/7569) -- Theme with no static files won't get deployed (fixed in [#10753](https://github.com/magento/magento2/pull/10753))
+    * [#7311](https://github.com/magento/magento2/issues/7311) -- Vimeo videos in product gallery do not work over https (fixed in [#10748](https://github.com/magento/magento2/pull/10748))
+    * [#8574](https://github.com/magento/magento2/issues/8574) -- Product Gallery Vimeo Videos Don't Play Over  HTTPS (fixed in [#10748](https://github.com/magento/magento2/pull/10748))
+    * [#6081](https://github.com/magento/magento2/issues/6081) -- Broken HTML in base template file (fixed in [#10934](https://github.com/magento/magento2/pull/10934))
+    * [#10510](https://github.com/magento/magento2/issues/10510) -- Magento 2.1.8 w/Sample Data is not responsive in categories with text containers (fixed in [#10929](https://github.com/magento/magento2/pull/10929))
+    * [#10738](https://github.com/magento/magento2/issues/10738) -- Empty attribute label is displayed on product page when other language used. (fixed in [#10932](https://github.com/magento/magento2/pull/10932))
+    * [#10417](https://github.com/magento/magento2/issues/10417) -- Wysywig editor shows broken image icons (fixed in [#11309](https://github.com/magento/magento2/pull/11309))
+    * [#10007](https://github.com/magento/magento2/issues/10007) -- ProductAlert: Product alerts not showing in admin side product edit page (fixed in [#11448](https://github.com/magento/magento2/pull/11448))
+    * [#10795](https://github.com/magento/magento2/issues/10795) -- Shipping method radios have duplicate IDs on cart page (fixed in [#11456](https://github.com/magento/magento2/pull/11456))
+    * [#10231](https://github.com/magento/magento2/issues/10231) -- Custom URL Rewrite Not working (fixed in [#11469](https://github.com/magento/magento2/pull/11469))
+    * [#11207](https://github.com/magento/magento2/issues/11207) -- Shipment API won't append comment to email (fixed in [#11386](https://github.com/magento/magento2/pull/11386))
+* GitHub pull requests:
+    * [#9692](https://github.com/magento/magento2/pull/9692) -- Backport of MAGETWO-59256 for 2.1: Custom composer modules break Component Manager #6718 (by @JTimNolan)
+    * [#9809](https://github.com/magento/magento2/pull/9809) -- Fix issue #6999: Configurable attribute cache was never hit (by @thlassche)
+    * [#10050](https://github.com/magento/magento2/pull/10050) -- [2.1-backport] Customer-data is not updates after login when full page cache disabled (by @ihor-sviziev)
+    * [#10075](https://github.com/magento/magento2/pull/10075) -- Fix date format in adminhtml order grid (by @alessandroniciforo)
+    * [#9718](https://github.com/magento/magento2/pull/9718) -- ported fix from 237e54d - MAGETWO-55684: Fix XSD schema (by @pixelhed)
+    * [#10159](https://github.com/magento/magento2/pull/10159) -- Fix labels tranlation on category page (by @fernandofauth)
+    * [#10164](https://github.com/magento/magento2/pull/10164) -- [2.1-backport] Fix trailing slash used in url rewrites (by @ihor-sviziev)
+    * [#10184](https://github.com/magento/magento2/pull/10184) -- Fixed: Product attributes labels are not translated on product edit page (by @fernandofauth)
+    * [#10211](https://github.com/magento/magento2/pull/10211) -- Add clarification about deprecated methods in Abstract model (by @ihor-sviziev)
+    * [#10218](https://github.com/magento/magento2/pull/10218) -- Backport 1b55a64 to 2.1 - Fixes #6818 (by @ajpevers)
+    * [#10188](https://github.com/magento/magento2/pull/10188) -- magento/magento2:#6175 Fixed Unable to generate unsecure URL if current URL is secure (by @arshadpkm)
+    * [#10260](https://github.com/magento/magento2/pull/10260) -- Fix order date format in Orders Grid (by @ihor-sviziev)
+    * [#10282](https://github.com/magento/magento2/pull/10282) -- 2.1 - Allow to use text swatch 0 (by @ihor-sviziev)
+    * [#10482](https://github.com/magento/magento2/pull/10482) -- Updated root composer.json file with current release (by @okorshenko)
+    * [#10569](https://github.com/magento/magento2/pull/10569) -- Fix for url_rewrite on page delete via api (by @avdb)
+    * [#10695](https://github.com/magento/magento2/pull/10695) -- Fix checking active carrier against store (by @bardkalbakk)
+    * [#10714](https://github.com/magento/magento2/pull/10714) -- Bugfix - Multiple filter_url_params  (by @bardkalbakk)
+    * [#10745](https://github.com/magento/magento2/pull/10745) -- Backport of PR-5725 for Magento 2.1 - Fix translations issues in... (by @hostep)
+    * [#10747](https://github.com/magento/magento2/pull/10747) -- Backport of MAGETWO-55900 for Magento 2.1: [GitHub] Translate message… (by @hostep)
+    * [#10750](https://github.com/magento/magento2/pull/10750) -- Backport of MAGETWO-65607 for Magento 2.1: [GitHub][PR] Check return … (by @hostep)
+    * [#10751](https://github.com/magento/magento2/pull/10751) -- Backport of MAGETWO-52577 for Magento 2.1: [GitHub] Set Product as Ne… (by @hostep)
+    * [#10557](https://github.com/magento/magento2/pull/10557) -- [BUGFIX] Flat Category reindexList of AllChildren if the url_key of t… (by @lewisvoncken)
+    * [#10753](https://github.com/magento/magento2/pull/10753) -- Backport of MAGETWO-52102 for Magento 2.1: [Github] Custom theme stat… (by @hostep)
+    * [#10749](https://github.com/magento/magento2/pull/10749) -- Backport PR-9713 & PR-9711 for Magento 2.1 - Google Analytics fixes when Cookie Restrictions is enabled (by @hostep)
+    * [#10748](https://github.com/magento/magento2/pull/10748) -- Backport PR-7919 for Magento 2.1 - Using Dynamic Protocol Concatination (by @hostep)
+    * [#10934](https://github.com/magento/magento2/pull/10934) -- [Backport] Fixed unclosed span tag (by @Igloczek)
+    * [#10929](https://github.com/magento/magento2/pull/10929) -- #10510 - fix RWD with installed Sample Data (by @szafran89)
+    * [#10932](https://github.com/magento/magento2/pull/10932) -- Backport #10739 - fix for translated attribute label comparison. (by @Januszpl)
+    * [#11201](https://github.com/magento/magento2/pull/11201) -- Delete CallExit function for After plugin logic execution 2.1-develop [BackPort] (by @osrecio)
+    * [#11309](https://github.com/magento/magento2/pull/11309) -- [2.1-Develop] Fix #10417 (by @PieterCappelle)
+    * [#11448](https://github.com/magento/magento2/pull/11448) -- Show product alerts in admin product detail [backport 2.1] (by @raumatbel)
+    * [#10975](https://github.com/magento/magento2/pull/10975) -- Checkout page could hang for Javascript error (by @angelo983)
+    * [#11456](https://github.com/magento/magento2/pull/11456) -- Added carrier code to ID to distinguish shipping methods [backport 2.1] (by @peterjaap)
+    * [#11506](https://github.com/magento/magento2/pull/11506) -- [Backport-2.1] Retain additional cron history by default (by @mpchadwick)
+    * [#11361](https://github.com/magento/magento2/pull/11361) -- [Backport 2.1-develop] cron:install and cron:remove commands, support to manage multiple instances in the same crontab, based on installation directory (by @adrian-martinez-interactiv4)
+    * [#11386](https://github.com/magento/magento2/pull/11386) -- [Backport 2.1] Append shipment comment to shipment if appendComment is true (by @JeroenVanLeusden)
+    * [#11469](https://github.com/magento/magento2/pull/11469) -- FR#10231_21 Custom URL Rewrite Not working (by @mrodespin)    
 
-2.0.8
+2.1.8
 =============
-* Fixed bugs:
-    * Fixed exception when merchant resets "Product Attributes mass update" Admin form.
-    * Fixed fatal error in CLI command after compilation on some environments.
-    * Fixed duplicate URL keys on creating configurable product.
-    * Fixed issue with Magento sending emails from Admin using default configuration instead of a store-specific email address.
-    * Fixed issue with delayed session messages.
-* GitHub requests:
-    * [#3490](https://github.com/magento/magento2/pull/3490) -- Fix support for GLOB_BRACE on non-GNU Linux systems
-    * [#3018](https://github.com/magento/magento2/issues/3018) -- Magento\Sales\Model\OrderRepository::getList() is incomplete
+* GitHub issues:
+    * [#5627](https://github.com/magento/magento2/issues/5627) -- main.CRITICAL: Broken reference (Magento CE v2.1) (fixed in [#9092](https://github.com/magento/magento2/pull/9092))
+    * [#4232](https://github.com/magento/magento2/issues/4232) -- UTF-8 special character issue in widgets (fixed in [#9333](https://github.com/magento/magento2/pull/9333))
+    * [#4427](https://github.com/magento/magento2/issues/4427) -- SEO/HEAD - Meta title is null when breadcrumb section is removed via XML (fixed in [#9324](https://github.com/magento/magento2/pull/9324))
+    * [#4868](https://github.com/magento/magento2/issues/4868) -- Checkout page very large and quite slow. (fixed in [#9364](https://github.com/magento/magento2/pull/9364) and [#9365](https://github.com/magento/magento2/pull/9365))
+    * [#6997](https://github.com/magento/magento2/issues/6997) -- Remove unneeded region definitions from the /checkout page. (fixed in [#9364](https://github.com/magento/magento2/pull/9364))
+    * [#6451](https://github.com/magento/magento2/issues/6451) -- Login Popup broken on iPad portrait (fixed in [#9396](https://github.com/magento/magento2/pull/9396))
+    * [#7497](https://github.com/magento/magento2/issues/7497) -- Shipping method radios become disabled when checkout page refreshed (fixed in [#9485](https://github.com/magento/magento2/pull/9485))
+    * [#4828](https://github.com/magento/magento2/issues/4828) -- Show/hide Editor not working sometimes (fixed in [#9499](https://github.com/magento/magento2/pull/9499))
+    * [#6222](https://github.com/magento/magento2/issues/6222) -- [2.1.0] Sometimes WYSIWYG editor does not show. (fixed in [#9499](https://github.com/magento/magento2/pull/9499))
+    * [#6815](https://github.com/magento/magento2/issues/6815) -- wysiwyg Editor problem (fixed in [#9499](https://github.com/magento/magento2/pull/9499))
+    * [#6866](https://github.com/magento/magento2/issues/6866) -- Products in wishlist show $0.00 price (fixed in [#9571](https://github.com/magento/magento2/pull/9571))
+    * [#8607](https://github.com/magento/magento2/issues/8607) -- Interface constructor if present will break Magento compilation (fixed in [#9524](https://github.com/magento/magento2/pull/9524))
+    * [#5352](https://github.com/magento/magento2/issues/5352) -- Magento 2.1 email logo image function does not work (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#5916](https://github.com/magento/magento2/issues/5916) -- Magento 2.1 transactional email uploaded logo not showing in admin. (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#5633](https://github.com/magento/magento2/issues/5633) -- Magento 2.1 fails to load email_logo.png (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#6420](https://github.com/magento/magento2/issues/6420) -- New order email header logo not showing correctly v2.1 (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#6275](https://github.com/magento/magento2/issues/6275) -- Transactional Email Logo Not Getting Updated (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#6502](https://github.com/magento/magento2/issues/6502) -- Can't save Logo Image to Transactional Emails (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#7985](https://github.com/magento/magento2/issues/7985) -- Logo email (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#7853](https://github.com/magento/magento2/issues/7853) -- Transactional email logo wrong location (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#8728](https://github.com/magento/magento2/issues/8728) -- Transactional Emails Logo (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#8626](https://github.com/magento/magento2/issues/8626) -- Magento 2.1.2 - 2.1.4 email logo image function does not work (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#8489](https://github.com/magento/magento2/issues/8489) -- Magento 2.1.4 - Asking Why Email Logo Never been fixed on all Magento releases (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#8961](https://github.com/magento/magento2/issues/8961) -- email logo error (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#9118](https://github.com/magento/magento2/issues/9118) -- transactional email (fixed in [#9590](https://github.com/magento/magento2/pull/9590))
+    * [#9428](https://github.com/magento/magento2/issues/9428) -- 2.1.6 Receive 500 error when want export Low Stock Report. (fixed in [#9487](https://github.com/magento/magento2/pull/9487))
+    * [#3640](https://github.com/magento/magento2/issues/3640) -- CartItemInterface cannot add extension_attributes (fixed in [#9647](https://github.com/magento/magento2/pull/9647))
+    * [#9646](https://github.com/magento/magento2/issues/9646) -- CartTotalRepository cannot handle extension attributes in quote addresses (fixed in [#9647](https://github.com/magento/magento2/pull/9647))
+    * [#700](https://github.com/magento/magento2/issues/700) -- suggestion: revise WYSIWYG editor (fixed in [#9655](https://github.com/magento/magento2/pull/9655))
+    * [#2312](https://github.com/magento/magento2/issues/2312) -- Media Browser loses PNG transparency for the thumbnails (fixed in [#9662](https://github.com/magento/magento2/pull/9662))
+    * [#5401](https://github.com/magento/magento2/issues/5401) -- Transparency of .png image gone (fixed in [#9662](https://github.com/magento/magento2/pull/9662))
+    * [#7149](https://github.com/magento/magento2/issues/7149) -- Admin WYSIWYG upgrade to latest Tiny MCE 4.* (fixed in [#9655](https://github.com/magento/magento2/pull/9655))
+    * [#8874](https://github.com/magento/magento2/issues/8874) -- tinyMCE is disabled (fixed in [#9655](https://github.com/magento/magento2/pull/9655))
+    * [#9518](https://github.com/magento/magento2/issues/9518) -- Chrome version 58 causes problems with selections in the tinymce editor (fixed in [#9655](https://github.com/magento/magento2/pull/9655))
+    * [#7959](https://github.com/magento/magento2/issues/7959) -- JS error on product page Cannot read property 'oldPrice' of undefined (fixed in [#9776](https://github.com/magento/magento2/pull/9776))
+    * [#9679](https://github.com/magento/magento2/issues/9679) -- Translation for layered navigation attribute option not working (fixed in [#9704](https://github.com/magento/magento2/pull/9704))
+    * [#6746](https://github.com/magento/magento2/issues/6746) -- Magento 2.1.1 Problem with change currency (fixed in [#9841](https://github.com/magento/magento2/pull/9841))
+    * [#9562](https://github.com/magento/magento2/issues/9562) -- ItemZone on product detail is not set correctly when chaning products via related/upsell products list (fixed in [#9841](https://github.com/magento/magento2/pull/9841))
+    * [#7279](https://github.com/magento/magento2/issues/7279) -- Bill-to Name and Ship-to Name trancated to 20 characters in backend (fixed in [#10011](https://github.com/magento/magento2/pull/10011))
+    * [#9139](https://github.com/magento/magento2/issues/9139) -- Unable to set negative product's quantity (fixed in [#9770](https://github.com/magento/magento2/pull/9770))
+* GitHub pull requests:
+    * [#9092](https://github.com/magento/magento2/pull/9092) -- Issue #5627: main.CRITICAL: Broken reference (Magento CE v2.1) (by @malachy-mcconnnell)
+    * [#8880](https://github.com/magento/magento2/pull/8880) -- Update design_config_form.xml (by @WaPoNe)
+    * [#9332](https://github.com/magento/magento2/pull/9332) -- Backport of MAGETWO-54401 for Magento 2.1 - Unable to click "Insert image" twice (by @hostep)
+    * [#9333](https://github.com/magento/magento2/pull/9333) -- Backport of MAGETWO-52850 for Magento 2.1 - [GitHub] UTF-8 special character issue in widgets #4232 (by @hostep)
+    * [#9324](https://github.com/magento/magento2/pull/9324) -- Page meta title fix in case breadcrumb section is removed via XML (by @latenights)
+    * [#9364](https://github.com/magento/magento2/pull/9364) -- Backport of MAGETWO-59685 for Magento 2.1 - Checkout pages very slow … (by @hostep)
+    * [#9376](https://github.com/magento/magento2/pull/9376) -- Fix a bug resulting in incorrect offsets with dynamic row drag-n-drop functionality (by @navarr)
+    * [#9365](https://github.com/magento/magento2/pull/9365) -- Backport of MAGETWO-60351 for Magento 2.1 - Unnecessary disabled paym… (by @hostep)
+    * [#9396](https://github.com/magento/magento2/pull/9396) -- [2.1-backport] Fix Login Popup broken on iPad portrait (by @ihor-sviziev)
+    * [#9485](https://github.com/magento/magento2/pull/9485) -- Shipping method radios become disabled when checkout page refreshed (by @rachkulik)
+    * [#9500](https://github.com/magento/magento2/pull/9500) -- Backport of MAGETWO-54798 For Magento 2.1: One page checkout - Street Address should highlight red when data is missing (by @hostep)
+    * [#9499](https://github.com/magento/magento2/pull/9499) -- Backport of MAGETWO-57675 for Magento 2.1: WYSIWYG editor does not show. #6222 #4828 #6815 (by @hostep)
+    * [#9571](https://github.com/magento/magento2/pull/9571) -- Backport of MAGETWO-59512 for Magento 2.1: Products in wishlist show $0.00 price #6866 (by @hostep)
+    * [#9524](https://github.com/magento/magento2/pull/9524) -- magento/magento2#8607: Interface constructor if present will break Magento compilation (by @LoganayakiK)
+    * [#9590](https://github.com/magento/magento2/pull/9590) -- Backport of MAGETWO-53010 for Magento 2.1: Saving a custom transactional email logo, failed. (by @hostep)
+    * [#9487](https://github.com/magento/magento2/pull/9487) -- magento/magento2#9428: 2.1.6 Fixed 500 error while getting Low Stock Reports (by @mikebox)
+    * [#9653](https://github.com/magento/magento2/pull/9653) -- Allow X-Forwarded-For to have multiple values [2.1 backport] (by @kassner)
+    * [#9647](https://github.com/magento/magento2/pull/9647) -- Fix for #9646 (by @ekuusela)
+    * [#9662](https://github.com/magento/magento2/pull/9662) -- Keep transparency when resizing images [2.1 backport] (by @kassner)
+    * [#9661](https://github.com/magento/magento2/pull/9661) -- Add configurations for change email templates [2.1 backport] (by @kassner)
+    * [#9660](https://github.com/magento/magento2/pull/9660) -- Do not di:compile tests/ folder [2.1 backport] (by @kassner)
+    * [#9655](https://github.com/magento/magento2/pull/9655) -- Backport of MAGETWO-69152: Removed workaround for old Webkit bug in t… (by @hostep)
+    * [#9776](https://github.com/magento/magento2/pull/9776) -- #7959 - Fix for JS error on Swatch Renderer for undefined oldPrice (by @dreamworkers)
+    * [#9601](https://github.com/magento/magento2/pull/9601) -- Do not hardcode product link types [2.1 backport] (by @kassner)
+    * [#9704](https://github.com/magento/magento2/pull/9704) -- Fixes regression bug introduced in Magento 2.1.6 where the layered navigation options are sometimes being cached using the wrong store id. (by @hostep)
+    * [#9841](https://github.com/magento/magento2/pull/9841) -- Backport of MAGETWO-59089 for Magento 2.1: Magento 2.1.1 Problem with change currency (by @hostep)
+    * [#10011](https://github.com/magento/magento2/pull/10011) -- Backport 7279 to 2.1 (by @lazyguru)
+    * [#9770](https://github.com/magento/magento2/pull/9770) -- #9139 Unable to set negative product's quantity fixes commit. (by @poongud)
 
-2.0.7
+2.1.1
 =============
-* GitHub requests:
-    * [#2984](https://github.com/magento/magento2/issues/2984) -- Payment config settings not decrypted when used?
+To get detailed information about changes in Magento 2.1.1, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.1/release-notes/ReleaseNotes2.1.1CE.html "Magento Community Edition (CE) Release Notes")
 
-2.0.6
+2.1.0
 =============
-* Functional fixes:
-    * Fixed issue with Redis sessions.
-    * Fixed issue with Varnish cache on GoDaddy.
-
-* Security fixes:
-    * This release contains several security fixes. We describe each issue in detail in the Magento Security Center (https://www.magento.com/security).
-
-* Enhancements:
-    * Management of file ownership and permissions have been made more flexible.
-    * Support for using the Redis adapter to provide session storage.
-
-2.0.5
-=============
-* Fixed bugs:
-    * Fixed issue with HTML minification and comments
-    * Fixed issue with cached CAPTCHA
-    * Fixed issue with images not changing on swatches
-    * Fixed issue with admin URL being indexed in search engines
-    * Fixed issue with viewing products from shared wishlists
-    * Fixed inconsistent data during installation
-    * Fixed issue with saving custom customer attributes during checkout
-    * Fixed issue with multiple newsletter subscriptions for same email
-    * Fixed import issue for products with store code
-* GitHub requests:
-    * [#2795](https://github.com/magento/magento2/pull/2795) -- Fix Notice: Undefined property: Magento\Backend\Helper\Dashboard\Order::$_storeManager
-    * [#2989](https://github.com/magento/magento2/issues/2989) -- Custom Options not working after editing product
-* Various improvements:
-    * Improved export performance
-    * Fixed several performance issue with duplicated queries on category and CMS pages
-
-2.0.3
-=============
-* Fixed bugs:
-    * Fixed HTML escaping issue on user account
-    * Fixed fatal error during import
-    * Fixed aggregation of sales rule report data by cron
-    * Fixed an issue with showing HTML tags in messages
-    * Fixed an issue with adding product swatch attributes through the SOAP
-    * Fixed an issue with Admin Action Log archive
-    * Fixed an issue when Rule-based free shipping doesn't work
-* GitHub requests:
-    * [#2453](https://github.com/magento/magento2/issues/2453) -- Fixed an issue when long street addresses are truncated after checkout
-    * [#2628](https://github.com/magento/magento2/issues/2628) -- Fixed an issue with missing shipping data in orders API
-    * [#2852](https://github.com/magento/magento2/issues/2852) -- Fixed an issue where "magento setup:config:set" cleans data
-    * [#2957](https://github.com/magento/magento2/issues/2957) -- Fixed performance issue with products import
-    * [#3233](https://github.com/magento/magento2/issues/3233) -- Fixed an issue with arbitrary PHP code execution in phrases
-    * [#3786](https://github.com/magento/magento2/issues/3786) -- Fixed an issue with ability to brute force API access token
-* Various improvements:
-    * Fixed performance issue with swatches functionality
-    * Fixed issue with redundant requests when customer has shopping cart items
-    * Fixed several security-related issues
-
-2.0.1
-=============
-* Fixed bugs:
-    * Fixed an issue to allow deployment of sample data after running "composer create-project"
-    * Fixed an issue that made it possible for someone to edit someone else's reviews
-    * Fixed an issue that made it possible to view order details for certain orders that were created by someone else
-    * Fixed an issue where catalog price rule isn't applied to a product that is created when using Web API
-    * Fixed an issue where an empty file was uploaded to custom option
-    * Fixed an issue where minicart does not clears after completing an order via PayPal
-    * Fixed an issue plugin incorrect calls when proxy exists
-    * Fixed an issue when travis CI builds fail due to authentication
-    * Fixed an issue when custom options for configurable products were calculated incorrectly
-    * Fixed an issue with modifying a category form on store view level
-    * Fixed an issue where URL rewrites worked incorrectly for sample data
-    * Fixed an issue with BaseURL in static files
-    * Fixed an issue where a customer's custom attribute of 'file' type isn't supported by UI Form Component
-    * Fixed an issue when bin/magento setup:upgrade does not clear cache properly
-    * Fixed an issue where category creation from product page fails if Google Chrome Experiments are enabled
-    * Fixed an issue where information about the country selected in address is not presented in checkout flow
-    * Fixed an issue where customer segments prevent page from caching
-    * Fixed an issue where an imported product with replace behaviour causes an error for multi-store implementations.
-    * Fixed an issue with validation of url_key during import
-    * Fixed an issue with "Learn More" link for Payments Pro goes to Payflow Pro
-    * Fixed an issue in which a JS error appears if loading a product grid after clearing cache and static files
-* GitHub requests:
-    * [#2519](https://github.com/magento/magento2/issues/2519) -- Fixed an issue where synonyms don't work with Magento 2.0
-    * [#2675](https://github.com/magento/magento2/issues/2675) -- Fixed an issue with admin order creation when config "Include Tax In Order Total is set to yes
-    * [#2471](https://github.com/magento/magento2/issues/2471) -- Fixed an issue with incorrect prices on configurable product page when catalog prices include tax
-    * [#2674](https://github.com/magento/magento2/issues/2674) -- Fixed an issue where plugins/interceptors don't work with early stage single instance objects
-    * [#2888](https://github.com/magento/magento2/issues/2888) -- Fixed an issue where not all files are pre-compiled
-* Various improvements:
-    * Fixed performance issue on customer edit form
-    * Fixed performance issue related to swatch module
-    * Fixed several security-related issues
-    * Added support of latest USPS API
-    * Added support of PHP 7.0.2
+To get detailed information about changes in Magento 2.1.0, please visit [Magento Community Edition (CE) Release Notes](http://devdocs.magento.com/guides/v2.1/release-notes/ReleaseNotes2.1.0CE.html "Magento Community Edition (CE) Release Notes")
 
 2.0.0
 =============
@@ -220,7 +275,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
    * Added the ability of inline and bulk inline editing in data grids
 * WebApi Framework improvements:
     * Added the support for store codes in API calls
-    * Added the ability to update the Magento system to a particular version of Magento
+    * Added the ability to update the Magento system to a particular version of Magento 
     * Added the ability to enable/disable modules for Magento application
     * Added the ability to use maintenance mode
     * Introduced the common interface for Webapi payload processors
@@ -258,7 +313,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
     * Updated the extensions styles in the Web Installation Wizard
     * Added the ability to control access to the setup tool
     * Added the Install Components functionality for Web Installation Wizard
-    * Updated styles
+    * Updated styles 
 * Sample Data:
     * Improved sample data installation UX
     * Updated sample data with Product Heros, color swatches, MAP and rule based product relations
@@ -344,7 +399,7 @@ To get detailed information about changes in Magento 2.0.9, please visit [Magent
     * [#1418](https://github.com/magento/magento2/issue/1418) -- Items in minicart are not cleared after successful placing an order
     * [#1408](https://github.com/magento/magento2/issue/1408) -- Error command cli setup:static-content:deploy
     * [#1396](https://github.com/magento/magento2/issue/1396) -- Products are not shown in category right after import
-
+    
 1.0.0-beta
 =============
 * Framework improvements:
@@ -2980,7 +3035,7 @@ Tests:
   * Fixed a 404 error after saving mass update product attributes form
   * Fixed an issue when it was impossible to perform search by all tax classes on the Advanced Search page
   * Fixed an issue when attribute order for configurable product was not preserved after saving product
-  * Fixed an issue with no results for the Product Best Sellers report
+  * Fixed an issue with no results for the Product Bestsellers report
   * Fixed a fatal error when opening tax configuration page in the backend
   * Fixed an error occurring when opening the Tax Zones and Rates page in the backend
   * Fixed a 404 error occurring while searching products on the New Review page

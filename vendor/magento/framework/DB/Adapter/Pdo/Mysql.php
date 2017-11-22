@@ -17,6 +17,7 @@ use Magento\Framework\DB\ExpressionConverter;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\DB\Profiler;
 use Magento\Framework\DB\Select;
+use Magento\Framework\DB\SelectFactory;
 use Magento\Framework\DB\Statement\Parameter;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
@@ -180,6 +181,11 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
     protected $dateTime;
 
     /**
+     * @var SelectFactory
+     */
+    protected $selectFactory;
+
+    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -187,24 +193,26 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
     /**
      * @var QueryGenerator
      */
-    protected $queryGenerator;
+    private $queryGenerator;
 
     /**
-     * @param \Magento\Framework\Stdlib\StringUtils|String $string
+     * @param StringUtils $string
      * @param DateTime $dateTime
      * @param LoggerInterface $logger
+     * @param SelectFactory $selectFactory
      * @param array $config
-     * @throws \InvalidArgumentException
      */
     public function __construct(
         StringUtils $string,
         DateTime $dateTime,
         LoggerInterface $logger,
+        SelectFactory $selectFactory,
         array $config = []
     ) {
         $this->string = $string;
         $this->dateTime = $dateTime;
         $this->logger = $logger;
+        $this->selectFactory = $selectFactory;
         try {
             parent::__construct($config);
         } catch (\Zend_Db_Adapter_Exception $e) {
@@ -310,8 +318,8 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
     /**
      * Creates a PDO object and connects to the database.
      *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return void
      * @throws \Zend_Db_Adapter_Exception
@@ -337,10 +345,8 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
             list($this->_config['host'], $this->_config['port']) = explode(':', $this->_config['host']);
         }
 
-        if (defined("\\PDO::MYSQL_ATTR_MULTI_STATEMENTS")) {
-            if (!isset($this->_config['driver_options'][\PDO::MYSQL_ATTR_MULTI_STATEMENTS])) {
-                $this->_config['driver_options'][\PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
-            }
+        if (!isset($this->_config['driver_options'][\PDO::MYSQL_ATTR_MULTI_STATEMENTS])) {
+            $this->_config['driver_options'][\PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
         }
 
         $this->logger->startTimer();
@@ -508,12 +514,9 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
      */
     public function query($sql, $bind = [])
     {
-        if (strpos(rtrim($sql, " \t\n\r\0;"), ';') !== false) {
-            if ($this->isMultiQuery($sql)) {
-                throw new \Magento\Framework\Exception\LocalizedException(new Phrase('Cannot execute multiple queries'));
-            }
+        if (strpos(rtrim($sql, " \t\n\r\0;"), ';') !== false && count($this->_splitMultiQuery($sql)) > 1) {
+            throw new \Magento\Framework\Exception\LocalizedException(new Phrase('Cannot execute multiple queries'));
         }
-
         return $this->_query($sql, $bind);
     }
 
@@ -694,6 +697,8 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
      *
      * @param string $sql
      * @return array
+     *
+     * @deprecated
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -1345,7 +1350,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
      */
     public function select()
     {
-        return new Select($this);
+        return $this->selectFactory->create($this);
     }
 
     /**
@@ -2798,6 +2803,9 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
                 if (($key == 'seq') || ($key == 'sneq')) {
                     $key = $this->_transformStringSqlCondition($key, $value);
                 }
+                if (($key == 'in' || $key == 'nin') && is_string($value)) {
+                    $value = explode(',', $value);
+                }
                 $query = $this->_prepareQuotedSqlCondition($conditionKeyMap[$key], $value, $fieldName);
             } else {
                 $queries = [];
@@ -3774,11 +3782,19 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface
     }
 
     /**
-     * @param $sql
-     * @return bool
+     * Returns auto increment field if exists
+     *
+     * @param string $tableName
+     * @param string|null $schemaName
+     * @return string|bool
      */
-    private function isMultiQuery($sql)
+    public function getAutoIncrementField($tableName, $schemaName = null)
     {
-        return count($this->_splitMultiQuery(preg_replace("/(\\n)|\n|(\\t)|\t|(\\r)|\r|(\\f)|\f/", "", $sql))) > 1;
+        $indexName = $this->getPrimaryKeyName($tableName, $schemaName);
+        $indexes = $this->getIndexList($tableName);
+        if ($indexName && count($indexes[$indexName]['COLUMNS_LIST']) == 1) {
+            return current($indexes[$indexName]['COLUMNS_LIST']);
+        }
+        return false;
     }
 }

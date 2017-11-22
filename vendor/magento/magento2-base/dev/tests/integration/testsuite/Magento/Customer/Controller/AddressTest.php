@@ -6,7 +6,6 @@
 namespace Magento\Customer\Controller;
 
 use Magento\Customer\Api\AccountManagementInterface;
-use Magento\Customer\Model\CustomerRegistry;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\TestFramework\Helper\Bootstrap;
 
@@ -91,7 +90,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         );
         // we are overwriting the address coming from the fixture
         $this->dispatch('customer/address/formPost');
-        $this->getCustomerRegistry()->remove(1);
+
         $this->assertRedirect($this->stringContains('customer/address/index'));
         $this->assertSessionMessages(
             $this->equalTo(['You saved the address.']),
@@ -104,14 +103,6 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->assertEquals('Kiev', $address->getRegion()->getRegion());
         $this->assertTrue($address->isDefaultBilling());
         $this->assertTrue($address->isDefaultShipping());
-    }
-
-    /**
-     * @return CustomerRegistry
-     */
-    private function getCustomerRegistry()
-    {
-        return $this->_objectManager->get(CustomerRegistry::class);
     }
 
     /**
@@ -144,7 +135,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         );
         // we are overwriting the address coming from the fixture
         $this->dispatch('customer/address/formPost');
-        $this->getCustomerRegistry()->remove(1);
+
         $this->assertRedirect($this->stringContains('customer/address/edit'));
         $this->assertSessionMessages(
             $this->equalTo(

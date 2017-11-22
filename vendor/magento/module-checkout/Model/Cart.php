@@ -8,12 +8,13 @@ namespace Magento\Checkout\Model;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Checkout\Model\Cart\CartInterface;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\DataObject;
 
 /**
  * Shopping cart model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @deprecated 
  */
 class Cart extends DataObject implements CartInterface
 {
@@ -334,8 +335,8 @@ class Cart extends DataObject implements CartInterface
                 __('We found an invalid request for adding product to quote.')
             );
         }
-
         $this->getRequestInfoFilter()->filter($request);
+
         return $request;
     }
 

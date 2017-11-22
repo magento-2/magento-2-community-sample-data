@@ -5,6 +5,7 @@
  */
 namespace Magento\Deploy\Model;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\App\DeploymentConfig\Writer;
 use Magento\Framework\App\Filesystem\DirectoryList;
@@ -13,7 +14,7 @@ use Magento\Framework\Validator\Locale;
 use Magento\User\Model\ResourceModel\User\Collection as UserCollection;
 
 /**
- * A class to manage Magento modes
+ * Generate static files, compile; clear var/generation, var/di/, var/view_preprocessed and pub/static directories
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -48,25 +49,39 @@ class Filesystem
      */
     private $reader;
 
-    /** @var \Magento\Framework\ObjectManagerInterface */
+    /**
+     * @var \Magento\Framework\ObjectManagerInterface
+     */
     private $objectManager;
 
-    /** @var \Magento\Framework\Filesystem */
+    /**
+     * @var \Magento\Framework\Filesystem
+     */
     private $filesystem;
 
-    /** @var \Magento\Framework\App\Filesystem\DirectoryList */
+    /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
     private $directoryList;
 
-    /** @var \Magento\Framework\Filesystem\Driver\File */
+    /**
+     * @var \Magento\Framework\Filesystem\Driver\File
+     */
     private $driverFile;
 
-    /** @var \Magento\Store\Model\Config\StoreView */
+    /**
+     * @var \Magento\Store\Model\Config\StoreView
+     */
     private $storeView;
 
-    /** @var \Magento\Framework\Shell */
+    /**
+     * @var \Magento\Framework\ShellInterface
+     */
     private $shell;
 
-    /** @var  string */
+    /**
+     * @var string
+     */
     private $functionCallPath;
 
     /**
@@ -87,7 +102,7 @@ class Filesystem
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\Filesystem\Driver\File $driverFile
      * @param \Magento\Store\Model\Config\StoreView $storeView
-     * @param \Magento\Framework\Shell $shell
+     * @param \Magento\Framework\ShellInterface $shell
      * @param UserCollection|null $userCollection
      * @param Locale|null $locale
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -100,7 +115,7 @@ class Filesystem
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Magento\Framework\Filesystem\Driver\File $driverFile,
         \Magento\Store\Model\Config\StoreView $storeView,
-        \Magento\Framework\Shell $shell,
+        \Magento\Framework\ShellInterface $shell,
         UserCollection $userCollection = null,
         Locale $locale = null
     ) {
@@ -121,44 +136,44 @@ class Filesystem
     /**
      * Regenerate static
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @return void
      */
     public function regenerateStatic(
-        \Symfony\Component\Console\Output\OutputInterface $output
+        OutputInterface $output
     ) {
-        // Сlean up var/generation, var/di/, var/view_preprocessed and pub/static directories
+        // Сlear var/generation, var/di/, var/view_preprocessed and pub/static directories
         $this->cleanupFilesystem(
             [
                 DirectoryList::CACHE,
                 DirectoryList::GENERATION,
                 DirectoryList::DI,
-                DirectoryList::TMP_MATERIALIZATION_DIR,
+                DirectoryList::TMP_MATERIALIZATION_DIR
             ]
         );
-
-        // Trigger static assets compilation and deployment
-        $this->deployStaticContent($output);
+        
         // Trigger code generation
         $this->compile($output);
+        // Trigger static assets compilation and deployment
+        $this->deployStaticContent($output);
     }
 
     /**
      * Deploy static content
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @return void
      * @throws \Exception
      */
     protected function deployStaticContent(
-        \Symfony\Component\Console\Output\OutputInterface $output
+        OutputInterface $output
     ) {
-        $output->writeln('Static content deployment start');
+        $output->writeln('Starting deployment of static content');
         $cmd = $this->functionCallPath . 'setup:static-content:deploy '
             . implode(' ', $this->getUsedLocales());
 
         /**
-         * @todo build a solution that does not depend on exec
+         * @todo eliminate exec
          */
         try {
             $execOutput = $this->shell->execute($cmd);
@@ -167,22 +182,20 @@ class Filesystem
             throw $e;
         }
         $output->writeln($execOutput);
-        $output->writeln('Static content deployment complete');
+        $output->writeln('Deployment of static content complete');
     }
 
     /**
-     * Get admin user locales.
+     * Get admin user locales
      *
-     * @return array
+     * @return []string
      */
     private function getAdminUserInterfaceLocales()
     {
         $locales = [];
-
         foreach ($this->userCollection as $user) {
             $locales[] = $user->getInterfaceLocale();
         }
-
         return $locales;
     }
 
@@ -215,15 +228,15 @@ class Filesystem
     }
 
     /**
-     * Runs code multi-tenant compiler to generate code and DI information
+     * Runs compiler
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @return void
+     * @throws LocalizedException
      */
-    protected function compile(
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
-        $output->writeln('Start compilation');
+    protected function compile(OutputInterface $output)
+    {
+        $output->writeln('Starting compilation');
         $this->cleanupFilesystem(
             [
                 DirectoryList::CACHE,
@@ -231,15 +244,20 @@ class Filesystem
                 DirectoryList::DI,
             ]
         );
-        $cmd = $this->functionCallPath . 'setup:di:compile-multi-tenant';
+        $cmd = $this->functionCallPath . 'setup:di:compile';
 
         /**
          * exec command is necessary for now to isolate the autoloaders in the compiler from the memory state
          * of this process, which would prevent some classes from being generated
          *
-         * @todo build a solution that does not depend on exec
+         * @todo eliminate exec
          */
-        $execOutput = $this->shell->execute($cmd);
+        try {
+            $execOutput = $this->shell->execute($cmd);
+        } catch (LocalizedException $e) {
+            $output->writeln('Something went wrong while compiling generated code. See the error log for details.');
+            throw $e;
+        }
         $output->writeln($execOutput);
         $output->writeln('Compilation complete');
     }
@@ -285,7 +303,6 @@ class Filesystem
      * @param int $dirPermissions
      * @param int $filePermissions
      * @return void
-     *
      * @deprecated
      */
     protected function changePermissions($directoryCodeList, $dirPermissions, $filePermissions)
@@ -305,7 +322,6 @@ class Filesystem
      * Chenge permissions on static resources
      *
      * @return void
-     *
      * @deprecated
      */
     public function lockStaticResources()

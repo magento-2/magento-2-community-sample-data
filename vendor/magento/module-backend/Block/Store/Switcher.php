@@ -4,22 +4,17 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * Store switcher block
- *
- * @author     Magento Core Team <core@magentocommerce.com>
- */
 namespace Magento\Backend\Block\Store;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Store switcher block
  */
 class Switcher extends \Magento\Backend\Block\Template
 {
     /**
      * URL for store switcher hint
      */
-    const HINT_URL = 'http://www.magentocommerce.com/knowledge-base/entry/understanding-store-scopes';
+    const HINT_URL = 'http://docs.magento.com/m2/ce/user_guide/configuration/scope.html';
 
     /**
      * Name of website variable

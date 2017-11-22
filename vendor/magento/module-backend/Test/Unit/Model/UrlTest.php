@@ -6,17 +6,11 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Magento\Backend\Test\Unit\Model;
-
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Url\HostChecker;
-use Magento\Framework\Url\ParamEncoder;
-
 /**
  * Test class for \Magento\Backend\Model\Url
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+namespace Magento\Backend\Test\Unit\Model;
+
 class UrlTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -28,7 +22,6 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Mock menu model
-     *
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_menuMock;
@@ -54,7 +47,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     protected $_backendHelperMock;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_requestMock;
 
@@ -74,76 +67,81 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     protected $_encryptor;
 
     /**
-     * @var HostChecker
-     */
-    private $hostChecker;
-
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    private $objectManager;
-
-    /**
-     * @var ParamEncoder
-     */
-    private $paramEncoder;
-
-    /**
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp()
     {
         $this->_menuMock = $this->getMock(
-            \Magento\Backend\Model\Menu::class,
+            'Magento\Backend\Model\Menu',
             [],
-            [$this->getMock(\Psr\Log\LoggerInterface::class)]
+            [$this->getMock('Psr\Log\LoggerInterface')]
         );
 
-        $this->_menuConfigMock = $this->getMock(\Magento\Backend\Model\Menu\Config::class, [], [], '', false);
+        $this->_menuConfigMock = $this->getMock('Magento\Backend\Model\Menu\Config', [], [], '', false);
         $this->_menuConfigMock->expects($this->any())->method('getMenu')->will($this->returnValue($this->_menuMock));
 
         $this->_formKey = $this->getMock(
-            \Magento\Framework\Data\Form\FormKey::class,
+            'Magento\Framework\Data\Form\FormKey',
             ['getFormKey'],
             [],
             '', false
         );
         $this->_formKey->expects($this->any())->method('getFormKey')->will($this->returnValue('salt'));
 
-        $mockItem = $this->getMock(\Magento\Backend\Model\Menu\Item::class, [], [], '', false);
+        $mockItem = $this->getMock('Magento\Backend\Model\Menu\Item', [], [], '', false);
         $mockItem->expects($this->any())->method('isDisabled')->will($this->returnValue(false));
         $mockItem->expects($this->any())->method('isAllowed')->will($this->returnValue(true));
-        $mockItem->expects($this->any())->method('getId')->will(
+        $mockItem->expects(
+            $this->any()
+        )->method(
+            'getId'
+        )->will(
             $this->returnValue('Magento_Backend::system_acl_roles')
         );
         $mockItem->expects($this->any())->method('getAction')->will($this->returnValue('adminhtml/user_role'));
 
-        $this->_menuMock->expects($this->any())->method('get')->with(
+        $this->_menuMock->expects(
+            $this->any()
+        )->method(
+            'get'
+        )->with(
             $this->equalTo('Magento_Backend::system_acl_roles')
-        )->will($this->returnValue($mockItem));
+        )->will(
+            $this->returnValue($mockItem)
+        );
 
-        $helperMock = $this->getMock(\Magento\Backend\Helper\Data::class, [], [], '', false);
-        $helperMock->expects($this->any())->method('getAreaFrontName')->will(
+        $helperMock = $this->getMock('Magento\Backend\Helper\Data', [], [], '', false);
+        $helperMock->expects(
+            $this->any()
+        )->method(
+            'getAreaFrontName'
+        )->will(
             $this->returnValue($this->_areaFrontName)
         );
-        $this->_scopeConfigMock = $this->getMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->_scopeConfigMock->expects($this->any())->method('getValue')->with(
+        $this->_scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->_scopeConfigMock->expects(
+            $this->any()
+        )->method(
+            'getValue'
+        )->with(
             \Magento\Backend\Model\Url::XML_PATH_STARTUP_MENU_ITEM
-        )->will($this->returnValue('Magento_Backend::system_acl_roles'));
+        )->will(
+            $this->returnValue('Magento_Backend::system_acl_roles')
+        );
 
         $this->_authSessionMock = $this->getMock(
-            \Magento\Backend\Model\Auth\Session::class,
+            'Magento\Backend\Model\Auth\Session',
             [],
             [],
             '',
             false,
             false
         );
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_encryptor = $this->getMock(\Magento\Framework\Encryption\Encryptor::class, null, [], '', false);
+        $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->_encryptor = $this->getMock('Magento\Framework\Encryption\Encryptor', null, [], '', false);
         $this->_paramsResolverMock = $this->getMock(
-            \Magento\Framework\Url\RouteParamsResolverFactory::class,
+            'Magento\Framework\Url\RouteParamsResolverFactory',
             [],
             [],
             '',
@@ -155,60 +153,53 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             'create'
         )->will(
             $this->returnValue(
-                $this->getMock(\Magento\Framework\Url\RouteParamsResolver::class, [], [], '', false)
+                $this->getMock('Magento\Framework\Url\RouteParamsResolver', [], [], '', false)
             )
         );
-
-        $this->hostChecker = $this->getMockBuilder(HostChecker::class)
-            ->setMethods(['isOwnOrigin'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paramEncoder = $this->objectManager->getObject(ParamEncoder::class);
-
-        /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $objectManagerMock */
-        $objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->setMethods(['get'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $objectManagerMock->expects(self::at(0))->method('get')->with(HostChecker::class)
-            ->willReturn($this->hostChecker);
-
-        $objectManagerMock->expects(self::at(1))->method('get')->with(ParamEncoder::class)
-            ->willReturn($this->paramEncoder);
-
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
-
-        $this->_model = $this->objectManager->getObject(
-            \Magento\Backend\Model\Url::class,
+        $this->_model = $helper->getObject(
+            'Magento\Backend\Model\Url',
             [
-                'scopeConfig'                => $this->_scopeConfigMock,
-                'backendHelper'              => $helperMock,
-                'formKey'                    => $this->_formKey,
-                'menuConfig'                 => $this->_menuConfigMock,
-                'authSession'                => $this->_authSessionMock,
-                'encryptor'                  => $this->_encryptor,
-                'routeParamsResolverFactory' => $this->_paramsResolverMock,
+                'scopeConfig' => $this->_scopeConfigMock,
+                'backendHelper' => $helperMock,
+                'formKey' => $this->_formKey,
+                'menuConfig' => $this->_menuConfigMock,
+                'authSession' => $this->_authSessionMock,
+                'encryptor' => $this->_encryptor,
+                'routeParamsResolverFactory' => $this->_paramsResolverMock
             ]
         );
-        $this->_paramsResolverMock->expects($this->any())->method('create')
-            ->will($this->returnValue(
-                $this->getMock(\Magento\Framework\Url\RouteParamsResolver::class, [], [], '', false)
+        $this->_paramsResolverMock->expects(
+            $this->any()
+        )->method(
+            'create'
+        )->will(
+            $this->returnValue(
+                $this->getMock('Magento\Framework\Url\RouteParamsResolver', [], [], '', false)
             )
         );
+        $this->_model = $helper->getObject(
+            'Magento\Backend\Model\Url',
+            [
+                'scopeConfig' => $this->_scopeConfigMock,
+                'backendHelper' => $helperMock,
+                'formKey' => $this->_formKey,
+                'menuConfig' => $this->_menuConfigMock,
+                'authSession' => $this->_authSessionMock,
+                'encryptor' => $this->_encryptor,
+                'routeParamsResolverFactory' => $this->_paramsResolverMock
+            ]
+        );
 
-        $this->_requestMock = $this->getMock(\Magento\Framework\App\Request\Http::class, [], [], '', false);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
         $this->_model->setRequest($this->_requestMock);
     }
 
     public function testFindFirstAvailableMenuDenied()
     {
-        $user = $this->getMock(\Magento\User\Model\User::class, [], [], '', false);
+        $user = $this->getMock('Magento\User\Model\User', [], [], '', false);
         $user->expects($this->once())->method('setHasAvailableResources')->with($this->equalTo(false));
-        /** @var \Magento\Backend\Model\Auth\Session|\PHPUnit_Framework_MockObject_MockObject $mockSession */
         $mockSession = $this->getMock(
-            \Magento\Backend\Model\Auth\Session::class,
+            'Magento\Backend\Model\Auth\Session',
             ['getUser', 'isAllowed'],
             [],
             '',
@@ -226,10 +217,9 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     public function testFindFirstAvailableMenu()
     {
-        $user = $this->getMock(\Magento\User\Model\User::class, [], [], '', false);
-        /** @var  \Magento\Backend\Model\Auth\Session|\PHPUnit_Framework_MockObject_MockObject $mockSession */
+        $user = $this->getMock('Magento\User\Model\User', [], [], '', false);
         $mockSession = $this->getMock(
-            \Magento\Backend\Model\Auth\Session::class,
+            'Magento\Backend\Model\Auth\Session',
             ['getUser', 'isAllowed'],
             [],
             '',
@@ -240,7 +230,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
         $this->_model->setSession($mockSession);
 
-        $itemMock = $this->getMock(\Magento\Backend\Model\Menu\Item::class, [], [], '', false);
+        $itemMock = $this->getMock('Magento\Backend\Model\Menu\Item', [], [], '', false);
         $itemMock->expects($this->once())->method('getAction')->will($this->returnValue('adminhtml/user'));
         $this->_menuMock->expects($this->any())->method('getFirstAvailable')->will($this->returnValue($itemMock));
 
@@ -254,17 +244,21 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAreaFrontName()
     {
-        $helperMock = $this->getMock(\Magento\Backend\Helper\Data::class, [], [], '', false);
-        $helperMock->expects($this->once())->method('getAreaFrontName')->will(
+        $helperMock = $this->getMock('Magento\Backend\Helper\Data', [], [], '', false);
+        $helperMock->expects(
+            $this->once()
+        )->method(
+            'getAreaFrontName'
+        )->will(
             $this->returnValue($this->_areaFrontName)
         );
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $urlModel = $helper->getObject(
-            \Magento\Backend\Model\Url::class,
+            'Magento\Backend\Model\Url',
             [
-                'backendHelper'              => $helperMock,
-                'authSession'                => $this->_authSessionMock,
+                'backendHelper' => $helperMock,
+                'authSession' => $this->_authSessionMock,
                 'routeParamsResolverFactory' => $this->_paramsResolverMock
             ]
         );
@@ -316,11 +310,19 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
         $keyFromParams = $this->_model->getSecretKey($routeName, $controllerName, $actionName);
 
-        $this->_requestMock->expects($this->exactly(3))->method('getBeforeForwardInfo')->will(
+        $this->_requestMock->expects(
+            $this->exactly(3)
+        )->method(
+            'getBeforeForwardInfo'
+        )->will(
             $this->returnValue(null)
         );
         $this->_requestMock->expects($this->once())->method('getRouteName')->will($this->returnValue($routeName));
-        $this->_requestMock->expects($this->once())->method('getControllerName')->will(
+        $this->_requestMock->expects(
+            $this->once()
+        )->method(
+            'getControllerName'
+        )->will(
             $this->returnValue($controllerName)
         );
         $this->_requestMock->expects($this->once())->method('getActionName')->will($this->returnValue($actionName));
@@ -341,27 +343,63 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
         $keyFromParams = $this->_model->getSecretKey($routeName, $controllerName, $actionName);
 
-        $this->_requestMock->expects($this->at(0))->method('getBeforeForwardInfo')->with('route_name')->will(
+        $this->_requestMock->expects(
+            $this->at(0)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'route_name'
+        )->will(
             $this->returnValue('adminhtml')
         );
 
-        $this->_requestMock->expects($this->at(1))->method('getBeforeForwardInfo')->with('route_name')->will(
+        $this->_requestMock->expects(
+            $this->at(1)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'route_name'
+        )->will(
             $this->returnValue('adminhtml')
         );
 
-        $this->_requestMock->expects($this->at(2))->method('getBeforeForwardInfo')->with('controller_name')->will(
+        $this->_requestMock->expects(
+            $this->at(2)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'controller_name'
+        )->will(
             $this->returnValue('catalog')
         );
 
-        $this->_requestMock->expects($this->at(3))->method('getBeforeForwardInfo')->with('controller_name')->will(
+        $this->_requestMock->expects(
+            $this->at(3)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'controller_name'
+        )->will(
             $this->returnValue('catalog')
         );
 
-        $this->_requestMock->expects($this->at(4))->method('getBeforeForwardInfo')->with('action_name')->will(
+        $this->_requestMock->expects(
+            $this->at(4)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'action_name'
+        )->will(
             $this->returnValue('index')
         );
 
-        $this->_requestMock->expects($this->at(5))->method('getBeforeForwardInfo')->with('action_name')->will(
+        $this->_requestMock->expects(
+            $this->at(5)
+        )->method(
+            'getBeforeForwardInfo'
+        )->with(
+            'action_name'
+        )->will(
             $this->returnValue('index')
         );
 
@@ -374,17 +412,5 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     {
         $routePath = 'https://localhost/index.php/catalog/product/view/id/100/?foo=bar#anchor';
         static::assertEquals($routePath, $this->_model->getUrl($routePath));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function tearDown()
-    {
-        // reset ObjectManager instance.
-        $reflection = new \ReflectionClass(\Magento\Framework\App\ObjectManager::class);
-        $reflectionProperty = $reflection->getProperty('_instance');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue(null, null);
     }
 }

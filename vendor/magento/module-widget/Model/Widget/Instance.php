@@ -243,7 +243,14 @@ class Instance extends \Magento\Framework\Model\AbstractModel
         }
 
         $parameters = $this->getData('widget_parameters');
-        if (!is_array($parameters)) {
+        if (is_array($parameters)) {
+            if (array_key_exists('show_pager', $parameters) && !array_key_exists('page_var_name', $parameters)) {
+                $parameters['page_var_name'] = 'p' . $this->mathRandom->getRandomString(
+                    5,
+                    \Magento\Framework\Math\Random::CHARS_LOWERS
+                );
+            }
+        } else {
             $this->setData('widget_parameters', []);
             $errorMessage = sprintf(
                 'Expecting widget parameters to be an array, but received %s',
@@ -251,7 +258,6 @@ class Instance extends \Magento\Framework\Model\AbstractModel
             );
             $this->_logger->error($errorMessage);
         }
-
         $this->setData('page_groups', $tmpPageGroups);
         $this->setData('page_group_ids', $pageGroupIds);
 
@@ -364,7 +370,8 @@ class Instance extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * Getter to retrieve widget_parameters
+     * Getter
+     * Unserialize if serialized string setted
      *
      * @return array
      */

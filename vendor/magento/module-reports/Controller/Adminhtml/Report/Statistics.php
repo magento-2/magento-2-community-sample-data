@@ -17,7 +17,9 @@ use Magento\Backend\Model\Session;
 abstract class Statistics extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Reports::statistics';
 

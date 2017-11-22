@@ -16,7 +16,7 @@ define(
         'Magento_Checkout/js/model/payment/method-converter',
         'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/model/checkout-data-resolver',
-        'mage/translate',
+        'mage/translate'
     ],
     function (
         $,

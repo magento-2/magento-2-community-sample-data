@@ -8,7 +8,6 @@ namespace Magento\Framework\View\Test\Unit\Asset\MergeStrategy;
 use \Magento\Framework\View\Asset\MergeStrategy\Checksum;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\View\Asset\Source;
 
 class ChecksumTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,23 +32,16 @@ class ChecksumTest extends \PHPUnit_Framework_TestCase
     private $resultAsset;
 
     /**
-     * @var Source|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $assetSource;
-
-    /**
      * @var \Magento\Framework\View\Asset\MergeStrategy\Checksum
      */
     private $checksum;
 
     protected function setUp()
     {
-        $this->mergerMock = $this->getMockForAbstractClass(\Magento\Framework\View\Asset\MergeStrategyInterface::class);
-        $this->sourceDir = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
-        $this->targetDir = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
-        $filesystem = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
+        $this->mergerMock = $this->getMockForAbstractClass('\Magento\Framework\View\Asset\MergeStrategyInterface');
+        $this->sourceDir = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\ReadInterface');
+        $this->targetDir = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\WriteInterface');
+        $filesystem = $this->getMock('\Magento\Framework\Filesystem', [], [], '', false);
         $filesystem->expects($this->once())
             ->method('getDirectoryRead')
             ->with(DirectoryList::ROOT)
@@ -59,16 +51,7 @@ class ChecksumTest extends \PHPUnit_Framework_TestCase
             ->with(DirectoryList::STATIC_VIEW)
             ->will($this->returnValue($this->targetDir));
         $this->checksum = new Checksum($this->mergerMock, $filesystem);
-        $this->assetSource = $this->getMockBuilder(Source::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflection = new \ReflectionClass(Checksum::class);
-        $reflectionProperty = $reflection->getProperty('assetSource');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->checksum, $this->assetSource);
-
-        $this->resultAsset = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
+        $this->resultAsset = $this->getMock('\Magento\Framework\View\Asset\File', [], [], '', false);
     }
 
     public function testMergeNoAssets()
@@ -128,18 +111,10 @@ class ChecksumTest extends \PHPUnit_Framework_TestCase
      */
     private function getAssetsToMerge()
     {
-        $one = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
-        $two = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
-        $one->expects($this->never())
-            ->method('getSourceFile');
-        $two->expects($this->never())
-            ->method('getSourceFile');
-
-        $this->assetSource->expects($this->exactly(2))
-            ->method('findSource')
-            ->withConsecutive([$one], [$two])
-            ->willReturnOnConsecutiveCalls('/dir/file/one.txt', '/dir/file/two.txt');
-
+        $one = $this->getMock('\Magento\Framework\View\Asset\File', [], [], '', false);
+        $one->expects($this->once())->method('getSourceFile')->will($this->returnValue('/dir/file/one.txt'));
+        $two = $this->getMock('\Magento\Framework\View\Asset\File', [], [], '', false);
+        $two->expects($this->once())->method('getSourceFile')->will($this->returnValue('/dir/file/two.txt'));
         $this->sourceDir->expects($this->exactly(2))
             ->method('getRelativePath')
             ->will($this->onConsecutiveCalls('file/one.txt', 'file/two.txt'));

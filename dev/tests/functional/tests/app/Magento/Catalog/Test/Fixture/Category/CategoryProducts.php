@@ -41,11 +41,6 @@ class CategoryProducts extends DataSource
                 $this->data[] = $product->getName();
                 $this->products[] = $product;
             }
-        } else if (isset($data['products']) && is_array($data['products'])) {
-            foreach ($data['products'] as $product) {
-                $this->data[] = $product->getName();
-                $this->products[] = $product;
-            }
         }
     }
 

@@ -14,7 +14,9 @@ use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\ImportExport\Model\Import;
 
 /**
- * Test for Magento\ConfigurableImportExport\Model\Export\RowCustomizer
+ * Tests \Magento\ConfigurableImportExport\Model\Export\RowCustomizer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RowCustomizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -175,11 +177,6 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * Init Configurable Data
-     * 
-     * @return void
-     */
     private function initConfigurableData()
     {
         $productIds = [1, 2, 3];

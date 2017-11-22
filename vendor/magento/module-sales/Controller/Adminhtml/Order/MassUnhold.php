@@ -68,7 +68,6 @@ class MassUnhold extends AbstractMassAction
         }
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath($this->getComponentRefererUrl());
-
         return $resultRedirect;
     }
 }

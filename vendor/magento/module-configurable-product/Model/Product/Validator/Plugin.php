@@ -69,8 +69,7 @@ class Plugin
             $product->setTypeId(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
         }
         $result = $proceed($product, $request, $response);
-        $variationProducts = $request->getPost('configurable-matrix-serialized', '[]');
-        $variationProducts = json_decode($variationProducts, true);
+        $variationProducts = (array)$request->getPost('variations-matrix');
         if ($variationProducts) {
             $validationResult = $this->_validateProductVariations($product, $variationProducts, $request);
             if (!empty($validationResult)) {

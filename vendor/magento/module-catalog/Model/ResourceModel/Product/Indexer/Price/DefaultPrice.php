@@ -247,16 +247,19 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
     }
 
     /**
-     * Get select by entity ids or/and product type.
+     * Forms Select for collecting price related data for final price index table
+     * Next types of prices took into account: default, special, tier price
+     * Moved to protected for possible reusing
      *
-     * @param int|array $entityIds the entity ids limitation
-     * @param string|null $type product type, all if null
+     * @param int|array $entityIds Ids for filtering output result
+     * @param string|null $type Type for filtering output result by specified product type (all if null)
      * @return \Magento\Framework\DB\Select
      * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function getSelect($entityIds = null, $type = null)
     {
+        $metadata = $this->getMetadataPool()->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class);
         $connection = $this->getConnection();
         $select = $connection->select()->from(
             ['e' => $this->getTable('catalog_product_entity')],
@@ -301,18 +304,50 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
             '=?',
             \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
         );
-        $this->_addAttributeToSelect($select, 'status', 'e.entity_id', 'cs.store_id', $statusCond, true);
+        $this->_addAttributeToSelect(
+            $select,
+            'status',
+            'e.' . $metadata->getLinkField(),
+            'cs.store_id',
+            $statusCond,
+            true
+        );
         if ($this->moduleManager->isEnabled('Magento_Tax')) {
-            $taxClassId = $this->_addAttributeToSelect($select, 'tax_class_id', 'e.entity_id', 'cs.store_id');
+            $taxClassId = $this->_addAttributeToSelect(
+                $select,
+                'tax_class_id',
+                'e.' . $metadata->getLinkField(),
+                'cs.store_id'
+            );
         } else {
             $taxClassId = new \Zend_Db_Expr('0');
         }
         $select->columns(['tax_class_id' => $taxClassId]);
 
-        $price = $this->_addAttributeToSelect($select, 'price', 'e.entity_id', 'cs.store_id');
-        $specialPrice = $this->_addAttributeToSelect($select, 'special_price', 'e.entity_id', 'cs.store_id');
-        $specialFrom = $this->_addAttributeToSelect($select, 'special_from_date', 'e.entity_id', 'cs.store_id');
-        $specialTo = $this->_addAttributeToSelect($select, 'special_to_date', 'e.entity_id', 'cs.store_id');
+        $price = $this->_addAttributeToSelect(
+            $select,
+            'price',
+            'e.' . $metadata->getLinkField(),
+            'cs.store_id'
+        );
+        $specialPrice = $this->_addAttributeToSelect(
+            $select,
+            'special_price',
+            'e.' . $metadata->getLinkField(),
+            'cs.store_id'
+        );
+        $specialFrom = $this->_addAttributeToSelect(
+            $select,
+            'special_from_date',
+            'e.' . $metadata->getLinkField(),
+            'cs.store_id'
+        );
+        $specialTo = $this->_addAttributeToSelect(
+            $select,
+            'special_to_date',
+            'e.' . $metadata->getLinkField(),
+            'cs.store_id'
+        );
         $currentDate = $connection->getDatePartSql('cwd.website_date');
 
         $specialFromDate = $connection->getDatePartSql($specialFrom);
@@ -352,10 +387,9 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
                 'select' => $select,
                 'entity_field' => new \Zend_Db_Expr('e.entity_id'),
                 'website_field' => new \Zend_Db_Expr('cw.website_id'),
-                'store_field' => new \Zend_Db_Expr('cs.store_id')
+                'store_field' => new \Zend_Db_Expr('cs.store_id'),
             ]
         );
-
         return $select;
     }
 

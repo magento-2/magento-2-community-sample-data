@@ -299,14 +299,14 @@ class Column extends Widget
      * Validate frame callback.
      *
      * @param array $callback
-     * @return void
      * @throws \InvalidArgumentException
+     * @return void
      */
     private function validateFrameCallback(array $callback)
     {
         if (!is_object($callback[0]) || !$callback[0] instanceof Widget) {
             throw new \InvalidArgumentException(
-                "Frame callback host must be instance of " . Widget::class
+                "Frame callback host must be instance of " . \Magento\Backend\Block\Widget::class
             );
         }
     }

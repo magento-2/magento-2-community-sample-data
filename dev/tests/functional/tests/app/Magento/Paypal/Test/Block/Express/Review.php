@@ -35,6 +35,7 @@ class Review extends AbstractReview
             \Magento\Paypal\Test\Block\Express\Review\ShippingoptgroupElement::class
         );
         $shippingElement->setValue($shippingMethod['shipping_service'] . '/' . $shippingMethod['shipping_method']);
+        $this->waitForElementNotVisible('#review-please-wait');
     }
 
     /**

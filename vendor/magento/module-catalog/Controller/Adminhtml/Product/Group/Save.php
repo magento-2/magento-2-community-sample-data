@@ -9,7 +9,9 @@ namespace Magento\Catalog\Controller\Adminhtml\Product\Group;
 class Save extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Catalog::products';
 
@@ -18,7 +20,7 @@ class Save extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $model = $this->_objectManager->create(\Magento\Eav\Model\Entity\Attribute\Group::class);
+        $model = $this->_objectManager->create('Magento\Eav\Model\Entity\Attribute\Group');
 
         $model->setAttributeGroupName(
             $this->getRequest()->getParam('attribute_group_name')

@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
 use Symfony\Component\DependencyInjection\Compiler\RepeatedPass;
 use Symfony\Component\DependencyInjection\Compiler\RemoveUnusedDefinitionsPass;
@@ -19,7 +18,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class RemoveUnusedDefinitionsPassTest extends TestCase
+class RemoveUnusedDefinitionsPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {

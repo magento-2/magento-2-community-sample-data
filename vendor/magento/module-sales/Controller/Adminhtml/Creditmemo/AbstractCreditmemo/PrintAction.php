@@ -12,7 +12,9 @@ use Magento\Sales\Api\CreditmemoRepositoryInterface;
 class PrintAction extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_creditmemo';
 

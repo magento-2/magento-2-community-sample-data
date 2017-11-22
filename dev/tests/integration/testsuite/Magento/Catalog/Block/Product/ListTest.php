@@ -20,25 +20,25 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\App\State::class)
+        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\App\State')
             ->setAreaCode('frontend');
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
     }
 
     public function testGetLayer()
     {
-        $this->assertInstanceOf(\Magento\Catalog\Model\Layer::class, $this->_block->getLayer());
+        $this->assertInstanceOf('Magento\Catalog\Model\Layer', $this->_block->getLayer());
     }
 
     public function testGetLoadedProductCollection()
     {
         $this->_block->setShowRootCategory(true);
         $collection = $this->_block->getLoadedProductCollection();
-        $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, $collection);
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Product\Collection', $collection);
         /* Check that root category was defined for Layer as current */
         $this->assertEquals(2, $this->_block->getLayer()->getCurrentCategory()->getId());
     }
@@ -52,40 +52,17 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testToolbarCoverage()
     {
         /** @var $parent \Magento\Catalog\Block\Product\ListProduct */
-        $parent = $this->_getLayout()->createBlock(\Magento\Catalog\Block\Product\ListProduct::class, 'parent');
+        $parent = $this->_getLayout()->createBlock('Magento\Catalog\Block\Product\ListProduct', 'parent');
 
         /* Prepare toolbar block */
         $toolbar = $parent->getToolbarBlock();
-        $this->assertInstanceOf(\Magento\Catalog\Block\Product\ProductList\Toolbar::class, $toolbar, 'Default Toolbar');
+        $this->assertInstanceOf('Magento\Catalog\Block\Product\ProductList\Toolbar', $toolbar, 'Default Toolbar');
 
         $parent->setChild('toolbar', $toolbar);
         /* In order to initialize toolbar collection block toHtml should be called before toolbar toHtml */
         $this->assertEmpty($parent->toHtml(), 'Block HTML'); /* Template not specified */
         $this->assertEquals('grid', $parent->getMode(), 'Default Mode'); /* default mode */
         $this->assertNotEmpty($parent->getToolbarHtml(), 'Toolbar HTML'); /* toolbar for one simple product */
-    }
-
-    /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple_search_visibility.php
-     * @covers \Magento\Catalog\Block\Product\ListProduct::toHtml
-     */
-    public function testToolbarCoverageWithSearchOnlyProducts()
-    {
-        /** @var $parent \Magento\Catalog\Block\Product\ListProduct */
-        $parent = $this->_getLayout()->createBlock(\Magento\Catalog\Block\Product\ListProduct::class, 'productList');
-
-        /* Prepare toolbar block */
-        $toolbar = $parent->getToolbarBlock();
-
-        $parent->setChild('toolbar', $toolbar);
-        /* In order to initialize toolbar collection block toHtml should be called */
-        $this->assertEmpty($parent->toHtml(), 'Block HTML'); /* Template not specified */
-        $this->assertEquals(
-            1,
-            $parent->getLoadedProductCollection()->getSize(),
-            'Search only products are invisible in catalog'
-        ); /* Search only products are invisible in catalog*/
     }
 
     public function testGetAdditionalHtmlEmpty()
@@ -98,9 +75,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
     {
         $layout = $this->_getLayout();
         /** @var $parent \Magento\Catalog\Block\Product\ListProduct */
-        $parent = $layout->createBlock(\Magento\Catalog\Block\Product\ListProduct::class);
+        $parent = $layout->createBlock('Magento\Catalog\Block\Product\ListProduct');
         $childBlock = $layout->createBlock(
-            \Magento\Framework\View\Element\Text::class,
+            'Magento\Framework\View\Element\Text',
             'test',
             ['data' => ['text' => 'test']]
         );
@@ -125,7 +102,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     {
         /** @var $category \Magento\Catalog\Model\Category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $category->setDefaultSortBy('name');
         $this->_block->prepareSortableFieldsByCategory($category);
@@ -135,7 +112,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     protected function _getLayout()
     {
         return \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
     }
 }

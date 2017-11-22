@@ -35,6 +35,10 @@ $createDateStore = $block->getStoreCreateDate();
         </tr>
         <?php endif; ?>
         <tr>
+            <th><?php echo $block->escapeHtml(__('Account Lock:')) ?></th>
+            <td><?php echo $block->escapeHtml($block->getAccountLock()) ?></td>
+        </tr>
+        <tr>
             <th><?php echo $block->escapeHtml(__('Confirmed email:')) ?></th>
             <td><?php echo $block->escapeHtml($block->getIsConfirmedStatus()) ?></td>
         </tr>
@@ -54,7 +58,7 @@ $createDateStore = $block->getStoreCreateDate();
         </tr>
         <tr>
             <th><?php echo $block->escapeHtml(__('Customer Group:')) ?></th>
-            <td><?php echo $block->escapeHtml($block->getGroupName()) ?><td>
+            <td><?php echo $block->escapeHtml($block->getGroupName()) ?></td>
         </tr>
         </tbody>
     </table>

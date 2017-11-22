@@ -15,7 +15,9 @@ use Magento\Framework\Registry;
 abstract class Rating extends Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Review::ratings';
 

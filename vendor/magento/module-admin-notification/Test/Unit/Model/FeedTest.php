@@ -100,9 +100,12 @@ class FeedTest extends \PHPUnit_Framework_TestCase
 
         $this->deploymentConfig = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig::class)
             ->disableOriginalConstructor()->getMock();
+
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->productMetadata = $this->getMock(\Magento\Framework\App\ProductMetadata::class);
+        $this->productMetadata = $this->getMockBuilder(\Magento\Framework\App\ProductMetadata::class)
+            ->disableOriginalConstructor()->getMock();
+
         $this->urlBuilder = $this->getMock(\Magento\Framework\UrlInterface::class);
 
         $this->feed = $this->objectManagerHelper->getObject(

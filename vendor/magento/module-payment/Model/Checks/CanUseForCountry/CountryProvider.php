@@ -5,8 +5,9 @@
  */
 namespace Magento\Payment\Model\Checks\CanUseForCountry;
 
-use Magento\Quote\Model\Quote;
 use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Address;
 
 class CountryProvider
 {
@@ -27,7 +28,8 @@ class CountryProvider
      * Get payment country
      *
      * @param Quote $quote
-     * @return int
+     *
+     * @return string
      */
     public function getCountry(Quote $quote)
     {

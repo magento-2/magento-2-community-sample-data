@@ -218,31 +218,13 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
         $incrementId = isset($cookieData[1]) ? $cookieData[1] : null;
         if (!empty($protectCode) && !empty($incrementId)) {
             $order = $this->getOrderRecord($incrementId);
-            if ($this->hash_equals((string)$order->getProtectCode(), $protectCode)) {
+            if (hash_equals((string)$order->getProtectCode(), $protectCode)) {
                 $this->setGuestViewCookie($fromCookie);
 
                 return $order;
             }
         }
         throw new InputException(__($this->inputExceptionMessage));
-    }
-
-    /**
-     * hash_equals alternative for PHP 5.5
-     *
-     * @param $str1
-     * @param $str2
-     * @return bool
-     */
-    private function hash_equals($str1, $str2)
-    {
-        if(function_exists('hash_equals')) {
-            $result = hash_equals($str1, $str2);
-        } else {
-            $result = (string)$str1 === (string)$str2;
-        }
-
-        return $result;
     }
 
     /**

@@ -7,34 +7,33 @@
 // @codingStandardsIgnoreFile
 
 /**
-USAGE:
-
-Simple:
-
-<?php
-echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Name')
-     ->setObject($block->getAddress())
-     ->toHtml()
-?>
-
-For checkout/onepage/shipping.phtml:
-
-<?php
-echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Name')
-     ->setObject($block->getAddress())
-     ->setFieldIdFormat('shipping:%s')
-     ->setFieldNameFormat('shipping[%s]')
-     ->setFieldParams('onchange="shipping.setSameAsBilling(false);"')
-     ->toHtml()
-?>
-*/
-/* @var \Magento\Customer\Block\Widget\Name $block */
+ * USAGE:
+ *
+ * Simple:
+ *
+ * <?php
+ * echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Name')
+ *      ->setObject($block->getAddress())
+ *      ->toHtml()
+ * ?>
+ *
+ * For checkout/onepage/shipping.phtml:
+ *
+ * <?php
+ * echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Name')
+ *      ->setObject($block->getAddress())
+ *      ->setFieldIdFormat('shipping:%s')
+ *      ->setFieldNameFormat('shipping[%s]')
+ *      ->setFieldParams('onchange="shipping.setSameAsBilling(false);"')
+ *      ->toHtml()
+ * ?>
+ */
+/* @var $block \Magento\Customer\Block\Widget\Name */
 $prefix = $block->showPrefix();
 $middle = $block->showMiddlename();
 $suffix = $block->showSuffix();
 ?>
-
-<?php if ($prefix || $middle || $suffix && !$block->getNoWrap()): ?>
+<?php if (($prefix || $middle || $suffix) && !$block->getNoWrap()): ?>
 <div class="field required fullname <?= $this->helper(\Magento\Framework\EscapeHelper::class)->escapeHtmlAttr($block->getContainerClassName()) ?>">
     <label for="<?= $this->helper(\Magento\Framework\EscapeHelper::class)->escapeHtmlAttr($block->getFieldId('firstname')) ?>" class="label">
         <span><?= $block->escapeHtml(__('Name')) ?></span>
@@ -143,7 +142,7 @@ $suffix = $block->showSuffix();
         </div>
     <?php endif; ?>
 
-    <?php if ($prefix || $middle || $suffix && !$block->getNoWrap()): ?>
+    <?php if (($prefix || $middle || $suffix) && !$block->getNoWrap()): ?>
             </div>
         </fieldset>
     </div>

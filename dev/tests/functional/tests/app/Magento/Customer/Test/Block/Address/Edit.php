@@ -72,11 +72,9 @@ class Edit extends Form
     protected function dataMapping(array $fields = null, $parent = null)
     {
         if (isset($fields['custom_attribute'])) {
-            $this->placeholders =
-                ['attribute_code' => $fields['custom_attribute']['code']];
+            $this->placeholders = ['attribute_code' => $fields['custom_attribute']['code']];
             $this->applyPlaceholders();
         }
-
         return parent::dataMapping($fields, $parent);
     }
 }

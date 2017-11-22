@@ -13,7 +13,9 @@ use Magento\Framework\Controller\ResultFactory;
 class Fetch extends \Magento\Sales\Controller\Adminhtml\Transactions
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::transactions_fetch';
 

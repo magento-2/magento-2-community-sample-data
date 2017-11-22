@@ -7,7 +7,8 @@
  */
 namespace Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price;
 
-use \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice;
+use Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice;
+use Magento\Catalog\Api\Data\ProductInterface;
 
 class Grouped extends DefaultPrice implements GroupedInterface
 {
@@ -58,13 +59,13 @@ class Grouped extends DefaultPrice implements GroupedInterface
         }
         $connection = $this->getConnection();
         $table = $this->getIdxTable();
-
+        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         $select = $connection->select()->from(
             ['e' => $this->getTable('catalog_product_entity')],
             'entity_id'
         )->joinLeft(
             ['l' => $this->getTable('catalog_product_link')],
-            'e.entity_id = l.product_id AND l.link_type_id=' .
+            'e.' . $linkField . ' = l.product_id AND l.link_type_id=' .
             \Magento\GroupedProduct\Model\ResourceModel\Product\Link::LINK_TYPE_GROUPED,
             []
         )->join(
@@ -107,7 +108,7 @@ class Grouped extends DefaultPrice implements GroupedInterface
         );
 
         if ($entityIds !== null) {
-            $select->where('l.product_id IN(?)', $entityIds);
+            $select->where('e.entity_id IN(?)', $entityIds);
         }
 
         /**

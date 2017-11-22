@@ -663,10 +663,6 @@ class SendTest extends \PHPUnit_Framework_TestCase
             ])
             ->willReturnSelf();
         $this->transportBuilder->expects($this->once())
-            ->method('setScopeId')
-            ->with($storeId)
-            ->willReturnSelf();
-        $this->transportBuilder->expects($this->once())
             ->method('setFrom')
             ->with($from)
             ->willReturnSelf();

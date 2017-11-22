@@ -32,7 +32,7 @@ class RouteParamsResolver extends \Magento\Framework\DataObject implements Route
     /**
      * @var \Magento\Framework\Url\ParamEncoder
      */
-    private $paramEncoder;
+    protected $paramEncoder;
 
     /**
      * @param \Magento\Framework\App\RequestInterface $request

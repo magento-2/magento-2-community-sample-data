@@ -241,29 +241,28 @@ class Image extends AbstractHelper
     {
         $this->setWatermark(
             $this->scopeConfig->getValue(
-                "design/watermark/{$this->getType()}_image",
+                "design/watermark/{$this->_getModel()->getDestinationSubdir()}_image",
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             )
         );
         $this->setWatermarkImageOpacity(
             $this->scopeConfig->getValue(
-                "design/watermark/{$this->getType()}_imageOpacity",
+                "design/watermark/{$this->_getModel()->getDestinationSubdir()}_imageOpacity",
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             )
         );
         $this->setWatermarkPosition(
             $this->scopeConfig->getValue(
-                "design/watermark/{$this->getType()}_position",
+                "design/watermark/{$this->_getModel()->getDestinationSubdir()}_position",
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             )
         );
         $this->setWatermarkSize(
             $this->scopeConfig->getValue(
-                "design/watermark/{$this->getType()}_size",
+                "design/watermark/{$this->_getModel()->getDestinationSubdir()}_size",
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             )
         );
-
         return $this;
     }
 
@@ -497,14 +496,14 @@ class Image extends AbstractHelper
      */
     protected function isScheduledActionsAllowed()
     {
-        $isAllowed = true;
         $model = $this->_getModel();
-
-        if ($model->isBaseFilePlaceholder() || $model->isCached()) {
-            $isAllowed =  false;
+        if ($model->isBaseFilePlaceholder()
+            && $model->getNewFile() === true
+            || $model->isCached()
+        ) {
+            return false;
         }
-
-        return $isAllowed;
+        return true;
     }
 
     /**

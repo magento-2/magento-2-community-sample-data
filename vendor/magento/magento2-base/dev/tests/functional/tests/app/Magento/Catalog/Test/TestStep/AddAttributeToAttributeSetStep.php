@@ -8,11 +8,8 @@ namespace Magento\Catalog\Test\TestStep;
 
 use Magento\Catalog\Test\Fixture\CatalogAttributeSet;
 use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
-use Magento\Catalog\Test\Page\Adminhtml\CatalogProductEdit;
-use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductSetEdit;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductSetIndex;
-use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestStep\TestStepInterface;
 
 /**
@@ -35,9 +32,9 @@ class AddAttributeToAttributeSetStep implements TestStepInterface
     protected $catalogProductSetEdit;
 
     /**
-     * Catalog Product Attribute fixture.
+     * Catalog Product Attribute fixtures.
      *
-     * @var CatalogProductAttribute
+     * @var CatalogProductAttribute[]
      */
     protected $attribute;
 
@@ -49,55 +46,26 @@ class AddAttributeToAttributeSetStep implements TestStepInterface
     protected $attributeSet;
 
     /**
-     * Catalog Product Index page.
-     *
-     * @var CatalogProductIndex
-     */
-    protected $catalogProductIndex;
-
-    /**
-     * Catalog Product Edit page.
-     *
-     * @var CatalogProductEdit
-     */
-    protected $catalogProductEdit;
-
-    /**
-     * Custom attribute value to set while product creation.
-     *
-     * @var mixed
-     */
-    protected $attributeValue;
-
-    /**
      * @constructor
      * @param CatalogProductSetIndex $catalogProductSetIndex
      * @param CatalogProductSetEdit $catalogProductSetEdit
-     * @param CatalogProductAttribute $attribute
+     * @param CatalogProductAttribute|array $attribute
      * @param CatalogAttributeSet $attributeSet
-     * @param FixtureFactory $fixtureFactory
-     * @param CatalogProductIndex $catalogProductIndex
-     * @param CatalogProductEdit $catalogProductEdit
-     * @param mixed $attributeValue [optional]
      */
     public function __construct(
         CatalogProductSetIndex $catalogProductSetIndex,
         CatalogProductSetEdit $catalogProductSetEdit,
-        CatalogProductAttribute $attribute,
-        CatalogAttributeSet $attributeSet,
-        FixtureFactory $fixtureFactory,
-        CatalogProductIndex $catalogProductIndex,
-        CatalogProductEdit $catalogProductEdit,
-        $attributeValue = null
+        $attribute,
+        CatalogAttributeSet $attributeSet
     ) {
         $this->catalogProductSetIndex = $catalogProductSetIndex;
         $this->catalogProductSetEdit = $catalogProductSetEdit;
-        $this->attribute = $attribute;
+        if (!is_array($attribute)) {
+            $this->attribute = [$attribute];
+        } else {
+            $this->attribute = $attribute;
+        }
         $this->attributeSet = $attributeSet;
-        $this->fixtureFactory = $fixtureFactory;
-        $this->catalogProductIndex = $catalogProductIndex;
-        $this->catalogProductEdit = $catalogProductEdit;
-        $this->attributeValue = $attributeValue;
     }
 
     /**
@@ -109,29 +77,9 @@ class AddAttributeToAttributeSetStep implements TestStepInterface
     {
         $filterAttribute = ['set_name' => $this->attributeSet->getAttributeSetName()];
         $this->catalogProductSetIndex->open()->getGrid()->searchAndOpen($filterAttribute);
-        $this->catalogProductSetEdit->getAttributeSetEditBlock()->moveAttribute($this->attribute->getData());
-        $this->catalogProductSetEdit->getPageActions()->save();
-
-        // Create product with attribute set mentioned above:
-        $customAttribute = $this->attribute;
-        if ($this->attributeValue !== null) {
-            $customAttribute = ['value' => $this->attributeValue, 'attribute' => $customAttribute];
+        foreach ($this->attribute as $attribute) {
+            $this->catalogProductSetEdit->getAttributeSetEditBlock()->moveAttribute($attribute->getData());
         }
-        $product = $this->fixtureFactory->createByCode(
-            'catalogProductSimple',
-            [
-                'dataset' => 'product_with_category_with_anchor',
-                'data' => [
-                    'attribute_set_id' => ['attribute_set' => $this->attributeSet],
-                    'custom_attribute' => $customAttribute
-                ],
-            ]
-        );
-        $this->catalogProductIndex->open()->getGridPageActionBlock()->addProduct('simple');
-        $productForm = $this->catalogProductEdit->getProductForm();
-        $productForm->fill($product);
-        $this->catalogProductEdit->getFormPageActions()->save();
-
-        return ['product' => $product];
+        $this->catalogProductSetEdit->getPageActions()->save();
     }
 }

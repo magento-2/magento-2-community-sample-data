@@ -14,7 +14,9 @@ use Magento\Framework\Controller\ResultFactory;
 class Fetch extends \Magento\Paypal\Controller\Adminhtml\Paypal\Reports
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Paypal::fetch';
 

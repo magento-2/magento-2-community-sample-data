@@ -7,10 +7,9 @@
 define([
     'jquery',
     'mage/template',
-    'underscore',
     'jquery/ui',
     'mage/validation'
-], function ($, mageTemplate, _) {
+], function ($, mageTemplate) {
     'use strict';
 
     $.widget('mage.regionUpdater', {
@@ -125,8 +124,6 @@ define([
          * @private
          */
         _clearError: function () {
-            var args = ['clearError', this.options.regionListId, this.options.regionInputId, this.options.postcodeId];
-
             if (this.options.clearError && typeof this.options.clearError === 'function') {
                 this.options.clearError.call(this);
             } else {
@@ -136,8 +133,8 @@ define([
 
                 this.options.form = $(this.options.form);
 
-                this.options.form && this.options.form.data('validator') &&
-                    this.options.form.validation.apply(this.options.form, _.compact(args));
+                this.options.form && this.options.form.data('validator') && this.options.form.validation('clearError',
+                    this.options.regionListId, this.options.regionInputId, this.options.postcodeId);
 
                 // Clean up errors on region & zip fix
                 $(this.options.regionInputId).removeClass('mage-error').parent().find('[generated]').remove();

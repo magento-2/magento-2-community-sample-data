@@ -9,10 +9,10 @@
 namespace Magento\Framework\Model\Test\Unit\ResourceModel\Db\Collection;
 
 use Magento\Framework\DB\Select;
-use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Magento\Framework\DataObject as MagentoObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\ObjectManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -63,6 +63,7 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->fetchStrategyMock = $this->getMock('Magento\Framework\Data\Collection\Db\FetchStrategyInterface');
         $this->managerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
         $this->connectionMock = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
+        $renderer = $this->getMock('Magento\Framework\DB\Select\SelectRenderer', [], [], '', false);
         $this->resourceMock = $this->getMock('Magento\Framework\Flag\FlagResource', [], [], '', false);
 
         $this->resourceMock
@@ -73,7 +74,7 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->selectMock = $this->getMock(
             'Magento\Framework\DB\Select',
             ['getPart', 'setPart', 'from', 'columns'],
-            [$this->connectionMock]
+            [$this->connectionMock, $renderer]
         );
 
         $this->connectionMock
@@ -83,12 +84,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->objectManagerMock = $this->getMock('Magento\Framework\App\ObjectManager', [], [], '', false);
 
-        try {
-            $this->objectManagerBackup = \Magento\Framework\App\ObjectManager::getInstance();
-        } catch (\RuntimeException $e) {
-            $this->objectManagerBackup = \Magento\Framework\App\Bootstrap::createObjectManagerFactory(BP, $_SERVER)
-                ->create($_SERVER);
-        }
         \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerMock);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -98,7 +93,9 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         parent::tearDown();
-        \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerBackup);
+        /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $objectManagerMock*/
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
     }
 
     protected function getUut()
@@ -256,30 +253,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
             ['some_field', null, ['some_field']],
             ['some_field', 'alias', ['alias' => 'some_field']]
         ];
-    }
-
-    public function testLoadWithItemFieldsUnserialization()
-    {
-        $itemMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->uut->addItem($itemMock);
-
-        $itemMock->expects($this->once())
-            ->method('setOrigData');
-        $this->resourceMock->expects($this->once())
-            ->method('unserializeFields')
-            ->with($itemMock);
-
-        $this->managerMock->expects($this->exactly(2))
-            ->method('dispatch')
-            ->withConsecutive(
-                ['core_collection_abstract_load_before', ['collection' => $this->uut]],
-                ['core_collection_abstract_load_after', ['collection' => $this->uut]]
-
-            );
-
-        $this->uut->load();
     }
 
     /**

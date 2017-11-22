@@ -10,7 +10,6 @@ namespace Magento\Catalog\Model\Product\Media;
 
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Catalog product media config
@@ -37,38 +36,6 @@ class Config implements ConfigInterface
     public function __construct(StoreManagerInterface $storeManager)
     {
         $this->storeManager = $storeManager;
-    }
-
-    /**
-     * The getter function to get the attributeHelper for real application code
-     *
-     * @deprecated
-     *
-     * @return Attribute
-     */
-    private function getAttributeHelper()
-    {
-        if ($this->attributeHelper === null) {
-            $this->attributeHelper = ObjectManager::getInstance()->get('Magento\Eav\Model\Entity\Attribute');
-        }
-        return $this->attributeHelper;
-    }
-
-    /**
-     * The setter function to inject the mocked attributeHelper during unit test
-     *
-     * @deprecated
-     *
-     * @throws \LogicException
-     *
-     * @param Attribute $attributeHelper
-     */
-    public function setAttributeHelper(Attribute $attributeHelper)
-    {
-        if ($this->attributeHelper != null) {
-            throw new \LogicException(__('productFactory is already set'));
-        }
-        $this->attributeHelper = $attributeHelper;
     }
 
     /**
@@ -204,5 +171,17 @@ class Config implements ConfigInterface
     public function getMediaAttributeCodes()
     {
         return $this->getAttributeHelper()->getAttributeCodesByFrontendType('media_image');
+    }
+
+    /**
+     * @return Attribute
+     */
+    private function getAttributeHelper()
+    {
+        if (null === $this->attributeHelper) {
+            $this->attributeHelper = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get('Magento\Eav\Model\Entity\Attribute');
+        }
+        return $this->attributeHelper;
     }
 }

@@ -8,7 +8,7 @@ define([
     "jquery/ui"
 ], function($){
     "use strict";
-
+    
     $.widget('mage.addToWishlist', {
         options: {
             bundleInfo: 'div.control [name^=bundle_option]',
@@ -161,6 +161,6 @@ define([
             });
         }
     });
-
+    
     return $.mage.addToWishlist;
 });

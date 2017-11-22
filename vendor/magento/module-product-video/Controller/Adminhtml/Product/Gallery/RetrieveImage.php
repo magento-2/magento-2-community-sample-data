@@ -134,7 +134,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
         $response = $this->resultRawFactory->create();
         $response->setHeader('Content-type', 'text/plain');
         $response->setContents(json_encode($result));
-
         return $response;
     }
 
@@ -202,7 +201,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
         $result['size'] = filesize($this->appendAbsoluteFileSystemPath($fileName));
         $result['url'] = $this->mediaConfig->getTmpMediaUrl($tmpFileName);
         $result['file'] = $tmpFileName;
-
         return $result;
     }
 
@@ -234,7 +232,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
         $destinationFile = $this->appendAbsoluteFileSystemPath($localFilePath);
         $fileName = Uploader::getNewFileName($destinationFile);
         $fileInfo = pathinfo($localFilePath);
-
         return $fileInfo['dirname'] . DIRECTORY_SEPARATOR . $fileName;
     }
 
@@ -247,7 +244,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
         /** @var \Magento\Framework\Filesystem\Directory\Read $mediaDirectory */
         $mediaDirectory = $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA);
         $pathToSave = $mediaDirectory->getAbsolutePath();
-
         return $pathToSave . $localTmpFile;
     }
 }

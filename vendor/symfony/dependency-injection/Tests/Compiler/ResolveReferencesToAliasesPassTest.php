@@ -11,14 +11,13 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\ResolveReferencesToAliasesPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ResolveReferencesToAliasesPassTest extends TestCase
+class ResolveReferencesToAliasesPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
@@ -81,24 +80,6 @@ class ResolveReferencesToAliasesPassTest extends TestCase
 
         $this->assertSame('factory', (string) $resolvedFooFactory[0]);
         $this->assertSame('Factory', (string) $resolvedBarFactory[0]);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testResolveFactoryService()
-    {
-        $container = new ContainerBuilder();
-        $container->register('factory', 'Factory');
-        $container->setAlias('factory_alias', new Alias('factory'));
-        $foo = new Definition();
-        $foo->setFactoryService('factory_alias');
-        $foo->setFactoryMethod('createFoo');
-        $container->setDefinition('foo', $foo);
-
-        $this->process($container);
-
-        $this->assertSame('factory', $foo->getFactoryService());
     }
 
     protected function process(ContainerBuilder $container)

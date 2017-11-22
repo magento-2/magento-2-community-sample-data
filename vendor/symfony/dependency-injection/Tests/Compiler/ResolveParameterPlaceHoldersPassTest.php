@@ -11,11 +11,10 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ResolveParameterPlaceHoldersPassTest extends TestCase
+class ResolveParameterPlaceHoldersPassTest extends \PHPUnit_Framework_TestCase
 {
     private $compilerPass;
     private $container;

@@ -14,63 +14,73 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class Storage
 {
     /**
-     * Type font
+     * Type font.
      */
     const TYPE_FONT = 'font';
 
     /**
-     * Type image
+     * Type image.
      */
     const TYPE_IMAGE = 'image';
 
     /**
-     * \Directory for image thumbnail
+     * Directory for image thumbnail.
      */
     const THUMBNAIL_DIRECTORY = '.thumbnail';
 
     /**
-     * Image thumbnail width
+     * Image thumbnail width.
      */
     const THUMBNAIL_WIDTH = 100;
 
     /**
-     * Image thumbnail height
+     * Image thumbnail height.
      */
     const THUMBNAIL_HEIGHT = 100;
 
     /**
-     * \Directory name regular expression
+     * \Directory name regular expression.
      */
     const DIRECTORY_NAME_REGEXP = '/^[a-z0-9\-\_]+$/si';
 
     /**
-     * Storage helper
+     * Storage helper.
      *
      * @var \Magento\Theme\Helper\Storage
      */
     protected $_helper;
 
     /**
+     * Object manager.
+     *
      * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $_objectManager;
 
     /**
+     * Adapter factory.
+     *
      * @var \Magento\Framework\Image\AdapterFactory
      */
     protected $_imageFactory;
 
     /**
+     * Media write directory.
+     *
      * @var \Magento\Framework\Filesystem\Directory\Write
      */
     protected $mediaWriteDirectory;
 
     /**
+     * URL encoder.
+     *
      * @var \Magento\Framework\Url\EncoderInterface
      */
     protected $urlEncoder;
 
     /**
+     * URL decoder.
+     *
      * @var \Magento\Framework\Url\DecoderInterface
      */
     protected $urlDecoder;
@@ -90,8 +100,6 @@ class Storage
     private $logger;
 
     /**
-     * Initialize dependencies
-     *
      * @param \Magento\Framework\Filesystem $filesystem
      * @param \Magento\Theme\Helper\Storage $helper
      * @param \Magento\Framework\ObjectManagerInterface $objectManager

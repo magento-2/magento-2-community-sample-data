@@ -10,7 +10,7 @@ class EavTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Eav
      */
-    protected $model;
+    protected $_model;
 
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Eav\Action\Row|\PHPUnit_Framework_MockObject_MockObject

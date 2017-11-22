@@ -29,7 +29,7 @@
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderInOrdersGridOnFrontend" />
         </variation>
         <variation name="CreateOrderBackendTestVariation2">
-            <data name="tag" xsi:type="string">to_maintain:yes</data>
+            <data name="tag" xsi:type="string">stable:no</data>
             <data name="description" xsi:type="string">Create order with virtual product for registered UK customer using Check/Money Order payment method</data>
             <data name="products" xsi:type="string">catalogProductVirtual::default</data>
             <data name="customer/dataset" xsi:type="string">default</data>
@@ -70,7 +70,7 @@
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderInOrdersGridOnFrontend" />
         </variation>
         <variation name="CreateOrderBackendTestVariation4">
-            <data name="tag" xsi:type="string">to_maintain:yes</data>
+            <data name="tag" xsi:type="string">stable:no</data>
             <data name="description" xsi:type="string">Create order with virtual product for registered UK customer using Bank Transfer payment method</data>
             <data name="products" xsi:type="string">catalogProductVirtual::default</data>
             <data name="customer/dataset" xsi:type="string">default</data>
@@ -91,6 +91,7 @@
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderInOrdersGridOnFrontend" />
         </variation>
         <variation name="CreateOrderBackendTestVariation5">
+            <data name="tag" xsi:type="string">to_maintain:yes</data>
             <data name="description" xsi:type="string">Create order with simple product for registered US customer using Fixed shipping method and Purchase Order payment method</data>
             <data name="products" xsi:type="string">catalogProductSimple::default</data>
             <data name="customer/dataset" xsi:type="string">default</data>
@@ -113,6 +114,7 @@
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderInOrdersGridOnFrontend" />
         </variation>
         <variation name="CreateOrderBackendTestVariation6" summary="Create Offline Order for Registered Customer in Admin" ticketId="MAGETWO-12395">
+            <data name="tag" xsi:type="string">test_type:acceptance_test, test_type:extended_acceptance_test</data>
             <data name="products" xsi:type="string">catalogProductSimple::simple_10_dollar, configurableProduct::with_one_option</data>
             <data name="taxRule" xsi:type="string">us_ca_ny_rule</data>
             <data name="customer/dataset" xsi:type="string">default</data>
@@ -125,7 +127,6 @@
                 <item name="grandTotal" xsi:type="string">21.91</item>
             </data>
             <data name="payment/method" xsi:type="string">checkmo</data>
-            <data name="tag" xsi:type="string">test_type:acceptance_test</data>
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderSuccessCreateMessage" />
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderGrandTotal" />
         </variation>
@@ -146,6 +147,39 @@
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderSuccessCreateMessage" />
             <constraint name="Magento\Sales\Test\Constraint\AssertOrderGrandTotal" />
             <constraint name="Magento\Customer\Test\Constraint\AssertCustomerForm" />
+        </variation>
+        <variation name="CreateOrderBackendTestVariation_ApplyFreeShippingCartPriceRule" summary="Create Order for New Customer in Admin with Applying Cart Price Rule for Free Shipping" ticketId="MAGETWO-65068">
+            <data name="tag" xsi:type="string">test_type:acceptance_test</data>
+            <data name="products" xsi:type="string">catalogProductSimple::default</data>
+            <data name="salesRule" xsi:type="string">active_sales_rule_free_shipping</data>
+            <data name="customer/dataset" xsi:type="string">default</data>
+            <data name="saveAddress" xsi:type="string">Yes</data>
+            <data name="checkoutMethod" xsi:type="string">register</data>
+            <data name="billingAddress/dataset" xsi:type="string">US_address_1_without_email</data>
+            <data name="shipping/shipping_service" xsi:type="string">Flat Rate</data>
+            <data name="shipping/shipping_method" xsi:type="string">Fixed</data>
+            <data name="prices" xsi:type="array">
+                <item name="grandTotal" xsi:type="string">560.00</item>
+            </data>
+            <data name="payment/method" xsi:type="string">checkmo</data>
+            <constraint name="Magento\Sales\Test\Constraint\AssertOrderSuccessCreateMessage" />
+            <constraint name="Magento\Sales\Test\Constraint\AssertOrderGrandTotal" />
+        </variation>
+        <variation name="CreateOrderBackendTestVariation19" summary="'Reorder' button is not visible for customer if ordered item is out of stock" ticketId="MAGETWO-69160">
+            <data name="products/0" xsi:type="string">catalogProductSimple::default_qty_1</data>
+            <data name="customer/dataset" xsi:type="string">default</data>
+            <data name="billingAddress/dataset" xsi:type="string">US_address_1_without_email</data>
+            <data name="saveAddress" xsi:type="string">No</data>
+            <data name="shipping/shipping_service" xsi:type="string">Flat Rate</data>
+            <data name="shipping/shipping_method" xsi:type="string">Fixed</data>
+            <data name="prices" xsi:type="array">
+                <item name="grandTotal" xsi:type="string">565.00</item>
+            </data>
+            <data name="payment/method" xsi:type="string">cashondelivery</data>
+            <data name="configData" xsi:type="string">cashondelivery</data>
+            <constraint name="Magento\Sales\Test\Constraint\AssertOrderSuccessCreateMessage" />
+            <constraint name="Magento\Sales\Test\Constraint\AssertOrderGrandTotal" />
+            <constraint name="Magento\Sales\Test\Constraint\AssertReorderButtonIsNotVisibleOnFrontend" />
         </variation>
     </testCase>
 </config>

@@ -5,13 +5,11 @@
  */
 namespace Magento\Swatches\Test\Unit\Helper;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class DataTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Helper\Context
-     * */
-    private $contextMock;
-
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Catalog\Helper\Image */
     protected $imageHelperMock;
 
@@ -48,16 +46,18 @@ class DataTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Catalog\Api\ProductRepositoryInterface */
     protected $productRepoMock;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Swatches\Model\SwatchAttributesProvider */
+    private $swatchAttributesProviderMock;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Unserialize\SecureUnserializer
      */
-    private $secureunserializerMock;
+    protected $secureUnserializerMock;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        
-        $this->contextMock = $this->getMock(\Magento\Framework\App\Helper\Context::class, [], [], '', false);
+
         $this->imageHelperMock = $this->getMock(\Magento\Catalog\Helper\Image::class, [], [], '', false);
         $this->productCollectionFactoryMock = $this->getMock(
             \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
@@ -117,7 +117,15 @@ class DataTest extends \PHPUnit_Framework_TestCase
             false
         );
 
-        $this->unserializerMock = $this->getMock(
+        $this->swatchAttributesProviderMock = $this->getMock(
+            \Magento\Swatches\Model\SwatchAttributesProvider::class,
+            ['provide'],
+            [],
+            '',
+            false
+        );
+
+        $this->secureUnserializerMock = $this->getMock(
             \Magento\Framework\Unserialize\SecureUnserializer::class,
             ['unserializer'],
             [],
@@ -128,36 +136,16 @@ class DataTest extends \PHPUnit_Framework_TestCase
         $this->swatchHelperObject = $this->objectManager->getObject(
             \Magento\Swatches\Helper\Data::class,
             [
-                'context' => $this->contextMock,
                 'productCollectionFactory' => $this->productCollectionFactoryMock,
                 'configurable' => $this->configurableMock,
                 'productRepository' => $this->productRepoMock,
                 'storeManager' => $this->storeManagerMock,
                 'swatchCollectionFactory' => $this->swatchCollectionFactoryMock,
                 'imageHelper' => $this->imageHelperMock,
-                'unserializer' => $this->secureunserializerMock,
+                'swatchAttributesProvider' => $this->swatchAttributesProviderMock,
+                'unserializer' => $this->secureUnserializerMock,
             ]
         );
-    }
-
-    /**
-     * @deprecated
-     *
-     * @dataProvider dataForAdditionalData
-     */
-    public function testPopulateAdditionalDataEavAttribute($data, $count)
-    {
-        $this->attributeMock
-            ->expects($this->exactly($count['getData']))
-            ->method('getData')
-            ->with('additional_data')
-            ->will($this->returnValue($data));
-
-        $this->attributeMock
-            ->expects($this->exactly($count['setData']))
-            ->method('setData');
-
-        $this->swatchHelperObject->populateAdditionalDataEavAttribute($this->attributeMock);
     }
 
     public function dataForAdditionalData()
@@ -167,12 +155,13 @@ class DataTest extends \PHPUnit_Framework_TestCase
             'update_product_preview_image' => 1,
             'use_product_image_for_swatch' => 0
         ];
+
         return [
             [
                 serialize($additionalData),
                 [
                     'getData' => 1,
-                    'setData' => 0,
+                    'setData' => 3,
                 ]
             ],
             [
@@ -218,6 +207,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
             'update_product_preview_image' => 1,
             'use_product_image_for_swatch' => 0
         ];
+
         return [
             [
                 serialize($additionalData),
@@ -241,12 +231,12 @@ class DataTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataForVariationWithSwatchImage
      */
-    public function testLoadFirstVariationSwatchImage($imageTypes, $expected, $requiredAttributes)
+    public function testLoadFirstVariationWithSwatchImage($imageTypes, $expected, $requiredAttributes)
     {
         $this->getSwatchAttributes($this->productMock);
         $this->getUsedProducts($imageTypes + $requiredAttributes);
 
-        $result = $this->swatchHelperObject->loadFirstVariationSwatchImage($this->productMock, $requiredAttributes);
+        $result = $this->swatchHelperObject->loadFirstVariationWithSwatchImage($this->productMock, $requiredAttributes);
 
         if ($expected === false) {
             $this->assertFalse($result);
@@ -300,12 +290,12 @@ class DataTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataForVariationWithImage
      */
-    public function testLoadFirstVariationImage($imageTypes, $expected, $requiredAttributes)
+    public function testLoadFirstVariationWithImage($imageTypes, $expected, $requiredAttributes)
     {
         $this->getSwatchAttributes($this->productMock);
         $this->getUsedProducts($imageTypes + $requiredAttributes);
 
-        $result = $this->swatchHelperObject->loadFirstVariationImage($this->productMock, $requiredAttributes);
+        $result = $this->swatchHelperObject->loadFirstVariationWithImage($this->productMock, $requiredAttributes);
 
         if ($expected === false) {
             $this->assertFalse($result);
@@ -347,7 +337,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadVariationByFallbackWithoutProduct()
     {
-        $result = $this->swatchHelperObject->loadFirstVariationImage($this->productMock, ['color' => 31]);
+        $result = $this->swatchHelperObject->loadFirstVariationWithImage($this->productMock, ['color' => 31]);
         $this->assertFalse($result);
     }
 
@@ -362,14 +352,23 @@ class DataTest extends \PHPUnit_Framework_TestCase
         $this->imageHelperMock->expects($this->any())
             ->method('init')
             ->willReturnMap([
-                [$this->productMock, 'product_page_image_large_no_frame', [], $this->imageHelperMock],
-                [$this->productMock, 'product_page_image_medium_no_frame', [], $this->imageHelperMock],
+                [$this->productMock, 'product_page_image_large', [], $this->imageHelperMock],
+                [$this->productMock, 'product_page_image_medium', [], $this->imageHelperMock],
                 [$this->productMock, 'product_page_image_small', [], $this->imageHelperMock],
             ]);
 
         $this->imageHelperMock->expects($this->any())
             ->method('setImageFile')
             ->with($image)
+            ->willReturnSelf();
+        $this->imageHelperMock->expects($this->any())
+            ->method('constrainOnly')
+            ->willReturnSelf();
+        $this->imageHelperMock->expects($this->any())
+            ->method('keepAspectRatio')
+            ->willReturnSelf();
+        $this->imageHelperMock->expects($this->any())
+            ->method('keepFrame')
             ->willReturnSelf();
         $this->imageHelperMock->expects($this->any())
             ->method('getUrl')
@@ -426,8 +425,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     protected function getSwatchAttributes()
     {
         $this->getAttributesFromConfigurable();
-        $this->attributeMock->method('hasData')->with('swatch_input_type')->willReturn(true);
-        $this->attributeMock->method('getData')->with('swatch_input_type')->willReturn('visual');
+        $returnFromProvideMethod = [$this->attributeMock];
+        $this->swatchAttributesProviderMock
+            ->method('provide')
+            ->with($this->productMock)
+            ->willReturn($returnFromProvideMethod);
     }
 
     protected function getUsedProducts(array $attributes)
@@ -452,11 +454,6 @@ class DataTest extends \PHPUnit_Framework_TestCase
 
     protected function getAttributesFromConfigurable()
     {
-        $this->productMock
-            ->expects($this->atLeastOnce())
-            ->method('getTypeInstance')
-            ->willReturn($this->configurableMock);
-
         $confAttribute = $this->getMock(
             \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class,
             [],
@@ -557,47 +554,22 @@ class DataTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSwatchAttributesAsArray($optionsArray, $attributeData, $expected)
     {
-        $configurable = $this->getMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class,
-            [],
-            [],
-            '',
-            false
-        );
-
-        $this->productMock
-            ->expects($this->atLeastOnce())
-            ->method('getTypeInstance')
-            ->willReturn($configurable);
-
-        $confAttribute = $this->getMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class,
-            [],
-            [],
-            '',
-            false
-        );
-
-        $configurable
-            ->expects($this->atLeastOnce())
-            ->method('getConfigurableAttributes')
+        $this->swatchAttributesProviderMock
+            ->method('provide')
             ->with($this->productMock)
-            ->willReturn([$confAttribute]);
+            ->willReturn([$this->attributeMock]);
 
-        $confAttribute
-            ->expects($this->atLeastOnce())
-            ->method('__call')
-            ->with('getProductAttribute')
-            ->willReturn($this->attributeMock);
+        $storeId = 1;
 
-        $this->attributeMock->method('setStoreId')->will($this->returnSelf());
+        $this->attributeMock->method('setStoreId')->with($storeId)->will($this->returnSelf());
         $storeMock = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
-        $storeMock->method('getId')->willReturn(1);
+        $storeMock->method('getId')->willReturn($storeId);
         $this->storeManagerMock->method('getStore')->willReturn($storeMock);
 
-        $this->attributeMock->method('hasData')->with('swatch_input_type')->willReturn(true);
-        $this->attributeMock->expects($this->at(1))->method('getData')->with('swatch_input_type')->willReturn('visual');
-        $this->attributeMock->expects($this->at(3))->method('getData')->with('')->willReturn($attributeData);
+        $this->attributeMock
+            ->method('getData')
+            ->withConsecutive(['additional_data'], [''])
+            ->will($this->onConsecutiveCalls('', $attributeData));
 
         $sourceMock = $this->getMock(
             \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class,
@@ -783,7 +755,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     {
         $this->getSwatchAttributes();
         $result = $this->swatchHelperObject->isProductHasSwatch($this->productMock);
-        $this->assertEquals(2, $result);
+        $this->assertEquals(true, $result);
     }
 
     /**
@@ -853,6 +825,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
             'update_product_preview_image' => 1,
             'use_product_image_for_swatch' => 0
         ];
+
         return [
             [
                 serialize($additionalData),
@@ -909,6 +882,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
             'update_product_preview_image' => 1,
             'use_product_image_for_swatch' => 0
         ];
+
         return [
             [
                 serialize($additionalData),

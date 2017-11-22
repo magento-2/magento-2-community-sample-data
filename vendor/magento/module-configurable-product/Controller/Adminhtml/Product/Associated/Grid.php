@@ -35,6 +35,7 @@ class Grid extends Action
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
     }
+
     /**
      * Index action
      *
@@ -44,7 +45,6 @@ class Grid extends Action
     {
         /** @var \Magento\Framework\View\Result\Layout $resultPage */
         $resultPage = $this->resultPageFactory->create();
-
         return $resultPage;
     }
 }

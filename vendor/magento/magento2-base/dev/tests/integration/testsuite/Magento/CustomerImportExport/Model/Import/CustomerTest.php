@@ -112,8 +112,11 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $existingCustomer = $objectManager->get('Magento\Framework\Registry')
-            ->registry('_fixture/Magento_ImportExport_Customer');
+        $existingCustomer = $objectManager->get(
+            'Magento\Framework\Registry'
+        )->registry(
+                '_fixture/Magento_ImportExport_Customer'
+            );
 
         $updatedCustomer = $customers[$existingCustomer->getId()];
 
@@ -133,12 +136,6 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             $existingCustomer->getCreatedAt(),
             $updatedCustomer->getCreatedAt(),
             'Creation date must be changed'
-        );
-
-        $this->assertEquals(
-            $existingCustomer->getGender(),
-            $updatedCustomer->getGender(),
-            'Gender must be not changed'
         );
     }
 

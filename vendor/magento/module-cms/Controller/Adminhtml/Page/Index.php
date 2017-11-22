@@ -12,7 +12,9 @@ use Magento\Framework\View\Result\PageFactory;
 class Index extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Cms::page';
 
@@ -46,6 +48,9 @@ class Index extends \Magento\Backend\App\Action
         $resultPage->addBreadcrumb(__('CMS'), __('CMS'));
         $resultPage->addBreadcrumb(__('Manage Pages'), __('Manage Pages'));
         $resultPage->getConfig()->getTitle()->prepend(__('Pages'));
+
+        $dataPersistor = $this->_objectManager->get('Magento\Framework\App\Request\DataPersistorInterface');
+        $dataPersistor->clear('cms_page');
 
         return $resultPage;
     }

@@ -5,10 +5,9 @@
 /*jshint browser:true jquery:true expr:true*/
 define([
     'jquery',
-    'uiRegistry',
     'Magento_Catalog/js/product/weight-handler',
     'Magento_Catalog/catalog/type-events'
-], function ($, registry, weight, productType) {
+], function ($, weight, productType) {
     'use strict';
 
     return {
@@ -16,16 +15,6 @@ define([
         $items: $('#product_info_tabs_downloadable_items'),
         $tab: null,
         isDownloadable: false,
-
-        /**
-         * Init
-         */
-        init: function (data) {
-            this.$tab = $('[data-tab=' + data.tabId + ']');
-            this.isDownloadable = data.isDownloadable;
-            this.bindAll();
-            this._initType();
-        },
 
         /**
          * Show
@@ -48,7 +37,10 @@ define([
          * @param {Object} data - this backend data
          */
         'Magento_Downloadable/downloadable-type-handler': function (data) {
-            registry.get('typeSwitcher', this.init.bind(this, data));
+            this.$tab = $('[data-tab=' + data.tabId + ']');
+            this.isDownloadable = data.isDownloadable;
+            this.bindAll();
+            this._initType();
         },
 
         /**
@@ -56,7 +48,10 @@ define([
          */
         bindAll: function () {
             this.$checkbox.on('change', function (event) {
-                $(document).trigger('setTypeProduct', $(event.target).prop('checked') ? 'downloadable' : null);
+                $(document).trigger('setTypeProduct', $(event.target).prop('checked') ?
+                    'downloadable' :
+                    productType.type.init === 'downloadable' ? 'virtual' : productType.type.init
+                );
             });
 
             $(document).on('changeTypeProduct', this._initType.bind(this));
@@ -69,8 +64,11 @@ define([
         _initType: function () {
             if (productType.type.current === 'downloadable') {
                 weight.change(false);
-                weight.$weightSwitcher.one('change', function () {
-                    $(document).trigger('setTypeProduct', null);
+                weight.$weightSwitcher().one('change', function () {
+                    $(document).trigger(
+                        'setTypeProduct',
+                        productType.type.init === 'downloadable' ? 'virtual' : productType.type.init
+                    );
                 });
                 this.show();
             } else {

@@ -12,9 +12,6 @@ use Magento\Framework\Css\PreProcessor\Instruction\MagentoImport;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Design\Theme\ThemeProviderInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class MagentoImportTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -68,10 +65,8 @@ class MagentoImportTest extends \PHPUnit_Framework_TestCase
             'fileSource' => $this->fileSource,
             'errorHandler' => $this->errorHandler,
             'assetRepo' => $this->assetRepo,
+            'themeProvider' => $this->themeProvider
         ]);
-        $objectReflection = new \ReflectionProperty(MagentoImport::class, 'themeProvider');
-        $objectReflection->setAccessible(true);
-        $objectReflection->setValue($this->object,  $this->themeProvider);
     }
 
     /**

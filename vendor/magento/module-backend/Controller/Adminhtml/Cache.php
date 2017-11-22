@@ -11,7 +11,9 @@ use Magento\Framework\Exception\LocalizedException;
 abstract class Cache extends Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Backend::cache';
 

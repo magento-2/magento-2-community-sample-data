@@ -17,7 +17,7 @@ abstract class Feed extends \Magento\Backend\App\Action
      * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Rss::rss';
-    
+
     /**
      * @var \Magento\Rss\Model\RssManager
      */

@@ -19,7 +19,9 @@ use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 abstract class AbstractMassAction extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Customer::manage';
 

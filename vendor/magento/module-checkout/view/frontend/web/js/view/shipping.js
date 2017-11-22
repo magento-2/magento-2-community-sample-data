@@ -6,7 +6,7 @@
 define(
     [
         'jquery',
-        "underscore",
+        'underscore',
         'Magento_Ui/js/form/form',
         'ko',
         'Magento_Customer/js/model/customer',
@@ -29,7 +29,7 @@ define(
         'mage/translate',
         'Magento_Checkout/js/model/shipping-rate-service'
     ],
-    function(
+    function (
         $,
         _,
         Component,
@@ -54,7 +54,9 @@ define(
         $t
     ) {
         'use strict';
+
         var popUp = null;
+
         return Component.extend({
             defaults: {
                 template: 'Magento_Checkout/shipping'
@@ -65,16 +67,18 @@ define(
             isFormPopUpVisible: formPopUpState.isVisible,
             isFormInline: addressList().length == 0,
             isNewAddressAdded: ko.observable(false),
-            saveInAddressBook: true,
+            saveInAddressBook: 1,
             quoteIsVirtual: quote.isVirtual(),
 
+            /**
+             * @return {exports}
+             */
             initialize: function () {
                 var self = this,
                     hasNewAddress,
                     fieldsetName = 'checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset';
 
                 this._super();
-                shippingRatesValidator.initFields(fieldsetName);
 
                 if (!quote.isVirtual()) {
                     stepNavigator.registerStep(
@@ -105,28 +109,38 @@ define(
 
                 registry.async('checkoutProvider')(function (checkoutProvider) {
                     var shippingAddressData = checkoutData.getShippingAddressFromData();
+
                     if (shippingAddressData) {
                         checkoutProvider.set(
                             'shippingAddress',
-                            $.extend({}, checkoutProvider.get('shippingAddress'), shippingAddressData)
+                            $.extend(true, {}, checkoutProvider.get('shippingAddress'), shippingAddressData)
                         );
                     }
                     checkoutProvider.on('shippingAddress', function (shippingAddressData) {
                         checkoutData.setShippingAddressFromData(shippingAddressData);
                     });
+                    shippingRatesValidator.initFields(fieldsetName);
                 });
 
                 return this;
             },
 
+            /**
+             * Load data from server for shipping step
+             */
             navigate: function () {
                 //load data from server for shipping step
             },
 
+            /**
+             * @return {*}
+             */
             getPopUp: function () {
-                var self = this;
+                var self = this,
+                    buttons;
+
                 if (!popUp) {
-                    var buttons = this.popUpForm.options.buttons;
+                    buttons = this.popUpForm.options.buttons;
                     this.popUpForm.options.buttons = [
                         {
                             text: buttons.save.text ? buttons.save.text : $t('Save Address'),
@@ -134,72 +148,112 @@ define(
                             click: self.saveNewAddress.bind(self)
                         },
                         {
-                            text: buttons.cancel.text ? buttons.cancel.text: $t('Cancel'),
+                            text: buttons.cancel.text ? buttons.cancel.text : $t('Cancel'),
                             class: buttons.cancel.class ? buttons.cancel.class : 'action secondary action-hide-popup',
-                            click: function() {
-                                this.closeModal();
-                            }
+
+                            /** @inheritdoc */
+                            click: this.onClosePopUp.bind(this)
                         }
                     ];
-                    this.popUpForm.options.closed = function() {
+                    this.popUpForm.options.closed = function () {
                         self.isFormPopUpVisible(false);
+                    };
+
+                    this.popUpForm.options.modalCloseBtnHandler = this.onClosePopUp.bind(this);
+                    this.popUpForm.options.keyEventHandlers = {
+                        escapeKey: this.onClosePopUp.bind(this)
+                    };
+
+                    /** @inheritdoc */
+                    this.popUpForm.options.opened = function () {
+                        // Store temporary address for revert action in case when user click cancel action
+                        self.temporaryAddress = $.extend(true, {}, checkoutData.getShippingAddressFromData());
                     };
                     popUp = modal(this.popUpForm.options, $(this.popUpForm.element));
                 }
+
                 return popUp;
             },
 
-            /** Show address form popup */
-            showFormPopUp: function() {
+            /**
+             * Revert address and close modal.
+             */
+            onClosePopUp: function () {
+                checkoutData.setShippingAddressFromData($.extend(true, {}, this.temporaryAddress));
+                this.getPopUp().closeModal();
+            },
+
+            /**
+             * Show address form popup
+             */
+            showFormPopUp: function () {
                 this.isFormPopUpVisible(true);
             },
 
+            /**
+             * Save new shipping address
+             */
+            saveNewAddress: function () {
+                var addressData,
+                    newShippingAddress;
 
-            /** Save new shipping address */
-            saveNewAddress: function() {
                 this.source.set('params.invalid', false);
                 this.source.trigger('shippingAddress.data.validate');
 
                 if (!this.source.get('params.invalid')) {
-                    var addressData = this.source.get('shippingAddress');
-                    addressData.save_in_address_book = this.saveInAddressBook;
+                    addressData = this.source.get('shippingAddress');
+                    // if user clicked the checkbox, its value is true or false. Need to convert.
+                    addressData.save_in_address_book = this.saveInAddressBook ? 1 : 0;
 
                     // New address must be selected as a shipping address
-                    var newShippingAddress = createShippingAddress(addressData);
+                    newShippingAddress = createShippingAddress(addressData);
                     selectShippingAddress(newShippingAddress);
                     checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
-                    checkoutData.setNewCustomerShippingAddress(addressData);
+                    checkoutData.setNewCustomerShippingAddress($.extend(true, {}, addressData));
                     this.getPopUp().closeModal();
                     this.isNewAddressAdded(true);
                 }
             },
 
-            /** Shipping Method View **/
+            /**
+             * Shipping Method View
+             */
             rates: shippingService.getShippingRates(),
             isLoading: shippingService.isLoading,
             isSelected: ko.computed(function () {
-                    return quote.shippingMethod()
-                        ? quote.shippingMethod().carrier_code + '_' + quote.shippingMethod().method_code
+                    return quote.shippingMethod() ?
+                        quote.shippingMethod().carrier_code + '_' + quote.shippingMethod().method_code
                         : null;
                 }
             ),
 
-            selectShippingMethod: function(shippingMethod) {
+            /**
+             * @param {Object} shippingMethod
+             * @return {Boolean}
+             */
+            selectShippingMethod: function (shippingMethod) {
                 selectShippingMethodAction(shippingMethod);
                 checkoutData.setSelectedShippingRate(shippingMethod.carrier_code + '_' + shippingMethod.method_code);
+
                 return true;
             },
 
+            /**
+             * Set shipping information handler
+             */
             setShippingInformation: function () {
                 if (this.validateShippingInformation()) {
                     setShippingInformationAction().done(
-                        function() {
+                        function () {
                             stepNavigator.next();
                         }
                     );
                 }
             },
 
+            /**
+             * @return {Boolean}
+             */
             validateShippingInformation: function () {
                 var shippingAddress,
                     addressData,
@@ -207,7 +261,8 @@ define(
                     emailValidationResult = customer.isLoggedIn();
 
                 if (!quote.shippingMethod()) {
-                    this.errorValidationMessage('Please specify a shipping method');
+                    this.errorValidationMessage('Please specify a shipping method.');
+
                     return false;
                 }
 
@@ -216,23 +271,22 @@ define(
                     emailValidationResult = Boolean($(loginFormSelector + ' input[name=username]').valid());
                 }
 
-                if (!emailValidationResult) {
-                    $(loginFormSelector + ' input[name=username]').focus();
-                }
-
                 if (this.isFormInline) {
                     this.source.set('params.invalid', false);
                     this.source.trigger('shippingAddress.data.validate');
+
                     if (this.source.get('shippingAddress.custom_attributes')) {
                         this.source.trigger('shippingAddress.custom_attributes.data.validate');
-                    };
-                    if (this.source.get('params.invalid')
-                        || !quote.shippingMethod().method_code
-                        || !quote.shippingMethod().carrier_code
-                        || !emailValidationResult
+                    }
+
+                    if (this.source.get('params.invalid') ||
+                        !quote.shippingMethod().method_code ||
+                        !quote.shippingMethod().carrier_code ||
+                        !emailValidationResult
                     ) {
                         return false;
                     }
+
                     shippingAddress = quote.shippingAddress();
                     addressData = addressConverter.formAddressDataToQuoteAddress(
                         this.source.get('shippingAddress')
@@ -240,19 +294,32 @@ define(
 
                     //Copy form data to quote shipping address object
                     for (var field in addressData) {
-                        if (addressData.hasOwnProperty(field)
-                            && shippingAddress.hasOwnProperty(field)
-                            && typeof addressData[field] != 'function'
+
+                        if (addressData.hasOwnProperty(field) &&
+                            shippingAddress.hasOwnProperty(field) &&
+                            typeof addressData[field] != 'function' &&
+                            _.isEqual(shippingAddress[field], addressData[field])
                         ) {
                             shippingAddress[field] = addressData[field];
+                        } else if (typeof addressData[field] != 'function' &&
+                            !_.isEqual(shippingAddress[field], addressData[field])) {
+                            shippingAddress = addressData;
+                            break;
                         }
                     }
 
                     if (customer.isLoggedIn()) {
-                        shippingAddress.save_in_address_book = true;
+                        shippingAddress.save_in_address_book = 1;
                     }
                     selectShippingAddress(shippingAddress);
                 }
+
+                if (!emailValidationResult) {
+                    $(loginFormSelector + ' input[name=username]').focus();
+
+                    return false;
+                }
+
                 return true;
             }
         });

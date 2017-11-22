@@ -22,6 +22,8 @@ class ValidationBuilder
     public $rules = array();
 
     /**
+     * Constructor.
+     *
      * @param NodeDefinition $node The related node
      */
     public function __construct(NodeDefinition $node)

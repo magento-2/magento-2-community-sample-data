@@ -10,6 +10,9 @@ namespace Magento\Framework\Filesystem\Test\Unit\Directory;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\DriverInterface;
 
+/**
+ * Write test.
+ */
 class WriteTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -173,9 +176,7 @@ class WriteTest extends \PHPUnit_Framework_TestCase
     {
         if ($targetDir !== null) {
             $targetDir->driver = $this->getMockBuilder(DriverInterface::class)->getMockForAbstractClass();
-
             $targetDirPath = 'TARGET_PATH/';
-
             $targetDir->expects($this->once())
                 ->method('getAbsolutePath')
                 ->with($targetPath)
@@ -205,7 +206,6 @@ class WriteTest extends \PHPUnit_Framework_TestCase
             ->method('getParentDirectory')
             ->with($targetPath)
             ->willReturn(dirname($targetPath));
-
         $this->write->renameFile($sourcePath, $targetPath, $targetDir);
     }
 

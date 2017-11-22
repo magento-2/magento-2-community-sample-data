@@ -50,6 +50,6 @@ abstract class Files extends \Magento\Backend\App\Action
      */
     protected function _getStorage()
     {
-        return $this->_objectManager->get(\Magento\Theme\Model\Wysiwyg\Storage::class);
+        return $this->_objectManager->get('Magento\Theme\Model\Wysiwyg\Storage');
     }
 }

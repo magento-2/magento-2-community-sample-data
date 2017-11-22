@@ -40,7 +40,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
     /**
      * @var AttributeCache
      */
-    protected $attributeCache;
+    private $attributeCache;
 
     /**
      * Parameter name in event
@@ -75,6 +75,11 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
      * @var DateTimeFormatterInterface
      */
     protected $dateTimeFormatter;
+
+    /**
+     * @var \Magento\Framework\Intl\NumberFormatterFactory
+     */
+    private $numberFormatterFactory;
 
     /**
      * @param \Magento\Framework\Model\Context $context
@@ -217,6 +222,23 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
     }
 
     /**
+     * Get number formatter factory
+     *
+     * @return \Magento\Framework\Intl\NumberFormatterFactory
+     *
+     * @deprecated
+     */
+    private function getNumberFormatterFactory()
+    {
+        if ($this->numberFormatterFactory === null) {
+            $this->numberFormatterFactory = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Intl\NumberFormatterFactory::class
+            );
+        }
+        return $this->numberFormatterFactory;
+    }
+
+    /**
      * Prepare data for save
      *
      * @return $this
@@ -256,7 +278,8 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
         $hasDefaultValue = (string)$defaultValue != '';
 
         if ($this->getBackendType() == 'decimal' && $hasDefaultValue) {
-            $numberFormatter = new \NumberFormatter($this->_localeResolver->getLocale(), \NumberFormatter::DECIMAL);
+            $numberFormatter = $this->getNumberFormatterFactory()
+                ->create($this->_localeResolver->getLocale(), \NumberFormatter::DECIMAL);
             $defaultValue = $numberFormatter->parse($defaultValue);
             if ($defaultValue === false) {
                 throw new LocalizedException(__('Invalid default decimal value'));
@@ -498,6 +521,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
      */
     public function __sleep()
     {
+        $this->unsetData('attribute_set_info');
         return array_diff(
             parent::__sleep(),
             ['_localeDate', '_localeResolver', 'reservedAttributeList', 'dateTimeFormatter']

@@ -89,6 +89,20 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
     protected $productForSalesRule2;
 
     /**
+     * Cart prices to compare.
+     *
+     * @var array
+     */
+    protected $cartPrice;
+
+    /**
+     * Login customer on frontend step.
+     *
+     * @var \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep
+     */
+    private $logInStep;
+
+    /**
      * Implementation assert.
      *
      * @return void
@@ -120,18 +134,22 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
      * @param CustomerAccountLogout $customerAccountLogout
      * @param CatalogCategoryView $catalogCategoryView
      * @param CatalogProductView $catalogProductView
-     * @param Customer $customer
      * @param SalesRule $salesRule
      * @param SalesRule $salesRuleOrigin
      * @param array $productQuantity
      * @param CatalogProductSimple $productForSalesRule1
      * @param CatalogProductSimple $productForSalesRule2
+     * @param Customer $customer
      * @param Address $address
      * @param int|null $isLoggedIn
      * @param array $shipping
+     * @param array $cartPrice
+     * @param array $couponCodes
      * @return void
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function processAssert(
         CheckoutCart $checkoutCart,
@@ -140,15 +158,17 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
         CustomerAccountLogout $customerAccountLogout,
         CatalogCategoryView $catalogCategoryView,
         CatalogProductView $catalogProductView,
-        Customer $customer,
         SalesRule $salesRule,
         SalesRule $salesRuleOrigin,
         array $productQuantity,
         CatalogProductSimple $productForSalesRule1,
         CatalogProductSimple $productForSalesRule2 = null,
+        Customer $customer = null,
         Address $address = null,
         $isLoggedIn = null,
-        array $shipping = []
+        array $shipping = [],
+        array $cartPrice = [],
+        $couponCodes = null
     ) {
         $this->checkoutCart = $checkoutCart;
         $this->cmsIndex = $cmsIndex;
@@ -156,9 +176,12 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
         $this->customerAccountLogout = $customerAccountLogout;
         $this->catalogCategoryView = $catalogCategoryView;
         $this->catalogProductView = $catalogProductView;
-        $this->customer = $customer;
         $this->productForSalesRule1 = $productForSalesRule1;
         $this->productForSalesRule2 = $productForSalesRule2;
+        $this->cartPrice = $cartPrice;
+        if ($customer !== null) {
+            $this->customer = $customer;
+        }
         $isLoggedIn ? $this->login() : $this->customerAccountLogout->open();
         $this->checkoutCart->open()->getCartBlock()->clearShoppingCart();
         $this->addProductsToCart($productQuantity);
@@ -167,12 +190,25 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
             $this->checkoutCart->getShippingBlock()->fillEstimateShippingAndTax($address);
             $this->checkoutCart->getShippingBlock()->selectShippingMethod($shipping);
         }
-        if ($salesRule->getCouponCode() || $salesRuleOrigin->getCouponCode()) {
-            $this->checkoutCart->getDiscountCodesBlock()->applyCouponCode(
-                $salesRule->getCouponCode() ? $salesRule->getCouponCode() : $salesRuleOrigin->getCouponCode()
-            );
+
+        $couponCode = null;
+
+        if ($salesRule->getCouponCode()) {
+            $couponCode = $salesRule->getCouponCode();
+        } elseif ($salesRuleOrigin->getCouponCode()) {
+            $couponCode = $salesRuleOrigin->getCouponCode();
+        } elseif ($couponCodes && is_array($couponCodes)) {
+            $couponCode = isset($couponCodes[0]) ? $couponCodes[0]: null;
+        }
+
+        if ($couponCode) {
+            $this->checkoutCart->getDiscountCodesBlock()->applyCouponCode($couponCode);
         }
         $this->assert();
+
+        if ($isLoggedIn) {
+            $this->logout();
+        }
     }
 
     /**
@@ -182,10 +218,23 @@ abstract class AssertCartPriceRuleApplying extends AbstractConstraint
      */
     protected function login()
     {
-        $this->objectManager->create(
-            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
+        $this->logInStep = $this->objectManager->create(
+            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
             ['customer' => $this->customer]
-        )->run();
+        );
+        $this->logInStep->run();
+    }
+
+    /**
+     * LogOut customer.
+     *
+     * @return void
+     */
+    protected function logout()
+    {
+        if ($this->logInStep) {
+            $this->logInStep->cleanup();
+        }
     }
 
     /**

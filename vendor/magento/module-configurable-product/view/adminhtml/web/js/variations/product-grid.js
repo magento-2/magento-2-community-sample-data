@@ -30,8 +30,7 @@ define([
             listens: {
                 '${ $.productsProvider }:data': '_showMessageAssociatedGrid _handleManualGridOpening',
                 '${ $.productsMassAction }:selected': '_handleManualGridSelect',
-                '${ $.configurableVariations }:productMatrix': '_switchProductType',
-                '${ $.configurableVariations }:isShowAddProductButton': '_showButtonAddManual'
+                '${ $.configurableVariations }:productMatrix': '_showButtonAddManual _switchProductType'
             }
         },
 
@@ -66,7 +65,7 @@ define([
                 this.productsModal.notification();
             }.bind(this));
             this.variationsComponent(function (variation) {
-                this._showButtonAddManual(variation.attributes());
+                this._showButtonAddManual(variation.productMatrix());
             }.bind(this));
 
             this._initGrid = _.once(this._initGrid);
@@ -194,12 +193,12 @@ define([
 
         /**
          * Show button add manual
-         * @param {Array} attributes
+         * @param {Array} variations
          * @returns {*}
          * @private
          */
-        _showButtonAddManual: function (attributes) {
-            return this.button(attributes.length);
+        _showButtonAddManual: function (variations) {
+            return this.button(variations.length);
         },
 
         _switchProductType: function (variations) {
@@ -245,7 +244,7 @@ define([
                 }),
                 usedProductIds = _.values(this.variationsComponent().productAttributesMap);
 
-            if (usedProductIds) {
+            if (usedProductIds && usedProductIds.length > 0) {
                 filterModifier['entity_id'] = {
                     'condition_type': 'nin', value: usedProductIds
                 };

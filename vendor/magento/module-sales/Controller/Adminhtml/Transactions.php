@@ -19,7 +19,9 @@ use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 abstract class Transactions extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::transactions';
 

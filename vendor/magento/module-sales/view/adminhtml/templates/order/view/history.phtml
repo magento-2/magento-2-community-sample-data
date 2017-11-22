@@ -93,7 +93,7 @@
     </ul>
     <script>
 require(['prototype'], function(){
-    if($('order_status'))$('order_status').update(<?php echo json_encode($block->escapeHtml($block->getOrder()->getStatusLabel())) ?>);
+    if($('order_status'))$('order_status').update(<?php /* @noEscape */ echo json_encode($block->escapeHtml($block->getOrder()->getStatusLabel())) ?>);
 });
 </script>
 </div>

@@ -15,7 +15,7 @@ interface BaseSelectProcessorInterface
     /**
      * Product table alias
      */
-    const PRODUCT_RELATION_ALIAS = 'link';
+    const PRODUCT_TABLE_ALIAS = 'child';
 
     /**
      * @param Select $select

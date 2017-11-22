@@ -8,7 +8,9 @@ namespace Magento\SalesRule\Controller\Adminhtml\Promo;
 abstract class Quote extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_SalesRule::quote';
 
@@ -55,7 +57,7 @@ abstract class Quote extends \Magento\Backend\App\Action
     protected function _initRule()
     {
         $this->_coreRegistry->register(
-            'current_promo_quote_rule',
+            \Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE,
             $this->_objectManager->create('Magento\SalesRule\Model\Rule')
         );
         $id = (int)$this->getRequest()->getParam('id');
@@ -65,7 +67,7 @@ abstract class Quote extends \Magento\Backend\App\Action
         }
 
         if ($id) {
-            $this->_coreRegistry->registry('current_promo_quote_rule')->load($id);
+            $this->_coreRegistry->registry(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE)->load($id);
         }
     }
 

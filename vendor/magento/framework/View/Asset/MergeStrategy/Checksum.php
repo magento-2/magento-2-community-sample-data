@@ -6,8 +6,6 @@
 namespace Magento\Framework\View\Asset\MergeStrategy;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\View\Asset\Source;
 
 /**
  * Skip merging if all of the files that need to be merged were not modified
@@ -28,11 +26,6 @@ class Checksum implements \Magento\Framework\View\Asset\MergeStrategyInterface
     protected $filesystem;
 
     /**
-     * @var Source
-     */
-    private $assetSource;
-
-    /**
      * @param \Magento\Framework\View\Asset\MergeStrategyInterface $strategy
      * @param \Magento\Framework\Filesystem $filesystem
      */
@@ -45,30 +38,16 @@ class Checksum implements \Magento\Framework\View\Asset\MergeStrategyInterface
     }
 
     /**
-     * @deprecated
-     * @return Source
-     */
-    private function getAssetSource()
-    {
-        if (!$this->assetSource) {
-            $this->assetSource = ObjectManager::getInstance()->get(Source::class);
-        }
-        return $this->assetSource;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function merge(array $assetsToMerge, \Magento\Framework\View\Asset\LocalInterface $resultAsset)
     {
-        $rootDir = $this->filesystem->getDirectoryRead(DirectoryList::ROOT);
+        $sourceDir = $this->filesystem->getDirectoryRead(DirectoryList::ROOT);
         $mTime = null;
         /** @var \Magento\Framework\View\Asset\MergeableInterface $asset */
         foreach ($assetsToMerge as $asset) {
-            $sourceFile = $this->getAssetSource()->findSource($asset);
-            $mTime .= $rootDir->stat($rootDir->getRelativePath($sourceFile))['mtime'];
+            $mTime .= $sourceDir->stat($sourceDir->getRelativePath($asset->getSourceFile()))['mtime'];
         }
-
         if (null === $mTime) {
             return; // nothing to merge
         }

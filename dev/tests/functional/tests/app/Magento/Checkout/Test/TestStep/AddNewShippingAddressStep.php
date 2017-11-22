@@ -8,10 +8,11 @@ namespace Magento\Checkout\Test\TestStep;
 
 use Magento\Checkout\Test\Page\CheckoutOnepage;
 use Magento\Customer\Test\Fixture\Address;
+use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestStep\TestStepInterface;
 
 /**
- * Create customer custom attribute step.
+ * Add new shipping address on checkout step.
  */
 class AddNewShippingAddressStep implements TestStepInterface
 {
@@ -23,6 +24,13 @@ class AddNewShippingAddressStep implements TestStepInterface
     private $checkoutOnepage;
 
     /**
+     * Factory responsible for creating fixtures.
+     *
+     * @var FixtureFactory
+     */
+    private $fixtureFactory;
+
+    /**
      * Shipping Address fixture.
      *
      * @var Address
@@ -30,30 +38,50 @@ class AddNewShippingAddressStep implements TestStepInterface
     private $address;
 
     /**
+     * Save Shipping Address.
+     *
+     * @var boolean
+     */
+    private $save;
+
+    /**
      * @constructor
      * @param CheckoutOnepage $checkoutOnepage
-     * @param Address|null $address [optional]
+     * @param Address|null $shippingAddress [optional]
+     * @param boolean $save [optional]
      */
-    public function __construct(CheckoutOnepage $checkoutOnepage, Address $address = null)
+    public function __construct(CheckoutOnepage $checkoutOnepage, Address $shippingAddress = null, $save = true)
     {
         $this->checkoutOnepage = $checkoutOnepage;
-        $this->address = $address;
+        $this->address = $shippingAddress;
+        $this->save = $save;
     }
 
     /**
-     * Create customer account.
+     * Add new shipping address.
      *
-     * @return void
+     * @return array
      */
     public function run()
     {
         $shippingBlock = $this->checkoutOnepage->getShippingBlock();
         $shippingBlock->clickOnNewAddressButton();
+        if (is_string($this->address)) {
+            $this->address = $this->fixtureFactory->create(
+                Address::class,
+                ['dataset' => $this->address]
+            );
+        }
 
         if ($this->address) {
             $shippingBlock->getAddressModalBlock()->fill($this->address);
         }
+        if ($this->save) {
+            $shippingBlock->getAddressModalBlock()->save();
+        } else {
+            $shippingBlock->getAddressModalBlock()->cancel();
+        }
 
-        $shippingBlock->getAddressModalBlock()->save();
+        return ['shippingAddress' => $this->address];
     }
 }

@@ -19,12 +19,12 @@ echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob')
 
 For checkout/onepage/billing.phtml:
 
-<?php 
+<?php
 echo $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob')
-   ->setDate($block->getCustomer()->getDob())
-   ->setFieldIdFormat('billing:%s')
-   ->setFieldNameFormat('billing[%s]')
-   ->toHtml() 
+    ->setDate($block->getCustomer()->getDob())
+    ->setFieldIdFormat('billing:%s')
+    ->setFieldNameFormat('billing[%s]')
+    ->toHtml() 
 ?>
 
 NOTE: Regarding styles - if we leave it this way, we'll move it to boxes.css

@@ -7,6 +7,9 @@
  */
 namespace Magento\Widget\Test\Unit\Model\Widget;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class InstanceTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -54,7 +57,7 @@ class InstanceTest extends \PHPUnit_Framework_TestCase
      */
     private $loggerInterfaceMock;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->widgetModelMock = $this->getMockBuilder(
             \Magento\Widget\Model\Widget::class

@@ -85,6 +85,7 @@ class IndexerHandlerFactory
                 'Indexer handler is not available: ' . $currentHandler
             );
         }
+
         return $indexer;
     }
 }

@@ -99,6 +99,11 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     protected $rowCustomizer;
 
     /**
+     * @var \Magento\Framework\EntityManager\MetadataPool|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $metadataPool;
+
+    /**
      * @var \Magento\ImportExport\Model\Export\Adapter\AbstractAdapter| \PHPUnit_Framework_MockObject_MockObject
      */
     protected $writer;
@@ -107,7 +112,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
      * @var \Magento\CatalogImportExport\Model\Export\Product|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $product;
-
 
     /**
      * @var StubProduct|\Magento\CatalogImportExport\Model\Export\Product
@@ -265,6 +269,13 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         );
         $this->rowCustomizer = $this->getMock(
             'Magento\CatalogImportExport\Model\Export\RowCustomizer\Composite',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->metadataPool = $this->getMock(
+            '\Magento\Framework\EntityManager\MetadataPool',
             [],
             [],
             '',

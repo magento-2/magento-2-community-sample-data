@@ -222,10 +222,12 @@ class FormPostTest extends \PHPUnit_Framework_TestCase
             $this->helperData
         );
 
-        $reflection = new \ReflectionClass(get_class($this->model));
-        $reflectionProperty = $reflection->getProperty('customerAddressMapper');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->model, $this->customerAddressMapper);
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $objectManager->setBackwardCompatibleProperty(
+            $this->model,
+            'customerAddressMapper',
+            $this->customerAddressMapper
+        );
     }
 
     protected function prepareContext()
@@ -425,7 +427,6 @@ class FormPostTest extends \PHPUnit_Framework_TestCase
         $addressId,
         $countryId,
         $customerId,
-        $isRegionRequired,
         $regionId,
         $region,
         $regionCode,
@@ -491,11 +492,6 @@ class FormPostTest extends \PHPUnit_Framework_TestCase
             ->method('compactData')
             ->with($newAddressData)
             ->willReturn($newAddressData);
-
-        $this->helperData->expects($this->once())
-            ->method('isRegionRequired')
-            ->with($countryId)
-            ->willReturn($isRegionRequired);
 
         $this->region->expects($this->any())
             ->method('load')
@@ -584,31 +580,31 @@ class FormPostTest extends \PHPUnit_Framework_TestCase
     public function dataProviderTestExecute()
     {
         return [
-            [1, 1, 1, true, null, '', null, '', null, ''],
-            [1, 1, 1, false, '', null, '', null, '', null],
+            [1, 1, 1, null, '', null, '', null, ''],
+            [1, 1, 1, '', null, '', null, '', null],
 
-            [1, 1, 1, true, null, null, null, 12, null, null],
-            [1, 1, 1, true, null, null, null, 1, 'California', null],
-            [1, 1, 1, true, null, null, null, 1, 'California', 'CA'],
+            [1, 1, 1, null, null, null, 12, null, null],
+            [1, 1, 1, null, null, null, 1, 'California', null],
+            [1, 1, 1, null, null, null, 1, 'California', 'CA'],
 
-            [1, 1, 1, false, null, null, null, 1, null, 'CA'],
-            [1, 1, 1, false, null, null, null, null, null, 'CA'],
+            [1, 1, 1, null, null, null, 1, null, 'CA'],
+            [1, 1, 1, null, null, null, null, null, 'CA'],
 
-            [1, 1, 1, true, 2, null, null, null, null, null],
-            [1, 1, 1, true, 2, 'Alaska', null, null, null, null],
-            [1, 1, 1, true, 2, 'Alaska', 'AK', null, null, null],
+            [1, 1, 1, 2, null, null, null, null, null],
+            [1, 1, 1, 2, 'Alaska', null, null, null, null],
+            [1, 1, 1, 2, 'Alaska', 'AK', null, null, null],
 
-            [1, 1, 1, false, 2, null, null, null, null, null],
-            [1, 1, 1, false, 2, 'Alaska', null, null, null, null],
-            [1, 1, 1, false, 2, 'Alaska', 'AK', null, null, null],
+            [1, 1, 1, 2, null, null, null, null, null],
+            [1, 1, 1, 2, 'Alaska', null, null, null, null],
+            [1, 1, 1, 2, 'Alaska', 'AK', null, null, null],
 
-            [1, 1, 1, true, 2, null, null, 12, null, null],
-            [1, 1, 1, true, 2, 'Alaska', null, 12, null, 'CA'],
-            [1, 1, 1, true, 2, 'Alaska', 'AK', 12, 'California', null],
+            [1, 1, 1, 2, null, null, 12, null, null],
+            [1, 1, 1, 2, 'Alaska', null, 12, null, 'CA'],
+            [1, 1, 1, 2, 'Alaska', 'AK', 12, 'California', null],
 
-            [1, 1, 1, false, 2, null, null, 12, null, null],
-            [1, 1, 1, false, 2, 'Alaska', null, 12, null, 'CA'],
-            [1, 1, 1, false, 2, 'Alaska', 'AK', 12, 'California', null],
+            [1, 1, 1, 2, null, null, 12, null, null],
+            [1, 1, 1, 2, 'Alaska', null, 12, null, 'CA'],
+            [1, 1, 1, 2, 'Alaska', 'AK', 12, 'California', null],
         ];
     }
 

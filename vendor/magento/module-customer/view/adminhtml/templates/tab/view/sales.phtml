@@ -6,9 +6,9 @@
 
 // @codingStandardsIgnoreFile
 
-/** @var \Magento\Customer\Block\Adminhtml\Edit\Tab\View\Sales $block */ 
-
-$singleStoreMode = $block->isSingleStoreMode(); ?>
+/** @var \Magento\Customer\Block\Adminhtml\Edit\Tab\View\Sales $block */
+$singleStoreMode = $block->isSingleStoreMode(); 
+?>
 <div class="entry-edit fieldset-wrapper">
 
     <div class="fieldset-wrapper-title">
@@ -19,9 +19,9 @@ $singleStoreMode = $block->isSingleStoreMode(); ?>
         <thead>
         <tr>
             <?php if (!$singleStoreMode): ?>
-                <th><?php echo $block->escapeHtml(__('Web Site')) ?></th>
-                <th><?php echo $block->escapeHtml(__('Store')) ?></th>
-                <th><?php echo $block->escapeHtml(__('Store View')) ?></th>
+            <th><?php echo $block->escapeHtml(__('Web Site')) ?></th>
+            <th><?php echo $block->escapeHtml(__('Store')) ?></th>
+            <th><?php echo $block->escapeHtml(__('Store View')) ?></th>
             <?php endif; ?>
             <th><?php echo $block->escapeHtml(__('Lifetime Sales')) ?></th>
             <th class="last"><?php echo $block->escapeHtml(__('Average Sale')) ?></th>
@@ -46,24 +46,24 @@ $singleStoreMode = $block->isSingleStoreMode(); ?>
                 <?php foreach ($_stores as $_row): ?>
                     <?php if (!$singleStoreMode): ?>
                         <?php if ($_row->getStoreId() == 0): ?>
-                                <td colspan="3"><?php echo $block->escapeHtml($_row->getStoreName()) ?></td>
+                        <td colspan="3"><?php echo $block->escapeHtml($_row->getStoreName()) ?></td>
                             <?php else: ?>
                     <tr<?php echo($_i++ % 2 ? ' class="even"' : '') ?>>
                             <?php if (!$_websiteRow): ?>
-                                    <td rowspan="<?php /* @escapeNotVerified */ echo $block->getWebsiteCount($_websiteId) ?>"><?php echo $block->escapeHtml($_row->getWebsiteName()) ?></td>
+                                <td rowspan="<?php /* @escapeNotVerified */ echo $block->getWebsiteCount($_websiteId) ?>"><?php echo $block->escapeHtml($_row->getWebsiteName()) ?></td>
                                 <?php $_websiteRow = true; ?>
                                 <?php endif; ?>
                             <?php if (!$_groupRow): ?>
-                                    <td rowspan="<?php echo count($_stores) ?>"><?php echo $block->escapeHtml($_row->getGroupName()) ?></td>
+                                <td rowspan="<?php echo count($_stores) ?>"><?php echo $block->escapeHtml($_row->getGroupName()) ?></td>
                                 <?php $_groupRow = true; ?>
                                 <?php endif; ?>
-                                <td><?php echo $block->escapeHtml($_row->getStoreName()) ?></td>
+                            <td><?php echo $block->escapeHtml($_row->getStoreName()) ?></td>
                             <?php endif; ?>
                         <?php else: ?>
                     <tr>
                         <?php endif; ?>
-                        <td><?php echo $block->escapeHtml($block->formatCurrency($_row->getLifetime(), $_row->getWebsiteId())) ?></td>
-                        <td><?php echo $block->escapeHtml($block->formatCurrency($_row->getAvgsale(), $_row->getWebsiteId())) ?></td>
+                    <td><?php echo $block->escapeHtml($block->formatCurrency($_row->getLifetime(), $_row->getWebsiteId())) ?></td>
+                    <td><?php echo $block->escapeHtml($block->formatCurrency($_row->getAvgsale(), $_row->getWebsiteId())) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endforeach; ?>

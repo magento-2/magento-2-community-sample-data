@@ -43,13 +43,6 @@ class Page extends Block
     protected $textSelector = "//div[contains(.,'%s')]";
 
     /**
-     * Cms page products grid class.
-     *
-     * @var string
-     */
-    protected $productsGrid = ".products-grid";
-
-    /**
      * Widgets selectors.
      *
      * @var array
@@ -82,20 +75,6 @@ class Page extends Block
     public function getPageTitle()
     {
         return $this->_rootElement->find($this->cmsPageTitle)->getText();
-    }
-
-    /**
-     * Get products-grid content text.
-     *
-     * @return string
-     */
-    public function getProductsGridContent()
-    {
-        $content = '';
-        if ($this->_rootElement->find($this->productsGrid)->isVisible()) {
-            $content = $this->_rootElement->find($this->productsGrid)->getText();
-        }
-        return $content;
     }
 
     /**
@@ -142,5 +121,19 @@ class Page extends Block
     {
         $this->waitForElementNotVisible($this->initialScript);
         sleep(3); // TODO: remove after resolving an issue with ajax on Frontend.
+    }
+
+    /**
+     * Get widget title value.
+     * 
+     * @param string $widgetType
+     * @param string $widgetText
+     * @return string
+     */
+    public function getWidgetTitle($widgetType, $widgetText)
+    {
+        return $this->_rootElement
+            ->find(sprintf($this->widgetSelectors[$widgetType], $widgetText), Locator::SELECTOR_XPATH)
+            ->getAttribute('title');
     }
 }

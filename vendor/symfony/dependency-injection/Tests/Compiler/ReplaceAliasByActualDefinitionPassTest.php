@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\ReplaceAliasByActualDefinitionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -19,15 +18,13 @@ use Symfony\Component\DependencyInjection\Reference;
 
 require_once __DIR__.'/../Fixtures/includes/foo.php';
 
-class ReplaceAliasByActualDefinitionPassTest extends TestCase
+class ReplaceAliasByActualDefinitionPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
         $container = new ContainerBuilder();
 
         $aDefinition = $container->register('a', '\stdClass');
-        $aDefinition->setFactoryService('b', false);
-
         $aDefinition->setFactory(array(new Reference('b'), 'createA'));
 
         $bDefinition = new Definition('\stdClass');
@@ -49,31 +46,10 @@ class ReplaceAliasByActualDefinitionPassTest extends TestCase
             '->process() replaces alias to actual.'
         );
 
-        $this->assertSame('b_alias', $aDefinition->getFactoryService(false));
         $this->assertTrue($container->has('container'));
 
         $resolvedFactory = $aDefinition->getFactory();
         $this->assertSame('b_alias', (string) $resolvedFactory[0]);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testPrivateAliasesInFactory()
-    {
-        $container = new ContainerBuilder();
-
-        $container->register('a', 'Bar\FooClass');
-        $container->register('b', 'Bar\FooClass')
-            ->setFactoryService('a')
-            ->setFactoryMethod('getInstance');
-
-        $container->register('c', 'stdClass')->setPublic(false);
-        $container->setAlias('c_alias', 'c');
-
-        $this->process($container);
-
-        $this->assertInstanceOf('Bar\FooClass', $container->get('b'));
     }
 
     /**

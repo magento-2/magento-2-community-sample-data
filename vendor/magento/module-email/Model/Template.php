@@ -47,9 +47,10 @@ class Template extends AbstractTemplate implements \Magento\Framework\Mail\Templ
     const XML_PATH_SENDING_RETURN_PATH_EMAIL = 'system/smtp/return_path_email';
 
     /**
-     * Config path to mail sending setting that shows if email communications are disabled
+     * Config path to mail sending setting that shows if email communications are disabled.
+     *
      * @deprecated
-     * @see \Magento\Email\Model\Mail\TransportInterfacePlugin::XML_PATH_SYSTEM_SMTP_DISABLE
+     * @see \Magento\Email\Model\Plugin\TransportInterfacePlugin::XML_PATH_SYSTEM_SMTP_DISABLE
      */
     const XML_PATH_SYSTEM_SMTP_DISABLE = 'system/smtp/disable';
 
@@ -177,7 +178,7 @@ class Template extends AbstractTemplate implements \Magento\Framework\Mail\Templ
     }
 
     /**
-     * Return true if this template can be used for sending queue as main template
+     * Return true if this template can be used for sending queue as main template.
      *
      * @return bool
      */
@@ -230,7 +231,7 @@ class Template extends AbstractTemplate implements \Magento\Framework\Mail\Templ
         $this->applyDesignConfig();
         $storeId = $this->getDesignConfig()->getStore();
         try {
-            $processedResult = $processor->setStoreId($storeId)->filter($this->getTemplateSubject());
+            $processedResult = $processor->setStoreId($storeId)->filter(__($this->getTemplateSubject()));
         } catch (\Exception $e) {
             $this->cancelDesignConfig();
             throw new \Magento\Framework\Exception\MailException(__($e->getMessage()), $e);
@@ -330,8 +331,7 @@ class Template extends AbstractTemplate implements \Magento\Framework\Mail\Templ
         if ($this->_getResource()->checkCodeUsage($this)) {
             throw new \Magento\Framework\Exception\MailException(__('Duplicate Of Template Name'));
         }
-        parent::beforeSave();
-        return $this;
+        return parent::beforeSave();
     }
 
     /**

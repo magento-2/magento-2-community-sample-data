@@ -50,7 +50,6 @@ class ExportCsv extends \Magento\Backend\App\Action
         $fileName = 'customers.csv';
         /** @var \Magento\Backend\Block\Widget\Grid\ExportInterface $exportBlock  */
         $exportBlock = $this->_view->getLayout()->getChildBlock('admin.block.customer.grid', 'grid.export');
-
         return $this->_fileFactory->create(
             $fileName,
             $exportBlock->getCsvFile(),

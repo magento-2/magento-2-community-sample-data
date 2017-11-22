@@ -18,6 +18,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws \Zend_Db_Exception
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -1202,6 +1203,13 @@ class InstallSchema implements InstallSchemaInterface
         $table = $installer->getConnection()
             ->newTable($installer->getTable('catalog_category_product'))
             ->addColumn(
+                'entity_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'nullable' => false, 'primary' => true],
+                'Entity ID'
+            )
+            ->addColumn(
                 'category_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
@@ -1226,17 +1234,14 @@ class InstallSchema implements InstallSchemaInterface
                 $installer->getIdxName('catalog_category_product', ['product_id']),
                 ['product_id']
             )
-            ->addForeignKey(
-                $installer->getFkName(
+            ->addIndex(
+                $installer->getIdxName(
                     'catalog_category_product',
-                    'category_id',
-                    'catalog_category_entity',
-                    'entity_id'
+                    ['category_id', 'product_id'],
+                    \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
                 ),
-                'category_id',
-                $installer->getTable('catalog_category_entity'),
-                'entity_id',
-                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+                ['category_id', 'product_id'],
+                ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
             )
             ->addForeignKey(
                 $installer->getFkName('catalog_category_product', 'product_id', 'catalog_product_entity', 'entity_id'),
@@ -2422,7 +2427,6 @@ class InstallSchema implements InstallSchemaInterface
                 'option_id',
                 $installer->getTable('catalog_product_option'),
                 'option_id',
-                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE,
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
             )
             ->setComment(

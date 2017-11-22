@@ -5,6 +5,7 @@
  */
 namespace Magento\CatalogSearch\Model\Adapter\Mysql\Filter;
 
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\CatalogSearch\Model\Search\TableMapper;
@@ -12,10 +13,15 @@ use Magento\Eav\Model\Config;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Search\Adapter\Mysql\ConditionManager;
 use Magento\Framework\Search\Adapter\Mysql\Filter\PreprocessorInterface;
 use Magento\Framework\Search\Request\FilterInterface;
 use Magento\Store\Model\Store;
+use Magento\CatalogInventory\Model\Stock;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -53,9 +59,30 @@ class Preprocessor implements PreprocessorInterface
     private $connection;
 
     /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
+     * @deprecated
+     *
      * @var TableMapper
      */
     private $tableMapper;
+
+    /**
+     * Scope config.
+     *
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * Resolving table alias for Search Request filter.
+     *
+     * @var AliasResolver
+     */
+    private $aliasResolver;
 
     /**
      * @param ConditionManager $conditionManager
@@ -64,6 +91,8 @@ class Preprocessor implements PreprocessorInterface
      * @param ResourceConnection $resource
      * @param TableMapper $tableMapper
      * @param string $attributePrefix
+     * @param ScopeConfigInterface $scopeConfig
+     * @param AliasResolver $aliasResolver
      */
     public function __construct(
         ConditionManager $conditionManager,
@@ -71,7 +100,9 @@ class Preprocessor implements PreprocessorInterface
         Config $config,
         ResourceConnection $resource,
         TableMapper $tableMapper,
-        $attributePrefix
+        $attributePrefix,
+        ScopeConfigInterface $scopeConfig = null,
+        AliasResolver $aliasResolver = null
     ) {
         $this->conditionManager = $conditionManager;
         $this->scopeResolver = $scopeResolver;
@@ -80,6 +111,8 @@ class Preprocessor implements PreprocessorInterface
         $this->connection = $resource->getConnection();
         $this->attributePrefix = $attributePrefix;
         $this->tableMapper = $tableMapper;
+        $this->scopeConfig = $scopeConfig ?: ObjectManager::getInstance()->get(ScopeConfigInterface::class);
+        $this->aliasResolver = $aliasResolver ?: ObjectManager::getInstance()->get(AliasResolver::class);
     }
 
     /**
@@ -100,6 +133,7 @@ class Preprocessor implements PreprocessorInterface
     {
         /** @var Attribute $attribute */
         $attribute = $this->config->getAttribute(Product::ENTITY, $filter->getField());
+        $linkIdField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         if ($filter->getField() === 'price') {
             $resultQuery = str_replace(
                 $this->connection->quoteIdentifier('price'),
@@ -109,7 +143,7 @@ class Preprocessor implements PreprocessorInterface
         } elseif ($filter->getField() === 'category_ids') {
             return 'category_ids_index.category_id = ' . (int) $filter->getValue();
         } elseif ($attribute->isStatic()) {
-            $alias = $this->tableMapper->getMappingAlias($filter);
+            $alias = $this->aliasResolver->getAlias($filter);
             $resultQuery = str_replace(
                 $this->connection->quoteIdentifier($attribute->getAttributeCode()),
                 $this->connection->quoteIdentifier($alias . '.' . $attribute->getAttributeCode()),
@@ -132,7 +166,12 @@ class Preprocessor implements PreprocessorInterface
 
             $currentStoreId = $this->scopeResolver->getScope()->getId();
 
-            $select->from(['main_table' => $table], 'entity_id')
+            $select->from(['e' => $this->resource->getTableName('catalog_product_entity')], ['entity_id'])
+                ->join(
+                    ['main_table' => $table],
+                    "main_table.{$linkIdField} = e.{$linkIdField}",
+                    []
+                )
                 ->joinLeft(
                     ['current_store' => $table],
                     'current_store.attribute_id = main_table.attribute_id AND current_store.store_id = '
@@ -166,10 +205,16 @@ class Preprocessor implements PreprocessorInterface
         $tableSuffix = $attribute->getBackendType() === 'decimal' ? '_decimal' : '';
         $table = $this->resource->getTableName("catalog_product_index_eav{$tableSuffix}");
         $select = $this->connection->select();
+        $entityField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getIdentifierField();
 
         $currentStoreId = $this->scopeResolver->getScope()->getId();
 
-        $select->from(['main_table' => $table], 'entity_id')
+        $select->from(['e' => $this->resource->getTableName('catalog_product_entity')], ['entity_id'])
+            ->join(
+                ['main_table' => $table],
+                "main_table.{$entityField} = e.{$entityField}",
+                []
+            )
             ->columns([$filter->getField() => 'main_table.value'])
             ->where('main_table.attribute_id = ?', $attribute->getAttributeId())
             ->where('main_table.store_id = ?', $currentStoreId)
@@ -189,7 +234,7 @@ class Preprocessor implements PreprocessorInterface
      */
     private function processTermSelect(FilterInterface $filter, $isNegation)
     {
-        $alias = $this->tableMapper->getMappingAlias($filter);
+        $alias = $this->aliasResolver->getAlias($filter);
         if (is_array($filter->getValue())) {
             $value = sprintf(
                 '%s IN (%s)',
@@ -205,6 +250,45 @@ class Preprocessor implements PreprocessorInterface
             $value
         );
 
+        if ($this->isAddStockFilter()) {
+            $resultQuery = sprintf(
+                '%1$s AND %2$s%3$s.stock_status = %4$s',
+                $resultQuery,
+                $alias,
+                AliasResolver::STOCK_FILTER_SUFFIX,
+                Stock::STOCK_IN_STOCK
+            );
+        }
+
         return $resultQuery;
+    }
+
+    /**
+     * Checks if it is necessary to show out of stock products.
+     *
+     * @return bool
+     */
+    private function isAddStockFilter()
+    {
+        $isShowOutOfStock = $this->scopeConfig->isSetFlag(
+            'cataloginventory/options/show_out_of_stock',
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return false === $isShowOutOfStock;
+    }
+
+    /**
+     * Get product metadata pool
+     *
+     * @return \Magento\Framework\EntityManager\MetadataPool
+     */
+    protected function getMetadataPool()
+    {
+        if (!$this->metadataPool) {
+            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+        }
+        return $this->metadataPool;
     }
 }

@@ -7,6 +7,8 @@ namespace Magento\CatalogImportExport\Model\Export;
 
 /**
  * @magentoDataFixtureBeforeTransaction Magento/Catalog/_files/enable_reindex_schedule.php
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  */
 class ProductTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +52,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         'qty_increments',
         'use_config_enable_qty_inc',
         'enable_qty_increments',
-        'is_decimal_divided',
+        'is_decimal_divided'
     ];
 
     protected function setUp()
@@ -66,22 +68,63 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data.php
+     * @magentoDbIsolationEnabled
      */
     public function testExport()
     {
         $this->model->setWriter(
-            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            $this->objectManager->create(
                 \Magento\ImportExport\Model\Export\Adapter\Csv::class
             )
         );
         $exportData = $this->model->export();
+        $this->assertContains('New Product', $exportData);
+
+        $this->assertContains('Option 1 & Value 1"', $exportData);
+        $this->assertContains('Option 1 & Value 2"', $exportData);
+        $this->assertContains('Option 1 & Value 3"', $exportData);
+        $this->assertContains('Option 4 ""!@#$%^&*', $exportData);
+        $this->assertContains('test_option_code_2', $exportData);
+        $this->assertContains('max_characters=10', $exportData);
         $this->assertContains('text_attribute=!@#$%^&*()_+1234567890-=|\\:;""\'<,>.?/', $exportData);
-        $this->assertNotEmpty($exportData);
+        $occurrencesCount = substr_count($exportData, 'Hello "" &"" Bring the water bottle when you can!');
+        $this->assertEquals(1, $occurrencesCount);
+    }
+
+    /**
+     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data_special_chars.php
+     * @magentoDbIsolationEnabled
+     */
+    public function testExportSpecialChars()
+    {
+        $this->model->setWriter(
+            $this->objectManager->create(
+                \Magento\ImportExport\Model\Export\Adapter\Csv::class
+            )
+        );
+        $exportData = $this->model->export();
+        $this->assertContains('simple ""1""', $exportData);
+    }
+
+    /**
+     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_with_product_links_data.php
+     * @magentoDbIsolationEnabled
+     */
+    public function testExportWithProductLinks()
+    {
+        $this->model->setWriter(
+            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+                'Magento\ImportExport\Model\Export\Adapter\Csv'
+            )
+        );
+        $this->assertNotEmpty($this->model->export());
     }
 
     /**
      * Verify that all stock item attribute values are exported (aren't equal to empty string)
-     *
+     * 
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @covers \Magento\CatalogImportExport\Model\Export\Product::export
      * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data.php
      */
@@ -143,7 +186,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Verifies if exception processing works properly
-     *
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data.php
      */
     public function testExceptionInGetExportData()
@@ -207,7 +250,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertContains('""Option 2""', $exportData);
         $this->assertContains('""Option 3""', $exportData);
-        $this->assertContains('""Option 4 """"!@#$%^&*""', $exportData);
-        $this->assertContains('text_attribute=""!@#$%^&*()_+1234567890-=|\:;""""\'<,>.?/', $exportData);
+        $this->assertContains('""Option 4 """"!@#$%^&*"""', $exportData);
+        $this->assertContains('text_attribute=""!@#$%^&*()_+1234567890-=|\:;"""', $exportData);
     }
 }

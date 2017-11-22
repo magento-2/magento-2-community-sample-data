@@ -21,6 +21,11 @@ class CreditmemoDocumentFactory
     private $commentFactory;
 
     /**
+     * @var \Magento\Framework\EntityManager\HydratorPool
+     */
+    private $hydratorPool;
+
+    /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
     private $orderRepository;
@@ -30,15 +35,18 @@ class CreditmemoDocumentFactory
      *
      * @param \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory
      * @param \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory $commentFactory
+     * @param \Magento\Framework\EntityManager\HydratorPool $hydratorPool
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
         \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory $commentFactory,
+        \Magento\Framework\EntityManager\HydratorPool $hydratorPool,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
     ) {
         $this->creditmemoFactory = $creditmemoFactory;
         $this->commentFactory = $commentFactory;
+        $this->hydratorPool = $hydratorPool;
         $this->orderRepository = $orderRepository;
     }
 
@@ -58,15 +66,10 @@ class CreditmemoDocumentFactory
             $data['qtys'][$item->getOrderItemId()] = $item->getQty();
         }
         if ($arguments) {
-
-            $data = array_merge(
-                [
-                    'shipping_amount' => $arguments->getShippingAmount(),
-                    'adjustment_positive' => $arguments->getAdjustmentPositive(),
-                    'adjustment_negative' => $arguments->getAdjustmentNegative(),
-                ],
-                $data
+            $hydrator = $this->hydratorPool->getHydrator(
+                \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface::class
             );
+            $data = array_merge($hydrator->extract($arguments), $data);
         }
         return $data;
     }
@@ -84,10 +87,9 @@ class CreditmemoDocumentFactory
         \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface $comment,
         $appendComment = false
     ) {
-        $commentData = [
-            'comment' => $comment->getComment(),
-            'is_visible_on_front' => $comment->getIsVisibleOnFront()
-        ];
+        $commentData = $this->hydratorPool->getHydrator(
+            \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface::class
+        )->extract($comment);
         $comment = $this->commentFactory->create(['data' => $commentData]);
         $comment->setParentId($creditmemo->getEntityId())
             ->setStoreId($creditmemo->getStoreId())

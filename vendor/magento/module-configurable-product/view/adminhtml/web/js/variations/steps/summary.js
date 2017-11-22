@@ -16,7 +16,8 @@ define([
     return Component.extend({
         defaults: {
             modules: {
-                variationsComponent: '${ $.variationsComponent }'
+                variationsComponent: '${ $.variationsComponent }',
+                modalComponent: '${ $.modalComponent }'
             },
             notificationMessage: {
                 text: null,
@@ -81,7 +82,7 @@ define([
         variations: [],
         calculate: function (variations, getSectionValue) {
             var productSku = this.variationsComponent().getProductValue('sku'),
-                productPrice = this.variationsComponent().getProductValue('price'),
+                productPrice = this.variationsComponent().getProductPrice(),
                 productWeight = this.variationsComponent().getProductValue('weight'),
                 variationsKeys = [],
                 gridExisting = [],
@@ -100,26 +101,27 @@ define([
                 }
                 images = getSectionValue('images', options);
                 sku = productSku + _.reduce(options, function (memo, option) {
-                        return memo + '-' + option.label;
-                    }, '');
+                    return memo + '-' + option.label;
+                }, '');
                 quantity = getSectionValue('quantity', options);
 
-                if (!quantity && productId && product) {
+                if (!quantity && productId) {
                     quantity = product.quantity;
                 }
                 price = getSectionValue('price', options);
 
                 if (!price) {
-                    price = productId && product ? product.price : productPrice;
+                    price = productId ? product.price : productPrice;
                 }
 
-                if (productId && !images.file && product) {
+                if (productId && !images.file) {
                     images = product.images;
                 }
                 variation = {
                     options: options,
                     images: images,
                     sku: sku,
+                    name: sku,
                     quantity: quantity,
                     price: price,
                     productId: productId,
@@ -127,9 +129,10 @@ define([
                     editable: true
                 };
 
-                if (productId && product) {
+                if (productId) {
                     variation.sku = product.sku;
                     variation.weight = product.weight;
+                    variation.name = product.name;
                     gridExisting.push(this.prepareRowForGrid(variation));
                 } else {
                     gridNew.push(this.prepareRowForGrid(variation));
@@ -139,13 +142,11 @@ define([
             }, this);
 
             _.each(_.omit(this.variationsComponent().productAttributesMap, variationsKeys), function (productId) {
-                var variationToDelete = _.findWhere(this.variationsComponent().variations, {
-                    productId: productId
-                });
-
-                if (variationToDelete) {
-                    gridDeleted.push(this.prepareRowForGrid(variationToDelete));
-                }
+                gridDeleted.push(this.prepareRowForGrid(
+                    _.findWhere(this.variationsComponent().variations, {
+                        productId: productId
+                    })
+                ));
             }.bind(this));
 
             this.variationsExisting = gridExisting;
@@ -212,7 +213,7 @@ define([
         },
         force: function () {
             this.variationsComponent().render(this.variations, this.attributes());
-            $('[data-role=step-wizard-dialog]').trigger('closeModal');
+            this.modalComponent().closeModal();
         },
         back: function () {
         }

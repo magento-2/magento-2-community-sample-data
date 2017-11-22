@@ -16,7 +16,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_scopeConfigMock = $this->getMockBuilder(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+            'Magento\Framework\App\Config\ScopeConfigInterface'
         )->disableOriginalConstructor()->getMock();
 
         $this->_dataHelper = new \Magento\Integration\Helper\Oauth\Data($this->_scopeConfigMock);
@@ -80,5 +80,45 @@ class DataTest extends \PHPUnit_Framework_TestCase
     {
         $this->_scopeConfigMock->expects($this->once())->method('getValue')->will($this->returnValue(10));
         $this->assertEquals(10, $this->_dataHelper->getConsumerPostTimeout());
+    }
+
+    public function testGetCustomerTokenLifetimeNotEmpty()
+    {
+        $this->_scopeConfigMock
+            ->expects($this->once())
+            ->method('getValue')
+            ->with('oauth/access_token_lifetime/customer')
+            ->will($this->returnValue(10));
+        $this->assertEquals(10, $this->_dataHelper->getCustomerTokenLifetime());
+    }
+
+    public function testGetCustomerTokenLifetimeEmpty()
+    {
+        $this->_scopeConfigMock
+            ->expects($this->once())
+            ->method('getValue')
+            ->with('oauth/access_token_lifetime/customer')
+            ->will($this->returnValue(null));
+        $this->assertEquals(0, $this->_dataHelper->getCustomerTokenLifetime());
+    }
+
+    public function testGetAdminTokenLifetimeNotEmpty()
+    {
+        $this->_scopeConfigMock
+            ->expects($this->once())
+            ->method('getValue')
+            ->with('oauth/access_token_lifetime/admin')
+            ->will($this->returnValue(10));
+        $this->assertEquals(10, $this->_dataHelper->getAdminTokenLifetime());
+    }
+
+    public function testGetAdminTokenLifetimeEmpty()
+    {
+        $this->_scopeConfigMock
+            ->expects($this->once())
+            ->method('getValue')
+            ->with('oauth/access_token_lifetime/admin')
+            ->will($this->returnValue(null));
+        $this->assertEquals(0, $this->_dataHelper->getAdminTokenLifetime());
     }
 }

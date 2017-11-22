@@ -13,7 +13,9 @@ namespace Magento\Downloadable\Controller\Adminhtml\Downloadable;
 abstract class File extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Catalog::products';
 }

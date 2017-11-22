@@ -7,8 +7,18 @@
  */
 namespace Magento\Catalog\Model\Product;
 
+use Magento\Catalog\Api\Data\ProductInterface;
+
+/**
+ * Catalog product copier.
+ */
 class Copier
 {
+    /**
+     * @var Option\Repository
+     */
+    protected $optionRepository;
+
     /**
      * @var CopyConstructorInterface
      */
@@ -18,6 +28,11 @@ class Copier
      * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $productFactory;
+
+    /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    protected $metadataPool;
 
     /**
      * @param CopyConstructorInterface $copyConstructor
@@ -42,10 +57,15 @@ class Copier
         $product->getWebsiteIds();
         $product->getCategoryIds();
 
+        /** @var \Magento\Framework\EntityManager\EntityMetadataInterface $metadata */
+        $metadata = $this->getMetadataPool()->getMetadata(ProductInterface::class);
+
+        /** @var \Magento\Catalog\Model\Product $duplicate */
         $duplicate = $this->productFactory->create();
         $duplicate->setData($product->getData());
+        $duplicate->setOptions([]);
         $duplicate->setIsDuplicate(true);
-        $duplicate->setOriginalId($product->getId());
+        $duplicate->setOriginalLinkId($product->getData($metadata->getLinkField()));
         $duplicate->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED);
         $duplicate->setCreatedAt(null);
         $duplicate->setUpdatedAt(null);
@@ -66,9 +86,40 @@ class Copier
             } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
             }
         } while (!$isDuplicateSaved);
+        $this->getOptionRepository()->duplicate($product, $duplicate);
+        $product->getResource()->duplicate(
+            $product->getData($metadata->getLinkField()),
+            $duplicate->getData($metadata->getLinkField())
+        );
 
-        $product->getOptionInstance()->duplicate($product->getId(), $duplicate->getId());
-        $product->getResource()->duplicate($product->getId(), $duplicate->getId());
         return $duplicate;
+    }
+
+    /**
+     * @return Option\Repository
+     * @deprecated
+     */
+    private function getOptionRepository()
+    {
+        if (null === $this->optionRepository) {
+            $this->optionRepository = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Catalog\Model\Product\Option\Repository::class);
+        }
+        
+        return $this->optionRepository;
+    }
+
+    /**
+     * @return \Magento\Framework\EntityManager\MetadataPool
+     * @deprecated
+     */
+    private function getMetadataPool()
+    {
+        if (null === $this->metadataPool) {
+            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+        }
+        
+        return $this->metadataPool;
     }
 }

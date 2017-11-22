@@ -66,7 +66,6 @@ abstract class AbstractIndexer implements IndexerActionInterface, MviewActionInt
     {
         $this->indexBuilder->reindexFull();
         $this->_eventManager->dispatch('clean_cache_by_tags', ['object' => $this]);
-
         //TODO: remove after fix fpc. MAGETWO-50668
         $this->getCacheManager()->clean($this->getIdentities());
     }
@@ -146,7 +145,7 @@ abstract class AbstractIndexer implements IndexerActionInterface, MviewActionInt
     {
         if ($this->cacheManager === null) {
             $this->cacheManager = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\App\CacheInterface::class
+                'Magento\Framework\App\CacheInterface'
             );
         }
         return $this->cacheManager;

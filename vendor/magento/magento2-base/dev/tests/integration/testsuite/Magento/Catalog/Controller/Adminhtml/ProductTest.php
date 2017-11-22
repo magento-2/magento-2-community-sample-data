@@ -5,6 +5,8 @@
  */
 namespace Magento\Catalog\Controller\Adminhtml;
 
+use Magento\Catalog\Model\ProductRepository;
+
 /**
  * @magentoAppArea adminhtml
  */
@@ -27,7 +29,9 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndNew()
     {
         $this->getRequest()->setPostValue(['back' => 'new']);
-        $this->dispatch('backend/catalog/product/save/id/1');
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple');
+        $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/new/'));
         $this->assertSessionMessages(
             $this->contains('You saved the product.'),
@@ -41,10 +45,16 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndDuplicate()
     {
         $this->getRequest()->setPostValue(['back' => 'duplicate']);
-        $this->dispatch('backend/catalog/product/save/id/1');
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple');
+        $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/'));
         $this->assertRedirect(
-            $this->logicalNot($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/id/1/'))
+            $this->logicalNot(
+                $this->stringStartsWith(
+                    'http://localhost/index.php/backend/catalog/product/edit/id/' . $product->getEntityId() . '/'
+                )
+            )
         );
         $this->assertSessionMessages(
             $this->contains('You saved the product.'),
@@ -92,18 +102,20 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
      */
     public function testEditAction()
     {
-        $this->dispatch('backend/catalog/product/edit/id/1');
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple');
+        $this->dispatch('backend/catalog/product/edit/id/' . $product->getEntityId());
         $body = $this->getResponse()->getBody();
 
-        $this->assertSelectCount('#save-split-button', 1, $body, '"Save" button isn\'t present on Edit Product page');
+        $this->assertSelectCount('#save-button', 1, $body, '"Save" button isn\'t present on Edit Product page');
         $this->assertSelectCount(
-            '#save-split-button-new-button',
+            '#save_and_new',
             1,
             $body,
             '"Save & New" button isn\'t present on Edit Product page'
         );
         $this->assertSelectCount(
-            '#save-split-button-duplicate-button',
+            '#save_and_duplicate',
             1,
             $body,
             '"Save & Duplicate" button isn\'t present on Edit Product page'
@@ -111,72 +123,29 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     }
 
     /**
-     * @dataProvider saveWithInvalidCustomOptionDataProvider
-     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
-     */
-    public function testSaveWithInvalidCustomOption($postData)
-    {
-        $this->getRequest()->setPostValue($postData);
-        $this->dispatch('backend/catalog/product/save/id/1');
-
-        $this->assertSessionMessages(
-            $this->contains('You saved the product.'),
-            \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
-        );
-    }
-
-    /**
-     * Data Provider for save
+     * Tests Validate product action.
      *
-     * @return array
+     * @magentoDataFixture Magento/Catalog/_files/products_with_multiselect_attribute.php
+     *
+     * @return void
      */
-    public function saveWithInvalidCustomOptionDataProvider()
+    public function testValidateAction()
     {
-        return [
-            [
-                [
-                    'product' => [
-                        'options' => [
-                            [
-                                'title' => 'drop_down option',
-                                'type' => 'drop_down',
-                                'is_require' => true,
-                                'sort_order' => 0,
-                                'values' => [
-                                    [
-                                        'title' => 'drop_down option 1',
-                                        'price' => 10,
-                                        'price_type' => 'fixed',
-                                        'sku' => 'drop_down option 1 sku',
-                                        'option_type_id' => '-1',
-                                        'is_delete' => '',
-                                        'sort_order' => 0,
-                                    ],
-                                    [
-                                        'title' => 'drop_down option 2',
-                                        'price' => 20,
-                                        'price_type' => 'fixed',
-                                        'sku' => 'drop_down option 2 sku',
-                                        'option_type_id' => '-1',
-                                        'is_delete' => '',
-                                        'sort_order' => 1,
-                                    ],
-                                    [
-                                        'title' => '',
-                                        'price' => '',
-                                        'price_type' => 'fixed',
-                                        'sku' => '',
-                                        'option_type_id' => '-1',
-                                        'is_delete' => '1',
-                                        'sort_order' => 2,
-                                    ]
-                                ],
-                            ]
-                        ],
-                    ],
-                    'affect_product_custom_options' => 1,
-                ]
-            ],
-        ];
+        $expectedResult = json_encode(['error' => false]);
+
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple_ms_2');
+        $data = $product->getData();
+        unset($data['multiselect_attribute']);
+
+        $this->getRequest()->setPostValue(['product' => $data]);
+        $this->dispatch('backend/catalog/product/validate');
+        $response = $this->getResponse()->getBody();
+
+        $this->assertJsonStringEqualsJsonString(
+            $expectedResult,
+            $response,
+            'Validate action returned incorrect result.'
+        );
     }
 }

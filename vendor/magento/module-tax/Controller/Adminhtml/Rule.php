@@ -17,7 +17,9 @@ use Magento\Framework\Controller\ResultFactory;
 abstract class Rule extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Tax::manage_tax';
 

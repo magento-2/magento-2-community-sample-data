@@ -161,7 +161,7 @@ class XssOutputValidator
     {
         $command = preg_replace('/<[?]=(.*?)[?]>/sim', '\1', $command);
         
-        return trim(explode(';', $command)[0], 'echo');
+        return trim(ltrim(explode(';', $command)[0], 'echo'));
     }
 
     /**
@@ -214,7 +214,7 @@ class XssOutputValidator
     {
         $command = trim($command);
 
-        switch (true)  {
+        switch (true) {
             case preg_match(
                 '/->(' . implode('|', $this->escapeFunctions) . '|.*html.*)\(/simU',
                 $this->getLastMethod($command)
@@ -312,7 +312,7 @@ class XssOutputValidator
                 $this->addQuoteOriginsReplacements(
                     $phpBlockQuoteReplaced,
                     [
-                        '/([^\\\\])([\'])(.*?)([^\\\\])([\'])/sim',
+                        '/([^\\\\])([\'])(.*?)([^\\\\])([\'])/sim'
                     ]
                 );
                 $this->addQuoteOriginsReplacements(

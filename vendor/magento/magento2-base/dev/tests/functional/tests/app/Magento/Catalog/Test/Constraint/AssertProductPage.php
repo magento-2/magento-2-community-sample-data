@@ -7,7 +7,6 @@
 namespace Magento\Catalog\Test\Constraint;
 
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
-use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
 use Magento\Mtf\Client\BrowserInterface;
 use Magento\Mtf\Constraint\AbstractAssertForm;
 use Magento\Mtf\Fixture\FixtureInterface;
@@ -21,16 +20,21 @@ class AssertProductPage extends AbstractAssertForm
     /**
      * Product view block on frontend page
      *
-     * @var \Magento\ConfigurableProduct\Test\Block\Product\View
+     * @var \Magento\Catalog\Test\Block\Product\View
      */
     protected $productView;
 
     /**
      * Product fixture
      *
-     * @var ConfigurableProduct
+     * @var FixtureInterface
      */
     protected $product;
+
+    /**
+     * @var CatalogProductView
+     */
+    protected $pageView;
 
     /**
      * Assert that displayed product data on product page(front-end) equals passed from fixture:
@@ -54,7 +58,8 @@ class AssertProductPage extends AbstractAssertForm
         $browser->open($_ENV['app_frontend_url'] . $product->getUrlKey() . '.html');
 
         $this->product = $product;
-        $this->productView = $catalogProductView->getViewBlock();
+        $this->pageView = $catalogProductView;
+        $this->productView = $this->pageView->getViewBlock();
 
         $errors = $this->verify();
         \PHPUnit_Framework_Assert::assertEmpty(
@@ -168,7 +173,7 @@ class AssertProductPage extends AbstractAssertForm
         $fixtureProductDescription = $this->product->getDescription();
         $formProductDescription = $this->productView->getProductDescription();
 
-        if ($fixtureProductDescription == $formProductDescription) {
+        if ($fixtureProductDescription === null || $fixtureProductDescription == $formProductDescription) {
             return null;
         }
         return "Displayed product description on product page(front-end) not equals passed from fixture. "
@@ -182,14 +187,14 @@ class AssertProductPage extends AbstractAssertForm
      */
     protected function verifyShortDescription()
     {
-        $fixtureProductShortDescription = $this->product->getShortDescription();
+        $fixtureShortDescription = $this->product->getShortDescription();
         $formProductShortDescription = $this->productView->getProductShortDescription();
 
-        if ($fixtureProductShortDescription == $formProductShortDescription) {
+        if ($fixtureShortDescription === null || $fixtureShortDescription == $formProductShortDescription) {
             return null;
         }
         return "Displayed product short description on product page(front-end) not equals passed from fixture. "
-            . "Actual: {$formProductShortDescription}, expected: {$fixtureProductShortDescription}.";
+            . "Actual: {$formProductShortDescription}, expected: {$fixtureShortDescription}.";
     }
 
     /**

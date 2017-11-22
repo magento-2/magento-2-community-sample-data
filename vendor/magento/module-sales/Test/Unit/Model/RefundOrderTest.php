@@ -315,7 +315,6 @@ class RefundOrderTest extends \PHPUnit_Framework_TestCase
                 $this->creditmemoCreationArgumentsMock
             )->willReturn($this->creditmemoMock);
 
-
         $this->refundOrderValidatorMock->expects($this->once())
             ->method('validate')
             ->with(

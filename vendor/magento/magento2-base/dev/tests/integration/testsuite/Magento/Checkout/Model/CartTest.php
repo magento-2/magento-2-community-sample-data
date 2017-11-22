@@ -27,6 +27,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @magentoDataFixture Magento/Checkout/_files/simple_product.php
      * @magentoDataFixture Magento/Checkout/_files/set_product_min_in_cart.php
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
@@ -42,6 +43,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @magentoDataFixture Magento/Checkout/_files/simple_product.php
      * @magentoDataFixture Magento/Checkout/_files/set_product_min_in_cart.php
      * @magentoDbIsolation enabled
      */

@@ -20,10 +20,12 @@ class TypeTest extends \PHPUnit_Framework_TestCase
      * @var \Magento\Bundle\Model\ResourceModel\BundleFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $bundleFactory;
+
     /**
      * @var \Magento\Bundle\Model\SelectionFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $bundleModelSelection;
+
     /**
      * @var \Magento\Bundle\Model\Product\Type
      */
@@ -166,6 +168,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -231,7 +234,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->willReturn('options');
         $option->expects($this->at(3))
             ->method('getId')
-            ->willReturn(10);
+            ->willReturn(3);
         $option->expects($this->once())
             ->method('getRequired')
             ->willReturn(true);
@@ -317,6 +320,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -557,6 +561,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -776,6 +781,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -958,6 +964,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -1064,6 +1071,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -1180,6 +1188,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -1269,21 +1278,32 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testPrepareForCartAdvancedParentClassReturnString()
     {
         $exceptedResult = 'String message';
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\DataObject $buyRequest */
         $buyRequest = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['getItems', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Catalog\Model\Product $product */
         $product = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->setMethods(['getOptions'])
+            ->setMethods(
+                [
+                    'getOptions',
+                    'getHasOptions'
+                ]
+            )
             ->disableOriginalConstructor()
             ->getMock();
-        $product->expects($this->at(0))
+        $product->expects($this->any())
             ->method('getOptions')
             ->willThrowException(new LocalizedException(__($exceptedResult)));
+        $product->expects($this->once())
+            ->method('getHasOptions')
+            ->willReturn(true);
 
         $result = $this->model->prepareForCartAdvanced($buyRequest, $product);
+
         $this->assertEquals($exceptedResult, $result);
     }
 
@@ -1316,6 +1336,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -1416,6 +1437,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->setMethods(
                 [
                     'getOptions',
+                    'getHasOptions',
                     'prepareCustomOptions',
                     'addCustomOption',
                     'setCartQty',
@@ -1934,7 +1956,6 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->with('*')
             ->will($this->returnSelf());
         $flagMap = [
-            ['require_stock_items', true, $usedSelectionsMock],
             ['product_children', true, $usedSelectionsMock],
         ];
         $usedSelectionsMock->expects($this->any())
@@ -2409,6 +2430,9 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             ->method('getOptions')
             ->willReturn([$option]);
         $product->expects($this->once())
+            ->method('getHasOptions')
+            ->willReturn(true);
+        $product->expects($this->once())
             ->method('prepareCustomOptions');
         $product->expects($this->any())
             ->method('addCustomOption')
@@ -2422,127 +2446,6 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->catalogProduct->expects($this->once())
             ->method('getSkipSaleableCheck')
             ->willReturn(false);
-    }
-
-    public function testSave()
-    {
-        $options = [
-            'some_option' => ['option_id' => '', 'delete' => false],
-        ];
-        $selections = [
-            'some_option' => [
-                123 => ['selection_id' => '', 'delete' => false],
-            ]
-        ];
-
-        $resource = $this->getMockBuilder('Magento\Bundle\Model\ResourceModel\Bundle')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->bundleFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($resource);
-
-        $product = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->setMethods(
-                [
-                    'getStoreId',
-                    'getOrigData',
-                    'getData',
-                    'getBundleOptionsData',
-                    'getBundleSelectionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->once())
-            ->method('getBundleOptionsData')
-            ->willReturn($options);
-        $product->expects($this->once())
-            ->method('getBundleSelectionsData')
-            ->willReturn($selections);
-        $option = $this->getMockBuilder('Magento\Bundle\Model\ResourceModel\Option\Collection')
-            ->setMethods(['setData', 'setParentId', 'setStoreId', 'isDeleted', 'save', 'getOptionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $option->expects($this->once())->method('setData')->willReturnSelf();
-        $option->expects($this->once())->method('setParentId')->willReturnSelf();
-        $option->expects($this->once())->method('setStoreId')->willReturnSelf();
-        $this->bundleOptionFactory->expects($this->once())->method('create')->will($this->returnValue($option));
-
-        $selection = $this->getMockBuilder('Magento\Bundle\Model\Selection')
-            ->setMethods(['setData', 'setOptionId', 'setParentProductId', 'setWebsiteId', 'save'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $selection->expects($this->once())->method('setData')->willReturnSelf();
-        $selection->expects($this->once())->method('setOptionId')->willReturnSelf();
-        $selection->expects($this->once())->method('setParentProductId')->willReturnSelf();
-        $selection->expects($this->once())->method('setWebsiteId')->willReturnSelf();
-        $selection->expects($this->once())->method('setParentProductId')->willReturnSelf();
-        $this->bundleModelSelection->expects($this->once())->method('create')->willReturn($selection);
-        $store = $this->getMockBuilder('Magento\Store\Model\Store')
-            ->setMethods(['getWebsiteId', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager->expects($this->once())
-            ->method('getStore')
-            ->will($this->returnValue($store));
-        $store->expects($this->once())
-            ->method('getWebsiteId')
-            ->will($this->returnValue(10));
-        $this->model->save($product);
-    }
-
-    public function testGetOptionsCollection()
-    {
-        $product = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(
-                [
-                    '_wakeup',
-                    'getStoreId',
-                    'getData',
-                    'hasData',
-                    'setData',
-                    'getId'
-                ]
-            )
-            ->getMock();
-        $option = $this->getMockBuilder('\Magento\Bundle\Model\Option')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resourceClassName = 'Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection';
-        $dbResourceMock = $this->getMockBuilder($resourceClassName)
-            ->setMethods(['setProductIdFilter', 'setPositionOrder', 'joinValues'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $store = $this->getMockBuilder('\Magento\Store\Model\Store')
-            ->disableOriginalConstructor()
-            ->setMethods(['getId'])
-            ->getMock();
-
-        $product->expects($this->once())
-            ->method('hasData')
-            ->with('_cache_instance_options_collection')
-            ->willReturn(false);
-        $this->bundleOptionFactory->expects($this->once())->method('create')->willReturn($option);
-        $option->expects($this->once())->method('getResourceCollection')->willReturn($dbResourceMock);
-        $product->expects($this->once())->method('getId')->willReturn('prod_id');
-        $dbResourceMock->expects($this->once())->method('setProductIdFilter')->with('prod_id')->willReturnSelf();
-        $product->expects($this->once())->method('getStoreId')->willReturn('store_id');
-        $product->expects($this->at(3))->method('setData')->willReturnSelf();
-        $dbResourceMock->expects($this->once())->method('setPositionOrder')->willReturnSelf();
-        $product->expects($this->at(4))->method('getData')->with('_cache_instance_store_filter')->willReturn($store);
-        $store->expects($this->once())->method('getId')->willReturn('store_id');
-        $dbResourceMock->expects($this->once())->method('joinValues')->with('store_id')->willReturnSelf();
-        $product->expects($this->at(5))
-            ->method('setData')
-            ->with('_cache_instance_options_collection', $dbResourceMock)
-            ->willReturnSelf();
-        $product->expects($this->at(6))->method('getData')->with('_cache_instance_options_collection')->willReturn(
-            'result_data'
-        );
-
-        $this->assertEquals('result_data', $this->model->getOptionsCollection($product));
     }
 
     public function testGetSelectionsCollection()

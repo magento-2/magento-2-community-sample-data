@@ -70,7 +70,7 @@ class Checkout
      *
      * @var string
      */
-    protected $_apiType = 'Magento\Paypal\Model\Api\Nvp';
+    protected $_apiType = \Magento\Paypal\Model\Api\Nvp::class;
 
     /**
      * Payment method type
@@ -538,6 +538,12 @@ class Checkout
             }
             $this->_api->setSuppressShipping(true);
         } else {
+            $billingAddress = $this->_quote->getBillingAddress();
+
+            if ($billingAddress) {
+                $this->_api->setBillingAddress($billingAddress);
+            }
+
             $address = $this->_quote->getShippingAddress();
             $isOverridden = 0;
             if (true === $address->validate()) {
@@ -655,7 +661,7 @@ class Checkout
             && !$quote->isVirtual();
         if ($portBillingFromShipping) {
             $billingAddress = clone $shippingAddress;
-            $billingAddress->unsAddressId()->unsAddressType();
+            $billingAddress->unsAddressId()->unsAddressType()->setCustomerAddressId(null);
             $data = $billingAddress->getData();
             $data['save_in_address_book'] = 0;
             $quote->getBillingAddress()->addData($data);
@@ -668,6 +674,7 @@ class Checkout
         $this->_setExportedAddressData($billingAddress, $exportedBillingAddress);
         $billingAddress->setCustomerNote($exportedBillingAddress->getData('note'));
         $quote->setBillingAddress($billingAddress);
+        $quote->setCheckoutMethod($this->getCheckoutMethod());
 
         // import payment info
         $payment = $quote->getPayment();
@@ -756,6 +763,12 @@ class Checkout
             if ($methodCode != $shippingAddress->getShippingMethod()) {
                 $this->ignoreAddressValidation();
                 $shippingAddress->setShippingMethod($methodCode)->setCollectShippingRates(true);
+                $cartExtension = $this->_quote->getExtensionAttributes();
+                if ($cartExtension && $cartExtension->getShippingAssignments()) {
+                    $cartExtension->getShippingAssignments()[0]
+                        ->getShipping()
+                        ->setMethod($methodCode);
+                }
                 $this->_quote->collectTotals();
                 $this->quoteRepository->save($this->_quote);
             }

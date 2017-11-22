@@ -70,6 +70,7 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         /** @var $integration Integration */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $integration = $objectManager->create(\Magento\Integration\Model\Integration::class);
+        
         return $integration->load('Fixture Integration', 'name');
     }
 }

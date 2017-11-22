@@ -13,6 +13,9 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\TestFramework\Helper\Bootstrap;
 
+/**
+ * Class SpecialPriceIndexerTest test configurable product indexation with special price in child.
+ */
 class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -30,6 +33,9 @@ class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
      */
     private $indexerProcessor;
 
+    /**
+     * Prepare subject for tests.
+     */
     protected function setUp()
     {
         $this->productRepository = Bootstrap::getObjectManager()->get(ProductRepositoryInterface::class);
@@ -38,11 +44,9 @@ class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Use collection to check data in index
-     * Do not use magentoDbIsolation because index statement changing "tears" transaction (triggers creating)
+     * Use collection to check data in index.
+     * Do not use magentoDbIsolation because index statement changing "tears" transaction (triggers creating).
      *
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      * @magentoDataFixture Magento/Catalog/_files/enable_price_index_schedule.php
      */
@@ -52,14 +56,11 @@ class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
         /** @var Product $childProduct */
         $childProduct = $this->productRepository->get('simple_10', true);
         $childProduct->setData('special_price', $specialPrice);
-
         $this->productRepository->save($childProduct);
 
         /** @var ProductCollection $collection */
         $collection = $this->productCollectionFactory->create();
-        $collection
-            ->addPriceData()
-            ->addFieldToFilter(ProductInterface::SKU, 'configurable');
+        $collection->addPriceData()->addFieldToFilter(ProductInterface::SKU, 'configurable');
 
         /** @var Product[] $items */
         $items = array_values($collection->getItems());
@@ -69,27 +70,21 @@ class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
 
         /** @var ProductCollection $collection */
         $collection = $this->productCollectionFactory->create();
-        $collection
-            ->addPriceData()
-            ->addFieldToFilter(ProductInterface::SKU, 'configurable');
+        $collection->addPriceData()->addFieldToFilter(ProductInterface::SKU, 'configurable');
 
         /** @var Product $item */
         $item = $collection->getFirstItem();
-
         self::assertEquals($specialPrice, $item->getData('min_price'));
     }
 
     /**
-     * Use collection to check data in index
+     * Use collection to check data in index.
      *
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      */
     public function testOnSaveIndexationIfChildHasSpecialPrice()
     {
         $specialPrice = 2;
-
         /** @var Product $childProduct */
         $childProduct = $this->productRepository->get('simple_10', true);
         $childProduct->setData('special_price', $specialPrice);
@@ -97,13 +92,10 @@ class SpecialPriceIndexerTest extends \PHPUnit_Framework_TestCase
 
         /** @var ProductCollection $collection */
         $collection = $this->productCollectionFactory->create();
-        $collection
-            ->addPriceData()
-            ->addFieldToFilter(ProductInterface::SKU, 'configurable');
+        $collection->addPriceData()->addFieldToFilter(ProductInterface::SKU, 'configurable');
 
         /** @var Product $item */
         $item = $collection->getFirstItem();
-
         self::assertEquals($specialPrice, $item->getData('min_price'));
     }
 }

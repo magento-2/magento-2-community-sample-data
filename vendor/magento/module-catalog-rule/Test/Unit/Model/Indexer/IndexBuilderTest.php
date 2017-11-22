@@ -6,6 +6,9 @@
 
 namespace Magento\CatalogRule\Test\Unit\Model\Indexer;
 
+use Magento\CatalogRule\Model\Indexer\IndexBuilder\ProductLoader;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -42,7 +45,6 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceCurrency;
 
-
     /**
      * @var \Magento\Eav\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -67,6 +69,11 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $connection;
+
+    /**
+     * @var \Magento\Framework\EntityManager\MetadataPool|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $metadataPool;
 
     /**
      * @var \Magento\Framework\DB\Select|\PHPUnit_Framework_MockObject_MockObject
@@ -109,6 +116,11 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
     protected $backend;
 
     /**
+     * @var ProductLoader|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productLoader;
+
+    /**
      * Set up test
      *
      * @return void
@@ -137,6 +149,11 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
             false
         );
         $this->select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
+        $this->metadataPool = $this->getMock('Magento\Framework\EntityManager\MetadataPool', [], [], '', false);
+        $metadata = $this->getMockBuilder('Magento\Framework\EntityManager\EntityMetadata')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->metadataPool->expects($this->any())->method('getMetadata')->willReturn($metadata);
         $this->connection = $this->getMock('Magento\Framework\DB\Adapter\AdapterInterface');
         $this->db = $this->getMock('Zend_Db_Statement_Interface', [], [], '', false);
         $this->website = $this->getMock('Magento\Store\Model\Website', [], [], '', false);
@@ -169,31 +186,40 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
         $this->rules->expects($this->any())->method('getId')->will($this->returnValue(1));
         $this->rules->expects($this->any())->method('getWebsiteIds')->will($this->returnValue([1]));
         $this->rules->expects($this->any())->method('getCustomerGroupIds')->will($this->returnValue([1]));
-
         $this->ruleCollectionFactory->expects($this->any())->method('create')->will($this->returnSelf());
         $this->ruleCollectionFactory->expects($this->any())->method('addFieldToFilter')->will(
             $this->returnValue([$this->rules])
         );
-
         $this->product->expects($this->any())->method('load')->will($this->returnSelf());
         $this->product->expects($this->any())->method('getId')->will($this->returnValue(1));
         $this->product->expects($this->any())->method('getWebsiteIds')->will($this->returnValue([1]));
-
         $this->rules->expects($this->any())->method('validate')->with($this->product)->willReturn(true);
         $this->attribute->expects($this->any())->method('getBackend')->will($this->returnValue($this->backend));
         $this->productFactory->expects($this->any())->method('create')->will($this->returnValue($this->product));
+        $this->productLoader = $this->getMockBuilder(ProductLoader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->indexBuilder = new \Magento\CatalogRule\Model\Indexer\IndexBuilder(
-            $this->ruleCollectionFactory,
-            $this->priceCurrency,
-            $this->resource,
-            $this->storeManager,
-            $this->logger,
-            $this->eavConfig,
-            $this->dateFormat,
-            $this->dateTime,
-            $this->productFactory
+        $this->indexBuilder = (new ObjectManager($this))->getObject(
+            \Magento\CatalogRule\Model\Indexer\IndexBuilder::class,
+            [
+                'ruleCollectionFactory' => $this->ruleCollectionFactory,
+                'priceCurrency' => $this->priceCurrency,
+                'resource' => $this->resource,
+                'storeManager' => $this->storeManager,
+                'logger' => $this->logger,
+                'eavConfig' => $this->eavConfig,
+                'dateFormat' => $this->dateFormat,
+                'dateTime' => $this->dateTime,
+                'productFactory' => $this->productFactory,
+                1000,
+                'productLoader' => $this->productLoader
+            ]
         );
+
+        $this->setProperties($this->indexBuilder, [
+            'metadataPool' => $this->metadataPool
+        ]);
     }
 
     /**
@@ -239,8 +265,29 @@ class IndexBuilderTest extends \PHPUnit_Framework_TestCase
             ->with(\Magento\Catalog\Model\Product::ENTITY, 'price')
             ->will($this->returnValue($this->attribute));
 
+        $iterator = new \ArrayIterator([$this->product]);
+        $this->productLoader->expects($this->once())
+            ->method('getProducts')
+            ->willReturn($iterator);
+
         $this->select->expects($this->once())->method('insertFromSelect')->with('catalogrule_group_website');
 
         $this->indexBuilder->reindexByIds([1]);
+    }
+
+    /**
+     * @param $object
+     * @param array $properties
+     */
+    private function setProperties($object, $properties = [])
+    {
+        $reflectionClass = new \ReflectionClass(get_class($object));
+        foreach ($properties as $key => $value) {
+            if ($reflectionClass->hasProperty($key)) {
+                $reflectionProperty = $reflectionClass->getProperty($key);
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($object, $value);
+            }
+        }
     }
 }

@@ -11,10 +11,9 @@
 
 namespace Symfony\Component\DependencyInjection\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
-class DefinitionDecoratorTest extends TestCase
+class DefinitionDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
@@ -47,32 +46,6 @@ class DefinitionDecoratorTest extends TestCase
             array('factory', 'factory'),
             array('configurator', 'configurator'),
             array('file', 'file'),
-        );
-    }
-
-    /**
-     * @dataProvider provideLegacyPropertyTests
-     * @group legacy
-     */
-    public function testLegacySetProperty($property, $changeKey)
-    {
-        $def = new DefinitionDecorator('foo');
-
-        $getter = 'get'.ucfirst($property);
-        $setter = 'set'.ucfirst($property);
-
-        $this->assertNull($def->$getter());
-        $this->assertSame($def, $def->$setter('foo'));
-        $this->assertEquals('foo', $def->$getter());
-        $this->assertEquals(array($changeKey => true), $def->getChanges());
-    }
-
-    public function provideLegacyPropertyTests()
-    {
-        return array(
-            array('factoryClass', 'factory_class'),
-            array('factoryMethod', 'factory_method'),
-            array('factoryService', 'factory_service'),
         );
     }
 

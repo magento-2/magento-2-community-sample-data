@@ -35,6 +35,20 @@ class ConfigurableOptions extends CustomOptions
     protected $priceBlock = '//*[@class="product-info-main"]//*[contains(@class,"price-box")]';
 
     /**
+     * Selector for tier prices.
+     *
+     * @var string
+     */
+    private $tierPricesSelector = '.prices-tier li';
+
+    /**
+     * Product info main block.
+     *
+     * @var string
+     */
+    private $mainBlockSelector = '.product-info-main';
+
+    /**
      * Get configurable product options
      *
      * @param FixtureInterface|null $product [optional]
@@ -87,7 +101,6 @@ class ConfigurableOptions extends CustomOptions
         /** @var ConfigurableProduct $product */
         $attributesData = [];
         $productVariations = [];
-
         if ($product->hasData('configurable_attributes_data')) {
             $attributesData = $product->getConfigurableAttributesData()['attributes_data'];
             $productVariations = $product->getConfigurableAttributesData()['matrix'];
@@ -95,10 +108,15 @@ class ConfigurableOptions extends CustomOptions
 
         $productVariations = array_keys($productVariations);
         $result = [];
-
         foreach ($productVariations as $variation) {
             $variationOptions = explode(' ', $variation);
-            $result[$variation]['price'] = $this->getOptionPrice($variationOptions, $attributesData);
+            //Select all options specified in variation
+            $this->chooseOptions($variationOptions, $attributesData);
+            $result[$variation]['price'] = $this->getOptionPrice();
+            $tierPrices = $this->getOptionTierPrices();
+            if (count($tierPrices) > 0) {
+                $result[$variation]['tierPrices'] = $tierPrices;
+            }
         }
 
         return $result;
@@ -107,24 +125,34 @@ class ConfigurableOptions extends CustomOptions
     /**
      * Get option price
      *
-     * @param array $variationOptions
-     * @param array $attributesData
      * @return null|string
      */
-    protected function getOptionPrice($variationOptions, $attributesData)
+    protected function getOptionPrice()
     {
-        //Select all options specified in variation
-        foreach ($variationOptions as $variationSelection) {
-            list ($attribute, $option) = explode(':', $variationSelection);
-            $attributeTitle = $attributesData[$attribute]['label'];
-            $optionTitle = $attributesData[$attribute]['options'][$option]['label'];
-            $this->selectOption($attributeTitle, $optionTitle);
-        }
-
         $priceBlock = $this->getPriceBlock();
         $price = ($priceBlock->isOldPriceVisible()) ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
-        
         return $price;
+    }
+
+    /**
+     * Get tier prices of all variations.
+     *
+     * @return array
+     */
+    private function getOptionTierPrices()
+    {
+        $prices = [];
+        $mainBlock = $this->browser->find($this->mainBlockSelector);
+        $tierPricesNodes = $mainBlock->getElements($this->tierPricesSelector);
+        foreach ($tierPricesNodes as $node) {
+            preg_match('#^[^\d]+(\d+)[^\d]+(\d+(?:(?:,\d+)*)+(?:.\d+)*).*#i', $node->getText(), $matches);
+            $prices[] = [
+                'qty' => isset($matches[1]) ? $matches[1] : null,
+                'price_qty' => isset($matches[2]) ? $matches[2] : null,
+            ];
+        }
+
+        return $prices;
     }
 
     /**
@@ -150,5 +178,23 @@ class ConfigurableOptions extends CustomOptions
     {
         $this->_rootElement->find(sprintf($this->optionSelector, $attributeTitle), Locator::SELECTOR_XPATH, 'select')
             ->setValue($optionTitle);
+    }
+
+    /**
+     * Choose options of the configurable product.
+     *
+     * @param array $variationOptions
+     * @param array $attributesData
+     * @return void
+     */
+    protected function chooseOptions(array $variationOptions, array $attributesData)
+    {
+        //Select all options specified in variation
+        foreach ($variationOptions as $variationSelection) {
+            list ($attribute, $option) = explode(':', $variationSelection);
+            $attributeTitle = $attributesData[$attribute]['label'];
+            $optionTitle = $attributesData[$attribute]['options'][$option]['label'];
+            $this->selectOption($attributeTitle, $optionTitle);
+        }
     }
 }

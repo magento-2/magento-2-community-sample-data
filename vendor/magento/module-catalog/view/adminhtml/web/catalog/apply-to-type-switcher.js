@@ -4,21 +4,11 @@
  */
 define([
     'jquery',
-    'uiRegistry',
-    'Magento_Catalog/js/product/weight-handler',
     'Magento_Catalog/catalog/type-events'
-], function ($, registry, weight, productType) {
+], function ($, productType) {
     'use strict';
 
     return {
-
-        /**
-         * Init
-         */
-        init: function () {
-            this.bindAll();
-            this._switchToTypeByApplyAttr();
-        },
 
         /**
          * Bind event
@@ -41,7 +31,8 @@ define([
          * Constructor component
          */
         'Magento_Catalog/catalog/apply-to-type-switcher': function () {
-            registry.get('typeSwitcher', this.init.bind(this));
+            this.bindAll();
+            this._switchToTypeByApplyAttr();
         },
 
         /**

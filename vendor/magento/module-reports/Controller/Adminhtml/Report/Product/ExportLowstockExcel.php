@@ -12,6 +12,13 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportLowstockExcel extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
+    /**
      * Export low stock products report to XML format
      *
      * @return ResponseInterface

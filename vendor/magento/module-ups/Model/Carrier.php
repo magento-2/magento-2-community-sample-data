@@ -123,6 +123,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $configHelper;
 
     /**
+     * @inheritdoc
+     */
+    protected $_debugReplacePrivateDataKeys = [
+        'UserId', 'Password'
+    ];
+
+    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
      * @param \Psr\Log\LoggerInterface $logger
@@ -586,6 +593,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         $this->setXMLAccessRequest();
         $xmlRequest = $this->_xmlAccessRequest;
+        $debugData['accessRequest'] = $this->filterDebugData($xmlRequest);
 
         $rowRequest = $this->_rawRequest;
         if (self::USA_COUNTRY_ID == $rowRequest->getDestCountry()) {
@@ -619,7 +627,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         }
         $serviceDescription = $serviceCode ? $this->getShipmentByCode($serviceCode) : '';
 
-        $xmlRequest .= <<<XMLRequest
+        $xmlParams = <<<XMLRequest
 <?xml version="1.0"?>
 <RatingServiceSelectionRequest xml:lang="en-US">
   <Request>
@@ -639,18 +647,18 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 XMLRequest;
 
         if ($serviceCode !== null) {
-            $xmlRequest .= "<Service>" .
+            $xmlParams .= "<Service>" .
                 "<Code>{$serviceCode}</Code>" .
                 "<Description>{$serviceDescription}</Description>" .
                 "</Service>";
         }
 
-        $xmlRequest .= <<<XMLRequest
+        $xmlParams .= <<<XMLRequest
       <Shipper>
 XMLRequest;
 
         if ($this->getConfigFlag('negotiated_active') && ($shipper = $this->getConfigData('shipper_number'))) {
-            $xmlRequest .= "<ShipperNumber>{$shipper}</ShipperNumber>";
+            $xmlParams .= "<ShipperNumber>{$shipper}</ShipperNumber>";
         }
 
         if ($rowRequest->getIsReturn()) {
@@ -665,7 +673,7 @@ XMLRequest;
             $shipperStateProvince = $params['origRegionCode'];
         }
 
-        $xmlRequest .= <<<XMLRequest
+        $xmlParams .= <<<XMLRequest
       <Address>
           <City>{$shipperCity}</City>
           <PostalCode>{$shipperPostalCode}</PostalCode>
@@ -682,10 +690,10 @@ XMLRequest;
 XMLRequest;
 
         if ($params['49_residential'] === '01') {
-            $xmlRequest .= "<ResidentialAddressIndicator>{$params['49_residential']}</ResidentialAddressIndicator>";
+            $xmlParams .= "<ResidentialAddressIndicator>{$params['49_residential']}</ResidentialAddressIndicator>";
         }
 
-        $xmlRequest .= <<<XMLRequest
+        $xmlParams .= <<<XMLRequest
       </Address>
     </ShipTo>
 
@@ -708,17 +716,19 @@ XMLRequest;
 XMLRequest;
 
         if ($this->getConfigFlag('negotiated_active')) {
-            $xmlRequest .= "<RateInformation><NegotiatedRatesIndicator/></RateInformation>";
+            $xmlParams .= "<RateInformation><NegotiatedRatesIndicator/></RateInformation>";
         }
 
-        $xmlRequest .= <<<XMLRequest
+        $xmlParams .= <<<XMLRequest
   </Shipment>
 </RatingServiceSelectionRequest>
 XMLRequest;
 
+        $xmlRequest .= $xmlParams;
+
         $xmlResponse = $this->_getCachedQuotes($xmlRequest);
         if ($xmlResponse === null) {
-            $debugData = ['request' => $xmlRequest];
+            $debugData['request'] = $xmlParams;
             try {
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
@@ -729,9 +739,13 @@ XMLRequest;
                 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, (bool)$this->getConfigFlag('mode_xml'));
                 $xmlResponse = curl_exec($ch);
-
-                $debugData['result'] = $xmlResponse;
-                $this->_setCachedQuotes($xmlRequest, $xmlResponse);
+                if ($xmlResponse !== false) {
+                    $debugData['result'] = $xmlResponse;
+                    $this->_setCachedQuotes($xmlRequest, $xmlResponse);
+                } else {
+                    $debugData['result'] = ['error' => curl_error($ch)];
+                }
+                curl_close($ch);
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
                 $xmlResponse = '';
@@ -759,6 +773,22 @@ XMLRequest;
         }
 
         return $this->_baseCurrencyRate;
+    }
+
+    /**
+     * Map currency alias to currency code
+     *
+     * @param string $code
+     * @return string
+     */
+    private function mapCurrencyCode($code)
+    {
+        $currencyMapping = [
+            'RMB' => 'CNY',
+            'CNH' => 'CNY'
+        ];
+
+        return isset($currencyMapping[$code]) ? $currencyMapping[$code] : $code;
     }
 
     /**
@@ -790,7 +820,6 @@ XMLRequest;
                     ) && !empty($negotiatedArr);
 
                 $allowedCurrencies = $this->_currencyFactory->create()->getConfigAllowCurrencies();
-
                 foreach ($arr as $shipElement) {
                     $code = (string)$shipElement->Service->Code;
                     if (in_array($code, $allowedMethods)) {
@@ -802,7 +831,9 @@ XMLRequest;
 
                         //convert price with Origin country currency code to base currency code
                         $successConversion = true;
-                        $responseCurrencyCode = (string)$shipElement->TotalCharges->CurrencyCode;
+                        $responseCurrencyCode = $this->mapCurrencyCode(
+                            (string)$shipElement->TotalCharges->CurrencyCode
+                        );
                         if ($responseCurrencyCode) {
                             if (in_array($responseCurrencyCode, $allowedCurrencies)) {
                                 $cost = (double)$cost * $this->_getBaseCurrencyRate($responseCurrencyCode);
@@ -975,7 +1006,11 @@ XMLAuth;
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
                 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                 $xmlResponse = curl_exec($ch);
-                $debugData['result'] = $xmlResponse;
+                if ($xmlResponse !== false) {
+                    $debugData['result'] = $xmlResponse;
+                } else {
+                    $debugData['result'] = ['error' => curl_error($ch)];
+                }
                 curl_close($ch);
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];

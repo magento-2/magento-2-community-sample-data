@@ -17,15 +17,9 @@ class EscaperTest extends \PHPUnit_Framework_TestCase
      */
     protected $_escaper = null;
 
-    /**
-     * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $loggerMock;
-
     protected function setUp()
     {
-        $this->loggerMock = $this->getMockForAbstractClass(\Psr\Log\LoggerInterface::class);
-        $this->_escaper = new Escaper(null, $this->loggerMock);
+        $this->_escaper = new Escaper();
     }
 
     /**

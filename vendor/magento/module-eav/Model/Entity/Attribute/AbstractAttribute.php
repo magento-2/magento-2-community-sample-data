@@ -6,8 +6,8 @@
 
 namespace Magento\Eav\Model\Entity\Attribute;
 
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Entity/Attribute/Model - attribute abstract
@@ -112,6 +112,20 @@ abstract class AbstractAttribute extends \Magento\Framework\Model\AbstractExtens
     protected $dataObjectHelper;
 
     /**
+     * Array of attribute types that have empty string as a possible value.
+     *
+     * @var array
+     */
+    private static $emptyStringTypes = [
+        'int',
+        'decimal',
+        'datetime',
+        'varchar',
+        'text',
+        'static',
+    ];
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -174,7 +188,7 @@ abstract class AbstractAttribute extends \Magento\Framework\Model\AbstractExtens
      */
     protected function _construct()
     {
-        $this->_init('Magento\Eav\Model\ResourceModel\Entity\Attribute');
+        $this->_init(\Magento\Eav\Model\ResourceModel\Entity\Attribute::class);
     }
 
     /**
@@ -584,24 +598,42 @@ abstract class AbstractAttribute extends \Magento\Framework\Model\AbstractExtens
      */
     protected function _getDefaultSourceModel()
     {
-        return $this->getEntity()->getDefaultAttributeSourceModel();
+        return $this->getEntityType()->getEntity()->getDefaultAttributeSourceModel();
     }
 
     /**
+     * Check if Value is empty.
+     *
      * @param array|null|bool|int|float|string $value
      * @return bool
      */
     public function isValueEmpty($value)
     {
-        $attrType = $this->getBackend()->getType();
-        $isEmpty = (is_array($value) && count($value) == 0) ||
-            $value === null ||
-            $value === false && $attrType != 'int' ||
-            $value === '' && ($attrType == 'int' ||
-            $attrType == 'decimal' ||
-            $attrType == 'datetime');
+        return (is_array($value) && count($value) == 0)
+            || $value === null
+            || ($value === false && $this->getBackend()->getType() != 'int')
+            || ($value === '' && $this->isInEmptyStringTypes());
+    }
 
-        return $isEmpty;
+    /**
+     * Check if attribute empty value is valid.
+     *
+     * @param array|null|bool|int|float|string $value
+     * @return bool
+     */
+    public function isAllowedEmptyTextValue($value)
+    {
+        return $this->isInEmptyStringTypes() && $value === '';
+    }
+
+    /**
+     * Check is attribute type in allowed empty string types.
+     *
+     * @return bool
+     */
+    private function isInEmptyStringTypes()
+    {
+        return in_array($this->getBackend()->getType(), self::$emptyStringTypes);
     }
 
     /**
@@ -1059,7 +1091,7 @@ abstract class AbstractAttribute extends \Magento\Framework\Model\AbstractExtens
             foreach ($options as $option) {
                 $optionData = $this->dataObjectProcessor->buildOutputDataArray(
                     $option,
-                    '\Magento\Eav\Api\Data\AttributeOptionInterface'
+                    \Magento\Eav\Api\Data\AttributeOptionInterface::class
                 );
                 $optionDataArray[] = $optionData;
             }
@@ -1085,7 +1117,7 @@ abstract class AbstractAttribute extends \Magento\Framework\Model\AbstractExtens
             $this->dataObjectHelper->populateWithArray(
                 $optionDataObject,
                 $option,
-                '\Magento\Eav\Api\Data\AttributeOptionInterface'
+                \Magento\Eav\Api\Data\AttributeOptionInterface::class
             );
             $dataObjects[] = $optionDataObject;
         }

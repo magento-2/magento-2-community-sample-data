@@ -56,10 +56,6 @@ class TotalsInformationManagement implements \Magento\Checkout\Api\TotalsInforma
                 $addressInformation->getShippingCarrierCode() . '_' . $addressInformation->getShippingMethodCode()
             );
         }
-
-        if ($quote->getShippingAddress()->dataHasChangedFor('shipping_method')) {
-            $quote->setTotalsCollectedFlag(false);
-        }
         $quote->collectTotals();
 
         return $this->cartTotalRepository->get($cartId);

@@ -21,10 +21,8 @@ class Curl extends CatalogProductAttributeCurl implements SwatchProductAttribute
      * @param DataInterface $configuration
      * @param EventManagerInterface $eventManager
      */
-    public function __construct(
-        DataInterface $configuration,
-        EventManagerInterface $eventManager
-    ) {
+    public function __construct(DataInterface $configuration, EventManagerInterface $eventManager)
+    {
         parent::__construct($configuration, $eventManager);
         $this->mappingData['frontend_input'] = [
             'Text Swatch' => 'swatch_text',
@@ -40,15 +38,12 @@ class Curl extends CatalogProductAttributeCurl implements SwatchProductAttribute
      */
     protected function changeStructureOfTheData(array $data)
     {
-        /** @var array $data */
         $data = parent::changeStructureOfTheData($data);
         $data['optiontext'] = $data['option'];
         $data['swatchtext'] = [
-            'value' => $data['option']['value'],
+            'value' => $data['option']['value']
         ];
-
         unset($data['option']);
-
         return $data;
     }
 }

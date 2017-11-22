@@ -22,7 +22,6 @@ class AbstractAgreementStub extends AbstractAgreement
     /**
      * @param object $quote
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _isAvailable($quote)
     {

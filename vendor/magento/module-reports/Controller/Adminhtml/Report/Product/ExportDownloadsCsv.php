@@ -11,6 +11,13 @@ use Magento\Framework\App\ResponseInterface;
 class ExportDownloadsCsv extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
+    /**
      * Export products downloads report to CSV format
      *
      * @return ResponseInterface

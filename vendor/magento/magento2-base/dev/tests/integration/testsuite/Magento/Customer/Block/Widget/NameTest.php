@@ -33,7 +33,9 @@ class NameTest extends \PHPUnit_Framework_TestCase
     public function testToHtmlSimpleName()
     {
         /** @var \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory */
-        $customerFactory = Bootstrap::getObjectManager()->get(\Magento\Customer\Api\Data\CustomerInterfaceFactory::class);
+        $customerFactory = Bootstrap::getObjectManager()->get(
+            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
+        );
         $customerDataObject = $customerFactory->create();
         $customerDataObject->setFirstname('Jane');
         $customerDataObject->setLastname('Doe');
@@ -57,7 +59,9 @@ class NameTest extends \PHPUnit_Framework_TestCase
     public function testToHtmlFancyName()
     {
         /** @var \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory */
-        $customerFactory = Bootstrap::getObjectManager()->get(\Magento\Customer\Api\Data\CustomerInterfaceFactory::class);
+        $customerFactory = Bootstrap::getObjectManager()->get(
+            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
+        );
         $customerDataObject = $customerFactory->create();
         $customerDataObject->setPrefix(
             'Dr.'

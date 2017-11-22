@@ -55,7 +55,7 @@ define([
                 this._setOption('priceFormat', priceBox.priceBox('option').priceConfig.priceFormat);
                 priceBox.priceBox('setDefault', this.options.optionConfig.prices);
             }
-            this._applyQtyFix();
+
             this._applyOptionNodeFix(options);
 
             options.on('change', this._onBundleOptionChanged.bind(this));
@@ -180,7 +180,7 @@ define([
                         };
                     });
 
-                    $option.text(template(toTemplate));
+                    $option.html(template(toTemplate));
                 });
             });
         },
@@ -295,10 +295,6 @@ define([
             case 'hidden':
                 optionHash = 'bundle-option-' + optionName + '##' + optionValue;
                 optionQty = optionConfig[optionValue].qty || 0;
-                canQtyCustomize = optionConfig[optionValue].customQty === '1';
-                qtyField = element.data('qtyField');
-                qtyField.data('option', element);
-                toggleQtyField(qtyField, optionQty, optionId, optionValue, canQtyCustomize);
                 tempChanges = utils.deepClone(optionConfig[optionValue].prices);
                 tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);
                 tempChanges = applyQty(tempChanges, optionQty);

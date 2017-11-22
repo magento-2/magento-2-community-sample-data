@@ -11,7 +11,6 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Phrase;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class ImageProcessor
@@ -47,7 +46,7 @@ class ImageProcessor implements ImageProcessorInterface
     private $dataObjectHelper;
 
     /**
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
 
@@ -65,14 +64,14 @@ class ImageProcessor implements ImageProcessorInterface
      * @param Filesystem $fileSystem
      * @param ImageContentValidatorInterface $contentValidator
      * @param DataObjectHelper $dataObjectHelper
-     * @param LoggerInterface $logger
+     * @param \Psr\Log\LoggerInterface $logger
      * @param Uploader $uploader
      */
     public function __construct(
         Filesystem $fileSystem,
         ImageContentValidatorInterface $contentValidator,
         DataObjectHelper $dataObjectHelper,
-        LoggerInterface $logger,
+        \Psr\Log\LoggerInterface $logger,
         Uploader $uploader
     ) {
         $this->filesystem = $fileSystem;
@@ -94,7 +93,7 @@ class ImageProcessor implements ImageProcessorInterface
         //Get all Image related custom attributes
         $imageDataObjects = $this->dataObjectHelper->getCustomAttributeValueByType(
             $dataObjectWithCustomAttributes->getCustomAttributes(),
-            ImageContentInterface::class
+            '\Magento\Framework\Api\Data\ImageContentInterface'
         );
 
         // Return if no images to process
@@ -106,7 +105,7 @@ class ImageProcessor implements ImageProcessorInterface
         /** @var $imageDataObject \Magento\Framework\Api\AttributeValue */
         foreach ($imageDataObjects as $imageDataObject) {
 
-            /** @var $imageContent ImageContentInterface */
+            /** @var $imageContent \Magento\Framework\Api\Data\ImageContentInterface */
             $imageContent = $imageDataObject->getValue();
 
             $filename = $this->processImageContent($entityType, $imageContent);
@@ -160,7 +159,7 @@ class ImageProcessor implements ImageProcessorInterface
             $this->uploader->setFilenamesCaseSensitivity(false);
             $this->uploader->setAllowRenameFiles(true);
             $destinationFolder = $entityType;
-            $this->uploader->save($this->mediaDirectory->getAbsolutePath($destinationFolder), $imageContent->getName());
+            $this->uploader->save($this->mediaDirectory->getAbsolutePath($destinationFolder), $fileName);
         } catch (\Exception $e) {
             $this->logger->critical($e);
         }

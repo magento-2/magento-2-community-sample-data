@@ -7,11 +7,6 @@ namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
 
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 
-/**
- * Product import media validation model
- *
- * @package Magento\CatalogImportExport\Model\Import\Product\Validator
- */
 class Media extends AbstractImportValidator implements RowValidatorInterface
 {
     const URL_REGEXP = '|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i';
@@ -19,7 +14,7 @@ class Media extends AbstractImportValidator implements RowValidatorInterface
     const PATH_REGEXP = '#^(?!.*[\\/]\.{2}[\\/])(?!\.{2}[\\/])[-\w.\\/]+$#';
 
     const ADDITIONAL_IMAGES = 'additional_images';
-
+    
     /**
      * @deprecated
      * @see \Magento\CatalogImportExport\Model\Import\Product::getMultipleValueSeparator()

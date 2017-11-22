@@ -9,7 +9,9 @@ namespace Magento\Paypal\Controller\Adminhtml\Billing\Agreement;
 class Cancel extends \Magento\Paypal\Controller\Adminhtml\Billing\Agreement
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Paypal::actions_manage';
 

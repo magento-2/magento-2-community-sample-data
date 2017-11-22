@@ -17,11 +17,13 @@ use Magento\Store\Model\StoreManagerInterface;
 require __DIR__ . '/../../Store/_files/core_fixturestore.php';
 
 $objectManager = BootstrapHelper::getObjectManager();
+
 $objectManager->get(IndexerRegistry::class)
     ->get(FulltextIndexer::INDEXER_ID)
     ->reindexAll();
 
 require __DIR__ . '/../../Catalog/_files/product_simple_duplicated.php';
+/** @var Product $product */
 
 $addressData = include __DIR__ . '/address_data.php';
 
@@ -36,7 +38,6 @@ $payment->setMethod('checkmo');
 
 /** @var OrderItem $orderItem */
 $orderItem = $objectManager->create(OrderItem::class);
-/** @var Product $product */
 $orderItem->setProductId($product->getId())->setQtyOrdered(2);
 
 /** @var Order $order */

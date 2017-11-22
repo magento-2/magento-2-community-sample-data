@@ -8,7 +8,9 @@ namespace Magento\Sales\Controller\Adminhtml\Order\Edit;
 class Start extends \Magento\Sales\Controller\Adminhtml\Order\Create\Start
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::actions_edit';
 

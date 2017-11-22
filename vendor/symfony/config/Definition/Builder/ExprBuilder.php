@@ -26,6 +26,8 @@ class ExprBuilder
     public $thenPart;
 
     /**
+     * Constructor.
+     *
      * @param NodeDefinition $node The related node
      */
     public function __construct(NodeDefinition $node)
@@ -91,6 +93,18 @@ class ExprBuilder
     public function ifNull()
     {
         $this->ifPart = function ($v) { return null === $v; };
+
+        return $this;
+    }
+
+    /**
+     * Tests if the value is empty.
+     *
+     * @return ExprBuilder
+     */
+    public function ifEmpty()
+    {
+        $this->ifPart = function ($v) { return empty($v); };
 
         return $this;
     }

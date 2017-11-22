@@ -269,10 +269,16 @@
 }
 
 /* Bugfix for Add To Cart button */
-div[class^="swatch-opt-"] {
+.swatch-opt-listing {
     margin-bottom: 10px;
 }
 
 .swatch-option-loading {
     content: url("../images/loader-2.gif");
+}
+
+.swatch-input {
+    left: -1000px;
+    position: absolute;
+    visibility: hidden;
 }

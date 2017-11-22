@@ -5,6 +5,10 @@
  */
 namespace Magento\ConfigurableProduct\Controller\Adminhtml;
 
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Registry;
+use Magento\TestFramework\ObjectManager;
+
 /**
  * @magentoAppArea adminhtml
  */
@@ -16,22 +20,23 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAssociatedProductIds()
     {
         $associatedProductIds = [3, 14, 15, 92];
-        $associatedProductIdsSerialized = json_encode($associatedProductIds);
+        $associatedProductIdsJSON = json_encode($associatedProductIds);
         $this->getRequest()->setPostValue(
             [
                 'attributes' => [$this->_getConfigurableAttribute()->getId()],
-                'associated_product_ids_serialized' => $associatedProductIdsSerialized,
+                'product' => ['associated_product_ids_serialized' => $associatedProductIdsJSON]
             ]
         );
 
         $this->dispatch('backend/catalog/product/save');
 
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        /** @var $objectManager ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        /** @var $product \Magento\Catalog\Model\Product */
-        $product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
-        $this->assertEquals($associatedProductIds, $product->getAssociatedProductIds());
+        /** @var $product Product */
+        $product = $objectManager->get(Registry::class)->registry('current_product');
+
+        self::assertEquals($associatedProductIds, $product->getExtensionAttributes()->getConfigurableProductLinks());
     }
 
     /**

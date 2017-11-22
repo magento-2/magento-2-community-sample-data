@@ -6,10 +6,8 @@
 
 namespace Magento\Swatches\Test\Block\Product\ProductList;
 
-use Magento\Catalog\Test\Block\Product\ProductList\ProductItem as CatalogProductItem;
-use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
 use Magento\Mtf\Client\Locator;
-use Magento\Swatches\Test\Fixture\SwatchesProductAttribute;
+use Magento\Catalog\Test\Block\Product\ProductList\ProductItem as CatalogProductItem;
 
 /**
  * Product item block on frontend category view.
@@ -21,73 +19,15 @@ class ProductItem extends CatalogProductItem
      *
      * @var string
      */
-    protected $swatchSelector = 'div[option-id="%s"]';
+    protected $swatchBlockSelector = '.swatch-attribute-options';
 
     /**
-     * Fill product options on category page.
+     * Check swatches visibility.
      *
-     * @param ConfigurableProduct $product
-     * @return void
+     * @return bool
      */
-    public function fillData(ConfigurableProduct $product)
+    public function isSwatchesBlockVisible()
     {
-        /** @var array $checkoutData */
-        $checkoutData = $product->getCheckoutData();
-
-        /** @var array $options */
-        $options = $checkoutData['options']['configurable_options'];
-
-        /** @var array $confAttrData */
-        $confAttrData = $product->getDataFieldConfig('configurable_attributes_data');
-
-        /** @var ConfigurableProduct\ConfigurableAttributesData $confAttrSource */
-        $confAttrSource = $confAttrData['source'];
-
-        /** @var SwatchesProductAttribute[] $attributes */
-        $attributes = $confAttrSource->getAttributes();
-
-        foreach ($options as $option) {
-            if (!isset($attributes[$option['title']])) {
-                continue;
-            }
-
-            /** @var array $availableOptions */
-            $availableOptions = $attributes[$option['title']]->getOptions();
-
-            /** @var string $optionKey */
-            $optionKey = str_replace('option_key_', '', $option['value']);
-
-            if (!isset($availableOptions[$optionKey])) {
-                continue;
-            }
-
-            /** @var array $optionForSelect */
-            $optionForSelect = $availableOptions[$optionKey];
-
-            $this->clickOnSwatch($optionForSelect['id']);
-        }
-    }
-
-    /**
-     * Click on swatch.
-     *
-     * @param $optionId
-     */
-    private function clickOnSwatch($optionId)
-    {
-        /** @var string $selector */
-        $selector = sprintf($this->swatchSelector, $optionId);
-
-        $this->_rootElement->find($selector, Locator::SELECTOR_CSS)->click();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function clickAddToCart()
-    {
-        $this->_rootElement->hover();
-
-        parent::clickAddToCart();
+        return $this->_rootElement->find($this->swatchBlockSelector)->isVisible();
     }
 }

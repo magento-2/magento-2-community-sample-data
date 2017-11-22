@@ -95,7 +95,6 @@ class SenderBuilder
      */
     protected function configureEmailTemplate()
     {
-        $this->transportBuilder->setScopeId($this->identityContainer->getStore()->getStoreId());
         $this->transportBuilder->setTemplateIdentifier($this->templateContainer->getTemplateId());
         $this->transportBuilder->setTemplateOptions($this->templateContainer->getTemplateOptions());
         $this->transportBuilder->setTemplateVars($this->templateContainer->getTemplateVars());

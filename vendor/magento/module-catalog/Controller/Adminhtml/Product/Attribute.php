@@ -15,7 +15,9 @@ use Magento\Framework\View\Result\PageFactory;
 abstract class Attribute extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Catalog::attributes_attributes';
 
@@ -86,7 +88,7 @@ abstract class Attribute extends \Magento\Backend\App\Action
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         if ($this->getRequest()->getParam('popup')) {
-            if ($this->getRequest()->getParam('product_tab') == 'variations') {
+            if ($this->getRequest()->getParam('product_tab') === 'variations') {
                 $resultPage->addHandle(['popup', 'catalog_product_attribute_edit_product_tab_variations_popup']);
             } else {
                 $resultPage->addHandle(['popup', 'catalog_product_attribute_edit_popup']);

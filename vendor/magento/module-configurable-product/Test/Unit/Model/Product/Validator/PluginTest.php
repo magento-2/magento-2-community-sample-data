@@ -110,7 +110,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
 
     public function testAroundValidateWithVariationsValid()
     {
-        $matrix = json_encode(['products']);
+        $matrix = ['products'];
 
         $plugin = $this->getMock(
             'Magento\ConfigurableProduct\Model\Product\Validator\Plugin',
@@ -124,7 +124,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             '_validateProductVariations'
         )->with(
             $this->productMock,
-            json_decode($matrix),
+            $matrix,
             $this->requestMock
         )->will(
             $this->returnValue(null)
@@ -135,8 +135,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         )->method(
             'getPost'
         )->with(
-            'configurable-matrix-serialized',
-            '[]'
+            'variations-matrix'
         )->will(
             $this->returnValue($matrix)
         );
@@ -157,7 +156,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
 
     public function testAroundValidateWithVariationsInvalid()
     {
-        $matrix = json_encode(['products']);
+        $matrix = ['products'];
 
         $plugin = $this->getMock(
             'Magento\ConfigurableProduct\Model\Product\Validator\Plugin',
@@ -171,7 +170,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             '_validateProductVariations'
         )->with(
             $this->productMock,
-            json_decode($matrix),
+            $matrix,
             $this->requestMock
         )->will(
             $this->returnValue(true)
@@ -182,8 +181,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         )->method(
             'getPost'
         )->with(
-            'configurable-matrix-serialized',
-            '[]'
+            'variations-matrix'
         )->will(
             $this->returnValue($matrix)
         );
@@ -210,10 +208,9 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         )->method(
             'getPost'
         )->with(
-            'configurable-matrix-serialized',
-            '[]'
+            'variations-matrix'
         )->will(
-            $this->returnValue('[]')
+            $this->returnValue(null)
         );
         $this->eventManagerMock->expects($this->never())->method('dispatch');
         $this->plugin->aroundValidate(
@@ -228,11 +225,10 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     public function testAroundValidateWithVariationsAndRequiredAttributes()
     {
         $matrix = [
-            ['data1', 'data2', 'configurable_attribute' => ['data1'], 'price' => 10],
-            ['data3', 'data4', 'configurable_attribute' => ['data3'], 'price' => 10],
-            ['data5', 'data6', 'configurable_attribute' => ['data5'], 'price' => 10],
+            ['data1', 'data2', 'configurable_attribute' => ['data1']],
+            ['data3', 'data4', 'configurable_attribute' => ['data3']],
+            ['data5', 'data6', 'configurable_attribute' => ['data5']],
         ];
-        $encodedMatrix = json_encode($matrix);
 
         $this->productMock->expects($this->any())
             ->method('getData')
@@ -253,10 +249,9 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         )->method(
             'getPost'
         )->with(
-            'configurable-matrix-serialized',
-            '[]'
+            'variations-matrix'
         )->will(
-            $this->returnValue($encodedMatrix)
+            $this->returnValue($matrix)
         );
 
         $attribute1 = $this->createAttribute('code1', true, true);

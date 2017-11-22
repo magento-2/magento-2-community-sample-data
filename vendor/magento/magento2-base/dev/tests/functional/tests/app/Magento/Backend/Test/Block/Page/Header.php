@@ -44,6 +44,9 @@ class Header extends Block
     public function logOut()
     {
         if ($this->isLoggedIn()) {
+            $this->browser->waitUntil(function () {
+                return $this->browser->find('[data-role="spinner"]')->isVisible() ? null : true;
+            });
             $this->_rootElement->find($this->adminAccountLink)->click();
             $this->_rootElement->find($this->signOutLink)->click();
             $this->waitForElementNotVisible($this->signOutLink);
@@ -84,5 +87,29 @@ class Header extends Block
         /** @var GlobalsearchElement $search */
         $search = $this->_rootElement->find($this->searchSelector, Locator::SELECTOR_CSS, 'globalsearch');
         return $search->isExistValueInSearchResult($query);
+    }
+
+    /**
+     * Is admin search preview visible in suggestion dropdown.
+     *
+     * @param string $query
+     * @param string $type
+     * @return bool
+     */
+    public function isAdminSearchPreviewVisible($query, $type)
+    {
+        /** @var GlobalsearchElement $search */
+        $search = $this->_rootElement->find('searchPreview' . $type, Locator::SELECTOR_ID);
+        return $search->getText() === $query;
+    }
+
+    /**
+     * Navigate to grid of specified type
+     *
+     * @param string $type
+     */
+    public function navigateToGrid($type)
+    {
+        $this->_rootElement->find('searchPreview' . $type, Locator::SELECTOR_ID)->click();
     }
 }

@@ -6,8 +6,10 @@
 namespace Magento\CatalogSampleData\Model\Product;
 
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Media as GalleryAttribute;
+use Magento\Catalog\Model\ResourceModel\Product\Gallery as GalleryResource;
 use Magento\Framework\Setup\SampleData\Context as SampleDataContext;
+use Magento\Framework\App\ObjectManager;
+use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * Class Gallery
@@ -45,20 +47,25 @@ class Gallery
     protected $eavConfig;
 
     /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * @param SampleDataContext $sampleDataContext
      * @param ProductFactory $productFactory
-     * @param GalleryAttribute $galleryAttribute
+     * @param GalleryResource $galleryResource
      * @param \Magento\Eav\Model\Config $eavConfig
      */
     public function __construct(
         SampleDataContext $sampleDataContext,
         ProductFactory $productFactory,
-        GalleryAttribute $galleryAttribute,
+        GalleryResource $galleryResource,
         \Magento\Eav\Model\Config $eavConfig
     ) {
         $this->fixtureManager = $sampleDataContext->getFixtureManager();
         $this->csvReader = $sampleDataContext->getCsvReader();
-        $this->galleryAttribute = $galleryAttribute;
+        $this->galleryResource = $galleryResource;
         $this->productFactory = $productFactory;
         $this->eavConfig = $eavConfig;
     }
@@ -111,6 +118,8 @@ class Gallery
      */
     protected function storeImage($product, $images)
     {
+        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
+        $productId = $product->getData($linkField);
         $baseImage = '';
         $i = 1;
         $mediaAttribute = $this->eavConfig->getAttribute('catalog_product', 'media_gallery');
@@ -122,20 +131,20 @@ class Gallery
             if (strpos($image, '_main') !== false) {
                 $baseImage = $image;
             }
-            $id = $this->galleryAttribute->insertGallery([
+
+            $id = $this->galleryResource->insertGallery([
                 'attribute_id' => $mediaAttribute->getAttributeId(),
-                'entity_id' => $product->getId(),
                 'value' => $image,
             ]);
-            $this->galleryAttribute->insertGalleryValueInStore([
+            $this->galleryResource->insertGalleryValueInStore([
                 'value_id' => $id,
                 'store_id' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
-                'entity_id' => $product->getId(),
+                $linkField => $productId,
                 'label' => 'Image',
                 'position' => $i,
                 'disables' => 0,
             ]);
-            $this->galleryAttribute->bindValueToEntity($id, $product->getId());
+            $this->galleryResource->bindValueToEntity($id, $productId);
             $i++;
         }
 
@@ -152,12 +161,28 @@ class Gallery
                 $table = $imageAttribute->getBackend()->getTable();
                 /** @var \Magento\Framework\DB\Adapter\AdapterInterface $adapter*/
                 $data = [
-                    $attribute->getBackend()->getEntityIdField() => $product->getId(),
+                    $attribute->getEntity()->getLinkField() => $productId,
                     'attribute_id' => $attribute->getId(),
                     'value' => $baseImage,
                 ];
                 $adapter->insertOnDuplicate($table, $data, ['value']);
             }
+        }
+    }
+
+    /**
+     * @deprecated
+     *
+     * @return \Magento\Framework\EntityManager\MetadataPool|mixed
+     */
+    private function getMetadataPool()
+    {
+        if (!($this->metadataPool)) {
+            return ObjectManager::getInstance()->get(
+                '\Magento\Framework\EntityManager\MetadataPool'
+            );
+        } else {
+            return $this->metadataPool;
         }
     }
 }

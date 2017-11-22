@@ -36,7 +36,7 @@ use Magento\Quote\Api\Data\PaymentInterface;
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Payment extends \Magento\Payment\Model\Info implements \Magento\Quote\Api\Data\PaymentInterface
+class Payment extends \Magento\Payment\Model\Info implements PaymentInterface
 {
     /**
      * @var string
@@ -170,6 +170,7 @@ class Payment extends \Magento\Payment\Model\Info implements \Magento\Quote\Api\
         }
 
         $method->assignData($data);
+
         /*
          * validating the payment data
          */

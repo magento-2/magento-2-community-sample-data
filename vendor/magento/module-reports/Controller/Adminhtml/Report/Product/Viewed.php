@@ -11,7 +11,9 @@ use Magento\Reports\Model\Flag;
 class Viewed extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Reports::viewed';
 

@@ -60,13 +60,18 @@ class Date extends AbstractDataType
     public function prepare()
     {
         $config = $this->getData('config');
-        if (!isset($config['dateFormat'])) {
-            $config['dateFormat'] = $this->localeDate->getDateTimeFormat(\IntlDateFormatter::MEDIUM);
-            $this->setData('config', $config);
+
+        if (!isset($config['storeTimeZone'])) {
+            $storeTimeZone = $this->localeDate->getConfigTimezone();
+            $config['storeTimeZone'] = $storeTimeZone;
         }
+        // Set date format pattern by current locale
+        $localeDateFormat = $this->localeDate->getDateFormat();
+        $config['options']['dateFormat'] = $localeDateFormat;
+        $config['options']['storeLocale'] = $this->locale;
+        $this->setData('config', $config);
         parent::prepare();
     }
-
 
     /**
      * Get locale

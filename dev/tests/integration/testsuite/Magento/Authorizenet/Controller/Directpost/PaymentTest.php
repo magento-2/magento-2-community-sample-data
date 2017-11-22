@@ -22,15 +22,4 @@ class PaymentTest extends \Magento\TestFramework\TestCase\AbstractController
             $this->getResponse()->getBody()
         );
     }
-
-    public function testBackendResponseActionOrderSuccess()
-    {
-        $xNum = 1;
-        $this->getRequest()->setPostValue('x_invoice_num', $xNum);
-        $this->dispatch('authorizenet/directpost_payment/backendresponse');
-        $this->assertContains(
-            '/checkout/onepage/success/',
-            $this->getResponse()->getBody()
-        );
-    }
 }

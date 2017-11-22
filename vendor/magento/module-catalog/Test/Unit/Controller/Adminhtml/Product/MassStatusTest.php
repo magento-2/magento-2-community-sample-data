@@ -6,20 +6,20 @@
  */
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product;
 
-use Magento\Backend\Model\View\Result\Redirect;
-use Magento\Catalog\Controller\Adminhtml\Product\Builder;
-use Magento\Catalog\Controller\Adminhtml\Product\MassStatus;
-use Magento\Catalog\Model\Indexer\Product\Price\Processor;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Action;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Framework\App\Request\Http;
-use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Data\Collection\AbstractDb;
-use Magento\Framework\ObjectManager\ObjectManager as Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Ui\Component\MassAction\Filter;
+use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Catalog\Model\Indexer\Product\Price\Processor;
+use Magento\Catalog\Controller\Adminhtml\Product\Builder;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Catalog\Model\Product\Action;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Controller\Adminhtml\Product\MassStatus;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\Request\Http;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\ObjectManager\ObjectManager as Manager;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -67,8 +67,8 @@ class MassStatusTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $productBuilderMock = $this->getMockBuilder(Builder::class)->setMethods([
-            'build',
-        ])->disableOriginalConstructor()->getMock();
+                'build',
+            ])->disableOriginalConstructor()->getMock();
 
         $this->requestMock = $this->getMockBuilder(Http::class)->setMethods(
             ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
@@ -111,7 +111,7 @@ class MassStatusTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $objectManagerMock->expects($this->any())->method('get')->willReturn($this->actionMock);
-        $collectionFactoryMock = $this->getMockBuilder(ProductCollectionFactory::class)
+        $collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

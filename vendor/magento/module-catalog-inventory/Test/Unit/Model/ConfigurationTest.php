@@ -59,10 +59,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetDefaultScopeId()
+    public function testGetDefaultWebsiteId()
     {
-        $id = 1;
-        $this->assertEquals($id, $this->model->getDefaultScopeId());
+        $this->assertEquals(0, $this->model->getDefaultScopeId());
     }
 
     public function testGetIsQtyTypeIds()

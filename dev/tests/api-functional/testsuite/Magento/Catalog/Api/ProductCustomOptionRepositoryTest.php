@@ -9,17 +9,21 @@
 
 namespace Magento\Catalog\Api;
 
+use Magento\Catalog\Model\ProductRepository;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
+/**
+ * Tests Magento\Catalog\Model\Product\Option\Repository.
+ */
 class ProductCustomOptionRepositoryTest extends WebapiAbstract
 {
+    const SERVICE_NAME = 'catalogProductCustomOptionRepositoryV1';
+
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $objectManager;
-
-    const SERVICE_NAME = 'catalogProductCustomOptionRepositoryV1';
 
     /**
      * @var \Magento\Catalog\Model\ProductFactory
@@ -29,19 +33,23 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->productFactory = $this->objectManager->get('Magento\Catalog\Model\ProductFactory');
+        $this->productFactory = $this->objectManager->get(\Magento\Catalog\Model\ProductFactory::class);
     }
 
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
      * @magentoAppIsolation enabled
+     * @return void
      */
     public function testRemove()
     {
         $sku = 'simple';
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->objectManager->create(
+            \Magento\Catalog\Model\ProductRepository::class
+        );
         /** @var  \Magento\Catalog\Model\Product $product */
-        $product = $this->objectManager->create('Magento\Catalog\Model\Product');
-        $product->load(1);
+        $product = $productRepository->get($sku, false, null, true);
         $customOptions = $product->getOptions();
         $optionId = array_pop($customOptions)->getId();
         $serviceInfo = [
@@ -57,8 +65,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
         ];
         $this->assertTrue($this->_webApiCall($serviceInfo, ['sku' => $sku, 'optionId' => $optionId]));
         /** @var  \Magento\Catalog\Model\Product $product */
-        $product = $this->objectManager->create('Magento\Catalog\Model\Product');
-        $product->load(1);
+        $product = $productRepository->get($sku, false, null, true);
         $this->assertNull($product->getOptionById($optionId));
         $this->assertEquals(9, count($product->getOptions()));
     }
@@ -66,13 +73,14 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
      * @magentoAppIsolation enabled
+     * @return void
      */
     public function testGet()
     {
         $productSku = 'simple';
         /** @var \Magento\Catalog\Api\ProductCustomOptionRepositoryInterface $service */
         $service = Bootstrap::getObjectManager()
-            ->get('Magento\Catalog\Api\ProductCustomOptionRepositoryInterface');
+            ->get(\Magento\Catalog\Api\ProductCustomOptionRepositoryInterface::class);
         $options = $service->getList('simple');
         $option = current($options);
         $optionId = $option->getOptionId();
@@ -97,6 +105,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
      * @magentoAppIsolation enabled
+     * @return void
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testGetList()
@@ -140,7 +149,8 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_without_options.php
      * @magentoAppIsolation enabled
      * @dataProvider optionDataProvider
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @param array $optionData
+     * @return void
      */
     public function testSave($optionData)
     {
@@ -164,13 +174,16 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
         unset($result['product_sku']);
         unset($result['option_id']);
         if (!empty($result['values'])) {
-            foreach ($result['values'] as $key => $value) {
+            foreach (array_keys($result['values']) as $key) {
                 unset($result['values'][$key]['option_type_id']);
             }
         }
         $this->assertEquals($optionData, $result);
     }
 
+    /**
+     * @return array
+     */
     public function optionDataProvider()
     {
         $fixtureOptions = [];
@@ -188,6 +201,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_without_options.php
      * @magentoAppIsolation enabled
      * @dataProvider optionNegativeDataProvider
+     * @return void
      */
     public function testAddNegative($optionData)
     {
@@ -207,13 +221,20 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
         ];
 
         if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
-            $this->setExpectedException('SoapFault', 'Could not save product option');
+            if (isset($optionDataPost['title']) && empty($optionDataPost['title'])) {
+                $this->setExpectedException('SoapFault', 'Missed values for option required fields');
+            } else {
+                $this->setExpectedException('SoapFault', 'Invalid option');
+            }
         } else {
             $this->setExpectedException('Exception', '', 400);
         }
         $this->_webApiCall($serviceInfo, ['option' => $optionDataPost]);
     }
 
+    /**
+     * @return array
+     */
     public function optionNegativeDataProvider()
     {
         $fixtureOptions = [];
@@ -230,13 +251,14 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
      * @magentoAppIsolation enabled
+     * @return void
      */
     public function testUpdate()
     {
         $productSku = 'simple';
-        /** @var \Magento\Catalog\Model\ProductRepository $optionReadService */
+        /** @var ProductRepository $productRepository */
         $productRepository = $this->objectManager->create(
-            'Magento\Catalog\Model\ProductRepository'
+            \Magento\Catalog\Model\ProductRepository::class
         );
 
         $options = $productRepository->get($productSku, true)->getOptions();
@@ -246,8 +268,8 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
             'product_sku' => $productSku,
             'title' => $option->getTitle() . "_updated",
             'type' => $option->getType(),
-            'sort_order' => $option->getSortOrder(),
-            'is_require' => $option->getIsRequire(),
+            'sort_order' => (int)$option->getSortOrder(),
+            'is_require' => (bool)$option->getIsRequire(),
             'price' => $option->getPrice(),
             'price_type' => $option->getPriceType(),
             'sku' => $option->getSku(),
@@ -271,17 +293,19 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
                 $serviceInfo,
                 ['id' => $optionId, 'option' => $optionDataPost]
             );
+            unset($optionDataPost['option_id']);//update change option id now
         } else {
             $updatedOption = $this->_webApiCall($serviceInfo, ['option' => $optionDataPost]);
         }
 
         unset($updatedOption['values']);
-        $optionDataPost['option_id'] = $option->getOptionId();
+        unset($updatedOption['option_id']);//update change option id now
         $this->assertEquals($optionDataPost, $updatedOption);
     }
 
     /**
      * @param string $optionType
+     * @return void
      *
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
      * @magentoAppIsolation enabled
@@ -290,7 +314,6 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      */
     public function testUpdateOptionAddingNewValue($optionType)
     {
-        $productId = 1;
         $fixtureOption = null;
         $valueData = [
             'price' => 100500,
@@ -300,8 +323,12 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
             'sort_order' => 100,
         ];
 
-        $product = $this->productFactory->create();
-        $product->load($productId);
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->objectManager->create(
+            \Magento\Catalog\Model\ProductRepository::class
+        );
+        /** @var  \Magento\Catalog\Model\Product $product */
+        $product = $productRepository->get('simple', false, null, true);
 
         /**@var $option \Magento\Catalog\Model\Product\Option */
         foreach ($product->getOptions() as $option) {
@@ -361,6 +388,9 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
         $this->assertEquals(100, $values['sort_order']);
     }
 
+    /**
+     * @return array
+     */
     public function validOptionDataProvider()
     {
         return [
@@ -369,5 +399,51 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
             'radio' => ['radio'],
             'multiple' => ['multiple']
         ];
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Catalog/_files/product_with_options.php
+     * @magentoAppIsolation enabled
+     * @dataProvider optionNegativeUpdateDataProvider
+     * @param array $optionData
+     * @param string $message
+     * @param int $exceptionCode
+     * @return void
+     */
+    public function testUpdateNegative($optionData, $message, $exceptionCode)
+    {
+        $productSku = 'simple';
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->objectManager->create(ProductRepository::class);
+        $options = $productRepository->get($productSku, true)->getOptions();
+        $option = array_shift($options);
+        $optionId = $option->getOptionId();
+
+        $serviceInfo = [
+            'rest' => [
+                'resourcePath' => '/V1/products/options/' . $optionId,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
+            ],
+            'soap' => [
+                'service' => self::SERVICE_NAME,
+                'serviceVersion' => 'V1',
+                'operation' => self::SERVICE_NAME . 'Save',
+            ],
+        ];
+
+        if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
+            $this->setExpectedException('SoapFault');
+        } else {
+            $this->setExpectedException('Exception', $message, $exceptionCode);
+        }
+        $this->_webApiCall($serviceInfo, ['option' => $optionData]);
+    }
+
+    /**
+     * @return array
+     */
+    public function optionNegativeUpdateDataProvider()
+    {
+        return include '_files/product_options_update_negative.php';
     }
 }

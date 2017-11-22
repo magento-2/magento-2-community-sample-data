@@ -193,8 +193,8 @@ define(
                     // restore 'Same As Shipping' checkbox state
                     this.isAddressSameAsShipping(
                         quote.billingAddress() != null &&
-                        quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey() &&
-                        !quote.isVirtual()
+                            quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey() &&
+                            !quote.isVirtual()
                     );
                     this.isAddressDetailsVisible(true);
                 }

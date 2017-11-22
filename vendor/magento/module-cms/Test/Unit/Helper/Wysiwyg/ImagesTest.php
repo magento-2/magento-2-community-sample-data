@@ -370,7 +370,7 @@ class ImagesTest extends \PHPUnit_Framework_TestCase
         $this->directoryWriteMock->expects($this->any())
             ->method('create')
             ->willThrowException(
-                new \Magento\Framework\Exception\FileSystemException(__('Could not create directory.'))
+                new \Magento\Framework\Exception\FileSystemException(__('Could not create a directory.'))
             );
 
         $this->imagesHelper->getCurrentPath();
@@ -453,7 +453,7 @@ class ImagesTest extends \PHPUnit_Framework_TestCase
 
         $this->backendDataMock->expects($this->any())
             ->method('getUrl')
-            ->with('cms/wysiwyg/directive', ['___directive' => $directive])
+            ->with('cms/wysiwyg/directive', ['___directive' => $directive, '_escape_params' => false])
             ->willReturn($directive);
 
         $this->assertEquals($expectedHtml, $this->imagesHelper->getImageHtmlDeclaration($fileName));

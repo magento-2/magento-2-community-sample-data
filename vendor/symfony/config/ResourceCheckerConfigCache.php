@@ -150,10 +150,6 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
                 // discard chmod failure (some filesystem may not support it)
             }
         }
-
-        if (\function_exists('opcache_invalidate') && ini_get('opcache.enable')) {
-            @opcache_invalidate($this->file, true);
-        }
     }
 
     /**

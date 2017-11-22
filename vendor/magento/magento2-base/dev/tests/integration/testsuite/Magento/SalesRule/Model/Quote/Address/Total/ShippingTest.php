@@ -6,6 +6,9 @@
 
 namespace Magento\SalesRule\Model\Quote\Address\Total;
 
+/**
+ * Shipping test.
+ */
 class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -31,8 +34,10 @@ class ShippingTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Estimate shipment for product that match salesrule with free shipping.
+     *
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple_without_options.php
+     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
      */
     public function testRuleByProductWeightWithFreeShipping()
     {
@@ -42,12 +47,13 @@ class ShippingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(count($methods) > 0);
         $this->assertEquals('flatrate', $methods[0]->getMethodCode());
         $this->assertEquals(0, $methods[0]->getAmount());
-
     }
 
     /**
+     * Estimate shipment for product that doesn't match salesrule with free shipping.
+     *
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple_without_options.php
+     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
      */
     public function testRuleByProductWeightWithoutFreeShipping()
     {
@@ -57,7 +63,6 @@ class ShippingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(count($methods) > 0);
         $this->assertEquals('flatrate', $methods[0]->getMethodCode());
         $this->assertEquals(25, $methods[0]->getAmount());
-
     }
 
     /**
@@ -73,6 +78,7 @@ class ShippingTest extends \PHPUnit_Framework_TestCase
         $address = $addressFactory->create();
         $address->setCountryId('US');
         $address->setRegionId(2);
+
         /** @var \Magento\Quote\Api\GuestShipmentEstimationInterface $estimation */
         $estimation = $this->objectManager->get(\Magento\Quote\Api\GuestShipmentEstimationInterface::class);
 

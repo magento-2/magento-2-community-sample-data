@@ -11,19 +11,20 @@ use Magento\Webapi\Model\AbstractSchemaGenerator;
 use Magento\Webapi\Model\Config\Converter;
 use Magento\Webapi\Model\Rest\Swagger;
 use Magento\Webapi\Model\Rest\SwaggerFactory;
+use Magento\Framework\Webapi\Authorization;
 use Magento\Framework\Webapi\Exception as WebapiException;
-use Magento\Framework\Exception\AuthenticationException;
-use Magento\Framework\Exception\AuthorizationException;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Phrase;
 use Magento\Framework\App\ProductMetadataInterface;
+use \Magento\Framework\Api\SimpleDataObjectConverter;
+use Magento\Webapi\Model\ServiceMetadata;
 
 /**
  * REST Swagger schema generator.
  *
  * Generate REST API description in a format of JSON document,
  * compliant with {@link https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md Swagger specification}
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Generator extends AbstractSchemaGenerator
 {
@@ -104,26 +105,32 @@ class Generator extends AbstractSchemaGenerator
     /**
      * Initialize dependencies.
      *
-     * @param \Magento\Framework\App\Cache\Type\Webapi $cache
+     * @param \Magento\Webapi\Model\Cache\Type\Webapi $cache
      * @param \Magento\Framework\Reflection\TypeProcessor $typeProcessor
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Webapi\CustomAttributeTypeLocatorInterface $customAttributeTypeLocator
      * @param \Magento\Webapi\Model\ServiceMetadata $serviceMetadata
+     * @param Authorization $authorization
      * @param SwaggerFactory $swaggerFactory
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
      */
     public function __construct(
-        \Magento\Framework\App\Cache\Type\Webapi $cache,
+        \Magento\Webapi\Model\Cache\Type\Webapi $cache,
         \Magento\Framework\Reflection\TypeProcessor $typeProcessor,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Webapi\CustomAttributeTypeLocatorInterface $customAttributeTypeLocator,
         \Magento\Webapi\Model\ServiceMetadata $serviceMetadata,
+        Authorization $authorization,
         SwaggerFactory $swaggerFactory,
         ProductMetadataInterface $productMetadata
     ) {
         $this->swaggerFactory = $swaggerFactory;
         $this->productMetadata = $productMetadata;
-        parent::__construct($cache, $typeProcessor, $storeManager, $customAttributeTypeLocator, $serviceMetadata);
+        parent::__construct(
+            $cache,
+            $typeProcessor,
+            $customAttributeTypeLocator,
+            $serviceMetadata,
+            $authorization
+        );
     }
 
     /**
@@ -534,8 +541,50 @@ class Generator extends AbstractSchemaGenerator
                     ],
                 ],
             ],
-            $this->definitions
+            $this->snakeCaseDefinitions($this->definitions)
         );
+    }
+
+    /**
+     * Converts definitions' properties array to snake_case.
+     *
+     * @param array $definitions
+     * @return array
+     */
+    private function snakeCaseDefinitions($definitions)
+    {
+        foreach ($definitions as $name => $vals) {
+            if (!empty($vals['properties'])) {
+                $definitions[$name]['properties'] = $this->convertArrayToSnakeCase($vals['properties']);
+            }
+            if (!empty($vals['required'])) {
+                $snakeCaseRequired = [];
+                foreach ($vals['required'] as $requiredProperty) {
+                    $snakeCaseRequired[] = SimpleDataObjectConverter::camelCaseToSnakeCase($requiredProperty);
+                }
+                $definitions[$name]['required'] = $snakeCaseRequired;
+            }
+        }
+        return $definitions;
+    }
+
+    /**
+     * Converts associative array's key names from camelCase to snake_case, recursively.
+     *
+     * @param array $properties
+     * @return array
+     */
+    private function convertArrayToSnakeCase($properties)
+    {
+        foreach ($properties as $name => $value) {
+            $snakeCaseName = SimpleDataObjectConverter::camelCaseToSnakeCase($name);
+            if (is_array($value)) {
+                $value = $this->convertArrayToSnakeCase($value);
+            }
+            unset($properties[$name]);
+            $properties[$snakeCaseName] = $value;
+        }
+        return $properties;
     }
 
     /**
@@ -851,5 +900,24 @@ class Generator extends AbstractSchemaGenerator
         $responses[$httpCode]['schema']['$ref'] = self::ERROR_SCHEMA;
 
         return $responses;
+    }
+
+    /**
+     * Retrieve a list of services visible to current user.
+     *
+     * @return string[]
+     */
+    public function getListOfServices()
+    {
+        $listOfAllowedServices = [];
+        foreach ($this->serviceMetadata->getServicesConfig() as $serviceName => $service) {
+            foreach ($service[ServiceMetadata::KEY_SERVICE_METHODS] as $method) {
+                if ($this->authorization->isAllowed($method[ServiceMetadata::KEY_ACL_RESOURCES])) {
+                    $listOfAllowedServices[] = $serviceName;
+                    break;
+                }
+            }
+        }
+        return $listOfAllowedServices;
     }
 }

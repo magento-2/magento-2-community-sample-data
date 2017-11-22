@@ -5,6 +5,7 @@
  */
 namespace Magento\Catalog\Model\ResourceModel\Product;
 
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\Select;
 
@@ -36,6 +37,11 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
     private $catalogHelper;
 
     /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * @var BaseSelectProcessorInterface
      */
     private $baseSelectProcessor;
@@ -45,6 +51,7 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
      * @param \Magento\Framework\App\ResourceConnection $resourceConnection
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Catalog\Helper\Data $catalogHelper
+     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      * @param BaseSelectProcessorInterface $baseSelectProcessor
      */
     public function __construct(
@@ -52,12 +59,14 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Catalog\Helper\Data $catalogHelper,
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         BaseSelectProcessorInterface $baseSelectProcessor = null
     ) {
         $this->storeManager = $storeManager;
         $this->resource = $resourceConnection;
         $this->customerSession = $customerSession;
         $this->catalogHelper = $catalogHelper;
+        $this->metadataPool = $metadataPool;
         $this->baseSelectProcessor = (null !== $baseSelectProcessor)
             ? $baseSelectProcessor : ObjectManager::getInstance()->get(BaseSelectProcessorInterface::class);
     }
@@ -67,31 +76,39 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
      */
     public function build($productId)
     {
+        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+        $productTable = $this->resource->getTableName('catalog_product_entity');
+
         $priceSelect = $this->resource->getConnection()->select()
-            ->from(['t' => $this->resource->getTableName('catalog_product_entity_tier_price')], 'entity_id')
+            ->from(['parent' => $productTable], '')
             ->joinInner(
-                [
-                    BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS
-                        => $this->resource->getTableName('catalog_product_relation')
-                ],
-                BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . '.child_id = t.entity_id',
+                ['link' => $this->resource->getTableName('catalog_product_relation')],
+                "link.parent_id = parent.$linkField",
                 []
-            )->where(BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . '.parent_id = ? ', $productId)
+            )->joinInner(
+                [BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS => $productTable],
+                sprintf('%s.entity_id = link.child_id', BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS),
+                ['entity_id']
+            )->joinInner(
+                ['t' => $this->resource->getTableName('catalog_product_entity_tier_price')],
+                sprintf('t.%s = %s.%1$s', $linkField, BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS),
+                []
+            )->where('parent.entity_id = ?', $productId)
             ->where('t.all_groups = 1 OR customer_group_id = ?', $this->customerSession->getCustomerGroupId())
             ->where('t.qty = ?', 1)
             ->order('t.value ' . Select::SQL_ASC)
             ->limit(1);
         $priceSelect = $this->baseSelectProcessor->process($priceSelect);
 
-        $priceSelectDefault = clone $priceSelect;
-        $priceSelectDefault->where('t.website_id = ?', self::DEFAULT_WEBSITE_ID);
-        $select[] = $priceSelectDefault;
-
         if (!$this->catalogHelper->isPriceGlobal()) {
-            $priceSelect->where('t.website_id = ?', $this->storeManager->getStore()->getWebsiteId());
-            $select[] = $priceSelect;
+            $priceSelectStore = clone $priceSelect;
+            $priceSelectStore->where('t.website_id = ?', $this->storeManager->getStore()->getWebsiteId());
+            $selects[] = $priceSelectStore;
         }
 
-        return $select;
+        $priceSelect->where('t.website_id = ?', self::DEFAULT_WEBSITE_ID);
+        $selects[] = $priceSelect;
+
+        return $selects;
     }
 }

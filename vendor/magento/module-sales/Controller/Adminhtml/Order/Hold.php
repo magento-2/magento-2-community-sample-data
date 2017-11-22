@@ -8,7 +8,9 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
 class Hold extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::hold';
 

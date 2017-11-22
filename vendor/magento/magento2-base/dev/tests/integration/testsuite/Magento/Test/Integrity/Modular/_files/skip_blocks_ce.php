@@ -20,11 +20,5 @@ return [
     // Fails because of dependence on registry
     'Magento\Reminder\Block\Adminhtml\Reminder\Edit\Tab\Customers',
     'Magento\LayeredNavigation\Block\Navigation',
-    'Magento\LayeredNavigation\Block\Navigation\State',
-    // Other failures
-    'Magento\ProductAlert\Block\Email\Price',
-    'Magento\ProductAlert\Block\Email\Stock',
-    'Magento\ProductAlert\Block\Product\View',
-    'Magento\ProductAlert\Block\Product\View\Price',
-    'Magento\ProductAlert\Block\Product\View\Stock'
+    'Magento\LayeredNavigation\Block\Navigation\State'
 ];

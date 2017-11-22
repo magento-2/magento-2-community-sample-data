@@ -2,13 +2,14 @@
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\Exception\InactiveScopeException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 
 /**
+ * ProjectServiceContainer.
+ *
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  */
@@ -17,6 +18,9 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = array();
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $dir = __DIR__;
@@ -25,11 +29,7 @@ class ProjectServiceContainer extends Container
         }
         $this->parameters = $this->getDefaultParameters();
 
-        $this->services =
-        $this->scopedServices =
-        $this->scopeStacks = array();
-        $this->scopes = array();
-        $this->scopeChildren = array();
+        $this->services = array();
         $this->methodMap = array(
             'test' => 'getTestService',
         );
@@ -54,9 +54,12 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'test' shared service.
+     * Gets the 'test' service.
      *
-     * @return \stdClass
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \stdClass A stdClass instance
      */
     protected function getTestService()
     {

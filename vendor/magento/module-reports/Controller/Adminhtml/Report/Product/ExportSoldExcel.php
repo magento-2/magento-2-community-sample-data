@@ -13,6 +13,13 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportSoldExcel extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
+    /**
      * Export Sold Products report to XML format action
      *
      * @return ResponseInterface

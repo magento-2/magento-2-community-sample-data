@@ -10,7 +10,9 @@ use Magento\Backend\App\Action;
 abstract class Widget extends Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_CatalogRule::promo_catalog';
 }

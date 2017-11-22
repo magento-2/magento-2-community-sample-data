@@ -27,7 +27,9 @@ use Magento\Framework\Api\DataObjectHelper;
 abstract class Index extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Customer::manage';
 

@@ -1,15 +1,15 @@
 <?php
 /**
+ *
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Config;
 
-use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManager\ConfigCacheInterface;
 use Magento\Framework\ObjectManager\RelationsInterface;
 
-class Compiled implements ConfigInterface
+class Compiled implements \Magento\Framework\ObjectManager\ConfigInterface
 {
     /**
      * @var array
@@ -76,7 +76,7 @@ class Compiled implements ConfigInterface
             }
             return $this->arguments[$type];
         } else {
-            return [['_i_' => \Magento\Framework\ObjectManagerInterface::class]];
+            return [['_i_' => 'Magento\Framework\ObjectManagerInterface']];
         }
     }
 
@@ -130,22 +130,14 @@ class Compiled implements ConfigInterface
     public function extend(array $configuration)
     {
         $this->arguments = isset($configuration['arguments'])
-            ? array_replace(
-                $this->arguments ?: [],
-                $configuration['arguments']
-            ) : $this->arguments;
-
+            ? array_replace($this->arguments, $configuration['arguments'])
+            : $this->arguments;
         $this->virtualTypes = isset($configuration['instanceTypes'])
-            ? array_replace(
-                $this->virtualTypes ?: [],
-                $configuration['instanceTypes']
-            ) : $this->virtualTypes;
-
+            ? array_replace($this->virtualTypes, $configuration['instanceTypes'])
+            : $this->virtualTypes;
         $this->preferences = isset($configuration['preferences'])
-            ? array_replace(
-                $this->preferences ?: [],
-                $configuration['preferences']
-            ) : $this->preferences;
+            ? array_replace($this->preferences, $configuration['preferences'])
+            : $this->preferences;
     }
 
     /**

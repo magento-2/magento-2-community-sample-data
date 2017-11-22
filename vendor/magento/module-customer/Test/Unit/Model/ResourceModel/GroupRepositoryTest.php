@@ -71,7 +71,7 @@ class GroupRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $model;
     
-    public function setUp()
+    protected function setUp()
     {
         $this->groupRegistry = $this->getMock(
             'Magento\Customer\Model\GroupRegistry',
@@ -168,7 +168,7 @@ class GroupRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testSave()
     {
-        $groupId = 23;
+        $groupId = 0;
 
         $taxClass = $this->getMockForAbstractClass('Magento\Tax\Api\Data\TaxClassInterface', [], '', false);
 

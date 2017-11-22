@@ -5,11 +5,13 @@
  */
 namespace Magento\Framework\View\Test\Unit\Asset\MergeStrategy;
 
+use Magento\Framework\View\Asset\MergeStrategy\Direct;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
-use \Magento\Framework\View\Asset\MergeStrategy\Direct;
-
 use Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * Direct merge strategy test.
+ */
 class DirectTest extends \PHPUnit_Framework_TestCase
 {
     /**

@@ -169,9 +169,7 @@ abstract class AbstractCollection extends \Magento\Framework\Data\Collection\Abs
     }
 
     /**
-     * Init collection select
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     protected function _initSelect()
     {
@@ -521,34 +519,6 @@ abstract class AbstractCollection extends \Magento\Framework\Data\Collection\Abs
     }
 
     /**
-     * Join table to collection select.
-     *
-     * @param string $table
-     * @param string $cond
-     * @param string $cols
-     * @return $this
-     */
-    public function joinLeft($table, $cond, $cols = '*')
-    {
-        if (is_array($table)) {
-            foreach ($table as $k => $v) {
-                $alias = $k;
-                $table = $v;
-                break;
-            }
-        } else {
-            $alias = $table;
-        }
-
-        if (!isset($this->_joinedTables[$alias])) {
-            $this->getSelect()->joinLeft([$alias => $this->getTable($table)], $cond, $cols);
-            $this->_joinedTables[$alias] = true;
-        }
-        
-        return $this;
-    }
-
-    /**
      * Redeclare before load method for adding event
      *
      * @return $this
@@ -599,13 +569,8 @@ abstract class AbstractCollection extends \Magento\Framework\Data\Collection\Abs
         parent::_afterLoad();
         foreach ($this->_items as $item) {
             $item->setOrigData();
-
-            if ($item instanceof \Magento\Framework\Model\AbstractModel) {
-                $this->getResource()->unserializeFields($item);
-
-                if ($this->_resetItemsDataChanged) {
-                    $item->setDataChanges(false);
-                }
+            if ($this->_resetItemsDataChanged && ($item instanceof \Magento\Framework\Model\AbstractModel)) {
+                $item->setDataChanges(false);
             }
         }
         $this->_eventManager->dispatch('core_collection_abstract_load_after', ['collection' => $this]);

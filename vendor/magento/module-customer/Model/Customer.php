@@ -321,7 +321,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
     {
         $customerDataAttributes = $this->dataObjectProcessor->buildOutputDataArray(
             $customer,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
 
         foreach ($customerDataAttributes as $attributeCode => $attributeData) {
@@ -775,12 +775,13 @@ class Customer extends \Magento\Framework\Model\AbstractModel
         if ($this->canSkipConfirmation()) {
             return false;
         }
-        $storeId = $this->getStoreId() ? $this->getStoreId() : null;
+
+        $websiteId = $this->getWebsiteId() ? $this->getWebsiteId() : null;
 
         return (bool)$this->_scopeConfig->getValue(
             self::XML_PATH_IS_CONFIRM,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
         );
     }
 
@@ -829,8 +830,6 @@ class Customer extends \Magento\Framework\Model\AbstractModel
             ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $storeId]
         )->setTemplateVars(
             $templateParams
-        )->setScopeId(
-            $storeId
         )->setFrom(
             $this->_scopeConfig->getValue($sender, ScopeInterface::SCOPE_STORE, $storeId)
         )->addTo(
@@ -967,52 +966,13 @@ class Customer extends \Magento\Framework\Model\AbstractModel
 
     /**
      * Validate customer attribute values.
-     * For existing customer password + confirmation will be validated only when password is set
-     * (i.e. its change is requested)
      *
-     * @return bool|string[]
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @deprecated
+     * @return bool
      */
     public function validate()
     {
-        $errors = [];
-        if (!\Zend_Validate::is(trim($this->getFirstname()), 'NotEmpty')) {
-            $errors[] = __('Please enter a first name.');
-        }
-
-        if (!\Zend_Validate::is(trim($this->getLastname()), 'NotEmpty')) {
-            $errors[] = __('Please enter a last name.');
-        }
-
-        if (!\Zend_Validate::is($this->getEmail(), 'EmailAddress')) {
-            $errors[] = __('Please correct this email address: "%1".', $this->getEmail());
-        }
-
-        $entityType = $this->_config->getEntityType('customer');
-        $attribute = $this->_config->getAttribute($entityType, 'dob');
-        if ($attribute->getIsRequired() && '' == trim($this->getDob())) {
-            $errors[] = __('Please enter a date of birth.');
-        }
-        $attribute = $this->_config->getAttribute($entityType, 'taxvat');
-        if ($attribute->getIsRequired() && '' == trim($this->getTaxvat())) {
-            $errors[] = __('Please enter a TAX/VAT number.');
-        }
-        $attribute = $this->_config->getAttribute($entityType, 'gender');
-        if ($attribute->getIsRequired() && '' == trim($this->getGender())) {
-            $errors[] = __('Please enter a gender.');
-        }
-
-        $transport = new \Magento\Framework\DataObject(
-            ['errors' => $errors]
-        );
-        $this->_eventManager->dispatch('customer_validate', ['customer' => $this, 'transport' => $transport]);
-        $errors = $transport->getErrors();
-
-        if (empty($errors)) {
-            return true;
-        }
-        return $errors;
+        return true;
     }
 
     /**
@@ -1116,7 +1076,9 @@ class Customer extends \Magento\Framework\Model\AbstractModel
     {
         /** @var \Magento\Framework\Indexer\IndexerInterface $indexer */
         $indexer = $this->indexerRegistry->get(self::CUSTOMER_GRID_INDEXER_ID);
-        $indexer->reindexRow($this->getId());
+        if (!$indexer->isScheduled()) {
+            $indexer->reindexRow($this->getId());
+        }
     }
 
     /**
@@ -1351,5 +1313,41 @@ class Customer extends \Magento\Framework\Model\AbstractModel
             'confirmation' => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
         ];
         return $types;
+    }
+
+    /**
+     * Check if customer is locked
+     *
+     * @return boolean
+     */
+    public function isCustomerLocked()
+    {
+        if ($this->getLockExpires()) {
+            $lockExpires = new \DateTime($this->getLockExpires());
+            if ($lockExpires > new \DateTime()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return Password Confirmation
+     *
+     * @return string
+     */
+    public function getPasswordConfirm()
+    {
+        return (string) $this->getData('password_confirm');
+    }
+
+    /**
+     * Return Password Confirmation
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return (string) $this->getData('password');
     }
 }

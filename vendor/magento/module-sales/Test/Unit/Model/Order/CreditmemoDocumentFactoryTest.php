@@ -14,8 +14,10 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Api\Data\CreditmemoInterface;
 use Magento\Sales\Api\Data\CreditmemoItemCreationInterface;
 use Magento\Sales\Api\Data\CreditmemoCommentCreationInterface;
+use Magento\Framework\EntityManager\HydratorPool;
 use Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface;
 use Magento\Sales\Model\Order\CreditmemoFactory;
+use Magento\Framework\EntityManager\HydratorInterface;
 
 /**
  * Class CreditmemoDocumentFactoryTest
@@ -42,6 +44,16 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
      * @var \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $commentFactoryMock;
+
+    /**
+     * @var HydratorPool|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $hydratorPoolMock;
+
+    /**
+     * @var HydratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $hydratorMock;
 
     /**
      * @var \Magento\Sales\Model\Order|\PHPUnit_Framework_MockObject_MockObject
@@ -94,6 +106,9 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
                 ->setMethods(['create'])
                 ->disableOriginalConstructor()
                 ->getMock();
+        $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -107,6 +122,9 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->commentCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
@@ -133,6 +151,7 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
             [
                 'creditmemoFactory' => $this->creditmemoFactoryMock,
                 'commentFactory' => $this->commentFactoryMock,
+                'hydratorPool' => $this->hydratorPoolMock,
                 'orderRepository' => $this->orderRepositoryMock
             ]
         );
@@ -146,19 +165,26 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
         $this->creditmemoItemCreationMock->expects($this->once())
             ->method('getQty')
             ->willReturn(3);
-        $this->commentCreationArgumentsMock->expects($this->once())
-            ->method('getShippingAmount')
-            ->willReturn('20.00');
-        $this->commentCreationMock->expects($this->once())
-            ->method('getComment')
-            ->willReturn('text');
+        $this->hydratorPoolMock->expects($this->exactly(2))
+            ->method('getHydrator')
+            ->willReturnMap(
+                [
+                    [CreditmemoCreationArgumentsInterface::class, $this->hydratorMock],
+                    [CreditmemoCommentCreationInterface::class, $this->hydratorMock],
+                ]
+            );
+        $this->hydratorMock->expects($this->exactly(2))
+            ->method('extract')
+            ->willReturnMap([
+                [$this->commentCreationArgumentsMock, ['shipping_amount' => '20.00']],
+                [$this->commentCreationMock, ['comment' => 'text']]
+            ]);
         $this->commentFactoryMock->expects($this->once())
             ->method('create')
             ->with(
                 [
                     'data' => [
-                        'comment' => 'text',
-                        'is_visible_on_front' => null
+                        'comment' => 'text'
                     ]
                 ]
             )
@@ -196,9 +222,7 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
                 $this->orderMock,
                 [
                     'shipping_amount' => '20.00',
-                    'qtys' => [7 => 3],
-                    'adjustment_positive' => null,
-                    'adjustment_negative' => null
+                    'qtys' => [7 => 3]
                 ]
             )
             ->willReturn($this->creditmemoMock);
@@ -220,9 +244,7 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
                 $this->invoiceMock,
                 [
                     'shipping_amount' => '20.00',
-                    'qtys' => [7 => 3],
-                    'adjustment_positive' => null,
-                    'adjustment_negative' => null
+                    'qtys' => [7 => 3]
                 ]
             )
             ->willReturn($this->creditmemoMock);

@@ -12,6 +12,7 @@ use Magento\Framework\Exception\InvalidEmailOrPasswordException;
 use Magento\Framework\App\ObjectManager;
 use Magento\Customer\Model\Account\Redirect as AccountRedirect;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Login controller
@@ -49,15 +50,13 @@ class Login extends \Magento\Framework\App\Action\Action
 
     /**
      * @var AccountRedirect
-     * @deprecated
      */
-    private $accountRedirect;
+    protected $accountRedirect;
 
     /**
      * @var ScopeConfigInterface
-     * @deprecated
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
     /**
      * Initialize Login controller
@@ -92,7 +91,7 @@ class Login extends \Magento\Framework\App\Action\Action
      * @deprecated
      * @return AccountRedirect
      */
-    private function getAccountRedirect()
+    protected function getAccountRedirect()
     {
         if (!is_object($this->accountRedirect)) {
             $this->accountRedirect = ObjectManager::getInstance()->get(AccountRedirect::class);
@@ -116,7 +115,7 @@ class Login extends \Magento\Framework\App\Action\Action
      * @deprecated
      * @return ScopeConfigInterface
      */
-    private function getScopeConfig()
+    protected function getScopeConfig()
     {
         if (!is_object($this->scopeConfig)) {
             $this->scopeConfig = ObjectManager::getInstance()->get(ScopeConfigInterface::class);
@@ -180,6 +179,11 @@ class Login extends \Magento\Framework\App\Action\Action
                 'message' => $e->getMessage()
             ];
         } catch (InvalidEmailOrPasswordException $e) {
+            $response = [
+                'errors' => true,
+                'message' => $e->getMessage()
+            ];
+        } catch (LocalizedException $e) {
             $response = [
                 'errors' => true,
                 'message' => $e->getMessage()

@@ -62,7 +62,7 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     /** @var \Magento\Customer\Controller\Adminhtml\Index\Validate */
     protected $controller;
 
-    public function setUp()
+    protected function setUp()
     {
         if (!function_exists('libxml_set_external_entity_loader')) {
             $this->markTestSkipped('Skipped on HHVM. Will be fixed in MAGETWO-45033');
@@ -169,10 +169,6 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
             ->method('validateData')
             ->willReturn([$error]);
 
-        $this->extensibleDataObjectConverter->expects($this->once())
-            ->method('toFlatArray')
-            ->willReturn([]);
-
         $validationResult = $this->getMockForAbstractClass(
             'Magento\Customer\Api\Data\ValidationResultsInterface',
             [],
@@ -208,10 +204,6 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
             ->method('validateData')
             ->willReturn([$error]);
 
-        $this->extensibleDataObjectConverter->expects($this->once())
-            ->method('toFlatArray')
-            ->willReturn([]);
-
         $validationResult = $this->getMockForAbstractClass(
             'Magento\Customer\Api\Data\ValidationResultsInterface',
             [],
@@ -244,10 +236,6 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
 
         $this->form->expects($this->never())
             ->method('validateData');
-
-        $this->extensibleDataObjectConverter->expects($this->once())
-            ->method('toFlatArray')
-            ->willReturn([]);
 
         $validationResult = $this->getMockForAbstractClass(
             'Magento\Customer\Api\Data\ValidationResultsInterface',

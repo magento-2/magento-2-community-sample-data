@@ -22,34 +22,26 @@
             <argument name="requestFieldName" xsi:type="string">id</argument>
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
                     <item name="update_url" xsi:type="url" path="mui/index/render"/>
+                    <item name="storageConfig" xsi:type="array">
+                        <item name="cacheRequests" xsi:type="boolean">false</item>
+                    </item>
                 </item>
             </argument>
         </argument>
-        <argument name="data" xsi:type="array">
-            <item name="js_config" xsi:type="array">
-                <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
-            </item>
-        </argument>
     </dataSource>
-    <container name="listing_top">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="template" xsi:type="string">ui/grid/toolbar</item>
-            </item>
-        </argument>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
         <filters name="listing_filters">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="columnsProvider" xsi:type="string">configurable_associated_product_listing.configurable_associated_product_listing.product_columns</item>
+                    <item name="statefull" xsi:type="array">
+                        <item name="applied" xsi:type="boolean">false</item>
+                    </item>
                     <item name="params" xsi:type="array">
                         <item name="filters_modifier" xsi:type="array" />
-                    </item>
-                    <item name="childDefaults" xsi:type="array">
-                        <item name="provider" xsi:type="string">configurable_associated_product_listing.configurable_associated_product_listing.listing_top.listing_filters</item>
-                        <item name="imports" xsi:type="array">
-                            <item name="visible" xsi:type="string">configurable_associated_product_listing.configurable_associated_product_listing.product_columns.${ $.index }:visible</item>
-                        </item>
                     </item>
                     <item name="observers" xsi:type="array">
                         <item name="filters" xsi:type="object">Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct\Filters</item>
@@ -62,6 +54,10 @@
                 </argument>
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
+                        <item name="provider" xsi:type="string">${ $.parentName }</item>
+                        <item name="imports" xsi:type="array">
+                            <item name="visible" xsi:type="string">componentType = column, index = ${ $.index }:visible</item>
+                        </item>
                         <item name="dataScope" xsi:type="string">status</item>
                         <item name="caption" xsi:type="string" translate="true">Select...</item>
                         <item name="label" xsi:type="string" translate="true">Status</item>
@@ -69,20 +65,14 @@
                 </argument>
             </filterSelect>
         </filters>
-        <paging name="listing_paging">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="selectProvider" xsi:type="string">configurable_associated_product_listing.configurable_associated_product_listing.product_columns.ids</item>
-                </item>
-            </argument>
-        </paging>
-    </container>
+        <paging name="listing_paging"/>
+    </listingToolbar>
     <columns name="product_columns" class="Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct\Columns">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="childDefaults" xsi:type="array">
                     <item name="fieldAction" xsi:type="array">
-                        <item name="provider" xsi:type="string">configurableProductGrid</item>
+                        <item name="provider" xsi:type="string">product_form.product_form.configurable_associated_product_modal.configurable_associated_product_listing</item>
                         <item name="target" xsi:type="string">selectProduct</item>
                         <item name="params" xsi:type="array">
                             <item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
@@ -123,7 +113,7 @@
                 </item>
             </argument>
         </column>
-        <column name="name">
+        <column name="name" class="Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct\Columns\Name">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">text</item>
@@ -142,7 +132,7 @@
                 </item>
             </argument>
         </column>
-        <column name="price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price">
+        <column name="price" class="Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct\Columns\Price">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">textRange</item>
@@ -182,6 +172,16 @@
                     <item name="dataType" xsi:type="string">select</item>
                     <item name="label" xsi:type="string" translate="true">Status</item>
                     <item name="sortOrder" xsi:type="number">100</item>
+                </item>
+            </argument>
+        </column>
+        <column name="attributes" class="Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct\Columns\Attributes">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="add_field" xsi:type="boolean">true</item>
+                    <item name="visible" xsi:type="boolean">false</item>
+                    <item name="sortOrder" xsi:type="number">99</item>
+                    <item name="label" xsi:type="string" translate="true">Attributes</item>
                 </item>
             </argument>
         </column>

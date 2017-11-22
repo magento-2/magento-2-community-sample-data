@@ -11,6 +11,8 @@ use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\App\Action\Context;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Helper\Address;
@@ -29,8 +31,8 @@ use Magento\Framework\Exception\InputException;
 use Magento\Framework\Data\Form\FormKey\Validator;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CreatePost extends \Magento\Customer\Controller\AbstractAccount
 {
@@ -84,9 +86,14 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
     private $accountRedirect;
 
     /**
-     * @var ScopeConfigInterface
+     * @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
      */
-    private $scopeConfig;
+    private $cookieMetadataFactory;
+
+    /**
+     * @var \Magento\Framework\Stdlib\Cookie\PhpCookieManager
+     */
+    private $cookieMetadataManager;
 
     /**
      * Form key validator.
@@ -139,8 +146,6 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         AccountRedirect $accountRedirect,
         Validator $formKeyValidator = null
     ) {
-        parent::__construct($context);
-        
         $this->session = $customerSession;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
@@ -158,7 +163,40 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         $this->urlModel = $urlFactory->create();
         $this->dataObjectHelper = $dataObjectHelper;
         $this->accountRedirect = $accountRedirect;
-        $this->formKeyValidator = $formKeyValidator ?: $this->_objectManager->get(Validator::class);
+        $this->formKeyValidator = $formKeyValidator ?: ObjectManager::getInstance()->get(Validator::class);
+        parent::__construct($context);
+    }
+
+    /**
+     * Retrieve cookie manager
+     *
+     * @deprecated
+     * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
+     */
+    private function getCookieManager()
+    {
+        if (!$this->cookieMetadataManager) {
+            $this->cookieMetadataManager = ObjectManager::getInstance()->get(
+                \Magento\Framework\Stdlib\Cookie\PhpCookieManager::class
+            );
+        }
+        return $this->cookieMetadataManager;
+    }
+
+    /**
+     * Retrieve cookie metadata factory
+     *
+     * @deprecated
+     * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
+     */
+    private function getCookieMetadataFactory()
+    {
+        if (!$this->cookieMetadataFactory) {
+            $this->cookieMetadataFactory = ObjectManager::getInstance()->get(
+                \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+            );
+        }
+        return $this->cookieMetadataFactory;
     }
 
     /**
@@ -199,7 +237,7 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         $this->dataObjectHelper->populateWithArray(
             $addressDataObject,
             $addressData,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            '\Magento\Customer\Api\Data\AddressInterface'
         );
         $addressDataObject->setRegion($regionDataObject);
 
@@ -208,14 +246,13 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         )->setIsDefaultShipping(
             $this->getRequest()->getParam('default_shipping', false)
         );
-
         return $addressDataObject;
     }
 
     /**
      * Create customer account action
      *
-     * @return \Magento\Framework\App\ResponseInterface
+     * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -225,14 +262,12 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($this->session->isLoggedIn() || !$this->registration->isAllowed()) {
             $resultRedirect->setPath('*/*/');
-
             return $resultRedirect;
         }
 
         if (!$this->getRequest()->isPost() || !$this->formKeyValidator->validate($this->getRequest())) {
             $url = $this->urlModel->getUrl('*/*/create', ['_secure' => true]);
             $resultRedirect->setUrl($this->_redirect->error($url));
-
             return $resultRedirect;
         }
 
@@ -283,10 +318,14 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
                 if (!$this->scopeConfig->getValue('customer/startup/redirect_dashboard') && $requestedRedirect) {
                     $resultRedirect->setUrl($this->_redirect->success($requestedRedirect));
                     $this->accountRedirect->clearRedirectCookie();
-
                     return $resultRedirect;
                 }
                 $resultRedirect = $this->accountRedirect->getRedirect();
+            }
+            if ($this->getCookieManager()->getCookie('mage-cache-sessid')) {
+                $metadata = $this->getCookieMetadataFactory()->createCookieMetadata();
+                $metadata->setPath('/');
+                $this->getCookieManager()->deleteCookie('mage-cache-sessid', $metadata);
             }
 
             return $resultRedirect;
@@ -304,6 +343,8 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
             foreach ($e->getErrors() as $error) {
                 $this->messageManager->addError($this->escaper->escapeHtml($error->getMessage()));
             }
+        } catch (LocalizedException $e) {
+            $this->messageManager->addError($this->escaper->escapeHtml($e->getMessage()));
         } catch (\Exception $e) {
             $this->messageManager->addException($e, __('We can\'t save the customer.'));
         }
@@ -311,7 +352,6 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         $this->session->setCustomerFormData($this->getRequest()->getPostValue());
         $defaultUrl = $this->urlModel->getUrl('*/*/create', ['_secure' => true]);
         $resultRedirect->setUrl($this->_redirect->error($defaultUrl));
-
         return $resultRedirect;
     }
 

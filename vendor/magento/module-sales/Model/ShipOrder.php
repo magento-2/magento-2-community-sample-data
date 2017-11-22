@@ -87,7 +87,7 @@ class ShipOrder implements ShipOrderInterface
      * @param ShipmentRepositoryInterface $shipmentRepository
      * @param NotifierInterface $notifierInterface
      * @param OrderRegistrarInterface $orderRegistrar
-     * @param LoggerInterface $logger,
+     * @param LoggerInterface $logger
      * @param ShipOrderValidator|null $shipOrderValidator
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -109,8 +109,6 @@ class ShipOrder implements ShipOrderInterface
         $this->resourceConnection = $resourceConnection;
         $this->orderRepository = $orderRepository;
         $this->shipmentDocumentFactory = $shipmentDocumentFactory;
-        $this->shipmentValidator = $shipmentValidator;
-        $this->orderValidator = $orderValidator;
         $this->orderStateResolver = $orderStateResolver;
         $this->config = $config;
         $this->shipmentRepository = $shipmentRepository;

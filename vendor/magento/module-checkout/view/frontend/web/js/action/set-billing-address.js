@@ -20,8 +20,7 @@ define(
               errorProcessor,
               customer,
               fullScreenLoader,
-              getPaymentInformationAction
-    ) {
+              getPaymentInformationAction) {
         'use strict';
 
         return function (messageContainer) {

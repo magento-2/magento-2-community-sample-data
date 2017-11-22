@@ -66,10 +66,10 @@ class LayoutProcessorTest extends \PHPUnit_Framework_TestCase
         $layoutPointer = &$layout['components']['block-summary']['children']['block-shipping']
         ['children']['address-fieldsets']['children'];
 
-        $this->countryCollection->expects($this->once())->method('load')->willReturnSelf();
+        $this->countryCollection->expects($this->once())->method('loadByStore')->willReturnSelf();
         $this->countryCollection->expects($this->once())->method('toOptionArray')->willReturn($countries);
 
-        $this->regionCollection->expects($this->once())->method('load')->willReturnSelf();
+        $this->regionCollection->expects($this->once())->method('addAllowedCountriesFilter')->willReturnSelf();
         $this->regionCollection->expects($this->once())->method('toOptionArray')->willReturn($regions);
 
         $layoutMerged = $layout;
@@ -77,7 +77,12 @@ class LayoutProcessorTest extends \PHPUnit_Framework_TestCase
         ['address-fieldsets']['children']['fieldThree'] = ['param' => 'value'];
         $layoutMergedPointer = &$layoutMerged['components']['block-summary']['children']['block-shipping']
         ['children']['address-fieldsets']['children'];
-
+        $layoutMerged['components']['checkoutProvider'] = [
+            'dictionaries' => [
+                'country_id' => [],
+                'region_id' => [],
+            ]
+        ];
         $elements = [
             'city' => [
                 'visible' => false,

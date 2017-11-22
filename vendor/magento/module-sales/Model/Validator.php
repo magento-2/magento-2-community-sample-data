@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Model;
 
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\ConfigurationMismatchException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\ObjectManager;
 
@@ -47,7 +47,7 @@ class Validator
      * @param ValidatorInterface[] $validators
      * @param object|null $context
      * @return ValidatorResultInterface
-     * @throws LocalizedException
+     * @throws ConfigurationMismatchException
      */
     public function validate($entity, array $validators, $context = null)
     {
@@ -60,7 +60,7 @@ class Validator
         foreach ($validators as $validatorName) {
             $validator = $this->objectManager->create($validatorName, $validatorArguments);
             if (!$validator instanceof ValidatorInterface) {
-                throw new LocalizedException(
+                throw new ConfigurationMismatchException(
                     __(
                         sprintf('Validator %s is not instance of general validator interface', $validatorName)
                     )

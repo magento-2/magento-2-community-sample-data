@@ -37,23 +37,23 @@ class UninstallDependencyCheckTest extends \PHPUnit_Framework_TestCase
 
     public function setup()
     {
-        $this->composerInfo = $this->getMock(\Magento\Framework\Composer\ComposerInformation::class, [], [], '', false);
+        $this->composerInfo = $this->getMock('Magento\Framework\Composer\ComposerInformation', [], [], '', false);
         $this->packageDependencyChecker = $this->getMock(
-            \Magento\Framework\Composer\DependencyChecker::class,
+            'Magento\Framework\Composer\DependencyChecker',
             [],
             [],
             '',
             false
         );
         $this->themeDependencyChecker = $this->getMock(
-            \Magento\Theme\Model\Theme\ThemeDependencyChecker::class,
+            'Magento\Theme\Model\Theme\ThemeDependencyChecker',
             [],
             [],
             '',
             false
         );
         $this->themeDependencyCheckerFactory = $this->getMock(
-            \Magento\Setup\Model\ThemeDependencyCheckerFactory::class,
+            'Magento\Setup\Model\ThemeDependencyCheckerFactory',
             [],
             [],
             '',
@@ -81,12 +81,7 @@ class UninstallDependencyCheckTest extends \PHPUnit_Framework_TestCase
         $this->packageDependencyChecker->expects($this->once())
             ->method('checkDependencies')
             ->with(array_keys($packages))
-            ->willReturn([
-                'verndor/module' => ['magento/magento2ce'],
-                'verndor/theme' => ['magento/magento2ee'],
-                'verndor/metapackage' => ['magento/magento2ce'],
-                'verndor/language' => ['magento/magento2ce'],
-            ]);
+            ->willReturn([]);
 
         $this->themeDependencyChecker->expects($this->once())
             ->method('checkChildThemeByPackagesName')
@@ -110,12 +105,7 @@ class UninstallDependencyCheckTest extends \PHPUnit_Framework_TestCase
         $this->packageDependencyChecker->expects($this->once())
             ->method('checkDependencies')
             ->with(array_keys($packages))
-            ->willReturn([
-                'verndor/module' => ['magento/magento2ce'],
-                'verndor/theme' => ['magento/magento2ee'],
-                'verndor/metapackage' => ['magento/magento2ce'],
-                'verndor/language' => ['magento/magento2ce'],
-            ]);
+            ->willReturn([]);
 
         $this->themeDependencyChecker->expects($this->once())
             ->method('checkChildThemeByPackagesName')

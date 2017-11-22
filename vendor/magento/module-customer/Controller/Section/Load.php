@@ -5,16 +5,14 @@
  */
 namespace Magento\Customer\Controller\Section;
 
+use Magento\Customer\CustomerData\Section\Identifier;
 use Magento\Customer\CustomerData\SectionPoolInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Customer\CustomerData\Section\Identifier;
 use Magento\Framework\Escaper;
 
 /**
  * Customer section controller
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Load extends \Magento\Framework\App\Action\Action
 {
@@ -34,7 +32,7 @@ class Load extends \Magento\Framework\App\Action\Action
     protected $sectionPool;
 
     /**
-     * @var \Magento\Framework\Escaper
+     * @var  Escaper
      */
     private $escaper;
 
@@ -57,19 +55,6 @@ class Load extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * Get new Escaper dependency for application code.
-     * @return \Magento\Framework\Escaper
-     * @deprecated
-     */
-    private function getEscaper()
-    {
-        if ($this->escaper === null) {
-            $this->escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(Escaper::class);
-        }
-        return $this->escaper;
-    }
-
-    /**
      * @return \Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
@@ -81,7 +66,7 @@ class Load extends \Magento\Framework\App\Action\Action
             $sectionNames = $sectionNames ? array_unique(\explode(',', $sectionNames)) : null;
 
             $updateSectionId = $this->getRequest()->getParam('update_section_id');
-            if ('false' == $updateSectionId) {
+            if ('false' === $updateSectionId) {
                 $updateSectionId = false;
             }
             $response = $this->sectionPool->getSectionsData($sectionNames, (bool)$updateSectionId);
@@ -95,5 +80,17 @@ class Load extends \Magento\Framework\App\Action\Action
         }
 
         return $resultJson->setData($response);
+    }
+
+    /**
+     * @deprecated
+     * @return Escaper
+     */
+    private function getEscaper()
+    {
+        if ($this->escaper == null) {
+            $this->escaper = $this->_objectManager->get(Escaper::class);
+        }
+        return $this->escaper;
     }
 }

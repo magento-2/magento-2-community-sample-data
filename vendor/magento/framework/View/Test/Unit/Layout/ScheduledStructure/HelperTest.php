@@ -43,7 +43,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->scheduledStructureMock = $this->getMockBuilder('Magento\Framework\View\Layout\ScheduledStructure')
             ->disableOriginalConstructor()
@@ -181,7 +181,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
             ->method('getMode')
             ->willReturn($stateMode);
         $this->loggerMock->expects($loggerExpects)
-            ->method('critical')
+            ->method('info')
             ->with(
                 "Broken reference: the '{$key}' element cannot be added as child to '{$parentName}', " .
                 'because the latter doesn\'t exist'

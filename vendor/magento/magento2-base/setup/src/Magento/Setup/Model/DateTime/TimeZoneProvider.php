@@ -11,7 +11,7 @@ use Magento\Setup\Model\ObjectManagerProvider;
 /**
  * Provider of Timezone instance
  */
-class TimezoneProvider
+class TimeZoneProvider
 {
     /**
      * Object Manager provider
@@ -46,7 +46,7 @@ class TimezoneProvider
     {
         if (!$this->timezone) {
             $this->timezone = $this->objectManagerProvider->get()->create(
-                'Magento\Framework\Stdlib\DateTime\Timezone',
+                \Magento\Framework\Stdlib\DateTime\Timezone::class,
                 ['scopeType' => ScopeConfigInterface::SCOPE_TYPE_DEFAULT]
             );
         }

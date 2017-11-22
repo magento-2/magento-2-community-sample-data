@@ -19,6 +19,7 @@
                 <default_keywords>Magento, Varien, E-commerce</default_keywords>
                 <default_media_type>text/html</default_media_type>
                 <default_charset>utf-8</default_charset>
+                <demonotice>0</demonotice>
             </head>
             <search_engine_robots>
                 <default_robots>INDEX,FOLLOW</default_robots>
@@ -59,6 +60,7 @@ Disallow: /*SID=
             <media_storage_configuration>
                 <allowed_resources>
                     <site_favicons>favicon</site_favicons>
+                    <site_logos>logo</site_logos>
                 </allowed_resources>
             </media_storage_configuration>
         </system>

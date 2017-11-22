@@ -8,9 +8,7 @@ namespace Magento\Catalog\Controller\Adminhtml\Category;
 use Magento\Framework\View\Element\BlockInterface;
 
 /**
- * Catalog category widgets controller for CMS WYSIWYG
- *
- * @author     Magento Core Team <core@magentocommerce.com>
+ * Catalog category widgets controller for CMS WYSIWYG.
  */
 abstract class Widget extends \Magento\Backend\App\Action
 {
@@ -44,7 +42,7 @@ abstract class Widget extends \Magento\Backend\App\Action
     protected function _getCategoryTreeBlock()
     {
         return $this->layoutFactory->create()->createBlock(
-            \Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser::class,
+            'Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser',
             '',
             [
                 'data' => [

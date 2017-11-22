@@ -11,11 +11,6 @@ use Magento\CatalogImportExport\Model\Import\Product\Validator\Media;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\ImportExport\Model\Import;
 
-/**
- * Class MediaTest
- *
- * @package Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator
- */
 class MediaTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Media */
@@ -99,12 +94,12 @@ class MediaTest extends \PHPUnit_Framework_TestCase
             ],
             'additional_images' => [
                 ['additional_images' => 'image1.png,image2.jpg'],
-                ['result' => true, 'messages' => []]
+                ['result' => true, 'messages' => []],
             ],
             'additional_images_fail' => [
                 ['additional_images' => 'image1.png|image2.jpg|image3.gif'],
-                ['result' => false, 'messages' => [0 => 'additional_images']]
-            ]
+                ['result' => false, 'messages' => [0 => 'additional_images']],
+            ],
         ];
     }
 }

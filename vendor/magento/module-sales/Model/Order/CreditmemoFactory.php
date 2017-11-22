@@ -3,6 +3,7 @@
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Sales\Model\Order;
 
 /**
@@ -21,11 +22,6 @@ class CreditmemoFactory
      * @var \Magento\Tax\Model\Config
      */
     protected $taxConfig;
-
-    /**
-     * @var \Magento\Framework\Unserialize\Unserialize
-     */
-    protected $unserialize;
 
     /**
      * Factory constructor
@@ -61,12 +57,7 @@ class CreditmemoFactory
 
             $item = $this->convertor->itemToCreditmemoItem($orderItem);
             if ($orderItem->isDummy()) {
-                if (isset($data['qtys'][$orderItem->getParentItemId()])) {
-                    $parentQty = $data['qtys'][$orderItem->getParentItemId()];
-                } else {
-                    $parentQty = $orderItem->getParentItem() ? $orderItem->getParentItem()->getQtyToRefund() : 1;
-                }
-                $qty = $this->calculateProductOptions($orderItem, $parentQty);
+                $qty = 1;
                 $orderItem->setLockedDoShip(true);
             } else {
                 if (isset($qtys[$orderItem->getId()])) {
@@ -141,12 +132,7 @@ class CreditmemoFactory
 
             $item = $this->convertor->itemToCreditmemoItem($orderItem);
             if ($orderItem->isDummy()) {
-                if (isset($data['qtys'][$orderItem->getParentItemId()])) {
-                    $parentQty = $data['qtys'][$orderItem->getParentItemId()];
-                } else {
-                    $parentQty = $orderItem->getParentItem() ? $orderItem->getParentItem()->getQtyToRefund() : 1;
-                }
-                $qty = $this->calculateProductOptions($orderItem, $parentQty);
+                $qty = 1;
             } else {
                 if (isset($qtys[$orderItem->getId()])) {
                     $qty = (double)$qtys[$orderItem->getId()];
@@ -258,39 +244,5 @@ class CreditmemoFactory
         if (isset($data['adjustment_negative'])) {
             $creditmemo->setAdjustmentNegative($data['adjustment_negative']);
         }
-    }
-
-    /**
-     * @param \Magento\Sales\Api\Data\OrderItemInterface $orderItem
-     * @param array $qtys
-     * @return int
-     */
-    private function calculateProductOptions(\Magento\Sales\Api\Data\OrderItemInterface $orderItem, $parentQty)
-    {
-        $qty = $parentQty;
-        $productOptions = $orderItem->getProductOptions();
-        if (isset($productOptions['bundle_selection_attributes'])) {
-            $bundleSelectionAttributes = $this->getUnserialize()
-                ->unserialize($productOptions['bundle_selection_attributes']);
-            if ($bundleSelectionAttributes) {
-                $qty = $bundleSelectionAttributes['qty'] * $parentQty;
-            }
-        }
-        return $qty;
-    }
-
-    /**
-     * Get Unserialize
-     *
-     * @return \Magento\Framework\Unserialize\Unserialize
-     * @deprecated
-     */
-    private function getUnserialize()
-    {
-        if (!$this->unserialize) {
-            $this->unserialize = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Unserialize\Unserialize::class);
-        }
-        return $this->unserialize;
     }
 }

@@ -4,7 +4,6 @@
  * See COPYING.txt for license details.
  */
 
-
 namespace Magento\EncryptionKey\Controller\Adminhtml\Crypt;
 
 /**
@@ -13,7 +12,9 @@ namespace Magento\EncryptionKey\Controller\Adminhtml\Crypt;
 abstract class Key extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_EncryptionKey::crypt_key';
 }

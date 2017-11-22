@@ -40,7 +40,7 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
      */
     protected $eavConfigMock;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->_processor = $this->getMock(
             'Magento\Catalog\Model\Indexer\Product\Flat\Processor',
@@ -118,11 +118,6 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
                     'attributeCache' => $attributeCacheMock
                 ]
         );
-
-        $reflection = new \ReflectionClass(get_class($this->_model));
-        $reflectionProperty = $reflection->getProperty('attributeCache');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->_model, $attributeCacheMock);
     }
 
     public function testIndexerAfterSaveAttribute()

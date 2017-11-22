@@ -44,14 +44,14 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
         $origin = $this->getMockBuilder($type)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->objectManagerMock
             ->expects($this->once())
             ->method('create')
             ->with($type)
             ->willReturn($origin);
 
-         $this->conditionFactory->create($type);
+        $this->conditionFactory->create($type);
     }
 
     public function testExceptingClonedObject()
@@ -70,7 +70,7 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotSame($cloned, $origin);
     }
-
+    
     public function testCreateExceptionClass()
     {
         $type = 'type';

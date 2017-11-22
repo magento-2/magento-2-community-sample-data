@@ -56,7 +56,7 @@ class ResourceConnectionTest extends \PHPUnit_Framework_TestCase
             [
                 'deploymentConfig' => $this->deploymentConfigMock,
                 'connectionFactory' => $this->connectionFactoryMock,
-                'resourceConfig' => $this->configMock,
+                'config' => $this->configMock,
             ]
         );
     }
@@ -79,14 +79,9 @@ class ResourceConnectionTest extends \PHPUnit_Framework_TestCase
             ResourceConnection::class,
             [
                 'deploymentConfig' => $this->deploymentConfigMock,
+                'connections' => ['default_process_' . getmypid() => 'existing_connection']
             ]
         );
-        $connectionProperty = new \ReflectionProperty(
-            ResourceConnection::class,
-            'connections'
-        );
-        $connectionProperty->setAccessible(true);
-        $connectionProperty->setValue($unit, ['default_process_' . getmypid() => 'existing_connection']);
         $this->deploymentConfigMock->expects(self::never())->method('get');
 
         self::assertEquals('existing_connection', $unit->getConnectionByName('default'));

@@ -11,7 +11,9 @@ namespace Magento\Sitemap\Controller\Adminhtml;
 abstract class Sitemap extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sitemap::sitemap';
 

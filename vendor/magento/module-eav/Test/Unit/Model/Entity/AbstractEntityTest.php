@@ -119,7 +119,16 @@ class AbstractEntityTest extends \PHPUnit_Framework_TestCase
     {
         $connection = $this->getMock(
             'Magento\Framework\DB\Adapter\Pdo\Mysql',
-            ['describeTable', 'lastInsertId', 'insert', 'prepareColumnValue', 'query', 'delete'],
+            [
+                'describeTable',
+                'getIndexList',
+                'lastInsertId',
+                'insert',
+                'prepareColumnValue',
+                'select',
+                'query',
+                'delete'
+            ],
             [],
             '',
             false
@@ -131,6 +140,17 @@ class AbstractEntityTest extends \PHPUnit_Framework_TestCase
             '',
             false
         );
+
+        $select = $this->getMock(
+            'Magento\Framework\DB\Select',
+            [],
+            [],
+            '',
+            false
+        );
+        $select->expects($this->any())
+            ->method('from')
+            ->willReturnSelf();
 
         $connection->expects($this->any())->method('query')->will($this->returnValue($statement));
 
@@ -153,6 +173,22 @@ class AbstractEntityTest extends \PHPUnit_Framework_TestCase
         )->will(
             $this->returnValue(true)
         );
+
+        $connection->expects($this->any())
+            ->method('select')
+            ->willReturn($select);
+
+        $connection->expects($this->any())
+            ->method('getIndexList')
+            ->willReturn(
+                [
+                    'PK_ENTITYTABLE' => [
+                        'COLUMNS_LIST' => [
+                            'entity_id'
+                        ]
+                    ]
+                ]
+            );
 
         return $connection;
     }
@@ -281,8 +317,6 @@ class AbstractEntityTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $model->expects($this->any())->method('_getValue')->will($this->returnValue($eavConfig));
         $model->expects($this->any())->method('getConnection')->will($this->returnValue($this->_getConnectionMock()));
-
-
         $eavConfig->expects($this->any())->method('getAttribute')->will(
             $this->returnCallback(
                 function ($entityType, $attributeCode) use ($attributes) {
@@ -301,19 +335,29 @@ class AbstractEntityTest extends \PHPUnit_Framework_TestCase
             [
                 'test_attr',
                 $attributeSetId,
-                ['test_attr' => 'test_attr', 'attribute_set_id' => $attributeSetId, 'entity_id' => null],
+                [
+                    'test_attr' => 'test_attr',
+                    'attribute_set_id' => $attributeSetId,
+                    'entity_id' => null,
+                    'store_id' => 1
+                ],
                 null,
             ],
             [
                 'test_attr',
                 $attributeSetId,
-                ['test_attr' => 'test_attr', 'attribute_set_id' => $attributeSetId, 'entity_id' => 12345],
+                [
+                    'test_attr' => 'test_attr',
+                    'attribute_set_id' => $attributeSetId,
+                    'entity_id' => 12345,
+                    'store_id' => 1
+                ],
                 ['test_attr' => 'test_attr']
             ],
             [
                 'test_attr',
                 $attributeSetId,
-                ['test_attr' => '99.99', 'attribute_set_id' => $attributeSetId, 'entity_id' => 12345],
+                ['test_attr' => '99.99', 'attribute_set_id' => $attributeSetId, 'entity_id' => 12345, 'store_id' => 1],
                 ['test_attr' => '99.9900']
             ]
         ];

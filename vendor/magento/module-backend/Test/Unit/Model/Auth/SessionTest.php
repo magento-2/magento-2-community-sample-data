@@ -140,22 +140,14 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsLoggedInPositive()
     {
-        $lifetime = 900;
         $user = $this->getMock('Magento\User\Model\User', ['getId', '__wakeup'], [], '', false);
         $user->expects($this->once())
             ->method('getId')
             ->will($this->returnValue(1));
 
-        $this->session->setUpdatedAt(time() + $lifetime); // Emulate just updated session
-
         $this->storage->expects($this->any())
             ->method('getUser')
             ->will($this->returnValue($user));
-
-        $this->config->expects($this->once())
-            ->method('getValue')
-            ->with(\Magento\Backend\Model\Auth\Session::XML_PATH_SESSION_LIFETIME)
-            ->will($this->returnValue($lifetime));
 
         $this->assertTrue($this->session->isLoggedIn());
     }
@@ -168,6 +160,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $domain = 'magento2';
         $secure = true;
         $httpOnly = true;
+
         $cookieMetadata = $this->getMock('Magento\Framework\Stdlib\Cookie\PublicCookieMetadata');
         $cookieMetadata->expects($this->once())
             ->method('setPath')
@@ -185,9 +178,11 @@ class SessionTest extends \PHPUnit_Framework_TestCase
             ->method('setHttpOnly')
             ->with($httpOnly)
             ->will($this->returnSelf());
+
         $this->cookieMetadataFactory->expects($this->once())
             ->method('createPublicCookieMetadata')
             ->will($this->returnValue($cookieMetadata));
+
         $this->cookieManager->expects($this->once())
             ->method('getCookie')
             ->with($name)
@@ -195,6 +190,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->cookieManager->expects($this->once())
             ->method('setPublicCookie')
             ->with($name, $cookie, $cookieMetadata);
+
         $this->sessionConfig->expects($this->once())
             ->method('getCookiePath')
             ->will($this->returnValue($path));
@@ -207,7 +203,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->sessionConfig->expects($this->once())
             ->method('getCookieHttpOnly')
             ->will($this->returnValue($httpOnly));
+
         $this->session->prolong();
+
         $this->assertLessThanOrEqual(time(), $this->session->getUpdatedAt());
     }
 

@@ -9,7 +9,9 @@ namespace Magento\AdminNotification\Controller\Adminhtml\Notification;
 class MarkAsRead extends \Magento\AdminNotification\Controller\Adminhtml\Notification
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_AdminNotification::mark_as_read';
 

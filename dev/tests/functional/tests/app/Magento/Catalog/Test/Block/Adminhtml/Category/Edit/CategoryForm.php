@@ -6,7 +6,7 @@
 
 namespace Magento\Catalog\Test\Block\Adminhtml\Category\Edit;
 
-use Magento\Backend\Test\Block\Widget\FormTabs;
+use Magento\Ui\Test\Block\Adminhtml\FormSections;
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
@@ -14,7 +14,7 @@ use Magento\Mtf\Fixture\FixtureInterface;
 /**
  * Category container block.
  */
-class CategoryForm extends FormTabs
+class CategoryForm extends FormSections
 {
     /**
      * Default sore switcher block locator.
@@ -42,36 +42,25 @@ class CategoryForm extends FormTabs
      *
      * @param FixtureInterface $fixture
      * @param SimpleElement|null $element
-     * @return FormTabs
+     * @return FormSections
      */
     public function fill(FixtureInterface $fixture, SimpleElement $element = null)
     {
-        $tabs = $this->getFieldsByTabs($fixture);
         if ($fixture->hasData('store_id')) {
             $store = $fixture->getStoreId();
+            $this->browser->find($this->header)->hover();
             $storeSwitcherBlock = $this->browser->find($this->storeSwitcherBlock);
             $storeSwitcherBlock->find($this->dropdownBlock, Locator::SELECTOR_CSS, 'liselectstore')->setValue($store);
             $modalElement = $this->browser->find($this->confirmModal);
             /** @var \Magento\Ui\Test\Block\Adminhtml\Modal $modal */
-            $modal = $this->blockFactory->create('Magento\Ui\Test\Block\Adminhtml\Modal', ['element' => $modalElement]);
+            $modal = $this->blockFactory->create(
+                \Magento\Ui\Test\Block\Adminhtml\Modal::class,
+                ['element' => $modalElement]
+            );
             $modal->acceptAlert();
+            $modal->waitModalWindowToDisappear();
         }
 
-        return $this->fillTabs($tabs, $element);
-    }
-
-    /**
-     * Return category Id.
-     *
-     * @return string
-     */
-    public function getCategoryId()
-    {
-        $categoryId = '';
-        if (preg_match('/\/id\/(?<id>\d+)(?:\/)?/', $this->browser->getUrl(), $matches)) {
-            $categoryId = $matches['id'];
-        }
-
-        return $categoryId;
+        return parent::fill($fixture, $element);
     }
 }

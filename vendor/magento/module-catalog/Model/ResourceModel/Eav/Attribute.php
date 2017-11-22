@@ -351,14 +351,11 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
      */
     public function getApplyTo()
     {
-        if ($this->getData(self::APPLY_TO)) {
-            if (is_array($this->getData(self::APPLY_TO))) {
-                return $this->getData(self::APPLY_TO);
-            }
-            return explode(',', $this->getData(self::APPLY_TO));
-        } else {
-            return [];
+        $applyTo = $this->_getData(self::APPLY_TO) ?: [];
+        if (!is_array($applyTo)) {
+            $applyTo = explode(',', $applyTo);
         }
+        return $applyTo;
     }
 
     /**
@@ -824,6 +821,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
      */
     public function __sleep()
     {
+        $this->unsetData('entity_type');
         return array_diff(
             parent::__sleep(),
             ['_indexerEavProcessor', '_productFlatIndexerProcessor', '_productFlatIndexerHelper', 'attrLockValidator']

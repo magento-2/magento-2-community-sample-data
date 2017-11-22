@@ -154,6 +154,9 @@ class Customer extends AbstractCustomer
         CustomerInterface::GENDER,
         'rp_token',
         'rp_token_created_at',
+        'failures_num',
+        'first_failure',
+        'lock_expires',
     ];
 
     /**

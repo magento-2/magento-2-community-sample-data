@@ -3,15 +3,14 @@
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\ProductVideo\Model\Plugin;
 
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Media;
+use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Framework\DB\Select;
 use Magento\ProductVideo\Setup\InstallSchema;
 
 /**
- * Attribute Media Resource decorator
+ * Media Resource decorator
  */
 class ExternalVideoResourceBackend
 {
@@ -29,13 +28,13 @@ class ExternalVideoResourceBackend
     }
 
     /**
-     * @param Media $originalResourceModel
+     * @param Gallery $originalResourceModel
      * @param array $valueIdMap
      * @return array
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterDuplicate(Media $originalResourceModel, array $valueIdMap)
+    public function afterDuplicate(Gallery $originalResourceModel, array $valueIdMap)
     {
         $mediaGalleryEntitiesData = $this->videoResourceModel->loadByIds(array_keys($valueIdMap));
         foreach ($mediaGalleryEntitiesData as $row) {
@@ -47,11 +46,11 @@ class ExternalVideoResourceBackend
     }
 
     /**
-     * @param Media $originalResourceModel
+     * @param Gallery $originalResourceModel
      * @param Select $select
      * @return Select
      */
-    public function afterCreateBatchBaseSelect(Media $originalResourceModel, Select $select)
+    public function afterCreateBatchBaseSelect(Gallery $originalResourceModel, Select $select)
     {
         $select = $select->joinLeft(
             ['value_video' => $originalResourceModel->getTable(InstallSchema::GALLERY_VALUE_VIDEO_TABLE)],

@@ -21,11 +21,18 @@ class AddressModal extends Form
     private $saveButton = '.action-save-address';
 
     /**
+     * CSS Selector for Cancel button.
+     *
+     * @var string
+     */
+    private $cancelButton = '.action-hide-popup';
+
+    /**
      * Selector for field's error message.
      *
      * @var string
      */
-    private $errorMessage = '.mage-error';
+    private $errorMessage = '.field-error';
 
     /**
      * Selector for error fields.
@@ -52,6 +59,16 @@ class AddressModal extends Form
     }
 
     /**
+     * Click on 'Cancel' button.
+     *
+     * @return void
+     */
+    public function cancel()
+    {
+        $this->_rootElement->find($this->cancelButton)->click();
+    }
+
+    /**
      * Get Error messages for attributes.
      *
      * @return array
@@ -59,7 +76,6 @@ class AddressModal extends Form
     public function getErrorMessages()
     {
         $result = [];
-
         foreach ($this->_rootElement->getElements($this->errorField) as $item) {
             $result[$item->find($this->fieldLabel)->getText()] = $item->find($this->errorMessage)->getText();
         }
@@ -80,7 +96,6 @@ class AddressModal extends Form
             $this->placeholders = ['attribute_code' => $fields['custom_attribute']['code']];
             $this->applyPlaceholders();
         }
-
         return parent::dataMapping($fields, $parent);
     }
 }

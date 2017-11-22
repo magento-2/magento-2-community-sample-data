@@ -19,6 +19,23 @@ class UpdateConfigurations
     protected $variationHandler;
 
     /**
+     * @var array
+     */
+    private $keysPost = [
+        'status',
+        'sku',
+        'name',
+        'price',
+        'configurable_attribute',
+        'weight',
+        'media_gallery',
+        'swatch_image',
+        'small_image',
+        'thumbnail',
+        'image',
+    ];
+
+    /**
      * @param \Magento\Framework\App\RequestInterface $request
      * @param \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
      * @param \Magento\ConfigurableProduct\Model\Product\VariationHandler $variationHandler
@@ -46,30 +63,92 @@ class UpdateConfigurations
         \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper $subject,
         \Magento\Catalog\Model\Product $configurableProduct
     ) {
-        $configurations = $this->request->getParam('configurations', []);
-        if ($this->request->getParam('configurations_serialized')) {
-            $configurations = json_decode($this->request->getParam('configurations_serialized'), true);
-        }
+        $configurations = $this->getConfigurationsFromProduct($configurableProduct);
         $configurations = $this->variationHandler->duplicateImagesForVariations($configurations);
-        $productsAttributeSets = [];
-
-        foreach ($configurations as $productId => $productData) {
-            /** @var \Magento\Catalog\Model\Product $product */
-            $product = $this->productRepository->getById($productId, false, $this->request->getParam('store', 0));
-            $productData = $this->variationHandler->processMediaGallery($product, $productData);
-            $productAttributeSetId = $product->getAttributeSetId();
-
-            if (!array_key_exists($productAttributeSetId, $productsAttributeSets)) {
-                $product->getResource()->getSortedAttributes($productAttributeSetId);
-                $productsAttributeSets[$productAttributeSetId] = 1;
-            }
-
-            $product->addData($productData);
-            if ($product->hasDataChanges()) {
-                $product->save();
+        if (count($configurations)) {
+            foreach ($configurations as $productId => $productData) {
+                /** @var \Magento\Catalog\Model\Product $product */
+                $product = $this->productRepository->getById($productId, false, $this->request->getParam('store', 0));
+                $productData = $this->variationHandler->processMediaGallery($product, $productData);
+                $product->addData($productData);
+                if ($product->hasDataChanges()) {
+                    $product->save();
+                }
             }
         }
-        
         return $configurableProduct;
+    }
+
+    /**
+     * Get configurations from product
+     *
+     * @param \Magento\Catalog\Model\Product $configurableProduct
+     * @return array
+     */
+    private function getConfigurationsFromProduct(\Magento\Catalog\Model\Product $configurableProduct)
+    {
+        $result = [];
+
+        $configurableMatrix = $configurableProduct->hasData('configurable-matrix') ?
+            $configurableProduct->getData('configurable-matrix') : [];
+        foreach ($configurableMatrix as $item) {
+            if (empty($item['was_changed'])) {
+                continue;
+            } else {
+                unset($item['was_changed']);
+            }
+
+            if (!$item['newProduct']) {
+                $result[$item['id']] = $this->mapData($item);
+
+                if (isset($item['qty'])) {
+                    $result[$item['id']]['quantity_and_stock_status']['qty'] = $item['qty'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get configurations from request
+     *
+     * @return array
+     * @deprecated
+     */
+    protected function getConfigurations()
+    {
+        $result = [];
+        $configurableMatrix = $this->request->getParam('configurable-matrix', []);
+        foreach ($configurableMatrix as $item) {
+            if (!$item['newProduct']) {
+                $result[$item['id']] = $this->mapData($item);
+
+                if (isset($item['qty'])) {
+                    $result[$item['id']]['quantity_and_stock_status']['qty'] = $item['qty'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Map data from POST
+     *
+     * @param array $item
+     * @return array
+     */
+    private function mapData(array $item)
+    {
+        $result = [];
+
+        foreach ($this->keysPost as $key) {
+            if (isset($item[$key])) {
+                $result[$key] = $item[$key];
+            }
+        }
+
+        return $result;
     }
 }

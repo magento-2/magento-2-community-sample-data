@@ -5,9 +5,10 @@
 define([
     'jquery',
     'underscore',
+    'uiRegistry',
     'jquery/ui',
     'mage/translate'
-], function ($, _) {
+], function ($, _, registry) {
     'use strict';
 
     $.widget('mage.productAttributes', {
@@ -21,7 +22,7 @@ define([
             var self = this;
 
             this.modal = $('<div id="create_new_attribute"/>').modal({
-                title: $.mage.__('New Attribute'),
+                 title: $.mage.__('New Attribute'),
                 type: 'slide',
                 buttons: [],
                 opened: function () {
@@ -32,7 +33,7 @@ define([
                     });
                     self.modal.append(self.iframe);
                     self._changeIframeSize();
-                    $(window).off().on('resize', _.debounce(self._changeIframeSize.bind(self), 400));
+                    $(window).off().on('resize.modal', _.debounce(self._changeIframeSize.bind(self), 400));
                 },
                 closed: function () {
                     var doc = self.iframe.get(0).document;
@@ -43,6 +44,7 @@ define([
                         self.iframe.remove();
                     }
                     self.modal.data('modal').modal.remove();
+                    $(window).off('resize.modal');
                 }
             });
         },
@@ -69,13 +71,19 @@ define([
         },
 
         _prepareUrl: function () {
-            var name = $('[data-role=product-attribute-search]').val();
+            var productSource,
+                attributeSetId = '';
+
+            if (this.options.dataProvider) {
+                try {
+                    productSource = registry.get(this.options.dataProvider);
+                    attributeSetId = productSource.data.product['attribute_set_id'];
+                } catch (e) {}
+            }
 
             return this.options.url +
                 (/\?/.test(this.options.url) ? '&' : '?') +
-                'set=' + $('#attribute_set_id').val() +
-                '&attribute[frontend_label]=' +
-                window.encodeURIComponent(name);
+                'set=' + attributeSetId;
         },
 
         _showPopup: function () {

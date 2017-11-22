@@ -4,9 +4,11 @@
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block
+ */
 
-/** @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block */
+// @codingStandardsIgnoreFile
 
 $order = $block->getOrder();
 
@@ -15,6 +17,7 @@ $orderAdminDate = $block->formatDate(
     \IntlDateFormatter::MEDIUM,
     true
 );
+
 $orderStoreDate = $block->formatDate(
     $order->getCreatedAt(),
     \IntlDateFormatter::MEDIUM,
@@ -57,6 +60,7 @@ $orderStoreDate = $block->formatDate(
                     <th><?php echo $block->escapeHtml(__('Order Status')) ?></th>
                     <td><span id="order_status"><?php echo $block->escapeHtml($order->getStatusLabel()) ?></span></td>
                 </tr>
+                <?php echo $block->getChildHtml(); ?>
                 <?php if ($block->isSingleStoreMode() == false):?>
                     <tr>
                         <th><?php echo $block->escapeHtml(__('Purchased From')) ?></th>
@@ -111,9 +115,9 @@ $orderStoreDate = $block->formatDate(
                 <span class="title"><?php echo $block->escapeHtml(__('Account Information')) ?></span>
                 <div class="actions">
                     <?php if ($customerUrl = $block->getCustomerViewUrl()) : ?>
-                        <a href="<?php /* @noEscape */ echo $block->getCustomerViewUrl() ?>" target="_blank">
-                            <?php echo $block->escapeHtml(__('Edit Customer')) ?>
-                        </a>
+                    <a href="<?php /* @noEscape */ echo $block->getCustomerViewUrl() ?>" target="_blank">
+                        <?php echo $block->escapeHtml(__('Edit Customer')) ?>
+                    </a>
                     <?php endif; ?>
                 </div>
             </div>

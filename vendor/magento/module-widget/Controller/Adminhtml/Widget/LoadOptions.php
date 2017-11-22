@@ -1,21 +1,21 @@
 <?php
 /**
- *
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Widget\Controller\Adminhtml\Widget;
 
 use Magento\Framework\App\ObjectManager;
 
 /**
- * Load widget options
+ * Loading widget options
  */
 class LoadOptions extends \Magento\Backend\App\Action
 {
     /**
-     * @inheritdoc
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 
@@ -55,7 +55,7 @@ class LoadOptions extends \Magento\Backend\App\Action
         );
         parent::__construct($context);
     }
-    
+
     /**
      * Ajax responder for loading plugin options form
      *
@@ -65,9 +65,7 @@ class LoadOptions extends \Magento\Backend\App\Action
     {
         try {
             $this->_view->loadLayout();
-            $paramsJson = $this->getRequest()->getParam('widget');
-
-            if ($paramsJson) {
+            if ($paramsJson = $this->getRequest()->getParam('widget')) {
                 $request = $this->jsonHelper->jsonDecode($paramsJson);
                 if (is_array($request)) {
                     $optionsBlock = $this->_view->getLayout()->getBlock('wysiwyg_widget.options');

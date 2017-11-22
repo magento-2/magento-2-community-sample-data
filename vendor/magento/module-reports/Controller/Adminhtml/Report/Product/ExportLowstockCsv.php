@@ -12,6 +12,13 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportLowstockCsv extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
+    /**
      * Export low stock products report to CSV format
      *
      * @return ResponseInterface

@@ -3,75 +3,58 @@
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Sales\Test\Unit\Model\Order\Address;
 
-use Magento\Customer\Block\Address\Renderer\RendererInterface as CustomerAddressBlockRenderer;
-use Magento\Customer\Model\Address\Config as CustomerAddressConfig;
-use Magento\Framework\DataObject;
-use Magento\Framework\Event\ManagerInterface as EventManager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Address as OrderAddress;
 use Magento\Sales\Model\Order\Address\Renderer as OrderAddressRenderer;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Customer\Model\Address\Config as CustomerAddressConfig;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Sales\Model\Order;
+use Magento\Customer\Block\Address\Renderer\RendererInterface as CustomerAddressBlockRenderer;
+use Magento\Framework\DataObject;
 
 /**
- * Class RendererTest covers Magento\Sales\Model\Order\Address\Renderer::format.
+ * Order address render test
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Order address renderer instance.
-     *
      * @var OrderAddressRenderer
      */
     private $orderAddressRenderer;
 
     /**
-     * Object manager helper instance.
-     *
      * @var ObjectManagerHelper
      */
     private $objectManagerHelper;
 
     /**
-     * Customer address config instance mock.
-     *
      * @var CustomerAddressConfig|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerAddressConfigMock;
 
     /**
-     * Event manager instance mock.
-     *
      * @var EventManager|\PHPUnit_Framework_MockObject_MockObject
      */
     private $eventManagerMock;
 
     /**
-     * Order address instance mock.
-     *
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
     private $orderAddressMock;
 
     /**
-     * Order instance mock.
-     *
      * @var Order|\PHPUnit_Framework_MockObject_MockObject
      */
     private $orderMock;
 
     /**
-     * Customer address block renderer instance mock.
-     *
      * @var CustomerAddressBlockRenderer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerAddressBlockRendererMock;
 
-    /**
-     * Prepare mocks for tests.
-     */
     protected function setUp()
     {
         $this->customerAddressConfigMock = $this->getMockBuilder(CustomerAddressConfig::class)
@@ -102,9 +85,6 @@ class RendererTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Run test format.
-     */
     public function testFormat()
     {
         $type = 'html';
@@ -131,9 +111,6 @@ class RendererTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result, $this->orderAddressRenderer->format($this->orderAddressMock, $type));
     }
 
-    /**
-     * Run test format without renderer.
-     */
     public function testFormatNoRenderer()
     {
         $type = 'html';
@@ -150,7 +127,7 @@ class RendererTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Set expectations for store.
+     * Set expectations for store
      *
      * @param string|int $storeId
      * @return void

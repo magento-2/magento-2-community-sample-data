@@ -17,6 +17,7 @@ use Magento\Framework\App\RequestInterface;
 
 /**
  * Test class for \Magento\Widget\Controller\Adminhtml\Widget\LoadOptions
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LoadOptionsTest extends \PHPUnit_Framework_TestCase
 {

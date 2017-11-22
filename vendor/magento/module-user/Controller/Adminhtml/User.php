@@ -8,7 +8,9 @@ namespace Magento\User\Controller\Adminhtml;
 abstract class User extends \Magento\Backend\App\AbstractAction
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_User::acl_users';
 

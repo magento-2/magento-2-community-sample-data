@@ -49,7 +49,6 @@ class Grid extends Action
         $resultLayout->getLayout()->getBlock('admin.product.reviews')
             ->setProductId($product->getId())
             ->setUseAjax(true);
-
         return $resultLayout;
     }
 }

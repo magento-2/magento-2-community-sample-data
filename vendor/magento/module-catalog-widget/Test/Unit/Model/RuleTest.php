@@ -7,8 +7,6 @@
 namespace Magento\CatalogWidget\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\Unserialize\SecureUnserializer;
-use Magento\Framework\ObjectManagerInterface;
 
 class RuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,29 +20,28 @@ class RuleTest extends \PHPUnit_Framework_TestCase
      */
     protected $combineFactory;
 
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
-     * @var SecureUnserializer
-     */
-    private $unserialize;
-
     protected function setUp()
     {
-        $this->combineFactory = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\CombineFactory::class)
+        $this->combineFactory = $this->getMockBuilder('Magento\CatalogWidget\Model\Rule\Condition\CombineFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
+        $objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->prepareObjectManager();
+        $this->prepareObjectManager([
+            [
+                'Magento\Framework\Api\ExtensionAttributesFactory',
+                $this->getMock('Magento\Framework\Api\ExtensionAttributesFactory', [], [], '', false)
+            ],
+            [
+                'Magento\Framework\Api\AttributeValueFactory',
+                $this->getMock('Magento\Framework\Api\AttributeValueFactory', [], [], '', false)
+            ],
+        ]);
 
-        $this->rule = $this->objectManagerHelper->getObject(
-            \Magento\CatalogWidget\Model\Rule::class,
+        $this->rule = $objectManagerHelper->getObject(
+            'Magento\CatalogWidget\Model\Rule',
             [
                 'conditionsFactory' => $this->combineFactory
             ]
@@ -53,7 +50,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConditionsInstance()
     {
-        $condition = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\Combine::class)
+        $condition = $this->getMockBuilder('Magento\CatalogWidget\Model\Rule\Condition\Combine')
             ->setMethods([])
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,35 +64,18 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Prepares ObjectManager mock.
-     *
-     * @return void
+     * @param $map
      */
-    private function prepareObjectManager()
+    private function prepareObjectManager($map)
     {
-        $objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->unserialize =  $this->getMockBuilder(SecureUnserializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $objectManagerMock->expects($this->any())->method('get')->willReturn(
-            [SecureUnserializer::class, $this->unserialize]
-        );
-
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function tearDown()
-    {
-        $reflectionClass = new \ReflectionClass(\Magento\Framework\App\ObjectManager::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $objectManagerMock->expects($this->any())->method('getInstance')->willReturnSelf();
+        $objectManagerMock->expects($this->any())
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $reflectionClass = new \ReflectionClass('Magento\Framework\App\ObjectManager');
         $reflectionProperty = $reflectionClass->getProperty('_instance');
         $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue(null, null);
+        $reflectionProperty->setValue($objectManagerMock);
     }
 }

@@ -13,19 +13,23 @@ use Magento\Catalog\Model\ResourceModel\Product\StatusBaseSelectProcessor;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\EntityManager\EntityMetadataInterface;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\StoreResolverInterface;
 use Magento\Store\Model\Store;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class StatusBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config|\PHPUnit_Framework_MockObject_MockObject
      */
     private $eavConfig;
+
+    /**
+     * @var MetadataPool|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $metadataPool;
 
     /**
      * @var StoreResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -45,21 +49,34 @@ class StatusBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->eavConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
+        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)->disableOriginalConstructor()->getMock();
         $this->storeResolver = $this->getMockBuilder(StoreResolverInterface::class)->getMock();
         $this->select = $this->getMockBuilder(Select::class)->disableOriginalConstructor()->getMock();
 
         $this->statusBaseSelectProcessor =  (new ObjectManager($this))->getObject(StatusBaseSelectProcessor::class, [
             'eavConfig' => $this->eavConfig,
+            'metadataPool' => $this->metadataPool,
             'storeResolver' => $this->storeResolver,
         ]);
     }
 
     public function testProcess()
     {
+        $linkField = 'link_field';
         $backendTable = 'backend_table';
         $attributeId = 2;
         $currentStoreId = 1;
 
+        $metadata = $this->getMock(EntityMetadataInterface::class);
+        $metadata->expects($this->once())
+            ->method('getLinkField')
+            ->willReturn($linkField);
+        $this->metadataPool->expects($this->once())
+            ->method('getMetadata')
+            ->with(ProductInterface::class)
+            ->willReturn($metadata);
+
+        /** @var AttributeInterface|\PHPUnit_Framework_MockObject_MockObject $statusAttribute */
         $statusAttribute = $this->getMockBuilder(AttributeInterface::class)
             ->setMethods(['getBackendTable', 'getAttributeId'])
             ->getMock();
@@ -82,10 +99,10 @@ class StatusBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('joinLeft')
             ->with(
                 ['status_global_attr' => $backendTable],
-                "status_global_attr.entity_id = "
-                . BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . ".child_id"
-                . " AND status_global_attr.attribute_id = {$attributeId}"
-                . ' AND status_global_attr.store_id = ' . Store::DEFAULT_STORE_ID,
+                "status_global_attr.{$linkField} = "
+                    . BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS . ".{$linkField}"
+                    . " AND status_global_attr.attribute_id = {$attributeId}"
+                    . ' AND status_global_attr.store_id = ' . Store::DEFAULT_STORE_ID,
                 []
             )
             ->willReturnSelf();
@@ -93,9 +110,9 @@ class StatusBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('joinLeft')
             ->with(
                 ['status_attr' => $backendTable],
-                "status_attr.entity_id = " . BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . ".child_id"
-                . " AND status_attr.attribute_id = {$attributeId}"
-                . " AND status_attr.store_id = {$currentStoreId}",
+                "status_attr.{$linkField} = " . BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS . ".{$linkField}"
+                    . " AND status_attr.attribute_id = {$attributeId}"
+                    . " AND status_attr.store_id = {$currentStoreId}",
                 []
             )
             ->willReturnSelf();

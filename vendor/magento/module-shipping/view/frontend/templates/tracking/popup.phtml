@@ -31,14 +31,14 @@ $results = $block->getTrackingInfo();
                         ?>
                         <?php /* @noEscape */ echo $block->getChildHtml('shipping.tracking.details.' . $counter); ?>
                     </div>
-                    <?php if (!empty($track->getProgressdetail())): ?>
+                    <?php if (is_object($track) && !empty($track->getProgressdetail())): ?>
                         <?php
                             $block->addChild('shipping.tracking.progress.'. $counter, Template::class, [
                                 'track' => $track,
                                 'template' => 'Magento_Shipping::tracking/progress.phtml'
                             ]);
                         ?>
-                        <?php /* @noEscape  */echo $block->getChildHtml('shipping.tracking.progress.' . $counter); ?>
+                        <?php /* @noEscape */ echo $block->getChildHtml('shipping.tracking.progress.' . $counter); ?>
                     <?php endif; ?>
                 <?php endforeach; ?>
             <?php else: ?>

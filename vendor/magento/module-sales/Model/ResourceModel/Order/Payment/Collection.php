@@ -67,7 +67,7 @@ class Collection extends AbstractCollection implements OrderPaymentSearchResultI
     }
 
     /**
-     * Unserialize additional_information in each item
+     * Unserialize additional_information in each item.
      *
      * @return $this
      */
@@ -76,6 +76,7 @@ class Collection extends AbstractCollection implements OrderPaymentSearchResultI
         foreach ($this->_items as $item) {
             $this->getResource()->unserializeFields($item);
         }
+
         return parent::_afterLoad();
     }
 }

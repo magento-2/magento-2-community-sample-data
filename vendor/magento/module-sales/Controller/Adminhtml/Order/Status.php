@@ -11,7 +11,9 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
 abstract class Status extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::order_statuses';
 

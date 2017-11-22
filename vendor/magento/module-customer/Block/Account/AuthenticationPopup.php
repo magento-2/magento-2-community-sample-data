@@ -46,7 +46,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
             'autocomplete' => $this->escapeHtml($this->isAutocompleteEnabled()),
             'customerRegisterUrl' => $this->escapeUrl($this->getCustomerRegisterUrlUrl()),
             'customerForgotPasswordUrl' => $this->escapeUrl($this->getCustomerForgotPasswordUrl()),
-            'baseUrl' => $this->escapeUrl($this->getBaseUrl()),
+            'baseUrl' => $this->escapeUrl($this->getBaseUrl())
         ];
     }
 

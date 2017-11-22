@@ -12,7 +12,9 @@ use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 class Save extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_creditmemo';
 

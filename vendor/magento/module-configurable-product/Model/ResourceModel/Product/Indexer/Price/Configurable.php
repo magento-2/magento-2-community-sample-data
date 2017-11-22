@@ -8,9 +8,7 @@
 namespace Magento\ConfigurableProduct\Model\ResourceModel\Product\Indexer\Price;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
 use Magento\Store\Api\StoreResolverInterface;
-use Magento\Store\Model\Store;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -91,7 +89,6 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
             $this->_applyConfigurableOption();
             $this->_movePriceDataToIndexTable($entityIds);
         }
-
         return $this;
     }
 
@@ -146,12 +143,15 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
      */
     protected function _applyConfigurableOption()
     {
+        $metadata = $this->getMetadataPool()->getMetadata(ProductInterface::class);
         $connection = $this->getConnection();
         $coaTable = $this->_getConfigurableOptionAggregateTable();
         $copTable = $this->_getConfigurableOptionPriceTable();
+        $linkField = $metadata->getLinkField();
 
         $this->_prepareConfigurableOptionAggregateTable();
         $this->_prepareConfigurableOptionPriceTable();
+
         $subSelect = $this->getSelect();
         $subSelect->join(
             ['l' => $this->getTable('catalog_product_super_link')],
@@ -159,7 +159,7 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
             []
         )->join(
             ['le' => $this->getTable('catalog_product_entity')],
-            'le.entity_id = l.parent_id',
+            'le.' . $linkField . ' = l.parent_id',
             ['parent_id' => 'entity_id']
         );
 

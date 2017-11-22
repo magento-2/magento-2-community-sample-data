@@ -11,7 +11,9 @@ namespace Magento\Paypal\Controller\Adminhtml\Paypal;
 abstract class Reports extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Paypal::paypal_settlement_reports';
 

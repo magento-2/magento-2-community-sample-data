@@ -11,7 +11,9 @@ namespace Magento\Paypal\Controller\Adminhtml\Billing;
 abstract class Agreement extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Paypal::billing_agreement';
 

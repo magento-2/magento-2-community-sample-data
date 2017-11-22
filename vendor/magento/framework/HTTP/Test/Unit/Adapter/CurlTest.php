@@ -20,7 +20,6 @@ class CurlTest extends \PHPUnit_Framework_TestCase
      */
     public static $curlExectClosure;
 
-
     protected function setUp()
     {
         require_once __DIR__ . '/_files/curl_exec_mock.php';

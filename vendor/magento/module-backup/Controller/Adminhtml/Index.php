@@ -13,9 +13,11 @@ namespace Magento\Backup\Controller\Adminhtml;
 abstract class Index extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_Backup::backup';
+    const ADMIN_RESOURCE = 'Magento_Backend::backup';
 
     /**
      * Core registry

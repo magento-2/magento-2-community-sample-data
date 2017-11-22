@@ -11,7 +11,9 @@ use Magento\Framework\Controller\ResultFactory;
 abstract class Term extends Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Search::search';
 

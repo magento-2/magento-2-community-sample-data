@@ -64,7 +64,9 @@ class Quote extends AbstractDb
         $select = parent::_getLoadSelect($field, $value, $object);
         $storeIds = $object->getSharedStoreIds();
         if ($storeIds) {
-            $select->where('store_id IN (?)', $storeIds);
+            if ($storeIds != ['*']) {
+                $select->where('store_id IN (?)', $storeIds);
+            }
         } else {
             /**
              * For empty result
@@ -168,6 +170,25 @@ class Quote extends AbstractDb
             $quote->getStore()->getGroup()->getDefaultStoreId()
         )
         ->getNextValue();
+    }
+
+    /**
+     * Check is order increment id use in sales/order table
+     *
+     * @param int $orderIncrementId
+     * @return bool
+     */
+    public function isOrderIncrementIdUsed($orderIncrementId)
+    {
+        /** @var \Magento\Framework\DB\Adapter\AdapterInterface $adapter */
+        $adapter = $this->getConnection();
+        $bind = [':increment_id' => $orderIncrementId];
+        /** @var \Magento\Framework\DB\Select $select */
+        $select = $adapter->select()
+            ->from($this->getTable('sales_order'), 'entity_id')
+            ->where('increment_id = :increment_id');
+        $entity_id = $adapter->fetchOne($select, $bind);
+        return ($entity_id > 0);
     }
 
     /**

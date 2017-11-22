@@ -19,7 +19,7 @@ class CompositeBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager =  new ObjectManager($this);
     }
 
     /**

@@ -11,12 +11,11 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Loader;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\IniFileLoader;
 use Symfony\Component\Config\FileLocator;
 
-class IniFileLoaderTest extends TestCase
+class IniFileLoaderTest extends \PHPUnit_Framework_TestCase
 {
     protected static $fixturesPath;
 

@@ -13,7 +13,9 @@ use Magento\Framework\View\Result\LayoutFactory;
 class AddComment extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 

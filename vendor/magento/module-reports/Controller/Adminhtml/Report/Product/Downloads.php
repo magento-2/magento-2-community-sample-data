@@ -9,6 +9,13 @@ namespace Magento\Reports\Controller\Adminhtml\Report\Product;
 class Downloads extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
+    /**
      * Downloads action
      *
      * @return void

@@ -7,6 +7,7 @@
 namespace Magento\CatalogRule\Test\Unit\Pricing\Price;
 
 use \Magento\CatalogRule\Pricing\Price\CatalogRulePrice;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * Class CatalogRulePriceTest
@@ -77,7 +78,7 @@ class CatalogRulePriceTest extends \PHPUnit_Framework_TestCase
     /**
      * Set up
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->saleableItemMock = $this->getMock(
             'Magento\Catalog\Model\Product',
@@ -156,9 +157,11 @@ class CatalogRulePriceTest extends \PHPUnit_Framework_TestCase
             $this->catalogRuleResourceFactoryMock
         );
 
-        $property = new \ReflectionProperty($this->object, 'ruleResource');
-        $property->setAccessible(true);
-        $property->setValue($this->object, $this->catalogRuleResourceMock);
+        (new ObjectManager($this))->setBackwardCompatibleProperty(
+            $this->object,
+            'ruleResource',
+            $this->catalogRuleResourceMock
+        );
     }
 
     /**

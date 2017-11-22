@@ -52,8 +52,6 @@ class Widget
     protected $conditionsHelper;
 
     /**
-     * Random data generator.
-     *
      * @var \Magento\Framework\Math\Random
      */
     private $mathRandom;
@@ -93,7 +91,6 @@ class Widget
             $this->mathRandom = \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Magento\Framework\Math\Random::class);
         }
-        
         return $this->mathRandom;
     }
 
@@ -316,13 +313,12 @@ class Widget
                     $value = $parameters[$name]->getValue();
                 }
             }
-            if ($value) {
+            if (isset($value)) {
                 $directive .= sprintf(' %s="%s"', $name, $this->escaper->escapeQuote($value));
             }
         }
 
         $directive .= $this->getWidgetPageVarName($params);
-
         $directive .= '}}';
 
         if ($asIs) {
@@ -335,13 +331,10 @@ class Widget
             $this->getPlaceholderImageUrl($type),
             $this->escaper->escapeUrl($directive)
         );
-        
         return $html;
     }
 
     /**
-     * Returns var name for widget page.
-     *
      * @param array $params
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -356,7 +349,6 @@ class Widget
                 'p' . $this->getMathRandom()->getRandomString(5, \Magento\Framework\Math\Random::CHARS_LOWERS)
             );
         }
-        
         return $pageVarName;
     }
 

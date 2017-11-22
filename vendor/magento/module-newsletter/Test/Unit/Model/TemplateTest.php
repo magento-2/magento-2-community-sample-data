@@ -88,7 +88,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
      */
     private $filterFactory;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->context = $this->getMockBuilder('Magento\Framework\Model\Context')
             ->disableOriginalConstructor()
@@ -336,6 +336,8 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get processed template data provider.
+     *
      * @return array
      */
     public function getProcessedTemplateDataProvider()
@@ -384,6 +386,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
      * @param $senderName string
      * @param $senderEmail string
      * @param $templateSubject string
+     * @param $expectedValue
      * @dataProvider isValidForSendDataProvider
      */
     public function testIsValidForSend($senderName, $senderEmail, $templateSubject, $expectedValue)

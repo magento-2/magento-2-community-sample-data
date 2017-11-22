@@ -174,8 +174,7 @@ class Template extends \Magento\Email\Model\AbstractTemplate
     public function beforeSave()
     {
         $this->validate();
-        parent::beforeSave();
-        return $this;
+        return parent::beforeSave();
     }
 
     /**
@@ -233,7 +232,7 @@ class Template extends \Magento\Email\Model\AbstractTemplate
     }
 
     /**
-     * Check if template can be added to newsletter queue
+     * Check if template can be added to newsletter queue.
      *
      * @return boolean
      */

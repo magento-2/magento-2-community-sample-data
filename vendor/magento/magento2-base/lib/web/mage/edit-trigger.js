@@ -98,16 +98,12 @@
          * @protected
          */
         _onMouseMove: function(e) {
-            var target = $(e.target),
-                inner = target.find(this.options.editSelector);
+            var target = $(e.target);
+            target = target.is(this.trigger) || target.is(this.options.editSelector) ?
+                target :
+                target.parents(this.options.editSelector).first();
 
-            if ($(e.target).is('button') && inner.length) {
-                target = inner;
-            } else if (!target.is(this.trigger) && !target.is(this.options.editSelector)) {
-                target = target.parents(this.options.editSelector).first();
-            }
-
-            if (target.length) {
+            if (target.size()) {
                 if (!target.is(this.trigger)) {
                     this._setPosition(target);
                     this.currentTarget = target;

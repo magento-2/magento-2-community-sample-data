@@ -10,12 +10,14 @@ use Magento\Mtf\Block\Block;
 use Magento\Mtf\Client\Locator;
 
 /**
- * Adminhtml sales order create totals block.
+ * Class Totals
+ * Adminhtml sales order create totals block
+ *
  */
 class Totals extends Block
 {
     /**
-     * 'Submit Order' button.
+     * 'Submit Order' button
      *
      * @var string
      */
@@ -36,45 +38,11 @@ class Totals extends Block
     protected $totalLabelLocator = './/tr[normalize-space(td)="%s"]';
 
     /**
-     * Total value selector.
-     *
-     * @var string
-     */
-    protected $totalValueLocator = './/td/span[contains(@class,"price")]';
-
-    /**
-     * Click 'Submit Order' button.
+     * Click 'Submit Order' button
      */
     public function submitOrder()
     {
         $this->_rootElement->find($this->submitOrder)->click();
-    }
-
-    /**
-     * Return totals by labels.
-     *
-     * @param $totals string[]
-     * @return array
-     */
-    public function getTotals($totals)
-    {
-        if (empty ($totals)) {
-            return [];
-        }
-
-        $totalsResult = [];
-        $totalsTable = $this->_rootElement->find($this->totalsTable);
-
-        foreach ($totals as $total) {
-
-            $totalRow = $totalsTable->find(sprintf($this->totalLabelLocator, $total), Locator::SELECTOR_XPATH);
-            if ($totalRow->isVisible()) {
-                $totalValue = $totalRow->find($this->totalValueLocator, Locator::SELECTOR_XPATH);
-                $totalsResult[$total] = $this->escapeNumericValue($totalValue->getText());
-            }
-        }
-
-        return $totalsResult;
     }
 
     /**
@@ -87,17 +55,7 @@ class Totals extends Block
     {
         $totalsTable = $this->_rootElement->find($this->totalsTable);
         $totalRow = $totalsTable->find(sprintf($this->totalLabelLocator, $total), Locator::SELECTOR_XPATH);
+        
         return $totalRow->isVisible();
-    }
-
-    /**
-     * Escape numeric value.
-     *
-     * @param string $value
-     * @return mixed
-     */
-    private function escapeNumericValue($value)
-    {
-        return preg_replace("/[^-0-9\\.]/", "", $value);
     }
 }

@@ -13,7 +13,9 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class PrintPackage extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 

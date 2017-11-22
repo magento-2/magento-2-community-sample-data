@@ -44,6 +44,13 @@ define(
                         addressData.region.region_code = region['code'];
                         addressData.region.region = region['name'];
                     }
+                } else if (
+                    !addressData.region_id
+                    && countryData()[addressData.country_id]
+                    && countryData()[addressData.country_id]['regions']
+                ) {
+                    addressData.region.region_code = '';
+                    addressData.region.region = '';
                 }
                 delete addressData.region_id;
 
@@ -107,36 +114,22 @@ define(
              */
             objectToArray: function (object) {
                 var convertedArray = [];
+
                 $.each(object, function (key) {
-                    return object[key].length ? convertedArray.push(object[key]) : false;
+                    return typeof object[key] === 'string' ? convertedArray.push(object[key]) : false;
                 });
 
                 return convertedArray.slice(0);
             },
 
             addressToEstimationAddress: function (address) {
-                var estimatedAddressData = {
-                    'street': address.street,
-                    'city': address.city,
-                    'region_id': address.regionId,
-                    'region': address.region,
-                    'country_id': address.countryId,
-                    'postcode': address.postcode,
-                    'email': address.email,
-                    'customer_id': address.customerId,
-                    'firstname': address.firstname,
-                    'lastname': address.lastname,
-                    'middlename': address.middlename,
-                    'prefix': address.prefix,
-                    'suffix': address.suffix,
-                    'vat_id': address.vatId,
-                    'company': address.company,
-                    'telephone': address.telephone,
-                    'fax': address.fax,
-                    'custom_attributes': address.customAttributes
+                var self = this;
+                var estimatedAddressData = {};
 
-                };
-               return this.formAddressDataToQuoteAddress(estimatedAddressData);
+                $.each(address, function (key) {
+                    estimatedAddressData[self.toUnderscore(key)] = address[key];
+                });
+                return this.formAddressDataToQuoteAddress(estimatedAddressData);
             }
         };
     }

@@ -3,7 +3,6 @@
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Setup\Module\Di\Code\Scanner;
 
 use Magento\Framework\Autoload\AutoloaderRegistry;
@@ -38,21 +37,18 @@ class RepositoryScanner implements ScannerInterface
                 if (
                     $forType !== null
                     && $replacementType !== null
-                    && (substr($forType->nodeValue, -19) === 'RepositoryInterface')
+                    && (substr($forType->nodeValue, -19) == 'RepositoryInterface')
                 ) {
-                    // backward compatibility workaround for composer below 1.3.0
-                    // (https://github.com/composer/composer/issues/5923)
-                    $nodeValue = ltrim($replacementType->nodeValue, '\\');
-                    if (!class_exists($nodeValue, false)
-                        && !AutoloaderRegistry::getAutoloader()->loadClass($nodeValue)
-                    ) {
-                        $persistor = str_replace('\\Repository', 'InterfacePersistor', $nodeValue);
-                        $factory = str_replace('\\Repository', 'InterfaceFactory', $nodeValue);
-                        $searchResultFactory = str_replace('\\Repository', 'SearchResultInterfaceFactory', $nodeValue);
+                    if (!class_exists($replacementType->nodeValue, false)
+                        && !AutoloaderRegistry::getAutoloader()->loadClass($replacementType->nodeValue)) {
+                        $persistor = str_replace('\\Repository', 'InterfacePersistor', $replacementType->nodeValue);
+                        $factory = str_replace('\\Repository', 'InterfaceFactory', $replacementType->nodeValue);
+                        $searchResultFactory
+                            = str_replace('\\Repository', 'SearchResultInterfaceFactory', $replacementType->nodeValue);
                         $repositoryClassNames[$persistor] = $persistor;
                         $repositoryClassNames[$factory] = $factory;
                         $repositoryClassNames[$searchResultFactory] = $searchResultFactory;
-                        $repositoryClassNames[$nodeValue] = $nodeValue;
+                        $repositoryClassNames[$replacementType->nodeValue] = $replacementType->nodeValue;
                     }
                 }
             }

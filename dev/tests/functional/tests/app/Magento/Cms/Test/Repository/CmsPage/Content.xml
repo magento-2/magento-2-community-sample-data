@@ -19,20 +19,6 @@
             </field>
         </dataset>
 
-        <dataset name="product_list_with_attribute_set_condition">
-            <field name="widget_1" xsi:type="array">
-                <item name="widget_type" xsi:type="string">Catalog Products List</item>
-                <item name="title" xsi:type="string">Catalog Products List %isolation%</item>
-                <item name="template" xsi:type="string">Products Grid Template</item>
-                <item name="entities" xsi:type="array">
-                    <item name="0" xsi:type="string">catalogProductSimple::default</item>
-                </item>
-                <item name="conditions" xsi:type="array">
-                    <item name="attribute_set_id" xsi:type="string">[Attribute Set|is|%attribute_set_id%]</item>
-                </item>
-            </field>
-        </dataset>
-
         <dataset name="all_widgets">
             <field name="widget_1" xsi:type="array">
                 <item name="widget_type" xsi:type="string">CMS Page Link</item>
@@ -86,6 +72,18 @@
                 <item name="widget_type" xsi:type="string">Recently Viewed Products</item>
                 <item name="page_size" xsi:type="string">10</item>
                 <item name="template" xsi:type="string">Viewed Products Grid Template</item>
+            </field>
+        </dataset>
+
+        <dataset name="widget_with_special_characters_in_title">
+            <field name="widget_1" xsi:type="array">
+                <item name="widget_type" xsi:type="string">CMS Page Link</item>
+                <item name="anchor_text" xsi:type="string">CMS Page Link anchor_text_%isolation%</item>
+                <item name="title" xsi:type="string">glāžšķūņu rūķīši_%isolation%</item>
+                <item name="template" xsi:type="string">CMS Page Link Block Template</item>
+                <item name="chosen_option" xsi:type="array">
+                    <item name="filter_url_key" xsi:type="string">home</item>
+                </item>
             </field>
         </dataset>
     </repository>

@@ -13,7 +13,8 @@ define(
         './postcode-validator',
         'mage/translate',
         'uiRegistry',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/shipping-address/form-popup-state'
     ],
     function (
         $,
@@ -24,7 +25,8 @@ define(
         postcodeValidator,
         $t,
         uiRegistry,
-        quote
+        quote,
+        formPopUpState
     ) {
         'use strict';
 
@@ -53,7 +55,7 @@ define(
              * @return {Boolean}
              */
             validateAddressData: function (address) {
-                return validators.some(function(validator) {
+                return validators.some(function (validator) {
                     return validator.validate(address);
                 });
             },
@@ -119,7 +121,7 @@ define(
             bindHandler: function (element, delay) {
                 var self = this;
 
-                delay = typeof delay === "undefined" ? self.validateDelay : delay;
+                delay = typeof delay === 'undefined' ? self.validateDelay : delay;
 
                 if (element.component.indexOf('/group') !== -1) {
                     $.each(element.elems(), function (index, elem) {
@@ -127,12 +129,14 @@ define(
                     });
                 } else {
                     element.on('value', function () {
-                        clearTimeout(self.validateAddressTimeout);
-                        self.validateAddressTimeout = setTimeout(function () {
-                            if (self.postcodeValidation()) {
-                                self.validateFields();
-                            }
-                        }, delay);
+                        if (!formPopUpState.isVisible()) {
+                            clearTimeout(self.validateAddressTimeout);
+                            self.validateAddressTimeout = setTimeout(function () {
+                                if (self.postcodeValidation()) {
+                                    self.validateFields();
+                                }
+                            }, delay);
+                        }
                     });
                     observedElements.push(element);
                 }
@@ -143,7 +147,7 @@ define(
              */
             postcodeValidation: function () {
                 var countryId = $('select[name="country_id"]').val(),
-                    validationResult = postcodeValidator.validate(postcodeElement.value(), countryId),
+                    validationResult,
                     warnMessage;
 
                 if (postcodeElement == null || postcodeElement.value() == null) {
@@ -151,9 +155,11 @@ define(
                 }
 
                 postcodeElement.warn(null);
+                validationResult = postcodeValidator.validate(postcodeElement.value(), countryId);
 
                 if (!validationResult) {
                     warnMessage = $t('Provided Zip/Postal Code seems to be invalid.');
+
                     if (postcodeValidator.validatedPostCodeExample.length) {
                         warnMessage += $t(' Example: ') + postcodeValidator.validatedPostCodeExample.join('; ') + '. ';
                     }
@@ -175,7 +181,7 @@ define(
                     address;
 
                 if (this.validateAddressData(addressFlat)) {
-                    addressFlat = $.extend(true, {}, quote.shippingAddress(), addressFlat);
+                    addressFlat = uiRegistry.get('checkoutProvider').shippingAddress;
                     address = addressConverter.formAddressDataToQuoteAddress(addressFlat);
                     selectShippingAddress(address);
                 }

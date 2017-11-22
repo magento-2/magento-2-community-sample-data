@@ -29,11 +29,6 @@ class SenderBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $transportBuilder;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $storeMock;
-
     protected function setUp()
     {
         $templateId = 'test_template_id';
@@ -63,7 +58,7 @@ class SenderBuilderTest extends \PHPUnit_Framework_TestCase
             [
                 'getEmailIdentity', 'getCustomerEmail',
                 'getCustomerName', 'getTemplateOptions', 'getEmailCopyTo',
-                'getCopyMethod', 'getStore'
+                'getCopyMethod'
             ],
             [],
             '',
@@ -104,9 +99,6 @@ class SenderBuilderTest extends \PHPUnit_Framework_TestCase
         $this->identityContainerMock->expects($this->once())
             ->method('getEmailIdentity')
             ->will($this->returnValue($emailIdentity));
-        $this->identityContainerMock->expects($this->once())
-            ->method('getStore')
-            ->will($this->returnValue($this->storeMock));
         $this->transportBuilder->expects($this->once())
             ->method('setFrom')
             ->with($this->equalTo($emailIdentity));

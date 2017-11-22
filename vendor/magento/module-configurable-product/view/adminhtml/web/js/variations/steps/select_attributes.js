@@ -94,7 +94,7 @@ define([
             wizard.data.attributesIds = this.multiselect().selected;
 
             if (!wizard.data.attributesIds() || wizard.data.attributesIds().length === 0) {
-                throw new Error($.mage.__('Please, select attribute(s)'));
+                throw new Error($.mage.__('Please select attribute(s).'));
             }
             this.setNotificationMessage();
         },

@@ -11,7 +11,9 @@ namespace Magento\Newsletter\Controller\Adminhtml;
 abstract class Problem extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Newsletter::problem';
 }

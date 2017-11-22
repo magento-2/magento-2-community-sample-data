@@ -81,21 +81,6 @@ class AbstractTypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @deprecated
-     */
-    public function testGetEditableAttributes()
-    {
-        $expected = [$this->attribute];
-        $this->productResource->expects($this->any())->method('loadAllAttributes')->will(
-            $this->returnValue($this->productResource)
-        );
-        $this->productResource->expects($this->any())->method('getSortedAttributes')->will(
-            $this->returnValue($expected)
-        );
-        $this->assertEquals($expected, $this->model->getEditableAttributes($this->product));
-    }
-
-    /**
      * @dataProvider attributeCompareProvider
      */
     public function testAttributesCompare($attr1, $attr2, $expectedResult)

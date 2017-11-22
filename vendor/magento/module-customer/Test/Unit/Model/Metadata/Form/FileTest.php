@@ -14,6 +14,7 @@ use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 class FileTest extends AbstractFormTestCase
 {
     const ENTITY_TYPE = 0;
+
     /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\Url\EncoderInterface */
     protected $urlEncode;
 
@@ -58,6 +59,7 @@ class FileTest extends AbstractFormTestCase
     /**
      * @param array|bool $expected
      * @param string $attributeCode
+     * @param bool $isAjax
      * @param string $delete
      * @dataProvider extractValueNoRequestScopeDataProvider
      */
@@ -276,7 +278,7 @@ class FileTest extends AbstractFormTestCase
                 ['tmp_name' => 'tempName_0001.bin', 'name' => 'realFileName.bin'],
                 ['uploaded' => false],
             ],
-            'isValid' => [true, ['tmp_name' => 'tempName_0001.txt', 'name' => 'realFileName.txt']],
+            'isValid' => [true, ['tmp_name' => 'tempName_0001.txt', 'name' => 'realFileName.txt']]
         ];
     }
 
@@ -317,6 +319,7 @@ class FileTest extends AbstractFormTestCase
         $mediaDirMock->expects($this->once())
             ->method('delete')
             ->with(self::ENTITY_TYPE . '/' . 'value');
+
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
@@ -439,55 +442,34 @@ class FileTest extends AbstractFormTestCase
         $this->assertSame($expected, $model->outputValue(ElementFactory::OUTPUT_FORMAT_JSON));
     }
 
-    public function testCompactValueNoAction()
+    /**
+     * @param array $data
+     * @return \Magento\Customer\Model\Metadata\Form\File
+     */
+    private function initialize(array $data)
     {
-        $value = 'value';
+        $model = new \Magento\Customer\Model\Metadata\Form\File(
+            $this->localeMock,
+            $this->loggerMock,
+            $this->attributeMetadataMock,
+            $this->localeResolverMock,
+            $data['value'],
+            $data['entityTypeCode'],
+            $data['isAjax'],
+            $this->urlEncode,
+            $this->fileValidatorMock,
+            $this->fileSystemMock,
+            $this->uploaderFactoryMock
+        );
 
-        $model = $this->initialize([
-            'value' => $value,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $objectManager->setBackwardCompatibleProperty(
+            $model,
+            'fileProcessor',
+            $this->fileProcessorMock
+        );
 
-        $this->assertEquals($value, $model->compactValue($value));
-    }
-
-    public function testCompactValueUiComponent()
-    {
-        $value = [
-            'file' => 'filename',
-        ];
-
-        $model = $this->initialize([
-            'value' => null,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('moveTemporaryFile')
-            ->with($value['file'])
-            ->willReturn(true);
-
-        $this->assertTrue($model->compactValue($value));
-    }
-
-    public function testCompactValueRemoveUiComponentValue()
-    {
-        $value = 'value';
-
-        $model = $this->initialize([
-            'value' => $value,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('removeUploadedFile')
-            ->with($value)
-            ->willReturnSelf();
-
-        $this->assertEquals([], $model->compactValue([]));
+        return $model;
     }
 
     public function testExtractValueFileUploaderUIComponent()
@@ -521,6 +503,57 @@ class FileTest extends AbstractFormTestCase
         $result = $model->extractValue($this->requestMock);
 
         $this->assertEquals(['file' => $fileName], $result);
+    }
+
+    public function testCompactValueRemoveUiComponentValue()
+    {
+        $value = 'value';
+
+        $model = $this->initialize([
+            'value' => $value,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('removeUploadedFile')
+            ->with($value)
+            ->willReturnSelf();
+
+        $this->assertEquals([], $model->compactValue([]));
+    }
+
+    public function testCompactValueNoAction()
+    {
+        $value = 'value';
+
+        $model = $this->initialize([
+            'value' => $value,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->assertEquals($value, $model->compactValue($value));
+    }
+
+    public function testCompactValueUiComponent()
+    {
+        $value = [
+            'file' => 'filename',
+        ];
+
+        $model = $this->initialize([
+            'value' => null,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('moveTemporaryFile')
+            ->with($value['file'])
+            ->willReturn(true);
+
+        $this->assertTrue($model->compactValue($value));
     }
 
     public function testCompactValueInputField()
@@ -621,33 +654,5 @@ class FileTest extends AbstractFormTestCase
         ]);
 
         $this->assertEquals('', $model->compactValue($value));
-    }
-
-    /**
-     * @param array $data
-     * @return \Magento\Customer\Model\Metadata\Form\File
-     */
-    private function initialize(array $data)
-    {
-        $model = new \Magento\Customer\Model\Metadata\Form\File(
-            $this->localeMock,
-            $this->loggerMock,
-            $this->attributeMetadataMock,
-            $this->localeResolverMock,
-            $data['value'],
-            $data['entityTypeCode'],
-            $data['isAjax'],
-            $this->urlEncode,
-            $this->fileValidatorMock,
-            $this->fileSystemMock,
-            $this->uploaderFactoryMock
-        );
-
-        $reflection = new \ReflectionClass(get_class($model));
-        $reflectionProperty = $reflection->getProperty('fileProcessor');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($model, $this->fileProcessorMock);
-
-        return $model;
     }
 }

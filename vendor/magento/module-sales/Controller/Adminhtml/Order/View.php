@@ -10,7 +10,9 @@ use Magento\Backend\App\Action;
 class View extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::actions_view';
 

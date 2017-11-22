@@ -38,6 +38,7 @@ class HostChecker
         if (empty($hostName)) {
             return true;
         }
+        /** @var \Magento\Framework\App\ScopeInterface $scope */
         foreach ($this->scopeResolver->getScopes() as $scope) {
             $scopeHostNames[] = parse_url($scope->getBaseUrl(), PHP_URL_HOST);
             $scopeHostNames[] = parse_url($scope->getBaseUrl(UrlInterface::URL_TYPE_LINK, true), PHP_URL_HOST);

@@ -59,20 +59,21 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->rowCustomizerMock = $this->objectManagerHelper->getObject(
-            \Magento\BundleImportExport\Model\Export\RowCustomizer::class
+            '\Magento\BundleImportExport\Model\Export\RowCustomizer'
         );
         $this->productResourceCollection = $this->getMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
             ['addAttributeToFilter', 'getIterator'],
             [],
             '',
             false
         );
         $this->product = $this->getMock(
-            \Magento\Catalog\Model\Product::class,
+            '\Magento\Catalog\Model\Product',
             [
-                'getId',
+                'getEntityId',
                 'getPriceType',
+                'getShipmentType',
                 'getSkuType',
                 'getPriceView',
                 'getWeightType',
@@ -84,14 +85,15 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
             '',
             false
         );
-        $this->product->expects($this->any())->method('getId')->willReturn(1);
+        $this->product->expects($this->any())->method('getEntityId')->willReturn(1);
         $this->product->expects($this->any())->method('getPriceType')->willReturn(1);
+        $this->product->expects($this->any())->method('getShipmentType')->willReturn(1);
         $this->product->expects($this->any())->method('getSkuType')->willReturn(1);
         $this->product->expects($this->any())->method('getPriceView')->willReturn(1);
         $this->product->expects($this->any())->method('getWeightType')->willReturn(1);
         $this->product->expects($this->any())->method('getTypeInstance')->willReturnSelf();
         $this->optionsCollection = $this->getMock(
-            \Magento\Bundle\Model\ResourceModel\Option\Collection::class,
+            '\Magento\Bundle\Model\ResourceModel\Option\Collection',
             ['setOrder', 'getIterator'],
             [],
             '',
@@ -100,7 +102,7 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
         $this->product->expects($this->any())->method('getOptionsCollection')->willReturn($this->optionsCollection);
         $this->optionsCollection->expects($this->any())->method('setOrder')->willReturnSelf();
         $this->option = $this->getMock(
-            \Magento\Bundle\Model\Option::class,
+            '\Magento\Bundle\Model\Option',
             ['getId', 'getTitle', 'getType', 'getRequired'],
             [],
             '',
@@ -114,7 +116,7 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
             $this->returnValue(new \ArrayIterator([$this->option]))
         );
         $this->selection = $this->getMock(
-            \Magento\Catalog\Model\Product::class,
+            '\Magento\Catalog\Model\Product',
             ['getSku', 'getSelectionPriceValue', 'getIsDefault', 'getSelectionQty', 'getSelectionPriceType'],
             [],
             '',
@@ -125,7 +127,7 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
         $this->selection->expects($this->any())->method('getSelectionQty')->willReturn(1);
         $this->selection->expects($this->any())->method('getSelectionPriceType')->willReturn(1);
         $this->selectionsCollection = $this->getMock(
-            \Magento\Bundle\Model\ResourceModel\Selection\Collection::class,
+            '\Magento\Bundle\Model\ResourceModel\Selection\Collection',
             ['getIterator', 'addAttributeToSort'],
             [],
             '',
@@ -159,12 +161,13 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
     {
         $productData = [0 => 'sku'];
         $expectedData = [
-            0 => 'sku',
-            1 => 'bundle_price_type',
-            2 => 'bundle_sku_type',
-            3 => 'bundle_price_view',
-            4 => 'bundle_weight_type',
-            5 => 'bundle_values'
+            'sku',
+            'bundle_price_type',
+            'bundle_sku_type',
+            'bundle_price_view',
+            'bundle_weight_type',
+            'bundle_values',
+            'bundle_shipment_type'
         ];
         $this->assertEquals($expectedData, $this->rowCustomizerMock->addHeaderColumns($productData));
     }
@@ -176,7 +179,7 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
     {
         $preparedData = $this->rowCustomizerMock->prepareData($this->productResourceCollection, [1]);
         $attributes = 'attribute=1,sku_type=1,attribute2="Text",price_type=1,price_view=1,weight_type=1,'
-            . 'values=values,attribute3=One,Two,Three';
+            . 'values=values,shipment_type=1,attribute3=One,Two,Three';
         $dataRow = [
             'sku' => 'sku1',
             'additional_attributes' => $attributes
@@ -186,6 +189,7 @@ class RowCustomizerTest extends \PHPUnit_Framework_TestCase
             'sku' => 'sku1',
             'additional_attributes' => 'attribute=1,attribute2="Text",attribute3=One,Two,Three',
             'bundle_price_type' => 'fixed',
+            'bundle_shipment_type' => 'separately',
             'bundle_sku_type' => 'fixed',
             'bundle_price_view' => 'As low as',
             'bundle_weight_type' => 'fixed',

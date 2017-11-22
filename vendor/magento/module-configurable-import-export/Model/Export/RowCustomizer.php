@@ -11,9 +11,6 @@ use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableP
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\ImportExport\Model\Import;
 
-/**
- *  Exporting configurable products
- */
 class RowCustomizer implements RowCustomizerInterface
 {
     /**
@@ -42,17 +39,18 @@ class RowCustomizer implements RowCustomizerInterface
 
             foreach ($productAttributesOptions as $productAttributeOption) {
                 foreach ($productAttributeOption as $optValues) {
-                    $variations[$optValues['sku']][] = $optValues['attribute_code'] . '=' . $optValues['option_title'];
-
+                    $variations[$optValues['sku']][] =
+                        $optValues['attribute_code'] . '=' . $optValues['option_title'];
                     if (!empty($optValues['super_attribute_label'])) {
-                        $variationsLabels[$optValues['attribute_code']] = $optValues['attribute_code'] . '='
-                            . $optValues['super_attribute_label'];
+                        $variationsLabels[$optValues['attribute_code']] =
+                            $optValues['attribute_code'] . '=' . $optValues['super_attribute_label'];
                     }
                 }
             }
 
             foreach ($variations as $sku => $values) {
-                $variations[$sku] = 'sku=' . $sku . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
+                $variations[$sku] =
+                    'sku=' . $sku . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
                     . implode(Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR, $values);
             }
 

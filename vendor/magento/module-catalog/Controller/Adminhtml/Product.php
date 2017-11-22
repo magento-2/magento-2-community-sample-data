@@ -14,7 +14,7 @@ use Magento\Backend\App\Action;
 abstract class Product extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

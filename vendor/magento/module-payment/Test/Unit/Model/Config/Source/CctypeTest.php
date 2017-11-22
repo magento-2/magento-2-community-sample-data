@@ -22,10 +22,10 @@ class CctypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $_model;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->_paymentConfig = $this->getMockBuilder(
-            'Magento\Payment\Model\Config'
+            \Magento\Payment\Model\Config::class
         )->disableOriginalConstructor()->setMethods([])->getMock();
 
         $this->_model = new Cctype($this->_paymentConfig);

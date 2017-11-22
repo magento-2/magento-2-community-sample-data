@@ -6,50 +6,48 @@
  */
 namespace Magento\Catalog\Controller\Adminhtml\Product;
 
-use Magento\Backend\App\Action\Context;
+use Magento\Backend\App\Action;
 use Magento\Catalog\Controller\Adminhtml\Product;
-use Magento\Catalog\Model\Indexer\Product\Price\Processor;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 
 class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 {
     /**
-     * @var Processor
+     * @var \Magento\Catalog\Model\Indexer\Product\Price\Processor
      */
     protected $_productPriceIndexerProcessor;
 
     /**
      * MassActions filter
      *
-     * @var Filter
+     * @var \Magento\Ui\Component\MassAction\Filter
      */
     protected $filter;
 
     /**
-     * @var CollectionFactory
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     protected $collectionFactory;
 
     /**
-     * @param Context $context
+     * @param Action\Context $context
      * @param Builder $productBuilder
-     * @param Processor $productPriceIndexerProcessor
-     * @param Filter $filter
-     * @param CollectionFactory $collectionFactory
+     * @param \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor
+     * @param \Magento\Ui\Component\MassAction\Filter $filter
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory
      */
     public function __construct(
-        Context $context,
+        \Magento\Backend\App\Action\Context $context,
         Product\Builder $productBuilder,
-        Processor $productPriceIndexerProcessor,
+        \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor,
         Filter $filter,
         CollectionFactory $collectionFactory
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
         $this->_productPriceIndexerProcessor = $productPriceIndexerProcessor;
-
         parent::__construct($context, $productBuilder);
     }
 
@@ -83,13 +81,10 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
         $productIds = $collection->getAllIds();
         $storeId = (int) $this->getRequest()->getParam('store', 0);
         $status = (int) $this->getRequest()->getParam('status');
-
-        /** @var array $filters */
-        $filters = (array) $this->getRequest()->getParam('filters', []);
+        $filters = (array)$this->getRequest()->getParam('filters', []);
 
         if (isset($filters['store_id'])) {
-            /** @var int $storeId */
-            $storeId = (int) $filters['store_id'];
+            $storeId = (int)$filters['store_id'];
         }
 
         try {
@@ -106,7 +101,6 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
         return $resultRedirect->setPath('catalog/*/', ['store' => $storeId]);
     }
 }

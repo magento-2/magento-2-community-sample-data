@@ -9,7 +9,7 @@ namespace Magento\ConfigurableProduct\Test\TestStep;
 use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductEdit;
 use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
-use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Tab\Variations\Config;
+use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
 use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestStep\TestStepInterface;
@@ -203,9 +203,9 @@ class UpdateConfigurableProductStep implements TestStepInterface
 
         //update
         $productForm = $this->catalogProductEdit->getProductForm();
-        $productForm->openTab('variations');
+        $productForm->openSection('variations');
         /** @var Config $variationsSection */
-        $variationsSection = $productForm->getTab('variations');
+        $variationsSection = $productForm->getSection('variations');
         $variationsSection->deleteVariations();
         $this->catalogProductEdit->getProductForm()->fill($product);
     }

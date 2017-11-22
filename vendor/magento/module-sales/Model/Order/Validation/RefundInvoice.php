@@ -19,8 +19,6 @@ use Magento\Sales\Model\ValidatorResultMerger;
 
 /**
  * Class RefundInvoice
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RefundInvoice implements RefundInvoiceInterface
 {
@@ -101,13 +99,11 @@ class RefundInvoice implements RefundInvoiceInterface
 
         $itemsValidation = [];
         foreach ($items as $item) {
-            $itemValidation = $this->itemCreationValidator->validate(
+            $itemsValidation[] = $this->itemCreationValidator->validate(
                 $item,
                 [CreationQuantityValidator::class],
                 $order
             )->getMessages();
-
-            $itemsValidation = array_merge($itemsValidation, $itemValidation);
         }
 
         $invoiceValidationResult = $this->invoiceValidator->validate(
@@ -121,7 +117,7 @@ class RefundInvoice implements RefundInvoiceInterface
             $orderValidationResult,
             $creditmemoValidationResult,
             $invoiceValidationResult->getMessages(),
-            $itemsValidation
+            ...array_values($itemsValidation)
         );
     }
 }

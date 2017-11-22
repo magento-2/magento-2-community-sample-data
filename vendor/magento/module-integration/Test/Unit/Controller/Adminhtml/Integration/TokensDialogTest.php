@@ -8,6 +8,9 @@
 
 namespace Magento\Integration\Test\Unit\Controller\Adminhtml\Integration;
 
+/**
+ * Class TokensDialogTest.
+ */
 class TokensDialogTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     public function testTokensDialog()

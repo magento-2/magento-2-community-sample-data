@@ -652,7 +652,23 @@ class Website extends \Magento\Framework\Model\AbstractExtensibleModel implement
      */
     public function getIdentities()
     {
-        return [self::CACHE_TAG . '_' . $this->getId()];
+        return [self::CACHE_TAG];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScopeType()
+    {
+        return \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScopeTypeName()
+    {
+        return 'Website';
     }
 
     /**

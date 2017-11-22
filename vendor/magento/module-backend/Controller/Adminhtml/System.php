@@ -15,7 +15,9 @@ use Magento\Backend\App\AbstractAction;
 abstract class System extends AbstractAction
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Backend::system';
 }

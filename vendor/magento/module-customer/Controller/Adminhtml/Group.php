@@ -14,7 +14,9 @@ use Magento\Customer\Api\GroupRepositoryInterface;
 abstract class Group extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see \Magento\Backend\App\Action\_isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Customer::group';
 

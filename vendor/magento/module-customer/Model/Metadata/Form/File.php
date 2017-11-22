@@ -146,9 +146,7 @@ class File extends AbstractData
             }
         }
 
-        if (!empty($extend['delete'])
-            && filter_var($extend['delete'], FILTER_VALIDATE_BOOLEAN)
-        ) {
+        if (!empty($extend['delete'])) {
             $value['delete'] = true;
         }
 
@@ -382,6 +380,8 @@ class File extends AbstractData
      * Get FileProcessor instance
      *
      * @return FileProcessor
+     *
+     * @deprecated
      */
     protected function getFileProcessor()
     {
@@ -404,7 +404,7 @@ class File extends AbstractData
     {
         if ($this->fileProcessorFactory === null) {
             $this->fileProcessorFactory = ObjectManager::getInstance()
-                ->get(FileProcessorFactory::class);
+                ->get('Magento\Customer\Model\FileProcessorFactory');
         }
         return $this->fileProcessorFactory;
     }

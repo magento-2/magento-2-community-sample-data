@@ -17,11 +17,22 @@
             </field>
         </dataset>
 
-        <dataset name="default_category">
-            <field name="id" xsi:type="string">%id%</field>
-            <field name="parent_id" xsi:type="string">%id%</field>
-            <field name="name" xsi:type="string">Default Category</field>
+        <dataset name="default_with_custom_url">
+            <field name="name" xsi:type="string">Category%isolation%</field>
+            <field name="url_key" xsi:type="string">custom%isolation%</field>
             <field name="is_active" xsi:type="string">Yes</field>
+            <field name="include_in_menu" xsi:type="string">Yes</field>
+            <field name="parent_id" xsi:type="array">
+                <item name="dataset" xsi:type="string">default_category</item>
+            </field>
+            <field name="use_default_url_key" xsi:type="string">Yes</field>
+        </dataset>
+
+        <dataset name="default_category">
+            <field name="name" xsi:type="string">Default Category</field>
+            <field name="parent_id" xsi:type="string">1</field>
+            <field name="is_active" xsi:type="string">Yes</field>
+            <field name="id" xsi:type="string">2</field>
         </dataset>
 
         <dataset name="default_subcategory">
@@ -46,8 +57,8 @@
         </dataset>
 
         <dataset name="root_category">
-            <field name="parent_id" xsi:type="string">%id%</field>
             <field name="name" xsi:type="string">RootCategory%isolation%</field>
+            <field name="parent_id" xsi:type="string">1</field>
             <field name="is_active" xsi:type="string">Yes</field>
             <field name="include_in_menu" xsi:type="string">Yes</field>
         </dataset>
@@ -62,7 +73,7 @@
             <field name="include_in_menu" xsi:type="string">Yes</field>
         </dataset>
 
-        <dataset name="two_nested_category">
+        <dataset name="two_nested_categories">
             <field name="name" xsi:type="string">Category%isolation%</field>
             <field name="url_key" xsi:type="string">category-%isolation%</field>
             <field name="parent_id" xsi:type="array">

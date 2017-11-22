@@ -15,8 +15,8 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab;
 
 use Magento\Backend\Block\Widget\Form\Generic;
 use Magento\Config\Model\Config\Source\Yesno;
-use Magento\Eav\Helper\Data;
 use Magento\Eav\Block\Adminhtml\Attribute\PropertyLocker;
+use Magento\Eav\Helper\Data;
 use Magento\Framework\App\ObjectManager;
 
 class Advanced extends Generic
@@ -39,9 +39,7 @@ class Advanced extends Generic
     protected $disableScopeChangeList;
 
     /**
-     * Disable form fields.
-     *
-     * @var \Magento\Eav\Block\Adminhtml\Attribute\PropertyLocker PropertyLocker
+     * @var PropertyLocker
      */
     private $propertyLocker;
 
@@ -163,7 +161,7 @@ class Advanced extends Generic
                 'name' => 'is_unique',
                 'label' => __('Unique Value'),
                 'title' => __('Unique Value (not shared with other products)'),
-                'note' => __('Not shared with other products'),
+                'note' => __('Not shared with other products.'),
                 'values' => $yesno
             ]
         );
@@ -239,7 +237,7 @@ class Advanced extends Generic
                 'name' => 'is_global',
                 'label' => __('Scope'),
                 'title' => __('Scope'),
-                'note' => __('Declare attribute value saving scope'),
+                'note' => __('Declare attribute value saving scope.'),
                 'values' => $scopes
             ],
             'attribute_code'
@@ -251,7 +249,6 @@ class Advanced extends Generic
         }
         $this->setForm($form);
         $this->getPropertyLocker()->lock($form);
-
         return $this;
     }
 
@@ -277,7 +274,7 @@ class Advanced extends Generic
     }
 
     /**
-     * Get property locker.
+     * Get property locker
      *
      * @return PropertyLocker
      */
@@ -286,7 +283,6 @@ class Advanced extends Generic
         if (null === $this->propertyLocker) {
             $this->propertyLocker = ObjectManager::getInstance()->get(PropertyLocker::class);
         }
-        
         return $this->propertyLocker;
     }
 }

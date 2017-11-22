@@ -10,7 +10,9 @@ use Magento\Framework\Controller\ResultFactory;
 class ImportExport extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_TaxImportExport::import_export';
 

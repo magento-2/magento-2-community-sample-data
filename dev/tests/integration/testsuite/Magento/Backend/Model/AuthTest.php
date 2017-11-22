@@ -5,6 +5,7 @@
  */
 namespace Magento\Backend\Model;
 
+use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Exception\AuthenticationException;
 
 /**
@@ -12,6 +13,7 @@ use Magento\Framework\Exception\AuthenticationException;
  *
  * @magentoAppArea adminhtml
  * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  */
 class AuthTest extends \PHPUnit_Framework_TestCase
 {
@@ -112,25 +114,6 @@ class AuthTest extends \PHPUnit_Framework_TestCase
             \Magento\TestFramework\Bootstrap::ADMIN_NAME,
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
-        $this->assertTrue($this->_model->isLoggedIn());
-
-        $this->_model->getAuthStorage()->setUpdatedAt(time() - 101);
-        $this->assertFalse($this->_model->isLoggedIn());
-    }
-
-    /**
-     * Disabled form security in order to prevent exit from the app
-     * @magentoConfigFixture current_store admin/security/session_lifetime 59
-     */
-    public function testIsLoggedInWithIgnoredLifetime()
-    {
-        $this->_model->login(
-            \Magento\TestFramework\Bootstrap::ADMIN_NAME,
-            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
-        );
-        $this->assertTrue($this->_model->isLoggedIn());
-
-        $this->_model->getAuthStorage()->setUpdatedAt(time() - 101);
         $this->assertTrue($this->_model->isLoggedIn());
     }
 

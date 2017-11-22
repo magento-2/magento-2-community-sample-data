@@ -53,7 +53,7 @@ class ResetPasswordPost extends \Magento\User\Controller\Adminhtml\Auth
                 $user->save();
                 $this->messageManager->addSuccess(__('You updated your password.'));
                 $this->getResponse()->setRedirect(
-                    $this->_objectManager->get(\Magento\Backend\Helper\Data::class)->getHomePageUrl()
+                    $this->_objectManager->get('Magento\Backend\Helper\Data')->getHomePageUrl()
                 );
             }
         } catch (\Magento\Framework\Validator\Exception $exception) {

@@ -4,18 +4,27 @@
  * See COPYING.txt for license details.
  */
 
+$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
 /** @var \Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
+$registry = $objectManager->get(\Magento\Framework\Registry::class);
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
-/** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
-$product->load(1);
-if ($product->getId()) {
+$repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+try {
+    $product = $repository->get('simple', false, null, true);
     $product->delete();
+} catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+    //Entity already deleted
 }
+
+// Remove product stock registry data.
+/* @var \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage */
+$stockRegistryStorage = $objectManager->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
+$stockRegistryStorage->removeStockItem(1);
+$stockRegistryStorage->removeStockStatus(1);
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', false);

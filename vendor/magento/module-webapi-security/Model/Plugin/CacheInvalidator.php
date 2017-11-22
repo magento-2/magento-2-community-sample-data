@@ -34,10 +34,10 @@ class CacheInvalidator
         \Magento\Framework\App\Config\Value $subject,
         \Magento\Framework\App\Config\Value $result
     ) {
-        if ($subject->getPath() == \Magento\WebapiSecurity\Model\Plugin\AnonymousResourceSecurity::XML_ALLOW_INSECURE
-            && $subject->isValueChanged()
+        if ($result->getPath() == \Magento\WebapiSecurity\Model\Plugin\AnonymousResourceSecurity::XML_ALLOW_INSECURE
+            && $result->isValueChanged()
         ) {
-            $this->cacheTypeList->invalidate(\Magento\Framework\App\Cache\Type\Webapi::TYPE_IDENTIFIER);
+            $this->cacheTypeList->invalidate(\Magento\Webapi\Model\Cache\Type\Webapi::TYPE_IDENTIFIER);
         }
 
         return $result;

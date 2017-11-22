@@ -27,6 +27,11 @@ class ImageTest extends AbstractFormTestCase
     protected $fileSystemMock;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Request\Http
+     */
+    protected $requestMock;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\File\UploaderFactory
      */
     protected $uploaderFactoryMock;
@@ -56,6 +61,10 @@ class ImageTest extends AbstractFormTestCase
             ->getMock();
 
         $this->fileSystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -93,15 +102,17 @@ class ImageTest extends AbstractFormTestCase
             $this->uploaderFactoryMock
         );
 
-        $reflection = new \ReflectionClass(get_class($model));
-        $reflectionProperty = $reflection->getProperty('fileProcessor');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($model, $this->fileProcessorMock);
-
-        $reflection = new \ReflectionClass(get_class($model));
-        $reflectionProperty = $reflection->getProperty('imageContentFactory');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($model, $this->imageContentFactory);
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $objectManager->setBackwardCompatibleProperty(
+            $model,
+            'fileProcessor',
+            $this->fileProcessorMock
+        );
+        $objectManager->setBackwardCompatibleProperty(
+            $model,
+            'imageContentFactory',
+            $this->imageContentFactory
+        );
 
         return $model;
     }
@@ -156,43 +167,6 @@ class ImageTest extends AbstractFormTestCase
         $this->assertTrue($model->validateValue($value));
     }
 
-    public function validateValueToUploadDataProvider()
-    {
-        $imagePath = __DIR__ . '/_files/logo.gif';
-        return [
-            [
-                ['"realFileName" is not a valid file.'],
-                ['tmp_name' => 'tmp_file', 'name' => 'realFileName'],
-                ['valid' => false],
-            ],
-            [true, ['tmp_name' => $imagePath, 'name' => 'logo.gif']]
-        ];
-    }
-
-    public function testCompactValueUiComponentCustomerNotExists()
-    {
-        $originValue = 'filename.ext1';
-
-        $value = [
-            'file' => 'filename.ext2',
-            'name' => 'filename.ext2',
-            'type' => 'image',
-        ];
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('isExist')
-            ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
-            ->willReturn(false);
-
-        $model = $this->initialize([
-            'value' => $originValue,
-            'isAjax' => false,
-            'entityTypeCode' => CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
-        ]);
-
-        $this->assertEquals($originValue, $model->compactValue($value));
-    }
-
     public function testValidateMaxFileSize()
     {
         $value = [
@@ -203,9 +177,8 @@ class ImageTest extends AbstractFormTestCase
 
         $maxFileSize = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        $validationRuleMock = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
+            ->getMockForAbstractClass();
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_file_size');
@@ -243,9 +216,8 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageWidth = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        $validationRuleMock = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
+            ->getMockForAbstractClass();
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_width');
@@ -283,9 +255,8 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageHeight = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        $validationRuleMock = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
+            ->getMockForAbstractClass();
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_heght');
@@ -378,9 +349,8 @@ class ImageTest extends AbstractFormTestCase
             ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
             ->willReturnSelf();
 
-        $imageContentMock = $this->getMockBuilder(
-            \Magento\Framework\Api\Data\ImageContentInterface::class
-        )->getMockForAbstractClass();
+        $imageContentMock = $this->getMockBuilder('Magento\Framework\Api\Data\ImageContentInterface')
+            ->getMockForAbstractClass();
         $imageContentMock->expects($this->once())
             ->method('setName')
             ->with($value['name'])
@@ -405,5 +375,29 @@ class ImageTest extends AbstractFormTestCase
         ]);
 
         $this->assertEquals($imageContentMock, $model->compactValue($value));
+    }
+
+    public function testCompactValueUiComponentCustomerNotExists()
+    {
+        $originValue = 'filename.ext1';
+
+        $value = [
+            'file' => 'filename.ext2',
+            'name' => 'filename.ext2',
+            'type' => 'image',
+        ];
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('isExist')
+            ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
+            ->willReturn(false);
+
+        $model = $this->initialize([
+            'value' => $originValue,
+            'isAjax' => false,
+            'entityTypeCode' => CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
+        ]);
+
+        $this->assertEquals($originValue, $model->compactValue($value));
     }
 }

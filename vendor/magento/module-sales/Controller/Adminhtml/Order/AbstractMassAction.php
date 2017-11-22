@@ -59,13 +59,11 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
     {
         try {
             $collection = $this->filter->getCollection($this->collectionFactory->create());
-
             return $this->massAction($collection);
         } catch (\Exception $e) {
             $this->messageManager->addError($e->getMessage());
             /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
             $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
             return $resultRedirect->setPath($this->redirectUrl);
         }
     }

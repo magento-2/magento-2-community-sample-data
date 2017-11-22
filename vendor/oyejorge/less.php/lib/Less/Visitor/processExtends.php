@@ -45,7 +45,7 @@ class Less_Visitor_processExtends extends Less_Visitor{
 		// a target extend is the one on the ruleset we are looking at copy/edit/pasting in place
 		// e.g. .a:extend(.b) {} and .b:extend(.c) {} then the first extend extends the second one
 		// and the second is the target.
-		// the seperation into two lists allows us to process a subset of chains with a bigger set, as is the
+		// the separation into two lists allows us to process a subset of chains with a bigger set, as is the
 		// case when processing media queries
 		for( $extendIndex = 0, $extendsList_len = count($extendsList); $extendIndex < $extendsList_len; $extendIndex++ ){
 			for( $targetExtendIndex = 0; $targetExtendIndex < count($extendsListTarget); $targetExtendIndex++ ){
@@ -112,7 +112,7 @@ class Less_Visitor_processExtends extends Less_Visitor{
 					$selectorTwo = "{unable to calculate}";
 				}
 
-				throw new Less_Exception_Parser("extend circular reference detected. One of the circular extends is currently:"+$selectorOne+":extend(" + $selectorTwo+")");
+				throw new Less_Exception_Parser("extend circular reference detected. One of the circular extends is currently:" . $selectorOne . ":extend(" . $selectorTwo . ")");
 			}
 
 			// now process the new extends on the existing rules so that we can handle a extending b extending c ectending d extending e...

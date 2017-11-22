@@ -12,7 +12,9 @@ namespace Magento\Theme\Controller\Adminhtml\System\Design;
 abstract class Theme extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Theme::theme';
 

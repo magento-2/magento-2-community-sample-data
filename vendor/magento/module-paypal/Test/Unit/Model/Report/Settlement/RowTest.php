@@ -15,7 +15,7 @@ class RowTest extends \PHPUnit_Framework_TestCase
      */
     protected $row;
 
-    public function setUp()
+    protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->row = $objectManagerHelper->getObject('Magento\Paypal\Model\Report\Settlement\Row');
@@ -107,8 +107,8 @@ class RowTest extends \PHPUnit_Framework_TestCase
     public function getCastedAmountDataProvider()
     {
         return [
-            ['fee_amount', ['fee_amount' => 100, 'fee_debit_or_credit' => 'CR'], -1],
-            ['fee_amount', ['fee_amount' => 100, 'fee_debit_or_credit' => 'DB'], 1]
+            ['fee_amount', ['fee_amount' => 1, 'fee_debit_or_credit' => 'CR'], -1],
+            ['fee_amount', ['fee_amount' => 1, 'fee_debit_or_credit' => 'DB'], 1]
         ];
     }
 }

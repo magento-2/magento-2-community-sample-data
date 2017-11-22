@@ -15,6 +15,7 @@ use Magento\Framework\View\Element\BlockInterface;
 
 /**
  * Test class for \Magento\CatalogWidget\Block\Product\Widget\Conditions
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,6 +49,9 @@ class ConditionsTest extends \PHPUnit_Framework_TestCase
      */
     private $blockMock;
 
+    /**
+     * return void
+     */
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -69,6 +73,9 @@ class ConditionsTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->layoutMock);
     }
 
+    /**
+     * @return void
+     */
     public function testConstructWithEmptyData()
     {
         $this->registryMock->expects($this->once())
@@ -94,6 +101,9 @@ class ConditionsTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testConstructWithWidgetInstance()
     {
         $widgetParams = ['conditions' => 'some conditions'];
@@ -129,6 +139,9 @@ class ConditionsTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testConstructWithParamsFromBlock()
     {
         $widgetParams = ['conditions' => 'some conditions'];

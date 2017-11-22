@@ -14,6 +14,8 @@ use Magento\Framework\Search\RequestInterface;
 
 /**
  * MySQL Search Adapter
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Adapter implements AdapterInterface
 {
@@ -68,7 +70,13 @@ class Adapter implements AdapterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Process Search Request.
+     *
+     * @param RequestInterface $request
+     *
+     * @return \Magento\Framework\Search\Response\QueryResponse
+     *
+     * @throws \LogicException
      */
     public function query(RequestInterface $request)
     {
@@ -78,7 +86,7 @@ class Adapter implements AdapterInterface
 
         $documents = $this->getDocuments($table);
 
-        $aggregations = $this->aggregationBuilder->build($request, $table);
+        $aggregations = $this->aggregationBuilder->build($request, $table, $documents);
         $response = [
             'documents' => $documents,
             'aggregations' => $aggregations,

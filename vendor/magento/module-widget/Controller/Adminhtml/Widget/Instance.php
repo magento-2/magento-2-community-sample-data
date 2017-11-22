@@ -12,7 +12,9 @@ namespace Magento\Widget\Controller\Adminhtml\Widget;
 abstract class Instance extends \Magento\Backend\App\Action
 {
     /**
-     * {@inheritdoc}
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 

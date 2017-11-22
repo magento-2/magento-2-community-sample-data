@@ -10,7 +10,7 @@ use Magento\Catalog\Test\Block\AbstractConfigureBlock;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
-use Magento\Checkout\Test\Block\Cart\Sidebar;
+use Magento\Mtf\Fixture\InjectableFixture;
 
 /**
  * Product view block on the product page.
@@ -64,6 +64,13 @@ class View extends AbstractConfigureBlock
     protected $paypalCheckout = '[data-action=checkout-form-submit]';
 
     /**
+     * 'Check out with PayPal' button.
+     *
+     * @var string
+     */
+    protected $inContextPaypalCheckout = '#paypal-express-in-context-mini-cart';
+
+    /**
      * Product name element.
      *
      * @var string
@@ -82,14 +89,14 @@ class View extends AbstractConfigureBlock
      *
      * @var string
      */
-    protected $productDescription = '.product.attibute.description';
+    protected $productDescription = '.product.attribute.description';
 
     /**
      * Product short-description element.
      *
      * @var string
      */
-    protected $productShortDescription = '.product.attibute.overview';
+    protected $productShortDescription = '.product.attribute.overview';
 
     /**
      * Stock Availability control.
@@ -138,14 +145,7 @@ class View extends AbstractConfigureBlock
      *
      * @var string
      */
-    protected $miniCartBlockSelector = '[data-block="minicart"]';
-
-    /**
-     * Minicart block element.
-     *
-     * @var Sidebar
-     */
-    private $miniCartBlock;
+    protected $miniCartBlock = '[data-block="minicart"]';
 
     /**
      * Success message selector.
@@ -169,11 +169,44 @@ class View extends AbstractConfigureBlock
     protected $ajaxLoading = 'body.ajax-loading';
 
     /**
+     * Full image selector
+     *
+     * @var string
+     */
+    protected $fullImage = '[data-gallery-role="gallery"] img.fotorama__img--full';
+
+    /**
+     * Full image close selector
+     *
+     * @var string
+     */
+    protected $fullImageClose = '[data-gallery-role="fotorama__fullscreen-icon"]';
+
+    /**
+     * Base image selector
+     *
+     * @var string
+     */
+    protected $baseImage = '[data-gallery-role="gallery"] img.fotorama__img.fotorama__img';
+
+    /**
+     * @var string
+     */
+    protected $galleryLoader = '.fotorama__spinner--show';
+
+    /**
      * Video Container selector
      *
      * @var string
      */
     private $videoContainer = 'div.fotorama-video-container';
+
+    /**
+     * Success message block after add to cart click.
+     *
+     * @var string
+     */
+    private $addToCartSuccess = '.message-success';
 
     /**
      * Get block price.
@@ -196,44 +229,21 @@ class View extends AbstractConfigureBlock
      */
     public function addToCart(FixtureInterface $product)
     {
-        $this->configure($product);
-        $this->clickAddToCart();
-        $this->getMiniCartBlock()->waitLoader();
-    }
-
-    /**
-     * Configure Product.
-     *
-     * @param FixtureInterface $product
-     * @return void
-     */
-    public function configure(FixtureInterface $product)
-    {
+        /** @var \Magento\Checkout\Test\Block\Cart\Sidebar $miniCart */
+        $miniCart = $this->blockFactory->create(
+            '\Magento\Checkout\Test\Block\Cart\Sidebar',
+            ['element' => $this->browser->find($this->miniCartBlock)]
+        );
         /** @var CatalogProductSimple $product */
         $checkoutData = $product->getCheckoutData();
 
-        $this->getMiniCartBlock()->waitInit();
+        $miniCart->waitInit();
         $this->fillOptions($product);
         if (isset($checkoutData['qty'])) {
             $this->setQty($checkoutData['qty']);
         }
-    }
-
-    /**
-     * Get MiniCart block.
-     *
-     * @return Sidebar
-     */
-    private function getMiniCartBlock()
-    {
-        if ($this->miniCartBlock === null) {
-            $this->miniCartBlock = $this->blockFactory->create(
-                Sidebar::class,
-                ['element' => $this->browser->find($this->miniCartBlockSelector)]
-            );
-        }
-
-        return $this->miniCartBlock;
+        $this->clickAddToCart();
+        $miniCart->waitLoader();
     }
 
     /**
@@ -244,6 +254,7 @@ class View extends AbstractConfigureBlock
     public function clickAddToCart()
     {
         $this->_rootElement->find($this->addToCart, Locator::SELECTOR_CSS)->click();
+        $this->waitForElementVisible($this->addToCartSuccess);
     }
 
     /**
@@ -289,6 +300,36 @@ class View extends AbstractConfigureBlock
     {
         $this->_rootElement->find($this->paypalCheckout, Locator::SELECTOR_CSS)->click();
         $this->waitForElementNotVisible($this->paypalCheckout);
+    }
+
+    /**
+     * Press 'Check out with PayPal' button.
+     *
+     * @return void
+     */
+    public function inContextPaypalCheckout()
+    {
+        $this->_rootElement->find($this->inContextPaypalCheckout, Locator::SELECTOR_CSS)->click();
+        $this->waitForElementNotVisible($this->inContextPaypalCheckout);
+    }
+
+    /**
+     * Press 'Check out with Braintree PayPal' button.
+     * 
+     * @return string
+     */
+    public function braintreePaypalCheckout()
+    {
+        $currentWindow = $this->browser->getCurrentWindow();
+        /** @var \Magento\Checkout\Test\Block\Cart\Sidebar $miniCart */
+        $miniCart = $this->blockFactory->create(
+            '\Magento\Checkout\Test\Block\Cart\Sidebar',
+            ['element' => $this->browser->find($this->miniCartBlock)]
+        );
+
+        $miniCart->openMiniCart();
+        $miniCart->clickBraintreePaypalButton();
+        return $currentWindow;
     }
 
     /**
@@ -471,17 +512,82 @@ class View extends AbstractConfigureBlock
      */
     public function isGalleryVisible()
     {
-        return $this->getGalleryElement()->isVisible();
+        $this->waitForElementNotVisible($this->galleryLoader);
+        return $this->_rootElement->find($this->mediaGallery)->isVisible();
     }
 
     /**
-     * Get gallery element on product page.
+     * Check is full image into gallery is visible for the product.
      *
-     * @return \Magento\Mtf\Client\ElementInterface
+     * @return bool
      */
-    public function getGalleryElement()
+    public function isFullImageVisible()
     {
-        return $this->_rootElement->find($this->mediaGallery);
+        $this->waitForElementNotVisible($this->galleryLoader);
+        return $this->browser->find($this->fullImage)->isVisible();
+    }
+
+    /**
+     * Get full image source from media gallery into product
+     *
+     * @return string
+     */
+    public function getFullImageSource()
+    {
+        return $this->browser->find($this->fullImage)->getAttribute('src');
+    }
+
+    /**
+     * Check is base image into gallery is visible for the product.
+     *
+     * @return bool
+     */
+    public function isBaseImageVisible()
+    {
+        return $this->_rootElement->find($this->baseImage)->isVisible();
+    }
+
+    /**
+     * Get full image source from media gallery into product
+     *
+     * @return string
+     */
+    public function getBaseImageSource()
+    {
+        return $this->_rootElement->find($this->baseImage)->getAttribute('src');
+    }
+
+    /**
+     * Click link.
+     *
+     * @return void
+     */
+    public function clickBaseImage()
+    {
+        $this->_rootElement->find($this->baseImage, Locator::SELECTOR_CSS)->click();
+        $this->waitForElementVisible($this->fullImage);
+    }
+
+    /**
+     * Click link.
+     *
+     * @return void
+     */
+    public function closeFullImage()
+    {
+        $this->_rootElement->waitUntil(
+            function () {
+                $this->browser->find($this->fullImage)->hover();
+
+                if ($this->browser->find($this->fullImageClose)->isVisible()) {
+                    $this->browser->find($this->fullImageClose)->click();
+
+                    return true;
+                }
+
+                return null;
+            }
+        );
     }
 
     /**
