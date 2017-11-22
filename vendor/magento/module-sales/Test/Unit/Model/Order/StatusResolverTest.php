@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
@@ -12,7 +12,7 @@ use Magento\Sales\Model\Order\Config;
 use Magento\Sales\Model\Order\StatusResolver;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class StatusResolverTest extends \PHPUnit_Framework_TestCase
+class StatusResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param OrderInterface|MockObject $order

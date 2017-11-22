@@ -1,20 +1,24 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Catalog super product configurable part block
+ *
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Block\Product\View\Type;
 
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeData;
 use Magento\Customer\Helper\Session\CurrentCustomer;
+use Magento\Customer\Model\Session;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
- * Catalog super product configurable part block.
- *
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 100.0.2
  */
 class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
 {
@@ -28,6 +32,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
     /**
      * Current customer
      *
+     * @deprecated 100.2.0, as unused property
      * @var CurrentCustomer
      */
     protected $currentCustomer;
@@ -65,6 +70,11 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
     private $localeFormat;
 
     /**
+     * @var Session
+     */
+    private $customerSession;
+
+    /**
      * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\Stdlib\ArrayUtils $arrayUtils
      * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder
@@ -75,6 +85,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
      * @param ConfigurableAttributeData $configurableAttributeData
      * @param array $data
      * @param Format|null $localeFormat
+     * @param Session|null $customerSession
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -87,7 +98,8 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
         PriceCurrencyInterface $priceCurrency,
         ConfigurableAttributeData $configurableAttributeData,
         array $data = [],
-        Format $localeFormat = null
+        Format $localeFormat = null,
+        Session $customerSession = null
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->helper = $helper;
@@ -96,6 +108,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
         $this->currentCustomer = $currentCustomer;
         $this->configurableAttributeData = $configurableAttributeData;
         $this->localeFormat = $localeFormat ?: ObjectManager::getInstance()->get(Format::class);
+        $this->customerSession = $customerSession ?: ObjectManager::getInstance()->get(Session::class);
 
         parent::__construct(
             $context,
@@ -108,11 +121,13 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
      * Get cache key informative items.
      *
      * @return array
+     * @since 100.2.0
      */
     public function getCacheKeyInfo()
     {
         $parentData = parent::getCacheKeyInfo();
         $parentData[] = $this->priceCurrency->getCurrencySymbol();
+        $parentData[] = $this->customerSession->getCustomerGroupId();
         return $parentData;
     }
 
@@ -153,11 +168,14 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
     public function getAllowProducts()
     {
         if (!$this->hasAllowProducts()) {
+            $products = [];
             $skipSaleableCheck = $this->catalogProduct->getSkipSaleableCheck();
-
-            $products = $skipSaleableCheck ?
-                $this->getProduct()->getTypeInstance()->getUsedProducts($this->getProduct(), null) :
-                $this->getProduct()->getTypeInstance()->getSalableUsedProducts($this->getProduct(), null);
+            $allProducts = $this->getProduct()->getTypeInstance()->getUsedProducts($this->getProduct(), null);
+            foreach ($allProducts as $product) {
+                if ($product->isSaleable() || $skipSaleableCheck) {
+                    $products[] = $product;
+                }
+            }
             $this->setAllowProducts($products);
         }
         return $this->getData('allow_products');
@@ -235,12 +253,12 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
      * Get product images for configurable variations
      *
      * @return array
+     * @since 100.2.0
      */
-    private function getOptionImages()
+    protected function getOptionImages()
     {
         $images = [];
         foreach ($this->getAllowProducts() as $product) {
-
             $productImages = $this->helper->getGalleryImages($product) ?: [];
             foreach ($productImages as $image) {
                 $images[$product->getId()][] =
@@ -269,7 +287,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
         foreach ($this->getAllowProducts() as $product) {
             $tierPrices = [];
             $priceInfo = $product->getPriceInfo();
-            $tierPriceModel = $priceInfo->getPrice('tier_price');
+            $tierPriceModel =  $priceInfo->getPrice('tier_price');
             $tierPricesList = $tierPriceModel->getTierPriceList();
             foreach ($tierPricesList as $tierPrice) {
                 $tierPrices[] = [
@@ -307,7 +325,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
     /**
      * Replace ',' on '.' for js
      *
-     * @deprecated Will be removed in major release
+     * @deprecated 100.2.0 Will be removed in major release
      * @param float $price
      * @return string
      */
@@ -320,6 +338,7 @@ class Configurable extends \Magento\Catalog\Block\Product\View\AbstractView
      * Should we generate "As low as" block or not
      *
      * @return bool
+     * @since 100.2.0
      */
     public function showMinimalPrice()
     {

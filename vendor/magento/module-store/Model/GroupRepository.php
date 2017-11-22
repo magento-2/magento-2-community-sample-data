@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Model;
@@ -104,7 +104,7 @@ class GroupRepository implements \Magento\Store\Api\GroupRepositoryInterface
     /**
      * Retrieve application config.
      *
-     * @deprecated
+     * @deprecated 100.1.3
      * @return Config
      */
     private function getAppConfig()

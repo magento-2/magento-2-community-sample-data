@@ -1,15 +1,17 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Widget\Model\Widget;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Widget Instance Model
  *
+ * @api
  * @method string getTitle()
  * @method \Magento\Widget\Model\Widget\Instance setTitle(string $value)
  * @method \Magento\Widget\Model\Widget\Instance setStoreIds(string $value)
@@ -18,7 +20,9 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @method \Magento\Widget\Model\Widget\Instance setSortOrder(int $value)
  * @method \Magento\Widget\Model\Widget\Instance setThemeId(int $value)
  * @method int getThemeId()
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Instance extends \Magento\Framework\Model\AbstractModel
 {
@@ -108,6 +112,11 @@ class Instance extends \Magento\Framework\Model\AbstractModel
     protected $conditionsHelper;
 
     /**
+     * @var Json
+     */
+    private $serializer;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Escaper $escaper
@@ -124,6 +133,7 @@ class Instance extends \Magento\Framework\Model\AbstractModel
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $relatedCacheTypes
      * @param array $data
+     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -142,7 +152,8 @@ class Instance extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $relatedCacheTypes = [],
-        array $data = []
+        array $data = [],
+        Json $serializer = null
     ) {
         $this->_escaper = $escaper;
         $this->_viewFileSystem = $viewFileSystem;
@@ -155,6 +166,7 @@ class Instance extends \Magento\Framework\Model\AbstractModel
         $this->conditionsHelper = $conditionsHelper;
         $this->_directory = $filesystem->getDirectoryRead(DirectoryList::ROOT);
         $this->_namespaceResolver = $namespaceResolver;
+        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Json::class);
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
 
@@ -241,7 +253,6 @@ class Instance extends \Magento\Framework\Model\AbstractModel
         if (is_array($this->getData('store_ids'))) {
             $this->setData('store_ids', implode(',', $this->getData('store_ids')));
         }
-
         $parameters = $this->getData('widget_parameters');
         if (is_array($parameters)) {
             if (array_key_exists('show_pager', $parameters) && !array_key_exists('page_var_name', $parameters)) {
@@ -250,13 +261,8 @@ class Instance extends \Magento\Framework\Model\AbstractModel
                     \Magento\Framework\Math\Random::CHARS_LOWERS
                 );
             }
-        } else {
-            $this->setData('widget_parameters', []);
-            $errorMessage = sprintf(
-                'Expecting widget parameters to be an array, but received %s',
-                (is_object($parameters) ? get_class($parameters) : gettype($parameters))
-            );
-            $this->_logger->error($errorMessage);
+
+            $this->setData('widget_parameters', $this->serializer->serialize($parameters));
         }
         $this->setData('page_groups', $tmpPageGroups);
         $this->setData('page_group_ids', $pageGroupIds);
@@ -377,6 +383,11 @@ class Instance extends \Magento\Framework\Model\AbstractModel
      */
     public function getWidgetParameters()
     {
+        if (is_string($this->getData('widget_parameters'))) {
+            return $this->serializer->unserialize($this->getData('widget_parameters'));
+        } elseif (null === $this->getData('widget_parameters')) {
+            return [];
+        }
         return is_array($this->getData('widget_parameters')) ? $this->getData('widget_parameters') : [];
     }
 
@@ -582,6 +593,7 @@ class Instance extends \Magento\Framework\Model\AbstractModel
                 $value = implode(',', $value);
             }
             if ($name && strlen((string)$value)) {
+                $value = html_entity_decode($value);
                 $xml .= '<action method="setData">' .
                     '<argument name="name" xsi:type="string">' .
                     $name .

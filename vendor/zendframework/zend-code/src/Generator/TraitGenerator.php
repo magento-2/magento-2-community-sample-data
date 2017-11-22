@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -38,7 +38,7 @@ class TraitGenerator extends ClassGenerator
             $cg->setNamespaceName($classReflection->getNamespaceName());
         }
 
-        $properties = array();
+        $properties = [];
         foreach ($classReflection->getProperties() as $reflectionProperty) {
             if ($reflectionProperty->getDeclaringClass()->getName() == $classReflection->getName()) {
                 $properties[] = PropertyGenerator::fromReflection($reflectionProperty);
@@ -46,7 +46,7 @@ class TraitGenerator extends ClassGenerator
         }
         $cg->addProperties($properties);
 
-        $methods = array();
+        $methods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
             $className = ($cg->getNamespaceName())
                 ? $cg->getNamespaceName() . '\\' . $cg->getName()
@@ -85,7 +85,7 @@ class TraitGenerator extends ClassGenerator
         $cg = new static($array['name']);
         foreach ($array as $name => $value) {
             // normalize key
-            switch (strtolower(str_replace(array('.', '-', '_'), '', $name))) {
+            switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'containingfile':
                     $cg->setContainingFileGenerator($value);
                     break;

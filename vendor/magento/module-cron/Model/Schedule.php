@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,6 @@ use Magento\Framework\Exception\CronException;
 /**
  * Crontab schedule model
  *
- * @method \Magento\Cron\Model\ResourceModel\Schedule _getResource()
- * @method \Magento\Cron\Model\ResourceModel\Schedule getResource()
  * @method string getJobCode()
  * @method \Magento\Cron\Model\Schedule setJobCode(string $value)
  * @method string getStatus()
@@ -30,7 +28,8 @@ use Magento\Framework\Exception\CronException;
  * @method array getCronExprArr()
  * @method \Magento\Cron\Model\Schedule setCronExprArr(array $value)
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Schedule extends \Magento\Framework\Model\AbstractModel
 {
@@ -66,7 +65,7 @@ class Schedule extends \Magento\Framework\Model\AbstractModel
      */
     public function _construct()
     {
-        $this->_init('Magento\Cron\Model\ResourceModel\Schedule');
+        $this->_init(\Magento\Cron\Model\ResourceModel\Schedule::class);
     }
 
     /**
@@ -221,16 +220,17 @@ class Schedule extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * Sets a job to STATUS_RUNNING only if it is currently in STATUS_PENDING.
-     * Returns true if status was changed and false otherwise.
+     * Lock the cron job so no other scheduled instances run simultaneously.
      *
-     * This is used to implement locking for cron jobs.
+     * Sets a job to STATUS_RUNNING only if it is currently in STATUS_PENDING
+     * and no other jobs of the same code are currently in STATUS_RUNNING.
+     * Returns true if status was changed and false otherwise.
      *
      * @return boolean
      */
     public function tryLockJob()
     {
-        if ($this->_getResource()->trySetJobStatusAtomic(
+        if ($this->_getResource()->trySetJobUniqueStatusAtomic(
             $this->getId(),
             self::STATUS_RUNNING,
             self::STATUS_PENDING

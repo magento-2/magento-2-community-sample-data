@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -173,25 +173,6 @@ class Quote extends AbstractDb
     }
 
     /**
-     * Check is order increment id use in sales/order table
-     *
-     * @param int $orderIncrementId
-     * @return bool
-     */
-    public function isOrderIncrementIdUsed($orderIncrementId)
-    {
-        /** @var \Magento\Framework\DB\Adapter\AdapterInterface $adapter */
-        $adapter = $this->getConnection();
-        $bind = [':increment_id' => $orderIncrementId];
-        /** @var \Magento\Framework\DB\Select $select */
-        $select = $adapter->select()
-            ->from($this->getTable('sales_order'), 'entity_id')
-            ->where('increment_id = :increment_id');
-        $entity_id = $adapter->fetchOne($select, $bind);
-        return ($entity_id > 0);
-    }
-
-    /**
      * Mark quotes - that depend on catalog price rules - to be recollected on demand
      *
      * @return $this
@@ -238,6 +219,9 @@ class Quote extends AbstractDb
         }
         $connection = $this->getConnection();
         $subSelect = $connection->select();
+        $conditionCheck = $connection->quoteIdentifier('q.items_count') . " > 0";
+        $conditionTrue = $connection->quoteIdentifier('q.items_count') . ' - 1';
+        $ifSql = "IF (" . $conditionCheck . "," . $conditionTrue . ", 0)";
 
         $subSelect->from(
             false,
@@ -245,7 +229,7 @@ class Quote extends AbstractDb
                 'items_qty' => new \Zend_Db_Expr(
                     $connection->quoteIdentifier('q.items_qty') . ' - ' . $connection->quoteIdentifier('qi.qty')
                 ),
-                'items_count' => new \Zend_Db_Expr($connection->quoteIdentifier('q.items_count') . ' - 1')
+                'items_count' => new \Zend_Db_Expr($ifSql)
             ]
         )->join(
             ['qi' => $this->getTable('quote_item')],

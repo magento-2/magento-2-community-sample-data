@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Widget;
@@ -11,7 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Test \Magento\Customer\Block\Widget\Name
  * @magentoAppArea frontend
  */
-class NameTest extends \PHPUnit_Framework_TestCase
+class NameTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Name */
     protected $_block;
@@ -48,8 +48,8 @@ class NameTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('title="Last&#x20;Name"', $html);
         $this->assertContains('value="Doe"', $html);
         $this->assertNotContains('title="Middle&#x20;Name&#x2F;Initial"', $html);
-        $this->assertNotContains('title="Prefix"', $html);
-        $this->assertNotContains('title="Suffix"', $html);
+        $this->assertNotContains('title="Name&#x20;Prefix"', $html);
+        $this->assertNotContains('title="Name&#x20;Suffix"', $html);
     }
 
     /**
@@ -84,9 +84,9 @@ class NameTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('value="Doe"', $html);
         $this->assertContains('title="Middle&#x20;Name&#x2F;Initial"', $html);
         $this->assertContains('value="Roe"', $html);
-        $this->assertContains('title="Prefix"', $html);
+        $this->assertContains('title="Name&#x20;Prefix"', $html);
         $this->assertContains('value="Dr."', $html);
-        $this->assertContains('title="Suffix"', $html);
+        $this->assertContains('title="Name&#x20;Suffix"', $html);
         $this->assertContains('value="Ph.D."', $html);
     }
 }

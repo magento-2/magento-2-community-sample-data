@@ -45,7 +45,7 @@ class Parser
      *
      * @var array
      */
-    protected $symbolTable = array();
+    protected $symbolTable = [];
 
     /**
      * Create a new plural parser.
@@ -211,8 +211,8 @@ class Parser
      */
     protected function getSymbol($id)
     {
-        if (!isset($this->symbolTable[$id])) {
-            // Unkown symbol exception
+        if (! isset($this->symbolTable[$id])) {
+            // Unknown symbol exception
         }
 
         return clone $this->symbolTable[$id];

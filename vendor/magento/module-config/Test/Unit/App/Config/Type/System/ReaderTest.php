@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\App\Config\Type\System;
@@ -11,7 +11,7 @@ use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 use Magento\Framework\App\Config\Spi\PostProcessorInterface;
 use Magento\Config\App\Config\Type\System\Reader;
 
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class ReaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ConfigSourceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,7 +34,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     private $postProcessor;
 
     /*
-     * @var Reader
+     * Reader
      */
     private $model;
 
@@ -61,7 +61,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 'source' => $this->source,
                 'fallback' => $this->fallback,
                 'preProcessor' => $this->preProcessor,
-                'postProcessor' => $this->postProcessor,
+                'postProcessor' => $this->postProcessor
             ]
         );
     }
@@ -71,7 +71,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $data = [
             'default' => [],
             'websites' => [],
-            'stores' => [],
+            'stores' => []
         ];
         $this->source->expects($this->once())
             ->method('get')
@@ -81,10 +81,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willReturn($data);
         $this->fallback->expects($this->once())
-            ->method('process')
-            ->with($data)
-            ->willReturn($data);
-        $this->postProcessor->expects($this->once())
             ->method('process')
             ->with($data)
             ->willReturn($data);

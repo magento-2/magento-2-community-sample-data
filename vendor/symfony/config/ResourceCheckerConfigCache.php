@@ -29,15 +29,15 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
     private $file;
 
     /**
-     * @var ResourceCheckerInterface[]
+     * @var iterable|ResourceCheckerInterface[]
      */
     private $resourceCheckers;
 
     /**
-     * @param string                     $file             The absolute cache path
-     * @param ResourceCheckerInterface[] $resourceCheckers The ResourceCheckers to use for the freshness check
+     * @param string                              $file             The absolute cache path
+     * @param iterable|ResourceCheckerInterface[] $resourceCheckers The ResourceCheckers to use for the freshness check
      */
-    public function __construct($file, array $resourceCheckers = array())
+    public function __construct($file, $resourceCheckers = array())
     {
         $this->file = $file;
         $this->resourceCheckers = $resourceCheckers;
@@ -149,6 +149,10 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
             } catch (IOException $e) {
                 // discard chmod failure (some filesystem may not support it)
             }
+        }
+
+        if (\function_exists('opcache_invalidate') && ini_get('opcache.enable')) {
+            @opcache_invalidate($this->file, true);
         }
     }
 

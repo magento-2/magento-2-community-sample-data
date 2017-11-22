@@ -64,7 +64,7 @@ class Perforce
     public function initialize($repoConfig)
     {
         $this->uniquePerforceClientName = $this->generateUniquePerforceClientName();
-        if (null == $repoConfig) {
+        if (!$repoConfig) {
             return;
         }
         if (isset($repoConfig['unique_perforce_client_name'])) {
@@ -285,7 +285,7 @@ class Perforce
     public function isLoggedIn()
     {
         $command = $this->generateP4Command('login -s', false);
-        $exitCode  = $this->executeCommand($command);
+        $exitCode = $this->executeCommand($command);
         if ($exitCode) {
             $errorOutput = $this->process->getErrorOutput();
             $index = strpos($errorOutput, $this->getUser());
@@ -304,7 +304,9 @@ class Perforce
 
     public function connectClient()
     {
-        $p4CreateClientCommand = $this->generateP4Command('client -i < ' . str_replace(" ", "\\ ", $this->getP4ClientSpec()));
+        $p4CreateClientCommand = $this->generateP4Command(
+            'client -i < ' . str_replace(" ", "\\ ", $this->getP4ClientSpec())
+        );
         $this->executeCommand($p4CreateClientCommand);
     }
 
@@ -313,7 +315,7 @@ class Perforce
         $prevDir = getcwd();
         chdir($this->path);
         $p4SyncCommand = $this->generateP4Command('sync -f ');
-        if (null != $sourceReference) {
+        if (null !== $sourceReference) {
             $p4SyncCommand = $p4SyncCommand . '@' . $sourceReference;
         }
         $this->executeCommand($p4SyncCommand);
@@ -362,7 +364,7 @@ class Perforce
             return;
         }
         $line = fgets($pipe);
-        while ($line != false) {
+        while ($line !== false) {
             $line = fgets($pipe);
         }
 
@@ -397,55 +399,55 @@ class Perforce
 
     public function getComposerInformation($identifier)
     {
+        $composerFileContent = $this->getFileContent('composer.json', $identifier);
+
+        if (!$composerFileContent) {
+            return;
+        }
+
+        return json_decode($composerFileContent, true);
+    }
+
+    public function getFileContent($file, $identifier)
+    {
+        $path = $this->getFilePath($file, $identifier);
+
+        $command = $this->generateP4Command(' print ' . $path);
+        $this->executeCommand($command);
+        $result = $this->commandResult;
+
+        if (!trim($result)) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    public function getFilePath($file, $identifier)
+    {
         $index = strpos($identifier, '@');
         if ($index === false) {
-            $composerJson = $identifier. '/composer.json';
+            $path = $identifier. '/' . $file;
 
-            return $this->getComposerInformationFromPath($composerJson);
-        }
+            return $path;
+        } else {
+            $path = substr($identifier, 0, $index) . '/' . $file . substr($identifier, $index);
+            $command = $this->generateP4Command(' files ' . $path, false);
+            $this->executeCommand($command);
+            $result = $this->commandResult;
+            $index2 = strpos($result, 'no such file(s).');
+            if ($index2 === false) {
+                $index3 = strpos($result, 'change');
+                if ($index3 !== false) {
+                    $phrase = trim(substr($result, $index3));
+                    $fields = explode(' ', $phrase);
 
-        return $this->getComposerInformationFromLabel($identifier, $index);
-    }
-
-    public function getComposerInformationFromPath($composerJson)
-    {
-        $command = $this->generateP4Command(' print ' . $composerJson);
-        $this->executeCommand($command);
-        $result = $this->commandResult;
-        $index = strpos($result, '{');
-        if ($index === false) {
-            return '';
-        }
-        if ($index >= 0) {
-            $rawData = substr($result, $index);
-            $composer_info = json_decode($rawData, true);
-
-            return $composer_info;
-        }
-
-        return '';
-    }
-
-    public function getComposerInformationFromLabel($identifier, $index)
-    {
-        $composerJsonPath = substr($identifier, 0, $index) . '/composer.json' . substr($identifier, $index);
-        $command = $this->generateP4Command(' files ' . $composerJsonPath, false);
-        $this->executeCommand($command);
-        $result = $this->commandResult;
-        $index2 = strpos($result, 'no such file(s).');
-        if ($index2 === false) {
-            $index3 = strpos($result, 'change');
-            if (!($index3 === false)) {
-                $phrase = trim(substr($result, $index3));
-                $fields = explode(' ', $phrase);
-                $id = $fields[1];
-                $composerJson = substr($identifier, 0, $index) . '/composer.json@' . $id;
-
-                return $this->getComposerInformationFromPath($composerJson);
+                    return substr($identifier, 0, $index) . '/' . $file . '@' . $fields[1];
+                }
             }
         }
 
-        return "";
+        return null;
     }
 
     public function getBranches()
@@ -549,11 +551,11 @@ class Perforce
     public function getCommitLogs($fromReference, $toReference)
     {
         $fromChangeList = $this->getChangeList($fromReference);
-        if ($fromChangeList == null) {
+        if ($fromChangeList === null) {
             return null;
         }
         $toChangeList = $this->getChangeList($toReference);
-        if ($toChangeList == null) {
+        if ($toChangeList === null) {
             return null;
         }
         $index = strpos($fromReference, '@');

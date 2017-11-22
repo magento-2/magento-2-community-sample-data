@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Plugin\Model;
@@ -38,8 +38,7 @@ class AdminUser
         \Magento\Framework\DataObject $object
     ) {
         $isActive = $object->getIsActive();
-        $isNew = $object->isObjectNew();
-        if (isset($isActive) && $isActive == 0 && !$isNew) {
+        if (isset($isActive) && $isActive == 0) {
             $this->adminTokenService->revokeAdminAccessToken($object->getId());
         }
         return $subject;

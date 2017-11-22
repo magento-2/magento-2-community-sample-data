@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,7 +27,7 @@ define([
         getItems: totals.getItems(),
 
         /**
-         * Returns cart items qty.
+         * Returns cart items qty
          *
          * @returns {Number}
          */
@@ -36,7 +36,7 @@ define([
         },
 
         /**
-         * Returns count of cart line items.
+         * Returns count of cart line items
          *
          * @returns {Number}
          */
@@ -58,7 +58,7 @@ define([
         },
 
         /**
-         * Set items to observable field.
+         * Set items to observable field
          *
          * @param {Object} items
          */
@@ -70,7 +70,7 @@ define([
         },
 
         /**
-         * Returns bool value for items block state (expanded or not).
+         * Returns bool value for items block state (expanded or not)
          *
          * @returns {*|Boolean}
          */

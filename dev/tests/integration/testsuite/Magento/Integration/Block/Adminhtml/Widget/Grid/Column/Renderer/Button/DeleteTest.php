@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  *
  */
@@ -12,7 +12,7 @@ use Magento\Integration\Model\Integration;
  * @magentoAppArea adminhtml
  * @magentoDataFixture Magento/Integration/_files/integration_all_permissions.php
  */
-class DeleteTest extends \PHPUnit_Framework_TestCase
+class DeleteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Integration\Block\Adminhtml\Widget\Grid\Column\Renderer\Button\Delete
@@ -39,8 +39,8 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         $buttonHtml = $this->deleteButtonBlock->render($integration);
         $this->assertContains('title="Remove"', $buttonHtml);
         $this->assertContains(
-            'onclick="this.setAttribute(&#039;data-url&#039;, '
-            . '&#039;http://localhost/index.php/backend/admin/integration/delete/id/'
+            'onclick="this.setAttribute(\'data-url\', '
+            . '\'http://localhost/index.php/backend/admin/integration/delete/id/'
             . $integration->getId(),
             $buttonHtml
         );
@@ -54,8 +54,8 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         $buttonHtml = $this->deleteButtonBlock->render($integration);
         $this->assertContains('title="Uninstall the extension to remove this integration"', $buttonHtml);
         $this->assertContains(
-            'onclick="this.setAttribute(&#039;data-url&#039;, '
-            . '&#039;http://localhost/index.php/backend/admin/integration/delete/id/'
+            'onclick="this.setAttribute(\'data-url\', '
+            . '\'http://localhost/index.php/backend/admin/integration/delete/id/'
             . $integration->getId(),
             $buttonHtml
         );
@@ -70,7 +70,6 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         /** @var $integration Integration */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $integration = $objectManager->create(\Magento\Integration\Model\Integration::class);
-        
         return $integration->load('Fixture Integration', 'name');
     }
 }

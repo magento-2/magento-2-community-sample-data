@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Test\Unit\Model\Source;
@@ -10,7 +10,7 @@ use Magento\Store\Model\Store;
 /**
  * Unit test for Magento\Email\Model\Source\Variables
  */
-class VariablesTest extends \PHPUnit_Framework_TestCase
+class VariablesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Variables model
@@ -29,7 +29,7 @@ class VariablesTest extends \PHPUnit_Framework_TestCase
     protected function setup()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $helper->getObject('Magento\Email\Model\Source\Variables');
+        $this->model = $helper->getObject(\Magento\Email\Model\Source\Variables::class);
         $this->configVariables = [
             [
                 'value' => Store::XML_PATH_UNSECURE_BASE_URL,

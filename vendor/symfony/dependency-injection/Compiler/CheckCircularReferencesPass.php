@@ -51,7 +51,7 @@ class CheckCircularReferencesPass implements CompilerPassInterface
      *
      * @param ServiceReferenceGraphEdge[] $edges An array of Edges
      *
-     * @throws ServiceCircularReferenceException When a circular reference is found.
+     * @throws ServiceCircularReferenceException when a circular reference is found
      */
     private function checkOutEdges(array $edges)
     {
@@ -60,8 +60,8 @@ class CheckCircularReferencesPass implements CompilerPassInterface
             $id = $node->getId();
 
             if (empty($this->checkedNodes[$id])) {
-                // don't check circular dependencies for lazy services
-                if (!$node->getValue() || !$node->getValue()->isLazy()) {
+                // Don't check circular references for lazy edges
+                if (!$node->getValue() || !$edge->isLazy()) {
                     $searchKey = array_search($id, $this->currentPath);
                     $this->currentPath[] = $id;
 

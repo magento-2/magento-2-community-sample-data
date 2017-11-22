@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Model\Placeholder;
@@ -14,7 +14,7 @@ use \PHPUnit_Framework_MockObject_MockObject as Mock;
 /**
  * Class EnvironmentTest
  */
-class EnvironmentTest extends \PHPUnit_Framework_TestCase
+class EnvironmentTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Environment
@@ -47,8 +47,8 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     public function testGenerate($path, $scope, $scopeId, $expected)
     {
         $this->assertSame(
-            $this->model->generate($path, $scope, $scopeId),
-            $expected
+            $expected,
+            $this->model->generate($path, $scope, $scopeId)
         );
     }
 
@@ -84,8 +84,8 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     public function testIsApplicable($placeholder, $expected)
     {
         $this->assertSame(
-            $this->model->isApplicable($placeholder),
-            $expected
+            $expected,
+            $this->model->isApplicable($placeholder)
         );
     }
 
@@ -98,6 +98,34 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
             [Environment::PREFIX . 'TEST', true],
             ['TEST', false],
             [Environment::PREFIX . 'TEST_test', true],
+            [Environment::PREFIX . '-:A', false],
+            [Environment::PREFIX . '_A', false],
+            [Environment::PREFIX . 'A@#$', false]
+        ];
+    }
+
+    /**
+     * @param string $template
+     * @param string $expected
+     * @dataProvider restoreDataProvider
+     */
+    public function testRestore($template, $expected)
+    {
+        $this->assertSame(
+            $expected,
+            $this->model->restore($template)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function restoreDataProvider()
+    {
+        return [
+            [Environment::PREFIX . 'TEST__CONFIG', 'test/config'],
+            [Environment::PREFIX . 'TEST__CONFIG__VALUE', 'test/config/value'],
+            [Environment::PREFIX . 'TEST__CONFIG_VALUE', 'test/config_value'],
         ];
     }
 }

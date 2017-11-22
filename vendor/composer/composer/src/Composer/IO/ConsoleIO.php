@@ -27,12 +27,20 @@ use Symfony\Component\Console\Question\Question;
  */
 class ConsoleIO extends BaseIO
 {
+    /** @var InputInterface */
     protected $input;
+    /** @var OutputInterface */
     protected $output;
+    /** @var HelperSet */
     protected $helperSet;
+    /** @var string */
     protected $lastMessage;
+    /** @var string */
     protected $lastMessageErr;
+
+    /** @var float */
     private $startTime;
+    /** @var array<int, int> */
     private $verbosityMap;
 
     /**
@@ -56,6 +64,9 @@ class ConsoleIO extends BaseIO
         );
     }
 
+    /**
+     * @param float $startTime
+     */
     public function enableDebugging($startTime)
     {
         $this->startTime = $startTime;
@@ -147,13 +158,13 @@ class ConsoleIO extends BaseIO
 
         if (true === $stderr && $this->output instanceof ConsoleOutputInterface) {
             $this->output->getErrorOutput()->write($messages, $newline, $sfVerbosity);
-            $this->lastMessageErr = join($newline ? "\n" : '', (array) $messages);
+            $this->lastMessageErr = implode($newline ? "\n" : '', (array) $messages);
 
             return;
         }
 
         $this->output->write($messages, $newline, $sfVerbosity);
-        $this->lastMessage = join($newline ? "\n" : '', (array) $messages);
+        $this->lastMessage = implode($newline ? "\n" : '', (array) $messages);
     }
 
     /**
@@ -182,7 +193,7 @@ class ConsoleIO extends BaseIO
     private function doOverwrite($messages, $newline, $size, $stderr, $verbosity)
     {
         // messages can be an array, let's convert it to string anyway
-        $messages = join($newline ? "\n" : '', (array) $messages);
+        $messages = implode($newline ? "\n" : '', (array) $messages);
 
         // since overwrite is supposed to overwrite last message...
         if (!isset($size)) {
@@ -195,6 +206,9 @@ class ConsoleIO extends BaseIO
         // write the new message
         $this->doWrite($messages, false, $stderr, $verbosity);
 
+        // In cmd.exe on Win8.1 (possibly 10?), the line can not be cleared, so we need to
+        // track the length of previous output and fill it with spaces to make sure the line is cleared.
+        // See https://github.com/composer/composer/pull/5836 for more details
         $fill = $size - strlen(strip_tags($messages));
         if ($fill > 0) {
             // whitespace whatever has left
@@ -274,6 +288,9 @@ class ConsoleIO extends BaseIO
         return $default;
     }
 
+    /**
+     * @return OutputInterface
+     */
     private function getErrorOutput()
     {
         if ($this->output instanceof ConsoleOutputInterface) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\CustomerData;
@@ -9,13 +9,13 @@ use Magento\Customer\CustomerData\SectionSourceInterface;
 
 /**
  * Returns information for "Recently Ordered" widget.
- * It contains limited list of salable products from the last placed order.
+ * It contains list of 5 salable products from the last placed order.
  * Qty of products to display is limited by LastOrderedItems::SIDEBAR_ORDER_LIMIT constant.
  */
 class LastOrderedItems implements SectionSourceInterface
 {
     /**
-     * Limit of orders in side bar.
+     * Limit of orders in side bar
      */
     const SIDEBAR_ORDER_LIMIT = 5;
 
@@ -50,8 +50,6 @@ class LastOrderedItems implements SectionSourceInterface
     protected $stockRegistry;
 
     /**
-     * Store manager interface.
-     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $_storeManager;
@@ -78,7 +76,7 @@ class LastOrderedItems implements SectionSourceInterface
     }
 
     /**
-     * Init last placed customer order to display on front.
+     * Init last placed customer order for display on front
      *
      * @return void
      */

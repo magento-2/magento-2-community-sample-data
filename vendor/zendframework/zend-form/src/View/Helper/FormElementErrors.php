@@ -26,7 +26,7 @@ class FormElementErrors extends AbstractHelper
     /**
      * @var array Default attributes for the open format tag
      */
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
      * Invoke helper as functor
@@ -37,9 +37,9 @@ class FormElementErrors extends AbstractHelper
      * @param  array            $attributes
      * @return string|FormElementErrors
      */
-    public function __invoke(ElementInterface $element = null, array $attributes = array())
+    public function __invoke(ElementInterface $element = null, array $attributes = [])
     {
-        if (!$element) {
+        if (! $element) {
             return $this;
         }
 
@@ -54,13 +54,13 @@ class FormElementErrors extends AbstractHelper
      * @throws Exception\DomainException
      * @return string
      */
-    public function render(ElementInterface $element, array $attributes = array())
+    public function render(ElementInterface $element, array $attributes = [])
     {
         $messages = $element->getMessages();
         if (empty($messages)) {
             return '';
         }
-        if (!is_array($messages) && !$messages instanceof Traversable) {
+        if (! is_array($messages) && ! $messages instanceof Traversable) {
             throw new Exception\DomainException(sprintf(
                 '%s expects that $element->getMessages() will return an array or Traversable; received "%s"',
                 __METHOD__,
@@ -71,13 +71,13 @@ class FormElementErrors extends AbstractHelper
         // Prepare attributes for opening tag
         $attributes = array_merge($this->attributes, $attributes);
         $attributes = $this->createAttributesString($attributes);
-        if (!empty($attributes)) {
+        if (! empty($attributes)) {
             $attributes = ' ' . $attributes;
         }
 
         // Flatten message array
         $escapeHtml      = $this->getEscapeHtmlHelper();
-        $messagesToPrint = array();
+        $messagesToPrint = [];
         array_walk_recursive($messages, function ($item) use (&$messagesToPrint, $escapeHtml) {
             $messagesToPrint[] = $escapeHtml($item);
         });

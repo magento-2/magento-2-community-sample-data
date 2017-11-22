@@ -128,6 +128,27 @@ class InstallationManager
     }
 
     /**
+     * Install binary for the given package.
+     * If the installer associated to this package doesn't handle that function, it'll do nothing.
+     *
+     * @param PackageInterface $package Package instance
+     */
+    public function ensureBinariesPresence(PackageInterface $package)
+    {
+        try {
+            $installer = $this->getInstaller($package->getType());
+        } catch (\InvalidArgumentException $e) {
+            // no installer found for the current package type (@see `getInstaller()`)
+            return;
+        }
+
+        // if the given installer support installing binaries
+        if ($installer instanceof BinaryPresenceInterface) {
+            $installer->ensureBinariesPresence($package);
+        }
+    }
+
+    /**
      * Executes solver operation.
      *
      * @param RepositoryInterface $repo      repository in which to check
@@ -165,7 +186,7 @@ class InstallationManager
         $target = $operation->getTargetPackage();
 
         $initialType = $initial->getType();
-        $targetType  = $target->getType();
+        $targetType = $target->getType();
 
         if ($initialType === $targetType) {
             $installer = $this->getInstaller($initialType);
@@ -252,8 +273,8 @@ class InstallationManager
                     );
                     $opts = array('http' =>
                         array(
-                            'method'  => 'POST',
-                            'header'  => array('Content-type: application/x-www-form-urlencoded'),
+                            'method' => 'POST',
+                            'header' => array('Content-type: application/x-www-form-urlencoded'),
                             'content' => http_build_query($params, '', '&'),
                             'timeout' => 3,
                         ),
@@ -279,8 +300,8 @@ class InstallationManager
 
             $opts = array('http' =>
                 array(
-                    'method'  => 'POST',
-                    'header'  => array('Content-Type: application/json'),
+                    'method' => 'POST',
+                    'header' => array('Content-Type: application/json'),
                     'content' => json_encode($postData),
                     'timeout' => 6,
                 ),

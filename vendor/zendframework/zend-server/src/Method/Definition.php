@@ -24,7 +24,7 @@ class Definition
     /**
      * @var array
      */
-    protected $invokeArguments = array();
+    protected $invokeArguments = [];
 
     /**
      * @var string
@@ -44,7 +44,7 @@ class Definition
     /**
      * @var array Array of \Zend\Server\Method\Prototype objects
      */
-    protected $prototypes = array();
+    protected $prototypes = [];
 
     /**
      * Constructor
@@ -165,7 +165,7 @@ class Definition
      */
     public function setPrototypes(array $prototypes)
     {
-        $this->prototypes = array();
+        $this->prototypes = [];
         $this->addPrototypes($prototypes);
         return $this;
     }
@@ -212,7 +212,10 @@ class Definition
     public function setObject($object)
     {
         if (!is_object($object) && (null !== $object)) {
-            throw new Server\Exception\InvalidArgumentException('Invalid object passed to ' . __CLASS__ . '::' . __METHOD__);
+            throw new Server\Exception\InvalidArgumentException(sprintf(
+                'Invalid object passed to %s',
+                __METHOD__
+            ));
         }
         $this->object = $object;
         return $this;
@@ -258,18 +261,18 @@ class Definition
     public function toArray()
     {
         $prototypes = $this->getPrototypes();
-        $signatures = array();
+        $signatures = [];
         foreach ($prototypes as $prototype) {
             $signatures[] = $prototype->toArray();
         }
 
-        return array(
+        return [
             'name'            => $this->getName(),
             'callback'        => $this->getCallback()->toArray(),
             'prototypes'      => $signatures,
             'methodHelp'      => $this->getMethodHelp(),
             'invokeArguments' => $this->getInvokeArguments(),
             'object'          => $this->getObject(),
-        );
+        ];
     }
 }

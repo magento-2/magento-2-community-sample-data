@@ -31,8 +31,8 @@ use Braintree\Error\ErrorCollection;
  * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read array $params original passed params
- * @property-read Braintree\Error\ErrorCollection $errors
- * @property-read Braintree\Result\CreditCardVerification $creditCardVerification credit card verification data
+ * @property-read \Braintree\Error\ErrorCollection $errors
+ * @property-read \Braintree\Result\CreditCardVerification $creditCardVerification credit card verification data
  */
 class Error extends Base
 {
@@ -97,6 +97,12 @@ class Error extends Base
            $this->_set('merchantAccount', MerchantAccount::factory($response['merchantAccount']));
        } else {
            $this->_set('merchantAccount', null);
+       }
+
+       if(isset($response['verification'])) {
+           $this->_set('verification', new CreditCardVerification($response['verification']));
+       } else {
+           $this->_set('verification', null);
        }
    }
 

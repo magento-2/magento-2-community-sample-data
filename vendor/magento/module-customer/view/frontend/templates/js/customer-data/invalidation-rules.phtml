@@ -1,18 +1,16 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 // @codingStandardsIgnoreFile
-?>
-<?php
 /* @var $block \Magento\Customer\Block\CustomerScopeData */
 ?>
 <script type="text/x-magento-init">
 <?php
     /* @noEscape */
-    echo \Zend_Json::encode([
+    echo \Magento\Framework\Serialize\JsonConverter::convert([
         '*' => ['Magento_Customer/js/invalidation-processor' => [
             'invalidationRules' => [
                 'website-rule' => [

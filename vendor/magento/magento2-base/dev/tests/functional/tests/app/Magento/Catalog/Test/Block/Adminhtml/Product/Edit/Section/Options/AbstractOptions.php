@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -23,10 +23,6 @@ abstract class AbstractOptions extends Section
      */
     public function fillOptions(array $fields, SimpleElement $element = null)
     {
-        if (isset($fields['action_type'])) {
-            unset($fields['action_type']);
-        }
-
         $element = $element === null ? $this->_rootElement : $element;
         $mapping = $this->dataMapping($fields);
         $this->_fill($mapping, $element);
@@ -47,5 +43,26 @@ abstract class AbstractOptions extends Section
         $mapping = $this->dataMapping($fields);
 
         return $this->_getData($mapping, $element);
+    }
+
+    /**
+     * Getting text for options.
+     *
+     * @param array $fields
+     * @param SimpleElement $element
+     * @return array
+     */
+    public function getTextForOptionValues(array $fields = null, SimpleElement $element = null)
+    {
+        $element = $element === null ? $this->_rootElement : $element;
+        $mapping = $this->dataMapping($fields);
+        $data = [];
+
+        foreach ($mapping as $key => $field) {
+            $element = $this->getElement($element, $field);
+            $data[$key] = $element->getText();
+        }
+
+        return $data;
     }
 }

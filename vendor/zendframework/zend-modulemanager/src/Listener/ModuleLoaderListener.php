@@ -32,7 +32,7 @@ class ModuleLoaderListener extends AbstractListener implements ListenerAggregate
     /**
      * @var array
      */
-    protected $callbacks = array();
+    protected $callbacks = [];
 
     /**
      * Constructor.
@@ -58,18 +58,18 @@ class ModuleLoaderListener extends AbstractListener implements ListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->callbacks[] = $events->attach(
             ModuleEvent::EVENT_LOAD_MODULES,
-            array($this->moduleLoader, 'register'),
+            [$this->moduleLoader, 'register'],
             9000
         );
 
         if ($this->generateCache) {
             $this->callbacks[] = $events->attach(
                 ModuleEvent::EVENT_LOAD_MODULES_POST,
-                array($this, 'onLoadModulesPost')
+                [$this, 'onLoadModulesPost']
             );
         }
     }
@@ -91,8 +91,7 @@ class ModuleLoaderListener extends AbstractListener implements ListenerAggregate
      */
     protected function hasCachedClassMap()
     {
-        if (
-            $this->options->getModuleMapCacheEnabled()
+        if ($this->options->getModuleMapCacheEnabled()
             && file_exists($this->options->getModuleMapCacheFile())
         ) {
             return true;

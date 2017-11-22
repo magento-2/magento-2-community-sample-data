@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Quote\Item;
@@ -73,6 +73,13 @@ class CartItemPersister
                 } else {
                     if ($item->getQty() !== $currentItem->getQty()) {
                         $currentItem->setQty($qty);
+                        /**
+                         * Qty validation errors are stored as items message
+                         * @see \Magento\CatalogInventory\Model\Quote\Item\QuantityValidator::validate
+                         */
+                        if (!empty($currentItem->getMessage())) {
+                            throw new LocalizedException(__($currentItem->getMessage()));
+                        }
                     }
                 }
             } else {

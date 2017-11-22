@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,6 +14,7 @@ use Magento\Framework\Exception\CouldNotSaveException;
  */
 class GuestPaymentInformationManagement implements \Magento\Checkout\Api\GuestPaymentInformationManagementInterface
 {
+
     /**
      * @var \Magento\Quote\Api\GuestBillingAddressManagementInterface
      */
@@ -45,19 +46,17 @@ class GuestPaymentInformationManagement implements \Magento\Checkout\Api\GuestPa
     protected $cartRepository;
 
     /**
-     * Logger instance.
-     *
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
-     * @param \Magento\Quote\Api\GuestBillingAddressManagementInterface   $billingAddressManagement
-     * @param \Magento\Quote\Api\GuestPaymentMethodManagementInterface    $paymentMethodManagement
-     * @param \Magento\Quote\Api\GuestCartManagementInterface             $cartManagement
+     * @param \Magento\Quote\Api\GuestBillingAddressManagementInterface $billingAddressManagement
+     * @param \Magento\Quote\Api\GuestPaymentMethodManagementInterface $paymentMethodManagement
+     * @param \Magento\Quote\Api\GuestCartManagementInterface $cartManagement
      * @param \Magento\Checkout\Api\PaymentInformationManagementInterface $paymentInformationManagement
-     * @param \Magento\Quote\Model\QuoteIdMaskFactory                     $quoteIdMaskFactory
-     * @param CartRepositoryInterface                                     $cartRepository
+     * @param \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory
+     * @param CartRepositoryInterface $cartRepository
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -100,7 +99,6 @@ class GuestPaymentInformationManagement implements \Magento\Checkout\Api\GuestPa
                 $e
             );
         }
-
         return $orderId;
     }
 
@@ -122,7 +120,6 @@ class GuestPaymentInformationManagement implements \Magento\Checkout\Api\GuestPa
         }
 
         $this->paymentMethodManagement->set($cartId, $paymentMethod);
-
         return true;
     }
 
@@ -132,22 +129,20 @@ class GuestPaymentInformationManagement implements \Magento\Checkout\Api\GuestPa
     public function getPaymentInformation($cartId)
     {
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
-
         return $this->paymentInformationManagement->getPaymentInformation($quoteIdMask->getQuoteId());
     }
 
     /**
-     * Get logger instance.
+     * Get logger instance
      *
      * @return \Psr\Log\LoggerInterface
-     * @deprecated
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {
         if (!$this->logger) {
             $this->logger = \Magento\Framework\App\ObjectManager::getInstance()->get(\Psr\Log\LoggerInterface::class);
         }
-
         return $this->logger;
     }
 }

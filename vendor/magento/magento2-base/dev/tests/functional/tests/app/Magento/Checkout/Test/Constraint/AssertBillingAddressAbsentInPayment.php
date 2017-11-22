@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Checkout\Test\Constraint;
 
 use Magento\Checkout\Test\Page\CheckoutOnepage;
@@ -31,7 +32,7 @@ class AssertBillingAddressAbsentInPayment extends AbstractConstraint
     }
 
     /**
-     * Returns string representation of successful assertion.
+     * Returns string representation of successful assertion
      *
      * @return string
      */

@@ -1,5 +1,9 @@
 <?php
 
+require '../vendor/autoload.php';
+
+use tubalmartin\CssMin\Minifier as CSSmin;
+
 mb_internal_encoding('UTF-8');
 
 /**
@@ -11,13 +15,14 @@ mb_internal_encoding('UTF-8');
  * @param array|string $value The array or string to be stripped.
  * @return array|string Stripped array (or string in the callback).
  */
-function stripslashes_deep($value) {
-    if ( is_array($value) ) {
+function stripslashes_deep($value)
+{
+    if (is_array($value)) {
         $value = array_map('stripslashes_deep', $value);
-    } elseif ( is_object($value) ) {
-        $vars = get_object_vars( $value );
-        foreach ($vars as $key=>$data) {
-            $value->{$key} = stripslashes_deep( $data );
+    } elseif (is_object($value)) {
+        $vars = get_object_vars($value);
+        foreach ($vars as $key => $data) {
+            $value->{$key} = stripslashes_deep($data);
         }
     } else {
         $value = stripslashes($value);
@@ -38,40 +43,47 @@ if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 }
 
 
-if (!empty($_POST)):
-
-    // Require the compressor
-    include '../cssmin.php';
-
+if (!empty($_POST)) :
     // Form options
     parse_str($_POST['options']);
 
-    $linebreak_pos = trim($linebreak_pos) != '' ? $linebreak_pos : FALSE;
-    $raise_php = isset($raise_php) ? TRUE : FALSE;
+    $linebreak_pos = trim($linebreak_pos) !== '' ? $linebreak_pos : false;
+    $raise_php = isset($raise_php) ? true : false;
 
     // Create a new CSSmin object and try to raise PHP settings
     $compressor = new CSSmin($raise_php);
 
+    if ($linebreak_pos !== false) {
+        $compressor->setLineBreakPosition($linebreak_pos);
+    }
+
+    if (isset($keep_sourcemap)) {
+        $compressor->keepSourceMapComment();
+    }
+
+    if (isset($remove_important_comments)) {
+        $compressor->removeImportantComments();
+    }
+
     if ($raise_php) {
-        $compressor->set_memory_limit($memory_limit);
-        $compressor->set_max_execution_time($max_execution_time);
-        $compressor->set_pcre_backtrack_limit(1000 * $pcre_backtrack_limit);
-        $compressor->set_pcre_recursion_limit(1000 * $pcre_recursion_limit);
+        $compressor->setMemoryLimit($memory_limit);
+        $compressor->setMaxExecutionTime($max_execution_time);
+        $compressor->setPcreBacktrackLimit(1000 * $pcre_backtrack_limit);
+        $compressor->setPcreRecursionLimit(1000 * $pcre_recursion_limit);
     }
 
     // Compress the CSS code and store data
     $output = array();
-    $output['css'] = $compressor->run($_POST['css'], $linebreak_pos);
+    $output['css'] = $compressor->run($_POST['css']);
     $output['originalSize'] = mb_strlen($_POST['css'], '8bit');
     $output['compressedSize'] = mb_strlen($output['css'], '8bit');
     $output['bytesSaved'] = $output['originalSize'] - $output['compressedSize'];
-    $output['compressionRatio'] = round(($output['bytesSaved'] * 100) / ($output['originalSize'] === 0 ? 1 : $output['originalSize']), 2);
+    $output['compressionRatio'] = round(($output['bytesSaved'] * 100) /
+        ($output['originalSize'] === 0 ? 1 : $output['originalSize']), 2);
 
     // Output data
     echo json_encode($output);
-
-else:
-
+else :
 ?>
 <!DOCTYPE HTML>
 <html lang="en-US">
@@ -87,7 +99,7 @@ else:
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-fluid">
-            <a class="brand" href="https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port">YUI CSS compressor - PHP <span class="version">v2.4.8-4</span></a>
+          <a class="brand" href="https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port">YUI CSS compressor PHP port</a>
         </div>
       </div>
     </div>
@@ -117,7 +129,7 @@ else:
                         <legend>LESS</legend>
                         <p class="control-group">
                             <label class="checkbox">
-                                <input type="checkbox" id="enable-less" value="1"> Enable compiler <span class="version">v1.7.0</span>
+                                <input type="checkbox" id="enable-less" value="1"> Enable compiler <span class="version">v1.7.5</span>
                             </label>
                         </p>
                     </fieldset>
@@ -126,6 +138,16 @@ else:
                         <div class="control-group">
                             <label>Linebreak after <i>n</i> columns</label>
                             <input type="text" name="linebreak_pos" class="span1">
+                        </div>
+                        <div class="control-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="keep_sourcemap" value="1"> Keep CSS Sourcemap comment
+                            </label>
+                        </div>
+                        <div class="control-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="remove_important_comments" value="1"> Remove important comments
+                            </label>
                         </div>
                     </fieldset>
                     <fieldset>
@@ -176,14 +198,12 @@ else:
             env: 'development'
         };
     </script>
-    <script type="text/javascript" src="third-party/less-1.7.0.min.js"></script>
-    <script type="text/javascript" src="third-party/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="third-party/less-1.7.5.min.js"></script>
+    <script type="text/javascript" src="third-party/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="third-party/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="scripts.js"></script>
 </body>
 </html>
 <?php
-
 endif;
-
 ?>

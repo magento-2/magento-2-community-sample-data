@@ -1,20 +1,15 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Model;
 
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
-/**
- * Url Rewrite Replacer based on bunches.
- */
 class UrlRewriteBunchReplacer
 {
     /**
-     * Url Persist Interface.
-     *
      * @var UrlPersistInterface
      */
     private $urlPersist;
@@ -28,7 +23,7 @@ class UrlRewriteBunchReplacer
     }
 
     /**
-     * Do Bunch Replace, with default bunch value = 10000.
+     * Do Bunch Replace, with default bunch value = 10000
      *
      * @param array $urls
      * @param int $bunchSize

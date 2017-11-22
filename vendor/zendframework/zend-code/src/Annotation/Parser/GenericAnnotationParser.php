@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -26,17 +26,17 @@ class GenericAnnotationParser implements ParserInterface
     /**
      * @var array
      */
-    protected $aliases = array();
+    protected $aliases = [];
 
     /**
      * @var array
      */
-    protected $annotationNames = array();
+    protected $annotationNames = [];
 
     /**
      * @var AnnotationInterface[]
      */
-    protected $annotations = array();
+    protected $annotations = [];
 
     /**
      * Listen to onCreateAnnotation, and attempt to return an annotation object
@@ -190,7 +190,7 @@ class GenericAnnotationParser implements ParserInterface
      */
     protected function normalizeAlias($alias)
     {
-        return strtolower(str_replace(array('-', '_', ' ', '\\', '/'), '', $alias));
+        return strtolower(str_replace(['-', '_', ' ', '\\', '/'], '', $alias));
     }
 
     /**

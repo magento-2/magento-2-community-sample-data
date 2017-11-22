@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\I18n;
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Module\I18n;
 use Magento\Framework\Component\ComponentRegistrar;
 use \Magento\Setup\Module\I18n\Context;
 
-class ContextTest extends \PHPUnit_Framework_TestCase
+class ContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Setup\Module\I18n\Context
@@ -22,13 +22,7 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->componentRegistrar = $this->getMock(
-            \Magento\Framework\Component\ComponentRegistrar::class,
-            [],
-            [],
-            '',
-            false
-        );
+        $this->componentRegistrar = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
     }
 
     /**
@@ -123,28 +117,25 @@ class ContextTest extends \PHPUnit_Framework_TestCase
             [
                 BP . '/app/code/Magento/Module/i18n/',
                 [Context::CONTEXT_TYPE_MODULE, 'Magento_Module'],
-                [[ComponentRegistrar::MODULE, 'Magento_Module', BP . '/app/code/Magento/Module']],
+                [[ComponentRegistrar::MODULE, 'Magento_Module', BP . '/app/code/Magento/Module']]
             ],
             [
                 BP . '/app/design/frontend/Magento/luma/i18n/',
                 [Context::CONTEXT_TYPE_THEME, 'frontend/Magento/luma'],
-                [[ComponentRegistrar::THEME, 'frontend/Magento/luma', BP . '/app/design/frontend/Magento/luma']],
+                [[ComponentRegistrar::THEME, 'frontend/Magento/luma', BP . '/app/design/frontend/Magento/luma']]
             ],
+
             [
                 null,
                 [Context::CONTEXT_TYPE_MODULE, 'Unregistered_Module'],
-                [[ComponentRegistrar::MODULE, 'Unregistered_Module', null]],
+                [[ComponentRegistrar::MODULE, 'Unregistered_Module', null]]
             ],
             [
                 null,
                 [Context::CONTEXT_TYPE_THEME, 'frontend/Magento/unregistered'],
-                [[ComponentRegistrar::THEME, 'frontend/Magento/unregistered', null]],
+                [[ComponentRegistrar::THEME, 'frontend/Magento/unregistered', null]]
             ],
-            [
-                BP . '/lib/web/i18n/',
-                [Context::CONTEXT_TYPE_LIB, 'lib/web/module/test.phtml'],
-                [],
-            ],
+            [BP . '/lib/web/i18n/', [Context::CONTEXT_TYPE_LIB, 'lib/web/module/test.phtml'], []],
         ];
     }
 

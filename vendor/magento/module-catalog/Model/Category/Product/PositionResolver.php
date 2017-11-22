@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Category\Product;
@@ -37,7 +37,7 @@ class PositionResolver extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * @param int $categoryId
      * @return array
      */
-    public function getPositions($categoryId)
+    public function getPositions(int $categoryId)
     {
         $connection = $this->getConnection();
 

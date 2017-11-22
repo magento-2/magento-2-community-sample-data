@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Cart;
@@ -12,7 +12,6 @@ use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Quote\Model\Cart\Totals\ItemConverter;
 use Magento\Quote\Api\CouponManagementInterface;
-use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Cart totals data object.
@@ -95,14 +94,13 @@ class CartTotalRepository implements CartTotalRepositoryInterface
             $addressTotalsData = $quote->getShippingAddress()->getData();
             $addressTotals = $quote->getShippingAddress()->getTotals();
         }
-        unset($addressTotalsData[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]);
 
         /** @var \Magento\Quote\Api\Data\TotalsInterface $quoteTotals */
         $quoteTotals = $this->totalsFactory->create();
         $this->dataObjectHelper->populateWithArray(
             $quoteTotals,
             $addressTotalsData,
-            '\Magento\Quote\Api\Data\TotalsInterface'
+            \Magento\Quote\Api\Data\TotalsInterface::class
         );
         $items = [];
         foreach ($quote->getAllVisibleItems() as $index => $item) {

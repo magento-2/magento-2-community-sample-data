@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model;
@@ -23,7 +23,6 @@ use Magento\Sales\Model\Order\PaymentAdapterInterface;
 use Magento\Sales\Model\ValidatorResultInterface;
 use Magento\Sales\Model\InvoiceOrder;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * Class InvoiceOrderTest
@@ -31,7 +30,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class InvoiceOrderTest extends \PHPUnit_Framework_TestCase
+class InvoiceOrderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
@@ -120,8 +119,6 @@ class InvoiceOrderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
-
         $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -187,20 +184,17 @@ class InvoiceOrderTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['hasMessages', 'getMessages', 'addMessage'])
             ->getMock();
 
-        $this->invoiceOrder = $objectManager->getObject(
-            InvoiceOrder::class,
-            [
-                'resourceConnection' => $this->resourceConnectionMock,
-                'orderRepository' => $this->orderRepositoryMock,
-                'invoiceDocumentFactory' => $this->invoiceDocumentFactoryMock,
-                'paymentAdapter' => $this->paymentAdapterMock,
-                'orderStateResolver' => $this->orderStateResolverMock,
-                'config' => $this->configMock,
-                'invoiceRepository' => $this->invoiceRepositoryMock,
-                'invoiceOrderValidator' => $this->invoiceOrderValidatorMock,
-                'notifierInterface' => $this->notifierInterfaceMock,
-                'logger' => $this->loggerMock
-            ]
+        $this->invoiceOrder = new InvoiceOrder(
+            $this->resourceConnectionMock,
+            $this->orderRepositoryMock,
+            $this->invoiceDocumentFactoryMock,
+            $this->paymentAdapterMock,
+            $this->orderStateResolverMock,
+            $this->configMock,
+            $this->invoiceRepositoryMock,
+            $this->invoiceOrderValidatorMock,
+            $this->notifierInterfaceMock,
+            $this->loggerMock
         );
     }
 

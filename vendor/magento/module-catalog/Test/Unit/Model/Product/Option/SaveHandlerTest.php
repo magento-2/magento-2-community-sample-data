@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,13 +8,10 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Option;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Option;
-use Magento\Catalog\Model\Product\Option\Repository;
-use Magento\Catalog\Model\Product\Option\SaveHandler;
+use \Magento\Catalog\Model\Product\Option\Repository;
+use \Magento\Catalog\Model\Product\Option\SaveHandler;
 
-/**
- * Tests Magento\Catalog\Model\Product\Option\SaveHandler.
- */
-class SaveHandlerTest extends \PHPUnit_Framework_TestCase
+class SaveHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SaveHandler|\PHPUnit_Framework_MockObject_MockObject

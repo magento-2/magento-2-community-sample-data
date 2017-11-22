@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -22,7 +22,7 @@ class Config
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Constructor
@@ -78,7 +78,7 @@ class Config
                 case 'runtime':
                     if (isset($definitionData['enabled']) && !$definitionData['enabled']) {
                         // Remove runtime from definition list if not enabled
-                        $definitions = array();
+                        $definitions = [];
                         foreach ($di->definitions() as $definition) {
                             if (!$definition instanceof RuntimeDefinition) {
                                 $definitions[] = $definition;

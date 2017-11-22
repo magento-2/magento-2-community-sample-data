@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesInventory\Model\Plugin\Order\Validation;
@@ -35,7 +35,7 @@ class OrderRefundCreationArguments
 
     /**
      * @param RefundOrderInterface $refundOrderValidator
-     * @param \Closure $proceed
+     * @param ValidatorResultInterface $validationResults
      * @param OrderInterface $order
      * @param CreditmemoInterface $creditmemo
      * @param array $items
@@ -46,9 +46,9 @@ class OrderRefundCreationArguments
      * @return ValidatorResultInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundValidate(
+    public function afterValidate(
         RefundOrderInterface $refundOrderValidator,
-        \Closure $proceed,
+        ValidatorResultInterface $validationResults,
         OrderInterface $order,
         CreditmemoInterface $creditmemo,
         array $items = [],
@@ -57,7 +57,6 @@ class OrderRefundCreationArguments
         CreditmemoCommentCreationInterface $comment = null,
         CreditmemoCreationArgumentsInterface $arguments = null
     ) {
-        $validationResults = $proceed($order, $creditmemo, $items, $notify, $appendComment, $comment, $arguments);
         if ($this->isReturnToStockItems($arguments)) {
             return $validationResults;
         }

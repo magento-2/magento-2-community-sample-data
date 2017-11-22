@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\DependencyInjection\Dumper;
 
+use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
@@ -81,7 +82,7 @@ class GraphvizDumper extends Dumper
             }
         }
 
-        return $this->startDot().$this->addNodes().$this->addEdges().$this->endDot();
+        return $this->container->resolveEnvPlaceholders($this->startDot().$this->addNodes().$this->addEdges().$this->endDot(), '__ENV_%s__');
     }
 
     /**
@@ -111,7 +112,7 @@ class GraphvizDumper extends Dumper
         $code = '';
         foreach ($this->edges as $id => $edges) {
             foreach ($edges as $edge) {
-                $code .= sprintf("  node_%s -> node_%s [label=\"%s\" style=\"%s\"];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['name'], $edge['required'] ? 'filled' : 'dashed');
+                $code .= sprintf("  node_%s -> node_%s [label=\"%s\" style=\"%s\"%s];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['name'], $edge['required'] ? 'filled' : 'dashed', $edge['lazy'] ? ' color="#9999ff"' : '');
             }
         }
 
@@ -128,7 +129,7 @@ class GraphvizDumper extends Dumper
      *
      * @return array An array of edges
      */
-    private function findEdges($id, array $arguments, $required, $name)
+    private function findEdges($id, array $arguments, $required, $name, $lazy = false)
     {
         $edges = array();
         foreach ($arguments as $argument) {
@@ -139,13 +140,19 @@ class GraphvizDumper extends Dumper
             }
 
             if ($argument instanceof Reference) {
+                $lazyEdge = $lazy;
+
                 if (!$this->container->has((string) $argument)) {
                     $this->nodes[(string) $argument] = array('name' => $name, 'required' => $required, 'class' => '', 'attributes' => $this->options['node.missing']);
+                } elseif ('service_container' !== (string) $argument) {
+                    $lazyEdge = $lazy || $this->container->getDefinition((string) $argument)->isLazy();
                 }
 
-                $edges[] = array('name' => $name, 'required' => $required, 'to' => $argument);
+                $edges[] = array('name' => $name, 'required' => $required, 'to' => $argument, 'lazy' => $lazyEdge);
+            } elseif ($argument instanceof ArgumentInterface) {
+                $edges = array_merge($edges, $this->findEdges($id, $argument->getValues(), $required, $name, true));
             } elseif (is_array($argument)) {
-                $edges = array_merge($edges, $this->findEdges($id, $argument, $required, $name));
+                $edges = array_merge($edges, $this->findEdges($id, $argument, $required, $name, $lazy));
             }
         }
 
@@ -180,15 +187,12 @@ class GraphvizDumper extends Dumper
         }
 
         foreach ($container->getServiceIds() as $id) {
-            $service = $container->get($id);
-
             if (array_key_exists($id, $container->getAliases())) {
                 continue;
             }
 
             if (!$container->hasDefinition($id)) {
-                $class = ('service_container' === $id) ? get_class($this->container) : get_class($service);
-                $nodes[$id] = array('class' => str_replace('\\', '\\\\', $class), 'attributes' => $this->options['node.instance']);
+                $nodes[$id] = array('class' => str_replace('\\', '\\\\', get_class($container->get($id))), 'attributes' => $this->options['node.instance']);
             }
         }
 

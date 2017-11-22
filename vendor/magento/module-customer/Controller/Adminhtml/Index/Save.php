@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\Index;
@@ -13,9 +13,6 @@ use Magento\Customer\Model\EmailNotificationInterface;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Framework\Exception\LocalizedException;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Save extends \Magento\Customer\Controller\Adminhtml\Index
 {
     /**
@@ -41,7 +38,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
             ];
 
             $customerData = $this->_extractData(
-                $this->getRequest(),
                 'adminhtml_customer',
                 CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
                 $additionalAttributes,
@@ -62,30 +58,25 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
     /**
      * Perform customer data filtration based on form code and form object
      *
-     * @param \Magento\Framework\App\RequestInterface $request
      * @param string $formCode The code of EAV form to take the list of attributes from
      * @param string $entityType entity type for the form
      * @param string[] $additionalAttributes The list of attribute codes to skip filtration for
      * @param string $scope scope of the request
-     * @param \Magento\Customer\Model\Metadata\Form $metadataForm to use for extraction
-     * @return array Filtered customer data
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @return array
      */
     protected function _extractData(
-        \Magento\Framework\App\RequestInterface $request,
         $formCode,
         $entityType,
         $additionalAttributes = [],
-        $scope = null,
-        \Magento\Customer\Model\Metadata\Form $metadataForm = null
+        $scope = null
     ) {
-        $metadataForm = $metadataForm ? $metadataForm : $this->getMetadataForm($entityType, $formCode, $scope);
-        $formData = $metadataForm->extractData($request, $scope);
+        $metadataForm = $this->getMetadataForm($entityType, $formCode, $scope);
+        $formData = $metadataForm->extractData($this->getRequest(), $scope);
         $formData = $metadataForm->compactData($formData);
 
         // Initialize additional attributes
         /** @var \Magento\Framework\DataObject $object */
-        $object = $this->_objectFactory->create(['data' => $request->getPostValue()]);
+        $object = $this->_objectFactory->create(['data' => $this->getRequest()->getPostValue()]);
         $requestData = $object->getData($scope);
         foreach ($additionalAttributes as $attributeCode) {
             $formData[$attributeCode] = isset($requestData[$attributeCode]) ? $requestData[$attributeCode] : false;
@@ -125,7 +116,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
         foreach ($addressIdList as $addressId) {
             $scope = sprintf('address/%s', $addressId);
             $addressData = $this->_extractData(
-                $this->getRequest(),
                 'adminhtml_customer_address',
                 AddressMetadataInterface::ENTITY_TYPE_ADDRESS,
                 ['default_billing', 'default_shipping'],
@@ -210,7 +200,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 $this->dataObjectHelper->populateWithArray(
                     $customer,
                     $customerData,
-                    '\Magento\Customer\Api\Data\CustomerInterface'
+                    \Magento\Customer\Api\Data\CustomerInterface::class
                 );
                 $addresses = [];
                 foreach ($addressesData as $addressData) {
@@ -224,7 +214,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     $this->dataObjectHelper->populateWithArray(
                         $addressDataObject,
                         $addressData,
-                        '\Magento\Customer\Api\Data\AddressInterface'
+                        \Magento\Customer\Api\Data\AddressInterface::class
                     );
                     $addresses[] = $addressDataObject;
                 }
@@ -253,7 +243,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     $isSubscribed = $this->getRequest()->getPost('subscription');
                 }
                 if ($isSubscribed !== null) {
-                    if ($isSubscribed !== 'false') {
+                    if ($isSubscribed !== '0') {
                         $this->_subscriberFactory->create()->subscribeCustomerById($customerId);
                     } else {
                         $this->_subscriberFactory->create()->unsubscribeCustomerById($customerId);
@@ -311,7 +301,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
      * Get email notification
      *
      * @return EmailNotificationInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getEmailNotification()
     {

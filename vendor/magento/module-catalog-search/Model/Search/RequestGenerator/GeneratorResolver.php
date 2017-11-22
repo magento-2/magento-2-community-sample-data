@@ -1,26 +1,23 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogSearch\Model\Search\RequestGenerator;
 
 /**
- * Search request generator resolver.
+ * @api
+ * @since 100.1.6
  */
 class GeneratorResolver
 {
     /**
-     * Search request generators.
-     *
      * @var GeneratorInterface[]
      */
     private $generators;
 
     /**
-     * Default search request generator.
-     *
      * @var GeneratorInterface
      */
     private $defaultGenerator;
@@ -36,11 +33,10 @@ class GeneratorResolver
     }
 
     /**
-     * Return search generator for specified attribute backend type.
-     *
      * @param string $type
      * @return GeneratorInterface
      * @throws \InvalidArgumentException
+     * @since 100.1.6
      */
     public function getGeneratorForType($type)
     {
@@ -50,7 +46,6 @@ class GeneratorResolver
                 'Generator must implement ' . GeneratorInterface::class
             );
         }
-        
         return $generator;
     }
 }

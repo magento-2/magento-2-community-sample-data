@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Category\Product;
@@ -12,7 +12,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
-class PositionResolverTest extends \PHPUnit_Framework_TestCase
+class PositionResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Context|\PHPUnit_Framework_MockObject_MockObject
@@ -48,11 +48,19 @@ class PositionResolverTest extends \PHPUnit_Framework_TestCase
         '1' => 102
     ];
 
+    /**
+     * @var array
+     */
     private $flippedPositions = [
         '100' => 3,
         '101' => 2,
         '102' => 1
     ];
+
+    /**
+     * @var int
+     */
+    private $categoryId = 1;
 
     protected function setUp()
     {
@@ -107,6 +115,6 @@ class PositionResolverTest extends \PHPUnit_Framework_TestCase
             ->method('fetchCol')
             ->willReturn($this->positions);
 
-        $this->assertEquals($this->flippedPositions, $this->model->getPositions(1));
+        $this->assertEquals($this->flippedPositions, $this->model->getPositions($this->categoryId));
     }
 }

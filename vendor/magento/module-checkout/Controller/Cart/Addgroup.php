@@ -1,16 +1,13 @@
 <?php
 /**
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Controller\Cart;
 
 use Magento\Sales\Model\Order\Item;
 
-/**
- * Add "Recently Ordered" customer items to cart.
- */
 class Addgroup extends \Magento\Checkout\Controller\Cart
 {
     /**
@@ -40,13 +37,11 @@ class Addgroup extends \Magento\Checkout\Controller\Cart
                         __('We can\'t add this item to your shopping cart right now.')
                     );
                     $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
-
                     return $this->_goBack();
                 }
             }
             $this->cart->save();
         }
-
         return $this->_goBack();
     }
 

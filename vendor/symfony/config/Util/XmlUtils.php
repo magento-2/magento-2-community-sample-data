@@ -37,9 +37,14 @@ class XmlUtils
      * @return \DOMDocument
      *
      * @throws \InvalidArgumentException When loading of XML file returns error
+     * @throws \RuntimeException         When DOM extension is missing
      */
     public static function loadFile($file, $schemaOrCallable = null)
     {
+        if (!extension_loaded('dom')) {
+            throw new \RuntimeException('Extension DOM is required.');
+        }
+
         $content = @file_get_contents($file);
         if ('' === trim($content)) {
             throw new \InvalidArgumentException(sprintf('File %s does not contain valid XML, it is empty.', $file));
@@ -63,7 +68,7 @@ class XmlUtils
         libxml_disable_entity_loader($disableEntities);
 
         foreach ($dom->childNodes as $child) {
-            if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+            if (XML_DOCUMENT_TYPE_NODE === $child->nodeType) {
                 throw new \InvalidArgumentException('Document types are not allowed.');
             }
         }

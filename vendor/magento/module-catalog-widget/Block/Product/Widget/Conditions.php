@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -73,7 +73,6 @@ class Conditions extends Template implements RendererInterface
         $this->conditions = $conditions;
         $this->rule = $rule;
         $this->registry = $registry;
-
         parent::__construct($context, $data);
     }
 
@@ -84,10 +83,9 @@ class Conditions extends Template implements RendererInterface
     {
         $widgetParameters = [];
         $widget = $this->registry->registry('current_widget_instance');
-        
         if ($widget) {
             $widgetParameters = $widget->getWidgetParameters();
-        } elseif (($widgetOptions = $this->getLayout()->getBlock('wysiwyg_widget.options')) != false) {
+        } elseif ($widgetOptions = $this->getLayout()->getBlock('wysiwyg_widget.options')) {
             $widgetParameters = $widgetOptions->getWidgetValues();
         }
 
@@ -102,6 +100,7 @@ class Conditions extends Template implements RendererInterface
     public function render(AbstractElement $element)
     {
         $this->element = $element;
+        $this->rule->getConditions()->setJsFormObject($this->getHtmlId());
         return $this->toHtml();
     }
 

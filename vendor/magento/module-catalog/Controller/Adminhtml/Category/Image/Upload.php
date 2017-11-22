@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Category\Image;
@@ -44,13 +44,14 @@ class Upload extends \Magento\Backend\App\Action
     }
 
     /**
-     * Upload file controller action.
+     * Upload file controller action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
         $imageId = $this->_request->getParam('param_name', 'image');
+
         try {
             $result = $this->imageUploader->saveFileToTmpDir($imageId);
 

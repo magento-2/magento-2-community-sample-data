@@ -56,7 +56,7 @@ class InitCommand extends BaseCommand
                 new InputOption('description', null, InputOption::VALUE_REQUIRED, 'Description of package'),
                 new InputOption('author', null, InputOption::VALUE_REQUIRED, 'Author name of package'),
                 // new InputOption('version', null, InputOption::VALUE_NONE, 'Version of package'),
-                new InputOption('type', null, InputOption::VALUE_OPTIONAL, 'Type of package'),
+                new InputOption('type', null, InputOption::VALUE_OPTIONAL, 'Type of package (e.g. library, project, metapackage, composer-plugin)'),
                 new InputOption('homepage', null, InputOption::VALUE_REQUIRED, 'Homepage of package'),
                 new InputOption('require', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Package to require with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0 or "foo/bar 1.0.0"'),
                 new InputOption('require-dev', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Package to require for development with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0 or "foo/bar 1.0.0"'),
@@ -115,7 +115,7 @@ EOT
             }
         }
 
-        $file = new JsonFile('composer.json');
+        $file = new JsonFile(Factory::getComposerFile());
         $json = $file->encode($options);
 
         if ($input->isInteractive()) {
@@ -284,7 +284,7 @@ EOT
 
         $type = $input->getOption('type') ?: false;
         $type = $io->ask(
-            'Package Type [<comment>'.$type.'</comment>]: ',
+            'Package Type (e.g. library, project, metapackage, composer-plugin) [<comment>'.$type.'</comment>]: ',
             $type
         );
         $input->setOption('type', $type);
@@ -320,10 +320,10 @@ EOT
      */
     public function parseAuthorString($author)
     {
-        if (preg_match('/^(?P<name>[- \.,\p{L}\p{N}\'’]+) <(?P<email>.+?)>$/u', $author, $match)) {
+        if (preg_match('/^(?P<name>[- .,\p{L}\p{N}\'’"()]+) <(?P<email>.+?)>$/u', $author, $match)) {
             if ($this->isValidEmail($match['email'])) {
                 return array(
-                    'name'  => trim($match['name']),
+                    'name' => trim($match['name']),
                     'email' => $match['email'],
                 );
             }
@@ -352,7 +352,7 @@ EOT
         return $this->repos;
     }
 
-    protected function determineRequirements(InputInterface $input, OutputInterface $output, $requires = array(), $phpVersion = null)
+    protected function determineRequirements(InputInterface $input, OutputInterface $output, $requires = array(), $phpVersion = null, $preferredStability = 'stable')
     {
         if ($requires) {
             $requires = $this->normalizeRequirements($requires);
@@ -362,7 +362,7 @@ EOT
             foreach ($requires as $requirement) {
                 if (!isset($requirement['version'])) {
                     // determine the best version automatically
-                    $version = $this->findBestVersionForPackage($input, $requirement['name'], $phpVersion);
+                    $version = $this->findBestVersionForPackage($input, $requirement['name'], $phpVersion, $preferredStability);
                     $requirement['version'] = $version;
 
                     $io->writeError(sprintf(
@@ -457,7 +457,7 @@ EOT
                     );
 
                     if (false === $constraint) {
-                        $constraint = $this->findBestVersionForPackage($input, $package, $phpVersion);
+                        $constraint = $this->findBestVersionForPackage($input, $package, $phpVersion, $preferredStability);
 
                         $io->writeError(sprintf(
                             'Using version <info>%s</info> for <info>%s</info>',
@@ -623,16 +623,23 @@ EOT
      * @param  InputInterface            $input
      * @param  string                    $name
      * @param  string                    $phpVersion
+     * @param  string                    $preferredStability
      * @throws \InvalidArgumentException
      * @return string
      */
-    private function findBestVersionForPackage(InputInterface $input, $name, $phpVersion)
+    private function findBestVersionForPackage(InputInterface $input, $name, $phpVersion, $preferredStability = 'stable')
     {
         // find the latest version allowed in this pool
         $versionSelector = new VersionSelector($this->getPool($input));
-        $package = $versionSelector->findBestCandidate($name, null, $phpVersion);
+        $package = $versionSelector->findBestCandidate($name, null, $phpVersion, $preferredStability);
 
         if (!$package) {
+            // Check whether the PHP version was the problem
+            if ($phpVersion && $versionSelector->findBestCandidate($name)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Could not find package %s at any version matching your PHP version %s', $name, $phpVersion
+                ));
+            }
             throw new \InvalidArgumentException(sprintf(
                 'Could not find package %s at any version for your minimum-stability (%s). Check the package spelling or your minimum-stability',
                 $name,

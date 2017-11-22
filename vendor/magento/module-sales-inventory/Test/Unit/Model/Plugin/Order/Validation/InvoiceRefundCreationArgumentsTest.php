@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesInventory\Test\Unit\Model\Plugin\Order\Validation;
@@ -16,9 +16,9 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Validation\RefundInvoiceInterface;
 
 /**
- * Class InvoiceRefundCreationArgumentsTest
+ * Class InvoiceRefundCreatetionArgumentsTest
  */
-class InvoiceRefundCreationArgumentsTest extends \PHPUnit_Framework_TestCase
+class InvoiceRefundCreationArgumentsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var InvoiceRefundCreationArguments
@@ -33,7 +33,7 @@ class InvoiceRefundCreationArgumentsTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CreditmemoCreationArgumentsExtensionInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $extensionAttributesMock;
+    private $extencionAttributesMock;
 
     /**
      * @var CreditmemoCreationArgumentsInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -65,11 +65,6 @@ class InvoiceRefundCreationArgumentsTest extends \PHPUnit_Framework_TestCase
      */
     private $creditmemoMock;
 
-    /**
-     * @var \Closure
-     */
-    private $proceed;
-
     protected function setUp()
     {
         $this->returnValidatorMock = $this->getMockBuilder(ReturnValidator::class)
@@ -80,10 +75,10 @@ class InvoiceRefundCreationArgumentsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extensionAttributesMock = $this->getMockBuilder(CreditmemoCreationArgumentsExtensionInterface::class)
+        $this->extencionAttributesMock = $this->getMockBuilder(CreditmemoCreationArgumentsExtensionInterface::class)
             ->setMethods(['getReturnToStockItems'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->validateResultMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()
@@ -105,37 +100,34 @@ class InvoiceRefundCreationArgumentsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->proceed = function () {
-            return $this->validateResultMock;
-        };
         $this->plugin = new InvoiceRefundCreationArguments($this->returnValidatorMock);
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testAroundValidation($errorMessage)
+    public function testAfterValidation($erroMessage)
     {
         $returnToStockItems = [1];
         $this->creditmemoCreationArgumentsMock->expects($this->exactly(3))
             ->method('getExtensionAttributes')
-            ->willReturn($this->extensionAttributesMock);
+            ->willReturn($this->extencionAttributesMock);
 
-        $this->extensionAttributesMock->expects($this->exactly(2))
+        $this->extencionAttributesMock->expects($this->exactly(2))
             ->method('getReturnToStockItems')
             ->willReturn($returnToStockItems);
 
         $this->returnValidatorMock->expects($this->once())
             ->method('validate')
-            ->willReturn($errorMessage);
+            ->willReturn($erroMessage);
 
-        $this->validateResultMock->expects($errorMessage ? $this->once() : $this->never())
+        $this->validateResultMock->expects($erroMessage ? $this->once() : $this->never())
             ->method('addMessage')
-            ->with($errorMessage);
+            ->with($erroMessage);
 
-        $this->plugin->aroundValidate(
+        $this->plugin->afterValidate(
             $this->refundInvoiceValidatorMock,
-            $this->proceed,
+            $this->validateResultMock,
             $this->invoiceMock,
             $this->orderMock,
             $this->creditmemoMock,

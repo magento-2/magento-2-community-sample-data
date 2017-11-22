@@ -1,22 +1,20 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Downloadable\Test\Unit\Helper;
 
-class FileTest extends \PHPUnit_Framework_TestCase
+class FileTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * File helper.
-     *
      * @var \Magento\Downloadable\Helper\File
      */
     private $file;
 
     /**
-     * Database saving file helper.
+     * Core file storage database
      *
      * @var \Magento\MediaStorage\Helper\File\Storage\Database|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -37,8 +35,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
     private $mediaDirectory;
 
     /**
-     * Application context helper.
-     *
      * @var \Magento\Framework\App\Helper\Context|\PHPUnit_Framework_MockObject_MockObject
      */
     private $appContext;

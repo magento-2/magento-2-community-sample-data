@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Block;
@@ -12,7 +12,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Block\CustomerScopeData;
 use Magento\Framework\Json\EncoderInterface;
 
-class CustomerScopeDataTest extends \PHPUnit_Framework_TestCase
+class CustomerScopeDataTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\Customer\Block\CustomerScopeData */
     private $model;

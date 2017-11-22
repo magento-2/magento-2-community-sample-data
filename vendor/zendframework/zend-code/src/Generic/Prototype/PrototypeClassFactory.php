@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -27,7 +27,7 @@ class PrototypeClassFactory
     /**
      * @var array
      */
-    protected $prototypes = array();
+    protected $prototypes = [];
 
     /**
      * @var PrototypeGenericInterface
@@ -38,7 +38,7 @@ class PrototypeClassFactory
      * @param PrototypeInterface[] $prototypes
      * @param PrototypeGenericInterface $genericPrototype
      */
-    public function __construct($prototypes = array(), PrototypeGenericInterface $genericPrototype = null)
+    public function __construct($prototypes = [], PrototypeGenericInterface $genericPrototype = null)
     {
         foreach ((array)$prototypes as $prototype) {
             $this->addPrototype($prototype);
@@ -83,7 +83,7 @@ class PrototypeClassFactory
      */
     protected function normalizeName($name)
     {
-        return str_replace(array('-', '_'), '', $name);
+        return str_replace(['-', '_'], '', $name);
     }
 
     /**

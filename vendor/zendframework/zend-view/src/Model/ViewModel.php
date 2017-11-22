@@ -30,13 +30,13 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      * Child models
      * @var array
      */
-    protected $children = array();
+    protected $children = [];
 
     /**
      * Renderer options
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Template to use when rendering this model
@@ -56,7 +56,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      * View variables
      * @var array|ArrayAccess&Traversable
      */
-    protected $variables = array();
+    protected $variables = [];
 
     /**
      * Is this append to child  with the same capture?
@@ -105,7 +105,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function __get($name)
     {
-        if (!$this->__isset($name)) {
+        if (! $this->__isset($name)) {
             return;
         }
 
@@ -133,7 +133,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function __unset($name)
     {
-        if (!$this->__isset($name)) {
+        if (! $this->__isset($name)) {
             return;
         }
 
@@ -181,7 +181,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
             $options = ArrayUtils::iteratorToArray($options);
         }
 
-        if (!is_array($options)) {
+        if (! is_array($options)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s: expects an array, or Traversable argument; received "%s"',
                 __METHOD__,
@@ -210,7 +210,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function clearOptions()
     {
-        $this->options = array();
+        $this->options = [];
         return $this;
     }
 
@@ -256,7 +256,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function setVariables($variables, $overwrite = false)
     {
-        if (!is_array($variables) && !$variables instanceof Traversable) {
+        if (! is_array($variables) && ! $variables instanceof Traversable) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s: expects an array, or Traversable argument; received "%s"',
                 __METHOD__,
@@ -265,7 +265,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
         }
 
         if ($overwrite) {
-            if (is_object($variables) && !$variables instanceof ArrayAccess) {
+            if (is_object($variables) && ! $variables instanceof ArrayAccess) {
                 $variables = ArrayUtils::iteratorToArray($variables);
             }
 
@@ -375,7 +375,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function clearChildren()
     {
-        $this->children = array();
+        $this->children = [];
         return $this;
     }
 
@@ -388,7 +388,7 @@ class ViewModel implements ModelInterface, ClearableModelInterface, RetrievableC
      */
     public function getChildrenByCaptureTo($capture, $recursive = true)
     {
-        $children = array();
+        $children = [];
 
         foreach ($this->children as $child) {
             if ($recursive === true) {

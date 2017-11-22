@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,6 +8,9 @@ namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 
 /**
  * Backend grid item renderer currency
+ *
+ * @api
+ * @since 100.0.2
  */
 class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {
@@ -46,11 +49,6 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
     protected $_localeCurrency;
 
     /**
-     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
-     */
-    private $priceCurrency;
-
-    /**
      * @param \Magento\Backend\Block\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Directory\Model\Currency\DefaultLocator $currencyLocator
@@ -78,23 +76,6 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
     }
 
     /**
-     * Get price currency
-     *
-     * @return \Magento\Framework\Pricing\PriceCurrencyInterface
-     *
-     * @deprecated
-     */
-    private function getPriceCurrency()
-    {
-        if ($this->priceCurrency === null) {
-            $this->priceCurrency = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Pricing\PriceCurrencyInterface::class
-            );
-        }
-        return $this->priceCurrency;
-    }
-
-    /**
      * Renders grid column
      *
      * @param   \Magento\Framework\DataObject $row
@@ -102,9 +83,15 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        $price = $this->_getValue($row) ? $this->_getValue($row) : $this->getColumn()->getDefault();
-        $displayPrice = $this->getPriceCurrency()->convertAndFormat($price, false);
-        return $displayPrice;
+        if ($data = (string)$this->_getValue($row)) {
+            $currency_code = $this->_getCurrencyCode($row);
+            $data = floatval($data) * $this->_getRate($row);
+            $sign = (bool)(int)$this->getColumn()->getShowNumberSign() && $data > 0 ? '+' : '';
+            $data = sprintf("%f", $data);
+            $data = $this->_localeCurrency->getCurrency($currency_code)->toCurrency($data);
+            return $sign . $data;
+        }
+        return $this->getColumn()->getDefault();
     }
 
     /**

@@ -21,7 +21,7 @@ class ModuleDependencyCheckerListener
     /**
      * @var array of already loaded modules, indexed by module name
      */
-    protected $loaded = array();
+    protected $loaded = [];
 
     /**
      * @param \Zend\ModuleManager\ModuleEvent $e
@@ -36,7 +36,7 @@ class ModuleDependencyCheckerListener
             $dependencies = $module->getModuleDependencies();
 
             foreach ($dependencies as $dependencyModule) {
-                if (!isset($this->loaded[$dependencyModule])) {
+                if (! isset($this->loaded[$dependencyModule])) {
                     throw new Exception\MissingDependencyModuleException(
                         sprintf(
                             'Module "%s" depends on module "%s", which was not initialized before it',

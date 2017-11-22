@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -75,7 +75,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
 
     /**
      * @var StoreManagerInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     protected $storeManager;
 
@@ -150,7 +150,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     public function correctItemsQty(array $items, $websiteId, $operator)
     {
         if (empty($items)) {
-            return $this;
+            return;
         }
 
         $connection = $this->getConnection();

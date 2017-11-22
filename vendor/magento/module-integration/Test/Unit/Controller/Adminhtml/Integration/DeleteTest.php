@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,9 +12,6 @@ use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Integration\Model\Integration as IntegrationModel;
 use Magento\Framework\Exception\IntegrationException;
 
-/**
- * Class DeleteTest.
- */
 class DeleteTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     /**

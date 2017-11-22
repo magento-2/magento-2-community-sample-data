@@ -5,9 +5,9 @@
 #### Features: ####
 - When a session's data size exceeds the compression threshold the session data will be compressed.
 - Compression libraries supported are 'gzip', 'lzf', 'lz4', and 'snappy'.
--- Gzip is the slowest but offers the best compression ratios.
--- Lzf can be installed easily via PECL.
--- Lz4 is supported by HHVM.
+  - Gzip is the slowest but offers the best compression ratios.
+  - Lzf can be installed easily via PECL.
+  - Lz4 is supported by HHVM.
 - Compression can be enabled, disabled, or reconfigured on the fly with no loss of session data.
 - Expiration is handled by Redis; no garbage collection needed.
 - Logs when sessions are not written due to not having or losing their lock.
@@ -16,7 +16,6 @@
 - Detects crashed processes to prevent session deadlocks (Linux only).
 - Gives shorter session lifetimes to bots and crawlers to reduce wasted resources.
 - Locking can be disabled entirely
-- Requires PHP >= 5.3. Yes, this is a feature. You're welcome. ;)
 
 #### Locking Algorithm Properties: ####
 - Only one process may get a write lock on a session.
@@ -27,10 +26,10 @@
 ### Compression ##
 
 Session data compresses very well so using compression is a great way to increase your capacity without
-dedicating a ton of RAM to Redis. Compression can be disabled by setting the `compression_threshold` to 0.
+dedicating a ton of RAM to Redis and reducing network utilization.
 The default `compression threshold` is 2048 bytes so any session data equal to or larger than this size
-will be compressed with the chosen `compression_lib` which is 'gzip' by default. However, both lzf and
-snappy offer much faster compression with comparable compression ratios so I definitely recommend using
+will be compressed with the chosen `compression_lib` which is `gzip` by default.  Compression can be disabled by setting the `compression_lib` to `none`. However, both `lzf` and
+`snappy` offer much faster compression with comparable compression ratios so I definitely recommend using
 one of these if you have root. lzf is easy to install via pecl:
 
     sudo pecl install lzf
@@ -55,12 +54,13 @@ counter on the number of writes against the session to determine the session lif
 
 ## Using with [Cm_Cache_Backend_Redis](https://github.com/colinmollenhour/Cm_Cache_Backend_Redis) ##
 
-Using Cm_RedisSession alongside Cm_Cache_Backend_Redis should be no problem at all. The main thing to
-keep in mind is that if both the cache and the sessions are using the same database, flushing the cache
-backend would also flush the sessions! So, don't use the same 'db' number for both if running only one
-instance of Redis. However, using a separate Redis instance for each is recommended to make sure that
-one or the other can't run wild consuming space and cause evictions for the other. For example,
-configure two instances each with 100M maxmemory rather than one instance with 200M maxmemory.
+Using Cm_RedisSession alongside Cm_Cache_Backend_Redis should be no problem at all. However, it is strongly advised
+to run two separate Redis instances even if they are running on the same server. Running two instances will
+actually perform better since Redis is single-threaded so on a multi-core server is bound by the performance of
+a single core. Also it makes sense to allocate varying amounts of memory to cache and sessions and to enforce different
+"maxmemory" policies. If you absolutely must run one Redis instance for both then just don't use the same 'db' number.
+But again, just run two Redis instances.
+
 
 ## License ##
 

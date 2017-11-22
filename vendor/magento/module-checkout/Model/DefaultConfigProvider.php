@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -293,9 +293,7 @@ class DefaultConfigProvider implements ConfigProviderInterface
         $output['originCountryCode'] = $this->getOriginCountryCode();
         $output['paymentMethods'] = $this->getPaymentMethods();
         $output['autocomplete'] = $this->isAutocompleteEnabled();
-        $output['displayBillingOnPaymentMethod'] =
-            $this->checkoutHelper->isDisplayBillingOnPaymentMethodAvailable();
-
+        $output['displayBillingOnPaymentMethod'] = $this->checkoutHelper->isDisplayBillingOnPaymentMethodAvailable();
         return $output;
     }
 
@@ -307,10 +305,10 @@ class DefaultConfigProvider implements ConfigProviderInterface
      */
     private function isAutocompleteEnabled()
     {
-         return $this->scopeConfig->getValue(
-             \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE,
-             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-         ) ? 'on' : 'off';
+        return $this->scopeConfig->getValue(
+            \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ? 'on' : 'off';
     }
 
     /**
@@ -367,7 +365,6 @@ class DefaultConfigProvider implements ConfigProviderInterface
                     'quote_id'
                 )->getMaskedId();
             }
-
         }
         return $quoteData;
     }

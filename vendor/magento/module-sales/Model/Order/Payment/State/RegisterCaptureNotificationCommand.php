@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Payment\State;
@@ -61,7 +61,7 @@ class RegisterCaptureNotificationCommand implements CommandInterface
     }
 
     /**
-     * @deprecated Replaced by a StatusResolver class call.
+     * @deprecated 100.2.0 Replaced by a StatusResolver class call.
      *
      * @param Order $order
      * @param string $status

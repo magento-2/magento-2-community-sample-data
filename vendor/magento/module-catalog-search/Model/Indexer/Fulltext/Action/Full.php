@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Action;
@@ -12,8 +12,15 @@ use Magento\Framework\App\ResourceConnection;
 /**
  * Class provides iterator through number of products suitable for fulltext indexation
  *
+ * To be suitable for fulltext index product must meet set of requirements:
+ * - to be visible on frontend
+ * - to be enabled
+ * - in case product is composite at least one sub product must be visible and enabled
+ *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 100.0.2
  */
 class Full
 {
@@ -33,7 +40,7 @@ class Full
      * Index values separator
      *
      * @var string
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::$separator
      */
     protected $separator = ' | ';
@@ -42,7 +49,7 @@ class Full
      * Array of \DateTime objects per store
      *
      * @var \DateTime[]
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $dates = [];
 
@@ -50,7 +57,7 @@ class Full
      * Product Type Instances cache
      *
      * @var array
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::$productTypes
      */
     protected $productTypes = [];
@@ -59,7 +66,7 @@ class Full
      * Product Emulators cache
      *
      * @var array
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::$productEmulators
      */
     protected $productEmulators = [];
@@ -87,7 +94,7 @@ class Full
      * Catalog product type
      *
      * @var \Magento\Catalog\Model\Product\Type
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::$catalogProductType
      */
     protected $catalogProductType;
@@ -103,7 +110,7 @@ class Full
      * Core store config
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $scopeConfig;
 
@@ -111,7 +118,7 @@ class Full
      * Store manager
      *
      * @var \Magento\Store\Model\StoreManagerInterface
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::$storeManager
      */
     protected $storeManager;
@@ -123,25 +130,25 @@ class Full
 
     /**
      * @var \Magento\Framework\Indexer\SaveHandler\IndexerInterface
-     * @deprecated As part of self::cleanIndex()
+     * @deprecated 100.1.6 As part of self::cleanIndex()
      */
     protected $indexHandler;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $dateTime;
 
     /**
      * @var \Magento\Framework\Locale\ResolverInterface
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $localeResolver;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $localeDate;
 
@@ -152,19 +159,19 @@ class Full
 
     /**
      * @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext
-     * @deprecated Not used anymore
+     * @deprecated 100.1.6 Not used anymore
      */
     protected $fulltextResource;
 
     /**
      * @var \Magento\Framework\Search\Request\Config
-     * @deprecated As part of self::reindexAll()
+     * @deprecated 100.1.6 As part of self::reindexAll()
      */
     protected $searchRequestConfig;
 
     /**
      * @var \Magento\Framework\Search\Request\DimensionFactory
-     * @deprecated As part of self::cleanIndex()
+     * @deprecated 100.1.6 As part of self::cleanIndex()
      */
     private $dimensionFactory;
 
@@ -175,7 +182,7 @@ class Full
 
     /**
      * @var \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\IndexIteratorFactory
-     * @deprecated DataProvider used directly without IndexIterator
+     * @deprecated 100.1.6 DataProvider used directly without IndexIterator
      * @see self::$dataProvider
      */
     private $iteratorFactory;
@@ -262,7 +269,7 @@ class Full
     /**
      * Rebuild whole fulltext index for all stores
      *
-     * @deprecated Please use \Magento\CatalogSearch\Model\Indexer\Fulltext::executeFull instead
+     * @deprecated 100.1.6 Please use \Magento\CatalogSearch\Model\Indexer\Fulltext::executeFull instead
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext::executeFull
      * @return void
      */
@@ -330,24 +337,25 @@ class Full
         if ($productIds !== null) {
             $productIds = array_unique(array_merge($productIds, $this->getProductIdsFromParents($productIds)));
         }
+
         // prepare searchable attributes
         $staticFields = [];
         foreach ($this->getSearchableAttributes('static') as $attribute) {
             $staticFields[] = $attribute->getAttributeCode();
         }
+
         $dynamicFields = [
-            'int' => array_keys($this->getSearchableAttributes('int')),
-            'varchar' => array_keys($this->getSearchableAttributes('varchar')),
-            'text' => array_keys($this->getSearchableAttributes('text')),
-            'decimal' => array_keys($this->getSearchableAttributes('decimal')),
-            'datetime' => array_keys($this->getSearchableAttributes('datetime')),
+            'int' => array_keys($this->dataProvider->getSearchableAttributes('int')),
+            'varchar' => array_keys($this->dataProvider->getSearchableAttributes('varchar')),
+            'text' => array_keys($this->dataProvider->getSearchableAttributes('text')),
+            'decimal' => array_keys($this->dataProvider->getSearchableAttributes('decimal')),
+            'datetime' => array_keys($this->dataProvider->getSearchableAttributes('datetime')),
         ];
 
         $lastProductId = 0;
-        do {
-            $products = $this->dataProvider
-                ->getSearchableProducts($storeId, $staticFields, $productIds, $lastProductId);
-
+        $products = $this->dataProvider
+            ->getSearchableProducts($storeId, $staticFields, $productIds, $lastProductId);
+        while (count($products) > 0) {
             $productsIds = array_column($products, 'entity_id');
             $relatedProducts = $this->getRelatedProducts($products);
             $productsIds = array_merge($productsIds, array_values($relatedProducts));
@@ -379,7 +387,9 @@ class Full
                 $index = $this->dataProvider->prepareProductIndex($productIndex, $productData, $storeId);
                 yield $productData['entity_id'] => $index;
             }
-        } while (count($products) > 0);
+            $products = $this->dataProvider
+                ->getSearchableProducts($storeId, $staticFields, $productIds, $lastProductId);
+        };
     }
 
     /**
@@ -414,7 +424,7 @@ class Full
      */
     private function isProductVisible($productId, array $productsAttributes)
     {
-        $visibility = $this->getSearchableAttribute('visibility');
+        $visibility = $this->dataProvider->getSearchableAttribute('visibility');
         $allowedVisibility = $this->engine->getAllowedVisibility();
         return isset($productsAttributes[$productId]) &&
             isset($productsAttributes[$productId][$visibility->getId()]) &&
@@ -433,7 +443,7 @@ class Full
      */
     private function isProductEnabled($productId, array $productsAttributes)
     {
-        $status = $this->getSearchableAttribute('status');
+        $status = $this->dataProvider->getSearchableAttribute('status');
         $allowedStatuses = $this->catalogProductStatus->getVisibleStatusIds();
         return isset($productsAttributes[$productId]) &&
             isset($productsAttributes[$productId][$status->getId()]) &&
@@ -465,7 +475,7 @@ class Full
     /**
      * Clean search index data for store
      *
-     * @deprecated As part of self::reindexAll()
+     * @deprecated 100.1.6 As part of self::reindexAll()
      * @param int $storeId
      * @return void
      */
@@ -479,7 +489,7 @@ class Full
      * Retrieve EAV Config Singleton
      *
      * @return \Magento\Eav\Model\Config
-     * @deprecated Use $self::$eavConfig directly
+     * @deprecated 100.1.6 Use $self::$eavConfig directly
      */
     protected function getEavConfig()
     {
@@ -490,75 +500,30 @@ class Full
      * Retrieve searchable attributes
      *
      * @param string $backendType
+     * @deprecated 100.2.0 see DataProvider::getSearchableAttributes()
      * @return \Magento\Eav\Model\Entity\Attribute[]
      */
     protected function getSearchableAttributes($backendType = null)
     {
-        if (null === $this->searchableAttributes) {
-            $this->searchableAttributes = [];
-
-            $productAttributes = $this->productAttributeCollectionFactory->create();
-            $productAttributes->addToIndexFilter(true);
-
-            /** @var \Magento\Eav\Model\Entity\Attribute[] $attributes */
-            $attributes = $productAttributes->getItems();
-
-            $this->eventManager->dispatch(
-                'catelogsearch_searchable_attributes_load_after',
-                ['engine' => $this->engine, 'attributes' => $attributes]
-            );
-
-            $entity = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntity();
-
-            foreach ($attributes as $attribute) {
-                $attribute->setEntity($entity);
-            }
-
-            $this->searchableAttributes = $attributes;
-        }
-
-        if ($backendType !== null) {
-            $attributes = [];
-            foreach ($this->searchableAttributes as $attributeId => $attribute) {
-                if ($attribute->getBackendType() == $backendType) {
-                    $attributes[$attributeId] = $attribute;
-                }
-            }
-
-            return $attributes;
-        }
-
-        return $this->searchableAttributes;
+        return $this->dataProvider->getSearchableAttributes($backendType);
     }
 
     /**
      * Retrieve searchable attribute by Id or code
      *
      * @param int|string $attribute
+     * @deprecated 100.2.0 see DataProvider::getSearchableAttributes()
      * @return \Magento\Eav\Model\Entity\Attribute
      */
     protected function getSearchableAttribute($attribute)
     {
-        $attributes = $this->getSearchableAttributes();
-        if (is_numeric($attribute)) {
-            if (isset($attributes[$attribute])) {
-                return $attributes[$attribute];
-            }
-        } elseif (is_string($attribute)) {
-            foreach ($attributes as $attributeModel) {
-                if ($attributeModel->getAttributeCode() == $attribute) {
-                    return $attributeModel;
-                }
-            }
-        }
-
-        return $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attribute);
+        return $this->dataProvider->getSearchableAttribute($attribute);
     }
 
     /**
      * Returns expression for field unification
      *
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::unifyField()
      * @param string $field
      * @param string $backendType
@@ -577,7 +542,7 @@ class Full
     /**
      * Retrieve Product Type Instance
      *
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::getProductTypeInstance()
      * @param string $typeId
      * @return \Magento\Catalog\Model\Product\Type\AbstractType
@@ -595,7 +560,7 @@ class Full
     /**
      * Retrieve Product Emulator (Magento Object)
      *
-     * @deprecated Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
+     * @deprecated 100.1.6 Moved to \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider
      * @see \Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider::getProductEmulator()
      * @param string $typeId
      * @return \Magento\Framework\DataObject

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Rule\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
+class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Rule\Model\ConditionFactory
@@ -27,7 +27,7 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->getMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->conditionFactory = $this->objectManagerHelper->getObject(
@@ -70,7 +70,7 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotSame($cloned, $origin);
     }
-    
+
     public function testCreateExceptionClass()
     {
         $type = 'type';
@@ -78,7 +78,7 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('create');
 
-        $this->setExpectedException(\InvalidArgumentException::class, 'Class does not exist');
+        $this->expectException(\InvalidArgumentException::class, 'Class does not exist');
 
         $this->conditionFactory->create($type);
     }
@@ -92,7 +92,7 @@ class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with($type)
             ->willReturn(new \stdClass());
-        $this->setExpectedException(\InvalidArgumentException::class, 'Class does not implement condition interface');
+        $this->expectException(\InvalidArgumentException::class, 'Class does not implement condition interface');
         $this->conditionFactory->create($type);
     }
 }

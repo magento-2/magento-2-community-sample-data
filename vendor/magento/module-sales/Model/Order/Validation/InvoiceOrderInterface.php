@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Validation;
@@ -13,6 +13,9 @@ use Magento\Sales\Model\ValidatorResultInterface;
 
 /**
  * Interface InvoiceOrderInterface
+ *
+ * @api
+ * @since 100.1.3
  */
 interface InvoiceOrderInterface
 {
@@ -26,6 +29,7 @@ interface InvoiceOrderInterface
      * @param InvoiceCommentCreationInterface|null $comment
      * @param InvoiceCreationArgumentsInterface|null $arguments
      * @return ValidatorResultInterface
+     * @since 100.1.3
      */
     public function validate(
         OrderInterface $order,

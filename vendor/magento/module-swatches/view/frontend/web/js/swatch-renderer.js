@@ -1,5 +1,5 @@
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -353,7 +353,7 @@ define([
                 isInProductView = false;
 
             productId = this.element.parents('.product-item-details')
-                .find('.price-box.price-final_price').attr('data-product-id');
+                    .find('.price-box.price-final_price').attr('data-product-id');
 
             if (!productId) {
                 // Check individual product.
@@ -397,7 +397,7 @@ define([
                 if ($widget.options.enableControlLabel) {
                     label +=
                         '<span id="' + controlLabelId + '" class="' + classes.attributeLabelClass + '">' +
-                        item.label +
+                            item.label +
                         '</span>' +
                         '<span class="' + classes.attributeSelectedOptionLabelClass + '"></span>';
                 }
@@ -413,17 +413,17 @@ define([
                 // Create new control
                 container.append(
                     '<div class="' + classes.attributeClass + ' ' + item.code + '" ' +
-                    'attribute-code="' + item.code + '" ' +
-                    'attribute-id="' + item.id + '">' +
-                    label +
-                    '<div aria-activedescendant="" ' +
-                    'tabindex="0" ' +
-                    'aria-invalid="false" ' +
-                    'aria-required="true" ' +
-                    'role="listbox" ' + listLabel +
-                    'class="' + classes.attributeOptionsWrapper + ' clearfix">' +
-                    options + select +
-                    '</div>' + input +
+                         'attribute-code="' + item.code + '" ' +
+                         'attribute-id="' + item.id + '">' +
+                        label +
+                        '<div aria-activedescendant="" ' +
+                             'tabindex="0" ' +
+                             'aria-invalid="false" ' +
+                             'aria-required="true" ' +
+                             'role="listbox" ' + listLabel +
+                             'class="' + classes.attributeOptionsWrapper + ' clearfix">' +
+                            options + select +
+                        '</div>' + input +
                     '</div>'
                 );
 
@@ -739,7 +739,7 @@ define([
          */
         _toggleCheckedAttributes: function ($this, $wrapper) {
             $wrapper.attr('aria-activedescendant', $this.attr('id'))
-                .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
+                    .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
             $this.attr('aria-checked', true);
         },
 
@@ -1208,7 +1208,7 @@ define([
         _EmulateSelectedByAttributeId: function (selectedAttributes) {
             $.each(selectedAttributes, $.proxy(function (attributeId, optionId) {
                 var elem = this.element.find('.' + this.options.classes.attributeClass +
-                        '[attribute-id="' + attributeId + '"] [option-id="' + optionId + '"]'),
+                    '[attribute-id="' + attributeId + '"] [option-id="' + optionId + '"]'),
                     parentInput = elem.parent();
 
                 if (elem.hasClass('selected')) {

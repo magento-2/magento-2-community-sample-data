@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
@@ -114,8 +114,7 @@ class CustomOptionsTest extends AbstractModifierTest
                             CustomOptions::FIELD_TITLE_NAME => 'option1',
                             CustomOptions::FIELD_STORE_TITLE_NAME => 'Option Store Title',
                             CustomOptions::FIELD_IS_USE_DEFAULT => false
-                        ],
-                        [
+                        ], [
                             CustomOptions::FIELD_TITLE_NAME => 'option2',
                             CustomOptions::FIELD_STORE_TITLE_NAME => null,
                             CustomOptions::FIELD_IS_USE_DEFAULT => true,
@@ -124,8 +123,7 @@ class CustomOptionsTest extends AbstractModifierTest
                                     CustomOptions::FIELD_TITLE_NAME => 'value1',
                                     CustomOptions::FIELD_STORE_TITLE_NAME => 'Option Value Store Title',
                                     CustomOptions::FIELD_IS_USE_DEFAULT => false
-                                ],
-                                [
+                                ], [
                                     CustomOptions::FIELD_TITLE_NAME => 'value2',
                                     CustomOptions::FIELD_STORE_TITLE_NAME => null,
                                     CustomOptions::FIELD_IS_USE_DEFAULT => true
@@ -157,6 +155,27 @@ class CustomOptionsTest extends AbstractModifierTest
             ->willReturn([]);
 
         $this->assertArrayHasKey(CustomOptions::GROUP_CUSTOM_OPTIONS_NAME, $this->getModel()->modifyMeta([]));
+    }
+
+    /**
+     * Tests if Compatible File Extensions is required when Option Type "File" is selected in Customizable Options.
+     */
+    public function testFileExtensionRequired()
+    {
+        $this->productOptionsConfigMock->expects($this->once())
+            ->method('getAll')
+            ->willReturn([]);
+
+        $meta = $this->getModel()->modifyMeta([]);
+
+        $config = $meta['custom_options']['children']['options']['children']['record']['children']['container_option']
+        ['children']['container_type_static']['children']['file_extension']['arguments']['data']['config'];
+
+        $scope = $config['dataScope'];
+        $required = $config['validation']['required-entry'];
+
+        $this->assertEquals(CustomOptions::FIELD_FILE_EXTENSION_NAME, $scope);
+        $this->assertTrue($required);
     }
 
     /**

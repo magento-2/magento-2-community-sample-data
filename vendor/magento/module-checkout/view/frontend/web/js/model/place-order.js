@@ -1,6 +1,9 @@
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
+ */
+/**
+ * @api
  */
 define(
     [
@@ -19,6 +22,9 @@ define(
             ).fail(
                 function (response) {
                     errorProcessor.process(response, messageContainer);
+                }
+            ).always(
+                function () {
                     fullScreenLoader.stopLoader();
                 }
             );

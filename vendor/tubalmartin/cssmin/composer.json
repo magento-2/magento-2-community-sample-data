@@ -1,7 +1,7 @@
 {
     "name": "tubalmartin/cssmin",
     "description": "A PHP port of the YUI CSS compressor",
-    "keywords": ["yui", "compressor", "css", "compress", "minify"],
+    "keywords": ["yui", "compressor", "css", "cssmin", "compress", "minify"],
     "homepage": "https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port",
     "license": "BSD-3-Clause",
     "authors": [
@@ -15,9 +15,24 @@
         "source": "https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port"
     },
     "autoload": {
-        "classmap": ["cssmin.php"]
+        "psr-4": {
+            "tubalmartin\\CssMin\\": "src"
+        }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "tubalmartin\\CssMin\\Tests\\": "tests"
+        }
+    },
+    "bin": [
+        "cssmin"
+    ],
     "require": {
-        "php": ">=5.0.0"
+        "php": ">=5.3.2",
+        "ext-pcre": "*"
+    },
+    "require-dev": {
+        "cogpowered/finediff": "0.3.*",
+        "phpunit/phpunit": "4.8.*"
     }
 }

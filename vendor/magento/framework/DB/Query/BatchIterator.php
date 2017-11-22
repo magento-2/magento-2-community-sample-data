@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB\Query;
@@ -88,7 +88,7 @@ class BatchIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return Select
      */
     public function current()
     {
@@ -101,7 +101,7 @@ class BatchIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return Select
      */
     public function next()
     {
@@ -121,7 +121,7 @@ class BatchIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public function key()
     {
@@ -129,7 +129,7 @@ class BatchIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     public function valid()
     {
@@ -137,7 +137,7 @@ class BatchIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     public function rewind()
     {

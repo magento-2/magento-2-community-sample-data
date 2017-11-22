@@ -13,6 +13,7 @@ Works with any Zend Framework project including all versions of Magento!
  - Supports unix socket connection for even better performance on a single machine.
  - Supports configurable compression for memory savings. Can choose between gzip, lzf and snappy and can change configuration without flushing cache.
  - Uses transactions to prevent race conditions between saves, cleans or removes causing unexpected results.
+ - Supports a configurable "auto expiry lifetime" which, if set, will be used as the TTL when the key otherwise wouldn't expire. In combination with "auto expiry refresh on load" offers a more sane cache management strategy for Magento's `Enterprise_PageCache` module.
  - __Unit tested!__
 
 ## INSTALLATION (Magento)
@@ -48,7 +49,8 @@ Works with any Zend Framework project including all versions of Magento!
             <compress_tags>1</compress_tags>  <!-- 0-9 for compression level, recommended: 0 or 1 -->
             <compress_threshold>20480</compress_threshold>  <!-- Strings below this size will not be compressed -->
             <compression_lib>gzip</compression_lib> <!-- Supports gzip, lzf, lz4 (as l4z) and snappy -->
-            <use_lua>0</use_lua> <!-- Set to 1 if Lua scripts should be used for some operations -->
+            <use_lua>0</use_lua> <!-- Set to 1 if Lua scripts should be used for some operations (recommended) -->
+            <load_from_slave>tcp://redis-slave:6379</load_from_slave> <!-- Perform reads from a different server --> 
           </backend_options>
         </cache>
 
@@ -65,8 +67,58 @@ Works with any Zend Framework project including all versions of Magento!
             <connect_retries>1</connect_retries>    <!-- Reduces errors due to random connection failures -->
             <lifetimelimit>57600</lifetimelimit>    <!-- 16 hours of lifetime for cache record -->
             <compress_data>0</compress_data>        <!-- DISABLE compression for EE FPC since it already uses compression -->
+            <auto_expire_lifetime></auto_expire_lifetime> <!-- Force an expiry (Enterprise_PageCache will not set one) -->
+            <auto_expire_refresh_on_load></auto_expire_refresh_on_load> <!-- Refresh keys when loaded (Keeps cache primed frequently requested resources) -->
           </backend_options>
         </full_page_cache>
+
+## High Availability and Load Balancing Support
+
+There are two supported methods of achieving High Availability and Load Balancing with Cm_Cache_Backend_Redis.
+
+### Redis Sentinel
+
+You may achieve high availability and load balancing using [Redis Sentinel](http://redis.io/topics/sentinel). To enable use of Redis Sentinel the `server`
+specified should be a comma-separated list of Sentinel servers and the `sentinel_master` option should be specified
+to indicate the name of the sentinel master set (e.g. 'mymaster'). If using `sentinel_master` you may also specify
+`load_from_slaves` in which case a random slave will be chosen for performing reads in order to load balance across multiple Redis instances.
+Using the value '1' indicates to only load from slaves and '2' to include the master in the random read slave selection.
+
+Example configuration:
+
+        <!-- This is a child node of config/global -->
+        <cache>
+          <backend>Cm_Cache_Backend_Redis</backend>
+          <backend_options>
+            <server>tcp://10.0.0.1:26379,tcp://10.0.0.2:26379,tcp://10.0.0.3:26379</server>
+            <timeout>0.5</timeout>
+            <sentinel_master>mymaster</sentinel_master>
+            <sentinel_master_verify>1</sentinel_master_verify>
+            <load_from_slaves>1</load_from_slaves>
+          </backend_options>
+        </cache>
+
+### Load Balancer or Service Discovery
+
+It is also possible to achieve high availability by using other methods where you can specify separate connection addresses for the
+master and slave(s). The `load_from_slave` option has been added for this purpose and this option does *not*
+connect to a Sentinel server as the example above, although you probably would benefit from still having a Sentinel setup purely for
+the easier replication and failover.
+
+Examples would be to use a TCP load balancer (e.g. HAProxy) with separate ports for master and slaves, or a DNS-based system that
+uses service discovery health checks to expose master and slaves via different DNS names. 
+
+Example configuration:
+
+        <!-- This is a child node of config/global -->
+        <cache>
+          <backend>Cm_Cache_Backend_Redis</backend>
+          <backend_options>
+            <server>tcp://redis-master:6379</server>
+            <load_from_slave>tcp://redis-slaves:6379</load_from_slave>
+            <timeout>0.5</timeout>
+          </backend_options>
+        </cache>
 
 ## RELATED / TUNING
 
@@ -103,6 +155,8 @@ Works with any Zend Framework project including all versions of Magento!
 
 ## Release Notes
 
+ - March 2017: Added support for Redis Sentinel and loading from slaves. Thanks @Xon for the help!
+ - Sometime in 2013: Ceased updating these release notes...
  - November 19, 2012: Added read_timeout option. (Feature only supported in standalone mode, will be supported by phpredis when pull request #260 is merged)
  - October 29, 2012: Added support for persistent connections. (Thanks samm-git!)
  - October 12, 2012: Improved memory usage and efficiency of garbage collection and updated recommendation.

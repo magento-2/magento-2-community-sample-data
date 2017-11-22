@@ -167,6 +167,38 @@ class CredisTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(4, count($range));
         $this->assertEquals(range(0, 3), array_keys($range)); 
 
+        // testing zunionstore (intersection of sorted sets)
+        $this->credis->zAdd('myset1', 10, 'key1');
+        $this->credis->zAdd('myset1', 10, 'key2');
+        $this->credis->zAdd('myset1', 10, 'key_not_in_myset2');
+
+        $this->credis->zAdd('myset2', 15, 'key1');
+        $this->credis->zAdd('myset2', 15, 'key2');
+        $this->credis->zAdd('myset2', 15, 'key_not_in_myset1');
+
+        $this->credis->zUnionStore('myset3', array('myset1', 'myset2'));
+        $range = $this->credis->zRangeByScore('myset3', '-inf', '+inf', array('withscores' => true));
+        $this->assertEquals(4, count($range));
+        $this->assertTrue(array_key_exists('key1', $range));
+        $this->assertEquals(25, $range['key1']);
+        $this->assertTrue(array_key_exists('key_not_in_myset1', $range));
+        $this->assertEquals(15, $range['key_not_in_myset1']);
+
+        // testing zunionstore AGGREGATE option
+        $this->credis->zUnionStore('myset4', array('myset1', 'myset2'), array('aggregate' => 'max'));
+        $range = $this->credis->zRangeByScore('myset4', '-inf', '+inf', array('withscores' => true));
+        $this->assertEquals(4, count($range));
+        $this->assertTrue(array_key_exists('key1', $range));
+        $this->assertEquals(15, $range['key1']);
+        $this->assertTrue(array_key_exists('key2', $range));
+        $this->assertEquals(15, $range['key2']);
+
+        // testing zunionstore WEIGHTS option
+        $this->credis->zUnionStore('myset5', array('myset1', 'myset2'), array('weights' => array(2, 4)));
+        $range = $this->credis->zRangeByScore('myset5', '-inf', '+inf', array('withscores' => true));
+        $this->assertEquals(4, count($range));
+        $this->assertTrue(array_key_exists('key1', $range));
+        $this->assertEquals(80, $range['key1']);
     }
 
     public function testHashes()
@@ -388,4 +420,39 @@ class CredisTest extends PHPUnit_Framework_TestCase
       $this->setExpectedException('CredisException','Cannot force Credis_Client to use standalone PHP driver after a connection has already been established.');
       $this->credis->forceStandalone();
   }
+  public function testHscan()
+  {
+      $this->credis->hmset('hash',array('name' => 'Jack','age' =>33));
+      $iterator = null;
+      $result = $this->credis->hscan($iterator,'hash','n*',10);
+      $this->assertEquals($iterator,0);
+      $this->assertEquals($result,['name'=>'Jack']);
+	}
+    public function testSscan()
+    {
+        $this->credis->sadd('set','name','Jack');
+        $this->credis->sadd('set','age','33');
+        $iterator = null;
+        $result = $this->credis->sscan($iterator,'set','n*',10);
+        $this->assertEquals($iterator,0);
+        $this->assertEquals($result,[0=>'name']);
+    }
+    public function testZscan()
+    {
+        $this->credis->zadd('sortedset',0,'name');
+        $this->credis->zadd('sortedset',1,'age');
+        $iterator = null;
+        $result = $this->credis->zscan($iterator,'sortedset','n*',10);
+        $this->assertEquals($iterator,0);
+        $this->assertEquals($result,['name'=>'0']);
+    }
+    public function testscan()
+    {
+        $this->credis->set('name','Jack');
+        $this->credis->set('age','33');
+        $iterator = null;
+        $result = $this->credis->scan($iterator,'n*',10);
+        $this->assertEquals($iterator,0);
+        $this->assertEquals($result,['name']);
+    }
 }

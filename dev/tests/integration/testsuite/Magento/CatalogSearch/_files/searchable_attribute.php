@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ $eavSetup->addAttribute(
     'test_searchable_attribute',
     [
         'label' => 'Test-attribute',
-        'is_global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+        'global' => \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_STORE,
         'required' => 0,
         'user_defined' => 1,
         'searchable' => 1,
@@ -22,10 +22,5 @@ $eavSetup->addAttribute(
         'used_in_product_listing' => 1,
         'is_used_in_grid' => 1,
         'is_filterable_in_grid' => 1,
-        'frontend_input' => 'text',
     ]
 );
-
-/** @var \Magento\Eav\Model\Config $eavConfig */
-$eavConfig = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config');
-$eavConfig->clear();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -30,16 +30,25 @@ class AssertConfigurableProductOutOfStockPage extends AssertProductPage
     protected function verifyPrice()
     {
         $priceBlock = $this->productView->getPriceBlock();
-        if (!$priceBlock->isVisible()) {
-            return "Price block for '{$this->product->getName()}' product' is not visible.";
-        }
-        $formPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
         $fixturePrice = $this->getLowestConfigurablePrice();
 
-        if ($fixturePrice != $formPrice) {
-            return "Displayed product price on product page (front-end) not equals passed from fixture. "
-                . "Actual: {$formPrice}, expected: {$fixturePrice}.";
+        if ($fixturePrice === null) {
+            if ($priceBlock->isVisible()) {
+                return "Price block for '{$this->product->getName()}' product' is visible.";
+            }
+        } else {
+            if (!$priceBlock->isVisible()) {
+                return "Price block for '{$this->product->getName()}' product' is not visible.";
+            }
+
+            $formPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
+
+            if ($fixturePrice != $formPrice) {
+                return "Displayed product price on product page (front-end) not equals passed from fixture. "
+                    . "Actual: {$formPrice}, expected: {$fixturePrice}.";
+            }
         }
+
         return null;
     }
 
@@ -63,12 +72,11 @@ class AssertConfigurableProductOutOfStockPage extends AssertProductPage
             $configurableOptions = $this->product->getConfigurableAttributesData();
             $products = $this->product->getDataFieldConfig('configurable_attributes_data')['source']->getProducts();
             foreach ($configurableOptions['matrix'] as $key => $option) {
-                $price = $price === null ? $option['price'] : $price;
-                if ($price > $option['price']) {
-                    $price = $option['price'];
-                }
-                if ($products[$key]->getQuantityAndStockStatus()['is_in_stock'] === 'Out of Stock') {
-                    $price = null;
+                if ($products[$key]->getQuantityAndStockStatus()['is_in_stock'] !== 'Out of Stock') {
+                    $price = $price === null ? $option['price'] : $price;
+                    if ($price > $option['price']) {
+                        $price = $option['price'];
+                    }
                 }
             }
         }

@@ -2,16 +2,14 @@
 /**
  * Application configuration object. Used to access configuration when application is initialized and installed.
  *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App;
 
-use Magento\Framework\App\Config\ScopePool;
+use Magento\Framework\App\Config\ConfigTypeInterface;
 use Magento\Framework\App\Config\ScopeCodeResolver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\Config\ConfigTypeInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Config
@@ -22,11 +20,6 @@ class Config implements ScopeConfigInterface
      * Config cache tag
      */
     const CACHE_TAG = 'CONFIG';
-
-    /**
-     * @var ScopePool
-     */
-    protected $_scopePool;
 
     /**
      * @var ScopeCodeResolver
@@ -41,17 +34,14 @@ class Config implements ScopeConfigInterface
     /**
      * Config constructor.
      *
-     * @param ScopePool $scopePool
-     * @param ScopeCodeResolver|null $scopeCodeResolver
+     * @param ScopeCodeResolver $scopeCodeResolver
      * @param array $types
      */
     public function __construct(
-        ScopePool $scopePool,
-        ScopeCodeResolver $scopeCodeResolver = null,
+        ScopeCodeResolver $scopeCodeResolver,
         array $types = []
     ) {
-        $this->_scopePool = $scopePool;
-        $this->scopeCodeResolver = $scopeCodeResolver ?: ObjectManager::getInstance()->get(ScopeCodeResolver::class);
+        $this->scopeCodeResolver = $scopeCodeResolver;
         $this->types = $types;
     }
 
@@ -77,7 +67,7 @@ class Config implements ScopeConfigInterface
         if ($scope !== 'default') {
             if (is_numeric($scopeCode) || $scopeCode === null) {
                 $scopeCode = $this->scopeCodeResolver->resolve($scope, $scopeCode);
-            } else if ($scopeCode instanceof \Magento\Framework\App\ScopeInterface) {
+            } elseif ($scopeCode instanceof \Magento\Framework\App\ScopeInterface) {
                 $scopeCode = $scopeCode->getCode();
             }
             if ($scopeCode) {
@@ -105,6 +95,7 @@ class Config implements ScopeConfigInterface
 
     /**
      * Invalidate cache by type
+     * Clean scopeCodeResolver
      *
      * @return void
      */
@@ -113,6 +104,7 @@ class Config implements ScopeConfigInterface
         foreach ($this->types as $type) {
             $type->clean();
         }
+        $this->scopeCodeResolver->clean();
     }
 
     /**

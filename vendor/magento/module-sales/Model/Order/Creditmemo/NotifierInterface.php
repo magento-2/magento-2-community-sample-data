@@ -1,12 +1,15 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Creditmemo;
 
 /**
  * Interface for CreditMemo notifier.
+ *
+ * @api
+ * @since 100.1.3
  */
 interface NotifierInterface
 {
@@ -19,6 +22,7 @@ interface NotifierInterface
      * @param bool $forceSyncMode
      *
      * @return void
+     * @since 100.1.3
      */
     public function notify(
         \Magento\Sales\Api\Data\OrderInterface $order,

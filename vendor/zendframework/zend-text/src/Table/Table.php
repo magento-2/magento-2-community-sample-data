@@ -11,6 +11,7 @@ namespace Zend\Text\Table;
 
 use Traversable;
 use Zend\Stdlib\ArrayUtils;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Text\Table\Decorator\DecoratorInterface as Decorator;
 
 /**
@@ -45,7 +46,7 @@ class Table
      *
      * @var array
      */
-    protected $rows = array();
+    protected $rows = [];
 
     /**
      * Auto separation mode
@@ -66,7 +67,7 @@ class Table
      *
      * @var array
      */
-    protected $defaultColumnAligns = array();
+    protected $defaultColumnAligns = [];
 
     /**
      * Plugin loader for decorators
@@ -94,11 +95,11 @@ class Table
      *
      * @var array
      */
-    protected $skipOptions = array(
+    protected $skipOptions = [
         'options',
         'config',
         'defaultColumnAlign',
-    );
+    ];
 
     /**
      * Create a basic table object
@@ -225,7 +226,7 @@ class Table
             return $this->decoratorManager;
         }
 
-        $this->setDecoratorManager(new DecoratorManager());
+        $this->setDecoratorManager(new DecoratorManager(new ServiceManager()));
         return $this->decoratorManager;
     }
 

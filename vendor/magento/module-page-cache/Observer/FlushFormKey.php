@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\PageCache\Observer;
@@ -9,9 +9,6 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\App\PageCache\FormKey as CookieFormKey;
 use Magento\Framework\Data\Form\FormKey as DataFormKey;
 
-/**
- * Flush FormKey after set of events (login/logout customer and backend).
- */
 class FlushFormKey implements ObserverInterface
 {
     /**
@@ -35,8 +32,6 @@ class FlushFormKey implements ObserverInterface
     }
 
     /**
-     * Flush FormKey after set of events (login/logout customer and backend).
-     *
      * @param \Magento\Framework\Event\Observer $observer
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
