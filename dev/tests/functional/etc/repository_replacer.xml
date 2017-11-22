@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -125,6 +125,51 @@
             <field name="tax_calculation_rate_id" xsi:type="number">2</field>
             <field name="tax_region_id" xsi:type="number">43</field>
         </dataset>
+
+        <dataset name="us_ca_rate_8_25_no_zip">
+            <field name="tax_region_id" xsi:type="number">12</field>
+        </dataset>
+
+        <dataset name="us_ca_rate_8_25">
+            <field name="tax_region_id" xsi:type="number">12</field>
+        </dataset>
+
+        <dataset name="us_ca_rate_8_375">
+            <field name="tax_region_id" xsi:type="number">12</field>
+        </dataset>
+
+        <dataset name="us_ny_rate_8_375">
+            <field name="tax_region_id" xsi:type="number">43</field>
+        </dataset>
+
+        <dataset name="us_ny_rate_8_25">
+            <field name="tax_region_id" xsi:type="number">43</field>
+        </dataset>
+
+        <dataset name="paypal_rate_8_25">
+            <field name="tax_region_id" xsi:type="number">12</field>
+        </dataset>
+
+        <dataset name="withFixedZip">
+            <field name="tax_region_id" xsi:type="number">57</field>
+        </dataset>
+
+        <dataset name="us_ut_fixed_zip_rate_20">
+            <field name="tax_region_id" xsi:type="number">58</field>
+        </dataset>
+
+        <dataset name="tx_rate_10">
+            <field name="tax_region_id" xsi:type="number">57</field>
+        </dataset>
+
+        <dataset name="ny_rate_20">
+            <field name="tax_region_id" xsi:type="number">43</field>
+        </dataset>
+
+        <dataset name="ca_rate_30">
+            <field name="tax_region_id" xsi:type="number">12</field>
+        </dataset>
+
     </repository>
 
     <repository class="Magento\User\Test\Repository\Role">

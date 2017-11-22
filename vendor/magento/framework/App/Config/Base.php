@@ -3,7 +3,7 @@
  * Abstract configuration class
  * Used to retrieve core configuration values
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Config;
@@ -18,11 +18,11 @@ class Base extends \Magento\Framework\Simplexml\Config
     public static $instances = [];
 
     /**
-     * @param \Magento\Framework\Simplexml\Element|string $sourceData $sourceData
+     * @param string|\Magento\Framework\Simplexml\Element $sourceData $sourceData
      */
     public function __construct($sourceData = null)
     {
-        $this->_elementClass = \Magento\Framework\App\Config\Element::class;
+        $this->_elementClass = 'Magento\Framework\App\Config\Element';
         parent::__construct($sourceData);
         self::$instances[] = $this;
     }

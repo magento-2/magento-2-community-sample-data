@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Controller\Adminhtml\Export;
@@ -10,7 +10,7 @@ use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Ui\Controller\Adminhtml\Export\GridToCsv;
 use Magento\Ui\Model\Export\ConvertToCsv;
 
-class GridToCsvTest extends \PHPUnit\Framework\TestCase
+class GridToCsvTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GridToCsv
@@ -32,17 +32,17 @@ class GridToCsvTest extends \PHPUnit\Framework\TestCase
      */
     protected $fileFactory;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->converter = $this->getMockBuilder(\Magento\Ui\Model\Export\ConvertToCsv::class)
+        $this->converter = $this->getMockBuilder('Magento\Ui\Model\Export\ConvertToCsv')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->fileFactory = $this->getMockBuilder(\Magento\Framework\App\Response\Http\FileFactory::class)
+        $this->fileFactory = $this->getMockBuilder('Magento\Framework\App\Response\Http\FileFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

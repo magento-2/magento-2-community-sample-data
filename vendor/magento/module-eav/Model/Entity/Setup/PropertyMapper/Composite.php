@@ -2,7 +2,7 @@
 /**
  * Composite attribute property mapper
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Entity\Setup\PropertyMapper;
@@ -45,7 +45,7 @@ class Composite implements PropertyMapperInterface
     {
         $data = [];
         foreach ($this->propertyMappers as $class) {
-            if (!is_subclass_of($class, \Magento\Eav\Model\Entity\Setup\PropertyMapperInterface::class)) {
+            if (!is_subclass_of($class, '\Magento\Eav\Model\Entity\Setup\PropertyMapperInterface')) {
                 throw new \InvalidArgumentException(
                     'Property mapper ' .
                     $class .

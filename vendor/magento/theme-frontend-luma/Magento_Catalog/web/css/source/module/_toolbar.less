@@ -1,16 +1,11 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
-
-//
-//  Variables
-//  _____________________________________________
 
 @toolbar-mode-icon-font-size: 16px;
 @toolbar-background: transparent;
 @toolbar-element-background: @color-gray94;
-@toolbar-element__color: @color-gray37;
 @pager-action__background: @toolbar-element-background;
 @pager-action__hover__background: darken(@toolbar-element-background, 7%);
 @pager__font-weight: @font-weight__bold;
@@ -41,14 +36,13 @@
 
         &-amount {
             left: 0;
-            line-height: @toolbar-mode-icon-font-size + 2;
+            line-height: @toolbar-mode-icon-font-size+2;
             margin: 0;
             padding: 7px 0;
             position: absolute;
             text-align: left;
             top: 0;
             vertical-align: middle;
-
             .products.wrapper ~ .toolbar & {
                 display: none;
             }
@@ -62,16 +56,13 @@
 
         &-products {
             .lib-css(background-color, @toolbar-background);
-
             .pages {
                 display: none;
-
                 .products.wrapper ~ & {
                     display: block;
                 }
             }
         }
-
         .pages {
             margin-bottom: @indent__m;
         }
@@ -79,23 +70,19 @@
 
     .sorter {
         float: right;
-
         .page-products & {
             position: absolute;
             right: @indent__s;
             top: 0;
             z-index: 1;
         }
-
         .products.wrapper ~ .toolbar & {
             display: none;
         }
-
         &-options {
             margin: 0 @indent__xs 0 7px;
             width: auto;
         }
-
         &-action {
             .lib-icon-font(
             @icon-arrow-up,
@@ -104,7 +91,6 @@
             @_icon-font-color-hover: @header-icons-color-hover
             );
             .lib-icon-text-hide();
-
             &.sort-desc:before {
                 content: @icon-arrow-down;
             }
@@ -116,19 +102,17 @@
     }
 
     .limiter {
+        display: none;
         &-options {
             margin: 0 5px 0 7px;
             width: auto;
         }
-
         &-label {
             font-weight: 400;
         }
-
         .page-products .toolbar & {
             display: none;
         }
-
         .control {
             display: inline-block;
         }
@@ -136,7 +120,7 @@
 }
 
 //
-//  Desktop
+//  Desctop
 //  _____________________________________________
 
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
@@ -145,7 +129,7 @@
     }
 }
 
-.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__s) {
     .page-products {
         .columns {
             padding-top: 0;
@@ -154,13 +138,12 @@
         }
     }
 
-    .toolbar-amount {
-        display: block;
-        float: left;
-        position: static;
-    }
-
     .toolbar {
+        &-amount {
+            display: block;
+            float: left;
+            position: static;
+        }
         .products.wrapper ~ & .pages {
             float: left;
             margin-bottom: 0;
@@ -175,51 +158,48 @@
         .products.wrapper ~ .toolbar & {
             display: none;
         }
-    }
 
-    .modes-label {
-        &:extend(.abs-visually-hidden-desktop all);
-    }
-
-    .modes-mode {
-        .lib-css(background-color, @toolbar-element-background);
-        .lib-css(box-shadow, @button__shadow);
-        .lib-css(color, @toolbar-element__color);
-        border: 1px solid @border-color__base;
-        border-right: 0;
-        float: left;
-        font-weight: @font-weight__regular;
-        line-height: 1;
-        padding: 7px 10px;
-        text-align: center;
-
-        .modes-label + & {
-            border-radius: 3px 0 0 3px;
+        &-label {
+            &:extend(.abs-visually-hidden-desktop-s all);
         }
 
-        &:hover {
-            .lib-css(color, @toolbar-element__color);
-            background: darken(@toolbar-element-background, 2%);
-        }
+        &-mode {
+            .lib-css(background-color, @toolbar-element-background);
+            .lib-css(box-shadow, @button__shadow);
+            .lib-css(color, @text__color__muted);
+            border: 1px solid @border-color__base;
+            border-right: 0;
+            float: left;
+            font-weight: @font-weight__regular;
+            line-height: 1;
+            padding: 7px 10px;
+            text-align: center;
 
-        &:last-child {
-            border-radius: 0 3px 3px 0;
-            border-right: 1px solid @border-color__base;
-        }
+            .modes-label + & {
+                border-radius: 3px 0 0 3px;
+            }
+            &:hover {
+                .lib-css(color, @text__color__muted);
+                background: darken(@toolbar-element-background, 2%);
+            }
+            &:last-child {
+                border-radius: 0 3px 3px 0;
+                border-right: 1px solid @border-color__base;
+            }
+            &.active {
+                .lib-css(box-shadow, @button__shadow-active);
+                background: darken(@toolbar-element-background, 7%);
+                color: @color-gray62;
+            }
 
-        &.active {
-            .lib-css(box-shadow, @button__shadow-active);
-            background: darken(@toolbar-element-background, 7%);
-            color: @color-gray62;
+            .lib-icon-font(
+            @icon-grid,
+            @_icon-font-size: @toolbar-mode-icon-font-size,
+            @_icon-font-text-hide: true,
+            @_icon-font-color: @text__color__muted,
+            @_icon-font-color-hover: @text__color__muted
+            );
         }
-
-        .lib-icon-font(
-        @icon-grid,
-        @_icon-font-size: @toolbar-mode-icon-font-size,
-        @_icon-font-text-hide: true,
-        @_icon-font-color: @text__color__muted,
-        @_icon-font-color-hover: @text__color__muted
-        );
     }
 
     .sorter {

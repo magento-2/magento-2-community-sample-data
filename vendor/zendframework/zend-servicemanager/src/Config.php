@@ -14,14 +14,14 @@ class Config implements ConfigInterface
     /**
      * @var array
      */
-    protected $config = [];
+    protected $config = array();
 
     /**
      * Constructor
      *
      * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct($config = array())
     {
         $this->config = $config;
     }
@@ -43,7 +43,7 @@ class Config implements ConfigInterface
      */
     public function getFactories()
     {
-        return (isset($this->config['factories'])) ? $this->config['factories'] : [];
+        return (isset($this->config['factories'])) ? $this->config['factories'] : array();
     }
 
     /**
@@ -53,7 +53,7 @@ class Config implements ConfigInterface
      */
     public function getAbstractFactories()
     {
-        return (isset($this->config['abstract_factories'])) ? $this->config['abstract_factories'] : [];
+        return (isset($this->config['abstract_factories'])) ? $this->config['abstract_factories'] : array();
     }
 
     /**
@@ -63,7 +63,7 @@ class Config implements ConfigInterface
      */
     public function getInvokables()
     {
-        return (isset($this->config['invokables'])) ? $this->config['invokables'] : [];
+        return (isset($this->config['invokables'])) ? $this->config['invokables'] : array();
     }
 
     /**
@@ -73,7 +73,7 @@ class Config implements ConfigInterface
      */
     public function getServices()
     {
-        return (isset($this->config['services'])) ? $this->config['services'] : [];
+        return (isset($this->config['services'])) ? $this->config['services'] : array();
     }
 
     /**
@@ -83,7 +83,7 @@ class Config implements ConfigInterface
      */
     public function getAliases()
     {
-        return (isset($this->config['aliases'])) ? $this->config['aliases'] : [];
+        return (isset($this->config['aliases'])) ? $this->config['aliases'] : array();
     }
 
     /**
@@ -93,7 +93,7 @@ class Config implements ConfigInterface
      */
     public function getInitializers()
     {
-        return (isset($this->config['initializers'])) ? $this->config['initializers'] : [];
+        return (isset($this->config['initializers'])) ? $this->config['initializers'] : array();
     }
 
     /**
@@ -103,7 +103,7 @@ class Config implements ConfigInterface
      */
     public function getShared()
     {
-        return (isset($this->config['shared'])) ? $this->config['shared'] : [];
+        return (isset($this->config['shared'])) ? $this->config['shared'] : array();
     }
 
     /**
@@ -114,7 +114,7 @@ class Config implements ConfigInterface
      */
     public function getDelegators()
     {
-        return (isset($this->config['delegators'])) ? $this->config['delegators'] : [];
+        return (isset($this->config['delegators'])) ? $this->config['delegators'] : array();
     }
 
     /**

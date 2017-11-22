@@ -1,22 +1,23 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Developer\Model\Css\PreProcessor\FileGenerator;
 
-use Magento\Developer\Model\Config\Source\WorkflowType;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\State;
-use Magento\Framework\App\View\Asset\Publisher;
-use Magento\Framework\Css\PreProcessor\File\Temporary;
-use Magento\Framework\Css\PreProcessor\FileGenerator\RelatedGenerator;
-use Magento\Framework\View\Asset\LocalInterface;
+use Magento\Framework\Filesystem;
 use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\App\View\Asset\Publisher;
+use Magento\Framework\View\Asset\LocalInterface;
+use Magento\Framework\Css\PreProcessor\File\Temporary;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Developer\Model\Config\Source\WorkflowType;
+use Magento\Framework\Css\PreProcessor\FileGenerator\RelatedGenerator;
 
 /**
- * Decorator for publishing of related assets
+ * Class PublicationDecorator
+ *
+ * Decorates generator of related assets and publishes them
  */
 class PublicationDecorator extends RelatedGenerator
 {
@@ -36,13 +37,9 @@ class PublicationDecorator extends RelatedGenerator
     private $hasRelatedPublishing;
 
     /**
-     * @var State
-     */
-    private $state;
-
-    /**
      * Constructor
      *
+     * @param Filesystem $filesystem
      * @param Repository $assetRepository
      * @param Temporary $temporaryFile
      * @param Publisher $assetPublisher
@@ -50,13 +47,14 @@ class PublicationDecorator extends RelatedGenerator
      * @param bool $hasRelatedPublishing
      */
     public function __construct(
+        Filesystem $filesystem,
         Repository $assetRepository,
         Temporary $temporaryFile,
         Publisher $assetPublisher,
         ScopeConfigInterface $scopeConfig,
         $hasRelatedPublishing = false
     ) {
-        parent::__construct($assetRepository, $temporaryFile);
+        parent::__construct($filesystem, $assetRepository, $temporaryFile);
         $this->assetPublisher = $assetPublisher;
         $this->scopeConfig = $scopeConfig;
         $this->hasRelatedPublishing = $hasRelatedPublishing;
@@ -68,27 +66,12 @@ class PublicationDecorator extends RelatedGenerator
     protected function generateRelatedFile($relatedFileId, LocalInterface $asset)
     {
         $relatedAsset = parent::generateRelatedFile($relatedFileId, $asset);
-        $isClientSideCompilation =
-            $this->getState()->getMode() !== State::MODE_PRODUCTION
-            && WorkflowType::CLIENT_SIDE_COMPILATION === $this->scopeConfig->getValue(WorkflowType::CONFIG_NAME_PATH);
-
-        if ($this->hasRelatedPublishing || $isClientSideCompilation) {
+        if ($this->hasRelatedPublishing
+            || WorkflowType::CLIENT_SIDE_COMPILATION === $this->scopeConfig->getValue(WorkflowType::CONFIG_NAME_PATH)
+        ) {
             $this->assetPublisher->publish($relatedAsset);
         }
 
         return $relatedAsset;
-    }
-
-    /**
-     * @return State
-     * @deprecated 100.2.0
-     */
-    private function getState()
-    {
-        if (null === $this->state) {
-            $this->state = ObjectManager::getInstance()->get(State::class);
-        }
-
-        return $this->state;
     }
 }

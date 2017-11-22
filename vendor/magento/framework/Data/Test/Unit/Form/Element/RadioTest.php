@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
-class RadioTest extends \PHPUnit\Framework\TestCase
+class RadioTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -23,9 +23,15 @@ class RadioTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $factoryMock = $this->createMock(\Magento\Framework\Data\Form\Element\Factory::class);
-        $collectionFactoryMock = $this->createMock(\Magento\Framework\Data\Form\Element\CollectionFactory::class);
-        $escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $factoryMock = $this->getMock('\Magento\Framework\Data\Form\Element\Factory', [], [], '', false);
+        $collectionFactoryMock = $this->getMock(
+            '\Magento\Framework\Data\Form\Element\CollectionFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $escaperMock = $this->getMock('\Magento\Framework\Escaper', [], [], '', false);
         $this->_model = new \Magento\Framework\Data\Form\Element\Radio(
             $factoryMock,
             $collectionFactoryMock,

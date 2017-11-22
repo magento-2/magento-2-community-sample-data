@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Test\Unit\Model;
@@ -10,7 +10,7 @@ use \Magento\CatalogInventory\Model\Configuration;
 /**
  * Class ConfigurationTest
  */
-class ConfigurationTest extends \PHPUnit\Framework\TestCase
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Configuration
@@ -39,16 +39,16 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->getMockBuilder(\Magento\Catalog\Model\ProductTypes\ConfigInterface::class)
+        $this->configMock = $this->getMockBuilder('Magento\Catalog\Model\ProductTypes\ConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->minSaleQtyHelperMock = $this->getMockBuilder(\Magento\CatalogInventory\Helper\Minsaleqty::class)
+        $this->minSaleQtyHelperMock = $this->getMockBuilder('Magento\CatalogInventory\Helper\Minsaleqty')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = new Configuration(
@@ -59,9 +59,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetDefaultWebsiteId()
+    public function testGetDefaultScopeId()
     {
-        $this->assertEquals(0, $this->model->getDefaultScopeId());
+        $id = 1;
+        $this->assertEquals($id, $this->model->getDefaultScopeId());
     }
 
     public function testGetIsQtyTypeIds()

@@ -1,56 +1,58 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Product;
 
-use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\AbstractPlugin as AbstractIndexerPlugin;
-use Magento\Catalog\Model\Product\Action as ProductAction;
+use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\AbstractPlugin;
 
-/**
- * Plugin for Magento\Catalog\Model\Product\Action
- */
-class Action extends AbstractIndexerPlugin
+class Action extends AbstractPlugin
 {
     /**
      * Reindex on product attribute mass change
      *
-     * @param ProductAction $subject
-     * @param ProductAction $action
+     * @param \Magento\Catalog\Model\Product\Action $subject
+     * @param \Closure $closure
      * @param array $productIds
      * @param array $attrData
      * @param int $storeId
-     * @return ProductAction
-     *
+     * @return \Magento\Catalog\Model\Product\Action
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterUpdateAttributes(
-        ProductAction $subject,
-        ProductAction $action,
-        $productIds,
-        $attrData,
+    public function aroundUpdateAttributes(
+        \Magento\Catalog\Model\Product\Action $subject,
+        \Closure $closure,
+        array $productIds,
+        array $attrData,
         $storeId
     ) {
+        $result = $closure($productIds, $attrData, $storeId);
         $this->reindexList(array_unique($productIds));
-
-        return $action;
+        return $result;
     }
 
     /**
      * Reindex on product websites mass change
      *
-     * @param ProductAction $subject
-     * @param null $result
+     * @param \Magento\Catalog\Model\Product\Action $subject
+     * @param \Closure $closure
      * @param array $productIds
      * @param array $websiteIds
      * @param string $type
-     * @return void
-     *
+     * @return \Magento\Catalog\Model\Product\Action
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterUpdateWebsites(ProductAction $subject, $result, $productIds, $websiteIds, $type)
-    {
+    public function aroundUpdateWebsites(
+        \Magento\Catalog\Model\Product\Action $subject,
+        \Closure $closure,
+        array $productIds,
+        array $websiteIds,
+        $type
+    ) {
+        $result = $closure($productIds, $websiteIds, $type);
         $this->reindexList(array_unique($productIds));
+        return $result;
     }
 }

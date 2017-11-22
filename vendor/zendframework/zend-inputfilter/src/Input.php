@@ -10,7 +10,6 @@
 namespace Zend\InputFilter;
 
 use Zend\Filter\FilterChain;
-use Zend\ServiceManager\AbstractPluginManager;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\ValidatorChain;
 
@@ -266,7 +265,7 @@ class Input implements
      */
     public function getFilterChain()
     {
-        if (! $this->filterChain) {
+        if (!$this->filterChain) {
             $this->setFilterChain(new FilterChain());
         }
         return $this->filterChain;
@@ -301,7 +300,7 @@ class Input implements
      */
     public function getValidatorChain()
     {
-        if (! $this->validatorChain) {
+        if (!$this->validatorChain) {
             $this->setValidatorChain(new ValidatorChain());
         }
         return $this->validatorChain;
@@ -319,8 +318,7 @@ class Input implements
     /**
      * Flag for inform if input value was set.
      *
-     * This flag used for distinguish when {@link Input::getValue()}
-     * will return the value previously set or the default.
+     * This flag used for distinguish when {@link Input::getValue()} will return the value previously set or the default.
      *
      * @see Input::getValue() For retrieve the input value.
      * @see Input::setValue() For set a new value.
@@ -369,7 +367,7 @@ class Input implements
         $this->setName($input->getName());
         $this->setRequired($input->isRequired());
         $this->setAllowEmpty($input->allowEmpty());
-        if (! $input instanceof Input || $input->hasValue()) {
+        if (!($input instanceof Input) || $input->hasValue()) {
             $this->setValue($input->getRawValue());
         }
 
@@ -387,13 +385,9 @@ class Input implements
      */
     public function isValid($context = null)
     {
-        if (is_array($this->errorMessage)) {
-            $this->errorMessage = null;
-        }
-
         $value           = $this->getValue();
         $hasValue        = $this->hasValue();
-        $empty           = ($value === null || $value === '' || $value === []);
+        $empty           = ($value === null || $value === '' || $value === array());
         $required        = $this->isRequired();
         $allowEmpty      = $this->allowEmpty();
         $continueIfEmpty = $this->continueIfEmpty();
@@ -450,7 +444,7 @@ class Input implements
         }
 
         if ($this->hasFallback()) {
-            return [];
+            return array();
         }
 
         $validator = $this->getValidatorChain();
@@ -464,7 +458,7 @@ class Input implements
      */
     protected function injectNotEmptyValidator()
     {
-        if ((! $this->isRequired() && $this->allowEmpty()) || $this->notEmptyValidator) {
+        if ((!$this->isRequired() && $this->allowEmpty()) || $this->notEmptyValidator) {
             return;
         }
         $chain = $this->getValidatorChain();
@@ -480,8 +474,8 @@ class Input implements
 
         $this->notEmptyValidator = true;
 
-        if (class_exists(AbstractPluginManager::class)) {
-            $chain->prependByName('NotEmpty', [], true);
+        if (class_exists('Zend\ServiceManager\AbstractPluginManager')) {
+            $chain->prependByName('NotEmpty', array(), true);
 
             return;
         }
@@ -496,26 +490,10 @@ class Input implements
      */
     protected function prepareRequiredValidationFailureMessage()
     {
-        $chain      = $this->getValidatorChain();
-        $notEmpty   = $chain->plugin(NotEmpty::class);
-
-        foreach ($chain->getValidators() as $validator) {
-            if ($validator['instance'] instanceof NotEmpty) {
-                $notEmpty = $validator['instance'];
-                break;
-            }
-        }
-
-        $templates  = $notEmpty->getOption('messageTemplates');
-        $message    = $templates[NotEmpty::IS_EMPTY];
-        $translator = $notEmpty->getTranslator();
-
-        if ($translator) {
-            $message = $translator->translate($message, $notEmpty->getTranslatorTextDomain());
-        }
-
-        return [
-            NotEmpty::IS_EMPTY => $message,
-        ];
+        $notEmpty = new NotEmpty();
+        $templates = $notEmpty->getOption('messageTemplates');
+        return array(
+            NotEmpty::IS_EMPTY => $templates[NotEmpty::IS_EMPTY],
+        );
     }
 }

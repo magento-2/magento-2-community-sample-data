@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\GiftMessage\Test\Unit\Model;
 
 use Magento\GiftMessage\Model\GiftMessageManager;
 
-class GiftMessageManagerTest extends \PHPUnit\Framework\TestCase
+class GiftMessageManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GiftMessageManager
@@ -51,9 +51,10 @@ class GiftMessageManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->messageFactoryMock =
-            $this->createPartialMock(\Magento\GiftMessage\Model\MessageFactory::class, ['create', '__wakeup']);
+            $this->getMock('\Magento\GiftMessage\Model\MessageFactory', ['create', '__wakeup'], [], '', false);
 
-        $this->quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, [
+        $this->quoteMock = $this->getMock('\Magento\Quote\Model\Quote',
+            [
                 'setGiftMessageId',
                 'getGiftMessageId',
                 'save',
@@ -63,30 +64,47 @@ class GiftMessageManagerTest extends \PHPUnit\Framework\TestCase
                 'getShippingAddress',
                 '__wakeup',
                 'getCustomerId'
-            ]);
-        $this->quoteItemMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Item::class, [
+            ],
+            [],
+            '',
+            false);
+        $this->quoteItemMock = $this->getMock('\Magento\Quote\Model\Quote\Item',
+            [
                 'setGiftMessageId',
                 'getGiftMessageId',
                 'save',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false);
 
-        $this->quoteAddressMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+        $this->quoteAddressMock = $this->getMock('Magento\Quote\Model\Quote\Address',
+            [
                 'getGiftMessageId',
                 'setGiftMessageId',
                 'getItemById',
                 'save',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false);
 
-        $this->quoteAddressItemMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Address\Item::class, [
+        $this->quoteAddressItemMock = $this->getMock(
+            '\Magento\Quote\Model\Quote\Address\Item',
+            [
                 'getGiftMessageId',
                 'setGiftMessageId',
                 'save',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false);
 
-        $this->giftMessageMock = $this->createPartialMock(\Magento\GiftMessage\Model\Message::class, [
+        $this->giftMessageMock = $this->getMock('\Magento\GiftMessage\Model\Message',
+            [
                 'setSender',
                 'setRecipient',
                 'setMessage',
@@ -97,9 +115,11 @@ class GiftMessageManagerTest extends \PHPUnit\Framework\TestCase
                 'getId',
                 'delete',
                 'save',
-                '__wakeup',
-                'load'
-            ]);
+                '__wakeup'
+            ],
+            [],
+            '',
+            false);
 
         $this->model = new \Magento\GiftMessage\Model\GiftMessageManager($this->messageFactoryMock);
     }

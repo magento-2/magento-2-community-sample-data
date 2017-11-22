@@ -1,10 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Product\Plugin;
 
+/**
+ * BeforeSave plugin for product resource model to update quote items prices if product price is changed
+ */
 class UpdateQuoteItems
 {
     /**
@@ -23,21 +26,16 @@ class UpdateQuoteItems
 
     /**
      * @param \Magento\Catalog\Model\ResourceModel\Product $subject
-     * @param \Magento\Catalog\Model\ResourceModel\Product $result
      * @param \Magento\Framework\Model\AbstractModel $product
-     * @return \Magento\Catalog\Model\ResourceModel\Product
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(
+    public function beforeSave(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
-        \Magento\Catalog\Model\ResourceModel\Product $result,
         \Magento\Framework\Model\AbstractModel $product
     ) {
         $originalPrice = $product->getOrigData('price');
-        $tierPriceChanged = $product->getData('tier_price_changed');
-        if ((!empty($originalPrice) && ($originalPrice != $product->getPrice())) || $tierPriceChanged) {
+        if (!empty($originalPrice) && ($originalPrice != $product->getPrice())) {
             $this->resource->markQuotesRecollect($product->getId());
         }
-        return $result;
     }
 }

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model\Entity;
 
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Type
@@ -49,14 +49,38 @@ class TypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->attrFactoryMock = $this->createMock(\Magento\Eav\Model\Entity\AttributeFactory::class);
-        $this->attrSetFactoryMock = $this->createMock(\Magento\Eav\Model\Entity\Attribute\SetFactory::class);
-        $this->storeFactoryMock = $this->createPartialMock(\Magento\Eav\Model\Entity\StoreFactory::class, ['create']);
-        $this->universalFactoryMock = $this->createMock(\Magento\Framework\Validator\UniversalFactory::class);
+        $this->contextMock = $this->getMock('Magento\Framework\Model\Context', [], [], '', false);
+        $this->registryMock = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $this->attrFactoryMock = $this->getMock(
+            'Magento\Eav\Model\Entity\AttributeFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->attrSetFactoryMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\SetFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->storeFactoryMock = $this->getMock(
+            'Magento\Eav\Model\Entity\StoreFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $this->universalFactoryMock = $this->getMock(
+            'Magento\Framework\Validator\UniversalFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->resourceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\Db\AbstractDb::class,
+            'Magento\Framework\Model\ResourceModel\Db\AbstractDb',
             [],
             '',
             false,

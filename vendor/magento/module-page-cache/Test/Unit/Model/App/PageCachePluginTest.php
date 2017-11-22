@@ -1,6 +1,6 @@
 <?php
 /***
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\PageCache\Model\App\PageCachePlugin;
 use Magento\PageCache\Model\Cache\Type;
 
-class PageCachePluginTest extends \PHPUnit\Framework\TestCase
+class PageCachePluginTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PageCachePlugin */
     private $plugin;
@@ -18,10 +18,10 @@ class PageCachePluginTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\App\PageCache\Cache*/
     private $subjectMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->plugin = (new ObjectManager($this))->getObject(\Magento\PageCache\Model\App\PageCachePlugin::class);
-        $this->subjectMock = $this->getMockBuilder(\Magento\Framework\App\PageCache\Cache::class)
+        $this->plugin = (new ObjectManager($this))->getObject('\Magento\PageCache\Model\App\PageCachePlugin');
+        $this->subjectMock = $this->getMockBuilder('\Magento\Framework\App\PageCache\Cache')
             ->disableOriginalConstructor()
             ->getMock();
     }

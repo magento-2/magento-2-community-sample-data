@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\Component\Test\Unit;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class ComponentRegistrarTest extends \PHPUnit\Framework\TestCase
+class ComponentRegistrarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Module registrar object
@@ -17,7 +17,7 @@ class ComponentRegistrarTest extends \PHPUnit\Framework\TestCase
      */
     private $object;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->object = new ComponentRegistrar();
     }
@@ -45,10 +45,11 @@ class ComponentRegistrarTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \LogicException
+     * @expectedExceptionMessage 'test_module_one' component already exists
      */
     public function testRegistrarWithExceptionForModules()
     {
-        ComponentRegistrar::register(ComponentRegistrar::MODULE, "test_module_one", "some/path/name/onemore");
+        ComponentRegistrar::register(ComponentRegistrar::MODULE, "test_module_one", "some/path/name/one");
     }
 
     public function testGetPath()

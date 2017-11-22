@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Developer\Test\Unit\Model\Config\Backend;
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class AllowedIpsTest
  */
-class AllowedIpsTest extends \PHPUnit\Framework\TestCase
+class AllowedIpsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Developer\Model\Config\Backend\AllowedIps
@@ -19,10 +19,10 @@ class AllowedIpsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $contextMock = $this->getMockBuilder(\Magento\Framework\Model\Context::class)
+        $contextMock = $this->getMockBuilder('\Magento\Framework\Model\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $eventMangerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $eventMangerMock = $this->getMockBuilder('\Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $contextMock->expects($this->any())
@@ -30,9 +30,9 @@ class AllowedIpsTest extends \PHPUnit\Framework\TestCase
             ->willReturn($eventMangerMock);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $escaper = $objectManagerHelper->getObject(\Magento\Framework\Escaper::class);
+        $escaper = $objectManagerHelper->getObject('\Magento\Framework\Escaper');
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Developer\Model\Config\Backend\AllowedIps::class,
+            'Magento\Developer\Model\Config\Backend\AllowedIps',
             [
                 'context' => $contextMock,
                 'escaper' => $escaper,

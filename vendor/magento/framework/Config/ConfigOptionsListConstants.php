@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,6 @@ namespace Magento\Framework\Config;
 
 /**
  * Deployment configuration options constant storage
- * @api
  */
 class ConfigOptionsListConstants
 {
@@ -31,11 +30,6 @@ class ConfigOptionsListConstants
     const CONFIG_PATH_DB = 'db';
     const CONFIG_PATH_RESOURCE = 'resource';
     const CONFIG_PATH_CACHE_TYPES = 'cache_types';
-    const CONFIG_PATH_DOCUMENT_ROOT_IS_PUB = 'directories/document_root_is_pub';
-    const CONFIG_PATH_DB_LOGGER_OUTPUT = 'db_logger/output';
-    const CONFIG_PATH_DB_LOGGER_LOG_EVERYTHING = 'db_logger/log_everything';
-    const CONFIG_PATH_DB_LOGGER_QUERY_TIME_THRESHOLD = 'db_logger/query_time_threshold';
-    const CONFIG_PATH_DB_LOGGER_INCLUDE_STACKTRACE = 'db_logger/include_stacktrace';
     /**#@-*/
 
     /**#@+
@@ -43,6 +37,7 @@ class ConfigOptionsListConstants
      */
     const INPUT_KEY_ENCRYPTION_KEY = 'key';
     const INPUT_KEY_SESSION_SAVE = 'session-save';
+    const INPUT_KEY_DEFINITION_FORMAT = 'definition-format';
     const INPUT_KEY_DB_HOST = 'db-host';
     const INPUT_KEY_DB_NAME = 'db-name';
     const INPUT_KEY_DB_USER = 'db-user';
@@ -57,20 +52,10 @@ class ConfigOptionsListConstants
     /**#@-*/
 
     /**#@+
-     * Input keys for cache configuration
-     */
-    const KEY_CACHE_FRONTEND = 'cache/frontend';
-    const CONFIG_PATH_BACKEND_OPTIONS = 'backend_options';
-
-    /** @deprecated */
-    const INPUT_KEY_DEFINITION_FORMAT = 'definition-format';
-
-    /**#@+
      * Values for session-save
      */
     const SESSION_SAVE_FILES = 'files';
     const SESSION_SAVE_DB = 'db';
-    const SESSION_SAVE_REDIS = 'redis';
     /**#@-*/
 
     /**
@@ -82,7 +67,6 @@ class ConfigOptionsListConstants
      * Array keys for Database configuration
      */
     const KEY_HOST = 'host';
-    const KEY_PORT = 'port';
     const KEY_NAME = 'dbname';
     const KEY_USER = 'username';
     const KEY_PASSWORD = 'password';

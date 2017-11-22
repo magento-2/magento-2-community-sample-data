@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Model\Checks;
 
 use \Magento\Payment\Model\Checks\SpecificationFactory;
 
-class SpecificationFactoryTest extends \PHPUnit\Framework\TestCase
+class SpecificationFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Specification key
@@ -20,22 +20,22 @@ class SpecificationFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $_compositeFactory;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_compositeFactory = $this->getMockBuilder(
-            \Magento\Payment\Model\Checks\CompositeFactory::class
+            'Magento\Payment\Model\Checks\CompositeFactory'
         )->disableOriginalConstructor()->setMethods(['create'])->getMock();
     }
 
     public function testCreate()
     {
         $specification = $this->getMockBuilder(
-            \Magento\Payment\Model\Checks\SpecificationInterface::class
+            'Magento\Payment\Model\Checks\SpecificationInterface'
         )->disableOriginalConstructor()->setMethods([])->getMock();
         $specificationMapping = [self::SPECIFICATION_KEY => $specification];
 
         $expectedComposite = $this->getMockBuilder(
-            \Magento\Payment\Model\Checks\Composite::class
+            'Magento\Payment\Model\Checks\Composite'
         )->disableOriginalConstructor()->setMethods([])->getMock();
         $modelFactory = new SpecificationFactory($this->_compositeFactory, $specificationMapping);
         $this->_compositeFactory->expects($this->once())->method('create')->with(

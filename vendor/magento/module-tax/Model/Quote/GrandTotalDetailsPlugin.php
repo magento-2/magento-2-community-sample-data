@@ -1,67 +1,55 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Model\Quote;
 
 use Magento\Quote\Api\Data\TotalSegmentExtensionFactory;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\App\ObjectManager;
 
 class GrandTotalDetailsPlugin
 {
     /**
      * @var \Magento\Tax\Api\Data\GrandTotalDetailsInterfaceFactory
      */
-    private $detailsFactory;
+    protected $detailsFactory;
 
     /**
      * @var \Magento\Tax\Api\Data\GrandTotalRatesInterfaceFactory
      */
-    private $ratesFactory;
+    protected $ratesFactory;
 
     /**
      * @var TotalSegmentExtensionFactory
      */
-    private $totalSegmentExtensionFactory;
+    protected $totalSegmentExtensionFactory;
 
     /**
      * @var \Magento\Tax\Model\Config
      */
-    private $taxConfig;
+    protected $taxConfig;
 
     /**
      * @var string
      */
-    private $code;
+    protected $code;
 
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
-     * Constructor
-     *
      * @param \Magento\Tax\Api\Data\GrandTotalDetailsInterfaceFactory $detailsFactory
      * @param \Magento\Tax\Api\Data\GrandTotalRatesInterfaceFactory $ratesFactory
      * @param TotalSegmentExtensionFactory $totalSegmentExtensionFactory
      * @param \Magento\Tax\Model\Config $taxConfig
-     * @param Json $serializer
      */
     public function __construct(
         \Magento\Tax\Api\Data\GrandTotalDetailsInterfaceFactory $detailsFactory,
         \Magento\Tax\Api\Data\GrandTotalRatesInterfaceFactory $ratesFactory,
         TotalSegmentExtensionFactory $totalSegmentExtensionFactory,
-        \Magento\Tax\Model\Config $taxConfig,
-        Json $serializer
+        \Magento\Tax\Model\Config $taxConfig
     ) {
         $this->detailsFactory = $detailsFactory;
         $this->ratesFactory = $ratesFactory;
         $this->totalSegmentExtensionFactory = $totalSegmentExtensionFactory;
         $this->taxConfig = $taxConfig;
-        $this->serializer = $serializer;
         $this->code = 'tax';
     }
 
@@ -83,17 +71,18 @@ class GrandTotalDetailsPlugin
 
     /**
      * @param \Magento\Quote\Model\Cart\TotalsConverter $subject
-     * @param \Magento\Quote\Api\Data\TotalSegmentInterface[] $totalSegments
+     * @param \Closure $proceed
      * @param \Magento\Quote\Model\Quote\Address\Total[] $addressTotals
      * @return \Magento\Quote\Api\Data\TotalSegmentInterface[]
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function afterProcess(
+    public function aroundProcess(
         \Magento\Quote\Model\Cart\TotalsConverter $subject,
-        array $totalSegments,
+        \Closure $proceed,
         array $addressTotals = []
     ) {
+        $totalSegments = $proceed($addressTotals);
 
         if (!array_key_exists($this->code, $addressTotals)) {
             return $totalSegments;
@@ -108,7 +97,7 @@ class GrandTotalDetailsPlugin
         $finalData = [];
         $fullInfo = $taxes['full_info'];
         if (is_string($fullInfo)) {
-            $fullInfo = $this->serializer->unserialize($fullInfo);
+            $fullInfo = unserialize($fullInfo);
         }
         foreach ($fullInfo as $info) {
             if ((array_key_exists('hidden', $info) && $info['hidden'])

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Layout\Data;
@@ -10,8 +10,6 @@ use Magento\Framework\App\State;
 
 /**
  * An associative data structure, that features "nested set" parent-child relations
- *
- * @api
  */
 class Structure extends DataStructure
 {
@@ -121,7 +119,7 @@ class Structure extends DataStructure
                 $siblingParentName = $this->getParentId($sibling);
                 if ($parentName !== $siblingParentName) {
                     if ($this->state->getMode() === State::MODE_DEVELOPER) {
-                        $this->logger->info(
+                        $this->logger->critical(
                             "Broken reference: the '{$childName}' tries to reorder itself towards '{$sibling}', but " .
                             "their parents are different: '{$parentName}' and '{$siblingParentName}' respectively."
                         );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -163,6 +163,12 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
         $connection = $this->getResource()->getConnection('sales');
         $connection->beginTransaction();
         try {
+            $order = $this->getRefundAdapter()->refund(
+                $creditmemo,
+                $creditmemo->getOrder(),
+                !$offlineRequested
+            );
+            $this->getOrderRepository()->save($order);
             $invoice = $creditmemo->getInvoice();
             if ($invoice && !$offlineRequested) {
                 $invoice->setIsUsedForRefund(true);
@@ -172,17 +178,11 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
                 $creditmemo->setInvoiceId($invoice->getId());
                 $this->getInvoiceRepository()->save($creditmemo->getInvoice());
             }
-            $order = $this->getRefundAdapter()->refund(
-                $creditmemo,
-                $creditmemo->getOrder(),
-                !$offlineRequested
-            );
-            $this->getOrderRepository()->save($order);
             $this->creditmemoRepository->save($creditmemo);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
-            throw new \Magento\Framework\Exception\LocalizedException(__($e->getMessage()));
+            throw new \Magento\Framework\Exception\LocalizedException($e->getMessage());
         }
 
         return $creditmemo;
@@ -221,7 +221,7 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
     /**
      * @return \Magento\Sales\Model\Order\RefundAdapterInterface
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getRefundAdapter()
     {
@@ -235,7 +235,7 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
     /**
      * @return \Magento\Framework\App\ResourceConnection|mixed
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getResource()
     {
@@ -249,7 +249,7 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
     /**
      * @return \Magento\Sales\Api\OrderRepositoryInterface
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getOrderRepository()
     {
@@ -263,7 +263,7 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
     /**
      * @return \Magento\Sales\Api\InvoiceRepositoryInterface
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getInvoiceRepository()
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ups\Test\Unit\Model;
@@ -13,7 +13,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CarrierTest extends \PHPUnit\Framework\TestCase
+class CarrierTest extends \PHPUnit_Framework_TestCase
 {
     const FREE_METHOD_NAME = 'free_method';
 
@@ -100,14 +100,14 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
 
         $this->errorFactory->expects($this->any())->method('create')->willReturn($this->error);
 
-        $this->rate = $this->createPartialMock(\Magento\Shipping\Model\Rate\Result::class, ['getError']);
-        $rateFactory = $this->createPartialMock(\Magento\Shipping\Model\Rate\ResultFactory::class, ['create']);
+        $this->rate = $this->getMock(\Magento\Shipping\Model\Rate\Result::class, ['getError'], [], '', false);
+        $rateFactory = $this->getMock(\Magento\Shipping\Model\Rate\ResultFactory::class, ['create'], [], '', false);
 
         $rateFactory->expects($this->any())->method('create')->willReturn($this->rate);
 
         $this->country = $this->getMockBuilder(\Magento\Directory\Model\Country::class)
             ->disableOriginalConstructor()
-            ->setMethods(['load', 'getData'])
+            ->setMethods(['load'])
             ->getMock();
 
         $this->abstractModel = $this->getMockBuilder(\Magento\Framework\Model\AbstractModel::class)
@@ -240,76 +240,6 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
         $request->setPackageWeight(1);
 
         $this->assertSame($this->rate, $this->model->collectRates($request));
-    }
-
-    /**
-     * @param string $data
-     * @param array $maskFields
-     * @param string $expected
-     * @dataProvider logDataProvider
-     */
-    public function testFilterDebugData($data, array $maskFields, $expected)
-    {
-        $refClass = new \ReflectionClass(Carrier::class);
-        $property = $refClass->getProperty('_debugReplacePrivateDataKeys');
-        $property->setAccessible(true);
-        $property->setValue($this->model, $maskFields);
-
-        $refMethod = $refClass->getMethod('filterDebugData');
-        $refMethod->setAccessible(true);
-        $result = $refMethod->invoke($this->model, $data);
-        $expectedXml = new \SimpleXMLElement($expected);
-        $resultXml = new \SimpleXMLElement($result);
-        static::assertEquals($expectedXml->asXML(), $resultXml->asXML());
-    }
-
-    /**
-     * Get list of variations
-     */
-    public function logDataProvider()
-    {
-        return [
-            [
-                '<?xml version="1.0" encoding="UTF-8"?>
-                <RateRequest>
-                    <UserId>42121</UserId>
-                    <Password>TestPassword</Password>
-                    <Package ID="0">
-                        <Service>ALL</Service>
-                    </Package>
-                </RateRequest>',
-                ['UserId', 'Password'],
-                '<?xml version="1.0" encoding="UTF-8"?>
-                <RateRequest>
-                    <UserId>****</UserId>
-                    <Password>****</Password>
-                    <Package ID="0">
-                        <Service>ALL</Service>
-                    </Package>
-                </RateRequest>',
-            ],
-            [
-                '<?xml version="1.0" encoding="UTF-8"?>
-                <RateRequest>
-                    <Auth>
-                        <UserId>1231</UserId>
-                    </Auth>
-                    <Package ID="0">
-                        <Service>ALL</Service>
-                    </Package>
-                </RateRequest>',
-                ['UserId'],
-                '<?xml version="1.0" encoding="UTF-8"?>
-                <RateRequest>
-                    <Auth>
-                        <UserId>****</UserId>
-                    </Auth>
-                    <Package ID="0">
-                        <Service>ALL</Service>
-                    </Package>
-                </RateRequest>',
-            ]
-        ];
     }
 
     /**

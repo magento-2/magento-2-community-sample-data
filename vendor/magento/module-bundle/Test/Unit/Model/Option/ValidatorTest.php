@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Test\Unit\Model\Option;
@@ -8,7 +8,7 @@ namespace Magento\Bundle\Test\Unit\Model\Option;
 use Magento\Framework\Validator\NotEmpty;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Bundle\Model\Option\Validator
@@ -21,9 +21,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new ObjectManager($this);
-        $validate = $helper->getObject(\Magento\Framework\Validator\NotEmpty::class, ['options' => NotEmpty::ALL]);
+        $validate = $helper->getObject('Magento\Framework\Validator\NotEmpty', ['options' => NotEmpty::ALL]);
 
-        $validateFactory = $this->getMockBuilder(\Magento\Framework\Validator\NotEmptyFactory::class)
+        $validateFactory = $this->getMockBuilder('Magento\Framework\Validator\NotEmptyFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -32,7 +32,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($validate);
 
         $this->validator = $helper->getObject(
-            \Magento\Bundle\Model\Option\Validator::class,
+            'Magento\Bundle\Model\Option\Validator',
             ['notEmptyFactory' => $validateFactory]
         );
     }
@@ -49,7 +49,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     public function testIsValid($title, $type, $isValid, $expectedMessages)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Bundle\Model\Option $option */
-        $option = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
+        $option = $this->getMockBuilder('Magento\Bundle\Model\Option')
             ->setMethods(['getTitle', 'getType'])
             ->disableOriginalConstructor()
             ->getMock();

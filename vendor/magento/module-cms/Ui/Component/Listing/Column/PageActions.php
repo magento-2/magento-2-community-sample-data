@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Ui\Component\Listing\Column;
@@ -22,14 +22,10 @@ class PageActions extends Column
     const CMS_URL_PATH_EDIT = 'cms/page/edit';
     const CMS_URL_PATH_DELETE = 'cms/page/delete';
 
-    /**
-     * @var \Magento\Cms\Block\Adminhtml\Page\Grid\Renderer\Action\UrlBuilder
-     */
+    /** @var UrlBuilder */
     protected $actionUrlBuilder;
 
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
+    /** @var UrlInterface */
     protected $urlBuilder;
 
     /**
@@ -38,6 +34,8 @@ class PageActions extends Column
     private $editUrl;
 
     /**
+     * Escaper.
+     *
      * @var Escaper
      */
     private $escaper;
@@ -88,8 +86,8 @@ class PageActions extends Column
                         'label' => __('Delete'),
                         'confirm' => [
                             'title' => __('Delete %1', $title),
-                            'message' => __('Are you sure you want to delete a %1 record?', $title)
-                        ]
+                            'message' => __('Are you sure you wan\'t to delete a %1 record?', $title),
+                        ],
                     ];
                 }
                 if (isset($item['identifier'])) {
@@ -99,7 +97,7 @@ class PageActions extends Column
                             isset($item['_first_store_id']) ? $item['_first_store_id'] : null,
                             isset($item['store_code']) ? $item['store_code'] : null
                         ),
-                        'label' => __('View')
+                        'label' => __('Preview')
                     ];
                 }
             }
@@ -109,15 +107,17 @@ class PageActions extends Column
     }
 
     /**
-     * Get instance of escaper
+     * Get instance of escaper.
+     *
      * @return Escaper
-     * @deprecated 101.0.7
+     * @deprecated
      */
     private function getEscaper()
     {
         if (!$this->escaper) {
             $this->escaper = ObjectManager::getInstance()->get(Escaper::class);
         }
+
         return $this->escaper;
     }
 }

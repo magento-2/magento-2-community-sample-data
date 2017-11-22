@@ -1,22 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Model;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Store\Api\StoreResolverInterface;
-use Magento\Store\Model\ResourceModel\StoreWebsiteRelation;
 
 /**
- * Service contract, which manage scopes
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class StoreManager implements
-    \Magento\Store\Model\StoreManagerInterface,
-    \Magento\Store\Api\StoreWebsiteRelationInterface
+class StoreManager implements \Magento\Store\Model\StoreManagerInterface
 {
     /**
      * Application run code
@@ -152,7 +146,7 @@ class StoreManager implements
     public function getStore($storeId = null)
     {
         if (!isset($storeId) || '' === $storeId || $storeId === true) {
-            if (null === $this->currentStoreId) {
+            if (!$this->currentStoreId) {
                 \Magento\Framework\Profiler::start('store.resolve');
                 $this->currentStoreId = $this->storeResolver->getCurrentStoreId();
                 \Magento\Framework\Profiler::stop('store.resolve');
@@ -200,12 +194,9 @@ class StoreManager implements
             $website = $websiteId;
         } elseif ($websiteId === true) {
             $website = $this->websiteRepository->getDefault();
-        } elseif (is_numeric($websiteId)) {
-            $website = $this->websiteRepository->getById($websiteId);
         } else {
-            $website = $this->websiteRepository->get($websiteId);
+            $website = $this->websiteRepository->getById($websiteId);
         }
-
         return $website;
     }
 
@@ -234,11 +225,10 @@ class StoreManager implements
     public function reinitStores()
     {
         $this->currentStoreId = null;
-        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, [StoreResolver::CACHE_TAG, Store::CACHE_TAG]);
-        $this->scopeConfig->clean();
         $this->storeRepository->clean();
         $this->websiteRepository->clean();
         $this->groupRepository->clean();
+        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [StoreResolver::CACHE_TAG]);
     }
 
     /**
@@ -295,22 +285,5 @@ class StoreManager implements
             self::XML_PATH_SINGLE_STORE_MODE_ENABLED,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-    }
-
-    /**
-     * @deprecated 100.2.0
-     * @return StoreWebsiteRelation
-     */
-    private function getStoreWebsiteRelation()
-    {
-        return ObjectManager::getInstance()->get(StoreWebsiteRelation::class);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getStoreByWebsiteId($websiteId)
-    {
-        return $this->getStoreWebsiteRelation()->getStoreByWebsiteId($websiteId);
     }
 }

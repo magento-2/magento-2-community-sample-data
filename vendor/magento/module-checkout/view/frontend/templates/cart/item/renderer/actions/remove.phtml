@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,10 +9,10 @@
 /** @var $block \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove */
 ?>
 <a href="#"
-   title="<?= $block->escapeHtml(__('Remove item')) ?>"
+   title="<?php echo $block->escapeHtml(__('Remove item')); ?>"
    class="action action-delete"
-   data-post='<?= /* @escapeNotVerified */ $block->getDeletePostJson() ?>'>
+   data-post='<?php /* @escapeNotVerified */ echo $block->getDeletePostJson(); ?>'>
     <span>
-        <?= /* @escapeNotVerified */ __('Remove item') ?>
+        <?php /* @escapeNotVerified */ echo __('Remove item')?>
     </span>
 </a>

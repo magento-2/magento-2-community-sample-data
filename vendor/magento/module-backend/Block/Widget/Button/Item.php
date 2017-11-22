@@ -1,20 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Backend\Block\Widget\Button;
 
 /**
- * @api
  * @method string getButtonKey()
  * @method string getRegion()
  * @method string getName()
  * @method int getLevel()
  * @method int getSortOrder()
  * @method string getTitle()
- * @since 100.0.2
  */
 class Item extends \Magento\Framework\DataObject
 {

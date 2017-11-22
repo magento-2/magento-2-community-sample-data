@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Cms\Test\TestCase;
 
-use Magento\Config\Test\Fixture\ConfigData;
 use Magento\Cms\Test\Fixture\CmsPage as CmsPageFixture;
 use Magento\Cms\Test\Page\Adminhtml\CmsPageIndex;
 use Magento\Cms\Test\Page\Adminhtml\CmsPageNew;
 use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\TestCase\Injectable;
 
 /**
@@ -22,15 +22,15 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save CMS Page.
  * 6. Verify created CMS Page.
  *
- * @group CMS_Content
+ * @group CMS_Content_(PS)
  * @ZephyrId MAGETWO-25580
  */
 class CreateCmsPageEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
+    const TEST_TYPE = 'acceptance_test';
     /* end tags */
 
     /**
@@ -55,13 +55,6 @@ class CreateCmsPageEntityTest extends Injectable
     protected $fixtureFactory;
 
     /**
-     * Configuration data.
-     *
-     * @var string
-     */
-    private $configData;
-
-    /**
      * Inject pages.
      *
      * @param CmsPageIndex $cmsIndex
@@ -81,40 +74,39 @@ class CreateCmsPageEntityTest extends Injectable
      *
      * @param array $data
      * @param string $fixtureType
-     * @param string $configData
      * @return array
      */
-    public function test(array $data, $fixtureType, $configData = '')
+    public function test(array $data, $fixtureType)
     {
-        $this->configData = $configData;
-
-        // Preconditions
-        $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $configData]
-        )->run();
         // Steps
         $cms = $this->fixtureFactory->createByCode($fixtureType, ['data' => $data]);
         $this->cmsIndex->open();
         $this->cmsIndex->getPageActionsBlock()->addNew();
+        //TODO: remove cms page new refresh after resolve issue with static js files publication (MAGETWO-37898)
+        $this->cmsPageNew->open();
         $this->cmsPageNew->getPageForm()->fill($cms);
+        $conditions = $this->getConditions($cms);
         $this->cmsPageNew->getPageMainActions()->save();
 
-        return ['cms' => $cms];
+        return ['cms' => $cms, 'conditions' => $conditions];
     }
 
     /**
-     * Disable single store mode on config level.
-     *
-     * @return void
+     * @param FixtureInterface $cms
+     * @return string
      */
-    public function tearDown()
+    private function getConditions($cms)
     {
-        if ($this->configData) {
-            $this->objectManager->create(
-                \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-                ['configData' => 'enable_single_store_mode', 'rollback' => true]
-            )->run();
+        $conditions = '';
+        if (isset($cms->getData('content')['widget']['dataset'])) {
+            foreach ($cms->getData('content')['widget']['dataset'] as $dataset) {
+                if (isset($dataset['serialized_conditions'])) {
+                    $this->cmsPageNew->getPageForm()->openTab('content');
+                    $conditions = $this->cmsPageNew->getPageForm()->getTab('content')->getContent();
+                    break;
+                }
+            }
         }
+        return $conditions;
     }
 }

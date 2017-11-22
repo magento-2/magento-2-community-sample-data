@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n\Pack\Writer\File;
@@ -38,6 +38,13 @@ abstract class AbstractFile implements WriterInterface
     protected $_factory;
 
     /**
+     * Pack path
+     *
+     * @var string
+     */
+    protected $_packPath;
+
+    /**
      * Locale
      *
      * @var \Magento\Setup\Module\I18n\Locale
@@ -70,14 +77,7 @@ abstract class AbstractFile implements WriterInterface
      */
     public function write(Dictionary $dictionary, $packPath, Locale $locale, $mode = self::MODE_REPLACE)
     {
-        $this->writeDictionary($dictionary, $locale, $mode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function writeDictionary(Dictionary $dictionary, Locale $locale, $mode = self::MODE_REPLACE)
-    {
+        $this->_packPath = rtrim($packPath, '\\/') . '/';
         $this->_locale = $locale;
         $this->_mode = $mode;
 
@@ -121,12 +121,7 @@ abstract class AbstractFile implements WriterInterface
                 } catch (\InvalidArgumentException $e) {
                     throw new \InvalidArgumentException($e->getMessage() . ' Row #' . ($key + 1) . '.');
                 }
-
-                if (null === $path) {
-                    continue;
-                }
-
-                $filename = $path . $this->_locale . '.' . $this->_getFileExtension();
+                $filename = $this->_packPath . $path . $this->_locale . '.' . $this->_getFileExtension();
                 $files[$filename][$phrase->getPhrase()] = $phrase;
             }
         }

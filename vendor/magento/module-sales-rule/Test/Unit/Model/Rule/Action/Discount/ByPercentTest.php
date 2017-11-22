@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Test\Unit\Model\Rule\Action\Discount;
 
-class ByPercentTest extends \PHPUnit\Framework\TestCase
+class ByPercentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\Rule\Action\Discount\ByPercent
@@ -27,19 +27,19 @@ class ByPercentTest extends \PHPUnit\Framework\TestCase
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->validator = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Validator::class
+            'Magento\SalesRule\Model\Validator'
         )->disableOriginalConstructor()->setMethods(
             ['getItemPrice', 'getItemBasePrice', 'getItemOriginalPrice', 'getItemBaseOriginalPrice', '__wakeup']
         )->getMock();
 
         $this->discountDataFactory = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Rule\Action\Discount\DataFactory::class
+            'Magento\SalesRule\Model\Rule\Action\Discount\DataFactory'
         )->disableOriginalConstructor()->setMethods(
             ['create']
         )->getMock();
 
         $this->model = $helper->getObject(
-            \Magento\SalesRule\Model\Rule\Action\Discount\ByPercent::class,
+            'Magento\SalesRule\Model\Rule\Action\Discount\ByPercent',
             ['discountDataFactory' => $this->discountDataFactory, 'validator' => $this->validator]
         );
     }
@@ -63,7 +63,7 @@ class ByPercentTest extends \PHPUnit\Framework\TestCase
         $expectedDiscountData
     ) {
         $discountData = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Rule\Action\Discount\Data::class
+            'Magento\SalesRule\Model\Rule\Action\Discount\Data'
         )->disableOriginalConstructor()->setMethods(
             ['setAmount', 'setBaseAmount', 'setOriginalAmount', 'setBaseOriginalAmount']
         )->getMock();
@@ -71,13 +71,13 @@ class ByPercentTest extends \PHPUnit\Framework\TestCase
         $this->discountDataFactory->expects($this->once())->method('create')->will($this->returnValue($discountData));
 
         $rule = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Rule::class
+            'Magento\SalesRule\Model\Rule'
         )->disableOriginalConstructor()->setMethods(
             ['getDiscountAmount', 'getDiscountQty', '__wakeup']
         )->getMock();
 
         $item = $this->getMockBuilder(
-            \Magento\Quote\Model\Quote\Item\AbstractItem::class
+            'Magento\Quote\Model\Quote\Item\AbstractItem'
         )->disableOriginalConstructor()->setMethods(
             [
                 'getDiscountAmount',
@@ -223,7 +223,13 @@ class ByPercentTest extends \PHPUnit\Framework\TestCase
      */
     public function testFixQuantity($step, $qty, $expected)
     {
-        $rule = $this->createPartialMock(\Magento\SalesRule\Model\Rule::class, ['getDiscountStep', '__wakeup']);
+        $rule = $this->getMock(
+            'Magento\SalesRule\Model\Rule',
+            ['getDiscountStep', '__wakeup'],
+            [],
+            '',
+            false
+        );
         $rule->expects($this->once())->method('getDiscountStep')->will($this->returnValue($step));
 
         $this->assertEquals($expected, $this->model->fixQuantity($qty, $rule));

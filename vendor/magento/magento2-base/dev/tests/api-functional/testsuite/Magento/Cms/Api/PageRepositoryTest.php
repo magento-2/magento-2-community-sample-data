@@ -1,15 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Api;
 
 use Magento\Cms\Api\Data\PageInterface;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
-use Magento\Framework\Api\SortOrderBuilder;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
@@ -52,11 +48,11 @@ class PageRepositoryTest extends WebapiAbstract
      */
     public function setUp()
     {
-        $this->pageFactory = Bootstrap::getObjectManager()->create(\Magento\Cms\Api\Data\PageInterfaceFactory::class);
-        $this->pageRepository = Bootstrap::getObjectManager()->create(\Magento\Cms\Api\PageRepositoryInterface::class);
-        $this->dataObjectHelper = Bootstrap::getObjectManager()->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $this->pageFactory = Bootstrap::getObjectManager()->create('Magento\Cms\Api\Data\PageInterfaceFactory');
+        $this->pageRepository = Bootstrap::getObjectManager()->create('Magento\Cms\Api\PageRepositoryInterface');
+        $this->dataObjectHelper = Bootstrap::getObjectManager()->create('Magento\Framework\Api\DataObjectHelper');
         $this->dataObjectProcessor = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Reflection\DataObjectProcessor::class);
+            ->create('Magento\Framework\Reflection\DataObjectProcessor');
     }
 
     /**
@@ -156,11 +152,11 @@ class PageRepositoryTest extends WebapiAbstract
         $this->dataObjectHelper->populateWithArray(
             $this->currentPage,
             [PageInterface::TITLE => $newPageTitle],
-            \Magento\Cms\Api\Data\PageInterface::class
+            'Magento\Cms\Api\Data\PageInterface'
         );
         $pageData = $this->dataObjectProcessor->buildOutputDataArray(
             $this->currentPage,
-            \Magento\Cms\Api\Data\PageInterface::class
+            'Magento\Cms\Api\Data\PageInterface'
         );
 
         $serviceInfo = [
@@ -217,49 +213,23 @@ class PageRepositoryTest extends WebapiAbstract
      */
     public function testSearch()
     {
-        $cmsPages = $this->prepareCmsPages();
+        $pageTitle = 'Page title';
+        $pageIdentifier = 'page-title' . uniqid();
+        /** @var  \Magento\Cms\Api\Data\PageInterface $pageDataObject */
+        $pageDataObject = $this->pageFactory->create();
+        $pageDataObject->setTitle($pageTitle)
+            ->setIdentifier($pageIdentifier);
+        $this->currentPage = $this->pageRepository->save($pageDataObject);
 
-        /** @var FilterBuilder $filterBuilder */
-        $filterBuilder = Bootstrap::getObjectManager()->create(FilterBuilder::class);
-
-        /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
+        $filterBuilder = Bootstrap::getObjectManager()->create('Magento\Framework\Api\FilterBuilder');
+        /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder */
         $searchCriteriaBuilder = Bootstrap::getObjectManager()
-            ->create(SearchCriteriaBuilder::class);
-
-        $filter1 = $filterBuilder
+            ->create('Magento\Framework\Api\SearchCriteriaBuilder');
+        $filter = $filterBuilder
             ->setField(PageInterface::IDENTIFIER)
-            ->setValue($cmsPages['first']->getIdentifier())
+            ->setValue($pageIdentifier)
             ->create();
-        $filter2 = $filterBuilder
-            ->setField(PageInterface::IDENTIFIER)
-            ->setValue($cmsPages['third']->getIdentifier())
-            ->create();
-
-        $searchCriteriaBuilder->addFilters([$filter1, $filter2]);
-
-        $filter3 = $filterBuilder
-            ->setField(PageInterface::TITLE)
-            ->setValue($cmsPages['second']->getTitle())
-            ->create();
-        $filter4 = $filterBuilder
-            ->setField(PageInterface::IS_ACTIVE)
-            ->setValue(true)
-            ->create();
-
-        $searchCriteriaBuilder->addFilters([$filter3, $filter4]);
-
-        /** @var SortOrderBuilder $sortOrderBuilder */
-        $sortOrderBuilder = Bootstrap::getObjectManager()->create(SortOrderBuilder::class);
-
-        /** @var SortOrder $sortOrder */
-        $sortOrder = $sortOrderBuilder->setField(PageInterface::IDENTIFIER)
-            ->setDirection(SortOrder::SORT_ASC)
-            ->create();
-
-        $searchCriteriaBuilder->setSortOrders([$sortOrder]);
-
-        $searchCriteriaBuilder->setPageSize(1);
-        $searchCriteriaBuilder->setCurrentPage(2);
+        $searchCriteriaBuilder->addFilters([$filter]);
 
         $searchData = $searchCriteriaBuilder->create()->__toArray();
         $requestData = ['searchCriteria' => $searchData];
@@ -276,44 +246,7 @@ class PageRepositoryTest extends WebapiAbstract
         ];
 
         $searchResult = $this->_webApiCall($serviceInfo, $requestData);
-        $this->assertEquals(2, $searchResult['total_count']);
-        $this->assertEquals(1, count($searchResult['items']));
-        $this->assertEquals(
-            $searchResult['items'][0][PageInterface::IDENTIFIER],
-            $cmsPages['third']->getIdentifier()
-        );
-    }
-
-    /**
-     * @return PageInterface[]
-     */
-    private function prepareCmsPages()
-    {
-        $result = [];
-
-        $pagesData['first'][PageInterface::TITLE] = 'Page title 1';
-        $pagesData['first'][PageInterface::IDENTIFIER] = 'page-title-1' . uniqid();
-        $pagesData['first'][PageInterface::IS_ACTIVE] = true;
-
-        $pagesData['second'][PageInterface::TITLE] = 'Page title 2';
-        $pagesData['second'][PageInterface::IDENTIFIER] = 'page-title-2' . uniqid();
-        $pagesData['second'][PageInterface::IS_ACTIVE] = false;
-
-        $pagesData['third'][PageInterface::TITLE] = 'Page title 3';
-        $pagesData['third'][PageInterface::IDENTIFIER] = 'page-title-3' . uniqid();
-        $pagesData['third'][PageInterface::IS_ACTIVE] = true;
-
-        foreach ($pagesData as $key => $pageData) {
-            /** @var  \Magento\Cms\Api\Data\PageInterface $pageDataObject */
-            $pageDataObject = $this->pageFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $pageDataObject,
-                $pageData,
-                \Magento\Cms\Api\Data\PageInterface::class
-            );
-            $result[$key] = $this->pageRepository->save($pageDataObject);
-        }
-
-        return $result;
+        $this->assertEquals(1, $searchResult['total_count']);
+        $this->assertEquals($searchResult['items'][0][PageInterface::IDENTIFIER], $pageIdentifier);
     }
 }

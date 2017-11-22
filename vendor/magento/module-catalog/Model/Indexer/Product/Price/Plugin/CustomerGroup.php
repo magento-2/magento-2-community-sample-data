@@ -1,49 +1,53 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Product\Price\Plugin;
 
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\Customer\Api\Data\GroupInterface;
-use \Magento\Catalog\Model\Indexer\Product\Price\UpdateIndexInterface;
 
-class CustomerGroup
+class CustomerGroup extends AbstractPlugin
 {
     /**
-     * @var UpdateIndexInterface
-     */
-    private $updateIndex;
-
-    /**
-     * Constructor
+     * Invalidate the indexer after the group is saved.
      *
-     * @param UpdateIndexInterface $updateIndex
+     * @param GroupRepositoryInterface $subject
+     * @param string                   $result
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(
-        UpdateIndexInterface $updateIndex
-    ) {
-        $this->updateIndex = $updateIndex;
+    public function afterSave(GroupRepositoryInterface $subject, $result)
+    {
+        $this->invalidateIndexer();
+        return $result;
     }
 
     /**
-     * Update price index after customer group saved
+     * Invalidate the indexer after the group is deleted.
      *
      * @param GroupRepositoryInterface $subject
-     * @param \Closure $proceed
-     * @param GroupInterface $result
-     * @return GroupInterface
+     * @param string                   $result
+     * @return string
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundSave(
-        GroupRepositoryInterface $subject,
-        \Closure $proceed,
-        GroupInterface $group
-    ) {
-        $isGroupNew = !$group->getId();
-        $group = $proceed($group);
-        $this->updateIndex->update($group, $isGroupNew);
-        return $group;
+    public function afterDelete(GroupRepositoryInterface $subject, $result)
+    {
+        $this->invalidateIndexer();
+        return $result;
+    }
+
+    /**
+     * Invalidate the indexer after the group is deleted.
+     *
+     * @param GroupRepositoryInterface $subject
+     * @param string                   $result
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function afterDeleteById(GroupRepositoryInterface $subject, $result)
+    {
+        $this->invalidateIndexer();
+        return $result;
     }
 }

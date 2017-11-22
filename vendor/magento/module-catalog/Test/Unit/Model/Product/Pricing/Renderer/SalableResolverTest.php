@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Pricing\Renderer;
 
-class SalableResolverTest extends \PHPUnit\Framework\TestCase
+class SalableResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver
@@ -20,14 +20,17 @@ class SalableResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->product = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['__wakeup', 'getCanShowPrice']
+        $this->product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['__wakeup', 'getCanShowPrice'],
+            [],
+            '',
+            false
         );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->object = $objectManager->getObject(
-            \Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver::class
+            'Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver'
         );
     }
 

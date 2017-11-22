@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Pdf\Total;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\ObjectManagerInterface
@@ -17,9 +17,9 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $_factory;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_factory = new \Magento\Sales\Model\Order\Pdf\Total\Factory($this->_objectManager);
     }
 
@@ -31,10 +31,13 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate($class, $arguments, $expectedClassName)
     {
-        $createdModel = $this->getMockBuilder(\Magento\Sales\Model\Order\Pdf\Total\DefaultTotal::class)
-            ->setMockClassName((string)$class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $createdModel = $this->getMock(
+            'Magento\Sales\Model\Order\Pdf\Total\DefaultTotal',
+            [],
+            [],
+            (string)$class,
+            false
+        );
         $this->_objectManager->expects(
             $this->once()
         )->method(
@@ -58,7 +61,8 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'default model' => [
                 null,
-                ['param1', 'param2'], \Magento\Sales\Model\Order\Pdf\Total\DefaultTotal::class,
+                ['param1', 'param2'],
+                'Magento\Sales\Model\Order\Pdf\Total\DefaultTotal',
             ],
             'custom model' => ['custom_class', ['param1', 'param2'], 'custom_class']
         ];

@@ -2,12 +2,12 @@
 /**
  * Test Rest renderer factory class.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit\Rest\Response;
 
-class RendererFactoryTest extends \PHPUnit\Framework\TestCase
+class RendererFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Webapi\Rest\Response\RendererFactory */
     protected $_factory;
@@ -20,16 +20,16 @@ class RendererFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_requestMock = $this->getMockBuilder(
-            \Magento\Framework\Webapi\Rest\Request::class
+            'Magento\Framework\Webapi\Rest\Request'
         )->disableOriginalConstructor()->getMock();
 
         $renders = [
-            'default' => ['type' => '*/*', 'model' => \Magento\Framework\Webapi\Rest\Response\Renderer\Json::class],
+            'default' => ['type' => '*/*', 'model' => 'Magento\Framework\Webapi\Rest\Response\Renderer\Json'],
             'application_json' => [
                 'type' => 'application/json',
-                'model' => \Magento\Framework\Webapi\Rest\Response\Renderer\Json::class,
+                'model' => 'Magento\Framework\Webapi\Rest\Response\Renderer\Json',
             ],
         ];
 
@@ -51,7 +51,7 @@ class RendererFactoryTest extends \PHPUnit\Framework\TestCase
         $this->_requestMock->expects($this->once())->method('getAcceptTypes')->will($this->returnValue($acceptTypes));
         /** Mock renderer. */
         $rendererMock = $this->getMockBuilder(
-            \Magento\Framework\Webapi\Rest\Response\Renderer\Json::class
+            'Magento\Framework\Webapi\Rest\Response\Renderer\Json'
         )->disableOriginalConstructor()->getMock();
         /** Mock object to return mocked renderer. */
         $this->_objectManagerMock->expects(
@@ -59,7 +59,7 @@ class RendererFactoryTest extends \PHPUnit\Framework\TestCase
         )->method(
             'get'
         )->with(
-            \Magento\Framework\Webapi\Rest\Response\Renderer\Json::class
+            'Magento\Framework\Webapi\Rest\Response\Renderer\Json'
         )->will(
             $this->returnValue($rendererMock)
         );
@@ -79,7 +79,7 @@ class RendererFactoryTest extends \PHPUnit\Framework\TestCase
         } catch (\Magento\Framework\Webapi\Exception $e) {
             $exceptionMessage = 'Server cannot match any of the given Accept HTTP header media type(s) '.
                 'from the request: "" with media types from the config of response renderer.';
-            $this->assertInstanceOf(\Magento\Framework\Webapi\Exception::class, $e, 'Exception type is invalid');
+            $this->assertInstanceOf('Magento\Framework\Webapi\Exception', $e, 'Exception type is invalid');
             $this->assertEquals($exceptionMessage, $e->getMessage(), 'Exception message is invalid');
             $this->assertEquals(
                 \Magento\Framework\Webapi\Exception::HTTP_NOT_ACCEPTABLE,
@@ -103,12 +103,12 @@ class RendererFactoryTest extends \PHPUnit\Framework\TestCase
         )->method(
             'get'
         )->with(
-            \Magento\Framework\Webapi\Rest\Response\Renderer\Json::class
+            'Magento\Framework\Webapi\Rest\Response\Renderer\Json'
         )->will(
             $this->returnValue(new \Magento\Framework\DataObject())
         );
 
-        $this->expectException(
+        $this->setExpectedException(
             'LogicException',
             'The renderer must implement "Magento\Framework\Webapi\Rest\Response\RendererInterface".'
         );

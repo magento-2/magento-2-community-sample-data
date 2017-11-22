@@ -18,7 +18,6 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\ArrayRepository;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
-use Composer\Repository\RepositoryFactory;
 use Composer\Plugin\CommandEvent;
 use Composer\Plugin\PluginEvents;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -94,15 +93,6 @@ class BaseDependencyCommand extends BaseCommand
             throw new \InvalidArgumentException(sprintf('Could not find package "%s" in your project', $needle));
         }
 
-        // If the version we ask for is not installed then we need to locate it in remote repos and add it.
-        // This is needed for why-not to resolve conflicts from an uninstalled version against installed packages.
-        if (!$repository->findPackage($needle, $textConstraint)) {
-            $defaultRepos = new CompositeRepository(RepositoryFactory::defaultRepos($this->getIO()));
-            if ($match = $defaultRepos->findPackage($needle, $textConstraint)) {
-                $repository->addRepository(new ArrayRepository(array(clone $match)));
-            }
-        }
-
         // Include replaced packages for inverted lookups as they are then the actual starting point to consider
         $needles = array($needle);
         if ($inverted) {
@@ -169,9 +159,7 @@ class BaseDependencyCommand extends BaseCommand
                 $doubles[$unique] = true;
                 $version = (strpos($package->getPrettyVersion(), 'No version set') === 0) ? '-' : $package->getPrettyVersion();
                 $rows[] = array($package->getPrettyName(), $version, $link->getDescription(), sprintf('%s (%s)', $link->getTarget(), $link->getPrettyConstraint()));
-                if ($children) {
-                    $queue = array_merge($queue, $children);
-                }
+                $queue = array_merge($queue, $children);
             }
             $results = $queue;
             $table = array_merge($rows, $table);
@@ -209,19 +197,17 @@ class BaseDependencyCommand extends BaseCommand
     /**
      * Recursively prints a tree of the selected results.
      *
-     * @param array  $results Results to be printed at this level.
-     * @param string $prefix  Prefix of the current tree level.
-     * @param int    $level   Current level of recursion.
+     * @param array  $results
+     * @param string $prefix
      */
     protected function printTree($results, $prefix = '', $level = 1)
     {
         $count = count($results);
         $idx = 0;
-        foreach ($results as $result) {
+        foreach ($results as $key => $result) {
             /**
              * @var PackageInterface $package
              * @var Link             $link
-             * @var array|bool       $children
              */
             list($package, $link, $children) = $result;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test class for \Magento\Integration\Model\CustomerTokenService.
  */
-class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
+class CustomerTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CustomerTokenServiceInterface
@@ -36,13 +36,11 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->tokenService = Bootstrap::getObjectManager()->get(
-            \Magento\Integration\Model\CustomerTokenService::class
-        );
+        $this->tokenService = Bootstrap::getObjectManager()->get('Magento\Integration\Model\CustomerTokenService');
         $this->accountManagement = Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
-        $this->tokenModel = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\Oauth\Token::class);
+        $this->tokenModel = Bootstrap::getObjectManager()->get('Magento\Integration\Model\Oauth\Token');
     }
 
     /**
@@ -102,7 +100,7 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
      */
     private function assertInputExceptionMessages($e)
     {
-        $this->assertEquals('One or more input exceptions have occurred.', $e->getMessage());
+        $this->assertEquals(InputException::DEFAULT_MESSAGE, $e->getMessage());
         $errors = $e->getErrors();
         $this->assertCount(2, $errors);
         $this->assertEquals('username is a required field.', $errors[0]->getLogMessage());

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Indexer;
@@ -14,14 +14,10 @@ use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProduct
  */
 class ProductRuleReindex
 {
-    /**
-     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-     */
+    /** @var Configurable */
     private $configurable;
 
-    /**
-     * @var \Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider
-     */
+    /** @var ConfigurableProductsProvider */
     private $configurableProductsProvider;
 
     /**

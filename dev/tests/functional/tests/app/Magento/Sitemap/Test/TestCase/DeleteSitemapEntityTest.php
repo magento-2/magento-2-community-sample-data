@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -24,14 +24,14 @@ use Magento\Mtf\TestCase\Injectable;
  *  4. Click "Delete" button.
  *  5. Perform all assertions.
  *
- * @group XML_Sitemap
+ * @group XML_Sitemap_(PS)
  * @ZephyrId MAGETWO-23296
  */
 class DeleteSitemapEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

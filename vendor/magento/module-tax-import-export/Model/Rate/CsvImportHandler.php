@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TaxImportExport\Model\Rate;
 
 /**
  * Tax Rate CSV Import Handler
- *
- * @api
- * @since 100.0.2
  */
 class CsvImportHandler
 {

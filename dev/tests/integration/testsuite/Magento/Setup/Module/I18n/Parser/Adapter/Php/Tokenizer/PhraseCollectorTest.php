@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer;
 
-use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\ObjectManager;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector
  */
-class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
+class PhraseCollectorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PhraseCollector
@@ -19,7 +19,7 @@ class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
     protected $phraseCollector;
 
     /**
-     * @var ObjectManagerInterface
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -27,7 +27,7 @@ class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->phraseCollector = $this->objectManager->create(
-            \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector::class
+            'Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector'
         );
     }
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Type;
 
-class VirtualTest extends \PHPUnit\Framework\TestCase
+class VirtualTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Type\Virtual
@@ -15,16 +15,16 @@ class VirtualTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $fileStorageDbMock = $this->createMock(\Magento\MediaStorage\Helper\File\Storage\Database::class);
-        $filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $coreRegistryMock = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $fileStorageDbMock = $this->getMock('Magento\MediaStorage\Helper\File\Storage\Database', [], [], '', false);
+        $filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $productFactoryMock = $this->createMock(\Magento\Catalog\Model\ProductFactory::class);
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $productFactoryMock = $this->getMock('Magento\Catalog\Model\ProductFactory', [], [], '', false);
         $this->_model = $objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Type\Virtual::class,
+            'Magento\Catalog\Model\Product\Type\Virtual',
             [
                 'eventManager' => $eventManager,
                 'fileStorageDb' => $fileStorageDbMock,

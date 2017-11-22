@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Creditmemo\AbstractCreditmemo;
@@ -12,9 +12,7 @@ use Magento\Sales\Api\CreditmemoRepositoryInterface;
 class PrintAction extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_creditmemo';
 
@@ -62,15 +60,13 @@ class PrintAction extends \Magento\Backend\App\Action
             $creditmemo = $this->creditmemoRepository->get($creditmemoId);
             if ($creditmemo) {
                 $pdf = $this->_objectManager->create(
-                    \Magento\Sales\Model\Order\Pdf\Creditmemo::class
+                    'Magento\Sales\Model\Order\Pdf\Creditmemo'
                 )->getPdf(
                     [$creditmemo]
                 );
-                $date = $this->_objectManager->get(
-                    \Magento\Framework\Stdlib\DateTime\DateTime::class
-                )->date('Y-m-d_H-i-s');
+                $date = $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime')->date('Y-m-d_H-i-s');
                 return $this->_fileFactory->create(
-                    \creditmemo::class . $date . '.pdf',
+                    'creditmemo' . $date . '.pdf',
                     $pdf->render(),
                     DirectoryList::VAR_DIR,
                     'application/pdf'

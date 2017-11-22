@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\Module\Test\Unit;
 
 use \Magento\Framework\Module\Setup;
 
-class SetupTest extends \PHPUnit\Framework\TestCase
+class SetupTest extends \PHPUnit_Framework_TestCase
 {
     const CONNECTION_NAME = 'connection';
 
@@ -29,16 +29,12 @@ class SetupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resourceModel = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->connection = $this->getMockForAbstractClass(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+        $this->resourceModel = $this->getMock('\Magento\Framework\App\ResourceConnection', [], [], '', false);
+        $this->connection = $this->getMockForAbstractClass('\Magento\Framework\DB\Adapter\AdapterInterface');
         $this->resourceModel->expects($this->any())
             ->method('getConnection')
             ->with(self::CONNECTION_NAME)
-            ->willReturn($this->connection);
-        $this->resourceModel->expects($this->any())
-            ->method('getConnectionByName')
-            ->with(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION)
-            ->willReturn($this->connection);
+            ->will($this->returnValue($this->connection));
         $this->object = new Setup($this->resourceModel, self::CONNECTION_NAME);
     }
 

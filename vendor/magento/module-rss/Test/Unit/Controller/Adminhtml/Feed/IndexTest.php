@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rss\Test\Unit\Controller\Adminhtml\Feed;
@@ -10,9 +10,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class IndexTest
  * @package Magento\Rss\Controller\Feed
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Rss\Controller\Feed\Index
@@ -46,20 +45,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->rssManager = $this->createPartialMock(\Magento\Rss\Model\RssManager::class, ['getProvider']);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->rssFactory = $this->createPartialMock(\Magento\Rss\Model\RssFactory::class, ['create']);
+        $this->rssManager = $this->getMock('Magento\Rss\Model\RssManager', ['getProvider'], [], '', false);
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->rssFactory = $this->getMock('Magento\Rss\Model\RssFactory', ['create'], [], '', false);
 
-        $request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $request = $this->getMock('Magento\Framework\App\RequestInterface');
         $request->expects($this->once())->method('getParam')->with('type')->will($this->returnValue('rss_feed'));
 
-        $this->response = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
+        $this->response = $this->getMockBuilder('Magento\Framework\App\ResponseInterface')
             ->setMethods(['setHeader', 'setBody', 'sendResponse'])
             ->disableOriginalConstructor()->getMock();
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $controllerArguments = $objectManagerHelper->getConstructArguments(
-            \Magento\Rss\Controller\Adminhtml\Feed\Index::class,
+            'Magento\Rss\Controller\Adminhtml\Feed\Index',
             [
                 'rssManager' => $this->rssManager,
                 'scopeConfig' => $this->scopeConfigInterface,
@@ -69,11 +68,11 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $objectManager = $controllerArguments['context']->getObjectManager();
-        $urlInterface = $this->createMock(\Magento\Backend\Model\UrlInterface::class);
-        $objectManager->expects($this->at(0))->method('get')->with(\Magento\Backend\Model\UrlInterface::class)
+        $urlInterface = $this->getMock('Magento\Backend\Model\UrlInterface');
+        $objectManager->expects($this->at(0))->method('get')->with('Magento\Backend\Model\UrlInterface')
             ->will($this->returnValue($urlInterface));
         $this->controller = $objectManagerHelper->getObject(
-            \Magento\Rss\Controller\Adminhtml\Feed\Index::class,
+            'Magento\Rss\Controller\Adminhtml\Feed\Index',
             $controllerArguments
         );
     }
@@ -81,10 +80,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     public function testExecute()
     {
         $this->scopeConfigInterface->expects($this->once())->method('getValue')->will($this->returnValue(true));
-        $dataProvider = $this->createMock(\Magento\Framework\App\Rss\DataProviderInterface::class);
+        $dataProvider = $this->getMock('Magento\Framework\App\Rss\DataProviderInterface');
         $dataProvider->expects($this->once())->method('isAllowed')->will($this->returnValue(true));
 
-        $rssModel = $this->createPartialMock(\Magento\Rss\Model\Rss::class, ['setDataProvider', 'createRssXml']);
+        $rssModel = $this->getMock('Magento\Rss\Model\Rss', ['setDataProvider', 'createRssXml'], [], '', false);
         $rssModel->expects($this->once())->method('setDataProvider')->will($this->returnSelf());
         $rssModel->expects($this->once())->method('createRssXml')->will($this->returnValue(''));
 
@@ -100,17 +99,17 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     public function testExecuteWithException()
     {
         $this->scopeConfigInterface->expects($this->once())->method('getValue')->will($this->returnValue(true));
-        $dataProvider = $this->createMock(\Magento\Framework\App\Rss\DataProviderInterface::class);
+        $dataProvider = $this->getMock('Magento\Framework\App\Rss\DataProviderInterface');
         $dataProvider->expects($this->once())->method('isAllowed')->will($this->returnValue(true));
 
-        $rssModel = $this->createPartialMock(\Magento\Rss\Model\Rss::class, ['setDataProvider']);
+        $rssModel = $this->getMock('Magento\Rss\Model\Rss', ['setDataProvider'], [], '', false);
         $rssModel->expects($this->once())->method('setDataProvider')->will($this->returnSelf());
 
         $this->response->expects($this->once())->method('setHeader')->will($this->returnSelf());
         $this->rssFactory->expects($this->once())->method('create')->will($this->returnValue($rssModel));
         $this->rssManager->expects($this->once())->method('getProvider')->will($this->returnValue($dataProvider));
 
-        $this->expectException('\Zend_Feed_Builder_Exception');
+        $this->setExpectedException('\Zend_Feed_Builder_Exception');
         $this->controller->execute();
     }
 }

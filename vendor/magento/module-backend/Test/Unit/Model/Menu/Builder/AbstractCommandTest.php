@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model\Menu\Builder;
 
-class AbstractCommandTest extends \PHPUnit\Framework\TestCase
+class AbstractCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Menu\Builder\AbstractCommand
@@ -15,7 +15,7 @@ class AbstractCommandTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\Backend\Model\Menu\Builder\AbstractCommand::class,
+            'Magento\Backend\Model\Menu\Builder\AbstractCommand',
             [['id' => 'item']]
         );
     }
@@ -25,17 +25,21 @@ class AbstractCommandTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorRequiresObligatoryParams()
     {
-        $this->getMockForAbstractClass(\Magento\Backend\Model\Menu\Builder\AbstractCommand::class);
+        $this->getMockForAbstractClass('Magento\Backend\Model\Menu\Builder\AbstractCommand');
     }
 
     public function testChainAddsNewCommandAsNextInChain()
     {
-        $command1 = $this->getMockBuilder(\Magento\Backend\Model\Menu\Builder\Command\Update::class)
-            ->setConstructorArgs([['id' => 1]])
-            ->getMock();
-        $command2 = $this->getMockBuilder(\Magento\Backend\Model\Menu\Builder\Command\Remove::class)
-            ->setConstructorArgs([['id' => 1]])
-            ->getMock();
+        $command1 = $this->getMock(
+            'Magento\Backend\Model\Menu\Builder\Command\Update',
+            [],
+            [['id' => 1]]
+        );
+        $command2 = $this->getMock(
+            'Magento\Backend\Model\Menu\Builder\Command\Remove',
+            [],
+            [['id' => 1]]
+        );
         $command1->expects($this->once())->method('chain')->with($this->equalTo($command2));
 
         $this->_model->chain($command1);
@@ -55,10 +59,11 @@ class AbstractCommandTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($itemParams)
         );
 
-        $command1 = $this->getMockBuilder(\Magento\Backend\Model\Menu\Builder\Command\Update::class)
-            ->setConstructorArgs([['id' => 1]])
-            ->getMock();
-
+        $command1 = $this->getMock(
+            'Magento\Backend\Model\Menu\Builder\Command\Update',
+            [],
+            [['id' => 1]]
+        );
         $command1->expects(
             $this->once()
         )->method(

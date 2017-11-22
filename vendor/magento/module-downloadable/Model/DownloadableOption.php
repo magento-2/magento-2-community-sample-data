@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Model;
@@ -10,8 +10,6 @@ use Magento\Framework\Model\AbstractExtensibleModel;
 
 /**
  * @codeCoverageIgnore
- * @api
- * @since 100.0.2
  */
 class DownloadableOption extends AbstractExtensibleModel implements DownloadableOptionInterface
 {

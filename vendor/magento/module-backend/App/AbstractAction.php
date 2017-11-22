@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\App;
@@ -8,10 +8,7 @@ namespace Magento\Backend\App;
 /**
  * Generic backend controller
  *
- * @api
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class AbstractAction extends \Magento\Framework\App\Action\Action
 {
@@ -267,7 +264,7 @@ abstract class AbstractAction extends \Magento\Framework\App\Action\Action
             if ($this->getRequest()->getQuery('isAjax', false) || $this->getRequest()->getQuery('ajax', false)) {
                 $this->getResponse()->representJson(
                     $this->_objectManager->get(
-                        \Magento\Framework\Json\Helper\Data::class
+                        'Magento\Framework\Json\Helper\Data'
                     )->jsonEncode(
                         ['error' => true, 'message' => $_keyErrorMsg]
                     )
@@ -289,7 +286,7 @@ abstract class AbstractAction extends \Magento\Framework\App\Action\Action
     protected function _processLocaleSettings()
     {
         $forceLocale = $this->getRequest()->getParam('locale', null);
-        if ($this->_objectManager->get(\Magento\Framework\Validator\Locale::class)->isValid($forceLocale)) {
+        if ($this->_objectManager->get('Magento\Framework\Validator\Locale')->isValid($forceLocale)) {
             $this->_getSession()->setSessionLocale($forceLocale);
         }
 

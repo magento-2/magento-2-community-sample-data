@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
 
-use Magento\Catalog\Test\Fixture\CatalogAttributeSet;
 use Magento\Mtf\Fixture\DataSource;
 use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\Fixture\FixtureInterface;
@@ -34,25 +33,11 @@ class ConfigurableAttributesData extends DataSource
     protected $attributesData = [];
 
     /**
-     * Temporary media path.
-     *
-     * @var string
-     */
-    protected $mediaPathTmp = '/pub/media/tmp/catalog/product/';
-
-    /**
      * Prepared variation matrix.
      *
      * @var array
      */
     protected $variationsMatrix = [];
-
-    /**
-     * Add media gallery.
-     *
-     * @var bool
-     */
-    private $addMediaGallery = false;
 
     /**
      * Prepared attributes.
@@ -62,25 +47,11 @@ class ConfigurableAttributesData extends DataSource
     protected $attributes = [];
 
     /**
-     * Prepared Attribute Set.
-     *
-     * @var CatalogAttributeSet
-     */
-    protected $attributeSet;
-
-    /**
      * Prepared products.
      *
      * @var array
      */
     protected $products = [];
-
-    /**
-     * Values for Bulk Images Price and Quantity step.
-     *
-     * @var array
-     */
-    private $bulkImagesPriceQuantity = [];
 
     /**
      * @constructor
@@ -103,11 +74,6 @@ class ConfigurableAttributesData extends DataSource
             unset($data['dataset']);
         }
 
-        if (isset($data['media_gallery'])) {
-            $this->addMediaGallery = true;
-            unset($data['media_gallery']);
-        }
-
         $data = array_replace_recursive($data, $dataset);
 
         if (!empty($data)) {
@@ -116,7 +82,6 @@ class ConfigurableAttributesData extends DataSource
             $this->prepareProducts($data);
             $this->prepareVariationsMatrix($data);
             $this->prepareData();
-            $this->prepareBulkImagesPriceQuantity($data);
         }
     }
 
@@ -156,6 +121,7 @@ class ConfigurableAttributesData extends DataSource
         foreach ($this->attributes as $attributeKey => $attribute) {
             $attributeData = $attribute->getData();
             $options = [];
+
             foreach ($attributeData['options'] as $key => $option) {
                 $options['option_key_' . $key] = $option;
             }
@@ -168,21 +134,6 @@ class ConfigurableAttributesData extends DataSource
             isset($data['attributes_data']) ? $data['attributes_data'] : [],
             $this->attributesData
         );
-    }
-
-    /**
-     * Create and assign products.
-     *
-     * @return void
-     */
-    public function generateProducts()
-    {
-        $assignedProducts = ['products' => []];
-        foreach (array_keys($this->variationsMatrix) as $variation) {
-            $assignedProducts['products'][$variation] = 'catalogProductSimple::default';
-        }
-
-        $this->prepareProducts($assignedProducts);
     }
 
     /**
@@ -206,13 +157,20 @@ class ConfigurableAttributesData extends DataSource
             if (is_string($product)) {
                 list($fixture, $dataset) = explode('::', $product);
                 $attributeData = ['attributes' => $this->getProductAttributeData($key)];
-                $productData = isset($this->variationsMatrix[$key]) ? $this->variationsMatrix[$key] : [];
+                $stock = [];
+
+                if (isset($data['matrix'][$key]['quantity_and_stock_status']['qty'])) {
+                    $stock['quantity_and_stock_status'] = [
+                        'qty' => $data['matrix'][$key]['quantity_and_stock_status']['qty'],
+                        'is_in_stock' => 'In Stock',
+                    ];
+                }
 
                 $product = $this->fixtureFactory->createByCode(
                     $fixture,
                     [
                         'dataset' => $dataset,
-                        'data' => array_merge($attributeSetData, $attributeData, $productData)
+                        'data' => array_merge($attributeSetData, $attributeData, $stock)
                     ]
                 );
             }
@@ -231,22 +189,19 @@ class ConfigurableAttributesData extends DataSource
      */
     protected function createAttributeSet()
     {
-        if (!$this->attributeSet) {
-            $this->attributeSet = $this->fixtureFactory->createByCode(
-                'catalogAttributeSet',
-                [
-                    'dataset' => 'custom_attribute_set',
-                    'data' => [
-                        'assigned_attributes' => [
-                            'attributes' => array_values($this->attributes),
-                        ],
-                    ]
+        $attributeSet = $this->fixtureFactory->createByCode(
+            'catalogAttributeSet',
+            [
+                'dataset' => 'custom_attribute_set',
+                'data' => [
+                    'assigned_attributes' => [
+                        'attributes' => array_values($this->attributes),
+                    ],
                 ]
-            );
-            $this->attributeSet->persist();
-        }
-
-        return $this->attributeSet;
+            ]
+        );
+        $attributeSet->persist();
+        return $attributeSet;
     }
 
     /**
@@ -302,16 +257,6 @@ class ConfigurableAttributesData extends DataSource
         foreach ($this->attributesData as $attributeKey => $attribute) {
             $variationsMatrix = $this->addVariationMatrix($variationsMatrix, $attribute, $attributeKey);
         }
-
-        if (isset($data['matrix'])) {
-            foreach ($data['matrix'] as $key => $value) {
-                if (isset($value['sku']) && $value['sku'] === '') {
-                    unset($variationsMatrix[$key]['sku']);
-                    unset($data['matrix'][$key]['sku']);
-                }
-            }
-        }
-
         $this->variationsMatrix = isset($data['matrix'])
             ? array_replace_recursive($variationsMatrix, $data['matrix'])
             : $variationsMatrix;
@@ -326,9 +271,12 @@ class ConfigurableAttributesData extends DataSource
                     'configurable_attribute' => $product->getId(),
                     'name' => $product->getName(),
                     'sku' => $product->getSku(),
-                    'qty' => $quantityAndStockStatus['qty'],
+                    'quantity_and_stock_status' => [
+                        'qty' => $quantityAndStockStatus['qty'],
+                    ],
                     'weight' => $product->getWeight(),
-                    'price' => $product->getPrice()
+                    'price' => $product->getPrice(),
+                    'special_price' => $product->getSpecialPrice(),
                 ];
                 $this->variationsMatrix[$key] = array_replace_recursive($this->variationsMatrix[$key], $productData);
             } else {
@@ -336,11 +284,14 @@ class ConfigurableAttributesData extends DataSource
                     $this->variationsMatrix[$key],
                     [
                         'weight' => 1,
-                        'qty' => 10,
+                        'quantity_and_stock_status' => [
+                            'qty' => 10,
+                        ],
                     ],
                     $row
                 );
             }
+
         }
     }
 
@@ -360,82 +311,31 @@ class ConfigurableAttributesData extends DataSource
 
         /* If empty matrix add one empty row */
         if (empty($variationsMatrix)) {
-            $variationIsolation = mt_rand(10000, 70000);
             $variationsMatrix = [
                 [
-                    'name' => "In configurable product {$variationIsolation}",
-                    'sku' => "in_configurable_product_{$variationIsolation}",
+                    'name' => 'In configurable product %isolation%',
+                    'sku' => 'in_configurable_product_%isolation%',
                 ],
             ];
         }
 
         foreach ($variationsMatrix as $rowKey => $row) {
             $randIsolation = mt_rand(1, 100);
-            $rowName = $row['name'];
-            $rowSku = $row['sku'];
+            $row['name'] .= ' ' . $randIsolation;
+            $row['sku'] .= '_' . $randIsolation;
             $index = 1;
-
-            if (isset($attribute['options'])) {
-                foreach ($attribute['options'] as $optionKey => $option) {
-                    $compositeKey = "{$attributeKey}:{$optionKey}";
-                    $row['name'] = $rowName . ' ' . $randIsolation . ' ' . $index;
-                    $row['sku'] = $rowSku . '_' . $randIsolation . '_' . $index;
-                    $row['price'] = $option['pricing_value'];
-                    if ($this->addMediaGallery) {
-                        $row['media_gallery'] = $this->prepareMediaGallery();
-                    }
-                    $newRowKey = $rowKey ? "{$rowKey} {$compositeKey}" : $compositeKey;
-                    $result[$newRowKey] = $row;
-                    $index++;
-                }
+            foreach ($attribute['options'] as $optionKey => $option) {
+                $compositeKey = "{$attributeKey}:{$optionKey}";
+                $row['name'] .= ' ' . $index;
+                $row['sku'] .= '_' . $index;
+                $row['price'] = $option['pricing_value'];
+                $newRowKey = $rowKey ? "{$rowKey} {$compositeKey}" : $compositeKey;
+                $result[$newRowKey] = $row;
+                $index++;
             }
         }
 
         return $result;
-    }
-
-    /**
-     * Create test image file.
-     *
-     * @param string $filename
-     * @return array
-     */
-    protected function prepareMediaGallery($filename = 'option_image.jpg')
-    {
-        $filePath = $this->getFullPath($filename);
-        if (!file_exists($filePath)) {
-            $optionImage = imagecreate(300, 200);
-            $colorYellow = imagecolorallocate($optionImage, 255, 255, 0);
-            imagefilledrectangle($optionImage, 50, 50, 250, 150, $colorYellow);
-            $directory = dirname($filePath);
-            if (!file_exists($directory)) {
-                mkdir($directory, 0777, true);
-            }
-            imagejpeg($optionImage, $filePath);
-            imagedestroy($optionImage);
-        }
-
-        return [
-            'images' => [
-                0 => [
-                    'position' => 1,
-                    'file' => $filename,
-                    'disabled' => 0,
-                    'label' => '1231414',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Gets full path based on filename.
-     *
-     * @param string $filename
-     * @return string
-     */
-    private function getFullPath($filename)
-    {
-        return BP . $this->mediaPathTmp . $filename;
     }
 
     /**
@@ -458,6 +358,7 @@ class ConfigurableAttributesData extends DataSource
             'admin',
             'label',
             'pricing_value',
+            'is_percent',
             'include',
         ];
         $variationMatrixFields = [
@@ -465,9 +366,9 @@ class ConfigurableAttributesData extends DataSource
             'name',
             'sku',
             'price',
-            'qty',
+            'quantity_and_stock_status',
             'weight',
-            'media_gallery'
+            'special_price',
         ];
 
         $this->data = [
@@ -493,19 +394,6 @@ class ConfigurableAttributesData extends DataSource
     }
 
     /**
-     * Prepare Bulk Image Price and Quantity value.
-     *
-     * @param array $data
-     * @return void
-     */
-    private function prepareBulkImagesPriceQuantity(array $data)
-    {
-        if (isset($data['bulk_images_price_quantity'])) {
-            $this->bulkImagesPriceQuantity = $data['bulk_images_price_quantity'];
-        }
-    }
-
-    /**
      * Get prepared attributes data.
      *
      * @return array
@@ -526,16 +414,6 @@ class ConfigurableAttributesData extends DataSource
     }
 
     /**
-     * Bulk Image Price and Quantity value.
-     *
-     * @return array
-     */
-    public function getBulkImagesPriceQuantity()
-    {
-        return $this->bulkImagesPriceQuantity;
-    }
-
-    /**
      * Get prepared attributes.
      *
      * @return array
@@ -543,16 +421,6 @@ class ConfigurableAttributesData extends DataSource
     public function getAttributes()
     {
         return $this->attributes;
-    }
-
-    /**
-     * Get created attribute set.
-     *
-     * @return CatalogAttributeSet
-     */
-    public function getAttributeSet()
-    {
-        return $this->attributeSet;
     }
 
     /**

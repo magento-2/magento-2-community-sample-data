@@ -1,18 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\Search\Request;
 
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Phrase;
 use Magento\Framework\Search\RequestInterface;
 
-/**
- * @api
- */
 class Builder
 {
     /**
@@ -37,7 +33,6 @@ class Builder
         'dimensions' => [],
         'placeholder' => [],
     ];
-
     /**
      * @var Cleaner
      */
@@ -135,7 +130,7 @@ class Builder
         /** @var array $data */
         $data = $this->config->get($requestName);
         if ($data === null) {
-            throw new NonExistingRequestNameException(new Phrase("Request name '%1' doesn't exist.", [$requestName]));
+            throw new \InvalidArgumentException("Request name '{$requestName}' doesn't exist.");
         }
 
         $data = $this->binder->bind($data, $this->data);
@@ -169,7 +164,7 @@ class Builder
     {
         /** @var Mapper $mapper */
         $mapper = $this->objectManager->create(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'rootQueryName' => $data['query'],
@@ -179,7 +174,7 @@ class Builder
             ]
         );
         return $this->objectManager->create(
-            \Magento\Framework\Search\Request::class,
+            'Magento\Framework\Search\Request',
             [
                 'name' => $data['query'],
                 'indexName' => $data['index'],
@@ -201,7 +196,7 @@ class Builder
         $dimensions = [];
         foreach ($dimensionsData as $dimensionData) {
             $dimensions[$dimensionData['name']] = $this->objectManager->create(
-                \Magento\Framework\Search\Request\Dimension::class,
+                'Magento\Framework\Search\Request\Dimension',
                 $dimensionData
             );
         }

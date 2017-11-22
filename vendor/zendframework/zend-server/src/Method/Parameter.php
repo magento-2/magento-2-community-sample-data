@@ -195,12 +195,12 @@ class Parameter
      */
     public function toArray()
     {
-        return [
+        return array(
             'type'         => $this->getType(),
             'name'         => $this->getName(),
             'optional'     => $this->isOptional(),
             'defaultValue' => $this->getDefaultValue(),
             'description'  => $this->getDescription(),
-        ];
+        );
     }
 }

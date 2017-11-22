@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Block\Adminhtml\Shopcart\Product;
@@ -23,17 +23,17 @@ class GridTest extends \Magento\Reports\Block\Adminhtml\Shopcart\GridTestAbstrac
     public function testGridContent()
     {
         /** @var \Magento\Framework\View\LayoutInterface $layout */
-        $layout = Bootstrap::getObjectManager()->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = Bootstrap::getObjectManager()->get('Magento\Framework\View\LayoutInterface');
         /** @var Grid $grid */
-        $grid = $layout->createBlock(\Magento\Reports\Block\Adminhtml\Shopcart\Product\Grid::class);
+        $grid = $layout->createBlock('Magento\Reports\Block\Adminhtml\Shopcart\Product\Grid');
         $result = $grid->getPreparedCollection();
 
         $this->assertCount(1, $result->getItems());
         /** @var Item $quoteItem */
         $quoteItem = $result->getFirstItem();
-        $this->assertInstanceOf(\Magento\Quote\Model\Quote\Item::class, $quoteItem);
+        $this->assertInstanceOf('Magento\Quote\Model\Quote\Item', $quoteItem);
 
-        $this->assertGreaterThan(0, (int)$quoteItem->getProductId());
+        $this->assertEquals(1, $quoteItem->getProductId());
         $this->assertEquals('Simple Product', $quoteItem->getName());
     }
 }

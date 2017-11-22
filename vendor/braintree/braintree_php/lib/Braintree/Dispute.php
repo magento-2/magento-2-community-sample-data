@@ -1,12 +1,10 @@
 <?php
-namespace Braintree;
-
 /**
  * Creates an instance of Dispute as returned from a transaction
  *
  *
  * @package    Braintree
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $amount
  * @property-read string $currencyIsoCode
@@ -16,9 +14,9 @@ namespace Braintree;
  * @property-read string $disbursementDate
  * @property-read object $transactionDetails
  */
-class Dispute extends Base
+final class Braintree_Dispute extends Braintree
 {
-    protected $_attributes = [];
+    protected $_attributes = array();
 
     /* Dispute Status */
     const OPEN  = 'open';
@@ -41,10 +39,6 @@ class Dispute extends Base
     const TRANSACTION_AMOUNT_DIFFERS      = "transaction_amount_differs";
     const RETRIEVAL                       = "retrieval";
 
-    /* Dispute Kind */
-    const CHARGEBACK      = 'chargeback';
-    const PRE_ARBITRATION = 'pre_arbitration';
-    // RETRIEVAL for kind already defined under Dispute Reason
 
     protected function _initialize($disputeAttribs)
     {
@@ -52,7 +46,7 @@ class Dispute extends Base
 
         if (isset($disputeAttribs['transaction'])) {
             $this->_set('transactionDetails',
-                new Dispute\TransactionDetails($disputeAttribs['transaction'])
+                new Braintree_Dispute_TransactionDetails($disputeAttribs['transaction'])
             );
         }
     }
@@ -66,17 +60,16 @@ class Dispute extends Base
 
     public function  __toString()
     {
-        $display = [
+        $display = array(
             'amount', 'reason', 'status',
             'replyByDate', 'receivedDate', 'currencyIsoCode'
-            ];
+            );
 
-        $displayAttributes = [];
+        $displayAttributes = array();
         foreach ($display AS $attrib) {
             $displayAttributes[$attrib] = $this->$attrib;
         }
         return __CLASS__ . '[' .
-                Util::attributesToString($displayAttributes) .']';
+                Braintree_Util::attributesToString($displayAttributes) .']';
     }
 }
-class_alias('Braintree\Dispute', 'Braintree_Dispute');

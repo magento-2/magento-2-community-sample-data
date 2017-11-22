@@ -1,7 +1,6 @@
 <?php
-namespace Braintree;
 
-class MerchantAccount extends Base
+final class Braintree_MerchantAccount extends Braintree
 {
     const STATUS_ACTIVE = 'active';
     const STATUS_PENDING = 'pending';
@@ -24,22 +23,22 @@ class MerchantAccount extends Base
 
         if (isset($merchantAccountAttribs['individual'])) {
             $individual = $merchantAccountAttribs['individual'];
-            $this->_set('individualDetails', MerchantAccount\IndividualDetails::Factory($individual));
+            $this->_set('individualDetails', Braintree_MerchantAccount_IndividualDetails::Factory($individual));
         }
 
         if (isset($merchantAccountAttribs['business'])) {
             $business = $merchantAccountAttribs['business'];
-            $this->_set('businessDetails', MerchantAccount\BusinessDetails::Factory($business));
+            $this->_set('businessDetails', Braintree_MerchantAccount_BusinessDetails::Factory($business));
         }
 
         if (isset($merchantAccountAttribs['funding'])) {
             $funding = $merchantAccountAttribs['funding'];
-            $this->_set('fundingDetails', new MerchantAccount\FundingDetails($funding));
+            $this->_set('fundingDetails', new Braintree_MerchantAccount_FundingDetails($funding));
         }
 
         if (isset($merchantAccountAttribs['masterMerchantAccount'])) {
             $masterMerchantAccount = $merchantAccountAttribs['masterMerchantAccount'];
-            $this->_set('masterMerchantAccount', self::Factory($masterMerchantAccount));
+            $this->_set('masterMerchantAccount', Braintree_MerchantAccount::Factory($masterMerchantAccount));
         }
     }
 
@@ -48,17 +47,16 @@ class MerchantAccount extends Base
 
     public static function create($attribs)
     {
-        return Configuration::gateway()->merchantAccount()->create($attribs);
+        return Braintree_Configuration::gateway()->merchantAccount()->create($attribs);
     }
 
     public static function find($merchant_account_id)
     {
-        return Configuration::gateway()->merchantAccount()->find($merchant_account_id);
+        return Braintree_Configuration::gateway()->merchantAccount()->find($merchant_account_id);
     }
 
     public static function update($merchant_account_id, $attributes)
     {
-        return Configuration::gateway()->merchantAccount()->update($merchant_account_id, $attributes);
+        return Braintree_Configuration::gateway()->merchantAccount()->update($merchant_account_id, $attributes);
     }
 }
-class_alias('Braintree\MerchantAccount', 'Braintree_MerchantAccount');

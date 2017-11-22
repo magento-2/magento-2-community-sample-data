@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Indexer\Test\Unit\Config;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Indexer\Config\Reader
@@ -24,10 +24,16 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_fileResolverMock = $this->createPartialMock(\Magento\Framework\App\Config\FileResolver::class, ['get']);
+        $this->_fileResolverMock = $this->getMock(
+            'Magento\Framework\App\Config\FileResolver',
+            ['get'],
+            [],
+            '',
+            false
+        );
 
-        $this->_converter = $this->createPartialMock(\Magento\Framework\Indexer\Config\Converter::class, ['convert']);
-        $validationState = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $this->_converter = $this->getMock('Magento\Framework\Indexer\Config\Converter', ['convert']);
+        $validationState = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $validationState->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn(false);
@@ -61,9 +67,9 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $constraint = function (\DOMDocument $actual) use ($expectedFile) {
             try {
                 $expected = file_get_contents(__DIR__ . '/../_files/' . $expectedFile);
-                \PHPUnit\Framework\Assert::assertXmlStringEqualsXmlString($expected, $actual->saveXML());
+                \PHPUnit_Framework_Assert::assertXmlStringEqualsXmlString($expected, $actual->saveXML());
                 return true;
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
                 return false;
             }
         };

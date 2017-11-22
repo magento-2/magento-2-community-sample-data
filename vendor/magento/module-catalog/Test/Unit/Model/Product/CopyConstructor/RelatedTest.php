@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\CopyConstructor;
 
-class RelatedTest extends \PHPUnit\Framework\TestCase
+class RelatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \\Magento\Catalog\Model\Product\CopyConstructor\Related
@@ -36,16 +36,22 @@ class RelatedTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model = new \Magento\Catalog\Model\Product\CopyConstructor\Related();
 
-        $this->_productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->_productMock = $this->getMock('\Magento\Catalog\Model\Product', [], [], '', false);
 
-        $this->_duplicateMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['setRelatedLinkData', '__wakeup']
+        $this->_duplicateMock = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['setRelatedLinkData', '__wakeup'],
+            [],
+            '',
+            false
         );
 
-        $this->_linkMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product\Link::class,
-            ['__wakeup', 'getAttributes', 'getRelatedLinkCollection', 'useRelatedLinks']
+        $this->_linkMock = $this->getMock(
+            '\Magento\Catalog\Model\Product\Link',
+            ['__wakeup', 'getAttributes', 'getRelatedLinkCollection', 'useRelatedLinks'],
+            [],
+            '',
+            false
         );
 
         $this->_productMock->expects(
@@ -68,9 +74,12 @@ class RelatedTest extends \PHPUnit\Framework\TestCase
 
         $this->_linkMock->expects($this->once())->method('getAttributes')->will($this->returnValue($attributes));
 
-        $productLinkMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
-            ['__wakeup', 'getLinkedProductId', 'toArray']
+        $productLinkMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Link',
+            ['__wakeup', 'getLinkedProductId', 'toArray'],
+            [],
+            '',
+            false
         );
 
         $productLinkMock->expects($this->once())->method('getLinkedProductId')->will($this->returnValue('100500'));
@@ -85,7 +94,7 @@ class RelatedTest extends \PHPUnit\Framework\TestCase
         );
 
         $collectionMock = $helper->getCollectionMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Collection::class,
+            '\Magento\Catalog\Model\ResourceModel\Product\Link\Collection',
             [$productLinkMock]
         );
         $this->_productMock->expects(

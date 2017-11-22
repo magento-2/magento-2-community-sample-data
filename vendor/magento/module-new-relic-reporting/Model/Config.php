@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Model;
@@ -51,7 +51,9 @@ class Config
     const FALSE = 'false';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
     protected $scopeConfig;
 
     /**
@@ -100,7 +102,7 @@ class Config
     {
         return (string)$this->scopeConfig->getValue('newrelicreporting/general/api_url');
     }
-
+    
     /**
      * Returns configured URL for Insights API
      *
@@ -173,7 +175,7 @@ class Config
 
     /**
      * Sets config value
-     *
+     * 
      * @param string $pathId
      * @param mixed $value
      * @param string $scope

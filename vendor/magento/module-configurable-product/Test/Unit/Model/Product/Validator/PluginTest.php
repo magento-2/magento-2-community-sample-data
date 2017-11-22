@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Test\Unit\Model\Product\Validator;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Model\Product\Validator\Plugin
@@ -28,17 +28,17 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     protected $jsonHelperMock;
 
     /**
-     * @var \Magento\Catalog\Model\Product|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $productMock;
 
     /**
-     * @var \Magento\Framework\App\Request\Http|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $requestMock;
 
     /**
-     * @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $responseMock;
 
@@ -53,31 +53,54 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     protected $proceedResult = [1, 2, 3];
 
     /**
-     * @var \Magento\Catalog\Model\Product\Validator|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subjectMock;
 
+    /**
+     * @var \Closure
+     */
+    protected $closureMock;
+
     protected function setUp()
     {
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $this->productFactoryMock = $this->createPartialMock(\Magento\Catalog\Model\ProductFactory::class, ['create']);
-        $this->jsonHelperMock = $this->createPartialMock(\Magento\Framework\Json\Helper\Data::class, ['jsonDecode']);
+        $this->eventManagerMock = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
+        $this->productFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ProductFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $this->jsonHelperMock = $this->getMock('Magento\Framework\Json\Helper\Data', ['jsonDecode'], [], '', false);
         $this->jsonHelperMock->expects($this->any())->method('jsonDecode')->will($this->returnArgument(0));
-        $this->productMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getData', 'getAttributes', 'setTypeId']
+        $this->productMock = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getData', 'getAttributes'],
+            [],
+            '',
+            false
         );
-        $this->requestMock = $this->createPartialMock(
-            \Magento\Framework\App\Request\Http::class,
-            ['getPost', 'getParam', '__wakeup', 'has']
+        $this->requestMock = $this->getMock(
+            'Magento\Framework\App\Request\Http',
+            ['getPost', 'getParam', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->responseMock = $this->createPartialMock(
-            \Magento\Framework\DataObject::class,
-            ['setError', 'setMessage', 'setAttributes']
+        $this->responseMock = $this->getMock(
+            'Magento\Framework\DataObject',
+            ['setError', 'setMessage', 'setAttributes'],
+            [],
+            '',
+            false
         );
         $this->arguments = [$this->productMock, $this->requestMock, $this->responseMock];
-
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Model\Product\Validator::class);
+        $proceedResult = $this->proceedResult;
+        $this->closureMock = function () use ($proceedResult) {
+            return $proceedResult;
+        };
+        $this->subjectMock = $this->getMock('Magento\Catalog\Model\Product\Validator', [], [], '', false);
         $this->plugin = new \Magento\ConfigurableProduct\Model\Product\Validator\Plugin(
             $this->eventManagerMock,
             $this->productFactoryMock,
@@ -85,27 +108,15 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBeforeValidate()
+    public function testAroundValidateWithVariationsValid()
     {
-        $this->requestMock->expects(static::once())->method('has')->with('attributes')->willReturn(true);
-        $this->productMock->expects(static::once())->method('setTypeId')->willReturnSelf();
+        $matrix = json_encode(['products']);
 
-        $this->plugin->beforeValidate(
-            $this->subjectMock,
-            $this->productMock,
-            $this->requestMock,
-            $this->responseMock
+        $plugin = $this->getMock(
+            'Magento\ConfigurableProduct\Model\Product\Validator\Plugin',
+            ['_validateProductVariations'],
+            [$this->eventManagerMock, $this->productFactoryMock, $this->jsonHelperMock]
         );
-    }
-
-    public function testAfterValidateWithVariationsValid()
-    {
-        $matrix = ['products'];
-
-        $plugin = $this->getMockBuilder(\Magento\ConfigurableProduct\Model\Product\Validator\Plugin::class)
-            ->setMethods(['_validateProductVariations'])
-            ->setConstructorArgs([$this->eventManagerMock, $this->productFactoryMock, $this->jsonHelperMock])
-            ->getMock();
 
         $plugin->expects(
             $this->once()
@@ -113,7 +124,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             '_validateProductVariations'
         )->with(
             $this->productMock,
-            $matrix,
+            json_decode($matrix),
             $this->requestMock
         )->will(
             $this->returnValue(null)
@@ -124,7 +135,8 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         )->method(
             'getPost'
         )->with(
-            'variations-matrix'
+            'configurable-matrix-serialized',
+            '[]'
         )->will(
             $this->returnValue($matrix)
         );
@@ -133,9 +145,9 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $this->proceedResult,
-            $plugin->afterValidate(
+            $plugin->aroundValidate(
                 $this->subjectMock,
-                $this->proceedResult,
+                $this->closureMock,
                 $this->productMock,
                 $this->requestMock,
                 $this->responseMock
@@ -143,14 +155,15 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testAfterValidateWithVariationsInvalid()
+    public function testAroundValidateWithVariationsInvalid()
     {
-        $matrix = ['products'];
+        $matrix = json_encode(['products']);
 
-        $plugin = $this->getMockBuilder(\Magento\ConfigurableProduct\Model\Product\Validator\Plugin::class)
-            ->setMethods(['_validateProductVariations'])
-            ->setConstructorArgs([$this->eventManagerMock, $this->productFactoryMock, $this->jsonHelperMock])
-            ->getMock();
+        $plugin = $this->getMock(
+            'Magento\ConfigurableProduct\Model\Product\Validator\Plugin',
+            ['_validateProductVariations'],
+            [$this->eventManagerMock, $this->productFactoryMock, $this->jsonHelperMock]
+        );
 
         $plugin->expects(
             $this->once()
@@ -158,7 +171,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             '_validateProductVariations'
         )->with(
             $this->productMock,
-            $matrix,
+            json_decode($matrix),
             $this->requestMock
         )->will(
             $this->returnValue(true)
@@ -169,7 +182,8 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         )->method(
             'getPost'
         )->with(
-            'variations-matrix'
+            'configurable-matrix-serialized',
+            '[]'
         )->will(
             $this->returnValue($matrix)
         );
@@ -179,9 +193,9 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         $this->responseMock->expects($this->once())->method('setAttributes')->will($this->returnSelf());
         $this->assertEquals(
             $this->proceedResult,
-            $plugin->afterValidate(
+            $plugin->aroundValidate(
                 $this->subjectMock,
-                $this->proceedResult,
+                $this->closureMock,
                 $this->productMock,
                 $this->requestMock,
                 $this->responseMock
@@ -189,34 +203,36 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testAfterValidateIfVariationsNotExist()
+    public function testAroundValidateIfVariationsNotExist()
     {
         $this->requestMock->expects(
             $this->once()
         )->method(
             'getPost'
         )->with(
-            'variations-matrix'
+            'configurable-matrix-serialized',
+            '[]'
         )->will(
-            $this->returnValue(null)
+            $this->returnValue('[]')
         );
         $this->eventManagerMock->expects($this->never())->method('dispatch');
-        $this->plugin->afterValidate(
+        $this->plugin->aroundValidate(
             $this->subjectMock,
-            $this->proceedResult,
+            $this->closureMock,
             $this->productMock,
             $this->requestMock,
             $this->responseMock
         );
     }
 
-    public function testAfterValidateWithVariationsAndRequiredAttributes()
+    public function testAroundValidateWithVariationsAndRequiredAttributes()
     {
         $matrix = [
-            ['data1', 'data2', 'configurable_attribute' => ['data1']],
-            ['data3', 'data4', 'configurable_attribute' => ['data3']],
-            ['data5', 'data6', 'configurable_attribute' => ['data5']],
+            ['data1', 'data2', 'configurable_attribute' => ['data1'], 'price' => 10],
+            ['data3', 'data4', 'configurable_attribute' => ['data3'], 'price' => 10],
+            ['data5', 'data6', 'configurable_attribute' => ['data5'], 'price' => 10],
         ];
+        $encodedMatrix = json_encode($matrix);
 
         $this->productMock->expects($this->any())
             ->method('getData')
@@ -237,9 +253,10 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         )->method(
             'getPost'
         )->with(
-            'variations-matrix'
+            'configurable-matrix-serialized',
+            '[]'
         )->will(
-            $this->returnValue($matrix)
+            $this->returnValue($encodedMatrix)
         );
 
         $attribute1 = $this->createAttribute('code1', true, true);
@@ -295,9 +312,9 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
         $this->responseMock->expects($this->never())->method('setError');
 
-        $result = $this->plugin->afterValidate(
+        $result = $this->plugin->aroundValidate(
             $this->subjectMock,
-            $this->proceedResult,
+            $this->closureMock,
             $this->productMock,
             $this->requestMock,
             $this->responseMock
@@ -318,9 +335,12 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      */
     private function createProduct($index, $id, $isValid = true)
     {
-        $productMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getAttributes', 'addData', 'setAttributeSetId', 'validate']
+        $productMock = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['getAttributes', 'addData', 'setAttributeSetId', 'validate'],
+            [],
+            '',
+            false
         );
         $this->productFactoryMock->expects($this->at($index))
             ->method('create')
@@ -340,7 +360,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      */
     private function createAttribute($attributeCode, $isUserDefined, $isRequired)
     {
-        $attribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
+        $attribute = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\AbstractAttribute')
             ->disableOriginalConstructor()
             ->setMethods(['getAttributeCode', 'getIsUserDefined', 'getIsRequired'])
             ->getMock();

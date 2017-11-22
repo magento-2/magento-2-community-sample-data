@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Variable\Controller\Adminhtml\System;
@@ -9,13 +9,13 @@ use Magento\Backend\App\Action;
 
 /**
  * Custom Variables admin controller
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 abstract class Variable extends Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Variable::variable';
 
@@ -94,7 +94,7 @@ abstract class Variable extends Action
         $variableId = $this->getRequest()->getParam('variable_id', null);
         $storeId = (int)$this->getRequest()->getParam('store', 0);
         /* @var $variable \Magento\Variable\Model\Variable */
-        $variable = $this->_objectManager->create(\Magento\Variable\Model\Variable::class);
+        $variable = $this->_objectManager->create('Magento\Variable\Model\Variable');
         if ($variableId) {
             $variable->setStoreId($storeId)->load($variableId);
         }

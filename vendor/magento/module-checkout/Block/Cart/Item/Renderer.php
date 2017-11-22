@@ -1,21 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Block\Cart\Item;
 
-use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 use Magento\Checkout\Block\Cart\Item\Renderer\Actions;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Message\InterpretationStrategyInterface;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
+use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 
 /**
  * Shopping cart item render block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  *
  * @method \Magento\Checkout\Block\Cart\Item\Renderer setProductName(string)
@@ -269,7 +268,7 @@ class Renderer extends \Magento\Framework\View\Element\Template implements
     }
 
     /**
-     * Get list of all options for product
+     * Get list of all otions for product
      *
      * @return array
      * @codeCoverageIgnore
@@ -337,7 +336,7 @@ class Renderer extends \Magento\Framework\View\Element\Template implements
                 ];
             }
         }
-        $this->messageManager->getMessages(true, 'quote_item' . $quoteItem->getId())->clear();
+        $this->messageManager->getMessages('quote_item' . $quoteItem->getId())->clear();
 
         return $messages;
     }

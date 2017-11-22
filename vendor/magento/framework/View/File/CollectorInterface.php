@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\File;
@@ -9,8 +9,6 @@ use Magento\Framework\View\Design\ThemeInterface;
 
 /**
  * Interface of locating view files in the file system
- *
- * @api
  */
 interface CollectorInterface
 {

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,8 +9,6 @@ namespace Magento\Customer\Api\Data;
 
 /**
  * Customer address interface.
- * @api
- * @since 100.0.2
  */
 interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
 {
@@ -41,6 +39,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get ID
      *
+     * @api
      * @return int|null
      */
     public function getId();
@@ -48,6 +47,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set ID
      *
+     * @api
      * @param int $id
      * @return $this
      */
@@ -56,6 +56,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get customer ID
      *
+     * @api
      * @return int|null
      */
     public function getCustomerId();
@@ -63,6 +64,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set customer ID
      *
+     * @api
      * @param int $customerId
      * @return $this
      */
@@ -71,6 +73,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get region
      *
+     * @api
      * @return \Magento\Customer\Api\Data\RegionInterface|null
      */
     public function getRegion();
@@ -78,6 +81,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set region
      *
+     * @api
      * @param \Magento\Customer\Api\Data\RegionInterface $region
      * @return $this
      */
@@ -86,6 +90,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get region ID
      *
+     * @api
      * @return int|null
      */
     public function getRegionId();
@@ -93,6 +98,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set region ID
      *
+     * @api
      * @param int $regionId
      * @return $this
      */
@@ -101,6 +107,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Two-letter country code in ISO_3166-2 format
      *
+     * @api
      * @return string|null
      */
     public function getCountryId();
@@ -108,6 +115,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set country id
      *
+     * @api
      * @param string $countryId
      * @return $this
      */
@@ -116,6 +124,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get street
      *
+     * @api
      * @return string[]|null
      */
     public function getStreet();
@@ -123,6 +132,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set street
      *
+     * @api
      * @param string[] $street
      * @return $this
      */
@@ -131,6 +141,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get company
      *
+     * @api
      * @return string|null
      */
     public function getCompany();
@@ -138,6 +149,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set company
      *
+     * @api
      * @param string $company
      * @return $this
      */
@@ -146,6 +158,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get telephone number
      *
+     * @api
      * @return string|null
      */
     public function getTelephone();
@@ -153,6 +166,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set telephone number
      *
+     * @api
      * @param string $telephone
      * @return $this
      */
@@ -161,6 +175,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get fax number
      *
+     * @api
      * @return string|null
      */
     public function getFax();
@@ -168,6 +183,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set fax number
      *
+     * @api
      * @param string $fax
      * @return $this
      */
@@ -176,6 +192,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get postcode
      *
+     * @api
      * @return string|null
      */
     public function getPostcode();
@@ -183,6 +200,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set postcode
      *
+     * @api
      * @param string $postcode
      * @return $this
      */
@@ -191,6 +209,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get city name
      *
+     * @api
      * @return string|null
      */
     public function getCity();
@@ -198,6 +217,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set city name
      *
+     * @api
      * @param string $city
      * @return $this
      */
@@ -206,6 +226,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get first name
      *
+     * @api
      * @return string|null
      */
     public function getFirstname();
@@ -213,6 +234,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set first name
      *
+     * @api
      * @param string $firstName
      * @return $this
      */
@@ -221,6 +243,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get last name
      *
+     * @api
      * @return string|null
      */
     public function getLastname();
@@ -228,6 +251,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set last name
      *
+     * @api
      * @param string $lastName
      * @return $this
      */
@@ -236,6 +260,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get middle name
      *
+     * @api
      * @return string|null
      */
     public function getMiddlename();
@@ -243,6 +268,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set middle name
      *
+     * @api
      * @param string $middleName
      * @return $this
      */
@@ -251,6 +277,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get prefix
      *
+     * @api
      * @return string|null
      */
     public function getPrefix();
@@ -258,6 +285,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set prefix
      *
+     * @api
      * @param string $prefix
      * @return $this
      */
@@ -266,6 +294,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get suffix
      *
+     * @api
      * @return string|null
      */
     public function getSuffix();
@@ -273,6 +302,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set suffix
      *
+     * @api
      * @param string $suffix
      * @return $this
      */
@@ -281,6 +311,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get Vat id
      *
+     * @api
      * @return string|null
      */
     public function getVatId();
@@ -288,6 +319,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set Vat id
      *
+     * @api
      * @param string $vatId
      * @return $this
      */
@@ -296,6 +328,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get if this address is default shipping address.
      *
+     * @api
      * @return bool|null
      */
     public function isDefaultShipping();
@@ -303,6 +336,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set if this address is default shipping address.
      *
+     * @api
      * @param bool $isDefaultShipping
      * @return $this
      */
@@ -311,6 +345,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Get if this address is default billing address
      *
+     * @api
      * @return bool|null
      */
     public function isDefaultBilling();
@@ -318,6 +353,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set if this address is default billing address
      *
+     * @api
      * @param bool $isDefaultBilling
      * @return $this
      */
@@ -326,6 +362,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Retrieve existing extension attributes object or create a new one.
      *
+     * @api
      * @return \Magento\Customer\Api\Data\AddressExtensionInterface|null
      */
     public function getExtensionAttributes();
@@ -333,6 +370,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set an extension attributes object.
      *
+     * @api
      * @param \Magento\Customer\Api\Data\AddressExtensionInterface $extensionAttributes
      * @return $this
      */

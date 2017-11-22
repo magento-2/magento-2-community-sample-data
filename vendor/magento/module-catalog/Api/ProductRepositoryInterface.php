@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,6 @@ namespace Magento\Catalog\Api;
 
 /**
  * @api
- * @since 100.0.2
  */
 interface ProductRepositoryInterface
 {
@@ -42,7 +41,7 @@ interface ProductRepositoryInterface
      *
      * @param int $productId
      * @param bool $editMode
-     * @param int|null $storeId
+     * @param null|int $storeId
      * @param bool $forceReload
      * @return \Magento\Catalog\Api\Data\ProductInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException

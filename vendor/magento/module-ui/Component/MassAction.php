@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component;
 
 /**
- * @api
- * @since 100.0.2
+ * Class MassAction
  */
 class MassAction extends AbstractComponent
 {
@@ -22,7 +21,7 @@ class MassAction extends AbstractComponent
 
         foreach ($this->getChildComponents() as $actionComponent) {
             $config['actions'][] = $actionComponent->getConfiguration();
-        }
+        };
 
         $origConfig = $this->getConfiguration();
         if ($origConfig !== $config) {
@@ -34,6 +33,7 @@ class MassAction extends AbstractComponent
 
         parent::prepare();
     }
+
 
     /**
      * Get component name

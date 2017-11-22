@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,7 +29,10 @@ class AssertBundlePriceCalculatedOnProductPage extends AbstractConstraint
         BundleProduct $product,
         CatalogProductView $catalogProductView
     ) {
-        $stepFactory->create(ConfigureProductOnProductPageStep::class, ['product' => $product])->run();
+        $stepFactory->create(
+            ConfigureProductOnProductPageStep::class,
+            ['product' => $product]
+        )->run();
 
         //Process assertions
         $this->assertPrice($product, $catalogProductView);
@@ -42,12 +45,20 @@ class AssertBundlePriceCalculatedOnProductPage extends AbstractConstraint
      * @param CatalogProductView $productView
      * @return void
      */
-    protected function assertPrice(BundleProduct $product, CatalogProductView $productView)
-    {
+    protected function assertPrice(
+        BundleProduct $product,
+        CatalogProductView $productView
+    ) {
         $checkoutData = $product->getCheckoutData();
+
+        $blockPrice = $productView->getBundleViewBlock()
+            ->getBundleSummaryBlock()
+            ->getConfiguredPriceBlock()
+            ->getPrice();
+
         \PHPUnit_Framework_Assert::assertEquals(
             $checkoutData['cartItem']['configuredPrice'],
-            $productView->getBundleViewBlock()->getBundleSummaryBlock()->getConfiguredPriceBlock()->getPrice(),
+            $blockPrice,
             'Bundle price calculated is not correct.'
         );
     }

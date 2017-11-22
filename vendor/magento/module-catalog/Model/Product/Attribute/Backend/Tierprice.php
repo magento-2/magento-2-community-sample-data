@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,8 +10,6 @@
  * @author     Magento Core Team <core@magentocommerce.com>
  */
 namespace Magento\Catalog\Model\Product\Attribute\Backend;
-
-use Magento\Catalog\Model\Attribute\ScopeOverriddenValue;
 
 class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPrice\AbstractGroupPrice
 {
@@ -31,7 +29,6 @@ class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPr
      * @param \Magento\Catalog\Model\Product\Type $catalogProductType
      * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
      * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice $productAttributeTierprice
-     * @param ScopeOverriddenValue|null $scopeOverriddenValue
      */
     public function __construct(
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
@@ -41,8 +38,7 @@ class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPr
         \Magento\Framework\Locale\FormatInterface $localeFormat,
         \Magento\Catalog\Model\Product\Type $catalogProductType,
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
-        \Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice $productAttributeTierprice,
-        ScopeOverriddenValue $scopeOverriddenValue = null
+        \Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice $productAttributeTierprice
     ) {
         $this->_productAttributeBackendTierprice = $productAttributeTierprice;
         parent::__construct(
@@ -52,8 +48,7 @@ class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPr
             $config,
             $localeFormat,
             $catalogProductType,
-            $groupManagement,
-            $scopeOverriddenValue
+            $groupManagement
         );
     }
 
@@ -78,18 +73,6 @@ class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPr
         $uniqueFields = parent::_getAdditionalUniqueFields($objectArray);
         $uniqueFields['qty'] = $objectArray['price_qty'] * 1;
         return $uniqueFields;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getAdditionalFields($objectArray)
-    {
-        $percentageValue = $this->getPercentage($objectArray);
-        return [
-            'value' => $percentageValue ? null : $objectArray['price'],
-            'percentage_value' => $percentageValue ?: null,
-        ];
     }
 
     /**
@@ -121,93 +104,5 @@ class Tierprice extends \Magento\Catalog\Model\Product\Attribute\Backend\GroupPr
     public function isScalar()
     {
         return false;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validate($object)
-    {
-        $attribute = $this->getAttribute();
-        $priceRows = $object->getData($attribute->getName());
-        $priceRows = array_filter((array)$priceRows);
-
-        foreach ($priceRows as $priceRow) {
-            $percentage = $this->getPercentage($priceRow);
-            if ($percentage !== null && (!$this->isPositiveOrZero($percentage) || $percentage > 100)) {
-                throw new \Magento\Framework\Exception\LocalizedException(
-                    __('Percentage value must be a number between 0 and 100.')
-                );
-            }
-        }
-
-        return parent::validate($object);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function validatePrice(array $priceRow)
-    {
-        if (!$this->getPercentage($priceRow)) {
-            parent::validatePrice($priceRow);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function modifyPriceData($object, $data)
-    {
-        $data = parent::modifyPriceData($object, $data);
-        $price = $object->getPrice();
-        foreach ($data as $key => $tierPrice) {
-            $percentageValue = $this->getPercentage($tierPrice);
-            if ($percentageValue) {
-                $data[$key]['price'] = $price * (1 - $percentageValue / 100);
-                $data[$key]['website_price'] = $data[$key]['price'];
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * @param array $valuesToUpdate
-     * @param array $oldValues
-     * @return boolean
-     */
-    protected function updateValues(array $valuesToUpdate, array $oldValues)
-    {
-        $isChanged = false;
-        foreach ($valuesToUpdate as $key => $value) {
-            if ((!empty($value['value']) && $oldValues[$key]['price'] != $value['value'])
-                || $this->getPercentage($oldValues[$key]) != $this->getPercentage($value)
-            ) {
-                $price = new \Magento\Framework\DataObject(
-                    [
-                        'value_id' => $oldValues[$key]['price_id'],
-                        'value' => $value['value'],
-                        'percentage_value' => $this->getPercentage($value)
-                    ]
-                );
-                $this->_getResource()->savePriceData($price);
-
-                $isChanged = true;
-            }
-        }
-        return $isChanged;
-    }
-
-    /**
-     * Check whether price has percentage value.
-     *
-     * @param array $priceRow
-     * @return null
-     */
-    private function getPercentage($priceRow)
-    {
-        return isset($priceRow['percentage_value']) && is_numeric($priceRow['percentage_value'])
-            ? $priceRow['percentage_value']
-            : null;
     }
 }

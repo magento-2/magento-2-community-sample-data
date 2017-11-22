@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rule\Block;
@@ -8,10 +8,6 @@ namespace Magento\Rule\Block;
 use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
 use Magento\Framework\View\Element\AbstractBlock;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Editable extends AbstractBlock implements RendererInterface
 {
     /**
@@ -57,8 +53,6 @@ class Editable extends AbstractBlock implements RendererInterface
                 $element->getName() .
                 '" value="' .
                 $element->getValue() .
-                '" data-form-part="' .
-                $element->getData('data-form-part') .
                 '"/> ' .
                 htmlspecialchars(
                     $valueName

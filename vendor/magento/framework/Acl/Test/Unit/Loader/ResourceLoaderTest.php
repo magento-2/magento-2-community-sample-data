@@ -2,12 +2,12 @@
 /**
  * Test for \Magento\Framework\Acl\Loader\ResourceLoader
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Acl\Test\Unit\Loader;
 
-class ResourceLoaderTest extends \PHPUnit\Framework\TestCase
+class ResourceLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test for \Magento\Framework\Acl\Loader\ResourceLoader::populateAcl
@@ -15,19 +15,25 @@ class ResourceLoaderTest extends \PHPUnit\Framework\TestCase
     public function testPopulateAclOnValidObjects()
     {
         /** @var $aclResource \Magento\Framework\Acl\AclResource */
-        $aclResource = $this->createMock(\Magento\Framework\Acl\AclResource::class);
+        $aclResource = $this->getMock('Magento\Framework\Acl\AclResource', [], [], '', false);
 
         /** @var $acl \Magento\Framework\Acl */
-        $acl = $this->createPartialMock(\Magento\Framework\Acl::class, ['addResource']);
+        $acl = $this->getMock('Magento\Framework\Acl', ['addResource'], [], '', false);
         $acl->expects($this->exactly(2))->method('addResource');
         $acl->expects($this->at(0))->method('addResource')->with($aclResource, null)->will($this->returnSelf());
         $acl->expects($this->at(1))->method('addResource')->with($aclResource, $aclResource)->will($this->returnSelf());
 
-        $factoryObject = $this->createPartialMock(\Magento\Framework\Acl\AclResourceFactory::class, ['createResource']);
+        $factoryObject = $this->getMock(
+            'Magento\Framework\Acl\AclResourceFactory',
+            ['createResource'],
+            [],
+            '',
+            false
+        );
         $factoryObject->expects($this->any())->method('createResource')->will($this->returnValue($aclResource));
 
         /** @var $resourceProvider \Magento\Framework\Acl\AclResource\ProviderInterface */
-        $resourceProvider = $this->createMock(\Magento\Framework\Acl\AclResource\ProviderInterface::class);
+        $resourceProvider = $this->getMock('Magento\Framework\Acl\AclResource\ProviderInterface');
         $resourceProvider->expects($this->once())
             ->method('getAclResources')
             ->will(
@@ -65,9 +71,9 @@ class ResourceLoaderTest extends \PHPUnit\Framework\TestCase
     public function testPopulateAclWithException()
     {
         /** @var $aclResource \Magento\Framework\Acl\AclResource */
-        $aclResource = $this->createMock(\Magento\Framework\Acl\AclResource::class);
+        $aclResource = $this->getMock('Magento\Framework\Acl\AclResource', [], [], '', false);
 
-        $factoryObject = $this->getMockBuilder(\Magento\Framework\Acl\AclResourceFactory::class)
+        $factoryObject = $this->getMockBuilder('Magento\Framework\Acl\AclResourceFactory')
             ->setMethods(['createResource'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -75,7 +81,7 @@ class ResourceLoaderTest extends \PHPUnit\Framework\TestCase
         $factoryObject->expects($this->any())->method('createResource')->will($this->returnValue($aclResource));
 
         /** @var $resourceProvider \Magento\Framework\Acl\AclResource\ProviderInterface */
-        $resourceProvider = $this->createMock(\Magento\Framework\Acl\AclResource\ProviderInterface::class);
+        $resourceProvider = $this->getMock('Magento\Framework\Acl\AclResource\ProviderInterface');
         $resourceProvider->expects($this->once())
             ->method('getAclResources')
             ->will(
@@ -98,7 +104,7 @@ class ResourceLoaderTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var $acl \Magento\Framework\Acl */
-        $acl = $this->createPartialMock(\Magento\Framework\Acl::class, ['addResource']);
+        $acl = $this->getMock('Magento\Framework\Acl', ['addResource'], [], '', false);
 
         /** @var $loaderResource \Magento\Framework\Acl\Loader\ResourceLoader */
         $loaderResource = new \Magento\Framework\Acl\Loader\ResourceLoader($resourceProvider, $factoryObject);

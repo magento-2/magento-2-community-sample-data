@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Review\Test\Unit\Block\Adminhtml;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class MainTest extends \PHPUnit\Framework\TestCase
+class MainTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Review\Block\Adminhtml\Main
@@ -33,9 +33,9 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testConstruct()
     {
         $this->customerRepository = $this
-            ->getMockForAbstractClass(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-        $this->customerViewHelper = $this->createMock(\Magento\Customer\Helper\View::class);
-        $dummyCustomer = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\CustomerInterface::class);
+            ->getMockForAbstractClass('Magento\Customer\Api\CustomerRepositoryInterface');
+        $this->customerViewHelper = $this->getMock('Magento\Customer\Helper\View', [], [], '', false);
+        $dummyCustomer = $this->getMockForAbstractClass('Magento\Customer\Api\Data\CustomerInterface');
 
         $this->customerRepository->expects($this->once())
             ->method('getById')
@@ -45,7 +45,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
             ->method('getCustomerName')
             ->with($dummyCustomer)
             ->will($this->returnValue(new \Magento\Framework\DataObject()));
-        $this->request = $this->getMockForAbstractClass(\Magento\Framework\App\RequestInterface::class);
+        $this->request = $this->getMockForAbstractClass('Magento\Framework\App\RequestInterface');
         $this->request->expects($this->at(0))
             ->method('getParam')
             ->with('customerId', false)
@@ -57,7 +57,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Review\Block\Adminhtml\Main::class,
+            'Magento\Review\Block\Adminhtml\Main',
             [
                 'request' => $this->request,
                 'customerRepository' => $this->customerRepository,

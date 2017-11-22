@@ -1,12 +1,11 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'ko',
     'jquery',
-    'Magento_Ui/js/lib/knockout/template/loader',
+    'Magento_Ui/js/lib/ko/template/loader',
     'mage/template'
 ], function (ko, $, templateLoader, template) {
     'use strict';

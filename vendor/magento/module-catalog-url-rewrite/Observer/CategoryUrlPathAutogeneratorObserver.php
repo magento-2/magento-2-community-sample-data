@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Observer;
@@ -11,23 +11,18 @@ use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
 use Magento\Framework\Event\Observer;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
 
 class CategoryUrlPathAutogeneratorObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator
-     */
+    /** @var CategoryUrlPathGenerator */
     protected $categoryUrlPathGenerator;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider */
     protected $childrenCategoriesProvider;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Service\V1\StoreViewService
-     */
+    /** @var StoreViewService */
     protected $storeViewService;
 
     /**
@@ -48,18 +43,21 @@ class CategoryUrlPathAutogeneratorObserver implements ObserverInterface
     /**
      * @param \Magento\Framework\Event\Observer $observer
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         /** @var Category $category */
         $category = $observer->getEvent()->getCategory();
-        $useDefaultAttribute = !$category->isObjectNew() && !empty($category->getData('use_default')['url_key']);
-        if ($category->getUrlKey() !== false && !$useDefaultAttribute) {
+        if ($category->getUrlKey() !== false) {
+
+            /** @var string $resultUrlKey */
             $resultUrlKey = $this->categoryUrlPathGenerator->getUrlKey($category);
+
             if (empty($resultUrlKey)) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('Invalid URL key'));
+                throw new LocalizedException(__('Invalid URL key'));
             }
+
             $category->setUrlKey($resultUrlKey)
                 ->setUrlPath($this->categoryUrlPathGenerator->getUrlPath($category));
             if (!$category->isObjectNew()) {

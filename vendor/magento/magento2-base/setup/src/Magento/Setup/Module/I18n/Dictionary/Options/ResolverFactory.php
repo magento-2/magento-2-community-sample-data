@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n\Dictionary\Options;
@@ -15,7 +15,7 @@ class ResolverFactory
     /**
      * Default option resolver class
      */
-    const DEFAULT_RESOLVER = \Magento\Setup\Module\I18n\Dictionary\Options\Resolver::class;
+    const DEFAULT_RESOLVER = 'Magento\Setup\Module\I18n\Dictionary\Options\Resolver';
 
     /**
      * @var string

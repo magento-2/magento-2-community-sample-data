@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Pdf\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Pdf\Config\Converter
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_model = new \Magento\Sales\Model\Order\Pdf\Config\Converter();
     }

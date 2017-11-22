@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,10 +25,10 @@ class AddressRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstra
     {
         $objectManager = Bootstrap::getObjectManager();
         $this->customerRepository = $objectManager->get(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
         $this->addressRepository = $objectManager->get(
-            \Magento\Customer\Api\AddressRepositoryInterface::class
+            'Magento\Customer\Api\AddressRepositoryInterface'
         );
         parent::setUp();
     }
@@ -39,7 +39,7 @@ class AddressRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstra
     protected function tearDown()
     {
         /** @var \Magento\Framework\Registry $registry */
-        $registry = Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+        $registry = Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
         $registry->unregister('isSecureArea');
         $registry->register('isSecureArea', true);
 
@@ -116,10 +116,7 @@ class AddressRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstra
         $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertTrue($response, 'Expected response should be true.');
 
-        $this->expectException(
-            \Magento\Framework\Exception\NoSuchEntityException::class,
-            'No such entity with addressId = 1'
-        );
+        $this->setExpectedException('Magento\Framework\Exception\NoSuchEntityException', 'No such entity with addressId = 1');
         $this->addressRepository->getById($fixtureAddressId);
     }
 

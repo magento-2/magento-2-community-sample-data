@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Search\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class QueryTest extends \PHPUnit\Framework\TestCase
+class QueryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Search\Model\Query
@@ -23,11 +23,11 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->resource = $this->getMockBuilder(\Magento\Search\Model\ResourceModel\Query::class)
+        $this->resource = $this->getMockBuilder('Magento\Search\Model\ResourceModel\Query')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->model = $objectManager->getObject(\Magento\Search\Model\Query::class, ['resource' => $this->resource]);
+        $this->model = $objectManager->getObject('Magento\Search\Model\Query', ['resource' => $this->resource]);
     }
 
     public function testSaveNumResults()

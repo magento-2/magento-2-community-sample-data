@@ -18,7 +18,7 @@ class FormTel extends FormInput
      *
      * @var array
      */
-    protected $validTagAttributes = [
+    protected $validTagAttributes = array(
         'name'           => true,
         'autocomplete'   => true,
         'autofocus'      => true,
@@ -33,7 +33,7 @@ class FormTel extends FormInput
         'size'           => true,
         'type'           => true,
         'value'          => true,
-    ];
+    );
 
     /**
      * Determine input type to use

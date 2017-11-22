@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Email\Container;
 
 use \Magento\Sales\Model\Order\Email\Container\OrderCommentIdentity;
 
-class OrderCommentIdentityTest extends \PHPUnit\Framework\TestCase
+class OrderCommentIdentityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Email\Container\OrderCommentIdentity
@@ -34,11 +34,17 @@ class OrderCommentIdentityTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->scopeConfigInterfaceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+            '\Magento\Framework\App\Config\ScopeConfigInterface'
         );
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManagerMock = $this->getMock('Magento\Store\Model\StoreManagerInterface');
 
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getStoreId', '__wakeup']);
+        $this->storeMock = $this->getMock(
+            '\Magento\Store\Model\Store',
+            ['getStoreId', '__wakeup'],
+            [],
+            '',
+            false
+        );
 
         $this->storeId = 999999999999;
         $this->storeMock->expects($this->any())

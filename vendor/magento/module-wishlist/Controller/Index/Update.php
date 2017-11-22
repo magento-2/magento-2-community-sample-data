@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Controller\Index;
@@ -70,7 +70,7 @@ class Update extends \Magento\Wishlist\Controller\AbstractIndex
             $updatedItems = 0;
 
             foreach ($post['description'] as $itemId => $description) {
-                $item = $this->_objectManager->create(\Magento\Wishlist\Model\Item::class)->load($itemId);
+                $item = $this->_objectManager->create('Magento\Wishlist\Model\Item')->load($itemId);
                 if ($item->getWishlistId() != $wishlist->getId()) {
                     continue;
                 }
@@ -78,9 +78,7 @@ class Update extends \Magento\Wishlist\Controller\AbstractIndex
                 // Extract new values
                 $description = (string)$description;
 
-                if ($description == $this->_objectManager->get(
-                    \Magento\Wishlist\Helper\Data::class
-                )->defaultCommentString()
+                if ($description == $this->_objectManager->get('Magento\Wishlist\Helper\Data')->defaultCommentString()
                 ) {
                     $description = '';
                 } elseif (!strlen($description)) {
@@ -100,7 +98,7 @@ class Update extends \Magento\Wishlist\Controller\AbstractIndex
                     try {
                         $item->delete();
                     } catch (\Exception $e) {
-                        $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+                        $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
                         $this->messageManager->addError(__('We can\'t delete item from Wish List right now.'));
                     }
                 }
@@ -116,7 +114,7 @@ class Update extends \Magento\Wishlist\Controller\AbstractIndex
                     $this->messageManager->addError(
                         __(
                             'Can\'t save description %1',
-                            $this->_objectManager->get(\Magento\Framework\Escaper::class)->escapeHtml($description)
+                            $this->_objectManager->get('Magento\Framework\Escaper')->escapeHtml($description)
                         )
                     );
                 }
@@ -126,7 +124,7 @@ class Update extends \Magento\Wishlist\Controller\AbstractIndex
             if ($updatedItems) {
                 try {
                     $wishlist->save();
-                    $this->_objectManager->get(\Magento\Wishlist\Helper\Data::class)->calculate();
+                    $this->_objectManager->get('Magento\Wishlist\Helper\Data')->calculate();
                 } catch (\Exception $e) {
                     $this->messageManager->addError(__('Can\'t update wish list'));
                 }

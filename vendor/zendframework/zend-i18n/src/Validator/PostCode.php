@@ -27,12 +27,12 @@ class PostCode extends AbstractValidator
     /**
      * @var array
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::INVALID        => "Invalid type given. String or integer expected",
         self::NO_MATCH       => "The input does not appear to be a postal code",
         self::SERVICE        => "The input does not appear to be a postal code",
         self::SERVICEFAILURE => "An exception has been raised while validating the input",
-    ];
+    );
 
     /**
      * Optional Locale to use
@@ -55,13 +55,12 @@ class PostCode extends AbstractValidator
      */
     protected $service;
 
-    // @codingStandardsIgnoreStart
     /**
      * Postal Code regexes by territory
      *
      * @var array
      */
-    protected static $postCodeRegex = [
+    protected static $postCodeRegex = array(
         'GB' => 'GIR[ ]?0AA|^((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\d[\dA-Z]?[ ]?\d[ABD-HJLN-UW-Z]{2}))$|^BFPO[ ]?\d{1,4}',
         'JE' => 'JE\d[\dA-Z]?[ ]?\d[ABD-HJLN-UW-Z]{2}',
         'GG' => 'GY\d[\dA-Z]?[ ]?\d[ABD-HJLN-UW-Z]{2}',
@@ -125,7 +124,7 @@ class PostCode extends AbstractValidator
         'IS' => '\d{3}',
         'IN' => '\d{6}',
         'ID' => '\d{5}',
-        'IE' => '[\dA-Z]{3} ?[\dA-Z]{4}',
+        'IE' => '((D|DUBLIN)?([1-9]|6[wW]|1[0-8]|2[024]))?',
         'IL' => '\d{5}',
         'JO' => '\d{5}',
         'KZ' => '\d{6}',
@@ -141,7 +140,7 @@ class PostCode extends AbstractValidator
         'MY' => '\d{5}',
         'MV' => '\d{5}',
         'MT' => '[A-Z]{3}[ ]?\d{2,4}',
-        'MU' => '\d{5}',
+        'MU' => '(\d{3}[A-Z]{2}\d{3})?',
         'MX' => '\d{5}',
         'MD' => '\d{4}',
         'MC' => '980\d{2}',
@@ -179,7 +178,7 @@ class PostCode extends AbstractValidator
         'AS' => '96799',
         'CC' => '6799',
         'CK' => '\d{4}',
-        'RS' => '\d{5}',
+        'RS' => '\d{6}',
         'ME' => '8\d{4}',
         'CS' => '\d{5}',
         'YU' => '\d{5}',
@@ -220,9 +219,7 @@ class PostCode extends AbstractValidator
         'TC' => 'TKCA 1ZZ',
         'WF' => '986\d{2}',
         'YT' => '976\d{2}',
-        'VN' => '\d{6}',
-    ];
-    // @codingStandardsIgnoreEnd
+    );
 
     /**
      * Constructor for the PostCode validator
@@ -232,9 +229,9 @@ class PostCode extends AbstractValidator
      * @param  array|Traversable $options
      * @throws Exception\ExtensionNotLoadedException if ext/intl is not present
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
-        if (! extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new I18nException\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -335,7 +332,7 @@ class PostCode extends AbstractValidator
      */
     public function isValid($value)
     {
-        if (! is_string($value) && ! is_int($value)) {
+        if (!is_string($value) && !is_int($value)) {
             $this->error(self::INVALID);
             return false;
         }
@@ -345,7 +342,7 @@ class PostCode extends AbstractValidator
         $service = $this->getService();
         $locale  = $this->getLocale();
         $format  = $this->getFormat();
-        if ((null === $format || '' === $format) && ! empty($locale)) {
+        if ((null === $format || '' === $format) && !empty($locale)) {
             $region = Locale::getRegion($locale);
             if ('' === $region) {
                 throw new Exception\InvalidArgumentException("Locale must contain a region");
@@ -365,18 +362,18 @@ class PostCode extends AbstractValidator
             $format .= '$/';
         }
 
-        if (! empty($service)) {
-            if (! is_callable($service)) {
+        if (!empty($service)) {
+            if (!is_callable($service)) {
                 throw new Exception\InvalidArgumentException('Invalid callback given');
             }
 
             try {
                 $callback = new Callback($service);
-                $callback->setOptions([
+                $callback->setOptions(array(
                     'format' => $format,
                     'locale' => $locale,
-                ]);
-                if (! $callback->isValid($value)) {
+                ));
+                if (!$callback->isValid($value)) {
                     $this->error(self::SERVICE, $value);
                     return false;
                 }
@@ -386,7 +383,7 @@ class PostCode extends AbstractValidator
             }
         }
 
-        if (! preg_match($format, $value)) {
+        if (!preg_match($format, $value)) {
             $this->error(self::NO_MATCH);
             return false;
         }

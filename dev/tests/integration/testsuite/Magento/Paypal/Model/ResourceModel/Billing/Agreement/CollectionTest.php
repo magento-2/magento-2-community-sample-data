@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\ResourceModel\Billing\Agreement;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Customer/_files/customer.php
@@ -17,7 +17,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection $billingAgreementCollection */
         $billingAgreementCollection = Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
         );
 
         $billingAgreementCollection->addCustomerDetails();

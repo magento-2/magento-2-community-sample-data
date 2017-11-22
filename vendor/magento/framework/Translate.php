@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework;
@@ -109,11 +109,6 @@ class Translate implements \Magento\Framework\TranslateInterface
     protected $packDictionary;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\View\DesignInterface $viewDesign
      * @param \Magento\Framework\Cache\FrontendInterface $cache
      * @param \Magento\Framework\View\FileSystem $viewFileSystem
@@ -182,8 +177,8 @@ class Translate implements \Magento\Framework\TranslateInterface
         $this->_data = [];
 
         $this->_loadModuleTranslation();
-        $this->_loadPackTranslation();
         $this->_loadThemeTranslation();
+        $this->_loadPackTranslation();
         $this->_loadDbTranslation();
 
         if (!$forceReload) {
@@ -339,7 +334,7 @@ class Translate implements \Magento\Framework\TranslateInterface
     protected function _loadDbTranslation()
     {
         $data = $this->_translateResource->getTranslationArray(null, $this->getLocale());
-        $this->_addData(array_map("htmlspecialchars_decode", $data));
+        $this->_addData($data);
         return $this;
     }
 
@@ -479,7 +474,7 @@ class Translate implements \Magento\Framework\TranslateInterface
     {
         $data = $this->_cache->load($this->getCacheId());
         if ($data) {
-            $data = $this->getSerializer()->unserialize($data);
+            $data = unserialize($data);
         }
         return $data;
     }
@@ -491,22 +486,7 @@ class Translate implements \Magento\Framework\TranslateInterface
      */
     protected function _saveCache()
     {
-        $this->_cache->save($this->getSerializer()->serialize($this->getData()), $this->getCacheId(true), [], false);
+        $this->_cache->save(serialize($this->getData()), $this->getCacheId(true), [], false);
         return $this;
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return \Magento\Framework\Serialize\SerializerInterface
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if ($this->serializer === null) {
-            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(Serialize\SerializerInterface::class);
-        }
-        return $this->serializer;
     }
 }

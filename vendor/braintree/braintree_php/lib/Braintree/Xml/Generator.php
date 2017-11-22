@@ -1,34 +1,27 @@
 <?php
-namespace Braintree\Xml;
-
-use DateTime;
-use DateTimeZone;
-use XMLWriter;
-use Braintree\Util;
-
 /**
  * PHP version 5
  *
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
  * Generates XML output from arrays using PHP's
  * built-in XMLWriter
  *
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class Generator
+class Braintree_Xml_Generator
 {
     /**
      * arrays passed to this method should have a single root element
      * with an array as its value
      * @param array $aData the array of data
-     * @return string XML string
+     * @return var XML string
      */
     public static function arrayToXml($aData)
     {
-        $aData = Util::camelCaseToDelimiterArray($aData, '-');
+        $aData = Braintree_Util::camelCaseToDelimiterArray($aData, '-');
         // set up the XMLWriter
         $writer = new XMLWriter();
         $writer->openMemory();
@@ -60,7 +53,7 @@ class Generator
      * @static
      * @param object $writer XMLWriter object
      * @param array $aData contains attributes and values
-     * @return void
+     * @return none
      */
     private static function _createElementsFromArray(&$writer, $aData)
     {
@@ -110,30 +103,28 @@ class Generator
     private static function _generateXmlAttribute($value)
     {
         if ($value instanceof DateTime) {
-            return ['type', 'datetime', self::_dateTimeToXmlTimestamp($value)];
+            return array('type', 'datetime', self::_dateTimeToXmlTimestamp($value));
         }
         if (is_int($value)) {
-            return ['type', 'integer', $value];
+            return array('type', 'integer', $value);
         }
         if (is_bool($value)) {
-            return ['type', 'boolean', ($value ? 'true' : 'false')];
+            return array('type', 'boolean', ($value ? 'true' : 'false'));
         }
         if ($value === NULL) {
-            return ['nil', 'true', $value];
+            return array('nil', 'true', $value);
         }
     }
     /**
      * converts datetime back to xml schema format
      * @access protected
      * @param object $dateTime
-     * @return string XML schema formatted timestamp
+     * @return var XML schema formatted timestamp
      */
     private static function _dateTimeToXmlTimestamp($dateTime)
     {
-        $dateTimeForUTC = clone $dateTime;
-
-        $dateTimeForUTC->setTimeZone(new DateTimeZone('UTC'));
-        return ($dateTimeForUTC->format('Y-m-d\TH:i:s') . 'Z');
+        $dateTime->setTimeZone(new DateTimeZone('UTC'));
+        return ($dateTime->format('Y-m-d\TH:i:s') . 'Z');
     }
 
     private static function _castDateTime($string)
@@ -150,4 +141,3 @@ class Generator
         }
     }
 }
-class_alias('Braintree\Xml\Generator', 'Braintree_Xml_Generator');

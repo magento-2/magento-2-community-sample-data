@@ -1,18 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Product;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product;
 
 /**
  * Product View block
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class View extends AbstractProduct implements \Magento\Framework\DataObject\IdentityInterface
 {
@@ -30,7 +28,6 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
 
     /**
      * @var \Magento\Framework\Pricing\PriceCurrencyInterface
-     * @deprecated 101.1.0
      */
     protected $priceCurrency;
 
@@ -58,7 +55,7 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
-
+    
     /**
      * @var ProductRepositoryInterface
      */
@@ -106,14 +103,12 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
             $data
         );
     }
-
     // @codingStandardsIgnoreEnd
 
     /**
      * Return wishlist widget options
      *
      * @return array
-     * @deprecated 101.0.1
      */
     public function getWishlistOptions()
     {
@@ -127,7 +122,7 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
      */
     protected function _prepareLayout()
     {
-        $this->getLayout()->createBlock(\Magento\Catalog\Block\Breadcrumbs::class);
+        $this->getLayout()->createBlock('Magento\Catalog\Block\Breadcrumbs');
         $product = $this->getProduct();
         if (!$product) {
             return parent::_prepareLayout();
@@ -228,34 +223,42 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
             $config = [
                 'productId' => $product->getId(),
                 'priceFormat' => $this->_localeFormat->getPriceFormat()
-            ];
+                ];
             return $this->_jsonEncoder->encode($config);
         }
 
         $tierPrices = [];
         $tierPricesList = $product->getPriceInfo()->getPrice('tier_price')->getTierPriceList();
         foreach ($tierPricesList as $tierPrice) {
-            $tierPrices[] = $tierPrice['price']->getValue();
+            $tierPrices[] = $this->priceCurrency->convert($tierPrice['price']->getValue());
         }
+        $regularPriceAmount = $product->getPriceInfo()->getPrice('regular_price')->getAmount();
+        $finalPriceAmount = $product->getPriceInfo()->getPrice('final_price')->getAmount();
         $config = [
-            'productId'   => $product->getId(),
+            'productId' => $product->getId(),
             'priceFormat' => $this->_localeFormat->getPriceFormat(),
-            'prices'      => [
-                'oldPrice'   => [
-                    'amount'      => $product->getPriceInfo()->getPrice('regular_price')->getAmount()->getValue(),
+            'prices' => [
+                'oldPrice' => [
+                    'amount' => $regularPriceAmount
+                        ? $this->priceCurrency->convert($regularPriceAmount->getValue())
+                        : null,
                     'adjustments' => []
                 ],
-                'basePrice'  => [
-                    'amount'      => $product->getPriceInfo()->getPrice('final_price')->getAmount()->getBaseAmount(),
+                'basePrice' => [
+                    'amount' => $finalPriceAmount
+                        ? $this->priceCurrency->convert($finalPriceAmount->getBaseAmount())
+                        : null,
                     'adjustments' => []
                 ],
                 'finalPrice' => [
-                    'amount'      => $product->getPriceInfo()->getPrice('final_price')->getAmount()->getValue(),
+                    'amount' => $finalPriceAmount
+                        ? $this->priceCurrency->convert($finalPriceAmount->getValue())
+                        : null,
                     'adjustments' => []
                 ]
             ],
-            'idSuffix'    => '_clone',
-            'tierPrices'  => $tierPrices
+            'idSuffix' => '_clone',
+            'tierPrices' => $tierPrices
         ];
 
         $responseObject = new \Magento\Framework\DataObject();
@@ -370,7 +373,7 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
         $identities = $this->getProduct()->getIdentities();
         $category = $this->_coreRegistry->registry('current_category');
         if ($category) {
-            $identities[] = Category::CACHE_TAG . '_' . $category->getId();
+            $identities[] = Product::CACHE_PRODUCT_CATEGORY_TAG . '_' . $category->getId();
         }
         return $identities;
     }

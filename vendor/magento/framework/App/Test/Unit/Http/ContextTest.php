@@ -1,15 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App\Test\Unit\Http;
 
 use \Magento\Framework\App\Http\Context;
-use Magento\Framework\Serialize\Serializer\Json;
 
-class ContextTest extends \PHPUnit\Framework\TestCase
+class ContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -21,33 +20,10 @@ class ContextTest extends \PHPUnit\Framework\TestCase
      */
     protected $object;
 
-    /**
-     * @var Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->setMethods(['serialize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serializerMock->expects($this->any())
-            ->method('serialize')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return json_encode($value);
-                    }
-                )
-            );
-        $this->object = $this->objectManager->getObject(
-            \Magento\Framework\App\Http\Context::class,
-            [
-                'serializer' => $this->serializerMock
-            ]
-        );
+        $this->object = $this->objectManager->getObject('Magento\Framework\App\Http\Context');
     }
 
     public function testGetValue()
@@ -86,21 +62,6 @@ class ContextTest extends \PHPUnit\Framework\TestCase
             'key1' => 'value1'
         ];
         ksort($data);
-        $this->assertEquals(sha1(json_encode($data)), $this->object->getVaryString());
-    }
-
-    public function testToArray()
-    {
-        $newObject = new \Magento\Framework\App\Http\Context(['key' => 'value'], [], $this->serializerMock);
-
-        $newObject->setValue('key1', 'value1', 'default1');
-        $newObject->setValue('key2', 'value2', 'default2');
-        $this->assertEquals(
-            [
-                'data' => ['key' => 'value', 'key1' => 'value1', 'key2' => 'value2'],
-                'default' => ['key1' => 'default1', 'key2' => 'default2']
-            ],
-            $newObject->toArray()
-        );
+        $this->assertEquals(sha1(serialize($data)), $this->object->getVaryString());
     }
 }

@@ -1,6 +1,6 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -33,14 +33,6 @@
     </div>
 </div>
 
-<div ng-show="logout===false" class="messages">
-    <div class="message message-success success">
-        <div data-ui-id="messages-message-success">
-            Credentials Saved
-        </div>
-    </div>
-</div>
-
 <section class="page-inner page-columns">
     <div class="page-inner-sidebar">
         <div class="admin__page-nav _collapsed _show">
@@ -57,7 +49,7 @@
         <h2 class="page-sub-title">Magento Marketplace</h2>
         <p>Sign in to sync your Magento Marketplace purchases.</p>
         <fieldset class="form-fieldset">
-            <form  ng-submit="saveAuthJson();" name="auth" role="form" autocomplete="off">
+            <form  ng-submit="saveAuthJson();" name="auth" role="form">
                 <div class="row form-row">
                     <div class="col-m-3">
                         <label class="form-label required" for="username">Public Access Key</label>
@@ -74,7 +66,6 @@
                                    || (auth.username.$error.required && user.submitted)}"
                                    autofocus
                                    required
-                                   autocomplete="off"
                                 >
                             <div class="error-container">
                                 This is a required field.
@@ -101,7 +92,7 @@
                                    ng-class="{ 'invalid' : (auth.password.$error.required && !auth.password.$pristine)
                                    || (auth.password.$error.required && user.submitted) }"
                                    required
-                                   autocomplete="new-password"
+                                   autocomplete="off"
                                 >
                             <div class="error-container">
                                 This is a required field.
@@ -119,13 +110,11 @@
     </div>
 </section>
 
-<!-- loading indicator overlay and loader -->
-<div ng-show="!isHiddenSpinner" class="loading-mask ng-scope" data-role="loader">
+<div ng-hide="isAuthLoadingComplete" class="loading-mask ng-scope" data-role="loader">
     <div class="popup popup-loading">
         <div class="popup-inner">
-            <img alt="Loading..." src="<?= $this->basePath() ?>/pub/images/loader-1.gif">
+            <img alt="Loading..." src="<?php echo $this->basePath() ?>/pub/images/loader-1.gif">
             Please wait...
         </div>
     </div>
 </div>
-

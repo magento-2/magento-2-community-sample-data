@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
-<sections>
+<tabs>
     <grouped>
         <class>\Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts</class>
-        <selector>[data-index="grouped"]</selector>
+        <selector>#product_info_tabs_product-details</selector>
         <strategy>css selector</strategy>
     </grouped>
-</sections>
+</tabs>

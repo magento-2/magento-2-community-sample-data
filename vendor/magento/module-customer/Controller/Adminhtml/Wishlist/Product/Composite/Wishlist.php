@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite;
@@ -13,9 +13,7 @@ use Magento\Framework\Exception\LocalizedException as CoreException;
 abstract class Wishlist extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Customer::manage';
 
@@ -47,15 +45,13 @@ abstract class Wishlist extends \Magento\Backend\App\Action
         }
 
         /* @var $wishlistItem \Magento\Wishlist\Model\Item */
-        $wishlistItem = $this->_objectManager->create(
-            \Magento\Wishlist\Model\Item::class
-        )->loadWithOptions($wishlistItemId);
+        $wishlistItem = $this->_objectManager->create('Magento\Wishlist\Model\Item')->loadWithOptions($wishlistItemId);
 
         if (!$wishlistItem->getWishlistId()) {
             throw new CoreException(__('Please load Wish List item.'));
         }
 
-        $this->_wishlist = $this->_objectManager->create(\Magento\Wishlist\Model\Wishlist::class)
+        $this->_wishlist = $this->_objectManager->create('Magento\Wishlist\Model\Wishlist')
             ->load($wishlistItem->getWishlistId());
 
         $this->_wishlistItem = $wishlistItem;

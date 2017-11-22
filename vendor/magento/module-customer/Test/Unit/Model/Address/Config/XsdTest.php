@@ -2,12 +2,12 @@
 /**
  * Test for validation rules implemented by XSD schema for customer address format configuration
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Address\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -30,7 +30,7 @@ class XsdTest extends \PHPUnit\Framework\TestCase
      */
     public function testExemplarXml($fixtureXml, array $expectedErrors)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $dom = new \Magento\Framework\Config\Dom($fixtureXml, $validationStateMock, [], null, null, '%message%');

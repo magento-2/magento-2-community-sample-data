@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
@@ -8,11 +8,9 @@ namespace Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
 /**
  * Catalog Product Compare Items Resource Collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.LongVariable)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -52,7 +50,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected $_catalogProductCompareItem;
 
     /**
-     * Collection constructor.
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -135,10 +132,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Catalog\Model\Product\Compare\Item::class,
-            \Magento\Catalog\Model\ResourceModel\Product::class
-        );
+        $this->_init('Magento\Catalog\Model\Product\Compare\Item', 'Magento\Catalog\Model\ResourceModel\Product');
         $this->_initTables();
     }
 
@@ -365,7 +359,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function useProductItem()
     {
-        $this->setObject(\Magento\Catalog\Model\Product::class);
+        $this->setObject('Magento\Catalog\Model\Product');
 
         $this->setFlag('url_data_object', true);
         $this->setFlag('do_not_use_category_id', true);

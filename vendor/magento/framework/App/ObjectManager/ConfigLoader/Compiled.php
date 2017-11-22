@@ -1,15 +1,12 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\ObjectManager\ConfigLoader;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManager\ConfigLoaderInterface;
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\Serialize\Serializer\Serialize;
 
 class Compiled implements ConfigLoaderInterface
 {
@@ -28,20 +25,18 @@ class Compiled implements ConfigLoaderInterface
         if (isset($this->configCache[$area])) {
             return $this->configCache[$area];
         }
-        $diConfiguration = include(self::getFilePath($area));
-        $this->configCache[$area] = $diConfiguration;
+        $this->configCache[$area] = \unserialize(\file_get_contents(self::getFilePath($area)));
         return $this->configCache[$area];
     }
 
     /**
-     * Returns path to compiled configuration
+     * Returns path to cached configuration
      *
      * @param string $area
      * @return string
      */
     public static function getFilePath($area)
     {
-        $diPath = DirectoryList::getDefaultConfig()[DirectoryList::GENERATED_METADATA][DirectoryList::PATH];
-        return BP . '/' . $diPath . '/' . $area . '.php';
+        return BP . '/var/di/' . $area . '.ser';
     }
 }

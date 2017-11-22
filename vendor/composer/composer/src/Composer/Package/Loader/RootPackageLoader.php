@@ -13,9 +13,9 @@
 namespace Composer\Package\Loader;
 
 use Composer\Package\BasePackage;
+use Composer\Package\PackageInterface;
 use Composer\Package\AliasPackage;
 use Composer\Config;
-use Composer\Package\RootPackageInterface;
 use Composer\Repository\RepositoryFactory;
 use Composer\Package\Version\VersionGuesser;
 use Composer\Package\Version\VersionParser;
@@ -56,10 +56,10 @@ class RootPackageLoader extends ArrayLoader
     }
 
     /**
-     * @param  array                $config package data
-     * @param  string               $class  FQCN to be instantiated
-     * @param  string               $cwd    cwd of the root package to be used to guess the version if it is not provided
-     * @return RootPackageInterface
+     * @param  array            $config package data
+     * @param  string           $class  FQCN to be instantiated
+     * @param  string           $cwd    cwd of the root package to be used to guess the version if it is not provided
+     * @return PackageInterface
      */
     public function load(array $config, $class = 'Composer\Package\RootPackage', $cwd = null)
     {
@@ -73,7 +73,7 @@ class RootPackageLoader extends ArrayLoader
                 $version = getenv('COMPOSER_ROOT_VERSION');
                 $commit = null;
             } else {
-                $versionData = $this->versionGuesser->guessVersion($config, $cwd ?: getcwd());
+                $versionData =  $this->versionGuesser->guessVersion($config, $cwd ?: getcwd());
                 $version = $versionData['version'];
                 $commit = $versionData['commit'];
             }
@@ -141,10 +141,6 @@ class RootPackageLoader extends ArrayLoader
             $realPackage->setPreferStable((bool) $config['prefer-stable']);
         }
 
-        if (isset($config['config'])) {
-            $realPackage->setConfig($config['config']);
-        }
-
         $repos = RepositoryFactory::defaultRepos(null, $this->config, $this->manager);
         foreach ($repos as $repo) {
             $this->manager->addRepository($repo);
@@ -205,18 +201,16 @@ class RootPackageLoader extends ArrayLoader
                 continue;
             }
 
-            foreach ($constraints as $constraint) {
-                // infer flags for requirements that have an explicit -dev or -beta version specified but only
-                // for those that are more unstable than the minimumStability or existing flags
-                $reqVersion = preg_replace('{^([^,\s@]+) as .+$}', '$1', $constraint);
-                if (preg_match('{^[^,\s@]+$}', $reqVersion) && 'stable' !== ($stabilityName = VersionParser::parseStability($reqVersion))) {
-                    $name = strtolower($reqName);
-                    $stability = $stabilities[$stabilityName];
-                    if ((isset($stabilityFlags[$name]) && $stabilityFlags[$name] > $stability) || ($minimumStability > $stability)) {
-                        continue;
-                    }
-                    $stabilityFlags[$name] = $stability;
+            // infer flags for requirements that have an explicit -dev or -beta version specified but only
+            // for those that are more unstable than the minimumStability or existing flags
+            $reqVersion = preg_replace('{^([^,\s@]+) as .+$}', '$1', $reqVersion);
+            if (preg_match('{^[^,\s@]+$}', $reqVersion) && 'stable' !== ($stabilityName = VersionParser::parseStability($reqVersion))) {
+                $name = strtolower($reqName);
+                $stability = $stabilities[$stabilityName];
+                if ((isset($stabilityFlags[$name]) && $stabilityFlags[$name] > $stability) || ($minimumStability > $stability)) {
+                    continue;
                 }
+                $stabilityFlags[$name] = $stability;
             }
         }
 

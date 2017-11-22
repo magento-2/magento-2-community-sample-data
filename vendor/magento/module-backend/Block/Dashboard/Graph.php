@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Dashboard;
@@ -200,7 +200,10 @@ class Graph extends \Magento\Backend\Block\Dashboard\AbstractDashboard
             $this->setAxisLabels($axis, $this->getRowsData($attr, true));
         }
 
-        $timezoneLocal = $this->_localeDate->getConfigTimezone();
+        $timezoneLocal = $this->_scopeConfig->getValue(
+            $this->_localeDate->getDefaultTimezonePath(),
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
         /** @var \DateTime $dateStart */
         /** @var \DateTime $dateEnd */
@@ -211,14 +214,10 @@ class Graph extends \Magento\Backend\Block\Dashboard\AbstractDashboard
             true
         );
 
-        $dateStart->setTimezone(new \DateTimeZone($timezoneLocal));
-        $dateEnd->setTimezone(new \DateTimeZone($timezoneLocal));
-
         if ($this->getDataHelper()->getParam('period') == '24h') {
+            $dateStart->setTimezone(new \DateTimeZone($timezoneLocal));
+            $dateEnd->setTimezone(new \DateTimeZone($timezoneLocal));
             $dateEnd->modify('-1 hour');
-        } else {
-            $dateEnd->setTime(23, 59, 59);
-            $dateStart->setTime(0, 0, 0);
         }
 
         $dates = [];

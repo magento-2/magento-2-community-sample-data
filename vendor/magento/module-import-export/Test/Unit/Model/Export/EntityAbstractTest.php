@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\ImportExport\Test\Unit\Model\Export;
 
-class EntityAbstractTest extends \PHPUnit\Framework\TestCase
+class EntityAbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test for setter and getter of file name property
@@ -21,7 +21,7 @@ class EntityAbstractTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $model \Magento\ImportExport\Model\Export\AbstractEntity */
         $model = $this->getMockForAbstractClass(
-            \Magento\ImportExport\Model\Export\AbstractEntity::class,
+            'Magento\ImportExport\Model\Export\AbstractEntity',
             [],
             'Stub_UnitTest_Magento_ImportExport_Model_Export_Entity_TestSetAndGet',
             false

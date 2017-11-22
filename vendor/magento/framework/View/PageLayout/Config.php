@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,9 +11,7 @@ namespace Magento\Framework\View\PageLayout;
  */
 class Config extends \Magento\Framework\Config\AbstractXml
 {
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver
-     */
+    /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolver;
 
     /**

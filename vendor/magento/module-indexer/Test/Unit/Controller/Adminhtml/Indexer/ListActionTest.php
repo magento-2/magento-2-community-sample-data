@@ -1,12 +1,12 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Indexer\Test\Unit\Controller\Adminhtml\Indexer;
 
-class ListActionTest extends \PHPUnit\Framework\TestCase
+class ListActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Indexer\Controller\Adminhtml\Indexer\ListAction
@@ -64,7 +64,9 @@ class ListActionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->contextMock = $this->createPartialMock(\Magento\Backend\App\Action\Context::class, [
+        $this->contextMock = $this->getMock(
+            'Magento\Backend\App\Action\Context',
+            [
                 'getAuthorization',
                 'getSession',
                 'getActionFlag',
@@ -79,21 +81,30 @@ class ListActionTest extends \PHPUnit\Framework\TestCase
                 'getResponse',
                 'getObjectManager',
                 'getMessageManager'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->response = $this->createPartialMock(
-            \Magento\Framework\App\ResponseInterface::class,
-            ['setRedirect', 'sendResponse']
+        $this->response = $this->getMock(
+            'Magento\Framework\App\ResponseInterface',
+            ['setRedirect', 'sendResponse'],
+            [],
+            '',
+            false
         );
 
         $this->request = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            '\Magento\Framework\App\RequestInterface',
             ['getParam', 'getRequest'],
             '',
             false
         );
 
-        $this->view = $this->createPartialMock(\Magento\Framework\App\ViewInterface::class, [
+        $this->view = $this->getMock(
+            '\Magento\Framework\App\ViewInterface',
+            [
                 'loadLayout',
                 'getPage',
                 'getConfig',
@@ -108,33 +119,50 @@ class ListActionTest extends \PHPUnit\Framework\TestCase
                 'addActionLayoutHandles',
                 'setIsLayoutLoaded',
                 'isLayoutLoaded'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->block = $this->createPartialMock(
-            \Magento\Framework\View\Element\AbstractBlock::class,
-            ['setActive', 'getMenuModel']
+        $this->block = $this->getMock(
+            '\Magento\Framework\View\Element\AbstractBlock',
+            ['setActive', 'getMenuModel'],
+            [],
+            '',
+            false
         );
 
         $this->layout = $this->getMockForAbstractClass(
-            \Magento\Framework\View\LayoutInterface::class,
+            '\Magento\Framework\View\LayoutInterface',
             ['getBlock'],
             '',
             false
         );
 
-        $this->menu = $this->createPartialMock(\Magento\Backend\Model\Menu::class, ['getParentItems']);
+        $this->menu = $this->getMock(
+            '\Magento\Backend\Model\Menu',
+            ['getParentItems'],
+            [],
+            '',
+            false
+        );
 
-        $this->items = $this->createPartialMock(\Magento\Backend\Model\Menu\Item::class, ['getParentItems']);
+        $this->items = $this->getMock(
+            '\Magento\Backend\Model\Menu\Item',
+            ['getParentItems'],
+            [],
+            '',
+            false
+        );
 
         $this->contextMock->expects($this->any())->method("getRequest")->willReturn($this->request);
         $this->contextMock->expects($this->any())->method("getResponse")->willReturn($this->response);
         $this->contextMock->expects($this->any())->method('getView')->will($this->returnValue($this->view));
 
-        $this->page = $this->createPartialMock(\Magento\Framework\View\Result\Page::class, ['getConfig']);
-        $this->config = $this->createPartialMock(\Magento\Framework\View\Result\Page::class, ['getTitle']);
-        $this->title = $this->getMockBuilder('Title')
-            ->setMethods(['prepend'])
-            ->getMock();
+        $this->page = $this->getMock('\Magento\Framework\View\Result\Page', ['getConfig'], [], '', false);
+        $this->config = $this->getMock('\Magento\Framework\View\Result\Page', ['getTitle'], [], '', false);
+        $this->title = $this->getMock('\Title', ['prepend'], [], '', false);
 
         $this->block->expects($this->any())->method('setActive')->will($this->returnValue(1));
         $this->view->expects($this->any())->method('getLayout')->will($this->returnValue($this->layout));
@@ -143,7 +171,9 @@ class ListActionTest extends \PHPUnit\Framework\TestCase
         $this->menu->expects($this->any())->method('getParentItems')->will($this->returnValue($this->items));
 
         $this->object = new \Magento\Indexer\Controller\Adminhtml\Indexer\ListAction($this->contextMock);
+
     }
+
 
     public function testExecute()
     {
@@ -171,7 +201,6 @@ class ListActionTest extends \PHPUnit\Framework\TestCase
             ->method('renderLayout')
             ->will($this->returnValue(1));
 
-        $result = $this->object->execute();
-        $this->assertNull($result);
+        $this->object->execute();
     }
 }

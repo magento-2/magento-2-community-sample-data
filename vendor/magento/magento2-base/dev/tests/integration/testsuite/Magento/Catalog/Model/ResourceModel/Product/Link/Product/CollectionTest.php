@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Link\Product;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Collection
@@ -19,7 +19,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection'
         );
     }
 
@@ -29,12 +29,10 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testAddLinkAttributeToFilterWithResults()
     {
         $om = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $link = $om->get(\Magento\Catalog\Model\Product\Link::class)->useCrossSellLinks();
+        $link = $om->get('Magento\Catalog\Model\Product\Link')->useCrossSellLinks();
         $this->collection->setLinkModel($link);
         $this->collection->addLinkAttributeToFilter('position', ['from' => 0, 'to' => 2]);
-        $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple_with_cross');
+        $product = $om->get('Magento\Catalog\Model\Product')->load(2);
         $this->collection->setProduct($product);
         $this->collection->load();
         $this->assertCount(1, $this->collection->getItems());
@@ -50,12 +48,10 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testAddLinkAttributeToFilterNoResults()
     {
         $om = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $link = $om->get(\Magento\Catalog\Model\Product\Link::class)->useCrossSellLinks();
+        $link = $om->get('Magento\Catalog\Model\Product\Link')->useCrossSellLinks();
         $this->collection->setLinkModel($link);
         $this->collection->addLinkAttributeToFilter('position', ['from' => 2, 'to' => 3]);
-        $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple_with_cross');
+        $product = $om->get('Magento\Catalog\Model\Product')->load(2);
         $this->collection->setProduct($product);
         $this->collection->load();
         $this->assertCount(0, $this->collection->getItems());

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,9 +9,6 @@ namespace Magento\Eav\Model;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\CustomAttributeTypeLocatorInterface;
-use Magento\Eav\Model\EavCustomAttributeTypeLocator\ComplexType as ComplexTypeLocator;
-use Magento\Eav\Model\EavCustomAttributeTypeLocator\SimpleType as SimpleTypeLocator;
-use Magento\Framework\Reflection\TypeProcessor;
 
 /**
  * Class to locate types for Eav custom attributes
@@ -24,6 +21,11 @@ class EavCustomAttributeTypeLocator implements CustomAttributeTypeLocatorInterfa
     private $attributeRepository;
 
     /**
+     * @var \Magento\Framework\Stdlib\StringUtils
+     */
+    private $stringUtility;
+
+    /**
      * @var array
      */
     private $serviceEntityTypeMap;
@@ -34,19 +36,8 @@ class EavCustomAttributeTypeLocator implements CustomAttributeTypeLocatorInterfa
     private $serviceBackendModelDataInterfaceMap;
 
     /**
-     * @var ComplexTypeLocator
-     */
-    private $complexTypeLocator;
-
-    /**
-     * @var SimpleTypeLocator
-     */
-    private $simpleTypeLocator;
-
-    /**
      * Initialize EavCustomAttributeTypeLocator
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @codeCoverageIgnore
      * @param AttributeRepositoryInterface $attributeRepository Attribute repository service
      * @param \Magento\Framework\Stdlib\StringUtils $stringUtility
@@ -75,33 +66,44 @@ class EavCustomAttributeTypeLocator implements CustomAttributeTypeLocatorInterfa
         array $serviceBackendModelDataInterfaceMap = []
     ) {
         $this->attributeRepository = $attributeRepository;
+        $this->stringUtility = $stringUtility;
         $this->serviceEntityTypeMap = $serviceEntityTypeMap;
         $this->serviceBackendModelDataInterfaceMap = $serviceBackendModelDataInterfaceMap;
     }
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getType($attributeCode, $serviceClass)
     {
         if (!$serviceClass || !$attributeCode || !isset($this->serviceEntityTypeMap[$serviceClass])
             || !isset($this->serviceBackendModelDataInterfaceMap[$serviceClass])
         ) {
-            return TypeProcessor::ANY_TYPE;
+            return null;
         }
 
         try {
             $attribute = $this->attributeRepository->get($this->serviceEntityTypeMap[$serviceClass], $attributeCode);
+            $backendModel = $attribute->getBackendModel();
         } catch (NoSuchEntityException $e) {
-            return TypeProcessor::ANY_TYPE;
+            return null;
         }
 
-        $dataInterface = $this->getComplexTypeLocator()->getType(
-            $attribute,
-            $serviceClass,
-            $this->serviceBackendModelDataInterfaceMap
-        );
-        return $dataInterface ?: $this->getSimpleTypeLocator()->getType($attribute);
+        //If empty backend model, check if it can be derived
+        if (empty($backendModel)) {
+            $backendModelClass = sprintf(
+                'Magento\Eav\Model\Attribute\Data\%s',
+                $this->stringUtility->upperCaseWords($attribute->getFrontendInput())
+            );
+            $backendModel = class_exists($backendModelClass) ? $backendModelClass : null;
+        }
+
+        $dataInterface = isset($this->serviceBackendModelDataInterfaceMap[$serviceClass][$backendModel])
+            ? $this->serviceBackendModelDataInterfaceMap[$serviceClass][$backendModel]
+            : null;
+
+        return $dataInterface;
     }
 
     /**
@@ -120,33 +122,5 @@ class EavCustomAttributeTypeLocator implements CustomAttributeTypeLocatorInterfa
             }
         }
         return $dataInterfaceArray;
-    }
-
-    /**
-     * Get complex type locator instance
-     *
-     * @return ComplexTypeLocator
-     * @deprecated 100.1.0
-     */
-    private function getComplexTypeLocator()
-    {
-        if (!$this->complexTypeLocator instanceof ComplexTypeLocator) {
-            return \Magento\Framework\App\ObjectManager::getInstance()->get(ComplexTypeLocator::class);
-        }
-        return $this->complexTypeLocator;
-    }
-
-    /**
-     * Get simple type locator instance
-     *
-     * @return SimpleTypeLocator
-     * @deprecated 100.1.0
-     */
-    private function getSimpleTypeLocator()
-    {
-        if (!$this->simpleTypeLocator instanceof SimpleTypeLocator) {
-            return \Magento\Framework\App\ObjectManager::getInstance()->get(SimpleTypeLocator::class);
-        }
-        return $this->simpleTypeLocator;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Test\Unit\Model\Plugin;
@@ -8,7 +8,7 @@ namespace Magento\Swatches\Test\Unit\Model\Plugin;
 /**
  * Class Product for changing image roles list
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider dataRoles
@@ -16,8 +16,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testAfterGetMediaAttributes($productType, $hasKey)
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $productMock = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['getTypeId']);
-        $roleMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
+        $productMock = $this->getMock('\Magento\Catalog\Model\Product', ['getTypeId'], [], '', false);
+        $roleMock = $this->getMock('\Magento\Catalog\Model\ResourceModel\Eav\Attribute', [], [], '', false);
 
         $imageRolesArray = [
             'image' => $roleMock,
@@ -26,7 +26,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'swatch_image' => $roleMock,
         ];
 
-        $plugin = $objectManager->getObject(\Magento\Swatches\Model\Plugin\Product::class);
+        $plugin = $objectManager->getObject('\Magento\Swatches\Model\Plugin\Product');
 
         $productMock->expects($this->atLeastOnce())->method('getTypeId')->willReturn($productType);
 

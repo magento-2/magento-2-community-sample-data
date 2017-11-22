@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Edit\Tab;
 
-class AlertsTest extends \PHPUnit\Framework\TestCase
+class AlertsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts
@@ -20,10 +20,10 @@ class AlertsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $this->alerts = $helper->getObject(
-            \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts',
             ['scopeConfig' => $this->scopeConfigMock]
         );
     }

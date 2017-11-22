@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Ui\Component\Listing\Column;
@@ -10,7 +10,6 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Store\Model\System\Store as SystemStore;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Magento\Store\Model\StoreManagerInterface as StoreManager;
 
 /**
  * Class Store
@@ -32,25 +31,14 @@ class Store extends Column
     protected $systemStore;
 
     /**
-     * Store manager
+     * Constructor
      *
-     * @var StoreManager
-     */
-    protected $storeManager;
-
-    /**
-     * @var string
-     */
-    protected $storeKey;
-
-    /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
      * @param SystemStore $systemStore
      * @param Escaper $escaper
      * @param array $components
      * @param array $data
-     * @param string $storeKey
      */
     public function __construct(
         ContextInterface $context,
@@ -58,12 +46,10 @@ class Store extends Column
         SystemStore $systemStore,
         Escaper $escaper,
         array $components = [],
-        array $data = [],
-        $storeKey = 'store_id'
+        array $data = []
     ) {
         $this->systemStore = $systemStore;
         $this->escaper = $escaper;
-        $this->storeKey = $storeKey;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
@@ -93,9 +79,7 @@ class Store extends Column
     protected function prepareItem(array $item)
     {
         $content = '';
-        if (!empty($item[$this->storeKey])) {
-            $origStores = $item[$this->storeKey];
-        }
+        $origStores = $item['store_id'];
 
         if (empty($origStores)) {
             return '';
@@ -120,34 +104,5 @@ class Store extends Column
         }
 
         return $content;
-    }
-
-    /**
-     * Prepare component configuration
-     *
-     * @return void
-     */
-    public function prepare()
-    {
-        parent::prepare();
-        if ($this->getStoreManager()->isSingleStoreMode()) {
-            $this->_data['config']['componentDisabled'] = true;
-        }
-    }
-
-    /**
-     * Get StoreManager dependency
-     *
-     * @return StoreManager
-     *
-     * @deprecated 100.1.0
-     */
-    private function getStoreManager()
-    {
-        if ($this->storeManager === null) {
-            $this->storeManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Store\Model\StoreManagerInterface::class);
-        }
-        return $this->storeManager;
     }
 }

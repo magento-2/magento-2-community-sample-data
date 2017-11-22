@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Layout\Config;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Layout\Config\SchemaLocator
@@ -20,12 +20,12 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
     /**
      * Initialize testable object
      */
-    protected function setUp()
+    public function setUp()
     {
         /**
          * @var \Magento\Framework\Config\Dom\UrnResolver $urnResolverMock | \PHPUnit_Framework_MockObject_MockObject
          */
-        $urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $urnResolverMock = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
         $urnResolverMock->expects($this->once())
             ->method('getRealPath')
             ->with('urn:magento:framework:View/PageLayout/etc/layouts.xsd')

@@ -1,100 +1,103 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Braintree\Controller\Paypal;
+namespace Magento\Braintree\Controller\PayPal;
 
-use Magento\Checkout\Model\Session;
+use Magento\Customer\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Model\Paypal\Helper\QuoteUpdater;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Braintree\Model\PaymentMethod\PayPal;
 
-/**
- * Class Review
- */
-class Review extends AbstractAction
+class Review extends \Magento\Braintree\Controller\PayPal
 {
     /**
-     * @var QuoteUpdater
+     * @var \Magento\Framework\Json\Helper\Data
      */
-    private $quoteUpdater;
+    protected $jsonHelper;
 
     /**
-     * @var string
-     */
-    private static $paymentMethodNonce = 'payment_method_nonce';
-
-    /**
-     * Constructor
-     *
-     * @param Context $context
-     * @param Config $config
-     * @param Session $checkoutSession
-     * @param QuoteUpdater $quoteUpdater
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Braintree\Model\Config\PayPal $braintreePayPalConfig
+     * @param \Magento\Paypal\Model\Config $paypalConfig
+     * @param \Magento\Braintree\Model\CheckoutFactory $checkoutFactory
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      */
     public function __construct(
         Context $context,
-        Config $config,
-        Session $checkoutSession,
-        QuoteUpdater $quoteUpdater
+        Session $customerSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Braintree\Model\Config\PayPal $braintreePayPalConfig,
+        \Magento\Paypal\Model\Config $paypalConfig,
+        \Magento\Braintree\Model\CheckoutFactory $checkoutFactory,
+        \Magento\Framework\Json\Helper\Data $jsonHelper
     ) {
-        parent::__construct($context, $config, $checkoutSession);
-        $this->quoteUpdater = $quoteUpdater;
+        parent::__construct(
+            $context,
+            $customerSession,
+            $checkoutSession,
+            $braintreePayPalConfig,
+            $paypalConfig,
+            $checkoutFactory
+        );
+        $this->jsonHelper = $jsonHelper;
     }
 
     /**
-     * @inheritdoc
+     * @return $this|\Magento\Framework\View\Result\Page
      */
     public function execute()
     {
-        $requestData = json_decode(
-            $this->getRequest()->getPostValue('result', '{}'),
-            true
-        );
-        $quote = $this->checkoutSession->getQuote();
-
+        $paymentMethodNonce = $this->getRequest()->getParam('payment_method_nonce');
+        $details = $this->getRequest()->getParam('details');
+        if (!empty($details)) {
+            $details = $this->jsonHelper->jsonDecode($details);
+        }
         try {
-            $this->validateQuote($quote);
+            $this->initCheckout();
 
-            if ($this->validateRequestData($requestData)) {
-                $this->quoteUpdater->execute(
-                    $requestData['nonce'],
-                    $requestData['details'],
-                    $quote
-                );
-            } elseif (!$quote->getPayment()->getAdditionalInformation(self::$paymentMethodNonce)) {
-                throw new LocalizedException(__('We can\'t initialize checkout.'));
+            if ($paymentMethodNonce && $details) {
+                if (!$this->braintreePayPalConfig->isBillingAddressEnabled()) {
+                    unset($details['billingAddress']);
+                }
+                $this->getCheckout()->initializeQuoteForReview($paymentMethodNonce, $details);
+                $paymentMethod = $this->getQuote()->getPayment()->getMethodInstance();
+                $paymentMethod->validate();
+            } else {
+                $paymentMethod = $this->getQuote()->getPayment()->getMethodInstance();
+                if (!$paymentMethod || $paymentMethod->getCode() !== PayPal::METHOD_CODE) {
+                    $this->messageManager->addErrorMessage(
+                        __('Incorrect payment method.')
+                    );
+
+                    /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+                    $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+                    return $resultRedirect->setPath('checkout/cart');
+                }
+                $this->getQuote()->setMayEditShippingMethod(true);
             }
 
             /** @var \Magento\Framework\View\Result\Page $resultPage */
             $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-
-            /** @var \Magento\Braintree\Block\Paypal\Checkout\Review $reviewBlock */
+            /** @var \Magento\Braintree\Block\Checkout\Review $reviewBlock */
             $reviewBlock = $resultPage->getLayout()->getBlock('braintree.paypal.review');
-
-            $reviewBlock->setQuote($quote);
-            $reviewBlock->getChildBlock('shipping_method')->setData('quote', $quote);
-
+            $reviewBlock->setQuote($this->getQuote());
+            $reviewBlock->getChildBlock('shipping_method')->setQuote($this->getQuote());
             return $resultPage;
-        } catch (\Exception $e) {
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
+        } catch (\Exception $e) {
+            $this->messageManager->addExceptionMessage(
+                $e,
+                __('We can\'t initialize checkout review.')
+            );
         }
 
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
-        return $resultRedirect->setPath('checkout/cart', ['_secure' => true]);
-    }
-
-    /**
-     * @param array $requestData
-     * @return boolean
-     */
-    private function validateRequestData(array $requestData)
-    {
-        return !empty($requestData['nonce']) && !empty($requestData['details']);
+        return $resultRedirect->setPath('checkout/cart');
     }
 }

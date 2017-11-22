@@ -1,13 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Controller\Cart;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class CouponPost extends \Magento\Checkout\Controller\Cart
 {
     /**
@@ -89,18 +86,27 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
             }
 
             if ($codeLength) {
-                $escaper = $this->_objectManager->get(\Magento\Framework\Escaper::class);
-                $coupon = $this->couponFactory->create();
-                $coupon->load($couponCode, 'code');
+                $escaper = $this->_objectManager->get('Magento\Framework\Escaper');
                 if (!$itemsCount) {
-                    if ($isCodeLengthValid && $coupon->getId()) {
-                        $this->_checkoutSession->getQuote()->setCouponCode($couponCode)->save();
-                        $this->messageManager->addSuccess(
-                            __(
-                                'You used coupon code "%1".',
-                                $escaper->escapeHtml($couponCode)
-                            )
-                        );
+                    if ($isCodeLengthValid) {
+                        $coupon = $this->couponFactory->create();
+                        $coupon->load($couponCode, 'code');
+                        if ($coupon->getId()) {
+                            $this->_checkoutSession->getQuote()->setCouponCode($couponCode)->save();
+                            $this->messageManager->addSuccess(
+                                __(
+                                    'You used coupon code "%1".',
+                                    $escaper->escapeHtml($couponCode)
+                                )
+                            );
+                        } else {
+                            $this->messageManager->addError(
+                                __(
+                                    'The coupon code "%1" is not valid.',
+                                    $escaper->escapeHtml($couponCode)
+                                )
+                            );
+                        }
                     } else {
                         $this->messageManager->addError(
                             __(
@@ -110,7 +116,7 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
                         );
                     }
                 } else {
-                    if ($isCodeLengthValid && $coupon->getId() && $couponCode == $cartQuote->getCouponCode()) {
+                    if ($isCodeLengthValid && $couponCode == $cartQuote->getCouponCode()) {
                         $this->messageManager->addSuccess(
                             __(
                                 'You used coupon code "%1".',
@@ -124,6 +130,7 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
                                 $escaper->escapeHtml($couponCode)
                             )
                         );
+                        $this->cart->save();
                     }
                 }
             } else {
@@ -133,7 +140,7 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addError(__('We cannot apply the coupon code.'));
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
         }
 
         return $this->_goBack();

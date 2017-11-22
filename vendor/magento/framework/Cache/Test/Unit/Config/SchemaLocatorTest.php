@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Cache\Test\Unit\Config;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Cache\Config\SchemaLocator */
     protected $schemaLocator;
@@ -16,11 +16,11 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolverMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
         /** @var \Magento\Framework\Config\Dom\UrnResolver $urnResolverMock */
-        $this->urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $this->urnResolverMock = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
         $this->schemaLocator = new \Magento\Framework\Cache\Config\SchemaLocator($this->urnResolverMock);
     }
 

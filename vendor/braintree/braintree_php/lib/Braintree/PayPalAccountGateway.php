@@ -1,14 +1,10 @@
 <?php
-namespace Braintree;
-
-use InvalidArgumentException;
-
 /**
  * Braintree PayPalAccountGateway module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -19,9 +15,9 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class PayPalAccountGateway
+class Braintree_PayPalAccountGateway
 {
     private $_gateway;
     private $_config;
@@ -32,7 +28,7 @@ class PayPalAccountGateway
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
         $this->_config->assertHasAccessTokenOrKeys();
-        $this->_http = new Http($gateway->config);
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
 
@@ -41,8 +37,8 @@ class PayPalAccountGateway
      *
      * @access public
      * @param string $token paypal accountunique id
-     * @return PayPalAccount
-     * @throws Exception\NotFound
+     * @return object Braintree_PayPalAccount
+     * @throws Braintree_Exception_NotFound
      */
     public function find($token)
     {
@@ -50,9 +46,9 @@ class PayPalAccountGateway
         try {
             $path = $this->_config->merchantPath() . '/payment_methods/paypal_account/' . $token;
             $response = $this->_http->get($path);
-            return PayPalAccount::factory($response['paypalAccount']);
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
+            return Braintree_PayPalAccount::factory($response['paypalAccount']);
+        } catch (Braintree_Exception_NotFound $e) {
+            throw new Braintree_Exception_NotFound(
                 'paypal account with token ' . $token . ' not found'
             );
         }
@@ -68,13 +64,13 @@ class PayPalAccountGateway
      * @access public
      * @param array $attributes
      * @param string $token (optional)
-     * @return Result\Successful or Result\Error
+     * @return object Braintree_Result_Successful or Braintree_Result_Error
      */
     public function update($token, $attributes)
     {
-        Util::verifyKeys(self::updateSignature(), $attributes);
+        Braintree_Util::verifyKeys(self::updateSignature(), $attributes);
         $this->_validateId($token);
-        return $this->_doUpdate('put', '/payment_methods/paypal_account/' . $token, ['paypalAccount' => $attributes]);
+        return $this->_doUpdate('put', '/payment_methods/paypal_account/' . $token, array('paypalAccount' => $attributes));
     }
 
     public function delete($token)
@@ -82,7 +78,7 @@ class PayPalAccountGateway
         $this->_validateId($token);
         $path = $this->_config->merchantPath() . '/payment_methods/paypal_account/' . $token;
         $this->_http->delete($path);
-        return new Result\Successful();
+        return new Braintree_Result_Successful();
     }
 
     /**
@@ -90,26 +86,26 @@ class PayPalAccountGateway
      *
      * @param string $token
      * @param array $transactionAttribs
-     * @return Result\Successful|Result\Error
-     * @see Transaction::sale()
+     * @return object Braintree_Result_Successful or Braintree_Result_Error
+     * @see Braintree_Transaction::sale()
      */
     public function sale($token, $transactionAttribs)
     {
         $this->_validateId($token);
-        return Transaction::sale(
+        return Braintree_Transaction::sale(
             array_merge(
                 $transactionAttribs,
-                ['paymentMethodToken' => $token]
+                array('paymentMethodToken' => $token)
             )
         );
     }
 
     public static function updateSignature()
     {
-        return [
+        return array(
             'token',
-            ['options' => ['makeDefault']]
-        ];
+            array('options' => array('makeDefault'))
+        );
     }
 
     /**
@@ -130,27 +126,27 @@ class PayPalAccountGateway
     /**
      * generic method for validating incoming gateway responses
      *
-     * creates a new PayPalAccount object and encapsulates
-     * it inside a Result\Successful object, or
-     * encapsulates a Errors object inside a Result\Error
+     * creates a new Braintree_PayPalAccount object and encapsulates
+     * it inside a Braintree_Result_Successful object, or
+     * encapsulates a Braintree_Errors object inside a Result_Error
      * alternatively, throws an Unexpected exception if the response is invalid.
      *
      * @ignore
      * @param array $response gateway response values
-     * @return Result\Successful|Result\Error
-     * @throws Exception\Unexpected
+     * @return object Result_Successful or Result_Error
+     * @throws Braintree_Exception_Unexpected
      */
     private function _verifyGatewayResponse($response)
     {
         if (isset($response['paypalAccount'])) {
-            // return a populated instance of PayPalAccount
-            return new Result\Successful(
-                    PayPalAccount::factory($response['paypalAccount'])
+            // return a populated instance of Braintree_PayPalAccount
+            return new Braintree_Result_Successful(
+                    Braintree_PayPalAccount::factory($response['paypalAccount'])
             );
         } else if (isset($response['apiErrorResponse'])) {
-            return new Result\Error($response['apiErrorResponse']);
+            return new Braintree_Result_Error($response['apiErrorResponse']);
         } else {
-            throw new Exception\Unexpected(
+            throw new Braintree_Exception_Unexpected(
             'Expected paypal account or apiErrorResponse'
             );
         }
@@ -177,4 +173,3 @@ class PayPalAccountGateway
         }
     }
 }
-class_alias('Braintree\PayPalAccountGateway', 'Braintree_PayPalAccountGateway');

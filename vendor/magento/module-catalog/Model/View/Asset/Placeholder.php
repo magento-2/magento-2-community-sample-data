@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,19 +13,19 @@ use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\Repository;
 
 /**
- * A locally available image placeholder file asset that can be referred with a file type
+ * A locally available image placeholder file asset that can be referred with a file type.
  */
 class Placeholder implements LocalInterface
 {
     /**
-     * Type of placeholder
+     * Type of placeholder.
      *
      * @var string
      */
     private $type;
 
     /**
-     * Filevpath of placeholder
+     * Filevpath of placeholder.
      *
      * @var string
      */
@@ -47,7 +47,7 @@ class Placeholder implements LocalInterface
     private $assetRepo;
 
     /**
-     * Core store config
+     * Core store config.
      *
      * @var ScopeConfigInterface
      */

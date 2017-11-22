@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Setup\SampleData;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class State implements StateInterface
 {
@@ -123,6 +123,7 @@ class State implements StateInterface
             $stream = $directoryWrite->openFile($fileName, $mode);
         }
         return $stream;
+
     }
 
     /**
@@ -135,8 +136,8 @@ class State implements StateInterface
         $stream = $this->getStream();
         if ($stream === false) {
             throw new \Exception(
-                'Please ensure that the ' . $this->fileName
-                . ' file exists in the var directory and is writable.'
+                'Please, ensure that file ' . $this->fileName
+                . ' inside var directory exists and is writable'
             );
         }
         $stream->write($data);

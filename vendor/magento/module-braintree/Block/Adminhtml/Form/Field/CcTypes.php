@@ -1,38 +1,38 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Braintree\Block\Adminhtml\Form\Field;
 
-use Magento\Braintree\Helper\CcType;
-use Magento\Framework\View\Element\Context;
-use Magento\Framework\View\Element\Html\Select;
-
-/**
- * Class CcTypes
- */
-class CcTypes extends Select
+class Cctypes extends \Magento\Framework\View\Element\Html\Select
 {
     /**
-     * @var CcType
+     * All possible credit card types
+     *
+     * @var array
      */
-    private $ccTypeHelper;
+    protected $ccTypes = [];
+
+    /**
+     * @var \Magento\Braintree\Model\Source\CcType
+     */
+    protected $ccTypeSource;
 
     /**
      * Constructor
      *
-     * @param Context $context
-     * @param CcType $ccTypeHelper
+     * @param \Magento\Framework\View\Element\Context $context
+     * @param \Magento\Braintree\Model\Source\CcType $ccTypeSource
      * @param array $data
      */
     public function __construct(
-        Context $context,
-        CcType $ccTypeHelper,
+        \Magento\Framework\View\Element\Context $context,
+        \Magento\Braintree\Model\Source\CcType $ccTypeSource,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->ccTypeHelper = $ccTypeHelper;
+        $this->ccTypeSource = $ccTypeSource;
     }
 
     /**
@@ -40,14 +40,31 @@ class CcTypes extends Select
      *
      * @return string
      */
-    protected function _toHtml()
+    public function _toHtml()
     {
         if (!$this->getOptions()) {
-            $this->setOptions($this->ccTypeHelper->getCcTypes());
+            foreach ($this->_getCcTypes() as $country) {
+                if (isset($country['value']) && $country['value'] && isset($country['label']) && $country['label']) {
+                    $this->addOption($country['value'], $country['label']);
+                }
+            }
         }
         $this->setClass('cc-type-select');
         $this->setExtraParams('multiple="multiple"');
         return parent::_toHtml();
+    }
+
+    /**
+     * All possible credit card types
+     *
+     * @return array
+     */
+    protected function _getCcTypes()
+    {
+        if (!$this->ccTypes) {
+            $this->ccTypes = $this->ccTypeSource->toOptionArray();
+        }
+        return $this->ccTypes;
     }
 
     /**

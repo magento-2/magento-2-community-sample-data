@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\ResourceModel\Address;
@@ -11,16 +11,19 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class AddressTest
  */
-class DeleteRelationTest extends \PHPUnit\Framework\TestCase
+class DeleteRelationTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Customer\Model\ResourceModel\Address\DeleteRelation */
     protected $relation;
 
     protected function setUp()
     {
-        $this->customerFactoryMock = $this->createPartialMock(
+        $this->customerFactoryMock = $this->getMock(
             \Magento\Customer\Model\CustomerFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->relation = (new ObjectManagerHelper($this))->getObject(
             \Magento\Customer\Model\ResourceModel\Address\DeleteRelation::class
@@ -38,7 +41,6 @@ class DeleteRelationTest extends \PHPUnit\Framework\TestCase
         /** @var AbstractModel | \PHPUnit_Framework_MockObject_MockObject $addressModel  */
         $addressModel = $this->getMockBuilder(\Magento\Framework\Model\AbstractModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getIsCustomerSaveTransaction', 'getId', 'getResource'])
             ->getMock();
         /** @var \Magento\Customer\Model\Customer | \PHPUnit_Framework_MockObject_MockObject $customerModel */
         $customerModel = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)
@@ -95,8 +97,7 @@ class DeleteRelationTest extends \PHPUnit\Framework\TestCase
                 $conditionSql
             );
         }
-        $result = $this->relation->deleteRelation($addressModel, $customerModel);
-        $this->assertNull($result);
+        $this->relation->deleteRelation($addressModel, $customerModel);
     }
 
     /**

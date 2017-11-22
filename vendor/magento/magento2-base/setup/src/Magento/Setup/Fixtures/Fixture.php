@@ -1,15 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Fixtures;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
 /**
- * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * Class Fixture
  */
 abstract class Fixture
 {
@@ -44,26 +42,6 @@ abstract class Fixture
      * @return string
      */
     abstract public function getActionTitle();
-
-    /**
-     * Print information about generated fixture. Print fixture label and amount of generated items
-     *
-     * @param OutputInterface $output
-     * @return void
-     */
-    public function printInfo(OutputInterface $output)
-    {
-        foreach ($this->introduceParamLabels() as $configName => $label) {
-            $configValue = $this->fixtureModel->getValue($configName);
-            $generationCount = is_array($configValue) === true
-                ? count($configValue[array_keys($configValue)[0]])
-                : $configValue;
-
-            if (!empty($generationCount)) {
-                $output->writeln('<info> |- ' . $label . ': ' . $generationCount . '</info>');
-            }
-        }
-    }
 
     /**
      * Introduce parameters labels

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\HTTP\Test\Unit\PhpEnvironment;
 
-class RemoteAddressTest extends \PHPUnit\Framework\TestCase
+class RemoteAddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Request\Http
@@ -20,7 +20,7 @@ class RemoteAddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_request = $this->getMockBuilder(
-            \Magento\Framework\App\Request\Http::class
+            'Magento\Framework\App\Request\Http'
         )->disableOriginalConstructor()->setMethods(
             ['getServer']
         )->getMock();
@@ -34,7 +34,7 @@ class RemoteAddressTest extends \PHPUnit\Framework\TestCase
     public function testGetRemoteAddress($alternativeHeaders, $serverValueMap, $expected, $ipToLong)
     {
         $remoteAddress = $this->_objectManager->getObject(
-            \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress::class,
+            'Magento\Framework\HTTP\PhpEnvironment\RemoteAddress',
             ['httpRequest' => $this->_request, 'alternativeHeaders' => $alternativeHeaders]
         );
         $this->_request->expects($this->any())->method('getServer')->will($this->returnValueMap($serverValueMap));

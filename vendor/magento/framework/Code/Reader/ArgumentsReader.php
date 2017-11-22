@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Reader;
@@ -8,28 +8,6 @@ namespace Magento\Framework\Code\Reader;
 class ArgumentsReader
 {
     const NO_DEFAULT_VALUE = 'NO-DEFAULT';
-
-    /**
-     * @var NamespaceResolver
-     */
-    private $namespaceResolver;
-
-    /**
-     * @var ScalarTypesProvider
-     */
-    private $scalarTypesProvider;
-
-    /**
-     * @param NamespaceResolver|null $namespaceResolver
-     * @param ScalarTypesProvider|null $scalarTypesProvider
-     */
-    public function __construct(
-        NamespaceResolver $namespaceResolver = null,
-        ScalarTypesProvider $scalarTypesProvider = null
-    ) {
-        $this->namespaceResolver = $namespaceResolver ?: new NamespaceResolver();
-        $this->scalarTypesProvider = $scalarTypesProvider ?: new ScalarTypesProvider();
-    }
 
     /**
      * Get class constructor
@@ -47,17 +25,18 @@ class ArgumentsReader
         /**
          * Skip native PHP types, classes without constructor
          */
-        if ($class->isInterface() || !$class->getFileName() || false == $class->hasMethod(
+        if (!$class->getFileName() || false == $class->hasMethod(
             '__construct'
         ) || !$inherited && $class->getConstructor()->class != $class->getName()
         ) {
             return $output;
         }
 
-        $constructor = new \Zend\Code\Reflection\MethodReflection($class->getName(), '__construct');
-        foreach ($constructor->getParameters() as $parameter) {
+        foreach ($class->getConstructor()->getParameters() as $parameter) {
             $name = $parameter->getName();
             $position = $parameter->getPosition();
+            $parameterClass = $parameter->getClass();
+            $type = $parameterClass ? '\\' . $parameterClass->getName() : ($parameter->isArray() ? 'array' : null);
             $index = $groupByPosition ? $position : $name;
             $default = null;
             if ($parameter->isOptional()) {
@@ -78,44 +57,12 @@ class ArgumentsReader
             $output[$index] = [
                 'name' => $name,
                 'position' => $position,
-                'type' => $this->processType($class, $parameter),
+                'type' => $type,
                 'isOptional' => $parameter->isOptional(),
                 'default' => $default,
             ];
         }
         return $output;
-    }
-
-    /**
-     * Process argument type.
-     *
-     * @param \ReflectionClass $class
-     * @param \Zend\Code\Reflection\ParameterReflection $parameter
-     * @return string
-     */
-    private function processType(\ReflectionClass $class, \Zend\Code\Reflection\ParameterReflection $parameter)
-    {
-        if ($parameter->getClass()) {
-            return NamespaceResolver::NS_SEPARATOR . $parameter->getClass()->getName();
-        }
-
-        $type =  $parameter->detectType();
-
-        if ($type === 'null') {
-            return null;
-        }
-
-        if (strpos($type, '[]')) {
-            return 'array';
-        }
-
-        if (!in_array($type, $this->scalarTypesProvider->getTypes())) {
-            $availableNamespaces = $this->namespaceResolver->getImportedNamespaces(file($class->getFileName()));
-            $availableNamespaces[0] = $class->getNamespaceName();
-            return $this->namespaceResolver->resolveNamespace($type, $availableNamespaces);
-        }
-
-        return $type;
     }
 
     /**
@@ -202,10 +149,6 @@ class ArgumentsReader
          */
         if ($requiredType === 'array' || $actualType === 'array') {
             return false;
-        }
-
-        if ($requiredType === 'mixed' || $actualType === 'mixed') {
-            return true;
         }
 
         return is_subclass_of($actualType, $requiredType);

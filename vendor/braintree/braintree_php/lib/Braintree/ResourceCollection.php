@@ -1,8 +1,4 @@
 <?php
-namespace Braintree;
-
-use Iterator;
-
 /**
  * Braintree ResourceCollection
  * ResourceCollection is a container object for result data
@@ -11,7 +7,7 @@ use Iterator;
  *
  * example:
  * <code>
- * $result = Customer::all();
+ * $result = Braintree_Customer::all();
  *
  * foreach($result as $transaction) {
  *   print_r($transaction->id);
@@ -20,13 +16,12 @@ use Iterator;
  *
  * @package    Braintree
  * @subpackage Utility
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class ResourceCollection implements Iterator
+class Braintree_ResourceCollection implements Iterator
 {
-    private $_batchIndex;
-    private $_ids;
     private $_index;
+    private $_batchIndex;
     private $_items;
     private $_pageSize;
     private $_pager;
@@ -36,8 +31,8 @@ class ResourceCollection implements Iterator
      *
      * expects an array of attributes with literal keys
      *
-     * @param array $response
-     * @param array $pager
+     * @param array $attributes
+     * @param array $pagerAttribs
      */
     public function  __construct($response, $pager)
     {
@@ -62,7 +57,7 @@ class ResourceCollection implements Iterator
     public function firstItem()
     {
         $ids = $this->_ids;
-        $page = $this->_getPage([$ids[0]]);
+        $page = $this->_getPage(array($ids[0]));
         return $page[0];
     }
 
@@ -113,7 +108,7 @@ class ResourceCollection implements Iterator
     {
         if (empty($this->_ids))
         {
-            $this->_items = [];
+            $this->_items = array();
         }
         else
         {
@@ -126,32 +121,21 @@ class ResourceCollection implements Iterator
     /**
      * requests the next page of results for the collection
      *
-     * @return void
+     * @return none
      */
     private function _getPage($ids)
     {
         $object = $this->_pager['object'];
         $method = $this->_pager['method'];
-        $methodArgs = [];
+        $methodArgs = array();
         foreach ($this->_pager['methodArgs'] as $arg) {
             array_push($methodArgs, $arg);
         }
         array_push($methodArgs, $ids);
 
         return call_user_func_array(
-            [$object, $method],
+            array($object, $method),
             $methodArgs
         );
     }
-
-    /**
-     * returns all IDs in the collection
-     *
-     * @return array
-     */
-    public function getIds()
-    {
-       return $this->_ids;
-    }
 }
-class_alias('Braintree\ResourceCollection', 'Braintree_ResourceCollection');

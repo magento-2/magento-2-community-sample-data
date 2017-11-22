@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,13 +26,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click Update Changes.
  * 6. Perform all assertions.
  *
- * @group Customers, Order_Management
+ * @group Customers_(CS), Order_Management_(CS)
  * @ZephyrId MAGETWO-27640
  */
 class MoveLastOrderedProductsOnOrderPageTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

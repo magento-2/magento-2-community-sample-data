@@ -1,16 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Import\Product;
 
-/**
- * Class SkuProcessor
- *
- * @api
- * @since 100.0.2
- */
 class SkuProcessor
 {
     /**
@@ -43,32 +37,10 @@ class SkuProcessor
     protected $productTypeModels;
 
     /**
-     * Product metadata pool
-     *
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    private $metadataPool;
-
-    /**
-     * Product entity link field
-     *
-     * @var string
-     */
-    private $productEntityLinkField;
-
-    /**
-     * Product entity identifier field
-     *
-     * @var string
-     */
-    private $productEntityIdentifierField;
-
-    /**
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      */
-    public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory
-    ) {
+    public function __construct(\Magento\Catalog\Model\ProductFactory $productFactory)
+    {
         $this->productFactory = $productFactory;
     }
 
@@ -114,7 +86,6 @@ class SkuProcessor
      */
     public function addNewSku($sku, $data)
     {
-        $sku = strtolower($sku);
         $this->newSkus[$sku] = $data;
         return $this;
     }
@@ -127,8 +98,7 @@ class SkuProcessor
      */
     public function setNewSkuData($sku, $key, $data)
     {
-        $sku = strtolower($sku);
-        if (isset($this->newSkus[$sku])) {
+        if ($this->newSkus[$sku]) {
             $this->newSkus[$sku][$key] = $data;
         }
         return $this;
@@ -141,7 +111,6 @@ class SkuProcessor
     public function getNewSku($sku = null)
     {
         if ($sku !== null) {
-            $sku = strtolower($sku);
             return isset($this->newSkus[$sku]) ? $this->newSkus[$sku] : null;
         }
         return $this->newSkus;
@@ -156,64 +125,16 @@ class SkuProcessor
     {
         $oldSkus = [];
         $columns = ['entity_id', 'type_id', 'attribute_set_id', 'sku'];
-        if ($this->getProductEntityLinkField() != $this->getProductIdentifierField()) {
-            $columns[] = $this->getProductEntityLinkField();
-        }
         foreach ($this->productFactory->create()->getProductEntitiesInfo($columns) as $info) {
             $typeId = $info['type_id'];
-            $sku = strtolower($info['sku']);
+            $sku = $info['sku'];
             $oldSkus[$sku] = [
                 'type_id' => $typeId,
                 'attr_set_id' => $info['attribute_set_id'],
                 'entity_id' => $info['entity_id'],
                 'supported_type' => isset($this->productTypeModels[$typeId]),
-                $this->getProductEntityLinkField() => $info[$this->getProductEntityLinkField()],
             ];
         }
         return $oldSkus;
-    }
-
-    /**
-     * Get product metadata pool
-     *
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     */
-    private function getMetadataPool()
-    {
-        if (!$this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        }
-        return $this->metadataPool;
-    }
-
-    /**
-     * Get product entity link field
-     *
-     * @return string
-     */
-    private function getProductEntityLinkField()
-    {
-        if (!$this->productEntityLinkField) {
-            $this->productEntityLinkField = $this->getMetadataPool()
-                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
-                ->getLinkField();
-        }
-        return $this->productEntityLinkField;
-    }
-
-    /**
-     * Get product entity identifier field
-     *
-     * @return string
-     */
-    private function getProductIdentifierField()
-    {
-        if (!$this->productEntityIdentifierField) {
-            $this->productEntityIdentifierField = $this->getMetadataPool()
-                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
-                ->getIdentifierField();
-        }
-        return $this->productEntityIdentifierField;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB\Ddl;
@@ -15,7 +15,7 @@ class TriggerFactory
     /**
      * @var string
      */
-    const INSTANCE_NAME = \Magento\Framework\DB\Ddl\Trigger::class;
+    const INSTANCE_NAME = 'Magento\Framework\DB\Ddl\Trigger';
 
     /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager

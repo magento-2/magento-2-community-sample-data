@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,14 +17,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 5. Save Product Attribute.
  * 6. Perform appropriate assertions.
  *
- * @group Product_Attributes
+ * @group Product_Attributes_(MX)
  * @ZephyrId MAGETWO-24767
  */
 class CreateProductAttributeEntityTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'extended_acceptance_test';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

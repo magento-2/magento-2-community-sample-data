@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use \Magento\Tax\Pricing\Adjustment;
 
 use Magento\Framework\Pricing\SaleableInterface;
 
-class AdjustmentTest extends \PHPUnit\Framework\TestCase
+class AdjustmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Adjustment
@@ -32,10 +32,10 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
      */
     protected $sortOrder = 5;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->taxHelper = $this->createMock(\Magento\Tax\Helper\Data::class);
-        $this->catalogHelper = $this->createMock(\Magento\Catalog\Helper\Data::class);
+        $this->taxHelper = $this->getMock('Magento\Tax\Helper\Data', [], [], '', false);
+        $this->catalogHelper = $this->getMock('Magento\Catalog\Helper\Data', [], [], '', false);
         $this->adjustment = new Adjustment($this->taxHelper, $this->catalogHelper, $this->sortOrder);
     }
 
@@ -100,7 +100,7 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
      */
     public function testExtractAdjustment($isPriceIncludesTax, $amount, $price, $expectedResult)
     {
-        $object = $this->getMockForAbstractClass(\Magento\Framework\Pricing\SaleableInterface::class);
+        $object = $this->getMockForAbstractClass('Magento\Framework\Pricing\SaleableInterface');
 
         $this->taxHelper->expects($this->any())
             ->method('priceIncludesTax')
@@ -132,7 +132,7 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
      */
     public function testApplyAdjustment($amount, $price, $expectedResult)
     {
-        $object = $this->getMockBuilder(\Magento\Framework\Pricing\SaleableInterface::class)->getMock();
+        $object = $this->getMockBuilder('Magento\Framework\Pricing\SaleableInterface')->getMock();
 
         $this->catalogHelper->expects($this->any())
             ->method('getTaxPrice')

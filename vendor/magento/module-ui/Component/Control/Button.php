@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Control;
@@ -20,19 +20,8 @@ class Button extends Template implements ControlInterface
      */
     protected function _construct()
     {
-        $this->setTemplate($this->getTemplatePath());
-
+        $this->setTemplate('Magento_Ui::control/button/default.phtml');
         parent::_construct();
-    }
-
-    /**
-     * Retrieve template path
-     *
-     * @return string
-     */
-    protected function getTemplatePath()
-    {
-        return 'Magento_Ui::control/button/default.phtml';
     }
 
     /**
@@ -134,7 +123,7 @@ class Button extends Template implements ControlInterface
             if ($attributeValue === null || $attributeValue == '') {
                 continue;
             }
-            $html .= $attributeKey . '="' . $this->escapeHtmlAttr($attributeValue, false) . '" ';
+            $html .= $attributeKey . '="' . $this->escapeHtml($attributeValue) . '" ';
         }
 
         return $html;

@@ -1,44 +1,36 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\Paypal\Block\Adminhtml\System\Config\Fieldset;
 
-use Magento\Backend\Block\Template;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
-
 /**
- * Class Hint adds "Configuration Details" link to payment configuration.
- * `<comment>` node must be defined in `<group>` node and contain some link.
+ * Renderer for PayPal banner in System Configuration
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Hint extends Template implements RendererInterface
+class Hint extends \Magento\Backend\Block\Template implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
     /**
      * @var string
-     * @deprecated 100.1.2
      */
     protected $_template = 'Magento_Paypal::system/config/fieldset/hint.phtml';
 
     /**
-     * @param AbstractElement $element
+     * Render fieldset html
+     *
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    public function render(AbstractElement $element)
+    public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $html = '';
-
-        if ($element->getComment()) {
-            $html .= sprintf('<tr id="row_%s">', $element->getHtmlId());
-            $html .= '<td colspan="1"><p class="note"><span>';
-            $html .= sprintf(
-                '<a href="%s" target="_blank">Configuration Details</a>',
-                $element->getComment()
-            );
-            $html .= '</span></p></td></tr>';
+        $elementOriginalData = $element->getOriginalData();
+        if (isset($elementOriginalData['help_link'])) {
+            $this->setHelpLink($elementOriginalData['help_link']);
         }
-
-        return $html;
+        return $this->toHtml();
     }
 }

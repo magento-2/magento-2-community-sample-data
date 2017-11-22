@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -37,9 +37,10 @@ class AssertAttributeSearchableByLabel extends AbstractConstraint
         $cmsIndex->open();
         $cmsIndex->getSearchBlock()->search($searchValue);
 
-        do {
+        $isVisible = $catalogSearchResult->getListProductBlock()->getProductItem($product)->isVisible();
+        while (!$isVisible && $catalogSearchResult->getBottomToolbar()->nextPage()) {
             $isVisible = $catalogSearchResult->getListProductBlock()->getProductItem($product)->isVisible();
-        } while (!$isVisible && $catalogSearchResult->getBottomToolbar()->nextPage());
+        }
 
         \PHPUnit_Framework_Assert::assertTrue($isVisible, 'Product attribute is not searchable on Frontend.');
     }

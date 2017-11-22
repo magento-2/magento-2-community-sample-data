@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,7 +25,6 @@ class NewActionTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\
                 $this->returnValue($this->_requestMock)
             );
         $integrationContr = $this->_createIntegrationController('NewAction');
-        $result = $integrationContr->execute();
-        $this->assertNull($result);
+        $integrationContr->execute();
     }
 }

@@ -1,12 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
 
-use Magento\Deploy\Console\Command\App\ConfigImportCommand;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Setup\Model\InstallerFactory;
@@ -125,11 +123,6 @@ class InstallCommand extends AbstractSetupCommand
         $consoleLogger = new ConsoleLogger($output);
         $installer = $this->installerFactory->create($consoleLogger);
         $installer->install($input->getOptions());
-
-        $importConfigCommand = $this->getApplication()->find(ConfigImportCommand::COMMAND_NAME);
-        $arrayInput = new ArrayInput([]);
-        $arrayInput->setInteractive($input->isInteractive());
-        $importConfigCommand->run($arrayInput, $output);
     }
 
     /**

@@ -1,51 +1,44 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
+require_once realpath(dirname(__FILE__)) . '/SubscriptionTestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use DateTime;
-use DateTimeZone;
-use Test;
-use Test\Setup;
-use Braintree;
-
-class SubscriptionSearchTest extends Setup
+class Braintree_SubscriptionSearchTest extends PHPUnit_Framework_TestCase
 {
-    public function testSearch_planIdIs()
+    function testSearch_planIdIs()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
-        $trialPlan = SubscriptionHelper::trialPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
+        $trialPlan = Braintree_SubscriptionTestHelper::trialPlan();
 
-        $trialSubscription = Braintree\Subscription::create([
+        $trialSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $trialPlan['id'],
             'price' => '1'
-        ])->subscription;
+        ))->subscription;
 
-        $triallessSubscription = Braintree\Subscription::create([
+        $triallessSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '1'
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::planId()->is('integration_trial_plan'),
-            Braintree\SubscriptionSearch::price()->is('1')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::planId()->is('integration_trial_plan'),
+            Braintree_SubscriptionSearch::price()->is('1')
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $trialSubscription));
-        $this->assertFalse(Test\Helper::includes($collection, $triallessSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $trialSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $triallessSubscription));
     }
 
-    public function test_noRequestsWhenIterating()
+    function test_noRequestsWhenIterating()
     {
         $resultsReturned = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::planId()->is('imaginary')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::planId()->is('imaginary')
+        ));
 
-        foreach ($collection as $transaction) {
+        foreach($collection as $transaction) {
             $resultsReturned = true;
             break;
         }
@@ -54,204 +47,204 @@ class SubscriptionSearchTest extends Setup
         $this->assertEquals(false, $resultsReturned);
     }
 
-    public function testSearch_inTrialPeriod()
+    function testSearch_inTrialPeriod()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
-        $trialPlan = SubscriptionHelper::trialPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
+        $trialPlan = Braintree_SubscriptionTestHelper::trialPlan();
 
-        $trialSubscription = Braintree\Subscription::create([
+        $trialSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $trialPlan['id'],
             'price' => '1'
-        ])->subscription;
+        ))->subscription;
 
-        $triallessSubscription = Braintree\Subscription::create([
+        $triallessSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '1'
-        ])->subscription;
+        ))->subscription;
 
-        $subscriptions_in_trial = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::inTrialPeriod()->is(true)
-        ]);
+        $subscriptions_in_trial = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::inTrialPeriod()->is(true)
+        ));
 
-        $this->assertTrue(Test\Helper::includes($subscriptions_in_trial, $trialSubscription));
-        $this->assertFalse(Test\Helper::includes($subscriptions_in_trial, $triallessSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($subscriptions_in_trial, $trialSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($subscriptions_in_trial, $triallessSubscription));
 
-        $subscriptions_not_in_trial = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::inTrialPeriod()->is(false)
-        ]);
+        $subscriptions_not_in_trial = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::inTrialPeriod()->is(false)
+        ));
 
-        $this->assertTrue(Test\Helper::includes($subscriptions_not_in_trial, $triallessSubscription));
-        $this->assertFalse(Test\Helper::includes($subscriptions_not_in_trial, $trialSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($subscriptions_not_in_trial, $triallessSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($subscriptions_not_in_trial, $trialSubscription));
     }
 
-    public function testSearch_statusIsPastDue()
+    function testSearch_statusIsPastDue()
     {
         $found = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->in([Braintree\Subscription::PAST_DUE])
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->in(array(Braintree_Subscription::PAST_DUE))
+        ));
         foreach ($collection AS $item) {
             $found = true;
-            $this->assertEquals(Braintree\Subscription::PAST_DUE, $item->status);
+            $this->assertEquals(Braintree_Subscription::PAST_DUE, $item->status);
         }
         $this->assertTrue($found);
     }
 
-    public function testSearch_statusIsExpired()
+    function testSearch_statusIsExpired()
     {
         $found = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->in([Braintree\Subscription::EXPIRED])
-        ]);
-        foreach ($collection as $item) {
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->in(array(Braintree_Subscription::EXPIRED))
+        ));
+        foreach ($collection AS $item) {
             $found = true;
-            $this->assertEquals(Braintree\Subscription::EXPIRED, $item->status);
+            $this->assertEquals(Braintree_Subscription::EXPIRED, $item->status);
         }
         $this->assertTrue($found);
     }
 
-    public function testSearch_billingCyclesRemaing()
+    function testSearch_billingCyclesRemaing()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $subscription_4 = Braintree\Subscription::create([
+        $subscription_4 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'numberOfBillingCycles' => 4
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_8 = Braintree\Subscription::create([
+        $subscription_8 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'numberOfBillingCycles' => 8
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_10 = Braintree\Subscription::create([
+        $subscription_10 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'numberOfBillingCycles' => 10
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::billingCyclesRemaining()->between(5, 10)
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::billingCyclesRemaining()->between(5, 10)
+        ));
 
-        $this->assertFalse(Test\Helper::includes($collection, $subscription_4));
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_8));
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_10));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $subscription_4));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_8));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_10));
     }
 
-    public function testSearch_subscriptionId()
+    function testSearch_subscriptionId()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
         $rand_id = strval(rand());
 
-        $subscription_1 = Braintree\Subscription::create([
+        $subscription_1 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => 'subscription_123_id_' . $rand_id
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_2 = Braintree\Subscription::create([
+        $subscription_2 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => 'subscription_23_id_' . $rand_id
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_3 = Braintree\Subscription::create([
+        $subscription_3 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => 'subscription_3_id_' . $rand_id
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::id()->contains('23_id_')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::id()->contains("23_id_")
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_1));
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_2));
-        $this->assertFalse(Test\Helper::includes($collection, $subscription_3));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_1));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_2));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $subscription_3));
     }
 
-    public function testSearch_merchantAccountId()
+    function testSearch_merchantAccountId()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
         $rand_id = strval(rand());
 
-        $subscription_1 = Braintree\Subscription::create([
+        $subscription_1 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => strval(rand()) . '_subscription_' . $rand_id,
             'price' => '2'
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_2 = Braintree\Subscription::create([
+        $subscription_2 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => strval(rand()) . '_subscription_' . $rand_id,
-            'merchantAccountId' => Test\Helper::nonDefaultMerchantAccountId(),
+            'merchantAccountId' => Braintree_TestHelper::nonDefaultMerchantAccountId(),
             'price' => '2'
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::id()->endsWith('subscription_' . $rand_id),
-            Braintree\SubscriptionSearch::merchantAccountId()->in([Test\Helper::nonDefaultMerchantAccountId()]),
-            Braintree\SubscriptionSearch::price()->is('2')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::id()->endsWith('subscription_' . $rand_id),
+            Braintree_SubscriptionSearch::merchantAccountId()->in(array(Braintree_TestHelper::nonDefaultMerchantAccountId())),
+            Braintree_SubscriptionSearch::price()->is('2')
+        ));
 
-        $this->assertFalse(Test\Helper::includes($collection, $subscription_1));
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_2));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $subscription_1));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_2));
     }
 
-    public function testSearch_bogusMerchantAccountId()
+    function testSearch_bogusMerchantAccountId()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
         $rand_id = strval(rand());
 
-        $subscription = Braintree\Subscription::create([
+        $subscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'id' => strval(rand()) . '_subscription_' . $rand_id,
             'price' => '11.38'
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::id()->endsWith('subscription_' . $rand_id),
-            Braintree\SubscriptionSearch::merchantAccountId()->in(['bogus_merchant_account']),
-            Braintree\SubscriptionSearch::price()->is('11.38')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::id()->endsWith('subscription_' . $rand_id),
+            Braintree_SubscriptionSearch::merchantAccountId()->in(array("bogus_merchant_account")),
+            Braintree_SubscriptionSearch::price()->is('11.38')
+        ));
 
-        $this->assertFalse(Test\Helper::includes($collection, $subscription));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $subscription));
     }
 
-    public function testSearch_daysPastDue()
+    function testSearch_daysPastDue()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $subscription = Braintree\Subscription::create([
+        $subscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id']
-        ])->subscription;
+        ))->subscription;
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . '/subscriptions/' . $subscription->id . '/make_past_due';
-        $http->put($path, ['daysPastDue' => 5]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . '/subscriptions/' . $subscription->id . '/make_past_due';
+        $http->put($path, array('daysPastDue' => 5));
 
         $found = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::daysPastDue()->between(2, 10)
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::daysPastDue()->between(2, 10)
+        ));
         foreach ($collection AS $item) {
             $found = true;
             $this->assertTrue($item->daysPastDue <= 10);
@@ -260,220 +253,85 @@ class SubscriptionSearchTest extends Setup
         $this->assertTrue($found);
     }
 
-    public function testSearch_price()
+    function testSearch_price()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $subscription_850 = Braintree\Subscription::create([
+        $subscription_850 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '8.50'
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_851 = Braintree\Subscription::create([
+        $subscription_851 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '8.51'
-        ])->subscription;
+        ))->subscription;
 
-        $subscription_852 = Braintree\Subscription::create([
+        $subscription_852 = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '8.52'
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::price()->between('8.51', '8.52')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::price()->between('8.51', '8.52')
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_851));
-        $this->assertTrue(Test\Helper::includes($collection, $subscription_852));
-        $this->assertFalse(Test\Helper::includes($collection, $subscription_850));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_851));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $subscription_852));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $subscription_850));
     }
 
-    public function testSearch_nextBillingDate()
+    function testSearch_nextBillingDate()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
-        $trialPlan = SubscriptionHelper::trialPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
+        $trialPlan = Braintree_SubscriptionTestHelper::trialPlan();
 
-        $triallessSubscription = Braintree\Subscription::create([
+        $triallessSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
-        ])->subscription;
+        ))->subscription;
 
-        $trialSubscription = Braintree\Subscription::create([
+        $trialSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $trialPlan['id'],
-        ])->subscription;
+        ))->subscription;
 
         $fiveDaysFromNow = new DateTime();
         $fiveDaysFromNow->modify("+5 days");
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::nextBillingDate()->greaterThanOrEqualTo($fiveDaysFromNow),
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::nextBillingDate()->greaterThanOrEqualTo($fiveDaysFromNow)
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $triallessSubscription));
-        $this->assertFalse(Test\Helper::includes($collection, $trialSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $triallessSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $trialSubscription));
     }
 
-    public function testSearch_createdAt_lessThanOrEqualTo()
+    function testSearch_transactionId()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $plan = SubscriptionHelper::trialPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $subscription= Braintree\Subscription::create([
-            'paymentMethodToken' => $creditCard->token,
-            'planId' => $plan['id'],
-        ])->subscription;
-
-        $fiveDaysFromNow = new DateTime();
-        $fiveDaysFromNow->modify("+5 days");
-
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->lessThanOrEqualTo($fiveDaysFromNow),
-        ]);
-
-        $this->assertTrue(Test\Helper::includes($collection, $subscription));
-
-        $fiveDaysAgo = new DateTime();
-        $fiveDaysAgo->modify("-5 days");
-
-        $emptyCollection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->lessThanOrEqualTo($fiveDaysAgo),
-        ]);
-
-        $this->assertFalse(Test\Helper::includes($emptyCollection, $subscription));
-    }
-
-    public function testSearch_createdAt_greaterThanOrEqualTo()
-    {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $plan = SubscriptionHelper::trialPlan();
-
-        $subscription= Braintree\Subscription::create([
-            'paymentMethodToken' => $creditCard->token,
-            'planId' => $plan['id'],
-        ])->subscription;
-
-        $fiveDaysAgo = new DateTime();
-        $fiveDaysAgo->modify("-5 days");
-
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->greaterThanOrEqualTo($fiveDaysAgo),
-        ]);
-
-        $this->assertTrue(Test\Helper::includes($collection, $subscription));
-
-        $fiveDaysFromNow = new DateTime();
-        $fiveDaysFromNow->modify("+5 days");
-
-        $emptyCollection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->greaterThanOrEqualTo($fiveDaysFromNow),
-        ]);
-
-        $this->assertFalse(Test\Helper::includes($emptyCollection, $subscription));
-    }
-
-    public function testSearch_createdAt_between()
-    {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $plan = SubscriptionHelper::trialPlan();
-
-        $subscription= Braintree\Subscription::create([
-            'paymentMethodToken' => $creditCard->token,
-            'planId' => $plan['id'],
-        ])->subscription;
-
-        $fiveDaysAgo = new DateTime();
-        $fiveDaysFromNow = new DateTime();
-        $tenDaysFromNow = new DateTime();
-
-        $fiveDaysAgo->modify("-5 days");
-        $fiveDaysFromNow->modify("+5 days");
-        $tenDaysFromNow->modify("+10 days");
-
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->between($fiveDaysAgo, $fiveDaysFromNow),
-        ]);
-
-        $this->assertTrue(Test\Helper::includes($collection, $subscription));
-
-        $emptyCollection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->between($fiveDaysFromNow, $tenDaysFromNow),
-        ]);
-
-        $this->assertFalse(Test\Helper::includes($emptyCollection, $subscription));
-    }
-
-    public function testSearch_createdAt_is()
-    {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $plan = SubscriptionHelper::trialPlan();
-
-        $subscription= Braintree\Subscription::create([
-            'paymentMethodToken' => $creditCard->token,
-            'planId' => $plan['id'],
-        ])->subscription;
-
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->is($subscription->createdAt),
-        ]);
-
-        $this->assertTrue(Test\Helper::includes($collection, $subscription));
-
-        $oneDayAgo = $subscription->createdAt;
-        $oneDayAgo->modify("-1 days");
-
-        $emptyCollection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->is($oneDayAgo),
-        ]);
-
-        $this->assertFalse(Test\Helper::includes($emptyCollection, $subscription));
-    }
-
-    public function testSearch_createdAt_convertLocalToUTC()
-    {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $plan = SubscriptionHelper::trialPlan();
-
-        $subscription= Braintree\Subscription::create([
-            'paymentMethodToken' => $creditCard->token,
-            'planId' => $plan['id'],
-        ])->subscription;
-
-        $tenMinAgo = date_create("now -10 minutes", new DateTimeZone("US/Pacific"));
-        $tenMinFromNow = date_create("now +10 minutes", new DateTimeZone("US/Pacific"));
-
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::createdAt()->between($tenMinAgo, $tenMinFromNow),
-        ]);
-
-        $this->assertTrue(Test\Helper::includes($collection, $subscription));
-    }
-
-    public function testSearch_transactionId()
-    {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
-
-        $matchingSubscription = Braintree\Subscription::create([
+        $matchingSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
-        ])->subscription;
+        ))->subscription;
 
-        $nonMatchingSubscription = Braintree\Subscription::create([
+        $nonMatchingSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
-        ])->subscription;
+        ))->subscription;
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::transactionId()->is($matchingSubscription->transactions[0]->id),
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::transactionId()->is($matchingSubscription->transactions[0]->id)
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $matchingSubscription));
-        $this->assertFalse(Test\Helper::includes($collection, $nonMatchingSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $matchingSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $nonMatchingSubscription));
     }
 }

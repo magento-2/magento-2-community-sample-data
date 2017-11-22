@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,10 +18,8 @@ var app = angular.module(
         'create-admin-account',
         'install',
         'success',
-        'module-grid',
-        'extension-grid',
+        'component-grid',
         'install-extension-grid',
-        'update-extension-grid',
         'create-backup',
         'complete-backup',
         'data-option',

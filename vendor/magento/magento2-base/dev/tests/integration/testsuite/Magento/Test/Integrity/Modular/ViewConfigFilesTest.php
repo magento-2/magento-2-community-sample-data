@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Test\Integrity\Modular;
 
-class ViewConfigFilesTest extends \PHPUnit\Framework\TestCase
+class ViewConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $file
@@ -13,7 +13,7 @@ class ViewConfigFilesTest extends \PHPUnit\Framework\TestCase
      */
     public function testViewConfigFile($file)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $domConfig = new \Magento\Framework\Config\Dom($file, $validationStateMock);
@@ -36,7 +36,7 @@ class ViewConfigFilesTest extends \PHPUnit\Framework\TestCase
     {
         $result = [];
         $files = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Module\Dir\Reader::class
+            'Magento\Framework\Module\Dir\Reader'
         )->getConfigurationFiles(
             'view.xml'
         );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Cache;
@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit\Cache;
 use \Magento\Framework\App\Cache\State;
 use Magento\Framework\Config\File\ConfigFilePool;
 
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -22,9 +22,8 @@ class StateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $this->writer =
-            $this->createPartialMock(\Magento\Framework\App\DeploymentConfig\Writer::class, ['update', 'saveConfig']);
+        $this->config = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $this->writer = $this->getMock('Magento\Framework\App\DeploymentConfig\Writer', [], [], '', false);
     }
 
     /**

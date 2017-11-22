@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -34,7 +34,7 @@ class RatingElement extends SimpleElement
      *
      * @var string
      */
-    protected $ratingByNumber = './/*[contains(@class,"field-rating")][%d]';
+    protected $ratingByNumber = './/*[@id="rating_detail"]//*[contains(@class,"field-rating")][%d]';
 
     /**
      * Set rating value

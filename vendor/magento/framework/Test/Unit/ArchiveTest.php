@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\Test\Unit;
 
 use \Magento\Framework\Archive;
 
-class ArchiveTest extends \PHPUnit\Framework\TestCase
+class ArchiveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Archive

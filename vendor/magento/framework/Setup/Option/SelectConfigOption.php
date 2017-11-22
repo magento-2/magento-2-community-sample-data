@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Setup\Option;
@@ -17,7 +17,11 @@ class SelectConfigOption extends AbstractConfigOption
     const FRONTEND_WIZARD_SELECT = 'select';
     /**#@- */
 
-    /**#@- */
+    /**
+     * Available options
+     *
+     * @var array
+     */
     private $selectOptions;
 
     /**

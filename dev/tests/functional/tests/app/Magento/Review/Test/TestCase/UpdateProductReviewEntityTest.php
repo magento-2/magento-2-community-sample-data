@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click "Submit review".
  * 6. Perform all assertions.
  *
- * @group Reviews_and_Ratings
+ * @group Reviews_and_Ratings_(MX)
  * @ZephyrId MAGETWO-25604
  */
 class UpdateProductReviewEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

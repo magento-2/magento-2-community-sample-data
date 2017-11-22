@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Product;
@@ -10,7 +10,7 @@ namespace Magento\Catalog\Block\Product;
  *
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  */
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\View
@@ -25,14 +25,11 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_block = $objectManager->create(\Magento\Catalog\Block\Product\View::class);
-
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $this->_product = $productRepository->get('simple');
-
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('product');
-        $objectManager->get(\Magento\Framework\Registry::class)->register('product', $this->_product);
+        $this->_block = $objectManager->create('Magento\Catalog\Block\Product\View');
+        $this->_product = $objectManager->create('Magento\Catalog\Model\Product');
+        $this->_product->load(1);
+        $objectManager->get('Magento\Framework\Registry')->unregister('product');
+        $objectManager->get('Magento\Framework\Registry')->register('product', $this->_product);
     }
 
     public function testSetLayout()
@@ -40,11 +37,11 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var $layout \Magento\Framework\View\Layout */
-        $layout = $objectManager->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = $objectManager->get('Magento\Framework\View\LayoutInterface');
         /** @var $pageConfig \Magento\Framework\View\Page\Config */
-        $pageConfig = $objectManager->get(\Magento\Framework\View\Page\Config::class);
+        $pageConfig = $objectManager->get('Magento\Framework\View\Page\Config');
 
-        $layout->createBlock(\Magento\Catalog\Block\Product\View::class);
+        $layout->createBlock('Magento\Catalog\Block\Product\View');
 
         $this->assertNotEmpty($pageConfig->getTitle()->get());
         $this->assertEquals($this->_product->getMetaTitle(), $pageConfig->getTitle()->get());
@@ -59,8 +56,8 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('product');
-        $this->_block->setProductId($this->_product->getId());
+        $objectManager->get('Magento\Framework\Registry')->unregister('product');
+        $this->_block->setProductId(1);
         $this->assertEquals($this->_product->getId(), $this->_block->getProduct()->getId());
     }
 
@@ -72,7 +69,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     public function testGetAddToCartUrl()
     {
         $url = $this->_block->getAddToCartUrl($this->_product);
-        $this->assertStringMatchesFormat('%scheckout/cart/add/%sproduct/' . $this->_product->getId() . '/', $url);
+        $this->assertStringMatchesFormat('%scheckout/cart/add/%sproduct/1/', $url);
     }
 
     public function testGetJsonConfig()
@@ -80,7 +77,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $config = (array)json_decode($this->_block->getJsonConfig());
         $this->assertNotEmpty($config);
         $this->assertArrayHasKey('productId', $config);
-        $this->assertEquals($this->_product->getId(), $config['productId']);
+        $this->assertEquals(1, $config['productId']);
     }
 
     public function testHasOptions()

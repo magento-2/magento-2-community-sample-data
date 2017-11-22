@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,9 +8,6 @@ namespace Magento\Wishlist\Block\Customer\Wishlist\Item\Column;
 
 /**
  * Wishlist block customer item cart column
- *
- * @api
- * @since 100.0.2
  */
 class Cart extends \Magento\Wishlist\Block\Customer\Wishlist\Item\Column
 {

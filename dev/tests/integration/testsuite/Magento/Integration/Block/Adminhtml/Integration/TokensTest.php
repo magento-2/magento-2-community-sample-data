@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  *
  */
@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoAppArea adminhtml
  */
-class TokensTest extends \PHPUnit\Framework\TestCase
+class TokensTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Block\Adminhtml\Integration\Tokens
@@ -24,7 +24,7 @@ class TokensTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->tokensBlock = Bootstrap::getObjectManager()
-            ->create(\Magento\Integration\Block\Adminhtml\Integration\Tokens::class);
+            ->create('Magento\Integration\Block\Adminhtml\Integration\Tokens');
     }
 
     public function testGetFormFields()

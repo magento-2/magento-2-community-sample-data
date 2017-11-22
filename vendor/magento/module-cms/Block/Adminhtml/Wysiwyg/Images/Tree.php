@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Block\Adminhtml\Wysiwyg\Images;
@@ -8,8 +8,7 @@ namespace Magento\Cms\Block\Adminhtml\Wysiwyg\Images;
 /**
  * Directory tree renderer for Cms Wysiwyg Images
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Tree extends \Magento\Backend\Block\Template
 {
@@ -28,29 +27,19 @@ class Tree extends \Magento\Backend\Block\Template
     protected $_cmsWysiwygImages = null;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Cms\Helper\Wysiwyg\Images $cmsWysiwygImages
      * @param \Magento\Framework\Registry $registry
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Cms\Helper\Wysiwyg\Images $cmsWysiwygImages,
         \Magento\Framework\Registry $registry,
-        array $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        array $data = []
     ) {
         $this->_coreRegistry = $registry;
         $this->_cmsWysiwygImages = $cmsWysiwygImages;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         parent::__construct($context, $data);
     }
 
@@ -76,7 +65,7 @@ class Tree extends \Magento\Backend\Block\Template
                 'cls' => 'folder',
             ];
         }
-        return $this->serializer->serialize($jsonArray);
+        return \Zend_Json::encode($jsonArray);
     }
 
     /**

@@ -11,8 +11,6 @@ namespace Zend\Validator\Db;
 
 use Traversable;
 use Zend\Db\Adapter\Adapter as DbAdapter;
-use Zend\Db\Adapter\AdapterAwareInterface;
-use Zend\Db\Adapter\AdapterAwareTrait;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\TableIdentifier;
@@ -23,10 +21,8 @@ use Zend\Validator\Exception;
 /**
  * Class for Database record validation
  */
-abstract class AbstractDb extends AbstractValidator implements AdapterAwareInterface
+abstract class AbstractDb extends AbstractValidator
 {
-    use AdapterAwareTrait;
-
     /**
      * Error constants
      */
@@ -36,10 +32,10 @@ abstract class AbstractDb extends AbstractValidator implements AdapterAwareInter
     /**
      * @var array Message templates
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::ERROR_NO_RECORD_FOUND => "No record matching the input was found",
         self::ERROR_RECORD_FOUND    => "A record matching the input was found",
-    ];
+    );
 
     /**
      * Select object to use. can be set, or will be auto-generated
@@ -67,6 +63,13 @@ abstract class AbstractDb extends AbstractValidator implements AdapterAwareInter
      * @var mixed
      */
     protected $exclude = null;
+
+    /**
+     * Database adapter to use. If null isValid() will throw an exception
+     *
+     * @var \Zend\Db\Adapter\Adapter
+     */
+    protected $adapter = null;
 
     /**
      * Provides basic configuration for use with Zend\Validator\Db Validators
@@ -107,22 +110,22 @@ abstract class AbstractDb extends AbstractValidator implements AdapterAwareInter
 
             $temp['field'] = array_shift($options);
 
-            if (! empty($options)) {
+            if (!empty($options)) {
                 $temp['exclude'] = array_shift($options);
             }
 
-            if (! empty($options)) {
+            if (!empty($options)) {
                 $temp['adapter'] = array_shift($options);
             }
 
             $options = $temp;
         }
 
-        if (! array_key_exists('table', $options) && ! array_key_exists('schema', $options)) {
+        if (!array_key_exists('table', $options) && !array_key_exists('schema', $options)) {
             throw new Exception\InvalidArgumentException('Table or Schema option missing!');
         }
 
-        if (! array_key_exists('field', $options)) {
+        if (!array_key_exists('field', $options)) {
             throw new Exception\InvalidArgumentException('Field option missing!');
         }
 
@@ -163,7 +166,8 @@ abstract class AbstractDb extends AbstractValidator implements AdapterAwareInter
      */
     public function setAdapter(DbAdapter $adapter)
     {
-        return $this->setDbAdapter($adapter);
+        $this->adapter = $adapter;
+        return $this;
     }
 
     /**
@@ -287,7 +291,7 @@ abstract class AbstractDb extends AbstractValidator implements AdapterAwareInter
         // Build select object
         $select          = new Select();
         $tableIdentifier = new TableIdentifier($this->table, $this->schema);
-        $select->from($tableIdentifier)->columns([$this->field]);
+        $select->from($tableIdentifier)->columns(array($this->field));
         $select->where->equalTo($this->field, null);
 
         if ($this->exclude !== null) {

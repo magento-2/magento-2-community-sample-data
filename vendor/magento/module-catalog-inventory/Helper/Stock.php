@@ -1,22 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Helper;
 
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
-use Magento\CatalogInventory\Api\StockConfigurationInterface;
-use Magento\CatalogInventory\Model\ResourceModel\Stock\Status;
-use Magento\CatalogInventory\Model\ResourceModel\Stock\StatusFactory;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\StatusFactory;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\Status;
+use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
+use Magento\Catalog\Model\Product;
 
 /**
  * Class Stock
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Stock
 {
@@ -50,11 +48,6 @@ class Stock
     private $stockRegistryProvider;
 
     /**
-     * @var StockConfigurationInterface
-     */
-    private $stockConfiguration;
-
-    /**
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $scopeConfig
      * @param StatusFactory $stockStatusFactory
@@ -76,14 +69,14 @@ class Stock
      * Assign stock status information to product
      *
      * @param Product $product
-     * @param int $status
+     * @param int $stockStatus
      * @return void
      */
-    public function assignStatusToProduct(Product $product, $status = null)
+    public function assignStatusToProduct(Product $product, $stockStatus = null)
     {
-        if ($status === null) {
-            $scopeId = $this->getStockConfiguration()->getDefaultScopeId();
-            $stockStatus = $this->stockRegistryProvider->getStockStatus($product->getId(), $scopeId);
+        if ($stockStatus === null) {
+            $websiteId = $product->getStore()->getWebsiteId();
+            $stockStatus = $this->stockRegistryProvider->getStockStatus($product->getId(), $websiteId);
             $status = $stockStatus->getStockStatus();
         }
         $product->setIsSalable($status);
@@ -93,15 +86,14 @@ class Stock
      * Add stock status information to products
      *
      * @param AbstractCollection $productCollection
-     * @deprecated 100.1.0 Use Stock::addIsInStockFilterToCollection instead
      * @return void
      */
     public function addStockStatusToProducts(AbstractCollection $productCollection)
     {
-        $scopeId = $this->getStockConfiguration()->getDefaultScopeId();
+        $websiteId = $this->storeManager->getStore($productCollection->getStoreId())->getWebsiteId();
         foreach ($productCollection as $product) {
             $productId = $product->getId();
-            $stockStatus = $this->stockRegistryProvider->getStockStatus($productId, $scopeId);
+            $stockStatus = $this->stockRegistryProvider->getStockStatus($productId, $websiteId);
             $status = $stockStatus->getStockStatus();
             $product->setIsSalable($status);
         }
@@ -156,7 +148,7 @@ class Stock
             $resource = $this->getStockStatusResource();
             $resource->addStockDataToCollection(
                 $collection,
-                !$isShowOutOfStock || $collection->getFlag('require_stock_items')
+                !$isShowOutOfStock && $collection->getFlag('require_stock_items')
             );
             $collection->setFlag($stockFlag, true);
         }
@@ -171,19 +163,5 @@ class Stock
             $this->stockStatusResource = $this->stockStatusFactory->create();
         }
         return $this->stockStatusResource;
-    }
-
-    /**
-     * @return StockConfigurationInterface
-     *
-     * @deprecated 100.1.0
-     */
-    private function getStockConfiguration()
-    {
-        if ($this->stockConfiguration === null) {
-            $this->stockConfiguration = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogInventory\Api\StockConfigurationInterface::class);
-        }
-        return $this->stockConfiguration;
     }
 }

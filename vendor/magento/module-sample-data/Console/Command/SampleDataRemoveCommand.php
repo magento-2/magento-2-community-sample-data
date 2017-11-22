@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -34,7 +34,6 @@ class SampleDataRemoveCommand extends Command
 
     /**
      * @var ArrayInputFactory
-     * @deprecated 100.1.0
      */
     private $arrayInputFactory;
 
@@ -83,7 +82,8 @@ class SampleDataRemoveCommand extends Command
             $commonArgs = ['--working-dir' => $baseDir, '--no-interaction' => 1, '--no-progress' => 1];
             $packages = array_keys($sampleDataPackages);
             $arguments = array_merge(['command' => 'remove', 'packages' => $packages], $commonArgs);
-            $commandInput = new ArrayInput($arguments);
+            /** @var ArrayInput $commandInput */
+            $commandInput = $this->arrayInputFactory->create(['parameters' => $arguments]);
 
             /** @var Application $application */
             $application = $this->applicationFactory->create();

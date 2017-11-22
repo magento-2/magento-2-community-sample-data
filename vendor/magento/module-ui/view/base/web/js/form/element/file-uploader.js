@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'jquery',
@@ -17,12 +13,24 @@ define([
 ], function ($, _, utils, uiAlert, validator, Element) {
     'use strict';
 
+    /**
+     * Constructor to creating valid validation format
+     *
+     * @param {String|Object} rule - One or many validation rules.
+     * @param {Boolean} passed
+     * @param {String} msg - ErrorMessage
+     */
+    var ValidationResult = function (rule, passed, msg) {
+        this.rule = rule || '';
+        this.passed = passed || false;
+        this.message = msg || '';
+    };
+
     return Element.extend({
         defaults: {
             value: [],
             maxFileSize: false,
             isMultipleFiles: false,
-            placeholderType: 'document', // 'image', 'video'
             allowedExtensions: false,
             previewTmpl: 'ui/form/element/uploader/preview',
             dropZone: '[data-role=drop-zone]',
@@ -33,9 +41,6 @@ define([
                 formData: {
                     'form_key': window.FORM_KEY
                 }
-            },
-            tracks: {
-                isLoading: true
             }
         },
 
@@ -64,6 +69,19 @@ define([
         },
 
         /**
+         * Initializes observable properties of instance
+         *
+         * @returns {Abstract} Chainable.
+         */
+        initObservable: function () {
+            this._super();
+
+            this.observe('isLoading');
+
+            return this;
+        },
+
+        /**
          * Defines initial value of the instance.
          *
          * @returns {FileUploader} Chainable.
@@ -77,7 +95,6 @@ define([
 
             this.value(value);
             this.on('value', this.onUpdate.bind(this));
-            this.isUseDefault(this.disabled());
 
             return this;
         },
@@ -163,8 +180,6 @@ define([
          * @returns {Object} Modified file object.
          */
         processFile: function (file) {
-            file.previewType = this.getFilePreviewType(file);
-
             this.observe.call(file, true, [
                 'previewWidth',
                 'previewHeight'
@@ -239,25 +254,7 @@ define([
          * @returns {Boolean}
          */
         isExtensionAllowed: function (file) {
-            return validator('validate-file-type', file.name, this.allowedExtensions);
-        },
-
-        /**
-         * Get simplified file type.
-         *
-         * @param {Object} file - File to be checked.
-         * @returns {String}
-         */
-        getFilePreviewType: function (file) {
-            var type;
-
-            if (!file.type) {
-                return 'document';
-            }
-
-            type = file.type.split('/')[0];
-
-            return type !== 'image' && type !== 'video' ? 'document' : type;
+            return this.validatorResultParser('validate-file-type', file.name, this.allowedExtensions);
         },
 
         /**
@@ -268,7 +265,22 @@ define([
          * @returns {Boolean}
          */
         isSizeExceeded: function (file) {
-            return validator('validate-max-size', file.size, this.maxFileSize);
+            return this.validatorResultParser('validate-max-size', file.size, this.maxFileSize);
+        },
+
+        /**
+         * Parse validation string result to valid format
+         *
+         * @param {(String|Object)} rule - One or many validation rules.
+         * @param {*} value - Value to validate.
+         * @param {*} [params] - Rule configuration
+         *
+         * @returns {Object} Parsed validation result
+         */
+        validatorResultParser: function (rule, value, params) {
+            var validation = validator(rule, value, params);
+
+            return !validation ? new ValidationResult(rule, true) : new ValidationResult(rule, false, validation);
         },
 
         /**
@@ -330,7 +342,7 @@ define([
 
             if (allowed.passed) {
                 target.on('fileuploadsend', function (event, postData) {
-                    postData.data.append('param_name', this.paramName);
+                    postData.data.set('param_name', this.paramName);
                 }.bind(data));
 
                 target.fileupload('process', data).done(function () {
@@ -360,14 +372,14 @@ define([
          * Load start event handler.
          */
         onLoadingStart: function () {
-            this.isLoading = true;
+            this.isLoading(true);
         },
 
         /**
          * Load stop event handler.
          */
         onLoadingStop: function () {
-            this.isLoading = false;
+            this.isLoading(false);
         },
 
         /**
@@ -389,8 +401,8 @@ define([
         onPreviewLoad: function (file, e) {
             var img = e.currentTarget;
 
-            file.previewWidth = img.naturalWidth;
-            file.previewHeight = img.naturalHeight;
+            file.previewWidth = img.naturalHeight;
+            file.previewHeight = img.naturalWidth;
         },
 
         /**

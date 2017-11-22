@@ -1,17 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config;
 
 /**
  * Magento configuration DOM factory
- * @api
  */
 class DomFactory
 {
-    const CLASS_NAME = \Magento\Framework\Config\Dom::class;
+    const CLASS_NAME = 'Magento\Framework\Config\Dom';
 
     /**
      * Object manager

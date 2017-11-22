@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,27 +29,20 @@ class AssertProductAttributeIsRequired extends AbstractConstraint
      * @param CatalogProductEdit $catalogProductEdit
      * @param CatalogProductAttribute $attribute
      * @param InjectableFixture $product
-     * @param string $sectionName
      * @return void
      */
     public function processAssert(
         CatalogProductIndex $catalogProductIndex,
         CatalogProductEdit $catalogProductEdit,
         CatalogProductAttribute $attribute,
-        InjectableFixture $product,
-        $sectionName
+        InjectableFixture $product
     ) {
         $catalogProductIndex->open()->getProductGrid()->searchAndOpen(['sku' => $product->getSku()]);
         $productForm = $catalogProductEdit->getProductForm();
-        if (!$productForm->checkAttributeLabel($attribute)) {
-            $productForm->openSection($sectionName);
-        }
         $productForm->getAttributeElement($attribute)->setValue('');
         $catalogProductEdit->getFormPageActions()->save();
-        $validationErrors = $productForm->getSection($sectionName)->getValidationErrors();
-        $actualMessage = isset($validationErrors[$attribute->getFrontendLabel()])
-            ? $validationErrors[$attribute->getFrontendLabel()]
-            : '';
+        $failedAttributes = $productForm->getRequireNoticeAttributes($product);
+        $actualMessage = $failedAttributes['product-details'][$attribute->getFrontendLabel()];
 
         \PHPUnit_Framework_Assert::assertEquals(
             self::REQUIRE_MESSAGE,

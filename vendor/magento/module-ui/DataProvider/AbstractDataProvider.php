@@ -1,17 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\DataProvider;
 
-use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractDataProvider implements DataProviderInterface
 {
     /**
@@ -80,7 +76,6 @@ abstract class AbstractDataProvider implements DataProviderInterface
     {
         return $this->collection;
     }
-
     /**
      * Get Data Provider name
      *
@@ -136,7 +131,7 @@ abstract class AbstractDataProvider implements DataProviderInterface
      */
     public function getFieldsMetaInfo($fieldSetName)
     {
-        return isset($this->meta[$fieldSetName]['children']) ? $this->meta[$fieldSetName]['children'] : [];
+        return isset($this->meta[$fieldSetName]['fields']) ? $this->meta[$fieldSetName]['fields'] : [];
     }
 
     /**
@@ -146,8 +141,8 @@ abstract class AbstractDataProvider implements DataProviderInterface
      */
     public function getFieldMetaInfo($fieldSetName, $fieldName)
     {
-        return isset($this->meta[$fieldSetName]['children'][$fieldName])
-            ? $this->meta[$fieldSetName]['children'][$fieldName]
+        return isset($this->meta[$fieldSetName]['fields'][$fieldName])
+            ? $this->meta[$fieldSetName]['fields'][$fieldName]
             : [];
     }
 
@@ -161,7 +156,6 @@ abstract class AbstractDataProvider implements DataProviderInterface
             [$filter->getConditionType() => $filter->getValue()]
         );
     }
-
     /**
      * Returns search criteria
      *
@@ -176,7 +170,7 @@ abstract class AbstractDataProvider implements DataProviderInterface
     /**
      * Returns SearchResult
      *
-     * @return \Magento\Framework\Api\Search\SearchResultInterface
+     * @return null
      */
     public function getSearchResult()
     {
@@ -282,16 +276,5 @@ abstract class AbstractDataProvider implements DataProviderInterface
     public function setConfigData($config)
     {
         $this->data['config'] = $config;
-    }
-
-    /**
-     * Retrieve all ids from collection
-     *
-     * @return int[]
-     * @since 100.2.0
-     */
-    public function getAllIds()
-    {
-        return  $this->collection->getAllIds();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,10 +12,7 @@ namespace Magento\CustomerImportExport\Test\Unit\Model\ResourceModel\Import\Cust
 use Magento\CustomerImportExport\Model\Import\Address;
 use Magento\CustomerImportExport\Model\Import\CustomerComposite;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Array of customer attributes
@@ -34,9 +31,12 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function _getDependencies($entityType, $bunchData)
     {
         /** @var $statementMock \Magento\Framework\DB\Statement\Pdo\Mysql */
-        $statementMock = $this->createPartialMock(
-            \Magento\Framework\DB\Statement\Pdo\Mysql::class,
-            ['setFetchMode', 'getIterator']
+        $statementMock = $this->getMock(
+            'Magento\Framework\DB\Statement\Pdo\Mysql',
+            ['setFetchMode', 'getIterator'],
+            [],
+            '',
+            false
         );
         $statementMock->expects(
             $this->any()
@@ -47,20 +47,29 @@ class DataTest extends \PHPUnit\Framework\TestCase
         );
 
         /** @var $selectMock \Magento\Framework\DB\Select */
-        $selectMock = $this->createPartialMock(\Magento\Framework\DB\Select::class, ['from', 'order']);
+        $selectMock = $this->getMock('Magento\Framework\DB\Select', ['from', 'order'], [], '', false);
         $selectMock->expects($this->any())->method('from')->will($this->returnSelf());
         $selectMock->expects($this->any())->method('order')->will($this->returnSelf());
 
         /** @var $connectionMock \Magento\Framework\DB\Adapter\AdapterInterface */
-        $connectionMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'from', 'order', 'query']
+        $connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['select', 'from', 'order', 'query'],
+            [],
+            '',
+            false
         );
         $connectionMock->expects($this->any())->method('select')->will($this->returnValue($selectMock));
         $connectionMock->expects($this->any())->method('query')->will($this->returnValue($statementMock));
 
         /** @var $resourceModelMock \Magento\Framework\App\ResourceConnection */
-        $resourceModelMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $resourceModelMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $resourceModelMock->expects($this->any())->method('getConnection')->will($this->returnValue($connectionMock));
 
         $data = ['resource' => $resourceModelMock, 'entity_type' => $entityType];
@@ -88,26 +97,26 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
         $resource = $dependencies['resource'];
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $jsonDecoderMock = $this->getMockBuilder(\Magento\Framework\Json\DecoderInterface::class)
+        $jsonDecoderMock = $this->getMockBuilder('Magento\Framework\Json\DecoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $jsonDecoderMock->expects($this->once())
             ->method('decode')
-            ->willReturn(json_decode($bunchData, true));
+            ->willReturn(\Zend_Json::decode($bunchData));
         $jsonHelper = $helper->getObject(
-            \Magento\Framework\Json\Helper\Data::class,
+            'Magento\Framework\Json\Helper\Data',
             [
                 'jsonDecoder' => $jsonDecoderMock,
             ]
         );
         unset($dependencies['resource'], $dependencies['json_helper']);
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('\Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->once())->method('getResources')->willReturn($resource);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $object = $objectManager->getObject(
-            \Magento\CustomerImportExport\Model\ResourceModel\Import\CustomerComposite\Data::class,
+            '\Magento\CustomerImportExport\Model\ResourceModel\Import\CustomerComposite\Data',
             [
                 'context' => $contextMock,
                 'jsonHelper' => $jsonHelper,
@@ -128,7 +137,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         return [
             'address entity' => [
                 '$entityType' => CustomerComposite::COMPONENT_ENTITY_ADDRESS,
-                '$bunchData' => json_encode(
+                '$bunchData' => \Zend_Json::encode(
                     [
                         [
                             '_scope' => CustomerComposite::SCOPE_DEFAULT,
@@ -158,7 +167,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             ],
             'customer entity default scope' => [
                 '$entityType' => CustomerComposite::COMPONENT_ENTITY_CUSTOMER,
-                '$bunchData' => json_encode(
+                '$bunchData' => \Zend_Json::encode(
                     [
                         [
                             '_scope' => CustomerComposite::SCOPE_DEFAULT,
@@ -190,7 +199,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             ],
             'customer entity address scope' => [
                 '$entityType' => CustomerComposite::COMPONENT_ENTITY_CUSTOMER,
-                '$bunchData' => json_encode(
+                '$bunchData' => \Zend_Json::encode(
                     [
                         [
                             '_scope' => CustomerComposite::SCOPE_ADDRESS,

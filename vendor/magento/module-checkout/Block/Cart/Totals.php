@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Block\Cart;
@@ -8,9 +8,6 @@ namespace Magento\Checkout\Block\Cart;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Checkout\Block\Checkout\LayoutProcessorInterface;
 
-/**
- * @api
- */
 class Totals extends \Magento\Checkout\Block\Cart\AbstractCart
 {
     /**
@@ -21,7 +18,7 @@ class Totals extends \Magento\Checkout\Block\Cart\AbstractCart
     /**
      * @var string
      */
-    protected $_defaultRenderer = \Magento\Checkout\Block\Total\DefaultTotal::class;
+    protected $_defaultRenderer = 'Magento\Checkout\Block\Total\DefaultTotal';
 
     /**
      * @var array

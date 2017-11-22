@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Payment\Test\Unit\Model\Checks;
 
-use Magento\Payment\Model\Checks\CanUseForCountry;
+use \Magento\Payment\Model\Checks\CanUseForCountry;
 
-class CanUseForCountryTest extends \PHPUnit\Framework\TestCase
+class CanUseForCountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Expected country id
@@ -25,10 +25,15 @@ class CanUseForCountryTest extends \PHPUnit\Framework\TestCase
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->countryProvider = $this->createMock(
-            \Magento\Payment\Model\Checks\CanUseForCountry\CountryProvider::class
+        $this->countryProvider = $this->getMock(
+            'Magento\Payment\Model\Checks\CanUseForCountry\CountryProvider',
+            [],
+            [],
+            '',
+            false,
+            false
         );
         $this->_model = new CanUseForCountry($this->countryProvider);
     }
@@ -39,12 +44,12 @@ class CanUseForCountryTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsApplicable($expectation)
     {
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)->disableOriginalConstructor()->setMethods(
+        $quoteMock = $this->getMockBuilder('Magento\Quote\Model\Quote')->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
 
         $paymentMethod = $this->getMockBuilder(
-            \Magento\Payment\Model\MethodInterface::class
+            '\Magento\Payment\Model\MethodInterface'
         )->disableOriginalConstructor()->setMethods([])->getMock();
         $paymentMethod->expects($this->once())->method('canUseForCountry')->with(
             self::EXPECTED_COUNTRY_ID

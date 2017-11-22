@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -89,9 +89,8 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
         /** @var ProcessingError $newError */
         $newError = $this->errorFactory->create();
         $newError->init($errorCode, $errorLevel, $rowNumber, $columnName, $errorMessage, $errorDescription);
-        $this->items['rows'][$rowNumber][] = $newError;
-        $this->items['codes'][$errorCode][] = $newError;
-        $this->items['messages'][$errorMessage][] = $newError;
+        $this->items[] = $newError;
+
         return $this;
     }
 
@@ -210,21 +209,13 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
         return (bool)$this->getErrorsCount([ProcessingError::ERROR_LEVEL_CRITICAL]);
     }
 
+
     /**
      * @return ProcessingError[]
      */
     public function getAllErrors()
     {
-        $result = [];
-        if (empty($this->items)) {
-            return $result;
-        }
-
-        foreach (array_values($this->items['rows']) as $errors) {
-            $result = array_merge($result, $errors);
-        }
-
-        return $result;
+        return $this->items;
     }
 
     /**
@@ -234,9 +225,9 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
     public function getErrorsByCode(array $codes)
     {
         $result = [];
-        foreach ($codes as $code) {
-            if (isset($this->items['codes'][$code])) {
-                $result = array_merge($result, $this->items['codes'][$code]);
+        foreach ($this->items as $error) {
+            if (in_array($error->getErrorCode(), $codes)) {
+                $result[] = $error;
             }
         }
 
@@ -250,8 +241,10 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
     public function getErrorByRowNumber($rowNumber)
     {
         $result = [];
-        if (isset($this->items['rows'][$rowNumber])) {
-            $result = $this->items['rows'][$rowNumber];
+        foreach ($this->items as $error) {
+            if ($error->getRowNumber() == (int)$rowNumber) {
+                $result[] = $error;
+            }
         }
 
         return $result;
@@ -268,26 +261,16 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
         array $excludedCodes = [],
         $replaceCodeWithMessage = true
     ) {
-        if (empty($this->items)) {
-            return [];
-        }
-        $allCodes = array_keys($this->items['codes']);
-        if (!empty($excludedCodes)) {
-            $allCodes = array_diff($allCodes, $excludedCodes);
-        }
-        if (!empty($errorCode)) {
-            $allCodes = array_intersect($errorCode, $allCodes);
-        }
-
         $result = [];
-        foreach ($allCodes as $code) {
-            $errors = $this->getErrorsByCode([$code]);
-            foreach ($errors as $error) {
-                $key = $replaceCodeWithMessage ? $error->getErrorMessage() : $code;
-                $result[$key][] = $error->getRowNumber() + 1;
+        foreach ($this->items as $error) {
+            if ((!empty($errorCode) && in_array($error->getErrorCode(), $errorCode))
+                || in_array($error->getErrorCode(), $excludedCodes)
+            ) {
+                continue;
             }
+            $message = $replaceCodeWithMessage ? $error->getErrorMessage() : $error->getErrorCode();
+            $result[$message][] = $error->getRowNumber()+1;
         }
-
         return $result;
     }
 
@@ -325,7 +308,6 @@ class ProcessingErrorAggregator implements ProcessingErrorAggregatorInterface
         $this->items = [];
         $this->errorStatistics = [];
         $this->invalidRows = [];
-        $this->skippedRows = [];
 
         return $this;
     }

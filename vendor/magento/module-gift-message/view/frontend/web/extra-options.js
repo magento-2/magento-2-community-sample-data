@@ -1,16 +1,13 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
+/*jshint jquery:true*/
 define([
-    'jquery',
-    'jquery/ui'
-], function ($) {
-    'use strict';
+    "jquery",
+    "jquery/ui"
+], function($){
+    "use strict";
 
     $.widget('mage.extraOptions', {
         options: {
@@ -22,7 +19,7 @@ define([
          * Set up event handler for requesting any additional extra options from the backend.
          * @private
          */
-        _create: function () {
+        _create: function() {
             this.element.on(this.options.events, $.proxy(this._addExtraOptions, this));
         },
 
@@ -31,20 +28,18 @@ define([
          * Printed Card.
          * @private
          */
-        _addExtraOptions: function () {
+        _addExtraOptions: function() {
             $.ajax({
                 url: this.options.additionalUrl,
                 context: this,
                 type: 'post',
                 async: false,
-
-                /** @inheritdoc */
-                success: function (response) {
+                success: function(response) {
                     $(this.options.additionalContainer).html(response).trigger('contentUpdated');
                 }
             });
         }
     });
-
+    
     return $.mage.extraOptions;
 });

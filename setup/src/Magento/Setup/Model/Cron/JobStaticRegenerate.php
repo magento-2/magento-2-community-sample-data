@@ -1,15 +1,26 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model\Cron;
+
+use Magento\Framework\App\Cache;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\App\DeploymentConfig\Writer;
 
 /**
  * Static regenerate job
  */
 class JobStaticRegenerate extends AbstractJob
 {
+    /**
+     * @var \Magento\Framework\ObjectManagerInterface
+     */
+    protected $objectManager;
+
     /**
      * @var \Magento\Framework\App\Cache
      */
@@ -41,8 +52,11 @@ class JobStaticRegenerate extends AbstractJob
         $name,
         $params = []
     ) {
-        $this->cleanupFiles = $objectManagerProvider->get()->get(\Magento\Framework\App\State\CleanupFiles::class);
-        $this->cache = $objectManagerProvider->get()->get(\Magento\Framework\App\Cache::class);
+        $this->objectManager = $objectManagerProvider->get();
+        $this->cleanupFiles = $this->objectManager->get('Magento\Framework\App\State\CleanupFiles');
+        $this->cache = $this->objectManager->get('Magento\Framework\App\Cache');
+        $this->output = $output;
+        $this->status = $status;
 
         parent::__construct($output, $status, $objectManagerProvider, $name, $params);
     }
@@ -57,21 +71,15 @@ class JobStaticRegenerate extends AbstractJob
     {
         try {
             $mode = $this->getModeObject();
-            if ($mode->getMode() == \Magento\Framework\App\State::MODE_PRODUCTION) {
+            if ($mode->getMode() == State::MODE_PRODUCTION) {
                 $filesystem = $this->getFilesystem();
                 $filesystem->regenerateStatic($this->getOutputObject());
             } else {
-                $this->getStatusObject()->add(
-                    'Cleaning generated files...',
-                    \Psr\Log\LogLevel::INFO
-                );
+                $this->getStatusObject()->add('Cleaning generated files...');
                 $this->getCleanFilesObject()->clearCodeGeneratedFiles();
-                $this->getStatusObject()->add('Clearing cache...', \Psr\Log\LogLevel::INFO);
+                $this->getStatusObject()->add('Clearing cache...');
                 $this->getCacheObject()->clean();
-                $this->getStatusObject()->add(
-                    'Cleaning static view files',
-                    \Psr\Log\LogLevel::INFO
-                );
+                $this->getStatusObject()->add('Cleaning static view files');
                 $this->getCleanFilesObject()->clearMaterializedViewFiles();
             }
         } catch (\Exception $e) {
@@ -127,7 +135,7 @@ class JobStaticRegenerate extends AbstractJob
      */
     public function getFilesystem()
     {
-        return $this->objectManager->create(\Magento\Deploy\Model\Filesystem::class);
+        return $this->objectManager->create('Magento\Deploy\Model\Filesystem');
     }
 
     /**
@@ -138,9 +146,9 @@ class JobStaticRegenerate extends AbstractJob
     public function getModeObject()
     {
         return $this->objectManager->create(
-            \Magento\Deploy\Model\Mode::class,
+            'Magento\Deploy\Model\Mode',
             [
-                'input' => new \Symfony\Component\Console\Input\ArrayInput([]),
+                'input' => new ArrayInput([]),
                 'output' => $this->output,
             ]
         );

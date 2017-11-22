@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
@@ -21,6 +21,7 @@ class I18nPackCommand extends Command
      * Keys and shortcuts for input arguments and options
      */
     const INPUT_KEY_SOURCE = 'source';
+    const INPUT_KEY_PACK = 'pack';
     const INPUT_KEY_LOCALE = 'locale';
     const INPUT_KEY_MODE = 'mode';
     const INPUT_KEY_ALLOW_DUPLICATES = 'allow-duplicates';
@@ -48,6 +49,11 @@ class I18nPackCommand extends Command
                 self::INPUT_KEY_SOURCE,
                 InputArgument::REQUIRED,
                 'Path to source dictionary file with translations'
+            ),
+            new InputArgument(
+                self::INPUT_KEY_PACK,
+                InputArgument::REQUIRED,
+                'Path to language package'
             ),
             new InputArgument(
                 self::INPUT_KEY_LOCALE,
@@ -86,6 +92,7 @@ class I18nPackCommand extends Command
         $locale = $input->getArgument(self::INPUT_KEY_LOCALE);
         $generator->generate(
             $input->getArgument(self::INPUT_KEY_SOURCE),
+            $input->getArgument(self::INPUT_KEY_PACK),
             $locale,
             $input->getOption(self::INPUT_KEY_MODE),
             $input->getOption(self::INPUT_KEY_ALLOW_DUPLICATES)

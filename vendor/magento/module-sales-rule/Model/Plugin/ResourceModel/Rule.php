@@ -1,15 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Model\Plugin\ResourceModel;
 
-/**
- * Class Rule
- * @package Magento\SalesRule\Model\Plugin\ResourceModel
- * @deprecated 100.1.0
- */
 class Rule
 {
     /**

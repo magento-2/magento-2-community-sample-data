@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Entity;
@@ -12,6 +12,8 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 /**
  * Product attribute extension with event dispatching
  *
+ * @method \Magento\Catalog\Model\ResourceModel\Attribute _getResource()
+ * @method \Magento\Catalog\Model\ResourceModel\Attribute getResource()
  * @method string getFrontendInputRenderer()
  * @method \Magento\Catalog\Model\Entity\Attribute setFrontendInputRenderer(string $value)
  * @method int setIsGlobal(int $value)

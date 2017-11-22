@@ -1,32 +1,27 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Block\Adminhtml\System\Config;
-
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Paypal\Block\Adminhtml\System\Config\ResolutionRules;
-use Magento\Paypal\Model\Config\Rules\Reader;
 
 /**
  * Class ResolutionRulesTest
  *
  * Test for class \Magento\Paypal\Block\Adminhtml\System\Config\ResolutionRules
  */
-class ResolutionRulesTest extends \PHPUnit\Framework\TestCase
+class ResolutionRulesTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ResolutionRules
+     * @var \Magento\Paypal\Block\Adminhtml\System\Config\ResolutionRules
      */
     protected $resolutionRules;
 
-    /** @var  Context */
+    /** @var  \Magento\Backend\Block\Template\Context */
     protected $context;
 
     /**
-     * @var Reader|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Paypal\Model\Config\Rules\Reader|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $readerMock;
 
@@ -37,15 +32,15 @@ class ResolutionRulesTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->context = $objectManager->getObject(Context::class);
+        $this->context = $objectManager->getObject('\Magento\Backend\Block\Template\Context');
 
-        $this->readerMock = $this->getMockBuilder(Reader::class)
+        $this->readerMock = $this->getMockBuilder('Magento\Paypal\Model\Config\Rules\Reader')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resolutionRules = new ResolutionRules(
+        $this->resolutionRules = new \Magento\Paypal\Block\Adminhtml\System\Config\ResolutionRules(
             $this->context,
             $this->readerMock
         );
@@ -54,30 +49,16 @@ class ResolutionRulesTest extends \PHPUnit\Framework\TestCase
     /**
      * Run test for getJson method
      *
-     * @param array $incoming
-     * @param string $outgoing
-     * @dataProvider getJsonDataProvider
+     * @return void
      */
-    public function testGetJson($incoming, $outgoing)
+    public function testGetJson()
     {
+        $expected = ['test' => 'test-value'];
+
         $this->readerMock->expects($this->once())
             ->method('read')
-            ->willReturn($incoming);
+            ->willReturn($expected);
 
-        $this->assertEquals(
-            $outgoing,
-            $this->resolutionRules->getJson()
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function getJsonDataProvider()
-    {
-        return [
-            [['test' => 'test-value'], '{"test":"test-value"}'],
-            [[], '{}']
-        ];
+        $this->assertEquals(json_encode($expected), $this->resolutionRules->getJson());
     }
 }

@@ -1,17 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Test\Legacy;
 
-use Magento\Framework\Component\ComponentRegistrar;
+namespace Magento\Test\Legacy;
 
 /**
  * Temporary test
  * Test verifies obsolete usages in modules that were refactored to work with getConnection.
  */
-class ObsoleteConnectionTest extends \PHPUnit\Framework\TestCase
+class ObsoleteConnectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -35,6 +34,7 @@ class ObsoleteConnectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
+        $this->appPath = \Magento\Framework\App\Utility\Files::init()->getPathToSource();
         $this->obsoleteMethods = [
             '_getReadConnection',
             '_getWriteConnection',
@@ -106,15 +106,13 @@ class ObsoleteConnectionTest extends \PHPUnit\Framework\TestCase
     public function modulesFilesDataProvider()
     {
         $filesList = [];
-        $componentRegistrar = new ComponentRegistrar();
-        foreach ($this->getFilesData('whitelist/refactored_modules*') as $refactoredModule) {
-            if ($componentRegistrar->getPath(ComponentRegistrar::MODULE, $refactoredModule)) {
-                $files = \Magento\Framework\App\Utility\Files::init()->getFiles(
-                    [$componentRegistrar->getPath(ComponentRegistrar::MODULE, $refactoredModule)],
-                    '*.php'
-                );
-                $filesList = array_merge($filesList, $files);
-            }
+
+        foreach ($this->getFilesData('whitelist/refactored_modules*') as $refactoredFolder) {
+            $files = \Magento\Framework\App\Utility\Files::init()->getFiles(
+                [$this->appPath . $refactoredFolder],
+                '*.php'
+            );
+            $filesList = array_merge($filesList, $files);
         }
 
         $result = array_map('realpath', $filesList);
@@ -128,10 +126,8 @@ class ObsoleteConnectionTest extends \PHPUnit\Framework\TestCase
     protected function getBlackList()
     {
         $blackListFiles = [];
-        $componentRegistrar = new ComponentRegistrar();
-        foreach ($this->getFilesData('blacklist/files_list*') as $fileInfo) {
-            $blackListFiles[] = $componentRegistrar->getPath(ComponentRegistrar::MODULE, $fileInfo[0])
-                . DIRECTORY_SEPARATOR . $fileInfo[1];
+        foreach ($this->getFilesData('blacklist/files_list*') as $file) {
+            $blackListFiles[] = realpath($this->appPath . $file);
         }
         return $blackListFiles;
     }

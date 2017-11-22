@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Block\Checkout;
 
+use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Magento\Customer\Helper\Address as AddressHelper;
-use Magento\Customer\Model\Session;
-use Magento\Directory\Helper\Data as DirectoryHelper;
 
 class AttributeMerger
 {
@@ -48,7 +48,6 @@ class AttributeMerger
         'alphanumeric' => 'validate-alphanum',
         'url' => 'validate-url',
         'email' => 'email2',
-        'length' => 'validate-length',
     ];
 
     /**
@@ -195,15 +194,6 @@ class AttributeMerger
             'visible' => isset($additionalConfig['visible']) ? $additionalConfig['visible'] : true,
         ];
 
-        if ($attributeCode === 'region_id' || $attributeCode === 'country_id') {
-            unset($element['options']);
-            $element['deps'] = [$providerName];
-            $element['imports'] = [
-                'initialOptions' => 'index = ' . $providerName . ':dictionaries.' . $attributeCode,
-                'setOptions' => 'index = ' . $providerName . ':dictionaries.' . $attributeCode
-            ];
-        }
-
         if (isset($attributeConfig['value']) && $attributeConfig['value'] != null) {
             $element['value'] = $attributeConfig['value'];
         } elseif (isset($attributeConfig['default']) && $attributeConfig['default'] != null) {
@@ -285,7 +275,7 @@ class AttributeMerger
                         $attributeConfig['validation']
                     )
                     : $attributeConfig['validation'],
-                'additionalClasses' => $isFirstLine ? 'field' : 'additional'
+                'additionalClasses' => $isFirstLine ? : 'additional'
 
             ];
             if ($isFirstLine && isset($attributeConfig['default']) && $attributeConfig['default'] != null) {
@@ -315,35 +305,21 @@ class AttributeMerger
      */
     protected function getDefaultValue($attributeCode)
     {
-        if ($attributeCode === 'country_id') {
-            return $this->directoryHelper->getDefaultCountry();
-        }
-
-        $customer = $this->getCustomer();
-        if ($customer === null) {
-            return null;
-        }
-
-        $attributeValue = null;
         switch ($attributeCode) {
-            case 'prefix':
-                $attributeValue = $customer->getPrefix();
-                break;
             case 'firstname':
-                $attributeValue = $customer->getFirstname();
-                break;
-            case 'middlename':
-                $attributeValue = $customer->getMiddlename();
+                if ($this->getCustomer()) {
+                    return $this->getCustomer()->getFirstname();
+                }
                 break;
             case 'lastname':
-                $attributeValue = $customer->getLastname();
+                if ($this->getCustomer()) {
+                    return $this->getCustomer()->getLastname();
+                }
                 break;
-            case 'suffix':
-                $attributeValue = $customer->getSuffix();
-                break;
+            case 'country_id':
+                return $this->directoryHelper->getDefaultCountry();
         }
-
-        return $attributeValue;
+        return null;
     }
 
     /**
@@ -367,11 +343,11 @@ class AttributeMerger
      * @param string $attributeCode
      * @param array $attributeConfig
      * @return array
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function getFieldOptions($attributeCode, array $attributeConfig)
     {
-        return isset($attributeConfig['options']) ? $attributeConfig['options'] : [];
+        $options = isset($attributeConfig['options']) ? $attributeConfig['options'] : [];
+        return ($attributeCode == 'country_id') ? $this->orderCountryOptions($options) : $options;
     }
 
     /**
@@ -379,7 +355,6 @@ class AttributeMerger
      *
      * @param array $countryOptions
      * @return array
-     * @deprecated 100.2.0
      */
     protected function orderCountryOptions(array $countryOptions)
     {
@@ -399,6 +374,7 @@ class AttributeMerger
             } else {
                 array_push($tailOptions, $countryOption);
             }
+
         }
         return array_merge($headOptions, $tailOptions);
     }

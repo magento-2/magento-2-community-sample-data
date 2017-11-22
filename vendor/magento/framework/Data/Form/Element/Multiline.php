@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -54,12 +54,11 @@ class Multiline extends AbstractElement
 
     /**
      * @param int $suffix
-     * @param string $scopeLabel
      * @return string
      */
-    public function getLabelHtml($suffix = 0, $scopeLabel = '')
+    public function getLabelHtml($suffix = 0)
     {
-        return parent::getLabelHtml($suffix, $scopeLabel);
+        return parent::getLabelHtml($suffix);
     }
 
     /**
@@ -149,21 +148,5 @@ class Multiline extends AbstractElement
             $html .= $this->getNoSpan() === true ? '' : '</span>' . "\n";
         }
         return $html;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEscapedValue($index = null)
-    {
-        $value = $this->getValue();
-        if (is_string($value)) {
-            $value = explode("\n", $value);
-            if (is_array($value)) {
-                $this->setValue($value);
-            }
-        }
-
-        return parent::getEscapedValue($index);
     }
 }

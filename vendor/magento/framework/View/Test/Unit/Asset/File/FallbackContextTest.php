@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Asset\File;
@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit\Asset\File;
 /**
  * @covers \Magento\Framework\View\Asset\File\FallbackContext
  */
-class FallbackContextTest extends \PHPUnit\Framework\TestCase
+class FallbackContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -31,6 +31,7 @@ class FallbackContextTest extends \PHPUnit\Framework\TestCase
      * @param string $areaType
      * @param string $themePath
      * @param string $localeCode
+     * @param bool $isSecure
      * @param string $expectedResult
      * @dataProvider getConfigPathDataProvider
      */
@@ -39,15 +40,17 @@ class FallbackContextTest extends \PHPUnit\Framework\TestCase
         $areaType,
         $themePath,
         $localeCode,
+        $isSecure,
         $expectedResult
     ) {
         $this->fallbackContext = $this->objectManager->getObject(
-            \Magento\Framework\View\Asset\File\FallbackContext::class,
+            'Magento\Framework\View\Asset\File\FallbackContext',
             [
                 'baseUrl' => $baseUrl,
                 'areaType' => $areaType,
                 'themePath' => $themePath,
-                'localeCode' => $localeCode
+                'localeCode' => $localeCode,
+                'isSecure' => $isSecure
             ]
         );
         $this->assertEquals($expectedResult, $this->fallbackContext->getConfigPath());
@@ -61,6 +64,7 @@ class FallbackContextTest extends \PHPUnit\Framework\TestCase
                 'areaType' => 'frontend',
                 'themePath' => 'Magento/blank',
                 'localeCode' => 'en_US',
+                'isSecure' => false,
                 'expectedResult' => 'frontend/Magento/blank/en_US'
             ],
             'https' => [
@@ -68,7 +72,8 @@ class FallbackContextTest extends \PHPUnit\Framework\TestCase
                 'areaType' => 'frontend',
                 'themePath' => 'Magento/blank',
                 'localeCode' => 'en_US',
-                'expectedResult' => 'frontend/Magento/blank/en_US'
+                'isSecure' => true,
+                'expectedResult' => 'frontend/Magento/blank/en_US/secure'
             ]
         ];
     }

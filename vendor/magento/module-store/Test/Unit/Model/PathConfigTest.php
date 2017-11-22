@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class PathConfigTest extends \PHPUnit\Framework\TestCase
+class PathConfigTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface | \PHPUnit_Framework_MockObject_MockObject*/
     private $scopeConfigMock;
@@ -26,18 +26,18 @@ class PathConfigTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Store\Model\RouteConfig */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlSecurityInfoMock = $this->getMockBuilder(\Magento\Framework\Url\SecurityInfoInterface::class)
+        $this->urlSecurityInfoMock = $this->getMockBuilder('Magento\Framework\Url\SecurityInfoInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
         $mockArgs = [
@@ -45,7 +45,7 @@ class PathConfigTest extends \PHPUnit\Framework\TestCase
             'urlSecurityInfo' => $this->urlSecurityInfoMock,
             'storeManager' => $this->storeManagerMock,
         ];
-        $this->model = (new ObjectManager($this))->getObject(\Magento\Store\Model\PathConfig::class, $mockArgs);
+        $this->model = (new ObjectManager($this))->getObject('\Magento\Store\Model\PathConfig', $mockArgs);
     }
 
     public function testGetCurrentSecureUrlNoAlias()
@@ -56,7 +56,7 @@ class PathConfigTest extends \PHPUnit\Framework\TestCase
         $this->storeMock->expects($this->once())->method('getBaseUrl')->with('link', true)->willReturn($baseUrl);
         $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($this->storeMock);
 
-        $request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -73,7 +73,7 @@ class PathConfigTest extends \PHPUnit\Framework\TestCase
         $this->storeMock->expects($this->once())->method('getBaseUrl')->with('link', true)->willReturn($baseUrl);
         $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($this->storeMock);
 
-        $request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
 

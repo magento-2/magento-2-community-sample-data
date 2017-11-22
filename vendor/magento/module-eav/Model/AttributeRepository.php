@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model;
 
-use Magento\Framework\Api\SearchCriteria\CollectionProcessor;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
+use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
@@ -47,18 +48,12 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
     protected $joinProcessor;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
      * @param Config $eavConfig
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute $eavResource
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory $attributeCollectionFactory
      * @param \Magento\Eav\Api\Data\AttributeSearchResultsInterfaceFactory $searchResultsFactory
      * @param Entity\AttributeFactory $attributeFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
-     * @param CollectionProcessorInterface $collectionProcessor
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -67,8 +62,7 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory $attributeCollectionFactory,
         \Magento\Eav\Api\Data\AttributeSearchResultsInterfaceFactory $searchResultsFactory,
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
-        CollectionProcessorInterface $collectionProcessor = null
+        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
     ) {
         $this->eavConfig = $eavConfig;
         $this->eavResource = $eavResource;
@@ -76,7 +70,6 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
         $this->searchResultsFactory = $searchResultsFactory;
         $this->attributeFactory = $attributeFactory;
         $this->joinProcessor = $joinProcessor;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -116,32 +109,40 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
             []
         );
         $entityType = $this->eavConfig->getEntityType($entityTypeCode);
-
         $additionalTable = $entityType->getAdditionalAttributeTable();
-        if ($additionalTable) {
-            $attributeCollection->join(
-                ['additional_table' => $attributeCollection->getTable($additionalTable)],
-                'main_table.attribute_id = additional_table.attribute_id',
-                []
+        $attributeCollection->join(
+            ['additional_table' => $attributeCollection->getTable($additionalTable)],
+            'main_table.attribute_id = additional_table.attribute_id',
+            []
+        );
+        //Add filters from root filter group to the collection
+        foreach ($searchCriteria->getFilterGroups() as $group) {
+            $this->addFilterGroupToCollection($group, $attributeCollection);
+        }
+        /** @var SortOrder $sortOrder */
+        foreach ((array)$searchCriteria->getSortOrders() as $sortOrder) {
+            $attributeCollection->addOrder(
+                $sortOrder->getField(),
+                ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
             );
         }
 
-        $this->collectionProcessor->process($searchCriteria, $attributeCollection);
+        $totalCount = $attributeCollection->getSize();
 
         // Group attributes by id to prevent duplicates with different attribute sets
         $attributeCollection->addAttributeGrouping();
+        $attributeCollection->setCurPage($searchCriteria->getCurrentPage());
+        $attributeCollection->setPageSize($searchCriteria->getPageSize());
 
         $attributes = [];
         /** @var \Magento\Eav\Api\Data\AttributeInterface $attribute */
         foreach ($attributeCollection as $attribute) {
             $attributes[] = $this->get($entityTypeCode, $attribute->getAttributeCode());
         }
-
-        /** @var \Magento\Eav\Api\Data\AttributeSearchResultsInterface $searchResults */
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($searchCriteria);
         $searchResults->setItems($attributes);
-        $searchResults->setTotalCount($attributeCollection->getSize());
+        $searchResults->setTotalCount($totalCount);
         return $searchResults;
     }
 
@@ -191,18 +192,24 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
     }
 
     /**
-     * Retrieve collection processor
+     * Helper function that adds a FilterGroup to the collection.
      *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
+     * @param \Magento\Framework\Api\Search\FilterGroup $filterGroup
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $collection
+     * @return void
+     * @throws \Magento\Framework\Exception\InputException
      */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                CollectionProcessor::class
+    private function addFilterGroupToCollection(
+        \Magento\Framework\Api\Search\FilterGroup $filterGroup,
+        Collection $collection
+    ) {
+        /** @var \Magento\Framework\Api\Search\FilterGroup $filter */
+        foreach ($filterGroup->getFilters() as $filter) {
+            $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+            $collection->addFieldToFilter(
+                $filter->getField(),
+                [$condition => $filter->getValue()]
             );
         }
-        return $this->collectionProcessor;
     }
 }

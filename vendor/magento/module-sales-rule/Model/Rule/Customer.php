@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Model\Rule;
@@ -8,6 +8,8 @@ namespace Magento\SalesRule\Model\Rule;
 /**
  * SalesRule Rule Customer Model
  *
+ * @method \Magento\SalesRule\Model\ResourceModel\Rule\Customer _getResource()
+ * @method \Magento\SalesRule\Model\ResourceModel\Rule\Customer getResource()
  * @method int getRuleId()
  * @method \Magento\SalesRule\Model\Rule\Customer setRuleId(int $value)
  * @method int getCustomerId()
@@ -27,7 +29,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(\Magento\SalesRule\Model\ResourceModel\Rule\Customer::class);
+        $this->_init('Magento\SalesRule\Model\ResourceModel\Rule\Customer');
     }
 
     /**

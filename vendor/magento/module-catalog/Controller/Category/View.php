@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Category;
@@ -125,7 +125,7 @@ class View extends \Magento\Framework\App\Action\Action
         } catch (NoSuchEntityException $e) {
             return false;
         }
-        if (!$this->_objectManager->get(\Magento\Catalog\Helper\Category::class)->canShow($category)) {
+        if (!$this->_objectManager->get('Magento\Catalog\Helper\Category')->canShow($category)) {
             return false;
         }
         $this->_catalogSession->setLastVisitedCategoryId($category->getId());
@@ -136,7 +136,7 @@ class View extends \Magento\Framework\App\Action\Action
                 ['category' => $category, 'controller_action' => $this]
             );
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             return false;
         }
 
@@ -183,17 +183,15 @@ class View extends \Magento\Framework\App\Action\Action
             if (!$hasChildren) {
                 // Two levels removed from parent.  Need to add default page type.
                 $parentType = strtok($type, '_');
-                $page->addPageLayoutHandles(['type' => $parentType], null, false);
+                $page->addPageLayoutHandles(['type' => $parentType]);
             }
-            $page->addPageLayoutHandles(['type' => $type], null, false);
-            $page->addPageLayoutHandles(['id' => $category->getId()]);
+            $page->addPageLayoutHandles(['type' => $type, 'id' => $category->getId()]);
 
             // apply custom layout update once layout is loaded
             $layoutUpdates = $settings->getLayoutUpdates();
             if ($layoutUpdates && is_array($layoutUpdates)) {
                 foreach ($layoutUpdates as $layoutUpdate) {
                     $page->addUpdate($layoutUpdate);
-                    $page->addPageLayoutHandles(['layout_update' => md5($layoutUpdate)], null, false);
                 }
             }
 

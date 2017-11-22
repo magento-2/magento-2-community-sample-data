@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\ResourceModel\Indexer;
-
-use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * Bundle products Price indexer resource model
@@ -15,11 +13,38 @@ use Magento\Catalog\Api\Data\ProductInterface;
 class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice
 {
     /**
-     * @inheritdoc
+     * Reindex temporary (price result data) for all products
+     *
+     * @return $this
+     * @throws \Exception
      */
-    protected function reindex($entityIds = null)
+    public function reindexAll()
+    {
+        $this->tableStrategy->setUseIdxTable(true);
+
+        $this->beginTransaction();
+        try {
+            $this->_prepareBundlePrice();
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Reindex temporary (price result data) for defined product(s)
+     *
+     * @param int|array $entityIds
+     * @return $this
+     */
+    public function reindexEntity($entityIds)
     {
         $this->_prepareBundlePrice($entityIds);
+
+        return $this;
     }
 
     /**
@@ -107,7 +132,7 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
             ['customer_group_id']
         );
         $this->_addWebsiteJoinToSelect($select, true);
-        $this->_addProductWebsiteJoinToSelect($select, 'cw.website_id', "e.entity_id");
+        $this->_addProductWebsiteJoinToSelect($select, 'cw.website_id', 'e.entity_id');
         $select->columns(
             'website_id',
             'cw'
@@ -130,10 +155,9 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
             '=?',
             \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
         );
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
-        $this->_addAttributeToSelect($select, 'status', "e.$linkField", 'cs.store_id', $statusCond, true);
+        $this->_addAttributeToSelect($select, 'status', 'e.entity_id', 'cs.store_id', $statusCond, true);
         if ($this->moduleManager->isEnabled('Magento_Tax')) {
-            $taxClassId = $this->_addAttributeToSelect($select, 'tax_class_id', "e.$linkField", 'cs.store_id');
+            $taxClassId = $this->_addAttributeToSelect($select, 'tax_class_id', 'e.entity_id', 'cs.store_id');
         } else {
             $taxClassId = new \Zend_Db_Expr('0');
         }
@@ -147,12 +171,12 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
         }
 
         $priceTypeCond = $connection->quoteInto('=?', $priceType);
-        $this->_addAttributeToSelect($select, 'price_type', "e.$linkField", 'cs.store_id', $priceTypeCond);
+        $this->_addAttributeToSelect($select, 'price_type', 'e.entity_id', 'cs.store_id', $priceTypeCond);
 
-        $price = $this->_addAttributeToSelect($select, 'price', "e.$linkField", 'cs.store_id');
-        $specialPrice = $this->_addAttributeToSelect($select, 'special_price', "e.$linkField", 'cs.store_id');
-        $specialFrom = $this->_addAttributeToSelect($select, 'special_from_date', "e.$linkField", 'cs.store_id');
-        $specialTo = $this->_addAttributeToSelect($select, 'special_to_date', "e.$linkField", 'cs.store_id');
+        $price = $this->_addAttributeToSelect($select, 'price', 'e.entity_id', 'cs.store_id');
+        $specialPrice = $this->_addAttributeToSelect($select, 'special_price', 'e.entity_id', 'cs.store_id');
+        $specialFrom = $this->_addAttributeToSelect($select, 'special_from_date', 'e.entity_id', 'cs.store_id');
+        $specialTo = $this->_addAttributeToSelect($select, 'special_to_date', 'e.entity_id', 'cs.store_id');
         $curentDate = new \Zend_Db_Expr('cwd.website_date');
 
         $specialExpr = $connection->getCheckSql(
@@ -377,17 +401,12 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
             );
         }
 
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         $select = $connection->select()->from(
             ['i' => $this->_getBundlePriceTable()],
             ['entity_id', 'customer_group_id', 'website_id']
         )->join(
-            ['parent_product' => $this->getTable('catalog_product_entity')],
-            'parent_product.entity_id = i.entity_id',
-            []
-        )->join(
             ['bo' => $this->getTable('catalog_product_bundle_option')],
-            "bo.parent_id = parent_product.$linkField",
+            'bo.parent_id = i.entity_id',
             ['option_id']
         )->join(
             ['bs' => $this->getTable('catalog_product_bundle_selection')],
@@ -457,14 +476,14 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
     protected function _prepareTierPriceIndex($entityIds = null)
     {
         $connection = $this->getConnection();
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
+
         // remove index by bundle products
         $select = $connection->select()->from(
             ['i' => $this->_getTierPriceIndexTable()],
             null
         )->join(
             ['e' => $this->getTable('catalog_product_entity')],
-            "i.entity_id=e.entity_id",
+            'i.entity_id=e.entity_id',
             []
         )->where(
             'e.type_id=?',
@@ -475,10 +494,10 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
 
         $select = $connection->select()->from(
             ['tp' => $this->getTable('catalog_product_entity_tier_price')],
-            ['e.entity_id']
+            ['entity_id']
         )->join(
             ['e' => $this->getTable('catalog_product_entity')],
-            "tp.{$linkField} = e.{$linkField}",
+            'tp.entity_id=e.entity_id',
             []
         )->join(
             ['cg' => $this->getTable('customer_group')],
@@ -496,11 +515,11 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
         )->columns(
             new \Zend_Db_Expr('MIN(tp.value)')
         )->group(
-            ['e.entity_id', 'cg.customer_group_id', 'cw.website_id']
+            ['tp.entity_id', 'cg.customer_group_id', 'cw.website_id']
         );
 
         if (!empty($entityIds)) {
-            $select->where('e.entity_id IN(?)', $entityIds);
+            $select->where('tp.entity_id IN(?)', $entityIds);
         }
 
         $query = $select->insertFromSelect($this->_getTierPriceIndexTable());

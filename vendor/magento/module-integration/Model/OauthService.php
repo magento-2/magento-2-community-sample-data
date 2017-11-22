@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Model;
@@ -103,7 +103,7 @@ class OauthService implements \Magento\Integration\Api\OauthServiceInterface
      *
      * @return \Magento\Framework\Stdlib\DateTime\DateTime
      *
-     * @deprecated 100.0.6
+     * @deprecated
      */
     private function getDateHelper()
     {
@@ -213,7 +213,7 @@ class OauthService implements \Magento\Integration\Api\OauthServiceInterface
     public function postToConsumer($consumerId, $endpointUrl)
     {
         try {
-            $consumer = $this->loadConsumer($consumerId);
+            $consumer = $this->_consumerFactory->create()->load($consumerId);
             $consumer->setUpdatedAt($this->getDateHelper()->gmtDate());
             $consumer->save();
             if (!$consumer->getId()) {

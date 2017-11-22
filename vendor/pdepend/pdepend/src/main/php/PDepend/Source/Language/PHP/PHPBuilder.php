@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -46,7 +46,6 @@ use PDepend\Source\AST\AbstractASTClassOrInterface;
 use PDepend\Source\AST\ASTArtifactList;
 use PDepend\Source\AST\ASTClass;
 use PDepend\Source\AST\ASTClassOrInterfaceReference;
-use PDepend\Source\AST\ASTClassReference;
 use PDepend\Source\AST\ASTCompilationUnit;
 use PDepend\Source\AST\ASTFunction;
 use PDepend\Source\AST\ASTInterface;
@@ -63,7 +62,7 @@ use PDepend\Util\Type;
 /**
  * Default code tree builder implementation.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 class PHPBuilder implements Builder
@@ -110,7 +109,7 @@ class PHPBuilder implements Builder
     /**
      * All generated {@link \PDepend\Source\AST\ASTTrait} objects
      *
-     * @var \PDepend\Source\AST\ASTTrait[]
+     * @var array
      */
     private $traits = array();
 
@@ -152,7 +151,7 @@ class PHPBuilder implements Builder
     /**
      * Cache of all traits created during the regular parsing process.
      *
-     * @var \PDepend\Source\AST\ASTTrait[]
+     * @var array
      */
     private $frozenTraits = array();
 
@@ -247,7 +246,7 @@ class PHPBuilder implements Builder
      * @param string $qualifiedName The full qualified trait name.
      *
      * @return \PDepend\Source\AST\ASTTrait
-     * @since 1.0.0
+     * @since  1.0.0
      */
     public function buildTrait($qualifiedName)
     {
@@ -358,18 +357,6 @@ class PHPBuilder implements Builder
     }
 
     /**
-     * Builds an anonymous class instance.
-     *
-     * @return \PDepend\Source\AST\ASTAnonymousClass
-     */
-    public function buildAnonymousClass()
-    {
-        return $this->buildAstNodeInstance('ASTAnonymousClass')
-            ->setCache($this->cache)
-            ->setContext($this->context);
-    }
-
-    /**
      * Builds a new code type reference instance.
      *
      * @param string $qualifiedName The qualified name of the referenced type.
@@ -386,7 +373,7 @@ class PHPBuilder implements Builder
             'Creating: \PDepend\Source\AST\ASTClassReference(' . $qualifiedName . ')'
         );
 
-        return new ASTClassReference($this->context, $qualifiedName);
+        return new \PDepend\Source\AST\ASTClassReference($this->context, $qualifiedName);
     }
 
     /**
@@ -695,13 +682,12 @@ class PHPBuilder implements Builder
     /**
      * Builds a new expression node.
      *
-     * @param string $image
      * @return \PDepend\Source\AST\ASTExpression
-     * @since 0.9.8
+     * @since  0.9.8
      */
-    public function buildAstExpression($image = null)
+    public function buildAstExpression()
     {
-        return $this->buildAstNodeInstance('ASTExpression', $image);
+        return $this->buildAstNodeInstance('ASTExpression');
     }
 
     /**
@@ -906,23 +892,6 @@ class PHPBuilder implements Builder
     public function buildAstConditionalExpression()
     {
         return $this->buildAstNodeInstance('ASTConditionalExpression', '?');
-    }
-
-    /**
-     * Builds a new print-expression.
-     *
-     * <code>
-     * -------------
-     * print "qafoo";
-     * -------------
-     * </code>
-     *
-     * @return \PDepend\Source\AST\ASTConditionalExpression
-     * @since 2.3
-     */
-    public function buildAstPrintExpression()
-    {
-        return $this->buildAstNodeInstance('ASTPrintExpression', 'print');
     }
 
     /**
@@ -2350,10 +2319,11 @@ class PHPBuilder implements Builder
     /**
      * Creates a {@link \PDepend\Source\AST\ASTNode} instance.
      *
-     * @param string $className
-     * @param string $image
+     * @param string $className Local name of the ast node class.
+     * @param string $image     Optional image for the created ast node.
+     *
      * @return \PDepend\Source\AST\ASTNode
-     * @since 0.9.12
+     * @since  0.9.12
      */
     private function buildAstNodeInstance($className, $image = null)
     {

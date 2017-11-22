@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Test\Unit\Model\Quote\Address\Total;
 
-class ShippingTest extends \PHPUnit\Framework\TestCase
+class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\Quote\Address\Total\Shipping
@@ -45,41 +45,49 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->freeShipping = $this->getMockForAbstractClass(
-            \Magento\Quote\Model\Quote\Address\FreeShippingInterface::class,
+            'Magento\Quote\Model\Quote\Address\FreeShippingInterface',
             [],
             '',
             false
         );
         $this->priceCurrency = $this->getMockForAbstractClass(
-            \Magento\Framework\Pricing\PriceCurrencyInterface::class,
+            'Magento\Framework\Pricing\PriceCurrencyInterface',
             [],
             '',
             false
         );
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->shippingModel = $objectManager->getObject(
-            \Magento\Quote\Model\Quote\Address\Total\Shipping::class,
+            'Magento\Quote\Model\Quote\Address\Total\Shipping',
             [
                 'freeShipping' => $this->freeShipping,
                 'priceCurrency' => $this->priceCurrency,
             ]
         );
 
-        $this->quote = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $this->total = $this->createPartialMock(\Magento\Quote\Model\Quote\Address\Total::class, [
+        $this->quote = $this->getMock('Magento\Quote\Model\Quote', [], [], '', false);
+        $this->total = $this->getMock(
+            'Magento\Quote\Model\Quote\Address\Total',
+            [
                 'setShippingAmount',
                 'setBaseShippingAmount',
                 'setBaseTotalAmount',
                 'setTotalAmount',
                 'setShippingDescription',
-            ]);
-        $this->shippingAssignment = $this->getMockForAbstractClass(
-            \Magento\Quote\Api\Data\ShippingAssignmentInterface::class,
+            ],
             [],
             '',
             false
         );
-        $this->address = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+        $this->shippingAssignment = $this->getMockForAbstractClass(
+            'Magento\Quote\Api\Data\ShippingAssignmentInterface',
+            [],
+            '',
+            false
+        );
+        $this->address = $this->getMock(
+            'Magento\Quote\Model\Quote\Address',
+            [
                 'setWeight',
                 'setFreeMethodWeight',
                 'getWeight',
@@ -91,15 +99,14 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
                 'setShippingDescription',
                 'getShippingDescription',
                 'getFreeShipping',
-            ]);
-        $this->shipping = $this->getMockForAbstractClass(
-            \Magento\Quote\Api\Data\ShippingInterface::class,
+            ],
             [],
             '',
             false
         );
+        $this->shipping = $this->getMockForAbstractClass('Magento\Quote\Api\Data\ShippingInterface', [], '', false);
         $this->cartItem = $this->getMockForAbstractClass(
-            \Magento\Quote\Api\Data\CartItemInterface::class,
+            'Magento\Quote\Api\Data\CartItemInterface',
             [],
             '',
             false,
@@ -116,11 +123,14 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
                 'setRowWeight',
             ]
         );
-        $this->rate = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\Address\Rate::class,
-            ['getPrice', 'getCode', 'getCarrierTitle', 'getMethodTitle']
+        $this->rate = $this->getMock(
+            'Magento\Quote\Model\Quote\Address\Rate',
+            ['getPrice', 'getCode', 'getCarrierTitle', 'getMethodTitle'],
+            [],
+            '',
+            false
         );
-        $this->store = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->store = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
     }
 
     public function testFetch()
@@ -133,10 +143,13 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
             'title' => __('Shipping & Handling (%1)', $shippingDescription)
         ];
 
-        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $totalMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\Address\Total::class,
-            ['getShippingAmount', 'getShippingDescription']
+        $quoteMock = $this->getMock('\Magento\Quote\Model\Quote', [], [], '', false);
+        $totalMock = $this->getMock(
+            '\Magento\Quote\Model\Quote\Address\Total',
+            ['getShippingAmount', 'getShippingDescription'],
+            [],
+            '',
+            false
         );
 
         $totalMock->expects($this->once())->method('getShippingAmount')->willReturn($shippingAmount);
@@ -162,9 +175,8 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
             ->method('isFreeShipping')
             ->with($this->quote, [$this->cartItem])
             ->willReturn(true);
-        $this->address->expects($this->once())
-            ->method('setFreeShipping')
-            ->with(true);
+        $this->address->expects($this->atLeastOnce())
+            ->method('setFreeShipping');
         $this->total->expects($this->atLeastOnce())
             ->method('setTotalAmount');
         $this->total->expects($this->atLeastOnce())
@@ -187,7 +199,9 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $this->cartItem->expects($this->atLeastOnce())
             ->method('getQty')
             ->willReturn(2);
-        $this->freeShippingAssertions();
+        $this->address->expects($this->atLeastOnce())
+            ->method('getFreeShipping')
+            ->willReturn(true);
         $this->cartItem->expects($this->once())
             ->method('setRowWeight')
             ->with(0);
@@ -239,18 +253,5 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
             ->with('Carrier title - Method title');
 
         $this->shippingModel->collect($this->quote, $this->shippingAssignment, $this->total);
-    }
-
-    protected function freeShippingAssertions()
-    {
-        $this->address->expects($this->at(0))
-            ->method('getFreeShipping')
-            ->willReturn(false);
-        $this->address->expects($this->at(1))
-            ->method('getFreeShipping')
-            ->willReturn(true);
-        $this->cartItem->expects($this->atLeastOnce())
-            ->method('getFreeShipping')
-            ->willReturn(true);
     }
 }

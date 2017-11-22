@@ -1,7 +1,4 @@
 <?php
-namespace Braintree;
-
-class Descriptor extends Instance
+class Braintree_Descriptor extends Braintree_Instance
 {
 }
-class_alias('Braintree\Descriptor', 'Braintree_Descriptor');

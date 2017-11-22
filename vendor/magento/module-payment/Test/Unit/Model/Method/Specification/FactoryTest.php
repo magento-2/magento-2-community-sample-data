@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Model\Method\Specification;
@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Model\Method\Specification;
 /**
  * Factory Test
  */
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -22,19 +22,19 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->factory = $objectManagerHelper->getObject(
-            \Magento\Payment\Model\Method\Specification\Factory::class,
+            'Magento\Payment\Model\Method\Specification\Factory',
             ['objectManager' => $this->objectManagerMock]
         );
     }
 
     public function testCreateMethod()
     {
-        $className = \Magento\Payment\Model\Method\SpecificationInterface::class;
-        $methodMock = $this->createMock($className);
+        $className = 'Magento\Payment\Model\Method\SpecificationInterface';
+        $methodMock = $this->getMock($className);
         $this->objectManagerMock->expects(
             $this->once()
         )->method(
@@ -55,7 +55,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function testWrongTypeException()
     {
         $className = 'WrongClass';
-        $methodMock = $this->createMock($className);
+        $methodMock = $this->getMock($className);
         $this->objectManagerMock->expects(
             $this->once()
         )->method(

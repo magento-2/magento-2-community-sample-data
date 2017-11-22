@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Convert\Test\Unit;
 
 use \Magento\Framework\Convert\ConvertArray;
 
-class ConvertArrayTest extends \PHPUnit\Framework\TestCase
+class ConvertArrayTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConvertArray

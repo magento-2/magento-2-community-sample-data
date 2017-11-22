@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module;
@@ -9,7 +9,7 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Setup\Model\ConfigGenerator;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
-class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
+class ConfigGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigGenerator
@@ -18,9 +18,9 @@ class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $random = $this->createMock(\Magento\Framework\Math\Random::class);
+        $random = $this->getMock('Magento\Framework\Math\Random', [], [], '', false);
         $random->expects($this->any())->method('getRandomString')->willReturn('key');
-        $deployConfig= $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deployConfig= $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deployConfig->expects($this->any())->method('isAvailable')->willReturn(false);
         $this->configGeneratorObject = new ConfigGenerator($random, $deployConfig);
     }
@@ -38,6 +38,16 @@ class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
         $returnValue = $this->configGeneratorObject->createCryptConfig([]);
         $this->assertEquals(ConfigFilePool::APP_ENV, $returnValue->getFileKey());
         $this->assertEquals(['crypt' => ['key' => md5('key')]], $returnValue->getData());
+    }
+
+    /**
+     * @deprecated
+     */
+    public function testCreateInstallConfig()
+    {
+        $returnValue = $this->configGeneratorObject->createInstallConfig([]);
+        $this->assertInstanceOf('Magento\Framework\Config\Data\ConfigData', $returnValue);
+        $this->assertEquals(ConfigFilePool::APP_ENV, $returnValue->getFileKey());
     }
 
     public function testCreateSessionConfigWithInput()
@@ -64,6 +74,14 @@ class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
         $returnValue = $this->configGeneratorObject->createSessionConfig([]);
         $this->assertEquals(ConfigFilePool::APP_ENV, $returnValue->getFileKey());
         $this->assertEquals([], $returnValue->getData());
+    }
+
+    public function testCreateDefinitionsConfig()
+    {
+        $testData = [ConfigOptionsListConstants::INPUT_KEY_DEFINITION_FORMAT => 'test-format'];
+        $returnValue = $this->configGeneratorObject->createDefinitionsConfig($testData);
+        $this->assertEquals(ConfigFilePool::APP_ENV, $returnValue->getFileKey());
+        $this->assertEquals(['definition' => ['format' => 'test-format']], $returnValue->getData());
     }
 
     public function testCreateDbConfig()

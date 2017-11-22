@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -64,7 +64,7 @@ class ToOrderAddress
         $this->dataObjectHelper->populateWithArray(
             $orderAddress,
             array_merge($orderAddressData, $data),
-            \Magento\Sales\Api\Data\OrderAddressInterface::class
+            '\Magento\Sales\Api\Data\OrderAddressInterface'
         );
 
         return $orderAddress;

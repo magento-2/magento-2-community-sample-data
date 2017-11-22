@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Test\Unit\Model\Indexer\Product;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ProductRuleIndexerTest extends \PHPUnit\Framework\TestCase
+class ProductRuleIndexerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\Indexer\IndexBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -26,16 +26,16 @@ class ProductRuleIndexerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->indexBuilder = $this->createMock(\Magento\CatalogRule\Model\Indexer\IndexBuilder::class);
+        $this->indexBuilder = $this->getMock('Magento\CatalogRule\Model\Indexer\IndexBuilder', [], [], '', false);
 
         $this->indexer = (new ObjectManager($this))->getObject(
-            \Magento\CatalogRule\Model\Indexer\Product\ProductRuleIndexer::class,
+            'Magento\CatalogRule\Model\Indexer\Product\ProductRuleIndexer',
             [
                 'indexBuilder' => $this->indexBuilder,
             ]
         );
 
-        $this->cacheContextMock = $this->createMock(\Magento\Framework\Indexer\CacheContext::class);
+        $this->cacheContextMock = $this->getMock(\Magento\Framework\Indexer\CacheContext::class, [], [], '', false);
 
         $cacheContextProperty = new \ReflectionProperty(
             \Magento\CatalogRule\Model\Indexer\Product\ProductRuleIndexer::class,

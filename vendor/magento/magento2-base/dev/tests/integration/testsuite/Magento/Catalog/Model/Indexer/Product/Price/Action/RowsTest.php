@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Product\Price\Action;
@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Price\Action;
 /**
  * Class RowsTest
  */
-class RowsTest extends \PHPUnit\Framework\TestCase
+class RowsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -23,10 +23,10 @@ class RowsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Indexer\Product\Price\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Price\Processor'
         );
     }
 
@@ -37,23 +37,15 @@ class RowsTest extends \PHPUnit\Framework\TestCase
      */
     public function testProductsUpdate()
     {
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Product::class
-        );
-        /** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $linkManagment */
-        $linkManagment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Api\CategoryLinkManagementInterface::class
-        );
-        $this->_product = $product->load(1);
-        $linkManagment->assignProductToCategories($this->_product->getSku(), [9]);
+        $this->_product->load(1);
+
         $this->_processor->reindexList([$this->_product->getId()]);
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(9);

@@ -1,18 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Category;
 
 use Magento\Framework\Indexer\CacheContext;
 
-/**
- * Category flat indexer
- *
- * @api
- * @since 100.0.2
- */
 class Flat implements \Magento\Framework\Indexer\ActionInterface, \Magento\Framework\Mview\ActionInterface
 {
     /**
@@ -109,8 +103,7 @@ class Flat implements \Magento\Framework\Indexer\ActionInterface, \Magento\Frame
      * Get cache context
      *
      * @return \Magento\Framework\Indexer\CacheContext
-     * @deprecated 100.0.11
-     * @since 100.0.11
+     * @deprecated
      */
     protected function getCacheContext()
     {

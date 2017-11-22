@@ -24,8 +24,7 @@ abstract class Rand
     protected static $generator = null;
 
     /**
-     * Generate random bytes using different approaches
-     * If PHP 7 is running we use the random_bytes() function
+     * Generate random bytes using OpenSSL or Mcrypt and mt_rand() as fallback
      *
      * @param  int $length
      * @param  bool $strong true if you need a strong random generator (cryptography)
@@ -40,8 +39,11 @@ abstract class Rand
             return false;
         }
 
-        if (function_exists('random_bytes')) { // available in PHP 7
-            return random_bytes($length);
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            $bytes = openssl_random_pseudo_bytes($length, $usable);
+            if (true === $usable) {
+                return $bytes;
+            }
         }
         if (function_exists('mcrypt_create_iv')) {
             $bytes = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
@@ -54,7 +56,7 @@ abstract class Rand
         if (true === $strong && false === $checkAlternatives) {
             throw new Exception\RuntimeException(
                 'This PHP environment doesn\'t support secure random number generation. ' .
-                'Please consider either installing ext/mcrypt or upgrading to PHP 7'
+                'Please consider installing the OpenSSL and/or Mcrypt extensions'
             );
         }
         $generator = self::getAlternativeGenerator();
@@ -73,8 +75,9 @@ abstract class Rand
         }
         if (!class_exists('RandomLib\\Factory')) {
             throw new Exception\RuntimeException(
-                'The RandomLib fallback pseudorandom generator is not installed. '.
-                'Please install it to support secure random numbers'
+                'The RandomLib fallback pseudorandom number generator (PRNG) '
+                . ' must be installed in the absence of the OpenSSL and '
+                . 'Mcrypt extensions'
             );
         }
         $factory = new RandomLib\Factory;
@@ -113,9 +116,6 @@ abstract class Rand
             throw new Exception\DomainException(
                 'The min parameter must be lower than max parameter'
             );
-        }
-        if (function_exists('random_int')) { // available in PHP 7
-            return random_int($min, $max);
         }
         $range = $max - $min;
         if ($range == 0) {

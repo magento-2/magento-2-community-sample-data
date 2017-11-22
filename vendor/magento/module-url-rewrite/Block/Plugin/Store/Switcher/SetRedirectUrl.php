@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\UrlRewrite\Block\Plugin\Store\Switcher;
@@ -14,24 +14,16 @@ use Magento\Framework\App\ActionInterface;
 
 class SetRedirectUrl
 {
-    /**
-     * @var \Magento\Framework\Url\Helper\Data
-     */
+    /** @var UrlHelper */
     private $urlHelper;
 
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
+    /** @var UrlInterface */
     private $urlBuilder;
 
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
-     */
+    /** @var UrlFinderInterface */
     private $urlFinder;
 
-    /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
+    /** @var RequestInterface */
     private $request;
 
     /**

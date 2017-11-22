@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -40,15 +40,11 @@ class AssertShipmentInShipmentsTab extends AbstractConstraint
         foreach ($ids['shipmentIds'] as $key => $shipmentId) {
             $filter = [
                 'id' => $shipmentId,
-                'qty_from' => number_format($totalQty[$key], 4, '.', ''),
-                'qty_to' => number_format($totalQty[$key], 4, '.', ''),
+                'qty_from' => $totalQty[$key],
+                'qty_to' => $totalQty[$key],
             ];
             \PHPUnit_Framework_Assert::assertTrue(
-                $salesOrderView
-                    ->getOrderForm()
-                    ->getTab('shipments')
-                    ->getGridBlock()
-                    ->isRowVisible($filter, true, false),
+                $salesOrderView->getOrderForm()->getTab('shipments')->getGridBlock()->isRowVisible($filter),
                 'Shipment is absent on shipments tab.'
             );
         }

@@ -1,17 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Downloadable\Model\Product\TypeHandler;
 
 use Magento\Catalog\Model\Product;
-use Magento\Downloadable\Helper\File;
 use Magento\Downloadable\Model\ComponentInterface;
-use Magento\Framework\Json\Helper\Data;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class AbstractTypeHandler
@@ -28,27 +24,22 @@ abstract class AbstractTypeHandler
     protected $deletedItems = [];
 
     /**
-     * @var Data
+     * @var \Magento\Framework\Json\Helper\Data
      */
     protected $jsonHelper;
 
     /**
-     * @var File
+     * @var \Magento\Downloadable\Helper\File
      */
     protected $downloadableFile;
 
     /**
-     * @var MetadataPool
-     */
-    protected $metadataPool;
-
-    /**
-     * @param Data $jsonHelper
-     * @param File $downloadableFile
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param \Magento\Downloadable\Helper\File $downloadableFile
      */
     public function __construct(
-        Data $jsonHelper,
-        File $downloadableFile
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \Magento\Downloadable\Helper\File $downloadableFile
     ) {
         $this->jsonHelper = $jsonHelper;
         $this->downloadableFile = $downloadableFile;
@@ -193,17 +184,5 @@ abstract class AbstractTypeHandler
     protected function clear()
     {
         $this->deletedItems = [];
-    }
-
-    /**
-     * Get MetadataPool instance
-     * @return MetadataPool
-     */
-    protected function getMetadataPool()
-    {
-        if (!$this->metadataPool) {
-            $this->metadataPool = ObjectManager::getInstance()->get(MetadataPool::class);
-        }
-        return $this->metadataPool;
     }
 }

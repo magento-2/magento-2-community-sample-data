@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Block\System\Config;
 
-class DwstreeTest extends \PHPUnit\Framework\TestCase
+class DwstreeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Block\System\Config\Dwstree
@@ -39,26 +39,26 @@ class DwstreeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->websiteMock = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+        $this->websiteMock = $this->getMockBuilder('Magento\Store\Model\Website')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->context = $objectManager->getObject(
-            \Magento\Backend\Block\Template\Context::class,
+            'Magento\Backend\Block\Template\Context',
             [
                 'request'      => $this->requestMock,
                 'storeManager' => $this->storeManagerMock,
@@ -66,7 +66,7 @@ class DwstreeTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->object = $objectManager->getObject(
-            \Magento\Config\Block\System\Config\Dwstree::class,
+            'Magento\Config\Block\System\Config\Dwstree',
             ['context' => $this->context]
         );
     }

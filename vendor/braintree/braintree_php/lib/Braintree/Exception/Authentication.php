@@ -1,18 +1,13 @@
 <?php
-namespace Braintree\Exception;
-
-use Braintree\Exception;
-
 /**
  * Raised when authentication fails.
- * This may be caused by an incorrect Configuration
+ * This may be caused by an incorrect Braintree_Configuration
  *
  * @package    Braintree
  * @subpackage Exception
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class Authentication extends Exception
+class Braintree_Exception_Authentication extends Braintree_Exception
 {
 
 }
-class_alias('Braintree\Exception\Authentication', 'Braintree_Exception_Authentication');

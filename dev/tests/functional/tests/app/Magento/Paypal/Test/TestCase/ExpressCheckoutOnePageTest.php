@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,16 +26,15 @@ use Magento\Mtf\TestCase\Scenario;
  * 5. Process checkout via PayPal.
  * 6. Perform asserts.
  *
- * @group PayPal
+ * @group PayPal_(CS)
  * @ZephyrId MAGETWO-12413, MAGETWO-14359, MAGETWO-12996
  */
 class ExpressCheckoutOnePageTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = '3rd_party_test';
-    const TO_MAINTAIN = 'yes';
-    const SEVERITY = 'S0';
     /* end tags */
 
     /**

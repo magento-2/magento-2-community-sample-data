@@ -1,18 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Api;
 
 use Magento\Downloadable\Api\Data\LinkInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * Interface LinkRepositoryInterface
  * @package Magento\Downloadable\Api
- * @api
- * @since 100.0.2
  */
 interface LinkRepositoryInterface
 {
@@ -30,7 +27,7 @@ interface LinkRepositoryInterface
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
      * @return \Magento\Downloadable\Api\Data\LinkInterface[]
      */
-    public function getLinksByProduct(ProductInterface $product);
+    public function getLinksByProduct(\Magento\Catalog\Api\Data\ProductInterface $product);
 
     /**
      * Update downloadable link of the given product (link type and its resources cannot be changed)

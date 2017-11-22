@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Block\Adminhtml\Product;
@@ -113,7 +113,7 @@ class Grid extends \Magento\Catalog\Block\Adminhtml\Product\Grid
                 'header' => __('Status'),
                 'index' => 'status',
                 'type' => 'options',
-                'source' => \Magento\Catalog\Model\Product\Attribute\Source\Status::class,
+                'source' => 'Magento\Catalog\Model\Product\Attribute\Source\Status',
                 'options' => $this->_status->getOptionArray()
             ]
         );

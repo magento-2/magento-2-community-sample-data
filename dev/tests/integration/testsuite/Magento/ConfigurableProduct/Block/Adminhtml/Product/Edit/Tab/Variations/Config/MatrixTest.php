@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variations\Config;
+
 
 /**
  * @magentoAppArea adminhtml
@@ -20,25 +21,25 @@ class MatrixTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
     public function testGetVariations()
     {
         $this->_objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->register(
             'current_product',
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                \Magento\Catalog\Model\Product::class
+                'Magento\Catalog\Model\Product'
             )->load(1)
         );
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Framework\View\Element\Text::class,
+            'Magento\Framework\View\Element\Text',
             'head'
         );
         /** @var $usedAttribute \Magento\Catalog\Model\Entity\Attribute */
         $usedAttribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Entity\Attribute::class
+            'Magento\Catalog\Model\Entity\Attribute'
         )->loadByCode(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Eav\Model\Config::class
+                'Magento\Eav\Model\Config'
             )->getEntityType(
                 'catalog_product'
             )->getId(),
@@ -47,7 +48,7 @@ class MatrixTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
         $attributeOptions = $usedAttribute->getSource()->getAllOptions(false);
         /** @var $block \Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variations\Config\Matrix */
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
             preg_replace('/Test$/', '', __CLASS__)
         );

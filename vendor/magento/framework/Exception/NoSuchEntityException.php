@@ -2,39 +2,28 @@
 /**
  * No such entity service exception
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Exception;
 
 use Magento\Framework\Phrase;
 
-/**
- * @api
- */
 class NoSuchEntityException extends LocalizedException
 {
-    /**
-     * @deprecated
-     */
     const MESSAGE_SINGLE_FIELD = 'No such entity with %fieldName = %fieldValue';
-
-    /**
-     * @deprecated
-     */
     const MESSAGE_DOUBLE_FIELDS = 'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value';
 
     /**
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception $cause
-     * @param int $code
      */
-    public function __construct(Phrase $phrase = null, \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase = null, \Exception $cause = null)
     {
         if ($phrase === null) {
             $phrase = new Phrase('No such entity.');
         }
-        parent::__construct($phrase, $cause, $code);
+        parent::__construct($phrase, $cause);
     }
 
     /**
@@ -48,7 +37,7 @@ class NoSuchEntityException extends LocalizedException
     {
         return new self(
             new Phrase(
-                'No such entity with %fieldName = %fieldValue',
+                self::MESSAGE_SINGLE_FIELD,
                 [
                     'fieldName' => $fieldName,
                     'fieldValue' => $fieldValue
@@ -70,7 +59,7 @@ class NoSuchEntityException extends LocalizedException
     {
         return new self(
             new Phrase(
-                'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value',
+                self::MESSAGE_DOUBLE_FIELDS,
                 [
                     'fieldName' => $fieldName,
                     'fieldValue' => $fieldValue,

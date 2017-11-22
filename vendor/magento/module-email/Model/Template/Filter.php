@@ -1,24 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Model\Template;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Filesystem;
-use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\View\Asset\ContentProcessorException;
 use Magento\Framework\View\Asset\ContentProcessorInterface;
 
 /**
  * Core Email Template Filter Model
  *
- * @api
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Filter extends \Magento\Framework\Filter\Template
 {
@@ -150,29 +145,13 @@ class Filter extends \Magento\Framework\Filter\Template
 
     /**
      * @var \Pelago\Emogrifier
-     * @deprecated 100.2.0
      */
     protected $emogrifier;
-
-    /**
-     * @var \Magento\Framework\Css\PreProcessor\Adapter\CssInliner
-     */
-    private $cssInliner;
 
     /**
      * @var \Magento\Email\Model\Source\Variables
      */
     protected $configVariables;
-
-    /**
-     * @var \Magento\Email\Model\Template\Css\Processor
-     */
-    private $cssProcessor;
-
-    /**
-     * @var ReadInterface
-     */
-    private $pubDirectory;
 
     /**
      * @param \Magento\Framework\Stdlib\StringUtils $string
@@ -189,7 +168,6 @@ class Filter extends \Magento\Framework\Filter\Template
      * @param \Pelago\Emogrifier $emogrifier
      * @param \Magento\Email\Model\Source\Variables $configVariables
      * @param array $variables
-     * @param \Magento\Framework\Css\PreProcessor\Adapter\CssInliner|null $cssInliner
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -207,8 +185,7 @@ class Filter extends \Magento\Framework\Filter\Template
         \Magento\Framework\UrlInterface $urlModel,
         \Pelago\Emogrifier $emogrifier,
         \Magento\Email\Model\Source\Variables $configVariables,
-        $variables = [],
-        \Magento\Framework\Css\PreProcessor\Adapter\CssInliner $cssInliner = null
+        $variables = []
     ) {
         $this->_escaper = $escaper;
         $this->_assetRepo = $assetRepo;
@@ -222,8 +199,6 @@ class Filter extends \Magento\Framework\Filter\Template
         $this->_appState = $appState;
         $this->urlModel = $urlModel;
         $this->emogrifier = $emogrifier;
-        $this->cssInliner = $cssInliner ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Css\PreProcessor\Adapter\CssInliner::class);
         $this->configVariables = $configVariables;
         parent::__construct($string, $variables);
     }
@@ -321,31 +296,6 @@ class Filter extends \Magento\Framework\Filter\Template
     }
 
     /**
-     * @deprecated 100.1.2
-     * @return Css\Processor
-     */
-    private function getCssProcessor()
-    {
-        if (!$this->cssProcessor) {
-            $this->cssProcessor = ObjectManager::getInstance()->get(Css\Processor::class);
-        }
-        return $this->cssProcessor;
-    }
-
-    /**
-     * @deprecated 100.1.2
-     * @param string $dirType
-     * @return ReadInterface
-     */
-    private function getPubDirectory($dirType)
-    {
-        if (!$this->pubDirectory) {
-            $this->pubDirectory = ObjectManager::getInstance()->get(Filesystem::class)->getDirectoryRead($dirType);
-        }
-        return $this->pubDirectory;
-    }
-
-    /**
      * Get design parameters
      *
      * @return array
@@ -385,7 +335,7 @@ class Filter extends \Magento\Framework\Filter\Template
         if (isset($blockParameters['class'])) {
             $block = $this->_layout->createBlock($blockParameters['class'], null, ['data' => $blockParameters]);
         } elseif (isset($blockParameters['id'])) {
-            $block = $this->_layout->createBlock(\Magento\Cms\Block\Block::class);
+            $block = $this->_layout->createBlock('Magento\Cms\Block\Block');
             if ($block) {
                 $block->setBlockId($blockParameters['id']);
             }
@@ -838,9 +788,7 @@ class Filter extends \Magento\Framework\Filter\Template
             return '/* ' . __('"file" parameter must be specified') . ' */';
         }
 
-        $css = $this->getCssProcessor()->process(
-            $this->getCssFilesContent([$params['file']])
-        );
+        $css = $this->getCssFilesContent([$params['file']]);
 
         if (strpos($css, ContentProcessorInterface::ERROR_MESSAGE_PREFIX) !== false) {
             // Return compilation error wrapped in CSS comment
@@ -941,17 +889,10 @@ class Filter extends \Magento\Framework\Filter\Template
         try {
             foreach ($files as $file) {
                 $asset = $this->_assetRepo->createAsset($file, $designParams);
-                $pubDirectory = $this->getPubDirectory($asset->getContext()->getBaseDirType());
-                if ($pubDirectory->isExist($asset->getPath())) {
-                    $css .= $pubDirectory->readFile($asset->getPath());
-                } else {
-                    $css .= $asset->getContent();
-                }
+                $css .= $asset->getContent();
             }
         } catch (ContentProcessorException $exception) {
             $css = $exception->getMessage();
-        } catch (\Magento\Framework\View\Asset\File\NotFoundException $exception) {
-            $css = '';
         }
 
         return $css;
@@ -971,8 +912,6 @@ class Filter extends \Magento\Framework\Filter\Template
         $cssToInline = $this->getCssFilesContent(
             $this->getInlineCssFiles()
         );
-        $cssToInline = $this->getCssProcessor()->process($cssToInline);
-
         // Only run Emogrify if HTML and CSS contain content
         if ($html && $cssToInline) {
             try {
@@ -985,14 +924,14 @@ class Filter extends \Magento\Framework\Filter\Template
                     );
                 }
 
-                $this->cssInliner->setHtml($html);
-
-                $this->cssInliner->setCss($cssToInline);
+                $emogrifier = $this->emogrifier;
+                $emogrifier->setHtml($html);
+                $emogrifier->setCss($cssToInline);
 
                 // Don't parse inline <style> tags, since existing tag is intentionally for non-inline styles
-                $this->cssInliner->disableStyleBlocksParsing();
+                $emogrifier->disableStyleBlocksParsing();
 
-                $processedHtml = $this->cssInliner->process();
+                $processedHtml = $emogrifier->emogrify();
             } catch (\Exception $e) {
                 if ($this->_appState->getMode() == \Magento\Framework\App\State::MODE_DEVELOPER) {
                     $processedHtml = __('CSS inlining error:') . PHP_EOL . $e->getMessage()

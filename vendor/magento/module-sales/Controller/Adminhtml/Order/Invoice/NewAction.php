@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order\Invoice;
@@ -14,9 +14,7 @@ use Magento\Sales\Model\Service\InvoiceService;
 class NewAction extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_invoice';
 
@@ -80,7 +78,7 @@ class NewAction extends \Magento\Backend\App\Action
 
         try {
             /** @var \Magento\Sales\Model\Order $order */
-            $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class)->load($orderId);
+            $order = $this->_objectManager->create('Magento\Sales\Model\Order')->load($orderId);
             if (!$order->getId()) {
                 throw new \Magento\Framework\Exception\LocalizedException(__('The order no longer exists.'));
             }
@@ -99,7 +97,7 @@ class NewAction extends \Magento\Backend\App\Action
             }
             $this->registry->register('current_invoice', $invoice);
 
-            $comment = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getCommentText(true);
+            $comment = $this->_objectManager->get('Magento\Backend\Model\Session')->getCommentText(true);
             if ($comment) {
                 $invoice->setCommentText($comment);
             }

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Shipment\AbstractShipment;
@@ -15,9 +15,7 @@ use Magento\Backend\Model\View\Result\ForwardFactory;
 abstract class PrintAction extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -53,16 +51,14 @@ abstract class PrintAction extends \Magento\Backend\App\Action
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if ($shipmentId) {
-            $shipment = $this->_objectManager->create(\Magento\Sales\Model\Order\Shipment::class)->load($shipmentId);
+            $shipment = $this->_objectManager->create('Magento\Sales\Model\Order\Shipment')->load($shipmentId);
             if ($shipment) {
                 $pdf = $this->_objectManager->create(
-                    \Magento\Sales\Model\Order\Pdf\Shipment::class
+                    'Magento\Sales\Model\Order\Pdf\Shipment'
                 )->getPdf(
                     [$shipment]
                 );
-                $date = $this->_objectManager->get(
-                    \Magento\Framework\Stdlib\DateTime\DateTime::class
-                )->date('Y-m-d_H-i-s');
+                $date = $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime')->date('Y-m-d_H-i-s');
                 return $this->_fileFactory->create(
                     'packingslip' . $date . '.pdf',
                     $pdf->render(),

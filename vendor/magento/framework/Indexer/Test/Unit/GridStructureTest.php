@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Indexer\Test\Unit;
@@ -9,7 +9,7 @@ use Magento\Framework\Indexer\GridStructure;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 
-class GridStructureTest extends \PHPUnit\Framework\TestCase
+class GridStructureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
@@ -31,16 +31,14 @@ class GridStructureTest extends \PHPUnit\Framework\TestCase
      */
     protected $object;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->connection = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->getMock();
-        $this->resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resource = $this->getMockBuilder('Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->flatScopeResolver = $this->getMockBuilder(
-            \Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver::class
-        )
+        $this->flatScopeResolver = $this->getMockBuilder('Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver')
             ->disableOriginalConstructor()
             ->getMock();
         $this->resource->expects($this->any())
@@ -86,7 +84,7 @@ class GridStructureTest extends \PHPUnit\Framework\TestCase
         $tableName = 'index_table';
         $idxName = 'idxName';
 
-        $table = $this->getMockBuilder(\Magento\Framework\DB\Ddl\Table::class)
+        $table = $this->getMockBuilder('Magento\Framework\DB\Ddl\Table')
             ->disableOriginalConstructor()
             ->getMock();
         $this->flatScopeResolver->expects($this->once())

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,8 +25,8 @@ class Curl extends Conditions implements CmsPageInterface
      */
     protected $mappingData = [
         'is_active' => [
-            'Yes' => 1,
-            'No' => 0,
+            'Enabled' => 1,
+            'Disabled' => 0,
         ],
         'store_id' => [
             'All Store Views' => 0,

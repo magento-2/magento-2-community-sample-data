@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,13 +29,13 @@ class SoldTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Report\Ab
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->sold = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\Sold::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\Sold',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,
@@ -49,7 +49,7 @@ class SoldTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Report\Ab
      */
     public function testExecute()
     {
-        $titleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $titleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @since 0.9.20
  */
@@ -54,11 +54,11 @@ use PDepend\Source\Tokenizer\Tokens;
  * constructs and keywords that are reserved in newer php versions, but not in
  * older versions.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @since 0.9.20
  */
-class PHPParserGeneric extends PHPParserVersion71
+class PHPParserGeneric extends PHPParserVersion70
 {
     /**
      * Tests if the given token type is a reserved keyword in the supported PHP
@@ -171,7 +171,7 @@ class PHPParserGeneric extends PHPParserVersion71
      * @return \PDepend\Source\AST\ASTValue
      * @throws \PDepend\Source\Parser\UnexpectedTokenException
      * @todo Handle shift left/right expressions in ASTValue
-     */ /*
+     */
     protected function parseStaticValueVersionSpecific(ASTValue $value)
     {
         switch ($this->tokenizer->peek()) {
@@ -191,7 +191,36 @@ class PHPParserGeneric extends PHPParserVersion71
         }
 
         return $value;
-    }*/
+    }
+
+    /**
+     * This method will parse a formal parameter. A formal parameter is at least
+     * a variable name, but can also contain a default parameter value.
+     *
+     * <code>
+     * //               --  -------
+     * function foo(Bar $x, $y = 42) {}
+     * //               --  -------
+     * </code>
+     *
+     * @return \PDepend\Source\AST\ASTFormalParameter
+     * @since 2.0.7
+     */
+    protected function parseFormalParameter()
+    {
+        $parameter = $this->builder->buildAstFormalParameter();
+
+        if (Tokens::T_ELLIPSIS === $this->tokenizer->peek()) {
+            $this->consumeToken(Tokens::T_ELLIPSIS);
+            $this->consumeComments();
+
+            $parameter->setVariableArgList();
+        }
+
+        $parameter->addChild($this->parseVariableDeclarator());
+
+        return $parameter;
+    }
 
     /**
      * Parses constant default values as they are supported by the most recent

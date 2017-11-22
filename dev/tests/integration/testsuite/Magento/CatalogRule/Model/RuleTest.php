@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Model;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\Rule
@@ -18,9 +18,12 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $resourceMock = $this->createPartialMock(
-            \Magento\CatalogRule\Model\ResourceModel\Rule::class,
-            ['getIdFieldName', 'getRulesFromProduct']
+        $resourceMock = $this->getMock(
+            'Magento\CatalogRule\Model\ResourceModel\Rule',
+            ['getIdFieldName', 'getRulesFromProduct'],
+            [],
+            '',
+            false
         );
         $resourceMock->expects($this->any())->method('getIdFieldName')->will($this->returnValue('id'));
         $resourceMock->expects(
@@ -32,7 +35,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_object = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\CatalogRule\Model\Rule::class,
+            'Magento\CatalogRule\Model\Rule',
             ['resource' => $resourceMock]
         );
     }
@@ -44,11 +47,11 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     public function testCalcProductPriceRule()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertEquals($this->_object->calcProductPriceRule($product, 100), 45);
         $product->setParentId(true);
-        $this->assertEquals($this->_object->calcProductPriceRule($product, 50), 50);
+        $this->assertEquals($this->_object->calcProductPriceRule($product, 50), 5);
     }
 
     /**
@@ -61,12 +64,16 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'action_operator' => 'by_percent',
-                'action_amount' => '50.0000',
-                'action_stop' => '0'
+                'action_amount' => '10.0000',
+                'sub_simple_action' => 'by_percent',
+                'sub_discount_amount' => '90.0000',
+                'action_stop' => '0',
             ],
             [
                 'action_operator' => 'by_percent',
-                'action_amount' => '10.0000',
+                'action_amount' => '50.0000',
+                'sub_simple_action' => '',
+                'sub_discount_amount' => '0.0000',
                 'action_stop' => '0'
             ]
         ];

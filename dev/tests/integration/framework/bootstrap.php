@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 use Magento\Framework\Autoload\AutoloaderRegistry;
@@ -16,24 +16,18 @@ if (!defined('TESTS_TEMP_DIR')) {
 }
 
 $testFrameworkDir = __DIR__;
-require_once 'deployTestModules.php';
+require_once __DIR__ . '/deployTestModules.php';
 
 try {
-    setCustomErrorHandler();
-
     /* Bootstrap the application */
     $settings = new \Magento\TestFramework\Bootstrap\Settings($testsBaseDir, get_defined_constants());
 
     if ($settings->get('TESTS_EXTRA_VERBOSE_LOG')) {
-        $filesystem = new \Magento\Framework\Filesystem\Driver\File();
-        $exceptionHandler = new \Magento\Framework\Logger\Handler\Exception($filesystem);
-        $loggerHandlers = [
-            'system'    => new \Magento\Framework\Logger\Handler\System($filesystem, $exceptionHandler),
-            'debug'     => new \Magento\Framework\Logger\Handler\Debug($filesystem)
-        ];
+        $logWriter = new \Zend_Log_Writer_Stream('php://output');
+        $logWriter->setFormatter(new \Zend_Log_Formatter_Simple('%message%' . PHP_EOL));
         $shell = new \Magento\Framework\Shell(
             new \Magento\Framework\Shell\CommandRenderer(),
-            new \Monolog\Logger('main', $loggerHandlers)
+            new \Zend_Log($logWriter)
         );
     } else {
         $shell = new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer());
@@ -81,9 +75,9 @@ try {
     \Magento\TestFramework\Helper\Bootstrap::setInstance(new \Magento\TestFramework\Helper\Bootstrap($bootstrap));
 
     $dirSearch = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-        ->create(\Magento\Framework\Component\DirSearch::class);
+        ->create('Magento\Framework\Component\DirSearch');
     $themePackageList = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-        ->create(\Magento\Framework\View\Design\Theme\ThemePackageList::class);
+        ->create('Magento\Framework\View\Design\Theme\ThemePackageList');
     \Magento\Framework\App\Utility\Files::setInstance(
         new Magento\Framework\App\Utility\Files(
             new \Magento\Framework\Component\ComponentRegistrar(),
@@ -97,41 +91,4 @@ try {
 } catch (\Exception $e) {
     echo $e . PHP_EOL;
     exit(1);
-}
-
-/**
- * Set custom error handler
- */
-function setCustomErrorHandler()
-{
-    set_error_handler(
-        function ($errNo, $errStr, $errFile, $errLine) {
-            if (error_reporting()) {
-                $errorNames = [
-                    E_ERROR => 'Error',
-                    E_WARNING => 'Warning',
-                    E_PARSE => 'Parse',
-                    E_NOTICE => 'Notice',
-                    E_CORE_ERROR => 'Core Error',
-                    E_CORE_WARNING => 'Core Warning',
-                    E_COMPILE_ERROR => 'Compile Error',
-                    E_COMPILE_WARNING => 'Compile Warning',
-                    E_USER_ERROR => 'User Error',
-                    E_USER_WARNING => 'User Warning',
-                    E_USER_NOTICE => 'User Notice',
-                    E_STRICT => 'Strict',
-                    E_RECOVERABLE_ERROR => 'Recoverable Error',
-                    E_DEPRECATED => 'Deprecated',
-                    E_USER_DEPRECATED => 'User Deprecated',
-                ];
-
-                $errName = isset($errorNames[$errNo]) ? $errorNames[$errNo] : "";
-
-                throw new \PHPUnit\Framework\Exception(
-                    sprintf("%s: %s in %s:%s.", $errName, $errStr, $errFile, $errLine),
-                    $errNo
-                );
-            }
-        }
-    );
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,13 +27,13 @@ class ExportLowstockExcelTest extends \Magento\Reports\Test\Unit\Controller\Admi
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->exportLowstockExcel = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\ExportLowstockExcel::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\ExportLowstockExcel',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,

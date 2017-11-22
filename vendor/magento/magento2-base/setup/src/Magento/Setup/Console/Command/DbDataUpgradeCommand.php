@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -62,8 +62,7 @@ class DbDataUpgradeCommand extends AbstractSetupCommand
     {
         if (!$this->deploymentConfig->isAvailable()) {
             $output->writeln("<info>No information is available: the Magento application is not installed.</info>");
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         $installer = $this->installFactory->create(new ConsoleLogger($output));
         $installer->installDataFixtures();

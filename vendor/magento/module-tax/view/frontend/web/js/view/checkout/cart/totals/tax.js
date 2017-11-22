@@ -1,45 +1,44 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+define(
+    [
+        'Magento_Tax/js/view/checkout/summary/tax',
+        'Magento_Checkout/js/model/totals'
+    ],
+    function (Component, totals) {
+        'use strict';
 
-/**
- * @api
- */
+        var isFullTaxSummaryDisplayed = window.checkoutConfig.isFullTaxSummaryDisplayed,
+            isZeroTaxDisplayed = window.checkoutConfig.isZeroTaxDisplayed;
 
-define([
-    'Magento_Tax/js/view/checkout/summary/tax',
-    'Magento_Checkout/js/model/totals'
-], function (Component, totals) {
-    'use strict';
+        return Component.extend({
 
-    var isFullTaxSummaryDisplayed = window.checkoutConfig.isFullTaxSummaryDisplayed,
-        isZeroTaxDisplayed = window.checkoutConfig.isZeroTaxDisplayed;
+            /**
+             * @override
+             */
+            ifShowValue: function () {
+                if (this.getPureValue() === 0) {
+                    return isZeroTaxDisplayed;
+                }
 
-    return Component.extend({
-        /**
-         * @override
-         */
-        ifShowValue: function () {
-            if (this.getPureValue() === 0) {
-                return isZeroTaxDisplayed;
+                return true;
+            },
+
+            /**
+             * @override
+             */
+            ifShowDetails: function () {
+                return this.getPureValue() > 0 && isFullTaxSummaryDisplayed;
+            },
+
+            /**
+             * @override
+             */
+            isCalculated: function () {
+                return this.totals() && totals.getSegment('tax') !== null;
             }
-
-            return true;
-        },
-
-        /**
-         * @override
-         */
-        ifShowDetails: function () {
-            return this.getPureValue() > 0 && isFullTaxSummaryDisplayed;
-        },
-
-        /**
-         * @override
-         */
-        isCalculated: function () {
-            return this.totals() && totals.getSegment('tax') !== null;
-        }
-    });
-});
+        });
+    }
+);

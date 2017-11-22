@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Asset;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\State;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Class LockerProcess
@@ -83,7 +83,7 @@ class LockerProcess implements LockerProcessInterface
     public function unlockProcess()
     {
         if ($this->getState()->getMode() == State::MODE_PRODUCTION) {
-            return;
+            return ;
         }
 
         $this->tmpDirectory->delete($this->lockFilePath);
@@ -105,6 +105,7 @@ class LockerProcess implements LockerProcessInterface
                     return false;
                 }
             } catch (FileSystemException $e) {
+
                 return false;
             }
 
@@ -127,7 +128,7 @@ class LockerProcess implements LockerProcessInterface
 
     /**
      * @return State
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getState()
     {

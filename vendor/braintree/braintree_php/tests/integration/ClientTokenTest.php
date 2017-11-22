@@ -1,164 +1,159 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
+require_once realpath(dirname(__FILE__)) . '/HttpClientApi.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test;
-use Test\Setup;
-use Braintree;
-
-class ClientTokenTest extends Setup
+class Braintree_ClientTokenTest extends PHPUnit_Framework_TestCase
 {
-    public function test_ClientTokenAuthorizesRequest()
+    function test_ClientTokenAuthorizesRequest()
     {
-        $clientToken = Test\Helper::decodedClientToken();
+        $clientToken = Braintree_TestHelper::decodedClientToken();
         $authorizationFingerprint = json_decode($clientToken)->authorizationFingerprint;
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $response = $http->get_cards([
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $response = $http->get_cards(array(
             "authorization_fingerprint" => $authorizationFingerprint,
             "shared_customer_identifier" => "fake_identifier",
-            "shared_customer_identifier_type" => "testing",
-        ]);
+            "shared_customer_identifier_type" => "testing"
+        ));
 
         $this->assertEquals(200, $response["status"]);
     }
 
-    public function test_VersionOptionSupported()
+    function test_VersionOptionSupported()
     {
-        $clientToken = Braintree\ClientToken::generate(["version" => 1]);
+        $clientToken = Braintree_ClientToken::generate(array("version" => 1));
         $version = json_decode($clientToken)->version;
         $this->assertEquals(1, $version);
     }
 
-    public function test_VersionDefaultsToTwo()
+    function test_VersionDefaultsToTwo()
     {
-        $encodedClientToken = Braintree\ClientToken::generate();
+        $encodedClientToken = Braintree_ClientToken::generate();
         $clientToken = base64_decode($encodedClientToken);
         $version = json_decode($clientToken)->version;
         $this->assertEquals(2, $version);
     }
 
-    public function testGateway_VersionDefaultsToTwo()
+    function testGateway_VersionDefaultsToTwo()
     {
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
-            'privateKey' => 'integration_private_key',
-        ]);
+            'privateKey' => 'integration_private_key'
+        ));
         $encodedClientToken = $gateway->clientToken()->generate();
         $clientToken = base64_decode($encodedClientToken);
         $version = json_decode($clientToken)->version;
         $this->assertEquals(2, $version);
     }
 
-    public function test_GatewayRespectsVerifyCard()
+    function test_GatewayRespectsVerifyCard()
     {
-        $result = Braintree\Customer::create();
+        $result = Braintree_Customer::create();
         $this->assertTrue($result->success);
         $customerId = $result->customer->id;
 
-        $clientToken = Test\Helper::decodedClientToken([
+        $clientToken = Braintree_TestHelper::decodedClientToken(array(
             "customerId" => $customerId,
-            "options" => [
+            "options" => array(
                 "verifyCard" => true
-            ]
-        ]);
+            )
+        ));
         $authorizationFingerprint = json_decode($clientToken)->authorizationFingerprint;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode([
-            "credit_card" => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode(array(
+            "credit_card" => array(
                 "number" => "4000111111111115",
                 "expirationDate" => "11/2099"
-            ],
+            ),
             "authorization_fingerprint" => $authorizationFingerprint,
             "shared_customer_identifier" => "fake_identifier",
             "shared_customer_identifier_type" => "testing"
-        ]));
+        )));
 
         $this->assertEquals(422, $response["status"]);
     }
 
-    public function test_GatewayRespectsFailOnDuplicatePaymentMethod()
+    function test_GatewayRespectsFailOnDuplicatePaymentMethod()
     {
-        $result = Braintree\Customer::create();
+        $result = Braintree_Customer::create();
         $this->assertTrue($result->success);
         $customerId = $result->customer->id;
 
-        $clientToken = Test\Helper::decodedClientToken([
+        $clientToken = Braintree_TestHelper::decodedClientToken(array(
             "customerId" => $customerId,
-        ]);
+        ));
         $authorizationFingerprint = json_decode($clientToken)->authorizationFingerprint;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode([
-            "credit_card" => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode(array(
+            "credit_card" => array(
                 "number" => "4242424242424242",
                 "expirationDate" => "11/2099"
-            ],
+            ),
             "authorization_fingerprint" => $authorizationFingerprint,
             "shared_customer_identifier" => "fake_identifier",
             "shared_customer_identifier_type" => "testing"
-        ]));
+        )));
         $this->assertEquals(201, $response["status"]);
 
-        $clientToken = Test\Helper::decodedClientToken([
+        $clientToken = Braintree_TestHelper::decodedClientToken(array(
             "customerId" => $customerId,
-            "options" => [
+            "options" => array(
                 "failOnDuplicatePaymentMethod" => true
-            ]
-        ]);
+            )
+        ));
         $authorizationFingerprint = json_decode($clientToken)->authorizationFingerprint;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode([
-            "credit_card" => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode(array(
+            "credit_card" => array(
                 "number" => "4242424242424242",
                 "expirationDate" => "11/2099"
-            ],
+            ),
             "authorization_fingerprint" => $authorizationFingerprint,
             "shared_customer_identifier" => "fake_identifier",
             "shared_customer_identifier_type" => "testing"
-        ]));
+        )));
         $this->assertEquals(422, $response["status"]);
     }
 
-    public function test_GatewayRespectsMakeDefault()
+    function test_GatewayRespectsMakeDefault()
     {
-        $result = Braintree\Customer::create();
+        $result = Braintree_Customer::create();
         $this->assertTrue($result->success);
         $customerId = $result->customer->id;
 
-        $result = Braintree\CreditCard::create([
+        $result = Braintree_CreditCard::create(array(
             'customerId' => $customerId,
             'number' => '4111111111111111',
             'expirationDate' => '11/2099'
-        ]);
+        ));
         $this->assertTrue($result->success);
 
-        $clientToken = Test\Helper::decodedClientToken([
+        $clientToken = Braintree_TestHelper::decodedClientToken(array(
             "customerId" => $customerId,
-            "options" => [
+            "options" => array(
                 "makeDefault" => true
-            ]
-        ]);
+            )
+        ));
         $authorizationFingerprint = json_decode($clientToken)->authorizationFingerprint;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode([
-            "credit_card" => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $response = $http->post('/client_api/v1/payment_methods/credit_cards.json', json_encode(array(
+            "credit_card" => array(
                 "number" => "4242424242424242",
                 "expirationDate" => "11/2099"
-            ],
+            ),
             "authorization_fingerprint" => $authorizationFingerprint,
             "shared_customer_identifier" => "fake_identifier",
             "shared_customer_identifier_type" => "testing"
-        ]));
+        )));
 
         $this->assertEquals(201, $response["status"]);
 
-        $customer = Braintree\Customer::find($customerId);
+        $customer = Braintree_Customer::find($customerId);
         $this->assertEquals(2, count($customer->creditCards));
         foreach ($customer->creditCards as $creditCard) {
             if ($creditCard->last4 == "4242") {
@@ -167,22 +162,22 @@ class ClientTokenTest extends Setup
         }
     }
 
-    public function test_ClientTokenAcceptsMerchantAccountId()
+    function test_ClientTokenAcceptsMerchantAccountId()
     {
-        $clientToken = Test\Helper::decodedClientToken([
+        $clientToken = Braintree_TestHelper::decodedClientToken(array(
             'merchantAccountId' => 'my_merchant_account'
-        ]);
+        ));
         $merchantAccountId = json_decode($clientToken)->merchantAccountId;
 
         $this->assertEquals('my_merchant_account', $merchantAccountId);
     }
 
-    public function test_GenerateRaisesExceptionOnGateway422()
+    function test_GenerateRaisesExceptionOnGateway422()
     {
         $this->setExpectedException('InvalidArgumentException', 'customer_id');
 
-        Braintree\ClientToken::generate([
+        Braintree_ClientToken::generate(array(
             "customerId" => "not_a_customer"
-        ]);
+        ));
     }
 }

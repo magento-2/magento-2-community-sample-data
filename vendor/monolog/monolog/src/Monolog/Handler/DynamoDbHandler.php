@@ -11,9 +11,8 @@
 
 namespace Monolog\Handler;
 
-use Aws\Sdk;
+use Aws\Common\Aws;
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\DynamoDb\Marshaler;
 use Monolog\Formatter\ScalarFormatter;
 use Monolog\Logger;
 
@@ -38,28 +37,15 @@ class DynamoDbHandler extends AbstractProcessingHandler
     protected $table;
 
     /**
-     * @var int
-     */
-    protected $version;
-
-    /**
-     * @var Marshaler
-     */
-    protected $marshaler;
-
-    /**
      * @param DynamoDbClient $client
      * @param string         $table
-     * @param int            $level
-     * @param bool           $bubble
+     * @param integer        $level
+     * @param boolean        $bubble
      */
     public function __construct(DynamoDbClient $client, $table, $level = Logger::DEBUG, $bubble = true)
     {
-        if (defined('Aws\Sdk::VERSION') && version_compare(Sdk::VERSION, '3.0', '>=')) {
-            $this->version = 3;
-            $this->marshaler = new Marshaler;
-        } else {
-            $this->version = 2;
+        if (!defined('Aws\Common\Aws::VERSION') || version_compare('3.0', Aws::VERSION, '<=')) {
+            throw new \RuntimeException('The DynamoDbHandler is only known to work with the AWS SDK 2.x releases');
         }
 
         $this->client = $client;
@@ -74,15 +60,11 @@ class DynamoDbHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         $filtered = $this->filterEmptyFields($record['formatted']);
-        if ($this->version === 3) {
-            $formatted = $this->marshaler->marshalItem($filtered);
-        } else {
-            $formatted = $this->client->formatAttributes($filtered);
-        }
+        $formatted = $this->client->formatAttributes($filtered);
 
         $this->client->putItem(array(
             'TableName' => $this->table,
-            'Item' => $formatted,
+            'Item' => $formatted
         ));
     }
 

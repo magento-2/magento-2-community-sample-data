@@ -1,18 +1,15 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
+/** 
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Eav\Test\Unit\Model\ResourceModel\Entity\Attribute;
 
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SetTest extends \PHPUnit\Framework\TestCase
+ 
+class SetTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Set
@@ -50,27 +47,25 @@ class SetTest extends \PHPUnit\Framework\TestCase
     protected $relationProcessor;
 
     /**
-     * @var Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->setMethods(['getConnection', 'getTableName'])
             ->getMock();
-        $this->transactionManagerMock = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface::class
+        $this->transactionManagerMock = $this->getMock(
+            '\Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface'
         );
-        $this->relationProcessor = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor::class
+        $this->relationProcessor = $this->getMock(
+            '\Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor',
+            [],
+            [],
+            '',
+            false
         );
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->once())
             ->method('getTransactionManager')
             ->willReturn($this->transactionManagerMock);
@@ -79,30 +74,33 @@ class SetTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->relationProcessor);
         $contextMock->expects($this->once())->method('getResources')->willReturn($this->resourceMock);
 
-        $this->eavConfigMock = $this->getMockBuilder(\Magento\Eav\Model\Config::class)
+        $this->eavConfigMock = $this->getMockBuilder('Magento\Eav\Model\Config')
             ->setMethods(['isCacheEnabled', 'getEntityType', 'getCache'])
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->serializerMock = $this->createMock(Json::class);
-
-        $attributeGroupFactoryMock = $this->createMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\GroupFactory::class
-        );
-
-        $this->model = $objectManager->getObject(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set::class,
+        $this->model = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Set',
             [
-                'context' => $contextMock,
-                'attrGroupFactory' => $attributeGroupFactoryMock,
-                'eavConfig' => $this->eavConfigMock
-            ]
+                'beginTransaction',
+                'getMainTable',
+                'getIdFieldName',
+                '_afterDelete',
+                'commit',
+                'rollBack',
+                '__wakeup'
+            ],
+            [
+                $contextMock,
+                $this->getMock('Magento\Eav\Model\ResourceModel\Entity\Attribute\GroupFactory', [], [], '', false),
+                $this->eavConfigMock
+            ],
+            '',
+            true
         );
-
-        $objectManager->setBackwardCompatibleProperty($this->model, 'serializer', $this->serializerMock);
-
-        $this->typeMock = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
-        $this->objectMock = $this->createPartialMock(\Magento\Framework\Model\AbstractModel::class, [
+        $this->typeMock = $this->getMock('\Magento\Eav\Model\Entity\Type', [], [], '', false);
+        $this->objectMock = $this->getMock(
+            'Magento\Framework\Model\AbstractModel',
+            [
                 'getEntityTypeId',
                 'getAttributeSetId',
                 'beforeDelete',
@@ -111,7 +109,12 @@ class SetTest extends \PHPUnit\Framework\TestCase
                 'afterDelete',
                 'afterDeleteCommit',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
+
     }
 
     /**
@@ -123,12 +126,12 @@ class SetTest extends \PHPUnit\Framework\TestCase
     {
         $this->resourceMock->expects($this->any())
             ->method('getConnection')
-            ->willReturn($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class));
+            ->willReturn($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'));
 
         $this->transactionManagerMock->expects($this->once())
             ->method('start')
-            ->with($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class))
-            ->willReturn($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class));
+            ->with($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'))
+            ->willReturn($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'));
 
         $this->objectMock->expects($this->once())->method('getEntityTypeId')->willReturn(665);
         $this->eavConfigMock->expects($this->once())->method('getEntityType')->with(665)->willReturn($this->typeMock);
@@ -147,12 +150,12 @@ class SetTest extends \PHPUnit\Framework\TestCase
     {
         $this->resourceMock->expects($this->any())
             ->method('getConnection')
-            ->willReturn($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class));
+            ->willReturn($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'));
 
         $this->transactionManagerMock->expects($this->once())
             ->method('start')
-            ->with($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class))
-            ->willReturn($this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class));
+            ->with($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'))
+            ->willReturn($this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface'));
 
         $this->objectMock->expects($this->once())->method('getEntityTypeId')->willReturn(665);
         $this->eavConfigMock->expects($this->once())->method('getEntityType')->with(665)->willReturn($this->typeMock);
@@ -170,23 +173,7 @@ class SetTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetSetInfoCacheMiss()
     {
-        $serializedData = 'serialized data';
-        $setElement = [
-            10000 => [
-                'group_id' => 10,
-                'group_sort' => 100,
-                'sort' => 1000
-            ]
-        ];
-        $setData = [
-            1 => $setElement,
-            2 => [],
-            3 => []
-        ];
-        $cached = [
-            1 => $setElement
-        ];
-        $cacheMock = $this->getMockBuilder(\Magento\Framework\App\CacheInterface::class)
+        $cacheMock = $this->getMockBuilder('Magento\Framework\App\CacheInterface')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'save', 'getFrontend', 'remove', 'clean'])
             ->getMock();
@@ -196,15 +183,21 @@ class SetTest extends \PHPUnit\Framework\TestCase
             ->method('load')
             ->with($cacheKey)
             ->willReturn(false);
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->with($cached)
-            ->willReturn($serializedData);
         $cacheMock
             ->expects($this->once())
             ->method('save')
             ->with(
-                $serializedData,
+                serialize(
+                    [
+                        1 => [
+                            10000 => [
+                                'group_id' =>  10,
+                                'group_sort' =>  100,
+                                'sort' =>  1000
+                            ]
+                        ]
+                    ]
+                ),
                 $cacheKey,
                 [\Magento\Eav\Model\Cache\Type::CACHE_TAG, \Magento\Eav\Model\Entity\Attribute::CACHE_TAG]
             );
@@ -222,7 +215,7 @@ class SetTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $selectMock = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->setMethods(['from', 'joinLeft', 'where'])
             ->getMock();
@@ -230,7 +223,7 @@ class SetTest extends \PHPUnit\Framework\TestCase
         $selectMock->expects($this->once())->method('joinLeft')->will($this->returnSelf());
         $selectMock->expects($this->atLeastOnce())->method('where')->will($this->returnSelf());
 
-        $connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $connectionMock = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->disableOriginalConstructor()
             ->setMethods(['select', 'fetchAll'])
             ->getMock();
@@ -240,7 +233,17 @@ class SetTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock->expects($this->any())->method('getConnection')->willReturn($connectionMock);
         $this->resourceMock->expects($this->any())->method('getTableName')->willReturn('_TABLE_');
         $this->assertEquals(
-            $setData,
+            [
+                1 => [
+                    10000 => [
+                        'group_id' =>  10,
+                        'group_sort' =>  100,
+                        'sort' =>  1000
+                    ]
+                ],
+                2 => [],
+                3 => []
+            ],
             $this->model->getSetInfo([1, 2, 3], 1)
         );
     }
@@ -250,41 +253,42 @@ class SetTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetSetInfoCacheHit()
     {
-        $setElement = [
-            10000 => [
-                'group_id' => 10,
-                'group_sort' => 100,
-                'sort' => 1000
+        $cached = [
+            1 => [
+                10000 => [
+                    'group_id' => 10,
+                    'group_sort' => 100,
+                    'sort' => 1000
+                ]
             ]
         ];
-        $setData = [
-            1 => $setElement,
-            2 => [],
-            3 => []
-        ];
-        $cached = [
-            1 => $setElement
-        ];
-        $serializedData = 'serialized data';
+
         $this->resourceMock->expects($this->never())->method('getConnection');
         $this->eavConfigMock->expects($this->any())->method('isCacheEnabled')->willReturn(true);
-        $cacheMock = $this->getMockBuilder(\Magento\Framework\App\CacheInterface::class)
+        $cacheMock = $this->getMockBuilder('Magento\Framework\App\CacheInterface')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'save', 'getFrontend', 'remove', 'clean'])
             ->getMock();
-        $cacheMock->expects($this->once())
+        $cacheMock
+            ->expects($this->once())
             ->method('load')
             ->with(Set::ATTRIBUTES_CACHE_ID . 1)
-            ->willReturn($serializedData);
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedData)
-            ->willReturn($cached);
+            ->willReturn(serialize($cached));
 
         $this->eavConfigMock->expects($this->any())->method('getCache')->willReturn($cacheMock);
 
         $this->assertEquals(
-            $setData,
+            [
+                1 => [
+                    10000 => [
+                        'group_id' =>  10,
+                        'group_sort' =>  100,
+                        'sort' =>  1000
+                    ]
+                ],
+                2 => [],
+                3 => []
+            ],
             $this->model->getSetInfo([1, 2, 3], 1)
         );
     }

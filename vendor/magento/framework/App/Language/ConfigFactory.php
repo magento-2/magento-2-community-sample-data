@@ -2,7 +2,7 @@
 /**
  * Application language config factory
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Language;
@@ -33,6 +33,6 @@ class ConfigFactory
      */
     public function create(array $arguments = [])
     {
-        return $this->_objectManager->create(\Magento\Framework\App\Language\Config::class, $arguments);
+        return $this->_objectManager->create('Magento\Framework\App\Language\Config', $arguments);
     }
 }

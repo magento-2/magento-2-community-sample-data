@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Category;
@@ -27,7 +27,7 @@ class Move extends \Magento\Catalog\Controller\Adminhtml\Category
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\View\LayoutFactory $layoutFactory,
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Psr\Log\LoggerInterface $logger,
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -69,15 +69,18 @@ class Move extends \Magento\Catalog\Controller\Adminhtml\Category
             $category->move($parentNodeId, $prevNodeId);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $error = true;
-            $this->messageManager->addExceptionMessage($e);
+            $this->messageManager->addError(__('There was a category move error.'));
+        } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
+            $error = true;
+            $this->messageManager->addError(__('There was a category move error. %1', $e->getMessage()));
         } catch (\Exception $e) {
             $error = true;
-            $this->messageManager->addErrorMessage(__('There was a category move error.'));
+            $this->messageManager->addError(__('There was a category move error.'));
             $this->logger->critical($e);
         }
 
         if (!$error) {
-            $this->messageManager->addSuccessMessage(__('You moved the category.'));
+            $this->messageManager->addSuccess(__('You moved the category'));
         }
 
         $block->setMessages($this->messageManager->getMessages(true));

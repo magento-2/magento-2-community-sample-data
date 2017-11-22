@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cron\Test\Unit\Model;
@@ -8,7 +8,7 @@ namespace Magento\Cron\Test\Unit\Model;
 /**
  * Class \Magento\Cron\Model\Config
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cron\Model\Config\Data|\PHPUnit_Framework_MockObject_MockObject
@@ -26,7 +26,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_configData = $this->getMockBuilder(
-            \Magento\Cron\Model\Config\Data::class
+            'Magento\Cron\Model\Config\Data'
         )->disableOriginalConstructor()->getMock();
         $this->_config = new \Magento\Cron\Model\Config($this->_configData);
     }

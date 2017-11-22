@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Weee\Test\Unit\Model\ResourceModel;
 
-class TaxTest extends \PHPUnit\Framework\TestCase
+class TaxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Weee\Model\ResourceModel\Tax
@@ -36,29 +36,30 @@ class TaxTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManagerMock = $this->getMock('\Magento\Store\Model\StoreManagerInterface');
 
-        $this->selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $this->selectMock = $this->getMock('\Magento\Framework\DB\Select', [], [], '', false);
 
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+        $this->connectionMock = $this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface', [], [], '', false);
         $this->connectionMock->expects($this->once())
             ->method('select')
             ->willReturn($this->selectMock);
 
-        $this->resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resourceMock = $this->getMock('\Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->resourceMock->expects($this->any())
             ->method('getConnection')
             ->willReturn($this->connectionMock);
+
 
         $this->resourceMock->expects($this->atLeastOnce())
             ->method('getTableName')
             ->willReturn('table_name');
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('\Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->any())->method('getResources')->willReturn($this->resourceMock);
 
         $this->model = $this->objectManager->getObject(
-            \Magento\Weee\Model\ResourceModel\Tax::class,
+            'Magento\Weee\Model\ResourceModel\Tax',
             [
                 'context' => $contextMock,
             ]

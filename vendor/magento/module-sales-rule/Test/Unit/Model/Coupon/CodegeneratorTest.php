@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Test\Unit\Model\Coupon;
@@ -8,7 +8,7 @@ namespace Magento\SalesRule\Test\Unit\Model\Coupon;
 /**
  * Class CodegeneratorTest
  */
-class CodegeneratorTest extends \PHPUnit\Framework\TestCase
+class CodegeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\Coupon\Codegenerator
@@ -18,7 +18,7 @@ class CodegeneratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->codegenerator = $objectManager->getObject(\Magento\SalesRule\Model\Coupon\Codegenerator::class);
+        $this->codegenerator = $objectManager->getObject('Magento\SalesRule\Model\Coupon\Codegenerator');
     }
 
     /**

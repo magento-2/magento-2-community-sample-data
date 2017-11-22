@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -13,9 +13,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class PrintLabel extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -95,7 +93,7 @@ class PrintLabel extends \Magento\Backend\App\Action
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $this->messageManager->addError(__('An error occurred while creating shipping label.'));
         }
         $this->_redirect(

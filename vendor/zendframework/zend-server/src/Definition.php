@@ -20,7 +20,7 @@ class Definition implements Countable, Iterator
     /**
      * @var array Array of \Zend\Server\Method\Definition objects
      */
-    protected $methods = [];
+    protected $methods = array();
 
     /**
      * @var bool Whether or not overwriting existing methods is allowed
@@ -169,7 +169,7 @@ class Definition implements Countable, Iterator
      */
     public function clearMethods()
     {
-        $this->methods = [];
+        $this->methods = array();
         return $this;
     }
 
@@ -180,7 +180,7 @@ class Definition implements Countable, Iterator
      */
     public function toArray()
     {
-        $methods = [];
+        $methods = array();
         foreach ($this->getMethods() as $key => $method) {
             $methods[$key] = $method->toArray();
         }

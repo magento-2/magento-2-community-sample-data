@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,18 +18,18 @@ use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
- * 1. Default test customer is created.
+ * 1. Default test customer is created
  *
  * Steps:
- * 1. Login to fronted as test customer from preconditions.
- * 2. Navigate to Account Dashboard page.
- * 3. Click "Edit" link near "Contact Information".
- * 4. Fill fields with test data and save.
- * 5. Click "Edit Address" link near "Default Billing Address", save and return to Account Dashboard page.
- * 6. Fill fields with test data and save.
- * 7. Perform all assertions.
+ * 1. Login to fronted as test customer from preconditions
+ * 2. Navigate to Account Dashboard page:
+ * 3. Click "Edit" link near "Contact Information"
+ * 4. Fill fields with test data and save
+ * 5. Click "Edit Address" link near "Default Billing Address", save and return to Account Dashboard page
+ * 6. Fill fields with test data and save
+ * 7. Perform all assertions
  *
- * @group Customer_Account
+ * @group Customer_Account_(CS)
  * @ZephyrId MAGETWO-25925
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,46 +38,47 @@ class UpdateCustomerFrontendEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
+    const DOMAIN = 'CS';
+    const TEST_TYPE = 'acceptance_test';
     /* end tags */
 
     /**
-     * Factory for Fixtures.
+     * Factory for Fixtures
      *
      * @var FixtureFactory
      */
     protected $fixtureFactory;
 
     /**
-     * CmsIndex page.
+     * CmsIndex page
      *
      * @var CmsIndex
      */
     protected $cmsIndex;
 
     /**
-     * CustomerAccountIndex page.
+     * CustomerAccountIndex page
      *
      * @var CustomerAccountIndex
      */
     protected $customerAccountIndex;
 
     /**
-     * CustomerAccountEdit page.
+     * CustomerAccountEdit page
      *
      * @var CustomerAccountEdit
      */
     protected $customerAccountEdit;
 
     /**
-     * CustomerAddressEdit page.
+     * CustomerAddressEdit page
      *
      * @var CustomerAddressEdit
      */
     protected $customerAddressEdit;
 
     /**
-     * Preparing data for test.
+     * Preparing data for test
      *
      * @param CmsIndex $cmsIndex
      * @param FixtureFactory $fixtureFactory
@@ -101,35 +102,13 @@ class UpdateCustomerFrontendEntityTest extends Injectable
     }
 
     /**
-     * Prepares customer returned after test.
-     *
-     * @param Customer $customer
-     * @param Customer $initialCustomer
-     * @return Customer
-     */
-    private function prepareCustomer(
-        Customer $customer,
-        Customer $initialCustomer
-    ) {
-        if (!$customer->hasData()) {
-            return $initialCustomer;
-        }
-        $data = array_replace_recursive($initialCustomer->getData(), $customer->getData());
-        $data['group_id'] = [
-            'customerGroup' => $initialCustomer->getDataFieldConfig('group_id')['source']->getCustomerGroup()
-        ];
-
-        return $this->fixtureFactory->createByCode('customer', ['data' => $data]);
-    }
-
-    /**
-     * Run Update Customer Entity test.
+     * Run Update Customer Entity test
      *
      * @param Customer $initialCustomer
      * @param Customer $customer
      * @param Address $address
      * @param AssertCustomerInfoSuccessSavedMessage $assertCustomerInfoSuccessSavedMessage
-     * @return array
+     * @return void
      */
     public function test(
         Customer $initialCustomer,
@@ -142,7 +121,7 @@ class UpdateCustomerFrontendEntityTest extends Injectable
 
         // Steps
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $initialCustomer]
         )->run();
         $this->customerAccountIndex->getInfoBlock()->openEditContactInfo();
@@ -155,11 +134,5 @@ class UpdateCustomerFrontendEntityTest extends Injectable
         $this->customerAccountIndex->getDashboardAddress()->editBillingAddress();
         $this->customerAddressEdit->getEditForm()->fill($address);
         $this->customerAddressEdit->getEditForm()->saveAddress();
-
-        return [
-            'customer' => $this->prepareCustomer($customer, $initialCustomer),
-            'shippingAddress' => $address,
-            'billingAddress' => $address
-        ];
     }
 }

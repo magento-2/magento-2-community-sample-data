@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
@@ -9,9 +9,6 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 
 /**
  * Backend grid item renderer date
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
  */
 class Date extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {
@@ -50,12 +47,11 @@ class Date extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
      * Retrieve date format
      *
      * @return string
-     * @deprecated 100.1.0
      */
     protected function _getFormat()
     {
         $format = $this->getColumn()->getFormat();
-        if ($format === null) {
+        if (!$format) {
             if (self::$_format === null) {
                 try {
                     self::$_format = $this->_localeDate->getDateFormat(
@@ -78,18 +74,19 @@ class Date extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        $format = $this->getColumn()->getFormat();
-        $date = $this->_getValue($row);
-        if ($date) {
-            if (!($date instanceof \DateTimeInterface)) {
-                $date = new \DateTime($date);
+        if ($data = $row->getData($this->getColumn()->getIndex())) {
+            $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone() : 'UTC';
+            if (!($data instanceof \DateTime)) {
+                $localeDate = new \DateTime($data, new \DateTimeZone($timezone));
+            } else {
+                $data->setTimezone(new \DateTimeZone($timezone));
+                $localeDate = $data;
             }
-            return $this->_localeDate->formatDateTime(
-                $date,
-                $format ?: \IntlDateFormatter::MEDIUM,
-                \IntlDateFormatter::NONE,
-                null,
-                $this->getColumn()->getTimezone() === false ? 'UTC' : null
+            return $this->dateTimeFormatter->formatObject(
+                $this->_localeDate->date(
+                    $localeDate
+                ),
+                $this->_getFormat()
             );
         }
         return $this->getColumn()->getDefault();

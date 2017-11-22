@@ -2,7 +2,7 @@
 /**
  * Encrypted config field backend model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,10 +10,6 @@
 
 namespace Magento\Config\Model\Config\Backend;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Encrypted extends \Magento\Framework\App\Config\Value implements
     \Magento\Framework\App\Config\Data\ProcessorInterface
 {
@@ -66,7 +62,7 @@ class Encrypted extends \Magento\Framework\App\Config\Value implements
     {
         parent::__wakeup();
         $this->_encryptor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-            \Magento\Framework\Encryption\EncryptorInterface::class
+            'Magento\Framework\Encryption\EncryptorInterface'
         );
     }
 
@@ -97,8 +93,6 @@ class Encrypted extends \Magento\Framework\App\Config\Value implements
             $this->_dataSaveAllowed = true;
             $encrypted = $this->_encryptor->encrypt($value);
             $this->setValue($encrypted);
-        } elseif (empty($value)) {
-            $this->_dataSaveAllowed = true;
         }
     }
 

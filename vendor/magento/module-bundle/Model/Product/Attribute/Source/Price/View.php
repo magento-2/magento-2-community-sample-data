@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\Product\Attribute\Source\Price;
@@ -11,8 +11,7 @@ use Magento\Framework\DB\Ddl\Table;
 /**
  * Bundle Price View Attribute Renderer
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class View extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
@@ -38,8 +37,8 @@ class View extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
     {
         if (null === $this->_options) {
             $this->_options = [
-                ['label' => __('Price Range'), 'value' => 0],
                 ['label' => __('As Low as'), 'value' => 1],
+                ['label' => __('Price Range'), 'value' => 0],
             ];
         }
         return $this->_options;

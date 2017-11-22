@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -11,7 +11,7 @@
 @tooltip__border-color: @color-gray68;
 @tooltip__border-radius: 0;
 @tooltip__color: @color-brown-darkie;
-@tooltip__max-width: 31rem;
+@tooltip__max-width: 20rem;
 @tooltip__opacity: .9;
 @tooltip__shadow-color: @color-gray80;
 @tooltip__z-index: 10;
@@ -35,31 +35,25 @@
     position: absolute;
     visibility: visible;
     z-index: @tooltip__z-index;
-
     &.in {
         opacity: @tooltip__opacity;
     }
-
     &.top {
         margin-top: -(@tooltip-arrow__size / 2);
         padding: @tooltip-arrow__size 0;
     }
-
     &.right {
         margin-left: @tooltip-arrow__size / 2;
         padding: 0 @tooltip-arrow__size;
     }
-
     &.bottom {
         margin-top: @tooltip-arrow__size / 2;
         padding: @tooltip-arrow__size 0;
     }
-
     &.left {
         margin-left: -(@tooltip-arrow__size / 2);
         padding: 0 @tooltip-arrow__size;
     }
-
     p:last-child {
         margin-bottom: 0;
     }
@@ -106,7 +100,6 @@
             margin-left: -@tooltip-arrow__size;
         }
     }
-
     &.top-left {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -117,7 +110,6 @@
             right: @tooltip-arrow__size;
         }
     }
-
     &.top-right {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -128,7 +120,6 @@
             margin-bottom: -@tooltip-arrow__size;
         }
     }
-
     &.right {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -138,7 +129,6 @@
             margin-top: -@tooltip-arrow__size;
             top: 50%;
         }
-
         .tooltip-arrow {
             &:after {
                 border-right-color: @tooltip__background-color;
@@ -148,7 +138,6 @@
             }
         }
     }
-
     &.left {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -159,7 +148,6 @@
             top: 50%;
         }
     }
-
     &.bottom {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -170,7 +158,6 @@
             top: 0;
         }
     }
-
     &.bottom-left {
         .tooltip-arrow,
         .tooltip-arrow:after {
@@ -181,7 +168,6 @@
             top: 0;
         }
     }
-
     &.bottom-right {
         .tooltip-arrow,
         .tooltip-arrow:after {

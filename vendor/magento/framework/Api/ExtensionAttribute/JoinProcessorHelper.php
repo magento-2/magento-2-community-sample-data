@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,14 +15,10 @@ use Magento\Framework\Api\SimpleDataObjectConverter;
  */
 class JoinProcessorHelper
 {
-    /**
-     * @var \Magento\Framework\Api\ExtensionAttribute\Config
-     */
+    /** @var Config */
     private $config;
 
-    /**
-     * @var \Magento\Framework\Api\ExtensionAttribute\JoinDataInterfaceFactory
-     */
+    /** @var JoinDataInterfaceFactory */
     private $joinDataInterfaceFactory;
 
     /**

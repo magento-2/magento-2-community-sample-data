@@ -1,12 +1,10 @@
 <?php
-namespace Braintree;
-
 /**
  * Braintree CoinbaseAccount module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -17,22 +15,21 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
- * @property-read string $customerId
  * @property-read string $token
  * @property-read string $userId
  * @property-read string $userName
  * @property-read string $userEmail
  */
-class CoinbaseAccount extends Base
+class Braintree_CoinbaseAccount extends Braintree
 {
     /**
-     *  factory method: returns an instance of CoinbaseAccount
+     *  factory method: returns an instance of Braintree_CoinbaseAccount
      *  to the requesting method, with populated properties
      *
      * @ignore
-     * @return CoinbaseAccount
+     * @return object instance of Braintree_CoinbaseAccount
      */
     public static function factory($attributes)
     {
@@ -58,17 +55,17 @@ class CoinbaseAccount extends Base
      *
      * @access protected
      * @param array $coinbaseAccountAttribs array of coinbaseAccount data
-     * @return void
+     * @return none
      */
     protected function _initialize($coinbaseAccountAttribs)
     {
         // set the attributes
         $this->_attributes = $coinbaseAccountAttribs;
 
-        $subscriptionArray = [];
+        $subscriptionArray = array();
         if (isset($coinbaseAccountAttribs['subscriptions'])) {
             foreach ($coinbaseAccountAttribs['subscriptions'] AS $subscription) {
-                $subscriptionArray[] = Subscription::factory($subscription);
+                $subscriptionArray[] = Braintree_Subscription::factory($subscription);
             }
         }
 
@@ -83,7 +80,7 @@ class CoinbaseAccount extends Base
     public function  __toString()
     {
         return __CLASS__ . '[' .
-                Util::attributesToString($this->_attributes) .']';
+                Braintree_Util::attributesToString($this->_attributes) .']';
     }
 
 
@@ -91,22 +88,21 @@ class CoinbaseAccount extends Base
 
     public static function find($token)
     {
-        return Configuration::gateway()->coinbaseAccount()->find($token);
+        return Braintree_Configuration::gateway()->coinbaseAccount()->find($token);
     }
 
     public static function update($token, $attributes)
     {
-        return Configuration::gateway()->coinbaseAccount()->update($token, $attributes);
+        return Braintree_Configuration::gateway()->coinbaseAccount()->update($token, $attributes);
     }
 
     public static function delete($token)
     {
-        return Configuration::gateway()->coinbaseAccount()->delete($token);
+        return Braintree_Configuration::gateway()->coinbaseAccount()->delete($token);
     }
 
     public static function sale($token, $transactionAttribs)
     {
-        return Configuration::gateway()->coinbaseAccount()->sale($token, $transactionAttribs);
+        return Braintree_Configuration::gateway()->coinbaseAccount()->sale($token, $transactionAttribs);
     }
 }
-class_alias('Braintree\CoinbaseAccount', 'Braintree_CoinbaseAccount');

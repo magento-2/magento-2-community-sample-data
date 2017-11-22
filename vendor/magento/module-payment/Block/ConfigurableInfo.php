@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Block;
@@ -9,11 +9,6 @@ use Magento\Framework\Phrase;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Gateway\ConfigInterface;
 
-/**
- * Class ConfigurableInfo
- * @api
- * @since 100.0.2
- */
 class ConfigurableInfo extends \Magento\Payment\Block\Info
 {
     /**
@@ -68,6 +63,7 @@ class ConfigurableInfo extends \Magento\Payment\Block\Info
                     $field,
                     $payment->getAdditionalInformation($field)
                 );
+
             }
         }
 

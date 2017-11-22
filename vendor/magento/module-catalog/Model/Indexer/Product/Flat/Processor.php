@@ -1,16 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Product\Flat;
 
-/**
- * Catalog flat indexer
- *
- * @api
- * @since 100.0.2
- */
 class Processor extends \Magento\Framework\Indexer\AbstractProcessor
 {
     /**
@@ -39,12 +33,11 @@ class Processor extends \Magento\Framework\Indexer\AbstractProcessor
      * Reindex single row by id
      *
      * @param int $id
-     * @param bool $forceReindex
      * @return void
      */
-    public function reindexRow($id, $forceReindex = false)
+    public function reindexRow($id)
     {
-        if (!$this->_state->isFlatEnabled() || (!$forceReindex && $this->getIndexer()->isScheduled())) {
+        if (!$this->_state->isFlatEnabled() || $this->getIndexer()->isScheduled()) {
             return;
         }
         $this->getIndexer()->reindexRow($id);
@@ -54,12 +47,11 @@ class Processor extends \Magento\Framework\Indexer\AbstractProcessor
      * Reindex multiple rows by ids
      *
      * @param int[] $ids
-     * @param bool $forceReindex
      * @return void
      */
-    public function reindexList($ids, $forceReindex = false)
+    public function reindexList($ids)
     {
-        if (!$this->_state->isFlatEnabled() || (!$forceReindex && $this->getIndexer()->isScheduled())) {
+        if (!$this->_state->isFlatEnabled() || $this->getIndexer()->isScheduled()) {
             return;
         }
         $this->getIndexer()->reindexList($ids);

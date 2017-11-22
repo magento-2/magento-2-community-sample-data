@@ -1,20 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
+/**
+ * Database saving file helper
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
+ */
 namespace Magento\MediaStorage\Helper\File\Storage;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 
-/**
- * Database saving file helper
- *
- * @api
- * @since 100.0.2
- */
 class Database extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /**
@@ -78,6 +77,7 @@ class Database extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Check if we use DB storage
+     * Note: Disabled as not completed feature
      *
      * @return bool
      */

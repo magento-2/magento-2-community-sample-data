@@ -25,12 +25,11 @@ class HgDownloader extends VcsDownloader
      */
     public function doDownload(PackageInterface $package, $path, $url)
     {
-        // Ensure we are allowed to use this URL by config
-        $this->config->prohibitUrlByConfig($url, $this->io);
+        $this->checkSecureHttp($url);
 
         $url = ProcessExecutor::escape($url);
         $ref = ProcessExecutor::escape($package->getSourceReference());
-        $this->io->writeError("Cloning ".$package->getSourceReference());
+        $this->io->writeError("    Cloning ".$package->getSourceReference());
         $command = sprintf('hg clone %s %s', $url, ProcessExecutor::escape($path));
         if (0 !== $this->process->execute($command, $ignoredOutput)) {
             throw new \RuntimeException('Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput());
@@ -46,12 +45,11 @@ class HgDownloader extends VcsDownloader
      */
     public function doUpdate(PackageInterface $initial, PackageInterface $target, $path, $url)
     {
-        // Ensure we are allowed to use this URL by config
-        $this->config->prohibitUrlByConfig($url, $this->io);
+        $this->checkSecureHttp($url);
 
         $url = ProcessExecutor::escape($url);
         $ref = ProcessExecutor::escape($target->getSourceReference());
-        $this->io->writeError(" Updating to ".$target->getSourceReference());
+        $this->io->writeError("    Updating to ".$target->getSourceReference());
 
         if (!$this->hasMetadataRepository($path)) {
             throw new \RuntimeException('The .hg directory is missing from '.$path.', see https://getcomposer.org/commit-deps for more information');
@@ -69,7 +67,7 @@ class HgDownloader extends VcsDownloader
     public function getLocalChanges(PackageInterface $package, $path)
     {
         if (!is_dir($path.'/.hg')) {
-            return null;
+            return;
         }
 
         $this->process->execute('hg st', $output, realpath($path));
@@ -89,6 +87,13 @@ class HgDownloader extends VcsDownloader
         }
 
         return $output;
+    }
+
+    protected function checkSecureHttp($url)
+    {
+        if (preg_match('{^http:}i', $url) && $this->config->get('secure-http')) {
+            throw new TransportException("Your configuration does not allow connection to $url. See https://getcomposer.org/doc/06-config.md#secure-http for details.");
+        }
     }
 
     /**

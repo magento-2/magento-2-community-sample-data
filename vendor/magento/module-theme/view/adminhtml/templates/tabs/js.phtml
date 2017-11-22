@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 ?>
 <?php /** @var $block \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Tab\Js */ ?>
-<?= $block->getFormHtml() ?>
+<?php echo $block->getFormHtml(); ?>
 
 <script>
 require([
@@ -21,7 +21,7 @@ require([
         dataType: 'json',
         replaceFileInput: false,
         sequentialUploads: true,
-        url: '<?= /* @escapeNotVerified */ $block->getJsUploadUrl() ?>',
+        url: '<?php /* @escapeNotVerified */ echo $block->getJsUploadUrl(); ?>',
 
         /**
          * Add data

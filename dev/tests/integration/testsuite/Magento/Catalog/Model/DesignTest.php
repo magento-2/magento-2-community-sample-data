@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Catalog\Model;
 
-class DesignTest extends \PHPUnit\Framework\TestCase
+class DesignTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Design
@@ -19,7 +19,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Design::class
+            'Magento\Catalog\Model\Design'
         );
     }
 
@@ -30,7 +30,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model->applyCustomDesign($theme);
         $design = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         );
         $this->assertEquals('package', $design->getDesignTheme()->getPackageCode());
         $this->assertEquals('theme', $design->getDesignTheme()->getThemeCode());
@@ -42,7 +42,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     public function getThemeModel()
     {
         $theme = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         );
         $theme->setData($this->_getThemeData());
         return [[$theme]];

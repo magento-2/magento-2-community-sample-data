@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backup\Test\Unit\Model;
@@ -11,7 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * @covers \Magento\Backup\Model\Backup
  */
-class BackupTest extends \PHPUnit\Framework\TestCase
+class BackupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -38,15 +38,15 @@ class BackupTest extends \PHPUnit\Framework\TestCase
      */
     protected $directoryMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->filesystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataHelperMock = $this->getMockBuilder(\Magento\Backup\Helper\Data::class)
+        $this->dataHelperMock = $this->getMockBuilder('Magento\Backup\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->directoryMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\WriteInterface::class)
+        $this->directoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\WriteInterface')
             ->getMock();
 
         $this->filesystemMock->expects($this->atLeastOnce())
@@ -56,7 +56,7 @@ class BackupTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager = new ObjectManager($this);
         $this->backupModel = $this->objectManager->getObject(
-            \Magento\Backup\Model\Backup::class,
+            'Magento\Backup\Model\Backup',
             [
                 'filesystem' => $this->filesystemMock,
                 'helper' => $this->dataHelperMock

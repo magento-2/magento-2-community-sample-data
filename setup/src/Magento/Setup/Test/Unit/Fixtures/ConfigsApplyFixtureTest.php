@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Test\Unit\Fixtures;
 
-use Magento\Setup\Fixtures\ConfigsApplyFixture;
+use \Magento\Setup\Fixtures\ConfigsApplyFixture;
 
-class ConfigsApplyFixtureTest extends \PHPUnit\Framework\TestCase
+class ConfigsApplyFixtureTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -23,18 +23,17 @@ class ConfigsApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock('\Magento\Setup\Fixtures\FixtureModel', [], [], '', false);
 
         $this->model = new ConfigsApplyFixture($this->fixtureModelMock);
     }
-
     public function testExecute()
     {
-        $cacheMock = $this->createMock(\Magento\Framework\App\Cache::class);
+        $cacheMock = $this->getMock('\Magento\Framework\App\Cache', [], [], '', false);
 
-        $valueMock = $this->createMock(\Magento\Framework\App\Config::class);
+        $valueMock = $this->getMock('\Magento\Framework\App\Config', [], [], '', false);
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManager\ObjectManager', [], [], '', false);
         $objectManagerMock->expects($this->once())
             ->method('get')
             ->will($this->returnValue($cacheMock));
@@ -53,12 +52,10 @@ class ConfigsApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function testNoFixtureConfigValue()
     {
-        $configMock = $this->getMockBuilder(\Magento\Framework\App\Config\ValueInterface::class)
-            ->setMethods(['save'])
-            ->getMockForAbstractClass();
+        $configMock = $this->getMock('\Magento\Framework\App\Config\ValueInterface', [], [], '', false);
         $configMock->expects($this->never())->method('save');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManager\ObjectManager', [], [], '', false);
         $objectManagerMock->expects($this->never())
             ->method('create')
             ->willReturn($configMock);

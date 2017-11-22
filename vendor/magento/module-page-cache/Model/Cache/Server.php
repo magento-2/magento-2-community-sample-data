@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\PageCache\Model\Cache;
@@ -62,11 +62,12 @@ class Server
             foreach ($configuredHosts as $host) {
                 $servers[] = UriFactory::factory('')
                     ->setHost($host['host'])
-                    ->setPort(isset($host['port']) ? $host['port'] : self::DEFAULT_PORT)
-                ;
+                    ->setPort(isset($host['port']) ? $host['port'] : self::DEFAULT_PORT);
             }
         } elseif ($this->request->getHttpHost()) {
-            $servers[] = UriFactory::factory('')->setHost($this->request->getHttpHost())->setPort(self::DEFAULT_PORT);
+            $servers[] = UriFactory::factory('')
+                ->setHost($this->request->getHttpHost())
+                ->setPort(self::DEFAULT_PORT);
         } else {
             $servers[] = UriFactory::factory($this->urlBuilder->getUrl('*', ['_nosid' => true]));
         }

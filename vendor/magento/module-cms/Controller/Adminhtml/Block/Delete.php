@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Block;
@@ -22,7 +22,7 @@ class Delete extends \Magento\Cms\Controller\Adminhtml\Block
         if ($id) {
             try {
                 // init model and delete
-                $model = $this->_objectManager->create(\Magento\Cms\Model\Block::class);
+                $model = $this->_objectManager->create('Magento\Cms\Model\Block');
                 $model->load($id);
                 $model->delete();
                 // display success message

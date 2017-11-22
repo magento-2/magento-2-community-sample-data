@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Model\Soap;
@@ -14,9 +14,7 @@ use Magento\Webapi\Model\ServiceMetadata;
  */
 class Config
 {
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
     /**
@@ -26,14 +24,10 @@ class Config
      */
     protected $soapOperations;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
+    /** @var \Magento\Framework\Registry */
     protected $registry;
 
-    /**
-     * @var \Magento\Webapi\Model\ServiceMetadata
-     */
+    /** @var  \Magento\Webapi\Model\ServiceMetadata */
     protected $serviceMetadata;
 
     /**

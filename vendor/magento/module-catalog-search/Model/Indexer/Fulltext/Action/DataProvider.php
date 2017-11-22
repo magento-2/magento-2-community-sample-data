@@ -1,17 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Action;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\ResourceConnection;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.3
  */
 class DataProvider
 {
@@ -92,16 +89,6 @@ class DataProvider
     private $connection;
 
     /**
-     * @var \Magento\Framework\EntityManager\EntityMetadata
-     */
-    private $metadata;
-
-    /**
-     * @var array
-     */
-    private $attributeOptions = [];
-
-    /**
      * @param ResourceConnection $resource
      * @param \Magento\Catalog\Model\Product\Type $catalogProductType
      * @param \Magento\Eav\Model\Config $eavConfig
@@ -109,7 +96,6 @@ class DataProvider
      * @param \Magento\CatalogSearch\Model\ResourceModel\EngineProvider $engineProvider
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      */
     public function __construct(
         ResourceConnection $resource,
@@ -118,8 +104,7 @@ class DataProvider
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $prodAttributeCollectionFactory,
         \Magento\CatalogSearch\Model\ResourceModel\EngineProvider $engineProvider,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -129,7 +114,6 @@ class DataProvider
         $this->eventManager = $eventManager;
         $this->storeManager = $storeManager;
         $this->engine = $engineProvider->get();
-        $this->metadata = $metadataPool->getMetadata(ProductInterface::class);
     }
 
     /**
@@ -152,7 +136,6 @@ class DataProvider
      * @param int $lastProductId
      * @param int $limit
      * @return array
-     * @since 100.0.3
      */
     public function getSearchableProducts(
         $storeId,
@@ -186,13 +169,22 @@ class DataProvider
     }
 
     /**
+     * Retrieve EAV Config Singleton
+     *
+     * @return \Magento\Eav\Model\Config
+     */
+    private function getEavConfig()
+    {
+        return $this->eavConfig;
+    }
+
+    /**
      * Retrieve searchable attributes
      *
      * @param string $backendType
      * @return \Magento\Eav\Model\Entity\Attribute[]
-     * @since 100.0.3
      */
-    public function getSearchableAttributes($backendType = null)
+    private function getSearchableAttributes($backendType = null)
     {
         if (null === $this->searchableAttributes) {
             $this->searchableAttributes = [];
@@ -209,7 +201,7 @@ class DataProvider
                 ['engine' => $this->engine, 'attributes' => $attributes]
             );
 
-            $entity = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntity();
+            $entity = $this->getEavConfig()->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntity();
 
             foreach ($attributes as $attribute) {
                 $attribute->setEntity($entity);
@@ -237,9 +229,8 @@ class DataProvider
      *
      * @param int|string $attribute
      * @return \Magento\Eav\Model\Entity\Attribute
-     * @since 100.0.3
      */
-    public function getSearchableAttribute($attribute)
+    private function getSearchableAttribute($attribute)
     {
         $attributes = $this->getSearchableAttributes();
         if (is_numeric($attribute)) {
@@ -254,7 +245,7 @@ class DataProvider
             }
         }
 
-        return $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attribute);
+        return $this->getEavConfig()->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attribute);
     }
 
     /**
@@ -281,33 +272,22 @@ class DataProvider
      * @param array $productIds
      * @param array $attributeTypes
      * @return array
-     * @since 100.0.3
      */
     public function getProductAttributes($storeId, array $productIds, array $attributeTypes)
     {
         $result = [];
         $selects = [];
         $ifStoreValue = $this->connection->getCheckSql('t_store.value_id > 0', 't_store.value', 't_default.value');
-        $linkField = $this->metadata->getLinkField();
-        $productLinkFieldsToEntityIdMap = $this->connection->fetchPairs(
-            $this->connection->select()->from(
-                ['cpe' => $this->getTable('catalog_product_entity')],
-                [$linkField, 'entity_id']
-            )->where(
-                'cpe.entity_id IN (?)',
-                $productIds
-            )
-        );
         foreach ($attributeTypes as $backendType => $attributeIds) {
             if ($attributeIds) {
                 $tableName = $this->getTable('catalog_product_entity_' . $backendType);
                 $selects[] = $this->connection->select()->from(
                     ['t_default' => $tableName],
-                    [$linkField, 'attribute_id']
+                    ['entity_id', 'attribute_id']
                 )->joinLeft(
                     ['t_store' => $tableName],
                     $this->connection->quoteInto(
-                        't_default.' . $linkField . '=t_store.' . $linkField .
+                        't_default.entity_id=t_store.entity_id' .
                         ' AND t_default.attribute_id=t_store.attribute_id' .
                         ' AND t_store.store_id = ?',
                         $storeId
@@ -320,8 +300,8 @@ class DataProvider
                     't_default.attribute_id IN (?)',
                     $attributeIds
                 )->where(
-                    't_default.' . $linkField . ' IN (?)',
-                    array_keys($productLinkFieldsToEntityIdMap)
+                    't_default.entity_id IN (?)',
+                    $productIds
                 );
             }
         }
@@ -330,8 +310,7 @@ class DataProvider
             $select = $this->connection->select()->union($selects, \Magento\Framework\DB\Select::SQL_UNION_ALL);
             $query = $this->connection->query($select);
             while ($row = $query->fetch()) {
-                $entityId = $productLinkFieldsToEntityIdMap[$row[$linkField]];
-                $result[$entityId][$row['attribute_id']] = $row['value'];
+                $result[$row['entity_id']][$row['attribute_id']] = $row['value'];
             }
         }
 
@@ -360,7 +339,6 @@ class DataProvider
      * @param int $productId Product Entity Id
      * @param string $typeId Super Product Link Type
      * @return array|null
-     * @since 100.0.3
      */
     public function getProductChildIds($productId, $typeId)
     {
@@ -373,15 +351,10 @@ class DataProvider
             $select = $this->connection->select()->from(
                 ['main' => $this->getTable($relation->getTable())],
                 [$relation->getChildFieldName()]
-            );
-            $select->join(
-                ['e' => $this->resource->getTableName('catalog_product_entity')],
-                'e.' . $this->metadata->getLinkField() . ' = main.' . $relation->getParentFieldName()
             )->where(
-                'e.entity_id = ?',
+                $relation->getParentFieldName() . ' = ?',
                 $productId
             );
-
             if ($relation->getWhere() !== null) {
                 $select->where($relation->getWhere());
             }
@@ -415,7 +388,6 @@ class DataProvider
      * @param int $storeId
      * @return string
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @since 100.0.3
      */
     public function prepareProductIndex($indexData, $productData, $storeId)
     {
@@ -425,6 +397,7 @@ class DataProvider
             $attributeCode = $attribute->getAttributeCode();
 
             if (isset($productData[$attributeCode])) {
+
                 if ('store_id' === $attributeCode) {
                     continue;
                 }
@@ -490,21 +463,11 @@ class DataProvider
             && $attribute->usesSource()
             && $this->engine->allowAdvancedIndex()
         ) {
-            if (!isset($this->attributeOptions[$attributeId][$storeId])) {
-                $attribute->setStoreId($storeId);
-                $options = $attribute->getSource()->toOptionArray();
-                $this->attributeOptions[$attributeId][$storeId] = array_combine(
-                    array_column($options, 'value'),
-                    array_column($options, 'label')
-                );
-            }
+            $attribute->setStoreId($storeId);
 
-            $valueText = '';
-            if (isset($this->attributeOptions[$attributeId][$storeId][$valueId])) {
-                $valueText = $this->attributeOptions[$attributeId][$storeId][$valueId];
-            }
+            $valueText = (array) $attribute->getSource()->getIndexOptionText($valueId);
 
-            $pieces = array_filter(array_merge([$value], [$valueText]));
+            $pieces = array_filter(array_merge([$value], $valueText));
 
             $value = implode($this->separator, $pieces);
         }

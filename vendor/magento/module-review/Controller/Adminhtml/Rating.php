@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Controller\Adminhtml;
@@ -15,9 +15,7 @@ use Magento\Framework\Registry;
 abstract class Rating extends Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Review::ratings';
 
@@ -47,7 +45,7 @@ abstract class Rating extends Action
     {
         $this->coreRegistry->register(
             'entityId',
-            $this->_objectManager->create(\Magento\Review\Model\Rating\Entity::class)->getIdByCode('product')
+            $this->_objectManager->create('Magento\Review\Model\Rating\Entity')->getIdByCode('product')
         );
     }
 }

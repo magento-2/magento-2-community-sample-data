@@ -1,12 +1,10 @@
 <?php
-namespace Braintree;
-
 /**
  * Braintree PaymentMethodNonceGateway module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -17,10 +15,10 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  */
-class PaymentMethodNonceGateway
+class Braintree_PaymentMethodNonceGateway
 {
     private $_gateway;
     private $_config;
@@ -30,7 +28,7 @@ class PaymentMethodNonceGateway
     {
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
-        $this->_http = new Http($gateway->config);
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
 
@@ -40,8 +38,8 @@ class PaymentMethodNonceGateway
         $fullPath = $this->_config->merchantPath() . $subPath;
         $response = $this->_http->post($fullPath);
 
-        return new Result\Successful(
-            PaymentMethodNonce::factory($response['paymentMethodNonce']),
+        return new Braintree_Result_Successful(
+            Braintree_PaymentMethodNonce::factory($response['paymentMethodNonce']),
             "paymentMethodNonce"
         );
     }
@@ -55,13 +53,12 @@ class PaymentMethodNonceGateway
         try {
             $path = $this->_config->merchantPath() . '/payment_method_nonces/' . $nonce;
             $response = $this->_http->get($path);
-            return PaymentMethodNonce::factory($response['paymentMethodNonce']);
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
-            'payment method nonce with id ' . $nonce . ' not found'
+            return Braintree_PaymentMethodNonce::factory($response['paymentMethodNonce']);
+        } catch (Braintree_Exception_NotFound $e) {
+            throw new Braintree_Exception_NotFound(
+            'payment method nonce with id ' . $id . ' not found'
             );
         }
 
     }
 }
-class_alias('Braintree\PaymentMethodNonceGateway', 'Braintree_PaymentMethodNonceGateway');

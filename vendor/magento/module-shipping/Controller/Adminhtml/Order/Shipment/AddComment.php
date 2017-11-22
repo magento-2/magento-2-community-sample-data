@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -13,9 +13,7 @@ use Magento\Framework\View\Result\LayoutFactory;
 class AddComment extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -89,7 +87,7 @@ class AddComment extends \Magento\Backend\App\Action
             $response = ['error' => true, 'message' => __('Cannot add new comment.')];
         }
         if (is_array($response)) {
-            $response = $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($response);
+            $response = $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($response);
             $this->getResponse()->representJson($response);
         } else {
             $this->getResponse()->setBody($response);

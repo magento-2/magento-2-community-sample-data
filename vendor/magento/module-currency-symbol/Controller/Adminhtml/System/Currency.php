@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,16 +11,10 @@
  */
 namespace Magento\CurrencySymbol\Controller\Adminhtml\System;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class Currency extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_CurrencySymbol::currency_rates';
 

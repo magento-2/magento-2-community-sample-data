@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,7 +21,7 @@ class PayflowExpress extends \Magento\Paypal\Model\Express
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\PayflowExpress\Form::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\PayflowExpress\Form';
 
     /**
      * Express Checkout payment method instance

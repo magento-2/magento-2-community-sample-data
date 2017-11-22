@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,13 +9,9 @@
  */
 namespace Magento\Framework\View\Test\Unit\Layout\Reader;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\View\Layout\AclCondition;
-use Magento\Framework\View\Layout\ConfigCondition;
 use Magento\Framework\View\Layout\Reader\Block;
-use Magento\Framework\View\Layout\Reader\Visibility\Condition;
 
-class BlockTest extends \PHPUnit\Framework\TestCase
+class BlockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Layout\ScheduledStructure|\PHPUnit_Framework_MockObject_MockObject
@@ -48,7 +44,7 @@ class BlockTest extends \PHPUnit\Framework\TestCase
             . $xml
             . '</' . Block::TYPE_BLOCK . '>';
 
-        $xml = simplexml_load_string($xml, \Magento\Framework\View\Layout\Element::class);
+        $xml = simplexml_load_string($xml, 'Magento\Framework\View\Layout\Element');
         return $xml->{$elementType};
     }
 
@@ -73,44 +69,49 @@ class BlockTest extends \PHPUnit\Framework\TestCase
     protected function getBlock(array $arguments)
     {
         return (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
-            ->getObject(\Magento\Framework\View\Layout\Reader\Block::class, $arguments);
+            ->getObject('Magento\Framework\View\Layout\Reader\Block', $arguments);
     }
 
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->scheduledStructure = $this->createMock(\Magento\Framework\View\Layout\ScheduledStructure::class);
-        $this->context = $this->createMock(\Magento\Framework\View\Layout\Reader\Context::class);
-        $this->readerPool = $this->createMock(\Magento\Framework\View\Layout\ReaderPool::class);
+        $this->scheduledStructure = $this->getMock(
+            'Magento\Framework\View\Layout\ScheduledStructure',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->context = $this->getMock('Magento\Framework\View\Layout\Reader\Context', [], [], '', false);
+        $this->readerPool = $this->getMock('Magento\Framework\View\Layout\ReaderPool', [], [], '', false);
     }
 
     /**
      * @param string $literal
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $scheduleStructureCount
      * @param string $ifconfigValue
-     * @param array $expectedConditions
+     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $ifconfigCondition
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $getCondition
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $setCondition
-     * @param string $aclKey
-     * @param string $aclValue
-     *
      * @dataProvider processBlockDataProvider
      */
     public function testProcessBlock(
         $literal,
         $scheduleStructureCount,
         $ifconfigValue,
-        $expectedConditions,
+        $ifconfigCondition,
         $getCondition,
-        $setCondition,
-        $aclKey,
-        $aclValue
+        $setCondition
     ) {
         $this->context->expects($this->once())->method('getScheduledStructure')
             ->will($this->returnValue($this->scheduledStructure));
+
+        $this->scheduledStructure->expects($ifconfigCondition)
+            ->method('setElementToIfconfigList')
+            ->with($literal, $ifconfigValue, 'scope');
         $this->scheduledStructure->expects($getCondition)
             ->method('getStructureElementData')
             ->with($literal, [])
@@ -130,8 +131,7 @@ class BlockTest extends \PHPUnit\Framework\TestCase
                         Block::ATTRIBUTE_TEMPLATE => '',
                         Block::ATTRIBUTE_TTL => '',
                         Block::ATTRIBUTE_DISPLAY => '',
-                        Block::ATTRIBUTE_ACL => $aclValue,
-                        'visibilityConditions' => $expectedConditions,
+                        Block::ATTRIBUTE_ACL => ''
                     ],
                     'actions' => [
                         ['someMethod', [], 'action_config_path', 'scope'],
@@ -140,23 +140,21 @@ class BlockTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $helper = $this->createMock(\Magento\Framework\View\Layout\ScheduledStructure\Helper::class);
+        $helper = $this->getMock('Magento\Framework\View\Layout\ScheduledStructure\Helper', [], [], '', false);
         $helper->expects($scheduleStructureCount)->method('scheduleStructure')->will($this->returnValue($literal));
 
         $this->prepareReaderPool(
-            '<' . $literal . ' ifconfig="' . $ifconfigValue . '" ' . $aclKey . '="' . $aclValue . '" >'
+            '<' . $literal . ' ifconfig="' . $ifconfigValue . '">'
             . '<action method="someMethod" ifconfig="action_config_path" />'
             . '</' . $literal . '>',
             $literal
         );
-        $objectManager = new ObjectManager($this);
-        $condition = $objectManager->getObject(Condition::class);
+
         /** @var \Magento\Framework\View\Layout\Reader\Block $block */
         $block = $this->getBlock(
             [
                 'helper' => $helper,
                 'readerPool' => $this->readerPool,
-                'conditionReader' => $condition,
                 'scopeType' => 'scope',
             ]
         );
@@ -169,69 +167,9 @@ class BlockTest extends \PHPUnit\Framework\TestCase
     public function processBlockDataProvider()
     {
         return [
-            [
-                'block',
-                $this->once(),
-                '',
-                [
-                    'acl' => [
-                        'name' => AclCondition::class,
-                        'arguments' => [
-                            'acl' => 'test'
-                        ],
-                    ],
-                ],
-                $this->once(),
-                $this->once(),
-                'acl',
-                'test',
-            ],
-            [
-                'block',
-                $this->once(),
-                'config_path',
-                [
-                    'acl' => [
-                        'name' => AclCondition::class,
-                        'arguments' => [
-                            'acl' => 'test'
-                        ],
-                    ],
-                    'ifconfig' => [
-                        'name' => ConfigCondition::class,
-                        'arguments' => [
-                            'configPath' => 'config_path'
-                        ],
-                    ],
-                ],
-                $this->once(),
-                $this->once(),
-                'aclResource',
-                'test',
-            ],
-            [
-                'page',
-                $this->never(),
-                '',
-                [
-                    'acl' => [
-                        'name' => AclCondition::class,
-                        'arguments' => [
-                            'acl' => 'test'
-                        ],
-                    ],
-                    'ifconfig' => [
-                        'name' => ConfigCondition::class,
-                        'arguments' => [
-                            'configPath' => 'config_path'
-                        ],
-                    ],
-                ],
-                $this->never(),
-                $this->never(),
-                'aclResource',
-                'test',
-            ],
+            ['block', $this->once(), '', $this->never(), $this->once(), $this->once()],
+            ['block', $this->once(), 'config_path', $this->once(), $this->once(), $this->once()],
+            ['page', $this->never(), '', $this->never(), $this->never(), $this->never()]
         ];
     }
 
@@ -250,12 +188,6 @@ class BlockTest extends \PHPUnit\Framework\TestCase
         $setCondition,
         $setRemoveCondition
     ) {
-        if ($literal == 'referenceBlock' && $remove == 'false') {
-            $this->scheduledStructure->expects($this->once())
-                ->method('unsetElementFromListToRemove')
-                ->with($literal);
-        }
-
         $this->context->expects($this->once())->method('getScheduledStructure')
             ->will($this->returnValue($this->scheduledStructure));
 
@@ -297,13 +229,11 @@ class BlockTest extends \PHPUnit\Framework\TestCase
             . '</' . $literal . '>',
             $literal
         );
-        $objectManager = new ObjectManager($this);
-        $condition = $objectManager->getObject(Condition::class);
+
         /** @var \Magento\Framework\View\Layout\Reader\Block $block */
         $block = $this->getBlock(
             [
                 'readerPool' => $this->readerPool,
-                'conditionReader' => $condition,
                 'scopeType' => 'scope',
             ]
         );

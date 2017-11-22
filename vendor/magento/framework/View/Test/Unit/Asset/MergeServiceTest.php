@@ -1,82 +1,69 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Asset;
 
-use Magento\Framework\App\State;
-use Magento\Framework\Filesystem;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\View\Asset\AssetInterface;
-use Magento\Framework\View\Asset\Merged;
-use Magento\Framework\View\Asset\MergeService;
-use Magento\Framework\View\Asset\ConfigInterface;
-use Magento\Framework\View\Asset\MergeStrategy\Checksum;
-use Magento\Framework\View\Asset\MergeStrategy\FileExists;
-
-/**
- * Class MergeServiceTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class MergeServiceTest extends \PHPUnit\Framework\TestCase
+class MergeServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MergeService
+     * @var \Magento\Framework\View\Asset\MergeService
      */
-    private $object;
+    protected $_object;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManagerMock;
+    protected $_objectManager;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $_config;
 
     /**
-     * @var Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $filesystemMock;
+    protected $_filesystem;
 
     /**
-     * @var Filesystem\Directory\Write|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $directoryMock;
+    protected $_directory;
 
     /**
-     * @var State|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $stateMock;
+    protected $_state;
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->configMock = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
-        $this->filesystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->directoryMock = $this->getMockBuilder(Filesystem\Directory\Write::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stateMock = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filesystemMock->expects($this->any())
-            ->method('getDirectoryWrite')
-            ->willReturn($this->directoryMock);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->_config = $this->getMock('Magento\Framework\View\Asset\ConfigInterface', [], [], '', false);
+        $this->_filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->_directory = $this->getMock(
+            '\Magento\Framework\Filesystem\Directory\Write',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_state = $this->getMock('Magento\Framework\App\State', [], [], '', false);
+        $this->_filesystem->expects(
+            $this->any()
+        )->method(
+            'getDirectoryWrite'
+        )->will(
+            $this->returnValue($this->_directory)
+        );
 
-        $this->object = (new ObjectManager($this))->getObject(MergeService::class, [
-            'objectManager' => $this->objectManagerMock,
-            'config' => $this->configMock,
-            'filesystem' => $this->filesystemMock,
-            'state' => $this->stateMock,
-        ]);
+        $this->_object = new \Magento\Framework\View\Asset\MergeService(
+            $this->_objectManager,
+            $this->_config,
+            $this->_filesystem,
+            $this->_state
+        );
     }
 
     /**
@@ -85,7 +72,7 @@ class MergeServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetMergedAssetsWrongContentType()
     {
-        $this->object->getMergedAssets([], 'unknown');
+        $this->_object->getMergedAssets([], 'unknown');
     }
 
     /**
@@ -97,25 +84,34 @@ class MergeServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetMergedAssets(array $assets, $contentType, $appMode, $mergeStrategy)
     {
-        $mergedAsset = $this->createMock(AssetInterface::class);
-        $mergeStrategyMock = $this->createMock($mergeStrategy);
+        $mergedAsset = $this->getMock('Magento\Framework\View\Asset\AssetInterface');
+        $this->_config->expects($this->once())->method('isMergeCssFiles')->will($this->returnValue(true));
+        $this->_config->expects($this->once())->method('isMergeJsFiles')->will($this->returnValue(true));
 
-        $this->configMock->expects($this->once())->method('isMergeCssFiles')->willReturn(true);
-        $this->configMock->expects($this->once())->method('isMergeJsFiles')->willReturn(true);
+        $mergeStrategyMock = $this->getMock($mergeStrategy, [], [], '', false);
 
-        $this->objectManagerMock->expects($this->once())
-            ->method('create')
-            ->with(Merged::class, ['assets' => $assets, 'mergeStrategy' => $mergeStrategyMock])
-            ->willReturn($mergedAsset);
-        $this->objectManagerMock->expects($this->once())
-            ->method('get')
-            ->with($mergeStrategy)
-            ->willReturn($mergeStrategyMock);
-        $this->stateMock->expects($this->once())
-            ->method('getMode')
-            ->willReturn($appMode);
+        $this->_objectManager->expects(
+            $this->once()
+        )->method(
+            'create'
+        )->with(
+            'Magento\Framework\View\Asset\Merged',
+            ['assets' => $assets, 'mergeStrategy' => $mergeStrategyMock]
+        )->will(
+            $this->returnValue($mergedAsset)
+        );
 
-        $this->assertSame($mergedAsset, $this->object->getMergedAssets($assets, $contentType));
+        $this->_objectManager->expects(
+            $this->once()
+        )->method(
+            'get'
+        )->with(
+            $mergeStrategy
+        )->will(
+            $this->returnValue($mergeStrategyMock)
+        );
+        $this->_state->expects($this->once())->method('getMode')->will($this->returnValue($appMode));
+        $this->assertSame($mergedAsset, $this->_object->getMergedAssets($assets, $contentType));
     }
 
     public static function getMergedAssetsDataProvider()
@@ -132,38 +128,38 @@ class MergeServiceTest extends \PHPUnit\Framework\TestCase
             'js production mode' => [
                 $jsAssets,
                 'js',
-                State::MODE_PRODUCTION,
-                FileExists::class,
+                \Magento\Framework\App\State::MODE_PRODUCTION,
+                'Magento\Framework\View\Asset\MergeStrategy\FileExists',
             ],
             'css production mode' => [
                 $cssAssets,
                 'css',
-                State::MODE_PRODUCTION,
-                FileExists::class,
+                \Magento\Framework\App\State::MODE_PRODUCTION,
+                'Magento\Framework\View\Asset\MergeStrategy\FileExists',
             ],
             'js default mode' => [
                 $jsAssets,
                 'js',
-                State::MODE_DEFAULT,
-                FileExists::class,
+                \Magento\Framework\App\State::MODE_DEFAULT,
+                'Magento\Framework\View\Asset\MergeStrategy\Checksum',
             ],
             'css default mode' => [
                 $cssAssets,
                 'js',
-                State::MODE_DEFAULT,
-                FileExists::class,
+                \Magento\Framework\App\State::MODE_DEFAULT,
+                'Magento\Framework\View\Asset\MergeStrategy\Checksum',
             ],
             'js developer mode' => [
                 $jsAssets,
                 'js',
-                State::MODE_DEVELOPER,
-                Checksum::class,
+                \Magento\Framework\App\State::MODE_DEVELOPER,
+                'Magento\Framework\View\Asset\MergeStrategy\Checksum',
             ],
             'css developer mode' => [
                 $cssAssets,
                 'css',
                 \Magento\Framework\App\State::MODE_DEVELOPER,
-                Checksum::class,
+                'Magento\Framework\View\Asset\MergeStrategy\Checksum',
             ]
         ];
     }
@@ -171,11 +167,8 @@ class MergeServiceTest extends \PHPUnit\Framework\TestCase
     public function testCleanMergedJsCss()
     {
         $mergedDir = \Magento\Framework\View\Asset\Merged::getRelativeDir();
+        $this->_directory->expects($this->once())->method('delete')->with($mergedDir);
 
-        $this->directoryMock->expects($this->once())
-            ->method('delete')
-            ->with($mergedDir);
-
-        $this->object->cleanMergedJsCss();
+        $this->_object->cleanMergedJsCss();
     }
 }

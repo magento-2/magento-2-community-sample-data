@@ -33,11 +33,11 @@ class BlockCipher implements EncryptionAlgorithmInterface
      *     'vector'        => initialization vector
      * )
      */
-    protected $encryption = [
+    protected $encryption = array(
         'key_iteration'       => 5000,
         'algorithm'           => 'aes',
         'hash'                => 'sha256',
-    ];
+    );
 
     /**
      * BlockCipher
@@ -62,22 +62,17 @@ class BlockCipher implements EncryptionAlgorithmInterface
      */
     public function __construct($options)
     {
-        $cipherPluginManager = CryptBlockCipher::getSymmetricPluginManager();
-        $cipherType = $cipherPluginManager->has('openssl') ? 'openssl' : 'mcrypt';
         try {
-            $this->blockCipher = CryptBlockCipher::factory($cipherType, $this->encryption);
+            $this->blockCipher = CryptBlockCipher::factory('mcrypt', $this->encryption);
         } catch (SymmetricException\RuntimeException $e) {
-            throw new Exception\RuntimeException(sprintf(
-                'The BlockCipher cannot be used without the %s extension',
-                $cipherType
-            ));
+            throw new Exception\RuntimeException('The BlockCipher cannot be used without the Mcrypt extension');
         }
 
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
         } elseif (is_string($options)) {
-            $options = ['key' => $options];
-        } elseif (! is_array($options)) {
+            $options = array('key' => $options);
+        } elseif (!is_array($options)) {
             throw new Exception\InvalidArgumentException('Invalid options argument provided to filter');
         }
 
@@ -114,7 +109,7 @@ class BlockCipher implements EncryptionAlgorithmInterface
             return $this;
         }
 
-        if (! is_array($options)) {
+        if (!is_array($options)) {
             throw new Exception\InvalidArgumentException('Invalid options argument provided to filter');
         }
 
@@ -128,9 +123,7 @@ class BlockCipher implements EncryptionAlgorithmInterface
             try {
                 $this->blockCipher->setCipherAlgorithm($options['algorithm']);
             } catch (CryptException\InvalidArgumentException $e) {
-                throw new Exception\InvalidArgumentException(
-                    "The algorithm '{$options['algorithm']}' is not supported"
-                );
+                throw new Exception\InvalidArgumentException("The algorithm '{$options['algorithm']}' is not supported");
             }
         }
 
@@ -230,7 +223,7 @@ class BlockCipher implements EncryptionAlgorithmInterface
     public function setCompression($compression)
     {
         if (is_string($this->compression)) {
-            $compression = ['adapter' => $compression];
+            $compression = array('adapter' => $compression);
         }
 
         $this->compression = $compression;
@@ -249,7 +242,7 @@ class BlockCipher implements EncryptionAlgorithmInterface
     public function encrypt($value)
     {
         // compress prior to encryption
-        if (! empty($this->compression)) {
+        if (!empty($this->compression)) {
             $compress = new Compress($this->compression);
             $value    = $compress($value);
         }
@@ -275,7 +268,7 @@ class BlockCipher implements EncryptionAlgorithmInterface
         $decrypted = $this->blockCipher->decrypt($value);
 
         // decompress after decryption
-        if (! empty($this->compression)) {
+        if (!empty($this->compression)) {
             $decompress = new Decompress($this->compression);
             $decrypted  = $decompress($decrypted);
         }

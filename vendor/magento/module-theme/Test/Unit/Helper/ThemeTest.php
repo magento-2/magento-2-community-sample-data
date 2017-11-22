@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Theme\Test\Unit\Helper;
 
-class ThemeTest extends \PHPUnit\Framework\TestCase
+class ThemeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getCssAssetsDataProvider
@@ -17,15 +17,17 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCssAssets($layoutStr, $expectedResult)
     {
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMockForAbstractClass('\Magento\Framework\View\Design\ThemeInterface');
         $theme->expects($this->once())->method('getArea')->will($this->returnValue('area'));
         $layoutMergeFactory = $this->_getLayoutMergeFactory($theme, $layoutStr);
-        $assetRepo = $this->createPartialMock(\Magento\Framework\View\Asset\Repository::class, ['createAsset']);
+        $assetRepo = $this->getMock(
+            'Magento\Framework\View\Asset\Repository', ['createAsset'], [], '', false
+        );
         $assetRepo->expects($this->any())
             ->method('createAsset')
             ->will($this->returnArgument(0));
         $helper = new \Magento\Theme\Helper\Theme(
-            $this->createMock(\Magento\Framework\App\Helper\Context::class),
+            $this->getMock('Magento\Framework\App\Helper\Context', [], [], '', false),
             $layoutMergeFactory,
             $assetRepo
         );
@@ -114,7 +116,7 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
     protected function _getLayoutMergeFactory($theme, $layoutStr)
     {
         /** @var $layoutProcessor \Magento\Framework\View\Layout\ProcessorInterface */
-        $layoutProcessor = $this->getMockBuilder(\Magento\Framework\View\Layout\ProcessorInterface::class)
+        $layoutProcessor = $this->getMockBuilder('Magento\Framework\View\Layout\ProcessorInterface')
             ->getMockForAbstractClass();
         $xml = '<layouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $layoutStr . '</layouts>';
         $layoutElement = simplexml_load_string($xml);
@@ -127,7 +129,9 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
         );
 
         /** @var $processorFactory \Magento\Framework\View\Layout\ProcessorFactory */
-        $processorFactory = $this->createPartialMock(\Magento\Framework\View\Layout\ProcessorFactory::class, ['create']);
+        $processorFactory = $this->getMock(
+            'Magento\Framework\View\Layout\ProcessorFactory', ['create'], [], '', false
+        );
         $processorFactory->expects($this->any())
             ->method('create')
             ->with(['theme' => $theme])

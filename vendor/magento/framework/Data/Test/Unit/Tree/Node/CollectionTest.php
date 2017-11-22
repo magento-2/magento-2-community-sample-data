@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,14 +8,14 @@ namespace Magento\Framework\Data\Test\Unit\Tree\Node;
 
 use \Magento\Framework\Data\Tree\Node\Collection;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Tree\Node\Collection
      */
     protected $collection;
 
-    protected function setUp()
+    public function setUp()
     {
         $tree = new \Magento\Framework\Data\Tree();
         $node = new \Magento\Framework\Data\Tree\Node(['id' => 'root'], 'id', $tree);
@@ -40,7 +40,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->collection->offsetExists('node1'), true);
         $this->collection->offsetSet('node1', 'Hello');
         $this->assertSame($this->collection->offsetExists('node1'), true);
-        $this->assertSame($this->collection->offsetget('node1'), 'Hello');
+        $this->assertSame($this->collection->offsetGet('node1'), 'Hello');
         $this->collection->offsetUnset('node1');
         $this->assertSame($this->collection->offsetExists('node1'), false);
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductAlert\Helper;
@@ -11,9 +11,6 @@ use Magento\Store\Model\Store;
  * ProductAlert data helper
  *
  * @author     Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
  */
 class Data extends \Magento\Framework\Url\Helper\Data
 {
@@ -36,9 +33,7 @@ class Data extends \Magento\Framework\Url\Helper\Data
      */
     protected $_layout;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     private $_storeManager;
 
     /**

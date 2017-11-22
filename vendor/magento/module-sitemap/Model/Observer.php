@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sitemap\Model;
@@ -89,7 +89,6 @@ class Observer
      * Generate sitemaps
      *
      * @return void
-     * @throws \Exception
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function scheduledGenerateSitemaps()
@@ -109,11 +108,11 @@ class Observer
         /* @var $collection \Magento\Sitemap\Model\ResourceModel\Sitemap\Collection */
         foreach ($collection as $sitemap) {
             /* @var $sitemap \Magento\Sitemap\Model\Sitemap */
+
             try {
                 $sitemap->generateXml();
             } catch (\Exception $e) {
                 $errors[] = $e->getMessage();
-                throw $e;
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,9 +15,7 @@ class FieldsFilter
 {
     const FILTER_PARAMETER = 'fields';
 
-    /**
-     * @var \Magento\Framework\Webapi\Rest\Request
-     */
+    /** @var RestRequest */
     protected $_request;
 
     /**

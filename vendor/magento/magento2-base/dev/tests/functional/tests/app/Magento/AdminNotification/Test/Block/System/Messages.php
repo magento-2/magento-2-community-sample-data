@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\AdminNotification\Test\Block\System;
 
 use Magento\Mtf\Block\Block;
-use Magento\Mtf\Client\Locator;
 
 /**
  * Global messages block.
@@ -19,14 +18,7 @@ class Messages extends Block
      *
      * @var string
      */
-    protected $closePopup = '[data-role="closeBtn"]';
-
-    /**
-     * Locator for popup text.
-     *
-     * @var string
-     */
-    protected $popupText = ".//*[@id='system_messages_list']/ul/li";
+    protected $closePopup = '.ui-dialog-titlebar-close';
 
     /**
      * Close popup block.
@@ -38,15 +30,5 @@ class Messages extends Block
         if ($this->_rootElement->isVisible()) {
             $this->_rootElement->find($this->closePopup)->click();
         }
-    }
-
-    /**
-     * Get pop up text.
-     *
-     * @return string
-     */
-    public function getPopupText()
-    {
-        return $this->_rootElement->find($this->popupText, Locator::SELECTOR_XPATH)->getText();
     }
 }

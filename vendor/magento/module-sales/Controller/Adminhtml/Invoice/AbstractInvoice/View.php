@@ -1,23 +1,18 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Invoice\AbstractInvoice;
 
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Registry;
-use Magento\Sales\Api\InvoiceRepositoryInterface;
-use Magento\Sales\Model\Order\InvoiceRepository;
 
 abstract class View extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_invoice';
 
@@ -30,11 +25,6 @@ abstract class View extends \Magento\Backend\App\Action
      * @var \Magento\Backend\Model\View\Result\ForwardFactory
      */
     protected $resultForwardFactory;
-
-    /**
-     * @var InvoiceRepositoryInterface
-     */
-    protected $invoiceRepository;
 
     /**
      * @param Context $context
@@ -74,30 +64,16 @@ abstract class View extends \Magento\Backend\App\Action
      */
     protected function getInvoice()
     {
-        try {
-            $invoice = $this->getInvoiceRepository()
-                ->get($this->getRequest()->getParam('invoice_id'));
-            $this->registry->register('current_invoice', $invoice);
-        } catch (\Exception $e) {
-            $this->messageManager->addError(__('Invoice capturing error'));
+        $invoiceId = $this->getRequest()->getParam('invoice_id');
+        if (!$invoiceId) {
             return false;
         }
-
-        return $invoice;
-    }
-
-    /**
-     * @return InvoiceRepository
-     *
-     * @deprecated 100.1.0
-     */
-    private function getInvoiceRepository()
-    {
-        if ($this->invoiceRepository === null) {
-            $this->invoiceRepository = ObjectManager::getInstance()
-                ->get(InvoiceRepositoryInterface::class);
+        /** @var \Magento\Sales\Model\Order\Invoice $invoice */
+        $invoice = $this->_objectManager->create('Magento\Sales\Api\InvoiceRepositoryInterface')->get($invoiceId);
+        if (!$invoice) {
+            return false;
         }
-
-        return $this->invoiceRepository;
+        $this->registry->register('current_invoice', $invoice);
+        return $invoice;
     }
 }

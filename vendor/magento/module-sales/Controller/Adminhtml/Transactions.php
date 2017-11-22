@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml;
@@ -19,9 +19,7 @@ use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 abstract class Transactions extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::transactions';
 
@@ -76,7 +74,7 @@ abstract class Transactions extends \Magento\Backend\App\Action
     protected function _initTransaction()
     {
         $txn = $this->_objectManager->create(
-            \Magento\Sales\Model\Order\Payment\Transaction::class
+            'Magento\Sales\Model\Order\Payment\Transaction'
         )->load(
             $this->getRequest()->getParam('txn_id')
         );

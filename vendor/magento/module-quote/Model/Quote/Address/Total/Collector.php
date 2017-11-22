@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Quote\Address\Total;
-
-use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Address Total Collector model
@@ -69,9 +67,8 @@ class Collector extends \Magento\Sales\Model\Config\Ordered
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Quote\Model\Quote\Address\TotalFactory $totalFactory
-     * @param \Magento\Framework\Simplexml\Element|mixed $sourceData
+     * @param mixed $sourceData
      * @param mixed $store
-     * @param SerializerInterface $serializer
      */
     public function __construct(
         \Magento\Framework\App\Cache\Type\Config $configCacheType,
@@ -81,12 +78,11 @@ class Collector extends \Magento\Sales\Model\Config\Ordered
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Quote\Model\Quote\Address\TotalFactory $totalFactory,
         $sourceData = null,
-        $store = null,
-        SerializerInterface $serializer = null
+        $store = null
     ) {
         $this->_scopeConfig = $scopeConfig;
         $this->_totalFactory = $totalFactory;
-        parent::__construct($configCacheType, $logger, $salesConfig, $sourceData, $serializer);
+        parent::__construct($configCacheType, $logger, $salesConfig, $sourceData);
         $this->_store = $store ?: $storeManager->getStore();
         $this->_initModels()->_initCollectors()->_initRetrievers();
     }

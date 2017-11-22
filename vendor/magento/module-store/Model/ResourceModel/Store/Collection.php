@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Model\ResourceModel\Store;
 
 /**
  * Stores collection
- *
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -35,7 +32,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->setFlag('load_default_store', false);
-        $this->_init(\Magento\Store\Model\Store::class, \Magento\Store\Model\ResourceModel\Store::class);
+        $this->_init('Magento\Store\Model\Store', 'Magento\Store\Model\ResourceModel\Store');
     }
 
     /**
@@ -82,18 +79,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function addGroupFilter($groupId)
     {
         return $this->addFieldToFilter('main_table.group_id', ['in' => $groupId]);
-    }
-
-    /**
-     * Add filter by status to collection
-     *
-     * @param int $status
-     * @return $this
-     * @since 100.1.0
-     */
-    public function addStatusFilter($status)
-    {
-        return $this->addFieldToFilter('main_table.is_active', ['eq' => $status]);
     }
 
     /**

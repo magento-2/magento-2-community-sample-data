@@ -1,22 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Generator;
 
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem\DriverInterface;
 
-/**
- * Manages generated code.
- */
 class Io
 {
     /**
      * Default code generation directory
      * Should correspond the value from \Magento\Framework\Filesystem
      */
-    const DEFAULT_DIRECTORY = 'generated/code';
+    const DEFAULT_DIRECTORY = 'var/generation';
 
     /**
      * Path to directory where new file must be created

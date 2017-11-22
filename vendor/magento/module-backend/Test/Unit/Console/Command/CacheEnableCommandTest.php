@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CacheEnableCommandTest extends AbstractCacheSetCommandTest
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
         $this->command = new CacheEnableCommand($this->cacheManagerMock);
@@ -22,7 +22,7 @@ class CacheEnableCommandTest extends AbstractCacheSetCommandTest
      * @param array $enable
      * @param array $result
      * @param string $output
-     * @dataProvider executeDataProvider
+     * @dataProvider testExecuteDataProvider
      */
     public function testExecute($param, $enable, $result, $output)
     {

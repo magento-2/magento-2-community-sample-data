@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Url;
@@ -8,9 +8,7 @@ namespace Magento\Framework\View\Url;
 use Magento\Framework\View\FileSystem;
 
 /**
- * CSS URLs resolver class.
- * This utility class provides a set of methods to work with CSS files.
- * @api
+ * Helper to work with CSS files
  */
 class CssResolver
 {

@@ -1,17 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /* Create attribute */
 /** @var $installer \Magento\Catalog\Setup\CategorySetup */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
 $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+    'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
 );
 $attribute->setData(
     [
@@ -32,15 +30,13 @@ $installer->addAttributeToGroup('catalog_product', 'Default', 'General', $attrib
 /* Create simple products per each option */
 /** @var $options \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection */
 $options = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection::class
+    'Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection'
 );
 $options->setAttributeFilter($attribute->getId());
 
 foreach ($options as $option) {
     /** @var $product \Magento\Catalog\Model\Product */
-    $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-        \Magento\Catalog\Model\Product::class
-    );
+    $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
     $product->setTypeId(
         \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
     )->setAttributeSetId(
@@ -64,7 +60,7 @@ foreach ($options as $option) {
     )->save();
 
     \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Catalog\Model\Product\Action::class
+        'Magento\Catalog\Model\Product\Action'
     )->updateAttributes(
         [$product->getId()],
         [$attribute->getAttributeCode() => $option->getId()],

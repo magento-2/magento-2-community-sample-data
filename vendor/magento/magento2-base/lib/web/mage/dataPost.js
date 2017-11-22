@@ -1,88 +1,50 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint browser:true jquery:true*/
+/*global confirm:true*/
 define([
-    'jquery',
-    'mage/template',
-    'Magento_Ui/js/modal/confirm',
-    'jquery/ui'
-], function ($, mageTemplate, uiConfirm) {
-    'use strict';
-
+    "jquery",
+    "mage/template",
+    "jquery/ui"
+], function($,mageTemplate){
+    
     $.widget('mage.dataPost', {
         options: {
-            formTemplate: '<form action="<%- data.action %>" method="post">' +
-            '<% _.each(data.data, function(value, index) { %>' +
-            '<input name="<%- index %>" value="<%- value %>">' +
-            '<% }) %></form>',
+            formTemplate: '<form action="<%- data.action %>" method="post">'
+                + '<% _.each(data.data, function(value, index) { %>'
+                    + '<input name="<%- index %>" value="<%- value %>">'
+                + '<% }) %></form>',
             postTrigger: ['a[data-post]', 'button[data-post]', 'span[data-post]'],
             formKeyInputSelector: 'input[name="form_key"]'
         },
-
-        /** @inheritdoc */
-        _create: function () {
+        _create: function() {
             this._bind();
         },
-
-        /** @inheritdoc */
-        _bind: function () {
+        _bind: function() {
             var events = {};
-
-            $.each(this.options.postTrigger, function (index, value) {
+            $.each(this.options.postTrigger, function(index, value) {
                 events['click ' + value] = '_postDataAction';
             });
-
             this._on(events);
         },
-
-        /**
-         * Handler for click.
-         *
-         * @param {Object} e
-         * @private
-         */
-        _postDataAction: function (e) {
-            var params = $(e.currentTarget).data('post');
-
+        _postDataAction: function(e) {
             e.preventDefault();
+            var params = $(e.currentTarget).data('post');
             this.postData(params);
         },
-
-        /**
-         * Data post action.
-         *
-         * @param {Object} params
-         */
-        postData: function (params) {
-            var formKey = $(this.options.formKeyInputSelector).val(),
-                $form;
-
+        postData: function(params) {
+            var formKey = $(this.options.formKeyInputSelector).val();
             if (formKey) {
-                params.data['form_key'] = formKey;
+                params.data.form_key = formKey;
             }
-
-            $form = $(mageTemplate(this.options.formTemplate, {
+            $(mageTemplate(this.options.formTemplate, {
                 data: params
-            }));
-
-            if (params.data.confirmation) {
-                uiConfirm({
-                    content: params.data.confirmationMessage,
-                    actions: {
-                        /** @inheritdoc */
-                        confirm: function () {
-                            $form.appendTo('body').hide().submit();
-                        }
-                    }
-                });
-            } else {
-                $form.appendTo('body').hide().submit();
-            }
+            })).appendTo('body').hide().submit();
         }
     });
-
+    
     $(document).dataPost();
 
     return $.mage.dataPost;

@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Persistent\Test\Unit\Observer;
 
-class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
+class EmulateCustomerObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\EmulateCustomerObserver
@@ -39,39 +39,23 @@ class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
      */
     protected $observerMock;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $addressRepositoryMock;
-
     protected function setUp()
     {
         $this->customerRepositoryMock = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class,
+            'Magento\Customer\Api\CustomerRepositoryInterface',
             [],
             '',
             false
         );
-        $methods = [
-            'setDefaultTaxShippingAddress',
-            'setDefaultTaxBillingAddress',
-            'setCustomerId',
-            'setCustomerGroupId',
-            'isLoggedIn',
-            'setIsCustomerEmulated',
-            '__wakeUp'
-        ];
-        $this->customerSessionMock = $this->createPartialMock(\Magento\Customer\Model\Session::class, $methods);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
-        $this->helperMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $this->addressRepositoryMock = $this->createMock(\Magento\Customer\Api\AddressRepositoryInterface::class);
+        $this->customerSessionMock = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
+        $this->sessionHelperMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
+        $this->helperMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $this->model = new \Magento\Persistent\Observer\EmulateCustomerObserver(
             $this->sessionHelperMock,
             $this->helperMock,
             $this->customerSessionMock,
-            $this->customerRepositoryMock,
-            $this->addressRepositoryMock
+            $this->customerRepositoryMock
         );
     }
 
@@ -103,48 +87,8 @@ class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
     {
         $customerId = 1;
         $customerGroupId = 2;
-        $countryId = 3;
-        $regionId = 4;
-        $postcode = 90210;
-        $sessionMock = $this->createPartialMock(
-            \Magento\Persistent\Model\Session::class,
-            ['getCustomerId', '__wakeUp']
-        );
-        $methods = ['getCountryId', 'getRegion', 'getRegionId', 'getPostcode'];
-        $defaultShippingAddressMock = $this->createPartialMock(\Magento\Customer\Model\Address::class, $methods);
-        $defaultBillingAddressMock = $this->createPartialMock(\Magento\Customer\Model\Address::class, $methods);
-        $customerMock = $this->createMock(\Magento\Customer\Api\Data\CustomerInterface::class);
-        $customerMock
-            ->expects($this->once())
-            ->method('getDefaultShipping')
-            ->willReturn('shippingId');
-        $customerMock
-            ->expects($this->once())
-            ->method('getDefaultBilling')
-            ->willReturn('billingId');
-        $valueMap = [
-            ['shippingId', $defaultShippingAddressMock],
-            ['billingId', $defaultBillingAddressMock]
-        ];
-        $this->addressRepositoryMock->expects($this->any())->method('getById')->willReturnMap($valueMap);
-        $this->customerSessionMock
-            ->expects($this->once())
-            ->method('setDefaultTaxShippingAddress')
-            ->with(
-                [
-                    'country_id' => $countryId,
-                    'region_id' => $regionId,
-                    'postcode' => $postcode
-                ]
-            );
-        $defaultBillingAddressMock->expects($this->once())->method('getCountryId')->willReturn($countryId);
-        $defaultBillingAddressMock->expects($this->once())->method('getRegion')->willReturn('California');
-        $defaultBillingAddressMock->expects($this->once())->method('getRegionId')->willReturn($regionId);
-        $defaultBillingAddressMock->expects($this->once())->method('getPostcode')->willReturn($postcode);
-        $defaultShippingAddressMock->expects($this->once())->method('getCountryId')->willReturn($countryId);
-        $defaultShippingAddressMock->expects($this->once())->method('getRegion')->willReturn('California');
-        $defaultShippingAddressMock->expects($this->once())->method('getRegionId')->willReturn($regionId);
-        $defaultShippingAddressMock->expects($this->once())->method('getPostcode')->willReturn($postcode);
+        $sessionMock = $this->getMock('Magento\Persistent\Model\Session', ['getCustomerId', '__wakeUp'], [], '', false);
+        $customerMock = $this->getMock('\Magento\Customer\Api\Data\CustomerInterface', [], [], '', false);
         $this->helperMock
             ->expects($this->once())
             ->method('canProcess')
@@ -167,15 +111,7 @@ class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
             ->method('setCustomerId')
             ->with($customerId)
             ->will($this->returnSelf());
-        $this->customerSessionMock
-            ->expects($this->once())
-            ->method('setCustomerGroupId')
-            ->with($customerGroupId)->will($this->returnSelf());
-        $this->customerSessionMock
-            ->expects($this->once())
-            ->method('setIsCustomerEmulated')
-            ->with(true)
-            ->will($this->returnSelf());
+        $this->customerSessionMock->expects($this->once())->method('setCustomerGroupId')->with($customerGroupId);
         $this->model->execute($this->observerMock);
     }
 

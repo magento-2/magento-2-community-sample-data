@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -54,7 +54,7 @@ class CheckoutValidator implements ValidatorInterface
     }
 
     /**
-     * Checks payment method and quote availability
+     * Сhecks payment method and quote availability
      *
      * @param string $paymentCode
      * @param bool $isInCatalog

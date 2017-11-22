@@ -2,9 +2,12 @@
 /**
  * Profiler driver factory
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Profiler\Driver;
 
 use Magento\Framework\Profiler\DriverInterface;
@@ -31,10 +34,8 @@ class Factory
      * @param string $defaultDriverPrefix
      * @param string $defaultDriverType
      */
-    public function __construct(
-        $defaultDriverPrefix = 'Magento\Framework\Profiler\Driver\\',
-        $defaultDriverType = 'standard'
-    ) {
+    public function __construct($defaultDriverPrefix = 'Magento\Framework\Profiler\Driver\\', $defaultDriverType = 'standard')
+    {
         $this->_defaultDriverPrefix = $defaultDriverPrefix;
         $this->_defaultDriverType = $defaultDriverType;
     }
@@ -62,10 +63,7 @@ class Factory
         $driver = new $class($config);
         if (!$driver instanceof DriverInterface) {
             throw new \InvalidArgumentException(
-                sprintf(
-                    "Driver class \"%s\" must implement \Magento\Framework\Profiler\DriverInterface.",
-                    get_class($driver)
-                )
+                sprintf("Driver class \"%s\" must implement \Magento\Framework\Profiler\DriverInterface.", get_class($driver))
             );
         }
         return $driver;

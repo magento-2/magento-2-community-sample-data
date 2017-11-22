@@ -1,62 +1,36 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Model\ResourceModel;
 
-use Magento\Cms\Api\Data\BlockInterface;
-use Magento\Framework\DB\Select;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\EntityManager;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
-use Magento\Framework\Model\ResourceModel\Db\Context;
-use Magento\Store\Model\Store;
-use Magento\Store\Model\StoreManagerInterface;
-
 /**
  * CMS block model
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Block extends AbstractDb
+class Block extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
      * Store manager
      *
-     * @var StoreManagerInterface
+     * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
 
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var MetadataPool
-     */
-    protected $metadataPool;
-
-    /**
-     * @param Context $context
-     * @param StoreManagerInterface $storeManager
-     * @param EntityManager $entityManager
-     * @param MetadataPool $metadataPool
+     * Construct
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param string $connectionName
      */
     public function __construct(
-        Context $context,
-        StoreManagerInterface $storeManager,
-        EntityManager $entityManager,
-        MetadataPool $metadataPool,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         $connectionName = null
     ) {
-        $this->_storeManager = $storeManager;
-        $this->entityManager = $entityManager;
-        $this->metadataPool = $metadataPool;
         parent::__construct($context, $connectionName);
+        $this->_storeManager = $storeManager;
     }
 
     /**
@@ -70,24 +44,31 @@ class Block extends AbstractDb
     }
 
     /**
-     * @inheritDoc
+     * Process block data before deleting
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object
+     * @return \Magento\Cms\Model\ResourceModel\Page
      */
-    public function getConnection()
+    protected function _beforeDelete(\Magento\Framework\Model\AbstractModel $object)
     {
-        return $this->metadataPool->getMetadata(BlockInterface::class)->getEntityConnection();
+        $condition = ['block_id = ?' => (int)$object->getId()];
+
+        $this->getConnection()->delete($this->getTable('cms_block_store'), $condition);
+
+        return parent::_beforeDelete($object);
     }
 
     /**
      * Perform operations before object save
      *
-     * @param AbstractModel $object
+     * @param \Magento\Framework\Model\AbstractModel $object
      * @return $this
-     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function _beforeSave(AbstractModel $object)
+    protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
         if (!$this->getIsUniqueBlockToStores($object)) {
-            throw new LocalizedException(
+            throw new \Magento\Framework\Exception\LocalizedException(
                 __('A block identifier with the same properties already exists in the selected store.')
             );
         }
@@ -95,48 +76,71 @@ class Block extends AbstractDb
     }
 
     /**
-     * @param AbstractModel $object
-     * @param mixed $value
-     * @param null $field
-     * @return bool|int|string
-     * @throws LocalizedException
-     * @throws \Exception
+     * Perform operations after object save
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object
+     * @return $this
      */
-    private function getBlockId(AbstractModel $object, $value, $field = null)
+    protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
-        $entityMetadata = $this->metadataPool->getMetadata(BlockInterface::class);
-        if (!is_numeric($value) && $field === null) {
-            $field = 'identifier';
-        } elseif (!$field) {
-            $field = $entityMetadata->getIdentifierField();
+        $oldStores = $this->lookupStoreIds($object->getId());
+        $newStores = (array)$object->getStores();
+
+        $table = $this->getTable('cms_block_store');
+        $insert = array_diff($newStores, $oldStores);
+        $delete = array_diff($oldStores, $newStores);
+
+        if ($delete) {
+            $where = ['block_id = ?' => (int)$object->getId(), 'store_id IN (?)' => $delete];
+
+            $this->getConnection()->delete($table, $where);
         }
-        $entityId = $value;
-        if ($field != $entityMetadata->getIdentifierField() || $object->getStoreId()) {
-            $select = $this->_getLoadSelect($field, $value, $object);
-            $select->reset(Select::COLUMNS)
-                ->columns($this->getMainTable() . '.' . $entityMetadata->getIdentifierField())
-                ->limit(1);
-            $result = $this->getConnection()->fetchCol($select);
-            $entityId = count($result) ? $result[0] : false;
+
+        if ($insert) {
+            $data = [];
+
+            foreach ($insert as $storeId) {
+                $data[] = ['block_id' => (int)$object->getId(), 'store_id' => (int)$storeId];
+            }
+
+            $this->getConnection()->insertMultiple($table, $data);
         }
-        return $entityId;
+
+        return parent::_afterSave($object);
     }
 
     /**
-     * Load an object
+     * Load an object using 'identifier' field if there's no field specified and value is not numeric
      *
-     * @param \Magento\Cms\Model\Block|AbstractModel $object
+     * @param \Magento\Framework\Model\AbstractModel $object
      * @param mixed $value
-     * @param string $field field to load by (defaults to model id)
+     * @param string $field
      * @return $this
      */
-    public function load(AbstractModel $object, $value, $field = null)
+    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
     {
-        $blockId = $this->getBlockId($object, $value, $field);
-        if ($blockId) {
-            $this->entityManager->load($object, $blockId);
+        if (!is_numeric($value) && $field === null) {
+            $field = 'identifier';
         }
-        return $this;
+
+        return parent::load($object, $value, $field);
+    }
+
+    /**
+     * Perform operations after object load
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object
+     * @return $this
+     */
+    protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
+    {
+        if ($object->getId()) {
+            $stores = $this->lookupStoreIds($object->getId());
+            $object->setData('store_id', $stores);
+            $object->setData('stores', $stores);
+        }
+
+        return parent::_afterLoad($object);
     }
 
     /**
@@ -144,28 +148,31 @@ class Block extends AbstractDb
      *
      * @param string $field
      * @param mixed $value
-     * @param \Magento\Cms\Model\Block|AbstractModel $object
-     * @return Select
+     * @param \Magento\Cms\Model\Block $object
+     * @return \Magento\Framework\DB\Select
      */
     protected function _getLoadSelect($field, $value, $object)
     {
-        $entityMetadata = $this->metadataPool->getMetadata(BlockInterface::class);
-        $linkField = $entityMetadata->getLinkField();
-
         $select = parent::_getLoadSelect($field, $value, $object);
 
         if ($object->getStoreId()) {
-            $stores = [(int)$object->getStoreId(), Store::DEFAULT_STORE_ID];
+            $stores = [(int)$object->getStoreId(), \Magento\Store\Model\Store::DEFAULT_STORE_ID];
 
             $select->join(
                 ['cbs' => $this->getTable('cms_block_store')],
-                $this->getMainTable() . '.' . $linkField . ' = cbs.' . $linkField,
+                $this->getMainTable() . '.block_id = cbs.block_id',
                 ['store_id']
-            )
-                ->where('is_active = ?', 1)
-                ->where('cbs.store_id in (?)', $stores)
-                ->order('store_id DESC')
-                ->limit(1);
+            )->where(
+                'is_active = ?',
+                1
+            )->where(
+                'cbs.store_id in (?)',
+                $stores
+            )->order(
+                'store_id DESC'
+            )->limit(
+                1
+            );
         }
 
         return $select;
@@ -174,33 +181,34 @@ class Block extends AbstractDb
     /**
      * Check for unique of identifier of block to selected store(s).
      *
-     * @param AbstractModel $object
+     * @param \Magento\Framework\Model\AbstractModel $object
      * @return bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getIsUniqueBlockToStores(AbstractModel $object)
+    public function getIsUniqueBlockToStores(\Magento\Framework\Model\AbstractModel $object)
     {
-        $entityMetadata = $this->metadataPool->getMetadata(BlockInterface::class);
-        $linkField = $entityMetadata->getLinkField();
-
         if ($this->_storeManager->hasSingleStore()) {
-            $stores = [Store::DEFAULT_STORE_ID];
+            $stores = [\Magento\Store\Model\Store::DEFAULT_STORE_ID];
         } else {
             $stores = (array)$object->getData('stores');
         }
 
-        $select = $this->getConnection()->select()
-            ->from(['cb' => $this->getMainTable()])
-            ->join(
-                ['cbs' => $this->getTable('cms_block_store')],
-                'cb.' . $linkField . ' = cbs.' . $linkField,
-                []
-            )
-            ->where('cb.identifier = ?', $object->getData('identifier'))
-            ->where('cbs.store_id IN (?)', $stores);
+        $select = $this->getConnection()->select()->from(
+            ['cb' => $this->getMainTable()]
+        )->join(
+            ['cbs' => $this->getTable('cms_block_store')],
+            'cb.block_id = cbs.block_id',
+            []
+        )->where(
+            'cb.identifier = ?',
+            $object->getData('identifier')
+        )->where(
+            'cbs.store_id IN (?)',
+            $stores
+        );
 
         if ($object->getId()) {
-            $select->where('cb.' . $entityMetadata->getIdentifierField() . ' <> ?', $object->getId());
+            $select->where('cb.block_id <> ?', $object->getId());
         }
 
         if ($this->getConnection()->fetchRow($select)) {
@@ -220,38 +228,15 @@ class Block extends AbstractDb
     {
         $connection = $this->getConnection();
 
-        $entityMetadata = $this->metadataPool->getMetadata(BlockInterface::class);
-        $linkField = $entityMetadata->getLinkField();
+        $select = $connection->select()->from(
+            $this->getTable('cms_block_store'),
+            'store_id'
+        )->where(
+            'block_id = :block_id'
+        );
 
-        $select = $connection->select()
-            ->from(['cbs' => $this->getTable('cms_block_store')], 'store_id')
-            ->join(
-                ['cb' => $this->getMainTable()],
-                'cbs.' . $linkField . ' = cb.' . $linkField,
-                []
-            )
-            ->where('cb.' . $entityMetadata->getIdentifierField()  . ' = :block_id');
+        $binds = [':block_id' => (int)$id];
 
-        return $connection->fetchCol($select, ['block_id' => (int)$id]);
-    }
-
-    /**
-     * @param AbstractModel $object
-     * @return $this
-     * @throws \Exception
-     */
-    public function save(AbstractModel $object)
-    {
-        $this->entityManager->save($object);
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(AbstractModel $object)
-    {
-        $this->entityManager->delete($object);
-        return $this;
+        return $connection->fetchCol($select, $binds);
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -12,8 +12,8 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Magento_Catalog::config_catalog" title="Catalog Section" translate="title">
-                                <resource id="Magento_CatalogSearch::config_catalog_search" title="Catalog Search" translate="title" sortOrder="10" />
+                            <resource id="Magento_Catalog::config_catalog" title="Catalog Section">
+                                <resource id="Magento_CatalogSearch::config_catalog_search" title="Catalog Search" sortOrder="10" />
                             </resource>
                         </resource>
                     </resource>

@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -23,74 +23,60 @@
     }
 }
 
-//
-//  Create attribute panel
-//  ---------------------------------------------
-
-//  Panel description
-.admin__field-complex-attributes {
-    .admin__field-complex-content {
-        font-size: 2.4rem;
-        padding: .5rem 0;
-    }
-
-    [class^='action-'] {
-        &:extend(.abs-action-l all);
-    }
+//  Change Attribute Set
+#product_info_tabs li.removed,
+div.removed,
+.field.removed {
+    display: none !important;
 }
 
-//  Grid search result summary
-.attributes-summary {
-    &:extend(.abs-list-reset-styles all);
-
-    .attributes-selected,
-    .attributes-found {
-        display: block;
+.ie9 {
+    .catalog-product-new {
+        .page-main-actions {
+            .action-default {
+                margin-right: 0;
+            }
+        }
     }
 }
 
 //
-//  Category page sidebar
+//  Product weight switcher
 //  ---------------------------------------------
 
-.sidebar-actions {
-    margin-bottom: @indent__base;
-
-    [class*='action-'] {
-        margin-bottom: @indent__xs;
+.weight-switcher {
+    .field-weight & {
+        .admin__control-switcher {
+            > .admin__field-label {
+                float: none;
+                padding-top: 7px;
+                text-align: left;
+                width: 100%;
+            }
+        }
     }
-}
-
-.catalog-category-edit,
-.catalog-category-add {
-    //  TODO: refactor trees
-    .x-tree.tree-wrapper {
-        overflow-x: auto;
+    .admin__control-radio[type=radio] {
+        margin: 0;
+        position: absolute;
     }
-}
-
-//
-//  Advanced Inventory panel
-//  ---------------------------------------------
-
-.admin__field-use-config {
-    .admin__field + {
-        margin-top: -@indent__base;
+    .admin__control-addon {
+        width: auto; // IE9 width fix
     }
 }
 
 //
-//  Advanced Price panel
+//  Create attribute panel iframe page configuration
 //  ---------------------------------------------
 
-.admin__control-fields {
-    .control-grouped {
-        .lib-vendor-prefix-display(inline-flex);
-        .lib-vendor-prefix-flex-direction(row);
+.catalog-product-attribute-edit {
+    min-width: 0;
 
-        .admin__field + .admin__field {
-            margin-left: @indent__s;
-            margin-top: 0;
+    &.attribute-popup {
+        .page-wrapper {
+            width: 100%;
+            .page-content {
+                padding-left: 0;
+            }
         }
     }
 }

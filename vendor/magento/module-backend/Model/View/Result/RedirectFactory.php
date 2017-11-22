@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model\View\Result;
@@ -9,8 +9,6 @@ use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Factory class for \Magento\Backend\Model\View\Result\Redirect
- * @api
- * @since 100.0.2
  */
 class RedirectFactory extends \Magento\Framework\Controller\Result\RedirectFactory
 {
@@ -34,7 +32,7 @@ class RedirectFactory extends \Magento\Framework\Controller\Result\RedirectFacto
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Backend\Model\View\Result\Redirect::class
+        $instanceName = 'Magento\Backend\Model\View\Result\Redirect'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

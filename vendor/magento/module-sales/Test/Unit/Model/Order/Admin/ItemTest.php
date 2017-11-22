@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Admin;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Admin;
 /**
  * Class ValidatorTest
  */
-class ItemTest extends \PHPUnit\Framework\TestCase
+class ItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -18,9 +18,10 @@ class ItemTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Sales\Model\Order\Admin\Item */
     protected $item;
 
-    protected function setUp()
+
+    public function setUp()
     {
-        $this->orderItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
+        $this->orderItemMock = $this->getMockBuilder('Magento\Sales\Model\Order\Item')
             ->disableOriginalConstructor()
             ->getMock();
         $this->item = new \Magento\Sales\Model\Order\Admin\Item();

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model\Widget\Grid;
 
-class ParserTest extends \PHPUnit\Framework\TestCase
+class ParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Widget\Grid\Parser

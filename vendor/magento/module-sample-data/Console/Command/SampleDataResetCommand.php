@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -66,9 +66,7 @@ class SampleDataResetCommand extends Command
         if (!empty($sampleDataPackages)) {
             foreach (array_keys($sampleDataPackages) as $name) {
                 $moduleName = $this->packageInfo->getModuleName($name);
-                if ($moduleName !== null) {
-                    $this->moduleResource->setDataVersion($moduleName, '');
-                }
+                $this->moduleResource->setDataVersion($moduleName, '');
             }
             $output->writeln('<info>' . 'Reset of sample data version completed successfully.' . '</info>');
         } else {

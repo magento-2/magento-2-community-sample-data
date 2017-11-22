@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GiftMessage\Model;
@@ -10,9 +10,10 @@ use Magento\Framework\Api\AttributeValueFactory;
 /**
  * Gift Message model
  *
- * @api
+ * @method \Magento\GiftMessage\Model\ResourceModel\Message _getResource()
+ * @method \Magento\GiftMessage\Model\ResourceModel\Message getResource()
+ *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Message extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\GiftMessage\Api\Data\MessageInterface
@@ -59,7 +60,7 @@ class Message extends \Magento\Framework\Model\AbstractExtensibleModel implement
      */
     protected function _construct()
     {
-        $this->_init(\Magento\GiftMessage\Model\ResourceModel\Message::class);
+        $this->_init('Magento\GiftMessage\Model\ResourceModel\Message');
     }
 
     /**
@@ -84,7 +85,6 @@ class Message extends \Magento\Framework\Model\AbstractExtensibleModel implement
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * {@inheritdoc}
      */
@@ -185,6 +185,5 @@ class Message extends \Magento\Framework\Model\AbstractExtensibleModel implement
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

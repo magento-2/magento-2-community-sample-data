@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,6 @@ use Magento\Tax\Api\Data\TaxRateInterface;
 /**
  * Interface for managing tax rates.
  * @api
- * @since 100.0.2
  */
 interface TaxRateManagementInterface
 {

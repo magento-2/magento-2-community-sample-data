@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Controller\Adminhtml\System\Design\Theme;
@@ -28,15 +28,15 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
     /** @var \Magento\Framework\View\Design\Theme\CustomizationInterface|\PHPUnit_Framework_MockObject_MockObject  */
     protected $themeCustomization;
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
-        $this->serviceModel = $this->createMock(\Magento\Theme\Model\Uploader\Service::class);
-        $this->themeFactory = $this->createMock(\Magento\Framework\View\Design\Theme\FlyweightFactory::class);
-        $this->jsonHelper = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
-        $this->logger = $this->getMockForAbstractClass(\Psr\Log\LoggerInterface::class, [], '', false);
+        $this->serviceModel = $this->getMock('Magento\Theme\Model\Uploader\Service', [], [], '', false);
+        $this->themeFactory = $this->getMock('Magento\Framework\View\Design\Theme\FlyweightFactory', [], [], '', false);
+        $this->jsonHelper = $this->getMock('Magento\Framework\Json\Helper\Data', [], [], '', false);
+        $this->logger = $this->getMockForAbstractClass('Psr\Log\LoggerInterface', [], '', false);
         $this->themeCustomization = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Design\Theme\CustomizationInterface::class,
+            'Magento\Framework\View\Design\Theme\CustomizationInterface',
             [],
             '',
             false,
@@ -47,7 +47,14 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
                 'getFilesByType'
             ]
         );
-        $this->customizationJs = $this->createMock(\Magento\Framework\View\Design\Theme\Customization\File\Js::class);
+        $this->customizationJs = $this->getMock(
+            'Magento\Framework\View\Design\Theme\Customization\File\Js',
+            [],
+            [],
+            '',
+            false
+        );
+
     }
 
     public function testExecuteWithoutTheme()
@@ -62,22 +69,22 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
         $this->_objectManagerMock
             ->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Theme\Model\Uploader\Service::class)
+            ->with('Magento\Theme\Model\Uploader\Service')
             ->WillReturn($this->serviceModel);
         $this->_objectManagerMock
             ->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\FlyweightFactory::class)
+            ->with('Magento\Framework\View\Design\Theme\FlyweightFactory')
             ->WillReturn($this->themeFactory);
         $this->_objectManagerMock
             ->expects($this->at(2))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\Customization\File\Js::class)
+            ->with('Magento\Framework\View\Design\Theme\Customization\File\Js')
             ->WillReturn($this->customizationJs);
         $this->_objectManagerMock
             ->expects($this->at(3))
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->WillReturn($this->jsonHelper);
 
         $this->themeFactory->expects($this->once())
@@ -106,21 +113,21 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
 
         $this->_objectManagerMock->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Theme\Model\Uploader\Service::class)
+            ->with('Magento\Theme\Model\Uploader\Service')
             ->WillReturn($this->serviceModel);
         $this->_objectManagerMock->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\FlyweightFactory::class)
+            ->with('Magento\Framework\View\Design\Theme\FlyweightFactory')
             ->WillReturn($this->themeFactory);
         $this->_objectManagerMock
             ->expects($this->at(2))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\Customization\File\Js::class)
+            ->with('Magento\Framework\View\Design\Theme\Customization\File\Js')
             ->WillReturn($this->customizationJs);
         $this->_objectManagerMock
             ->expects($this->at(4))
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->WillReturn($this->jsonHelper);
 
         $this->themeFactory->expects($this->once())
@@ -129,7 +136,7 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
 
         $this->_objectManagerMock->expects($this->at(3))
             ->method('get')
-            ->with(\Psr\Log\LoggerInterface::class)
+            ->with('Psr\Log\LoggerInterface')
             ->willReturn($this->logger);
         $this->logger->expects($this->once())
             ->method('critical');
@@ -148,9 +155,9 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
     public function testExecute()
     {
         $themeId = 23;
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class, [], '', false);
+        $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface', [], '', false);
         $jsFile = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Design\Theme\FileInterface::class,
+            'Magento\Framework\View\Design\Theme\FileInterface',
             [],
             '',
             false,
@@ -171,19 +178,19 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
 
         $this->_objectManagerMock->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Theme\Model\Uploader\Service::class)
+            ->with('Magento\Theme\Model\Uploader\Service')
             ->WillReturn($this->serviceModel);
         $this->_objectManagerMock->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\FlyweightFactory::class)
+            ->with('Magento\Framework\View\Design\Theme\FlyweightFactory')
             ->WillReturn($this->themeFactory);
         $this->_objectManagerMock->expects($this->at(2))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\Customization\File\Js::class)
+            ->with('Magento\Framework\View\Design\Theme\Customization\File\Js')
             ->WillReturn($this->customizationJs);
         $this->_objectManagerMock->expects($this->at(4))
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->WillReturn($this->jsonHelper);
 
         $this->themeFactory->expects($this->once())
@@ -213,7 +220,7 @@ class UploadJsTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\
         $this->_objectManagerMock->expects($this->once())
             ->method('create')
             ->with(
-                \Magento\Framework\View\Design\Theme\CustomizationInterface::class,
+                'Magento\Framework\View\Design\Theme\CustomizationInterface',
                 ['theme' => $theme]
             )
             ->willReturn($this->themeCustomization);

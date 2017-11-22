@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Test\Unit\Controller;
 
-use Magento\Setup\Controller\InstallExtensionGrid;
-use Magento\Setup\Model\PackagesData;
-use Magento\Framework\Composer\ComposerInformation;
+use \Magento\Setup\Controller\InstallExtensionGrid;
 
-class InstallExtensionGridTest extends \PHPUnit\Framework\TestCase
+class InstallExtensionGridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Controller
@@ -20,19 +18,15 @@ class InstallExtensionGridTest extends \PHPUnit\Framework\TestCase
     private $controller;
 
     /**
-     * @var PackagesData|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Setup\Model\MarketplaceManager
      */
-    private $packagesData;
+    private $marketplaceManager;
 
     public function setUp()
     {
-        $this->packagesData = $this->getMockBuilder(PackagesData::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->controller = new InstallExtensionGrid(
-            $this->packagesData
-        );
+        $this->marketplaceManager =
+            $this->getMock('Magento\Setup\Model\MarketplaceManager', ['getPackagesForInstall'], [], '', false);
+        $this->controller = new InstallExtensionGrid($this->marketplaceManager);
     }
 
     /**
@@ -41,7 +35,7 @@ class InstallExtensionGridTest extends \PHPUnit\Framework\TestCase
     public function testIndexAction()
     {
         $viewModel = $this->controller->indexAction();
-        static::assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('\Zend\View\Model\ViewModel', $viewModel);
     }
 
     /**
@@ -51,17 +45,17 @@ class InstallExtensionGridTest extends \PHPUnit\Framework\TestCase
      */
     public function testExtensionsAction($extensions)
     {
-        $this->packagesData->expects(static::once())
+        $this->marketplaceManager
+            ->expects($this->once())
             ->method('getPackagesForInstall')
-            ->willReturn($extensions);
-
+            ->will($this->returnValue($extensions));
         $jsonModel = $this->controller->extensionsAction();
-        static::assertInstanceOf(\Zend\View\Model\JsonModel::class, $jsonModel);
+        $this->assertInstanceOf('\Zend\View\Model\JsonModel', $jsonModel);
         $variables = $jsonModel->getVariables();
-        static::assertArrayHasKey('success', $variables);
-        static::assertArrayHasKey('extensions', $variables);
-        static::assertArrayHasKey('total', $variables);
-        static::assertTrue($variables['success']);
+        $this->assertArrayHasKey('success', $variables);
+        $this->assertArrayHasKey('extensions', $variables);
+        $this->assertArrayHasKey('total', $variables);
+        $this->assertTrue($variables['success']);
     }
 
     /**
@@ -69,29 +63,25 @@ class InstallExtensionGridTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderForTestExtensionsAction()
     {
-        $extensions['packages'] = [
+        $extensions = [
             'magento/testing-extension' => [
                 'name' => 'magento/testing-extension',
-                'type' => ComposerInformation::MODULE_PACKAGE_TYPE,
-                'vendor' => 'magento',
+                'type' => 'module',
                 'version' => '2.2.2',
                 'author' => 'magento'],
             'magento/my-first-module' => [
                 'name' => 'magento/my-first-module',
-                'type' => ComposerInformation::MODULE_PACKAGE_TYPE,
-                'vendor' => 'magento',
+                'type' => 'module',
                 'version' => '2.0.0',
                 'author' => 'magento'],
             'magento/last-extension' => [
-                'name' => 'magento/theme',
-                'type' => ComposerInformation::THEME_PACKAGE_TYPE,
-                'vendor' => 'magento',
+                'name' => 'magento/last-extension',
+                'type' => 'module',
                 'version' => '2.1.1',
                 'author' => 'magento'],
             'magento/magento-second-module' => [
                 'name' => 'magento/magento-second-module',
-                'type' => ComposerInformation::COMPONENT_PACKAGE_TYPE,
-                'vendor' => 'magento',
+                'type' => 'module',
                 'version' => '2.0.0',
                 'author' => 'magento']
         ];

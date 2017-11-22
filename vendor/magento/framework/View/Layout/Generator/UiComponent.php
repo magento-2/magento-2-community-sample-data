@@ -1,16 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Layout\Generator;
 
+use Magento\Framework\View\Layout;
 use Magento\Framework\View\Element\BlockFactory;
 use Magento\Framework\View\Layout\Data\Structure as DataStructure;
-use Magento\Framework\View\Layout\Element;
 use Magento\Framework\View\Layout\GeneratorInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
+use Magento\Framework\Data\Argument\InterpreterInterface;
 use Magento\Framework\View\Element\UiComponent\ContainerInterface;
 use Magento\Framework\View\Layout\Reader\Context as ReaderContext;
 use Magento\Framework\View\Layout\Generator\Context as GeneratorContext;
@@ -30,7 +31,7 @@ class UiComponent implements GeneratorInterface
     /**
      * Block container for components
      */
-    const CONTAINER = \Magento\Framework\View\Element\UiComponent\ContainerInterface::class;
+    const CONTAINER = 'Magento\Framework\View\Element\UiComponent\ContainerInterface';
 
     /**
      * @var UiComponentFactory
@@ -88,12 +89,7 @@ class UiComponent implements GeneratorInterface
         /** @var $blocks \Magento\Framework\View\Element\AbstractBlock[] */
         $blocks = [];
         foreach ($scheduledElements as $elementName => $element) {
-            list($elementType, $data) = $element;
-
-            if ($elementType !== Element::TYPE_UI_COMPONENT) {
-                continue;
-            }
-
+            list(, $data) = $element;
             $block = $this->generateComponent($structure, $elementName, $data, $layout);
             $blocks[$elementName] = $block;
             $layout->setBlock($elementName, $block);
@@ -119,21 +115,14 @@ class UiComponent implements GeneratorInterface
             $structure->addToParentGroup($elementName, $attributes['group']);
         }
 
-        $context = $this->contextFactory->create(
-            [
-                'namespace' => $elementName,
-                'pageLayout' => $layout
-            ]
-        );
+        $context = $this->contextFactory->create([
+            'namespace' => $elementName,
+            'pageLayout' => $layout
+        ]);
 
-        /**
-         * Structure is required for custom component factory like a 'htmlContent'
-         */
-        $component = $this->uiComponentFactory->create(
-            $elementName,
-            null,
-            ['context' => $context, 'structure' => $structure]
-        );
+        $component = $this->uiComponentFactory->create($elementName, null, [
+            'context' => $context
+        ]);
         $this->prepareComponent($component);
 
         /** @var ContainerInterface $blockContainer */

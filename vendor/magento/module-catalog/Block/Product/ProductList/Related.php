@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,7 @@ use Magento\Framework\View\Element\AbstractBlock;
 /**
  * Catalog product related items block
  *
- * @api
  * @SuppressWarnings(PHPMD.LongVariable)
- * @since 100.0.2
  */
 class Related extends \Magento\Catalog\Block\Product\AbstractProduct implements \Magento\Framework\DataObject\IdentityInterface
 {
@@ -117,13 +115,6 @@ class Related extends \Magento\Catalog\Block\Product\AbstractProduct implements 
      */
     public function getItems()
     {
-        /**
-         * getIdentities() depends on _itemCollection populated, but it can be empty if the block is hidden
-         * @see https://github.com/magento/magento2/issues/5897
-         */
-        if (is_null($this->_itemCollection)) {
-            $this->_prepareData();
-        }
         return $this->_itemCollection;
     }
 

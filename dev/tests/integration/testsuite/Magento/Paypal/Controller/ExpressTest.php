@@ -1,24 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Controller;
 
-use Magento\Checkout\Model\Session;
-use Magento\Framework\Session\Generic as GenericSession;
-use Magento\Paypal\Model\Api\Nvp;
-use Magento\Paypal\Model\Api\Type\Factory as ApiFactory;
-use Magento\Paypal\Model\Session as PaypalSession;
-use Magento\Quote\Model\Quote;
-use Magento\TestFramework\Helper\Bootstrap;
-
-/**
- * Tests of Paypal Express actions
- *
- * @package Magento\Paypal\Controller
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
 {
     /**
@@ -27,10 +13,10 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testReviewAction()
     {
-        $quote = Bootstrap::getObjectManager()->create(Quote::class);
+        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
         $quote->load('test01', 'reserved_order_id');
-        Bootstrap::getObjectManager()->get(
-            Session::class
+        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            'Magento\Checkout\Model\Session'
         )->setQuoteId(
             $quote->getId()
         );
@@ -49,11 +35,11 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testCancelAction()
     {
-        $quote = $this->_objectManager->create(Quote::class);
+        $quote = $this->_objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('100000002', 'reserved_order_id');
-        $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->_objectManager->create('Magento\Sales\Model\Order');
         $order->load('100000002', 'increment_id');
-        $session = $this->_objectManager->get(Session::class);
+        $session = $this->_objectManager->get('Magento\Checkout\Model\Session');
         $session->setLoadInactive(true);
         $session->setLastRealOrderId(
             $order->getRealOrderId()
@@ -64,8 +50,8 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
         )->setQuoteId(
             $order->getQuoteId()
         );
-        /** @var $paypalSession Generic */
-        $paypalSession = $this->_objectManager->get(PaypalSession::class);
+        /** @var $paypalSession \Magento\Framework\Session\Generic */
+        $paypalSession = $this->_objectManager->get('Magento\Paypal\Model\Session');
         $paypalSession->setExpressCheckoutToken('token');
 
         $this->dispatch('paypal/express/cancel');
@@ -93,18 +79,18 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
 
         /** Preconditions */
         /** @var \Magento\Customer\Model\Session $customerSession */
-        $customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        $customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-        $customerRepository = $this->_objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $this->_objectManager->get('Magento\Customer\Api\CustomerRepositoryInterface');
         $customerData = $customerRepository->getById($fixtureCustomerId);
         $customerSession->setCustomerDataObject($customerData);
 
-        /** @var Quote $quote */
-        $quote = $this->_objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $this->_objectManager->create('Magento\Quote\Model\Quote');
         $quote->load($fixtureQuoteReserveId, 'reserved_order_id');
 
-        /** @var Session $checkoutSession */
-        $checkoutSession = $this->_objectManager->get(Session::class);
+        /** @var \Magento\Checkout\Model\Session $checkoutSession */
+        $checkoutSession = $this->_objectManager->get('Magento\Checkout\Model\Session');
         $checkoutSession->setQuoteId($quote->getId());
 
         /** Preconditions check */
@@ -123,8 +109,8 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->dispatch('paypal/express/start');
 
         /** Check if customer data was copied to quote correctly */
-        /** @var Quote $updatedQuote */
-        $updatedQuote = $this->_objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $updatedQuote */
+        $updatedQuote = $this->_objectManager->create('Magento\Quote\Model\Quote');
         $updatedQuote->load($fixtureQuoteReserveId, 'reserved_order_id');
         $this->assertEquals(
             $fixtureCustomerEmail,
@@ -136,92 +122,5 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
             $updatedQuote->getCustomer()->getFirstname(),
             "Customer first name in quote is invalid."
         );
-    }
-
-    /**
-     * Test return action with configurable product.
-     *
-     * @magentoDataFixture Magento/Paypal/_files/quote_express_configurable.php
-     */
-    public function testReturnAction()
-    {
-        $quote = $this->_objectManager->create(Quote::class);
-        $quote->load('test_cart_with_configurable', 'reserved_order_id');
-
-        $payment = $quote->getPayment();
-        $payment->setMethod(\Magento\Paypal\Model\Config::METHOD_WPP_EXPRESS)
-            ->setAdditionalInformation(\Magento\Paypal\Model\Express\Checkout::PAYMENT_INFO_TRANSPORT_PAYER_ID, 123);
-
-        $quote->save();
-
-        $this->_objectManager->removeSharedInstance(Session::class);
-        $session = $this->_objectManager->get(Session::class);
-        $session->setQuoteId($quote->getId());
-
-        $nvpMethods = [
-            'setToken',
-            'setPayerId',
-            'setAmount',
-            'setPaymentAction',
-            'setNotifyUrl',
-            'setInvNum',
-            'setCurrencyCode',
-            'setPaypalCart',
-            'setIsLineItemsEnabled',
-            'setAddress',
-            'setBillingAddress',
-            'callDoExpressCheckoutPayment',
-            'callGetExpressCheckoutDetails',
-            'getExportedBillingAddress'
-        ];
-
-        $nvpMock = $this->getMockBuilder(Nvp::class)
-            ->setMethods($nvpMethods)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        foreach ($nvpMethods as $method) {
-            $nvpMock->method($method)
-                ->willReturnSelf();
-        }
-
-        $apiFactoryMock = $this->getMockBuilder(ApiFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $apiFactoryMock->method('create')
-            ->with(Nvp::class)
-            ->willReturn($nvpMock);
-
-        $this->_objectManager->addSharedInstance($apiFactoryMock, ApiFactory::class);
-
-        $sessionMock = $this->getMockBuilder(GenericSession::class)
-            ->setMethods(['getExpressCheckoutToken'])
-            ->setConstructorArgs(
-                [
-                    $this->_objectManager->get(\Magento\Framework\App\Request\Http::class),
-                    $this->_objectManager->get(\Magento\Framework\Session\SidResolverInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Session\Config\ConfigInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Session\SaveHandlerInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Session\ValidatorInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Session\StorageInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Stdlib\CookieManagerInterface::class),
-                    $this->_objectManager->get(\Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class),
-                    $this->_objectManager->get(\Magento\Framework\App\State::class),
-                ]
-            )
-            ->getMock();
-
-        $sessionMock->method('getExpressCheckoutToken')
-            ->willReturn(true);
-
-        $this->_objectManager->addSharedInstance($sessionMock, PaypalSession::class);
-
-        $this->dispatch('paypal/express/returnAction');
-        $this->assertRedirect($this->stringContains('checkout/onepage/success'));
-
-        $this->_objectManager->removeSharedInstance(ApiFactory::class);
-        $this->_objectManager->removeSharedInstance(PaypalSession::class);
     }
 }

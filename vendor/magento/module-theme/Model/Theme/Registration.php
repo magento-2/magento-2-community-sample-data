@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Model\Theme;
@@ -68,7 +68,6 @@ class Registration
     public function register()
     {
         $this->_themeCollection->clear();
-
         foreach ($this->_themeCollection as $theme) {
             $this->_registerThemeRecursively($theme);
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Api;
@@ -32,7 +32,7 @@ class OrderItemRepositoryTest extends WebapiAbstract
     public function testGet()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId(self::ORDER_INCREMENT_ID);
         $orderItem = current($order->getItems());
 
@@ -60,13 +60,13 @@ class OrderItemRepositoryTest extends WebapiAbstract
     public function testGetList()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId(self::ORDER_INCREMENT_ID);
 
         /** @var $searchCriteriaBuilder  \Magento\Framework\Api\SearchCriteriaBuilder */
-        $searchCriteriaBuilder = $this->objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+        $searchCriteriaBuilder = $this->objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
         /** @var $filterBuilder  \Magento\Framework\Api\FilterBuilder */
-        $filterBuilder = $this->objectManager->create(\Magento\Framework\Api\FilterBuilder::class);
+        $filterBuilder = $this->objectManager->create('Magento\Framework\Api\FilterBuilder');
 
         $searchCriteriaBuilder->addFilters(
             [

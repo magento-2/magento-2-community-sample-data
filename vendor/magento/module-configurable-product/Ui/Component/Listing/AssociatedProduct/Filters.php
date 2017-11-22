@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Ui\Component\Listing\AssociatedProduct;
@@ -10,10 +10,6 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory;
 use Magento\Framework\View\Element\UiComponent\ObserverInterface;
 use Magento\Framework\View\Element\UiComponentInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Filters implements ObserverInterface
 {
     /**
@@ -47,9 +43,9 @@ class Filters implements ObserverInterface
             return;
         }
 
-        $attributeCodes = $component->getContext()->getRequestParam('attributes_codes');
-        if ($attributeCodes) {
-            foreach ($this->getAttributes($attributeCodes) as $attribute) {
+        $attributeIds = $component->getContext()->getRequestParam('attribute_ids');
+        if ($attributeIds) {
+            foreach ($this->getAttributes($attributeIds) as $attribute) {
                 $filter = $this->filterFactory->create($attribute, $component->getContext());
                 $filter->prepare();
                 $component->addComponent($attribute->getAttributeCode(), $filter);
@@ -58,12 +54,12 @@ class Filters implements ObserverInterface
     }
 
     /**
-     * @param array $attributeCodes
+     * @param array $attributeIds
      * @return mixed
      */
-    protected function getAttributes($attributeCodes)
+    protected function getAttributes($attributeIds)
     {
         $attributeCollection = $this->attributeCollectionFactory->create();
-        return $attributeCollection->addFieldToFilter('attribute_code', ['in' => $attributeCodes]);
+        return $attributeCollection->addFieldToFilter('attribute_code', ['in' => $attributeIds]);
     }
 }

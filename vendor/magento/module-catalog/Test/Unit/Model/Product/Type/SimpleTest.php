@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Type;
 
-class SimpleTest extends \PHPUnit\Framework\TestCase
+class SimpleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Type\Simple
@@ -15,16 +15,16 @@ class SimpleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $fileStorageDbMock = $this->createMock(\Magento\MediaStorage\Helper\File\Storage\Database::class);
-        $filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $fileStorageDbMock = $this->getMock('Magento\MediaStorage\Helper\File\Storage\Database', [], [], '', false);
+        $filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
-        $coreRegistry = $this->createMock(\Magento\Framework\Registry::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $productFactoryMock = $this->createMock(\Magento\Catalog\Model\ProductFactory::class);
+        $coreRegistry = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $productFactoryMock = $this->getMock('Magento\Catalog\Model\ProductFactory', [], [], '', false);
         $this->_model = $objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Type\Simple::class,
+            'Magento\Catalog\Model\Product\Type\Simple',
             [
                 'productFactory' => $productFactoryMock,
                 'eventManager' => $eventManager,

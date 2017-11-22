@@ -1,13 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
 
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Pricing\Price\FinalPrice;
 
 /**
  * Adminhtml sales order create abstract block
@@ -133,21 +131,11 @@ abstract class AbstractCreate extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * @param Product $product
-     * @return string
-     */
-    public function getItemPrice(Product $product)
-    {
-        $price = $product->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getValue();
-        return $this->convertPrice($price);
-    }
-
-    /**
      * Convert price
      *
-     * @param int|float $value
+     * @param float $value
      * @param bool $format
-     * @return string|int|float
+     * @return float
      */
     public function convertPrice($value, $format = true)
     {

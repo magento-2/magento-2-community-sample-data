@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Framework\View\Test\Unit\Page;
 
 use Magento\Store\Model\ScopeInterface;
 
-class TitleTest extends \PHPUnit\Framework\TestCase
+class TitleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Page\Title
@@ -26,15 +26,15 @@ class TitleTest extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->title = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Page\Title::class,
+            'Magento\Framework\View\Page\Title',
             ['scopeConfig' => $this->scopeConfigMock]
         );
     }

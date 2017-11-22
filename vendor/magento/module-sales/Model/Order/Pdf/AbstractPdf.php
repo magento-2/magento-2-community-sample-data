@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,11 +12,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Sales Order PDF abstract model
- *
- * @api
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class AbstractPdf extends \Magento\Framework\DataObject
 {
@@ -398,10 +395,7 @@ abstract class AbstractPdf extends \Magento\Framework\DataObject
 
         if ($putOrderId) {
             $page->drawText(__('Order # ') . $order->getRealOrderId(), 35, $top -= 30, 'UTF-8');
-            $top +=15;
         }
-
-        $top -=30;
         $page->drawText(
             __('Order Date: ') .
             $this->_localeDate->formatDate(
@@ -414,7 +408,7 @@ abstract class AbstractPdf extends \Magento\Framework\DataObject
                 false
             ),
             35,
-            $top,
+            $top -= 15,
             'UTF-8'
         );
 

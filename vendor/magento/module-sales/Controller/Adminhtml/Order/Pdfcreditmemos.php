@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -21,10 +21,12 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
  * Class Pdfcreditmemos
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Pdfcreditmemos extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocumentsMassAction
+class Pdfcreditmemos extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::creditmemo';
 
@@ -79,12 +81,13 @@ class Pdfcreditmemos extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocume
      */
     protected function massAction(AbstractCollection $collection)
     {
-
         $creditmemoCollection = $this->collectionFactory->create()->setOrderFilter(['in' => $collection->getAllIds()]);
         if (!$creditmemoCollection->getSize()) {
             $this->messageManager->addError(__('There are no printable documents related to selected orders.'));
+
             return $this->resultRedirectFactory->create()->setPath($this->getComponentRefererUrl());
         }
+
         return $this->fileFactory->create(
             sprintf('creditmemo%s.pdf', $this->dateTime->date('Y-m-d_H-i-s')),
             $this->pdfCreditmemo->getPdf($creditmemoCollection->getItems())->render(),

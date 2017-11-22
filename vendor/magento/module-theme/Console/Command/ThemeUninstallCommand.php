@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -196,8 +196,7 @@ class ThemeUninstallCommand extends Command
         $messages = array_merge($messages, $this->validate($themePaths));
         if (!empty($messages)) {
             $output->writeln($messages);
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         $messages = array_merge(
             $messages,
@@ -210,8 +209,7 @@ class ThemeUninstallCommand extends Command
                 '<error>Unable to uninstall. Please resolve the following issues:</error>'
                 . PHP_EOL . implode(PHP_EOL, $messages)
             );
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
 
         try {
@@ -232,8 +230,6 @@ class ThemeUninstallCommand extends Command
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
             $output->writeln('<error>Please disable maintenance mode after you resolved above issues</error>');
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
     }
 
@@ -246,84 +242,27 @@ class ThemeUninstallCommand extends Command
     private function validate($themePaths)
     {
         $messages = [];
-
-        $incorrectThemes = $this->getIncorrectThemes($themePaths);
-        if (!empty($incorrectThemes)) {
-            $text = 'Theme path should be specified as full path which is area/vendor/name.';
-            $messages[] = '<error>Incorrect theme(s) format: ' . implode(', ', $incorrectThemes)
-                . '. ' . $text . '</error>';
-            return $messages;
+        $unknownPackages = [];
+        $unknownThemes = [];
+        $installedPackages = $this->composer->getRootRequiredPackages();
+        foreach ($themePaths as $themePath) {
+            if (array_search($this->themePackageInfo->getPackageName($themePath), $installedPackages) === false) {
+                $unknownPackages[] = $themePath;
+            }
+            if (!$this->themeCollection->hasTheme($this->themeCollection->getThemeByFullPath($themePath))) {
+                $unknownThemes[] = $themePath;
+            }
         }
-
-        $unknownPackages = $this->getUnknownPackages($themePaths);
-        $unknownThemes = $this->getUnknownThemes($themePaths);
-
         $unknownPackages = array_diff($unknownPackages, $unknownThemes);
         if (!empty($unknownPackages)) {
             $text = count($unknownPackages) > 1 ?
                 ' are not installed Composer packages' : ' is not an installed Composer package';
             $messages[] = '<error>' . implode(', ', $unknownPackages) . $text . '</error>';
         }
-
         if (!empty($unknownThemes)) {
             $messages[] = '<error>Unknown theme(s): ' . implode(', ', $unknownThemes) . '</error>';
         }
-
         return $messages;
-    }
-
-    /**
-     * Retrieve list of themes with wrong name format
-     *
-     * @param string[] $themePaths
-     * @return string[]
-     */
-    protected function getIncorrectThemes($themePaths)
-    {
-        $result = [];
-        foreach ($themePaths as $themePath) {
-            if (!preg_match('/^[^\/]+\/[^\/]+\/[^\/]+$/', $themePath)) {
-                $result[] = $themePath;
-                continue;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Retrieve list of unknown packages
-     *
-     * @param string[] $themePaths
-     * @return string[]
-     */
-    protected function getUnknownPackages($themePaths)
-    {
-        $installedPackages = $this->composer->getRootRequiredPackages();
-
-        $result = [];
-        foreach ($themePaths as $themePath) {
-            if (array_search($this->themePackageInfo->getPackageName($themePath), $installedPackages) === false) {
-                $result[] = $themePath;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Retrieve list of unknown themes
-     *
-     * @param string[] $themePaths
-     * @return string[]
-     */
-    protected function getUnknownThemes($themePaths)
-    {
-        $result = [];
-        foreach ($themePaths as $themePath) {
-            if (!$this->themeCollection->hasTheme($this->themeCollection->getThemeByFullPath($themePath))) {
-                $result[] = $themePath;
-            }
-        }
-        return $result;
     }
 
     /**

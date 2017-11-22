@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -10,9 +10,7 @@ use Magento\Backend\App\Action;
 class ReviewPayment extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::review_payment';
 
@@ -43,7 +41,7 @@ class ReviewPayment extends \Magento\Sales\Controller\Adminhtml\Order
                         $order->getPayment()->update();
                         if ($order->getPayment()->getIsTransactionApproved()) {
                             $message = __('Transaction has been approved.');
-                        } elseif ($order->getPayment()->getIsTransactionDenied()) {
+                        } else if ($order->getPayment()->getIsTransactionDenied()) {
                             $message = __('Transaction has been voided/declined.');
                         } else {
                             $message = __('There is no update for the transaction.');

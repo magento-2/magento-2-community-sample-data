@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,20 +12,20 @@ require __DIR__ . '/../../../Magento/Catalog/_files/product_virtual.php';
 
 /** @var \Magento\Quote\Model\Quote\Address $quoteShippingAddress */
 $quoteShippingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Quote\Model\Quote\Address::class
+    'Magento\Quote\Model\Quote\Address'
 );
 /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
 $customerRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Api\CustomerRepositoryInterface::class
+    'Magento\Customer\Api\CustomerRepositoryInterface'
 );
 /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
 $addressRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Api\AddressRepositoryInterface::class
+    'Magento\Customer\Api\AddressRepositoryInterface'
 );
 $quoteShippingAddress->importCustomerAddressData($addressRepository->getById(1));
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
 $quote->setStoreId(
         1
     )->setIsActive(
@@ -55,7 +55,7 @@ $quote->collectTotals()->save();
 
 /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
 $quoteIdMask = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)
+    ->create('Magento\Quote\Model\QuoteIdMaskFactory')
     ->create();
 $quoteIdMask->setQuoteId($quote->getId());
 $quoteIdMask->setDataChanges(true);

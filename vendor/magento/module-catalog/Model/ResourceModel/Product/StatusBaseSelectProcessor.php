@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product;
@@ -10,7 +10,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Eav\Model\Config;
 use Magento\Framework\DB\Select;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Api\StoreResolverInterface;
 use Magento\Store\Model\Store;
 
@@ -25,27 +24,19 @@ class StatusBaseSelectProcessor implements BaseSelectProcessorInterface
     private $eavConfig;
 
     /**
-     * @var MetadataPool
-     */
-    private $metadataPool;
-
-    /**
      * @var StoreResolverInterface
      */
     private $storeResolver;
 
     /**
      * @param Config $eavConfig
-     * @param MetadataPool $metadataPool
      * @param StoreResolverInterface $storeResolver
      */
     public function __construct(
         Config $eavConfig,
-        MetadataPool $metadataPool,
         StoreResolverInterface $storeResolver
     ) {
         $this->eavConfig = $eavConfig;
-        $this->metadataPool = $metadataPool;
         $this->storeResolver = $storeResolver;
     }
 
@@ -55,12 +46,11 @@ class StatusBaseSelectProcessor implements BaseSelectProcessorInterface
      */
     public function process(Select $select)
     {
-        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
         $statusAttribute = $this->eavConfig->getAttribute(Product::ENTITY, ProductInterface::STATUS);
 
         $select->joinLeft(
             ['status_global_attr' => $statusAttribute->getBackendTable()],
-            "status_global_attr.{$linkField} = " . self::PRODUCT_TABLE_ALIAS . ".{$linkField}"
+            "status_global_attr.entity_id = " . self::PRODUCT_RELATION_ALIAS . ".child_id"
             . ' AND status_global_attr.attribute_id = ' . (int)$statusAttribute->getAttributeId()
             . ' AND status_global_attr.store_id = ' . Store::DEFAULT_STORE_ID,
             []
@@ -68,7 +58,7 @@ class StatusBaseSelectProcessor implements BaseSelectProcessorInterface
 
         $select->joinLeft(
             ['status_attr' => $statusAttribute->getBackendTable()],
-            "status_attr.{$linkField} = " . self::PRODUCT_TABLE_ALIAS . ".{$linkField}"
+            "status_attr.entity_id = " . self::PRODUCT_RELATION_ALIAS . ".child_id"
             . ' AND status_attr.attribute_id = ' . (int)$statusAttribute->getAttributeId()
             . ' AND status_attr.store_id = ' . $this->storeResolver->getCurrentStoreId(),
             []

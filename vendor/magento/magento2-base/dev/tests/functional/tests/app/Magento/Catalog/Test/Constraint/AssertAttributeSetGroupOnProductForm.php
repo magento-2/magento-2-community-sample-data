@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -61,11 +61,11 @@ class AssertAttributeSetGroupOnProductForm extends AbstractConstraint
         $productBlockForm->fill($productSimple);
 
         \PHPUnit_Framework_Assert::assertTrue(
-            $productEdit->getProductForm()->isCustomSectionVisible($attributeSet->getGroup()),
-            "Product Group is absent on Product form sections."
+            $productEdit->getProductForm()->isCustomTabVisible($attributeSet->getGroup()),
+            "Product Group is absent on Product form tabs."
         );
 
-        $productEdit->getProductForm()->openCustomSection($attributeSet->getGroup());
+        $productEdit->getProductForm()->openCustomTab($attributeSet->getGroup());
         \PHPUnit_Framework_Assert::assertTrue(
             $productEdit->getProductForm()->checkAttributeLabel($productAttributeOriginal),
             "Product Attribute is absent on Product form."

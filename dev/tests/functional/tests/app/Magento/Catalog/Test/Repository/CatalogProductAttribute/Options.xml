@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -19,6 +19,17 @@
                 <item name="admin" xsi:type="string">black</item>
             </field>
             <field name="1" xsi:type="array">
+                <item name="admin" xsi:type="string">white</item>
+            </field>
+        </dataset>
+
+        <dataset name="two_options_no_default">
+            <field name="0" xsi:type="array">
+                <item name="is_default" xsi:type="string">No</item>
+                <item name="admin" xsi:type="string">black</item>
+            </field>
+            <field name="1" xsi:type="array">
+                <item name="is_default" xsi:type="string">No</item>
                 <item name="admin" xsi:type="string">white</item>
             </field>
         </dataset>

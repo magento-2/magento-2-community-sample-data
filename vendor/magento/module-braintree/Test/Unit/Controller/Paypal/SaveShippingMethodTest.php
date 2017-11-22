@@ -1,321 +1,241 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Braintree\Test\Unit\Controller\Paypal;
 
-use Magento\Quote\Model\Quote;
-use Magento\Framework\View\Layout;
-use Magento\Checkout\Model\Session;
-use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Result\Page;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
+namespace Magento\Braintree\Test\Unit\Controller\PayPal;
+
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Braintree\Block\Paypal\Checkout\Review;
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Controller\Paypal\SaveShippingMethod;
-use Magento\Braintree\Model\Paypal\Helper\ShippingMethodUpdater;
 
-/**
- * Class SaveShippingMethodTest
- *
- * @see \Magento\Braintree\Controller\Paypal\SaveShippingMethod
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SaveShippingMethodTest extends \PHPUnit\Framework\TestCase
+class SaveShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ShippingMethodUpdater|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $shippingMethodUpdaterMock;
+    const REVIEW_URL = 'http://localhost/braintree/paypal/review';
 
     /**
-     * @var Config|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Braintree\Model\CheckoutFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $checkoutFactoryMock;
 
     /**
-     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Checkout\Model\Session|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkoutSessionMock;
+    protected $checkoutSessionMock;
 
     /**
-     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $requestMock;
+    protected $requestMock;
 
     /**
-     * @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\Controller\ResultFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $responseMock;
+    protected $resultFactoryMock;
 
     /**
-     * @var RedirectInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Braintree\Model\Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $redirectMock;
+    protected $checkoutMock;
 
     /**
-     * @var UrlInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\Message\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $urlMock;
+    protected $messageManager;
 
     /**
-     * @var ResultFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\Response|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resultFactoryMock;
+    protected $responseMock;
 
     /**
-     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerHelper
      */
-    private $messageManagerMock;
+    protected $objectManagerHelper;
 
     /**
-     * @var SaveShippingMethod
+     * @var \Magento\Braintree\Controller\PayPal\SaveShippingMethod
      */
-    private $saveShippingMethod;
+    protected $controller;
 
-    protected function setUp()
+    /**
+     * test setup
+     */
+    public function setUp()
     {
-        /** @var Context|\PHPUnit_Framework_MockObject_MockObject $contextMock */
-        $contextMock = $this->getMockBuilder(Context::class)
+        $this->checkoutSessionMock = $this->getMockBuilder('\Magento\Checkout\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-        $this->redirectMock = $this->getMockBuilder(RedirectInterface::class)
-            ->getMockForAbstractClass();
-        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->setMethods(['setBody'])
-            ->getMockForAbstractClass();
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->checkoutSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shippingMethodUpdaterMock = $this->getMockBuilder(ShippingMethodUpdater::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
 
-        $contextMock->expects(self::once())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
-        $contextMock->expects(self::once())
-            ->method('getRedirect')
-            ->willReturn($this->redirectMock);
-        $contextMock->expects(self::once())
-            ->method('getResponse')
-            ->willReturn($this->responseMock);
-        $contextMock->expects(self::once())
+        $this->checkoutFactoryMock = $this->getMockBuilder('\Magento\Braintree\Model\CheckoutFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+
+        $this->messageManager = $this->getMock('\Magento\Framework\Message\ManagerInterface');
+
+        $this->checkoutMock = $this->getMockBuilder('\Magento\Braintree\Model\Checkout')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->requestMock = $this->getMock('\Magento\Framework\App\RequestInterface');
+
+        $this->resultFactoryMock = $this->getMockBuilder('\Magento\Framework\Controller\ResultFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->responseMock = $this->getMockBuilder('\Magento\Framework\App\Response')
+            ->disableOriginalConstructor()
+            ->setMethods(['setBody'])
+            ->getMock();
+
+        $urlBuilderMock = $this->getMock('\Magento\Framework\UrlInterface');
+        $urlBuilderMock->expects($this->any())
             ->method('getUrl')
-            ->willReturn($this->urlMock);
-        $contextMock->expects(self::once())
+            ->willReturn(self::REVIEW_URL);
+
+        $contextMock = $this->getMockBuilder('\Magento\Framework\App\Action\Context')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $contextMock->expects($this->any())
             ->method('getResultFactory')
             ->willReturn($this->resultFactoryMock);
-        $contextMock->expects(self::once())
+        $contextMock->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($this->requestMock);
+        $contextMock->expects($this->any())
             ->method('getMessageManager')
-            ->willReturn($this->messageManagerMock);
+            ->willReturn($this->messageManager);
+        $contextMock->expects($this->any())
+            ->method('getResponse')
+            ->willReturn($this->responseMock);
+        $contextMock->expects($this->any())
+            ->method('getUrl')
+            ->willReturn($urlBuilderMock);
 
-        $this->saveShippingMethod = new SaveShippingMethod(
-            $contextMock,
-            $this->configMock,
-            $this->checkoutSessionMock,
-            $this->shippingMethodUpdaterMock
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
+        $this->controller = $this->objectManagerHelper->getObject(
+            '\Magento\Braintree\Controller\PayPal\SaveShippingMethod',
+            [
+                'context' => $contextMock,
+                'checkoutSession' => $this->checkoutSessionMock,
+                'checkoutFactory' => $this->checkoutFactoryMock,
+            ]
         );
     }
 
-    public function testExecuteAjax()
+    protected function setupCart()
     {
-        $resultHtml = '<html>test</html>';
-        $quoteMock = $this->getQuoteMock();
-        $responsePageMock = $this->getResponsePageMock();
-        $layoutMock = $this->getLayoutMock();
-        $blockMock = $this->getBlockMock();
+        $quoteMock = $this->getMockBuilder('\Magento\Quote\Model\Quote')
+            ->disableOriginalConstructor()
+            ->setMethods(['hasItems', 'getHasError', 'getPayment'])
+            ->getMock();
+        $quoteMock->expects($this->any())
+            ->method('hasItems')
+            ->willReturn(true);
+        $quoteMock->expects($this->any())
+            ->method('getHasError')
+            ->willReturn(false);
 
-        $quoteMock->expects(self::once())
-            ->method('getItemsCount')
-            ->willReturn(1);
-
-        $this->requestMock->expects(self::exactly(2))
-            ->method('getParam')
-            ->willReturnMap(
-                [
-                    ['isAjax', null, true],
-                    ['shipping_method', null, 'test-shipping-method']
-                ]
-            );
-
-        $this->checkoutSessionMock->expects(self::once())
+        $this->checkoutSessionMock->expects($this->any())
             ->method('getQuote')
             ->willReturn($quoteMock);
 
-        $this->shippingMethodUpdaterMock->expects(self::once())
-            ->method('execute')
-            ->with('test-shipping-method', $quoteMock);
+        $this->checkoutFactoryMock->expects($this->any())
+            ->method('create')
+            ->willReturn($this->checkoutMock);
 
-        $this->resultFactoryMock->expects(self::once())
+        return $quoteMock;
+    }
+
+    public function testExecute()
+    {
+        $html = '<html></html>';
+
+        $shippingMethod = 'flat_rate';
+        $this->requestMock->expects($this->at(0))
+            ->method('getParam')
+            ->with('isAjax')
+            ->willReturn(true);
+        $this->requestMock->expects($this->at(1))
+            ->method('getParam')
+            ->with('shipping_method')
+            ->willReturn($shippingMethod);
+
+        $this->setupCart();
+        $this->checkoutMock->expects($this->once())
+            ->method('updateShippingMethod')
+            ->with($shippingMethod);
+
+        $blockMock = $this->getMockBuilder('\Magento\Paypal\Block\Express\Review\Details')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $blockMock->expects($this->once())
+            ->method('toHtml')
+            ->willReturn($html);
+        $layoutMock = $this->getMockBuilder('\Magento\Framework\View\Layout')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $layoutMock->expects($this->once())
+            ->method('getBlock')
+            ->with('page.block')
+            ->willReturn($blockMock);
+        $responsePageMock = $this->getMockBuilder('\Magento\Framework\View\Result\Page')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $responsePageMock->expects($this->once())
+            ->method('addHandle')
+            ->with('paypal_express_review_details')
+            ->willReturnSelf();
+        $responsePageMock->expects($this->once())
+            ->method('getLayout')
+            ->willReturn($layoutMock);
+
+        $this->responseMock->expects($this->once())
+            ->method('setBody')
+            ->with($html);
+        $this->resultFactoryMock->expects($this->once())
             ->method('create')
             ->with(ResultFactory::TYPE_PAGE)
             ->willReturn($responsePageMock);
 
-        $responsePageMock->expects(self::once())
-            ->method('addHandle')
-            ->with('paypal_express_review_details')
-            ->willReturnSelf();
-
-        $responsePageMock->expects(self::once())
-            ->method('getLayout')
-            ->willReturn($layoutMock);
-
-        $layoutMock->expects(self::once())
-            ->method('getBlock')
-            ->with('page.block')
-            ->willReturn($blockMock);
-
-        $blockMock->expects(self::once())
-            ->method('toHtml')
-            ->willReturn($resultHtml);
-
-        $this->responseMock->expects(self::once())
-            ->method('setBody')
-            ->with($resultHtml);
-
-        $this->urlMock->expects(self::never())
-            ->method('getUrl');
-
-        $this->saveShippingMethod->execute();
-    }
-
-    public function testExecuteAjaxException()
-    {
-        $redirectPath = 'path/to/redirect';
-        $quoteMock = $this->getQuoteMock();
-
-        $quoteMock->expects(self::once())
-            ->method('getItemsCount')
-            ->willReturn(0);
-
-        $this->requestMock->expects(self::exactly(1))
-            ->method('getParam')
-            ->willReturnMap(
-                [
-                    ['isAjax', null, false]
-                ]
-            );
-
-        $this->checkoutSessionMock->expects(self::once())
-            ->method('getQuote')
-            ->willReturn($quoteMock);
-
-        $this->shippingMethodUpdaterMock->expects(self::never())
-            ->method('execute');
-
-        $this->messageManagerMock->expects(self::once())
-            ->method('addExceptionMessage')
-            ->with(self::isInstanceOf('\InvalidArgumentException'), 'We can\'t initialize checkout.');
-
-        $this->urlMock->expects(self::once())
-            ->method('getUrl')
-            ->with('*/*/review', ['_secure' => true])
-            ->willReturn($redirectPath);
-
-        $this->redirectMock->expects(self::once())
-            ->method('redirect')
-            ->with($this->responseMock, $redirectPath, []);
-
-        $this->saveShippingMethod->execute();
+        $this->controller->execute();
     }
 
     public function testExecuteException()
     {
-        $redirectPath = 'path/to/redirect';
-        $quoteMock = $this->getQuoteMock();
+        $html = '<script>window.location.href = '
+            . self::REVIEW_URL
+            . ';</script>';
 
-        $quoteMock->expects(self::once())
-            ->method('getItemsCount')
-            ->willReturn(0);
-
-        $this->requestMock->expects(self::exactly(1))
+        $shippingMethod = 'flat_rate';
+        $this->requestMock->expects($this->at(0))
             ->method('getParam')
-            ->willReturnMap(
-                [
-                    ['isAjax', null, true]
-                ]
-            );
+            ->with('isAjax')
+            ->willReturn(true);
+        $this->requestMock->expects($this->at(1))
+            ->method('getParam')
+            ->with('shipping_method')
+            ->willReturn($shippingMethod);
 
-        $this->checkoutSessionMock->expects(self::once())
-            ->method('getQuote')
-            ->willReturn($quoteMock);
+        $this->setupCart();
 
-        $this->shippingMethodUpdaterMock->expects(self::never())
-            ->method('execute');
+        $exceptionMsg = new \Magento\Framework\Phrase('error');
+        $exception = new \Magento\Framework\Exception\LocalizedException(
+            $exceptionMsg
+        );
+        $this->checkoutMock->expects($this->once())
+            ->method('updateShippingMethod')
+            ->with($shippingMethod)
+            ->willThrowException($exception);
 
-        $this->messageManagerMock->expects(self::once())
+        $this->messageManager->expects($this->once())
             ->method('addExceptionMessage')
-            ->with(self::isInstanceOf('\InvalidArgumentException'), 'We can\'t initialize checkout.');
+            ->with($exception, $exceptionMsg);
 
-        $this->urlMock->expects(self::once())
-            ->method('getUrl')
-            ->with('*/*/review', ['_secure' => true])
-            ->willReturn($redirectPath);
-
-        $this->responseMock->expects(self::once())
+        $this->responseMock->expects($this->once())
             ->method('setBody')
-            ->with(sprintf('<script>window.location.href = "%s";</script>', $redirectPath));
+            ->with($html);
 
-        $this->saveShippingMethod->execute();
-    }
-
-    /**
-     * @return Review|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getBlockMock()
-    {
-        return $this->getMockBuilder(Review::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return Layout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getLayoutMock()
-    {
-        return $this->getMockBuilder(Layout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getQuoteMock()
-    {
-        return $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return Page|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getResponsePageMock()
-    {
-        return $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->controller->execute();
     }
 }

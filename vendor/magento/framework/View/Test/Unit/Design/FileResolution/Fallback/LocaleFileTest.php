@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use \Magento\Framework\View\Design\FileResolution\Fallback\LocaleFile;
 
 use Magento\Framework\View\Design\Fallback\RulePool;
 
-class LocaleFileTest extends \PHPUnit\Framework\TestCase
+class LocaleFileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -24,15 +24,13 @@ class LocaleFileTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resolver = $this->createMock(
-            \Magento\Framework\View\Design\FileResolution\Fallback\ResolverInterface::class
-        );
+        $this->resolver = $this->getMock('Magento\Framework\View\Design\FileResolution\Fallback\ResolverInterface');
         $this->object = new LocaleFile($this->resolver);
     }
 
     public function testGetFile()
     {
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMockForAbstractClass('\Magento\Framework\View\Design\ThemeInterface');
         $expected = 'some/file.ext';
         $this->resolver->expects($this->once())
             ->method('resolve')

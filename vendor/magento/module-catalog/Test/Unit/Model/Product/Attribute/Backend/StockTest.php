@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Backend;
 
-class StockTest extends \PHPUnit\Framework\TestCase
+class StockTest extends \PHPUnit_Framework_TestCase
 {
     const ATTRIBUTE_NAME = 'quantity_and_stock_status';
 
@@ -30,24 +30,27 @@ class StockTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->stockRegistry = $this->getMockBuilder(\Magento\CatalogInventory\Model\StockRegistry::class)
+        $this->stockRegistry = $this->getMockBuilder('Magento\CatalogInventory\Model\StockRegistry')
             ->disableOriginalConstructor()
             ->setMethods(['getStockItem', '__wakeup'])
             ->getMock();
 
-        $this->stockItemMock = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\Stock\Item::class,
-            ['getIsInStock', 'getQty', '__wakeup']
+        $this->stockItemMock = $this->getMock(
+            'Magento\CatalogInventory\Model\Stock\Item',
+            ['getIsInStock', 'getQty', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $this->stockRegistry->expects($this->any())
             ->method('getStockItem')
             ->will($this->returnValue($this->stockItemMock));
         $this->model = $this->objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Backend\Stock::class,
+            'Magento\Catalog\Model\Product\Attribute\Backend\Stock',
             ['stockRegistry' => $this->stockRegistry]
         );
-        $attribute = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getAttributeCode']);
+        $attribute = $this->getMock('Magento\Framework\DataObject', ['getAttributeCode']);
         $attribute->expects($this->atLeastOnce())
             ->method('getAttributeCode')
             ->will($this->returnValue(self::ATTRIBUTE_NAME));
@@ -61,7 +64,7 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $this->stockItemMock->expects($this->once())->method('getIsInStock')->will($this->returnValue(1));
         $this->stockItemMock->expects($this->once())->method('getQty')->will($this->returnValue(5));
 
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId', '__wakeup']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getWebsiteId', '__wakeup'], [], '', false);
         $store->expects($this->once())
             ->method('getWebsiteId')
             ->will($this->returnValue(10));
@@ -70,5 +73,69 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $data = $object->getData();
         $this->assertEquals(1, $data[self::ATTRIBUTE_NAME]['is_in_stock']);
         $this->assertEquals(5, $data[self::ATTRIBUTE_NAME]['qty']);
+    }
+
+    public function testBeforeSave()
+    {
+        $object = new \Magento\Framework\DataObject(
+            [
+                self::ATTRIBUTE_NAME => ['is_in_stock' => 1, 'qty' => 5],
+                'stock_data' => ['is_in_stock' => 2, 'qty' => 2],
+            ]
+        );
+        $stockData = $object->getStockData();
+        $this->assertEquals(2, $stockData['is_in_stock']);
+        $this->assertEquals(2, $stockData['qty']);
+        $this->assertNotEmpty($object->getData(self::ATTRIBUTE_NAME));
+
+        $this->model->beforeSave($object);
+
+        $stockData = $object->getStockData();
+        $this->assertEquals(1, $stockData['is_in_stock']);
+        $this->assertEquals(5, $stockData['qty']);
+        $this->assertNull($object->getData(self::ATTRIBUTE_NAME));
+    }
+
+    public function testBeforeSaveQtyIsEmpty()
+    {
+        $object = new \Magento\Framework\DataObject(
+            [
+                self::ATTRIBUTE_NAME => ['is_in_stock' => 1, 'qty' => ''],
+                'stock_data' => ['is_in_stock' => 2, 'qty' => ''],
+            ]
+        );
+
+        $this->model->beforeSave($object);
+
+        $stockData = $object->getStockData();
+        $this->assertNull($stockData['qty']);
+    }
+
+    public function testBeforeSaveQtyIsZero()
+    {
+        $object = new \Magento\Framework\DataObject(
+            [
+                self::ATTRIBUTE_NAME => ['is_in_stock' => 1, 'qty' => 0],
+                'stock_data' => ['is_in_stock' => 2, 'qty' => 0],
+            ]
+        );
+
+        $this->model->beforeSave($object);
+
+        $stockData = $object->getStockData();
+        $this->assertEquals(0, $stockData['qty']);
+    }
+
+    public function testBeforeSaveNoStockData()
+    {
+        $object = new \Magento\Framework\DataObject(
+            [
+                self::ATTRIBUTE_NAME => ['is_in_stock' => 1, 'qty' => 0]
+            ]
+        );
+
+        $this->model->beforeSave($object);
+        $this->assertNull($object->getStockData());
+        $this->assertNull($object->getData(self::ATTRIBUTE_NAME));
     }
 }

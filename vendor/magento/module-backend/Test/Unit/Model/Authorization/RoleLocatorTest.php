@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model\Authorization;
 
-class RoleLocatorTest extends \PHPUnit\Framework\TestCase
+class RoleLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Authorization\RoleLocator
@@ -19,9 +19,12 @@ class RoleLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_sessionMock = $this->createPartialMock(
-            \Magento\Backend\Model\Auth\Session::class,
-            ['getUser', 'getAclRole', 'hasUser']
+        $this->_sessionMock = $this->getMock(
+            'Magento\Backend\Model\Auth\Session',
+            ['getUser', 'getAclRole', 'hasUser'],
+            [],
+            '',
+            false
         );
         $this->_model = new \Magento\Backend\Model\Authorization\RoleLocator($this->_sessionMock);
     }

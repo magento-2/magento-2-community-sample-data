@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -41,7 +41,7 @@ class AssertWrongPassConfirmationMessage extends AbstractConstraint
                 'Wrong password confirmation validation text message.'
             );
         } else {
-            \PHPUnit\Framework\TestCase::fail('Password confirmation validation message is absent.');
+            \PHPUnit_Framework_TestCase::fail('Password confirmation validation message is absent.');
         }
     }
 

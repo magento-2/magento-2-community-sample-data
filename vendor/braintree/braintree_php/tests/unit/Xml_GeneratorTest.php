@@ -1,14 +1,9 @@
 <?php
-namespace Test\Unit\Xml;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class GeneratorTest extends Setup
+class Braintree_Xml_GeneratorTest extends PHPUnit_Framework_TestCase
 {
-    public function testSetsTypeAttributeForBooleans()
+    function testSetsTypeAttributeForBooleans()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -18,13 +13,13 @@ class GeneratorTest extends Setup
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['yes' => true, 'no' => false]
-        ]);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('yes' => true, 'no' => false)
+        ));
         $this->assertEquals($expected, $xml);
     }
 
-    public function testCreatesArrays()
+    function testCreatesArrays()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -36,13 +31,13 @@ XML;
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['stuff' => ['foo', 'bar']]
-        ]);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('stuff' => array('foo', 'bar'))
+        ));
         $this->assertEquals($expected, $xml);
     }
 
-    public function testCreatesWithDashes()
+    function testCreatesWithDashes()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -54,13 +49,13 @@ XML;
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['someStuff' => ['innerFoo' => 42, 'barBarBar' => 3]]
-        ]);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('someStuff' => array('innerFoo' => 42, 'barBarBar' => 3))
+        ));
         $this->assertEquals($expected, $xml);
     }
 
-    public function testCreatesArraysWithBooleans()
+    function testCreatesArraysWithBooleans()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -72,13 +67,13 @@ XML;
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['stuff' => [true, false]]
-        ]);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('stuff' => array(true, false))
+        ));
         $this->assertEquals($expected, $xml);
     }
 
-    public function testHandlesEmptyArrays()
+    function testHandlesEmptyArrays()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,13 +82,13 @@ XML;
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['stuff' => []]
-        ]);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('stuff' => array())
+        ));
         $this->assertEquals($expected, $xml);
     }
 
-    public function testEscapingSpecialChars()
+    function testEscapingSpecialChars()
     {
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -102,33 +97,9 @@ XML;
 </root>
 
 XML;
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['stuff' => '<>&\'"']
-        ]);
-        $this->assertEquals($expected, $xml);
-    }
-
-    public function testDoesNotModifyDateTime()
-    {
-        $date = new \DateTime();
-        $date->setTimestamp(strtotime('2016-05-17T21:22:26Z'));
-        $date->setTimezone(new \DateTimeZone('Europe/Paris'));
-
-        $originalDate = clone $date;
-
-        $expected = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<root>
- <stuff type="datetime">2016-05-17T21:22:26Z</stuff>
-</root>
-
-XML;
-
-        $xml = Braintree\Xml::buildXmlFromArray([
-            'root' => ['stuff' => $date]
-        ]);
-
-        $this->assertEquals($originalDate, $date);
+        $xml = Braintree_Xml::buildXmlFromArray(array(
+            'root' => array('stuff' => '<>&\'"')
+        ));
         $this->assertEquals($expected, $xml);
     }
 }

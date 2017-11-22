@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Model\Plugin;
@@ -20,7 +20,7 @@ class FilterRenderer
      *
      * @var string
      */
-    protected $block = \Magento\Swatches\Block\LayeredNavigation\RenderLayered::class;
+    protected $block = 'Magento\Swatches\Block\LayeredNavigation\RenderLayered';
 
     /**
      * @var \Magento\Swatches\Helper\Data

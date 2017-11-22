@@ -21,9 +21,9 @@ class File extends Element implements InputProviderInterface, ElementPrepareAwar
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'file',
-    ];
+    );
 
     /**
      * Prepare the form element (mostly used for rendering purposes)
@@ -45,10 +45,10 @@ class File extends Element implements InputProviderInterface, ElementPrepareAwar
      */
     public function getInputSpecification()
     {
-        return [
+        return array(
             'type'     => 'Zend\InputFilter\FileInput',
             'name'     => $this->getName(),
             'required' => false,
-        ];
+        );
     }
 }

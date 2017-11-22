@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,10 +10,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Directory\Model\Observer;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ObserverTest extends \PHPUnit\Framework\TestCase
+class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\TestFramework\Unit\Helper\ObjectManager  */
     protected $objectManager;
@@ -39,34 +36,34 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Framework\Translate\Inline\StateInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $inlineTranslation;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->importFactory = $this->getMockBuilder(\Magento\Directory\Model\Currency\Import\Factory::class)
+        $this->importFactory = $this->getMockBuilder('Magento\Directory\Model\Currency\Import\Factory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\MutableScopeConfig::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\MutableScopeConfig')
             ->disableOriginalConstructor()
             ->setMethods(['getValue'])
             ->getMock();
-        $this->transportBuilder = $this->getMockBuilder(\Magento\Framework\Mail\Template\TransportBuilder::class)
+        $this->transportBuilder = $this->getMockBuilder('Magento\Framework\Mail\Template\TransportBuilder')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
+        $this->storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->currencyFactory = $this->getMockBuilder(\Magento\Directory\Model\CurrencyFactory::class)
+        $this->currencyFactory = $this->getMockBuilder('Magento\Directory\Model\CurrencyFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->inlineTranslation = $this->getMockBuilder(\Magento\Framework\Translate\Inline\StateInterface::class)
+        $this->inlineTranslation = $this->getMockBuilder('Magento\Framework\Translate\Inline\StateInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->observer = $this->objectManager->getObject(
-            \Magento\Directory\Model\Observer::class,
+            'Magento\Directory\Model\Observer',
             [
                 'importFactory' => $this->importFactory,
                 'scopeConfig' => $this->scopeConfig,
@@ -95,7 +92,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
             ->method('getValue')
             ->with(Observer::IMPORT_SERVICE, ScopeInterface::SCOPE_STORE)
             ->will($this->returnValue('import-service'));
-        $importInterfaceMock = $this->getMockBuilder(\Magento\Directory\Model\Currency\Import\Webservicex::class)
+        $importInterfaceMock = $this->getMockBuilder('Magento\Directory\Model\Currency\Import\Webservicex')
             ->disableOriginalConstructor()
             ->setMethods(['fetchRates', 'getMessages'])
             ->getMock();
@@ -112,7 +109,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
             ->with('import-service')
             ->will($this->returnValue($importInterfaceMock));
 
-        $currencyMock = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
+        $currencyMock = $this->getMockBuilder('Magento\Directory\Model\Currency')
             ->disableOriginalConstructor()
             ->setMethods(['saveRates', '__wakeup', '__sleep'])
             ->getMock();
@@ -123,30 +120,6 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('create')
             ->will($this->returnValue($currencyMock));
-
-        $this->observer->scheduledUpdateCurrencyRates(null);
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testScheduledUpdateCurrencyRatesThrowsException()
-    {
-        $this->scopeConfig->expects($this->exactly(3))
-            ->method('getValue')
-            ->willReturnMap(
-                [
-                    [Observer::IMPORT_ENABLE, ScopeInterface::SCOPE_STORE, null, 1],
-                    [Observer::CRON_STRING_PATH, ScopeInterface::SCOPE_STORE, null, 'cron-path'],
-                    [Observer::IMPORT_SERVICE, ScopeInterface::SCOPE_STORE, null, 'import-service']
-                ]
-            );
-
-        $this->importFactory
-            ->expects($this->once())
-            ->method('create')
-            ->with('import-service')
-            ->willThrowException(new \Exception());
 
         $this->observer->scheduledUpdateCurrencyRates(null);
     }

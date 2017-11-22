@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -13,7 +13,9 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 class MassCancel extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::cancel';
 
@@ -58,6 +60,7 @@ class MassCancel extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassA
         }
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath($this->getComponentRefererUrl());
+
         return $resultRedirect;
     }
 }

@@ -24,13 +24,13 @@ class ReflectionClass
      * {@link __set()}
      * @var array
      */
-    protected $config = [];
+    protected $config = array();
 
     /**
      * Array of {@link \Zend\Server\Reflection\Method}s
      * @var array
      */
-    protected $methods = [];
+    protected $methods = array();
 
     /**
      * Namespace
@@ -83,7 +83,7 @@ class ReflectionClass
     public function __call($method, $args)
     {
         if (method_exists($this->reflection, $method)) {
-            return call_user_func_array([$this->reflection, $method], $args);
+            return call_user_func_array(array($this->reflection, $method), $args);
         }
 
         throw new Exception\BadMethodCallException('Invalid reflection method');

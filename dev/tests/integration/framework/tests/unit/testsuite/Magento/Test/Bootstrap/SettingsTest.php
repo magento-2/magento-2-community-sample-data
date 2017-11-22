@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Bootstrap;
 
-class SettingsTest extends \PHPUnit\Framework\TestCase
+class SettingsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Bootstrap\Settings
@@ -199,7 +199,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAsConfigFileException($settingName, $expectedExceptionMsg)
     {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class, $expectedExceptionMsg);
+        $this->setExpectedException('Magento\Framework\Exception\LocalizedException', $expectedExceptionMsg);
         $this->_object->getAsConfigFile($settingName);
     }
 

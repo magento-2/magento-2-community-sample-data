@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Model\Country\Postcode;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Country\Postcode\ValidatorInterface
@@ -17,7 +17,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $this->validator = $objectManager->create(\Magento\Directory\Model\Country\Postcode\ValidatorInterface::class);
+        $this->validator = $objectManager->create('Magento\Directory\Model\Country\Postcode\ValidatorInterface');
     }
 
     /**

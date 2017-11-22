@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Api;
@@ -8,7 +8,6 @@ namespace Magento\CatalogInventory\Api;
 /**
  * Interface StockStatusCriteriaInterface
  * @api
- * @since 100.0.2
  */
 interface StockStatusCriteriaInterface extends \Magento\Framework\Api\CriteriaInterface
 {

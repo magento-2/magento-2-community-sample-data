@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product;
 
-class PriceModifierTest extends \PHPUnit\Framework\TestCase
+class PriceModifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\PriceModifier
@@ -33,8 +33,15 @@ class PriceModifierTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->productMock =
-            $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['getData', 'setData', '__wakeup']);
-        $this->productRepositoryMock = $this->createMock(\Magento\Catalog\Model\ProductRepository::class);
+            $this->getMock('Magento\Catalog\Model\Product',
+                ['getData', 'setData', '__wakeup'], [], '', false);
+        $this->productRepositoryMock = $this->getMock(
+            '\Magento\Catalog\Model\ProductRepository',
+            [],
+            [],
+            '',
+            false
+        );
         $this->priceModifier = new \Magento\Catalog\Model\Product\PriceModifier(
             $this->productRepositoryMock
         );

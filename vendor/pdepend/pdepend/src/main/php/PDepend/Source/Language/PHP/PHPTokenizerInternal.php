@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -153,24 +153,10 @@ if (!defined('T_SPACESHIP')) {
 }
 
 /**
- * Define PHP 7's '??' token constant
- */
-if (!defined('T_COALESCE')) {
-    define('T_COALESCE', 42014);
-}
-
-/**
- * Define PHP 7's '**' token constant
- */
-if (!defined('T_POW')) {
-    define('T_POW', 42015);
-}
-
-/**
  * This tokenizer uses the internal {@link token_get_all()} function as token stream
  * generator.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 class PHPTokenizerInternal implements Tokenizer
@@ -190,7 +176,6 @@ class PHPTokenizerInternal implements Tokenizer
         T_FOR                       =>  Tokens::T_FOR,
         T_INC                       =>  Tokens::T_INC,
         T_NEW                       =>  Tokens::T_NEW,
-        T_POW                       =>  Tokens::T_POW,
         T_TRY                       =>  Tokens::T_TRY,
         T_USE                       =>  Tokens::T_USE,
         T_VAR                       =>  Tokens::T_VAR,
@@ -310,7 +295,6 @@ class PHPTokenizerInternal implements Tokenizer
         T_CONSTANT_ENCAPSED_STRING  =>  Tokens::T_CONSTANT_ENCAPSED_STRING,
         T_YIELD                     =>  Tokens::T_YIELD,
         T_FINALLY                   =>  Tokens::T_FINALLY,
-        T_COALESCE                  =>  Tokens::T_COALESCE,
         //T_DOLLAR_OPEN_CURLY_BRACES  =>  Tokens::T_CURLY_BRACE_OPEN,
     );
 
@@ -393,28 +377,24 @@ class PHPTokenizerInternal implements Tokenizer
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_GOTO => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_NULL => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_SELF => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_TRUE => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
@@ -422,11 +402,9 @@ class PHPTokenizerInternal implements Tokenizer
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_ARRAY => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
         ),
-
         Tokens::T_FALSE => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
@@ -434,64 +412,42 @@ class PHPTokenizerInternal implements Tokenizer
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_PARENT => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_NAMESPACE => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_DIR => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_NS_C => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_PARENT => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
         Tokens::T_FINALLY => array(
             Tokens::T_OBJECT_OPERATOR  =>  Tokens::T_STRING,
             Tokens::T_DOUBLE_COLON     =>  Tokens::T_STRING,
             Tokens::T_CONST            =>  Tokens::T_STRING,
             Tokens::T_FUNCTION         =>  Tokens::T_STRING,
         ),
-
-        Tokens::T_CALLABLE => array(
-            Tokens::T_OBJECT_OPERATOR  => Tokens::T_STRING,
-            Tokens::T_DOUBLE_COLON     => Tokens::T_STRING,
-        ),
-
-        Tokens::T_LIST => array(
-            Tokens::T_OBJECT_OPERATOR  => Tokens::T_STRING,
-            Tokens::T_DOUBLE_COLON     => Tokens::T_STRING,
-        ),
-
-        Tokens::T_EMPTY => array(
-            Tokens::T_OBJECT_OPERATOR  => Tokens::T_STRING,
-            Tokens::T_DOUBLE_COLON     => Tokens::T_STRING,
-        ),
-
         Tokens::T_CLASS => array(
             Tokens::T_DOUBLE_COLON     => Tokens::T_CLASS_FQN,
         ),
@@ -513,20 +469,6 @@ class PHPTokenizerInternal implements Tokenizer
             Tokens::T_IS_SMALLER_OR_EQUAL => array(
                 'type'  => Tokens::T_SPACESHIP,
                 'image' => '<=>',
-            )
-        ),
-
-        Tokens::T_QUESTION_MARK => array(
-            Tokens::T_QUESTION_MARK => array(
-                'type'  => Tokens::T_COALESCE,
-                'image' => '??',
-            )
-        ),
-
-        Tokens::T_MUL => array(
-            Tokens::T_MUL => array(
-                'type'  => Tokens::T_POW,
-                'image' => '**',
             )
         ),
     );
@@ -728,7 +670,6 @@ class PHPTokenizerInternal implements Tokenizer
 
         // Previous found type
         $previousType = null;
-        $previousStartColumn = 0;
 
         while ($token = current($tokens)) {
             $type  = null;
@@ -777,8 +718,6 @@ class PHPTokenizerInternal implements Tokenizer
                         $image = self::$reductionMap[$type][$previousType]['image'];
                         $type = self::$reductionMap[$type][$previousType]['type'];
 
-                        $startColumn = $previousStartColumn;
-
                         array_pop($this->tokens);
                     }
 
@@ -815,9 +754,6 @@ class PHPTokenizerInternal implements Tokenizer
 
                 // Store token in internal list
                 $this->tokens[] = $token;
-
-                // Store previous start column
-                $previousStartColumn = $startColumn;
 
                 // Count newlines in token
                 $lines = substr_count($image, "\n");

@@ -2,12 +2,12 @@
 /**
  * Test for Webapi Response model.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit;
 
-class ResponseTest extends \PHPUnit\Framework\TestCase
+class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Response object.

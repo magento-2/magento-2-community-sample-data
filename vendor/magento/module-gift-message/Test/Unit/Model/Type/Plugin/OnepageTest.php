@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\GiftMessage\Test\Unit\Model\Type\Plugin;
 
 use Magento\GiftMessage\Model\Type\Plugin\Onepage;
 
-class OnepageTest extends \PHPUnit\Framework\TestCase
+class OnepageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Onepage
@@ -31,11 +31,11 @@ class OnepageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->messageMock = $this->createMock(\Magento\GiftMessage\Model\GiftMessageManager::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->messageMock = $this->getMock('\Magento\GiftMessage\Model\GiftMessageManager', [], [], '', false);
+        $this->requestMock = $this->getMock('\Magento\Framework\App\RequestInterface');
 
         $this->plugin = $objectManager->getObject(
-            \Magento\GiftMessage\Model\Type\Plugin\Onepage::class,
+            'Magento\GiftMessage\Model\Type\Plugin\Onepage',
             [
                 'message' => $this->messageMock,
                 'request' => $this->requestMock,
@@ -45,12 +45,12 @@ class OnepageTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterSaveShippingMethodWithEmptyResult()
     {
-        $subjectMock = $this->createMock(\Magento\Checkout\Model\Type\Onepage::class);
+        $subjectMock = $this->getMock('\Magento\Checkout\Model\Type\Onepage', [], [], '', false);
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('giftmessage')
             ->will($this->returnValue('giftMessage'));
-        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
+        $quoteMock = $this->getMock('\Magento\Quote\Model\Quote', [], [], '', false);
         $subjectMock->expects($this->once())->method('getQuote')->will($this->returnValue($quoteMock));
         $this->messageMock->expects($this->once())->method('add')->with('giftMessage', $quoteMock);
 
@@ -59,7 +59,7 @@ class OnepageTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterSaveShippingMethodWithNotEmptyResult()
     {
-        $subjectMock = $this->createMock(\Magento\Checkout\Model\Type\Onepage::class);
+        $subjectMock = $this->getMock('\Magento\Checkout\Model\Type\Onepage', [], [], '', false);
         $this->assertEquals(
             ['expected result'],
             $this->plugin->afterSaveShippingMethod($subjectMock, ['expected result']));

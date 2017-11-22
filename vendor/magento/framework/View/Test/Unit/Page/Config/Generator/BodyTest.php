@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Test for page config generator model
  */
-class BodyTest extends \PHPUnit\Framework\TestCase
+class BodyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Body
@@ -27,13 +27,13 @@ class BodyTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->bodyGenerator = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Page\Config\Generator\Body::class,
+            'Magento\Framework\View\Page\Config\Generator\Body',
             [
                 'pageConfig' => $this->pageConfigMock,
             ]
@@ -42,15 +42,15 @@ class BodyTest extends \PHPUnit\Framework\TestCase
 
     public function testProcess()
     {
-        $generatorContextMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Generator\Context::class)
+        $generatorContextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Generator\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $structureMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config\Structure::class)
+        $structureMock = $this->getMockBuilder('Magento\Framework\View\Page\Config\Structure')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readerContextMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Reader\Context::class)
+        $readerContextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Reader\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $readerContextMock->expects($this->any())

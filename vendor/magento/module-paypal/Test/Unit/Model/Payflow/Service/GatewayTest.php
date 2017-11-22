@@ -1,25 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Payflow\Service;
 
-use Magento\Framework\DataObject;
 use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Math\Random;
-use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Paypal\Model\Payflow\Service\Gateway;
-use Psr\Log\LoggerInterface;
 
-/**
- * Class GatewayTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class GatewayTest extends \PHPUnit\Framework\TestCase
+class GatewayTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
     protected $object;
@@ -38,22 +30,22 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->httpClientFactoryMock = $this->getMockBuilder(ZendClientFactory::class)
+        $this->httpClientFactoryMock = $this->getMockBuilder('\Magento\Framework\HTTP\ZendClientFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->zendClientMock = $this->getMockBuilder(ZendClient::class)
+        $this->zendClientMock = $this->getMockBuilder('\Magento\Framework\HTTP\ZendClient')
             ->setMethods(['request', 'setUri'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->httpClientFactoryMock->expects(static::once())
+        $this->httpClientFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->zendClientMock);
-        $this->mathRandomMock = $this->getMockBuilder(Random::class)
+        $this->mathRandomMock = $this->getMockBuilder('\Magento\Framework\Math\Random')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->loggerMock = $this->getMockBuilder(Logger::class)
-            ->setConstructorArgs([$this->getMockForAbstractClass(LoggerInterface::class)])
+        $this->loggerMock = $this->getMockBuilder('\Magento\Payment\Model\Method\Logger')
+            ->setConstructorArgs([$this->getMockForAbstractClass('Psr\Log\LoggerInterface')])
             ->setMethods(['debug'])
             ->getMock();
 
@@ -66,59 +58,55 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
 
     public function testPostRequestOk()
     {
+        $configInterfaceMock = $this->getMockBuilder('\Magento\Payment\Model\Method\ConfigInterface')
+            ->getMockForAbstractClass();
+        $zendResponseMock = $this->getMockBuilder('\Zend_Http_Response')
+            ->setMethods(['getBody'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $zendResponseMock->expects($this->once())
+            ->method('getBody')
+            ->willReturn('RESULT=0&RESPMSG=Approved&SECURETOKEN=8ZIaw2&SECURETOKENID=2481d53');
+        $this->zendClientMock->expects($this->once())
+            ->method('request')
+            ->willReturn($zendResponseMock);
+
         $configMap = [
             ['getDebugReplacePrivateDataKeys', null, ['masked']],
             ['debug', null, true]
         ];
-        $expectedResponse = 'RESULT=0&RESPMSG=Approved&SECURETOKEN=8ZIaw2&SECURETOKENID=2481d53';
-
-        /** @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject $configInterfaceMock */
-        $configInterfaceMock = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
-        $zendResponseMock = $this->getMockBuilder(\Zend_Http_Response::class)
-            ->setMethods(['getBody'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $zendResponseMock->expects(static::once())
-            ->method('getBody')
-            ->willReturn($expectedResponse);
-        $this->zendClientMock->expects(static::once())
-            ->method('request')
-            ->willReturn($zendResponseMock);
-
-        $configInterfaceMock->expects(static::any())
+        $configInterfaceMock->expects($this->any())
             ->method('getValue')
-            ->willReturnMap($configMap);
-        $this->loggerMock->expects(static::once())
+            ->will($this->returnValueMap($configMap));
+        $this->loggerMock->expects($this->once())
             ->method('debug');
 
-        $object = new DataObject();
+        $object = new \Magento\Framework\DataObject();
 
         $result = $this->object->postRequest($object, $configInterfaceMock);
 
-        static::assertInstanceOf(DataObject::class, $result);
-        static::assertArrayHasKey('result_code', $result->getData());
+        $this->assertInstanceOf('Magento\Framework\DataObject', $result);
+        $this->assertArrayHasKey('result_code', $result->getData());
     }
 
     /**
-     * @expectedException  \Zend_Http_Client_Exception
+     * @expectedException  \Exception
      */
     public function testPostRequestFail()
     {
-        /** @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject $configInterfaceMock */
-        $configInterfaceMock = $this->getMockBuilder(ConfigInterface::class)
+        $configInterfaceMock = $this->getMockBuilder('\Magento\Payment\Model\Method\ConfigInterface')
             ->getMockForAbstractClass();
-        $zendResponseMock = $this->getMockBuilder(\Zend_Http_Response::class)
+        $zendResponseMock = $this->getMockBuilder('\Zend_Http_Response')
             ->setMethods(['getBody'])
             ->disableOriginalConstructor()
             ->getMock();
-        $zendResponseMock->expects(static::never())
+        $zendResponseMock->expects($this->never())
             ->method('getBody');
-        $this->zendClientMock->expects(static::once())
+        $this->zendClientMock->expects($this->once())
             ->method('request')
-            ->willThrowException(new \Zend_Http_Client_Exception());
+            ->willThrowException(new \Exception());
 
-        $object = new DataObject();
+        $object = new \Magento\Framework\DataObject();
         $this->object->postRequest($object, $configInterfaceMock);
     }
 }

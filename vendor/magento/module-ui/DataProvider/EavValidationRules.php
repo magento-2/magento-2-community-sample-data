@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\DataProvider;
@@ -8,14 +8,12 @@ namespace Magento\Ui\DataProvider;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 
 /**
- * @api
- * @since 100.0.2
+ * Class EavValidationRules
  */
 class EavValidationRules
 {
     /**
      * @var array
-     * @since 100.0.6
      */
     protected $validationRules = [
         'email' => ['validate-email' => true],

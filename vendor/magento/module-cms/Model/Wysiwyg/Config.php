@@ -1,21 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Model\Wysiwyg;
 
-use Magento\Framework\Filesystem;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Ui\Component\Wysiwyg\ConfigInterface;
-
 /**
  * Wysiwyg Config for Editor HTML Element
- *
- * @api
- * @since 100.0.2
  */
-class Config extends \Magento\Framework\DataObject implements ConfigInterface
+class Config extends \Magento\Framework\DataObject
 {
     /**
      * Wysiwyg status enabled
@@ -97,12 +90,6 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
     protected $_storeManager;
 
     /**
-     * @var Filesystem
-     * @since 101.0.0
-     */
-    protected $filesystem;
-
-    /**
      * @param \Magento\Backend\Model\UrlInterface $backendUrl
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\AuthorizationInterface $authorization
@@ -111,7 +98,6 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
      * @param \Magento\Widget\Model\Widget\Config $widgetConfig
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param Filesystem $filesystem
      * @param array $windowSize
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -125,7 +111,6 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
         \Magento\Widget\Model\Widget\Config $widgetConfig,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        Filesystem $filesystem,
         array $windowSize = [],
         array $data = []
     ) {
@@ -138,7 +123,6 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
         $this->_widgetConfig = $widgetConfig;
         $this->_windowSize = $windowSize;
         $this->_storeManager = $storeManager;
-        $this->filesystem = $filesystem;
         parent::__construct($data);
     }
 
@@ -171,9 +155,6 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
                 'add_widgets' => true,
                 'no_display' => false,
                 'encode_directives' => true,
-                'baseStaticUrl' => $this->_assetRepo->getStaticViewFileContext()->getBaseUrl(),
-                'baseStaticDefaultUrl' => str_replace('index.php/', '', $this->_backendUrl->getBaseUrl())
-                    . $this->filesystem->getUri(DirectoryList::STATIC_VIEW) . '/',
                 'directives_url' => $this->_backendUrl->getUrl('cms/wysiwyg/directive'),
                 'popup_css' => $this->_assetRepo->getUrl(
                     'mage/adminhtml/wysiwyg/tiny_mce/themes/advanced/skins/default/dialog.css'
@@ -182,8 +163,8 @@ class Config extends \Magento\Framework\DataObject implements ConfigInterface
                     'mage/adminhtml/wysiwyg/tiny_mce/themes/advanced/skins/default/content.css'
                 ),
                 'width' => '100%',
-                'height' => '500px',
                 'plugins' => [],
+                'add_directives' => true,
             ]
         );
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,21 +16,21 @@ class XssOutputValidator
     const ESCAPED_PATTERN = '/\* @noEscape \*/';
 
     /**
-     * Store origin for replacements
-     *
+     * Store origin for replacements.
+     * 
      * @var array
      */
     private $origins = [];
 
     /**
-     * Store replacements
-     *
+     * Store replacements.
+     * 
      * @var array
      */
     private $replacements = [];
 
     /**
-     * Array of escape functions
+     * Array of escape functions.
      *
      * @var string[]
      */
@@ -160,7 +160,8 @@ class XssOutputValidator
     private function prepareEchoCommand($command)
     {
         $command = preg_replace('/<[?]=(.*?)[?]>/sim', '\1', $command);
-        return trim(ltrim(explode(';', $command)[0], 'echo'));
+        
+        return trim(explode(';', $command)[0], 'echo');
     }
 
     /**
@@ -213,7 +214,7 @@ class XssOutputValidator
     {
         $command = trim($command);
 
-        switch (true) {
+        switch (true)  {
             case preg_match(
                 '/->(' . implode('|', $this->escapeFunctions) . '|.*html.*)\(/simU',
                 $this->getLastMethod($command)
@@ -301,6 +302,7 @@ class XssOutputValidator
         $replacements = [];
         if (preg_match_all('/<[?](php|=)(.*?)[?]>/sm', $fileContent, $phpBlockMatches)) {
             foreach ($phpBlockMatches[2] as $phpBlock) {
+
                 $phpBlockQuoteReplaced = preg_replace(
                     ['/([^\\\\])\'\'/si', '/([^\\\\])""/si'],
                     ["\1'-*=single=*-'", '\1"-*=double=*-"'],
@@ -310,7 +312,7 @@ class XssOutputValidator
                 $this->addQuoteOriginsReplacements(
                     $phpBlockQuoteReplaced,
                     [
-                        '/([^\\\\])([\'])(.*?)([^\\\\])([\'])/sim'
+                        '/([^\\\\])([\'])(.*?)([^\\\\])([\'])/sim',
                     ]
                 );
                 $this->addQuoteOriginsReplacements(

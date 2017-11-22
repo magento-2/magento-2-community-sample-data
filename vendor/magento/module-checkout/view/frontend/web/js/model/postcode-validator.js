@@ -1,43 +1,30 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-define([
-    'mageUtils'
-], function (utils) {
+/*jshint browser:true jquery:true*/
+/*global alert*/
+define(['mageUtils'], function (utils) {
     'use strict';
-
     return {
         validatedPostCodeExample: [],
-
-        /**
-         * @param {*} postCode
-         * @param {*} countryId
-         * @return {Boolean}
-         */
-        validate: function (postCode, countryId) {
-            var patterns = window.checkoutConfig.postCodes[countryId],
-                pattern, regex;
-
+        validate: function(postCode, countryId) {
+            var patterns = window.checkoutConfig.postCodes[countryId];
             this.validatedPostCodeExample = [];
 
             if (!utils.isEmpty(postCode) && !utils.isEmpty(patterns)) {
-                for (pattern in patterns) {
-                    if (patterns.hasOwnProperty(pattern)) { //eslint-disable-line max-depth
-                        this.validatedPostCodeExample.push(patterns[pattern].example);
-                        regex = new RegExp(patterns[pattern].pattern);
-
-                        if (regex.test(postCode)) { //eslint-disable-line max-depth
+                for (var pattern in patterns) {
+                    if (patterns.hasOwnProperty(pattern)) {
+                        this.validatedPostCodeExample.push(patterns[pattern]['example']);
+                        var regex = new RegExp(patterns[pattern]['pattern']);
+                        if (regex.test(postCode)) {
                             return true;
                         }
                     }
                 }
-
                 return false;
             }
-
             return true;
         }
-    };
+    }
 });

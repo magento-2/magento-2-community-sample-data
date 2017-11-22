@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,8 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 /**
  * Catalog attribute model
  *
- * @api
+ * @method \Magento\Catalog\Model\ResourceModel\Attribute _getResource()
+ * @method \Magento\Catalog\Model\ResourceModel\Attribute getResource()
  * @method \Magento\Catalog\Model\ResourceModel\Eav\Attribute getFrontendInputRenderer()
  * @method string setFrontendInputRenderer(string $value)
  * @method int setIsGlobal(int $value)
@@ -29,11 +30,9 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @since 100.0.2
  */
 class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
-    \Magento\Catalog\Api\Data\ProductAttributeInterface,
-    \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface
+    \Magento\Catalog\Api\Data\ProductAttributeInterface, \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface
 {
     const MODULE_NAME = 'Magento_Catalog';
 
@@ -165,7 +164,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Catalog\Model\ResourceModel\Attribute::class);
+        $this->_init('Magento\Catalog\Model\ResourceModel\Attribute');
     }
 
     /**
@@ -194,7 +193,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
         }
         if ($this->getFrontendInput() == 'price') {
             if (!$this->getBackendModel()) {
-                $this->setBackendModel(\Magento\Catalog\Model\Product\Attribute\Backend\Price::class);
+                $this->setBackendModel('Magento\Catalog\Model\Product\Attribute\Backend\Price');
             }
         }
         if ($this->getFrontendInput() == 'textarea') {
@@ -352,11 +351,14 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
      */
     public function getApplyTo()
     {
-        $applyTo = $this->_getData(self::APPLY_TO) ?: [];
-        if (!is_array($applyTo)) {
-            $applyTo = explode(',', $applyTo);
+        if ($this->getData(self::APPLY_TO)) {
+            if (is_array($this->getData(self::APPLY_TO))) {
+                return $this->getData(self::APPLY_TO);
+            }
+            return explode(',', $this->getData(self::APPLY_TO));
+        } else {
+            return [];
         }
-        return $applyTo;
     }
 
     /**
@@ -403,7 +405,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
      */
     public function _getDefaultSourceModel()
     {
-        return \Magento\Eav\Model\Entity\Attribute\Source\Table::class;
+        return 'Magento\Eav\Model\Entity\Attribute\Source\Table';
     }
 
     /**
@@ -417,9 +419,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
         // exclude price attribute
         if ($this->getAttributeCode() == 'price') {
             return false;
-        }
-        if ($this->getAttributeCode() == 'visibility') {
-            return true;
         }
 
         if (!$this->getIsFilterableInSearch() && !$this->getIsVisibleInAdvancedSearch() && !$this->getIsFilterable()) {
@@ -618,7 +617,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
     {
         return $this->getData(self::IS_VISIBLE);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**
@@ -823,11 +821,9 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
 
     /**
      * @inheritdoc
-     * @since 100.0.9
      */
     public function __sleep()
     {
-        $this->unsetData('entity_type');
         return array_diff(
             parent::__sleep(),
             ['_indexerEavProcessor', '_productFlatIndexerProcessor', '_productFlatIndexerHelper', 'attrLockValidator']
@@ -836,7 +832,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
 
     /**
      * @inheritdoc
-     * @since 100.0.9
      */
     public function __wakeup()
     {
@@ -848,35 +843,5 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements
         );
         $this->_productFlatIndexerHelper = $objectManager->get(\Magento\Catalog\Helper\Product\Flat\Indexer::class);
         $this->attrLockValidator = $objectManager->get(LockValidatorInterface::class);
-    }
-
-    /**
-     * @inheritdoc
-     * @since 101.1.0
-     */
-    public function setIsUsedInGrid($isUsedInGrid)
-    {
-        $this->setData(self::IS_USED_IN_GRID, $isUsedInGrid);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     * @since 101.1.0
-     */
-    public function setIsVisibleInGrid($isVisibleInGrid)
-    {
-        $this->setData(self::IS_VISIBLE_IN_GRID, $isVisibleInGrid);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     * @since 101.1.0
-     */
-    public function setIsFilterableInGrid($isFilterableInGrid)
-    {
-        $this->setData(self::IS_FILTERABLE_IN_GRID, $isFilterableInGrid);
-        return $this;
     }
 }

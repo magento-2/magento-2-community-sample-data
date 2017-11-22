@@ -1,17 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Account;
 
-use Magento\Customer\Model\AccountManagement;
-
 /**
  * Customer reset password form
- *
- * @api
- * @since 100.0.2
  */
 class Resetpassword extends \Magento\Framework\View\Element\Template
 {
@@ -26,27 +21,5 @@ class Resetpassword extends \Magento\Framework\View\Element\Template
             \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-    }
-
-    /**
-     * Get minimum password length
-     *
-     * @return string
-     * @since 100.1.0
-     */
-    public function getMinimumPasswordLength()
-    {
-        return $this->_scopeConfig->getValue(AccountManagement::XML_PATH_MINIMUM_PASSWORD_LENGTH);
-    }
-
-    /**
-     * Get minimum password length
-     *
-     * @return string
-     * @since 100.1.0
-     */
-    public function getRequiredCharacterClassesNumber()
-    {
-        return $this->_scopeConfig->getValue(AccountManagement::XML_PATH_REQUIRED_CHARACTER_CLASSES_NUMBER);
     }
 }

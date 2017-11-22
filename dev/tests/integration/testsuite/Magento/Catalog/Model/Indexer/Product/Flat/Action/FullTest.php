@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Product\Flat\Action;
@@ -23,10 +23,10 @@ class FullTest extends \Magento\TestFramework\Indexer\TestCase
     protected function setUp()
     {
         $this->_state = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Indexer\Product\Flat\State::class
+            'Magento\Catalog\Model\Indexer\Product\Flat\State'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Flat\Processor'
         );
     }
 
@@ -42,10 +42,10 @@ class FullTest extends \Magento\TestFramework\Indexer\TestCase
         $this->_processor->reindexAll();
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(2);

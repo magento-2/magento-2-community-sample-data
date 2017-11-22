@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,6 @@ namespace Magento\Framework\Simplexml;
 
 /**
  * Extends SimpleXML to add valuable functionality to \SimpleXMLElement class
- *
- * @api
  */
 class Element extends \SimpleXMLElement
 {
@@ -306,7 +304,7 @@ class Element extends \SimpleXMLElement
      */
     public function xmlentities($value = null)
     {
-        if ($value === null) {
+        if (is_null($value)) {
             $value = $this;
         }
         $value = (string)$value;
@@ -415,7 +413,7 @@ class Element extends \SimpleXMLElement
             $targetChild = $this->{$sourceName};
         }
 
-        if ($targetChild === null) {
+        if (is_null($targetChild)) {
             // if child target is not found create new and descend
             $targetChild = $this->addChild($sourceName);
             $targetChild->setParent($this);

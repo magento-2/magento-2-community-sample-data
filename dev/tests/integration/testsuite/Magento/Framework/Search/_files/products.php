@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory $customOptionFactory */
-$customOptionFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory::class);
 /** @var $product \Magento\Catalog\Model\Product */
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Model\Product::class);
+    ->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(1)
@@ -57,29 +54,31 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
             'is_qty_decimal' => 0,
             'is_in_stock' => 1,
         ]
-    );
-$option = [
-    'previous_group' => 'text',
-    'title' => 'Stone',
-    'type' => 'field',
-    'is_require' => 1,
-    'sort_order' => 0,
-    'price' => 1,
-    'price_type' => 'fixed',
-    'sku' => 'stone-1',
-    'max_characters' => 100,
-];
-/** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $customOption */
-$customOption = $customOptionFactory->create(['data' => $option]);
-$customOption->setProductSku($product->getSku());
-$product->setCanSaveCustomOptions(true)
-    ->setOptions([$customOption])
+    )
+    ->setCanSaveCustomOptions(true)
+    ->setProductOptions(
+        [
+            [
+                'id' => 1,
+                'option_id' => 0,
+                'previous_group' => 'text',
+                'title' => 'Stone',
+                'type' => 'field',
+                'is_require' => 1,
+                'sort_order' => 0,
+                'price' => 1,
+                'price_type' => 'fixed',
+                'sku' => 'stone-1',
+                'max_characters' => 100,
+            ],
+        ]
+    )
     ->setHasOptions(true)
     ->save();
 
 /** @var $product \Magento\Catalog\Model\Product */
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Model\Product::class);
+    ->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(2)
@@ -127,29 +126,31 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
             'is_qty_decimal' => 0,
             'is_in_stock' => 1,
         ]
-    );
-$option = [
-    'previous_group' => 'text',
-    'title' => 'Gold',
-    'type' => 'field',
-    'is_require' => 1,
-    'sort_order' => 0,
-    'price' => 1,
-    'price_type' => 'fixed',
-    'sku' => 'Gold',
-    'max_characters' => 100,
-];
-/** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $customOption */
-$customOption = $customOptionFactory->create(['data' => $option]);
-$customOption->setProductSku($product->getSku());
-$product->setCanSaveCustomOptions(true)
-    ->setOptions([$customOption])
+    )
+    ->setCanSaveCustomOptions(true)
+    ->setProductOptions(
+        [
+            [
+                'id' => 2,
+                'option_id' => 0,
+                'previous_group' => 'text',
+                'title' => 'Gold',
+                'type' => 'field',
+                'is_require' => 1,
+                'sort_order' => 0,
+                'price' => 1,
+                'price_type' => 'fixed',
+                'sku' => 'Gold',
+                'max_characters' => 100,
+            ],
+        ]
+    )
     ->setHasOptions(true)
     ->save();
 
 /** @var $product \Magento\Catalog\Model\Product */
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Model\Product::class);
+    ->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(3)
@@ -197,29 +198,31 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
             'is_qty_decimal' => 0,
             'is_in_stock' => 1,
         ]
-    );
-$option = [
-    'previous_group' => 'text',
-    'title' => 'Silver',
-    'type' => 'field',
-    'is_require' => 1,
-    'sort_order' => 0,
-    'price' => 1,
-    'price_type' => 'fixed',
-    'sku' => 'silver',
-    'max_characters' => 100,
-];
-/** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $customOption */
-$customOption = $customOptionFactory->create(['data' => $option]);
-$customOption->setProductSku($product->getSku());
-$product->setCanSaveCustomOptions(true)
-    ->setOptions([$customOption])
+    )
+    ->setCanSaveCustomOptions(true)
+    ->setProductOptions(
+        [
+            [
+                'id' => 3,
+                'option_id' => 0,
+                'previous_group' => 'text',
+                'title' => 'Silver',
+                'type' => 'field',
+                'is_require' => 1,
+                'sort_order' => 0,
+                'price' => 1,
+                'price_type' => 'fixed',
+                'sku' => 'silver',
+                'max_characters' => 100,
+            ],
+        ]
+    )
     ->setHasOptions(true)
     ->save();
 
 /** @var $product \Magento\Catalog\Model\Product */
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Model\Product::class);
+    ->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(4)
@@ -272,7 +275,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
 
 /** @var $product \Magento\Catalog\Model\Product */
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Model\Product::class);
+    ->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(5)

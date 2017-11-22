@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -76,7 +76,7 @@ class BackendDecorator implements CurlInterface
         ];
         $this->transport->write($url, $data, CurlInterface::POST);
         $response = $this->read();
-        if (strpos($response, 'login-form')) {
+        if (strpos($response, 'page-login')) {
             throw new \Exception(
                 'Admin user cannot be logged in by curl handler!'
             );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config\Converter\Dom;
@@ -9,8 +9,6 @@ use Magento\Framework\Config\Dom\ArrayNodeConfig;
 
 /**
  * Universal converter of any XML data to an array representation with no data loss
- *
- * @api
  */
 class Flat
 {

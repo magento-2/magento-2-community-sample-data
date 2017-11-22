@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Flat;
 
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -17,15 +17,21 @@ class StateTest extends \PHPUnit\Framework\TestCase
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $indexerMock = $this->createMock(\Magento\Indexer\Model\Indexer::class);
-        $flatIndexerHelperMock = $this->createMock(\Magento\Catalog\Helper\Product\Flat\Indexer::class);
-        $configMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $indexerMock = $this->getMock('Magento\Indexer\Model\Indexer', [], [], '', false);
+        $flatIndexerHelperMock = $this->getMock(
+            'Magento\Catalog\Helper\Product\Flat\Indexer',
+            [],
+            [],
+            '',
+            false
+        );
+        $configMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
         $this->_model = $this->_objectManager->getObject(
-            \Magento\Catalog\Model\Indexer\Product\Flat\State::class,
+            'Magento\Catalog\Model\Indexer\Product\Flat\State',
             [
                 'scopeConfig' => $configMock,
                 'flatIndexer' => $indexerMock,
@@ -37,9 +43,6 @@ class StateTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIndexer()
     {
-        $this->assertInstanceOf(
-            \Magento\Catalog\Helper\Product\Flat\Indexer::class,
-            $this->_model->getFlatIndexerHelper()
-        );
+        $this->assertInstanceOf('\Magento\Catalog\Helper\Product\Flat\Indexer', $this->_model->getFlatIndexerHelper());
     }
 }

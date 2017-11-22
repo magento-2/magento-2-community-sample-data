@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Form;
@@ -10,7 +10,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create\Form;
  *
  * @magentoAppArea adminhtml
  */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $_objectManager;
@@ -21,23 +21,11 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Customer\Api\AddressRepositoryInterface */
     protected $addressRepository;
 
-    /**
-     * @return int
-     */
-    private function getNumberOfCountryOptions()
-    {
-        /** @var \Magento\Directory\Model\ResourceModel\Country\Collection $countryCollection */
-        $countryCollection = $this->_objectManager->create(
-            \Magento\Directory\Model\ResourceModel\Country\Collection::class
-        );
-        return count($countryCollection->toOptionArray());
-    }
-
     protected function setUp()
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->addressRepository = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\AddressRepositoryInterface::class,
+            'Magento\Customer\Api\AddressRepositoryInterface',
             [],
             '',
             false,
@@ -46,14 +34,14 @@ class AddressTest extends \PHPUnit\Framework\TestCase
             ['getList']
         );
         /** @var \Magento\Framework\View\LayoutInterface $layout */
-        $layout = $this->_objectManager->get(\Magento\Framework\View\LayoutInterface::class);
-        $sessionQuoteMock = $this->getMockBuilder(\Magento\Backend\Model\Session\Quote::class)
+        $layout = $this->_objectManager->get('Magento\Framework\View\LayoutInterface');
+        $sessionQuoteMock = $this->getMockBuilder('Magento\Backend\Model\Session\Quote')
             ->disableOriginalConstructor()->setMethods(['getCustomerId', 'getStore', 'getStoreId', 'getQuote'])
             ->getMock();
         $sessionQuoteMock->expects($this->any())->method('getCustomerId')->will($this->returnValue(1));
 
         $this->_addressBlock = $layout->createBlock(
-            \Magento\Sales\Block\Adminhtml\Order\Create\Form\Address::class,
+            'Magento\Sales\Block\Adminhtml\Order\Create\Form\Address',
             'address_block' . rand(),
             ['addressService' => $this->addressRepository, 'sessionQuote' => $sessionQuoteMock]
         );
@@ -64,7 +52,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         $addressData = $this->_getAddresses();
         $searchResult = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressSearchResultsInterface::class,
+            'Magento\Customer\Api\Data\AddressSearchResultsInterface',
             [],
             '',
             false,
@@ -85,7 +73,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         $addressData = $this->_getAddresses();
         $searchResult = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressSearchResultsInterface::class,
+            'Magento\Customer\Api\Data\AddressSearchResultsInterface',
             [],
             '',
             false,
@@ -194,13 +182,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Data\Form\Element\Select $countryIdField */
         $countryIdField = $fieldset->getElements()->searchById('country_id');
-        $this->assertEquals(
-            $this->getNumberOfCountryOptions(),
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//option',
-                $countryIdField->getElementHtml()
-            )
-        );
+        $this->assertSelectCount('option', 246, $countryIdField->getElementHtml());
     }
 
     /**
@@ -209,7 +191,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     protected function _getAddresses()
     {
         /** @var \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory */
-        $addressFactory = $this->_objectManager->create(\Magento\Customer\Api\Data\AddressInterfaceFactory::class);
+        $addressFactory = $this->_objectManager->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
         $addressData[] = $addressFactory->create()
             ->setId(1)
             ->setStreet(['Street1'])

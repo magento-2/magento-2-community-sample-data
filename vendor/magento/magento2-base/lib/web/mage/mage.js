@@ -1,8 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint eqnull:true browser:true expr:true */
 (function (root, factory) {
     'use strict';
 
@@ -64,9 +64,6 @@
             timeout = timeout || 0;
             type    = type || 'assign';
 
-            /**
-             * @private
-             */
             _redirect = function () {
                 window.location[type](type === 'reload' ? forced : url);
             };

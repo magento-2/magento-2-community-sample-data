@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Test\Integrity\Magento\Framework\Api;
@@ -13,9 +13,9 @@ use Magento\Framework\App\Utility\Files;
  * Ensure that all interfaces inherited from \Magento\Framework\Api\ExtensibleDataInterface
  * override getExtensionAttributes() method and have correct return type specified.
  */
-class ExtensibleInterfacesTest extends \PHPUnit\Framework\TestCase
+class ExtensibleInterfacesTest extends \PHPUnit_Framework_TestCase
 {
-    const EXTENSIBLE_DATA_INTERFACE = \Magento\Framework\Api\ExtensibleDataInterface::class;
+    const EXTENSIBLE_DATA_INTERFACE = 'Magento\\Framework\\Api\\ExtensibleDataInterface';
 
     /**
      * Check return types of getExtensionAttributes() methods.

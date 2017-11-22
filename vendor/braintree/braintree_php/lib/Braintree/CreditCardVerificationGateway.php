@@ -1,7 +1,5 @@
 <?php
-namespace Braintree;
-
-class CreditCardVerificationGateway
+class Braintree_CreditCardVerificationGateway
 {
     private $_gateway;
     private $_config;
@@ -12,42 +10,20 @@ class CreditCardVerificationGateway
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
         $this->_config->assertHasAccessTokenOrKeys();
-        $this->_http = new Http($gateway->config);
-    }
-
-    public function create($attributes)
-    {
-        $response = $this->_http->post($this->_config->merchantPath() . "/verifications", ['verification' => $attributes]);
-        return $this->_verifyGatewayResponse($response);
-    }
-
-    private function _verifyGatewayResponse($response)
-    {
-
-        if(isset($response['verification'])){
-            return new Result\Successful(
-                CreditCardVerification::factory($response['verification'])
-            );
-        } else if (isset($response['apiErrorResponse'])) {
-            return new Result\Error($response['apiErrorResponse']);
-        } else {
-            throw new Exception\Unexpected(
-                "Expected transaction or apiErrorResponse"
-            );
-        }
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
     public function fetch($query, $ids)
     {
-        $criteria = [];
+        $criteria = array();
         foreach ($query as $term) {
             $criteria[$term->name] = $term->toparam();
         }
-        $criteria["ids"] = CreditCardVerificationSearch::ids()->in($ids)->toparam();
+        $criteria["ids"] = Braintree_CreditCardVerificationSearch::ids()->in($ids)->toparam();
         $path = $this->_config->merchantPath() . '/verifications/advanced_search';
-        $response = $this->_http->post($path, ['search' => $criteria]);
+        $response = $this->_http->post($path, array('search' => $criteria));
 
-        return Util::extractattributeasarray(
+        return Braintree_Util::extractattributeasarray(
             $response['creditCardVerifications'],
             'verification'
         );
@@ -55,20 +31,19 @@ class CreditCardVerificationGateway
 
     public function search($query)
     {
-        $criteria = [];
+        $criteria = array();
         foreach ($query as $term) {
             $criteria[$term->name] = $term->toparam();
         }
 
         $path = $this->_config->merchantPath() . '/verifications/advanced_search_ids';
-        $response = $this->_http->post($path, ['search' => $criteria]);
-        $pager = [
+        $response = $this->_http->post($path, array('search' => $criteria));
+        $pager = array(
             'object' => $this,
             'method' => 'fetch',
-            'methodArgs' => [$query]
-            ];
+            'methodArgs' => array($query)
+            );
 
-        return new ResourceCollection($response, $pager);
+        return new Braintree_ResourceCollection($response, $pager);
     }
 }
-class_alias('Braintree\CreditCardVerificationGateway', 'Braintree_CreditCardVerificationGateway');

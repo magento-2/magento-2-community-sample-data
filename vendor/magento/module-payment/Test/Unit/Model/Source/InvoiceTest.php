@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,14 +8,14 @@ namespace Magento\Payment\Test\Unit\Model\Source;
 
 use \Magento\Payment\Model\Source\Invoice;
 
-class InvoiceTest extends \PHPUnit\Framework\TestCase
+class InvoiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Invoice
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_model = new Invoice();
     }

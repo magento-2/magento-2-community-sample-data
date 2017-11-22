@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CurrencySymbol\Test\Unit\Observer;
 
-use Magento\CurrencySymbol\Model\System\CurrencysymbolFactory;
+use \Magento\CurrencySymbol\Model\System\CurrencysymbolFactory;
 
 /**
  * Test for \Magento\CurrencySymbol\Observer\CurrencyDisplayOptions
  */
-class CurrencyDisplayOptionsTest extends \PHPUnit\Framework\TestCase
+class CurrencyDisplayOptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CurrencySymbol\Observer\CurrencyDisplayOptions
@@ -37,23 +37,38 @@ class CurrencyDisplayOptionsTest extends \PHPUnit\Framework\TestCase
      */
     private $mockEvent;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->mockSymbolFactory = $this->createPartialMock(
-            \Magento\CurrencySymbol\Model\System\CurrencysymbolFactory::class,
-            ['create']
+        $this->mockSymbolFactory = $this->getMock(
+            'Magento\CurrencySymbol\Model\System\CurrencysymbolFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->mockSymbol = $this->createPartialMock(
-            \Magento\CurrencySymbol\Model\System\Currencysymbol::class,
-            ['getCurrencySymbol']
+        $this->mockSymbol = $this->getMock(
+            'Magento\CurrencySymbol\Model\System\Currencysymbol',
+            ['getCurrencySymbol'],
+            [],
+            '',
+            false
         );
 
-        $this->mockEventObserver = $this->createPartialMock(\Magento\Framework\Event\Observer::class, ['getEvent']);
+        $this->mockEventObserver = $this->getMock(
+            'Magento\Framework\Event\Observer',
+            ['getEvent'],
+            [],
+            '',
+            false
+        );
 
-        $this->mockEvent = $this->createPartialMock(
-            \Magento\Framework\Event::class,
-            ['getBaseCode', 'getCurrencyOptions']
+        $this->mockEvent = $this->getMock(
+            'Magento\Framework\Event',
+            ['getBaseCode', 'getCurrencyOptions'],
+            [],
+            '',
+            false
         );
 
         $this->mockEventObserver->expects($this->any())->method('getEvent')->willReturn($this->mockEvent);
@@ -64,11 +79,7 @@ class CurrencyDisplayOptionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCurrencyDisplayOptionsEmpty()
     {
-        $baseData = [
-            \Magento\Framework\Locale\Currency::CURRENCY_OPTION_NAME => 'US Dollar'
-        ];
-        $sampleCurrencyOptionObject = new \Magento\Framework\DataObject($baseData);
-
+        $sampleCurrencyOptionObject = new \Magento\Framework\DataObject;
         //Return invalid value
         $this->mockEvent->expects($this->once())->method('getBaseCode')->willReturn(null);
         $this->mockEvent->expects($this->once())->method('getCurrencyOptions')->willReturn($sampleCurrencyOptionObject);
@@ -77,27 +88,21 @@ class CurrencyDisplayOptionsTest extends \PHPUnit\Framework\TestCase
         $this->observer->execute($this->mockEventObserver);
 
         // Check if option set is empty
-        $this->assertEquals($baseData, $sampleCurrencyOptionObject->getData());
+        $this->assertEquals([], $sampleCurrencyOptionObject->getData());
     }
 
     public function testCurrencyDisplayOptions()
     {
-        $baseData = [
-            \Magento\Framework\Locale\Currency::CURRENCY_OPTION_NAME => 'US Dollar'
-        ];
-        $sampleCurrencyOptionObject = new \Magento\Framework\DataObject($baseData);
+        $sampleCurrencyOptionObject = new \Magento\Framework\DataObject;
         $sampleCurrency = 'USD';
         $sampleCurrencySymbol = '$';
 
-        $expectedCurrencyOptions = array_merge(
-            $baseData,
-            [
-                \Magento\Framework\Locale\Currency::CURRENCY_OPTION_NAME => 'US Dollar',
-                \Magento\Framework\Locale\Currency::CURRENCY_OPTION_SYMBOL => $sampleCurrencySymbol,
-                \Magento\Framework\Locale\Currency::CURRENCY_OPTION_DISPLAY => \Magento\Framework\Currency::USE_SYMBOL
-            ]
-        );
+        $expectedCurrencyOptions = [
+            \Magento\Framework\Locale\Currency::CURRENCY_OPTION_SYMBOL => $sampleCurrencySymbol,
+            \Magento\Framework\Locale\Currency::CURRENCY_OPTION_DISPLAY => \Magento\Framework\Currency::USE_SYMBOL
+        ];
 
+        //Return invalid value
         $this->mockEvent->expects($this->once())->method('getBaseCode')->willReturn($sampleCurrency);
         $this->mockEvent->expects($this->once())->method('getCurrencyOptions')->willReturn($sampleCurrencyOptionObject);
         $this->mockSymbol->expects($this->once())
@@ -107,6 +112,7 @@ class CurrencyDisplayOptionsTest extends \PHPUnit\Framework\TestCase
 
         $this->observer->execute($this->mockEventObserver);
 
+        // Check if option set is empty
         $this->assertEquals($expectedCurrencyOptions, $sampleCurrencyOptionObject->getData());
     }
 }

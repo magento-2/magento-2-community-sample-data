@@ -2,7 +2,7 @@
 /**
  * Associated products collection
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GroupedProduct\Model\ResourceModel\Product\Type\Grouped;
@@ -27,8 +27,6 @@ class AssociatedProductsCollection extends \Magento\Catalog\Model\ResourceModel\
     protected $_config;
 
     /**
-     * AssociatedProductsCollection constructor.
-     *
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -50,7 +48,7 @@ class AssociatedProductsCollection extends \Magento\Catalog\Model\ResourceModel\
      * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Catalog\Model\ProductTypes\ConfigInterface $config
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $connection
+     * @param mixed $connection
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */

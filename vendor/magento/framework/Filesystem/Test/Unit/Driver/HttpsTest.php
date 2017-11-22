@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filesystem\Test\Unit\Driver;
 
 use \Magento\Framework\Filesystem\Driver\Https;
 
-class HttpsTest extends \PHPUnit\Framework\TestCase
+class HttpsTest extends \PHPUnit_Framework_TestCase
 {
     public static $fSockOpen;
 
-    protected function setUp()
+    public function setUp()
     {
         require_once __DIR__ . '/../_files/http_mock.php';
         self::$fSockOpen = 'resource';

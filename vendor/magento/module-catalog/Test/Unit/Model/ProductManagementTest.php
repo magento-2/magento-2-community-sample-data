@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model;
 
-class ProductManagementTest extends \PHPUnit\Framework\TestCase
+class ProductManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ProductManagement
@@ -19,9 +19,12 @@ class ProductManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productsFactoryMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
-            ['create']
+        $this->productsFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->model = new \Magento\Catalog\Model\ProductManagement(
             $this->productsFactoryMock
@@ -31,7 +34,7 @@ class ProductManagementTest extends \PHPUnit\Framework\TestCase
     public function testGetEnabledCount()
     {
         $statusEnabled = 1;
-        $productsMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $productsMock = $this->getMock('Magento\Catalog\Model\ResourceModel\Product\Collection', [], [], '', false);
 
         $this->productsFactoryMock
             ->expects($this->once())
@@ -56,7 +59,7 @@ class ProductManagementTest extends \PHPUnit\Framework\TestCase
     public function testGetDisabledCount()
     {
         $statusDisabled = 2;
-        $productsMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $productsMock = $this->getMock('\Magento\Catalog\Model\ResourceModel\Product\Collection', [], [], '', false);
 
         $this->productsFactoryMock
             ->expects($this->once())

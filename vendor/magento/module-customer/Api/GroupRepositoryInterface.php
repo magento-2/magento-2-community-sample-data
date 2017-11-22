@@ -1,20 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Api;
 
 /**
  * Customer group CRUD interface
- * @api
- * @since 100.0.2
  */
 interface GroupRepositoryInterface
 {
     /**
      * Save customer group.
      *
+     * @api
      * @param \Magento\Customer\Api\Data\GroupInterface $group
      * @return \Magento\Customer\Api\Data\GroupInterface
      * @throws \Magento\Framework\Exception\InputException If there is a problem with the input
@@ -28,6 +27,7 @@ interface GroupRepositoryInterface
     /**
      * Get customer group by group ID.
      *
+     * @api
      * @param int $id
      * @return \Magento\Customer\Api\Data\GroupInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If $groupId is not found
@@ -45,6 +45,7 @@ interface GroupRepositoryInterface
      * included. See http://devdocs.magento.com/codelinks/attributes.html#GroupRepositoryInterface to determine
      * which call to use to get detailed information about all attributes for an object.
      *
+     * @api
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
      * @return \Magento\Customer\Api\Data\GroupSearchResultsInterface
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -54,6 +55,7 @@ interface GroupRepositoryInterface
     /**
      * Delete customer group.
      *
+     * @api
      * @param \Magento\Customer\Api\Data\GroupInterface $group
      * @return bool true on success
      * @throws \Magento\Framework\Exception\StateException If customer group cannot be deleted
@@ -64,6 +66,7 @@ interface GroupRepositoryInterface
     /**
      * Delete customer group by ID.
      *
+     * @api
      * @param int $id
      * @return bool true on success
      * @throws \Magento\Framework\Exception\NoSuchEntityException

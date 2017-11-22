@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Test\Unit\Model\Plugin;
 
-class LayerTest extends \PHPUnit\Framework\TestCase
+class LayerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Model\Plugin\Layer
@@ -22,10 +22,16 @@ class LayerTest extends \PHPUnit\Framework\TestCase
      */
     protected $_stockHelperMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->_stockHelperMock = $this->createMock(\Magento\CatalogInventory\Helper\Stock::class);
+        $this->_scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->_stockHelperMock = $this->getMock(
+            '\Magento\CatalogInventory\Helper\Stock',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->_model = new \Magento\CatalogInventory\Model\Plugin\Layer(
             $this->_stockHelperMock,
@@ -48,10 +54,16 @@ class LayerTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(true)
         );
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collectionMock */
-        $collectionMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collectionMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
+            [],
+            [],
+            '',
+            false
+        );
         $this->_stockHelperMock->expects($this->never())->method('addIsInStockFilterToCollection');
         /** @var \Magento\Catalog\Model\Layer $subjectMock */
-        $subjectMock = $this->createMock(\Magento\Catalog\Model\Layer::class);
+        $subjectMock = $this->getMock('\Magento\Catalog\Model\Layer', [], [], '', false);
         $this->_model->beforePrepareProductCollection($subjectMock, $collectionMock);
     }
 
@@ -70,7 +82,13 @@ class LayerTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(false)
         );
 
-        $collectionMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collectionMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->_stockHelperMock->expects(
             $this->once()
@@ -80,7 +98,7 @@ class LayerTest extends \PHPUnit\Framework\TestCase
             $collectionMock
         );
 
-        $subjectMock = $this->createMock(\Magento\Catalog\Model\Layer::class);
+        $subjectMock = $this->getMock('\Magento\Catalog\Model\Layer', [], [], '', false);
         $this->_model->beforePrepareProductCollection($subjectMock, $collectionMock);
     }
 }

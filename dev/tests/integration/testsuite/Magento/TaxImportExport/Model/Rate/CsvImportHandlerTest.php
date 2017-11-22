@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TaxImportExport\Model\Rate;
 
-class CsvImportHandlerTest extends \PHPUnit\Framework\TestCase
+class CsvImportHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TaxImportExport\Model\Rate\CsvImportHandler
@@ -15,7 +15,7 @@ class CsvImportHandlerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_importHandler = $objectManager->create(\Magento\TaxImportExport\Model\Rate\CsvImportHandler::class);
+        $this->_importHandler = $objectManager->create('Magento\TaxImportExport\Model\Rate\CsvImportHandler');
     }
 
     protected function tearDown()
@@ -34,7 +34,7 @@ class CsvImportHandlerTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         // assert that both tax rates, specified in import file, have been imported correctly
         $importedRuleCA = $objectManager->create(
-            \Magento\Tax\Model\Calculation\Rate::class
+            'Magento\Tax\Model\Calculation\Rate'
         )->loadByCode(
             'US-CA-*-Rate Import Test'
         );
@@ -44,7 +44,7 @@ class CsvImportHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('*', $importedRuleCA->getTaxPostcode());
 
         $importedRuleFL = $objectManager->create(
-            \Magento\Tax\Model\Calculation\Rate::class
+            'Magento\Tax\Model\Calculation\Rate'
         )->loadByCode(
             'US-FL-*-Rate Import Test'
         );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Plugin;
@@ -9,12 +9,9 @@ use Magento\Customer\Controller\Plugin\Account;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\ActionInterface;
-use Magento\Framework\App\Action\AbstractAction;
 use Magento\Framework\App\Request\Http;
-use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class AccountTest extends \PHPUnit\Framework\TestCase
+class AccountTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -32,7 +29,12 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     protected $session;
 
     /**
-     * @var AbstractAction | \PHPUnit_Framework_MockObject_MockObject
+     * @var \Closure
+     */
+    protected $proceed;
+
+    /**
+     * @var ActionInterface | \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subject;
 
@@ -46,14 +48,9 @@ class AccountTest extends \PHPUnit\Framework\TestCase
      */
     protected $actionFlag;
 
-    /**
-     * @var ResultInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $resultInterface;
-
     protected function setUp()
     {
-        $this->session = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->session = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([
                 'setNoReferer',
@@ -62,24 +59,24 @@ class AccountTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->subject = $this->getMockBuilder(AbstractAction::class)
+        $this->subject = $this->getMockBuilder('Magento\Framework\App\ActionInterface')
             ->setMethods([
                 'getActionFlag',
             ])
-            ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->proceed = function () {
+            return self::EXPECTED_VALUE;
+        };
+
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getActionName',
             ])
             ->getMock();
 
-        $this->resultInterface = $this->getMockBuilder(ResultInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->actionFlag = $this->getMockBuilder(\Magento\Framework\App\ActionFlag::class)
+        $this->actionFlag = $this->getMockBuilder('Magento\Framework\App\ActionFlag')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -90,9 +87,9 @@ class AccountTest extends \PHPUnit\Framework\TestCase
      * @param boolean $isActionAllowed
      * @param boolean $isAuthenticated
      *
-     * @dataProvider beforeDispatchDataProvider
+     * @dataProvider dataProviderAroundDispatch
      */
-    public function testBeforeDispatch(
+    public function testAroundDispatch(
         $action,
         $allowedActions,
         $isActionAllowed,
@@ -101,6 +98,11 @@ class AccountTest extends \PHPUnit\Framework\TestCase
         $this->request->expects($this->once())
             ->method('getActionName')
             ->willReturn($action);
+
+        $this->session->expects($this->once())
+            ->method('unsNoReferer')
+            ->with(false)
+            ->willReturnSelf();
 
         if ($isActionAllowed) {
             $this->session->expects($this->once())
@@ -124,13 +126,13 @@ class AccountTest extends \PHPUnit\Framework\TestCase
         }
 
         $plugin = new Account($this->session, $allowedActions);
-        $plugin->beforeDispatch($this->subject, $this->request);
+        $this->assertEquals(
+            self::EXPECTED_VALUE,
+            $plugin->aroundDispatch($this->subject, $this->proceed, $this->request)
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function beforeDispatchDataProvider()
+    public function dataProviderAroundDispatch()
     {
         return [
             [
@@ -164,25 +166,5 @@ class AccountTest extends \PHPUnit\Framework\TestCase
                 'is_authenticated' => 1,
             ],
         ];
-    }
-
-    public function testAfterDispatch()
-    {
-        $this->session->expects($this->once())
-            ->method('unsNoReferer')
-            ->with(false)
-            ->willReturnSelf();
-
-        $plugin = (new ObjectManager($this))->getObject(
-            Account::class,
-            [
-                'session' => $this->session,
-                'allowedActions' => ['testaction']
-            ]
-        );
-        $this->assertSame(
-            $this->resultInterface,
-            $plugin->afterDispatch($this->subject, $this->resultInterface, $this->request)
-        );
     }
 }

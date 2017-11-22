@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,15 +20,15 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save Tax Rule.
  * 6. Perform all assertions.
  *
- * @group Tax
+ * @group Tax_(CS)
  * @ZephyrId MAGETWO-20913
  */
 class CreateTaxRuleEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'CS';
+    const TEST_TYPE = 'acceptance_test';
     /* end tags */
 
     /**
@@ -82,6 +82,6 @@ class CreateTaxRuleEntityTest extends Injectable
      */
     public function tearDown()
     {
-        $this->objectManager->create(\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep::class, [])->run();
+        $this->objectManager->create('Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep', [])->run();
     }
 }

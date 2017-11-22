@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Product\Eav\Action;
@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Eav\Action;
 /**
  * Row reindex Test
  */
-class RowTest extends \PHPUnit\Framework\TestCase
+class RowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDbIsolation disabled
@@ -18,25 +18,27 @@ class RowTest extends \PHPUnit\Framework\TestCase
     public function testUpdateProduct()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attr **/
-        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class)
+        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config')
             ->getAttribute('catalog_product', 'weight');
         $attr->setIsFilterable(1)->save();
 
         $this->assertTrue($attr->isIndexable());
 
-        $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+        /** @var \Magento\Catalog\Model\Product $product */
+        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Catalog\Model\Product'
         );
-        $product = $repository->get('simple');
+
+        $product->load(1);
         $product->setWeight(11);
         $product->save();
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         /** @var \Magento\Catalog\Block\Product\ListProduct $listProduct */
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(2);

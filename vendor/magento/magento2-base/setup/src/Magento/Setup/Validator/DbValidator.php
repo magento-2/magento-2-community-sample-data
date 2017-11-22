@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -146,6 +146,7 @@ class DbValidator
             'DELETE',
             'CREATE',
             'DROP',
+            'REFERENCES',
             'INDEX',
             'ALTER',
             'CREATE TEMPORARY TABLES',
@@ -155,6 +156,7 @@ class DbValidator
             'SHOW VIEW',
             'CREATE ROUTINE',
             'ALTER ROUTINE',
+            'EVENT',
             'TRIGGER'
         ];
 

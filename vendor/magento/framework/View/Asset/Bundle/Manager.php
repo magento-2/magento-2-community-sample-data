@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,8 +15,6 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * BundleService model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @deprecated 100.2.0
- * @see \Magento\Deploy\Service\Bundle
  */
 class Manager
 {
@@ -28,34 +26,22 @@ class Manager
 
     const ASSET_TYPE_HTML = 'html';
 
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
+    /** @var Filesystem */
     protected $filesystem;
 
-    /**
-     * @var \Magento\Framework\View\Asset\Bundle
-     */
+    /** @var  Bundle */
     protected $bundle;
 
-    /**
-     * @var \Magento\Framework\View\Asset\Bundle\ConfigInterface
-     */
+    /** @var Bundle\ConfigInterface  */
     protected $bundleConfig;
 
-    /**
-     * @var \Magento\Framework\View\Asset\ConfigInterface
-     */
+    /** @var Asset\ConfigInterface  */
     protected $assetConfig;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $excluded = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public static $availableTypes = [self::ASSET_TYPE_JS, self::ASSET_TYPE_HTML];
 
     /**

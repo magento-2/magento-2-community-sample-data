@@ -1,142 +1,173 @@
 <?php
-namespace Braintree\Xml;
-
-use DateTime;
-use DateTimeZone;
-use DOMDocument;
-use DOMElement;
-use DOMText;
-use Braintree\Util;
 
 /**
  * Braintree XML Parser
  *
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class Parser
+/**
+ * Parses incoming Xml into arrays using PHP's
+ * built-in SimpleXML, and its extension via
+ * Iterator, SimpleXMLIterator
+ *
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
+ */
+class Braintree_Xml_Parser
 {
+
+    private static $_xmlRoot;
+    private static $_responseType;
+
     /**
-     * Converts an XML string into a multidimensional array
-     *
+     * sets up the SimpleXMLIterator and starts the parsing
+     * @access public
      * @param string $xml
-     * @return array
+     * @return array array mapped to the passed xml
      */
     public static function arrayFromXml($xml)
     {
-        $document = new DOMDocument('1.0', 'UTF-8');
-        $document->loadXML($xml);
+        // SimpleXML provides the root information on construct
+        $iterator = new SimpleXMLIterator($xml);
+        $xmlRoot = $iterator->getName();
+        $type = $iterator->attributes()->type;
 
-        $root = $document->documentElement->nodeName;
+        self::$_xmlRoot = $iterator->getName();
+        self::$_responseType = $type;
 
-        return Util::delimiterToCamelCaseArray([
-            $root => self::_nodeToValue($document->childNodes->item(0)),
-        ]);
+        // return the mapped array with the root element as the header
+        $array = array($xmlRoot => self::_iteratorToArray($iterator));
+        return Braintree_Util::delimiterToCamelCaseArray($array);
     }
 
     /**
-     * Converts a node to an array of values or nodes
+     * processes SimpleXMLIterator objects recursively
      *
-     * @param DOMNode @node
-     * @return mixed
+     * @access protected
+     * @param object $iterator
+     * @return array xml converted to array
      */
-    private static function _nodeToArray($node)
+    private static function _iteratorToArray($iterator)
     {
-        $type = null;
-        if ($node instanceof DOMElement) {
-            $type = $node->getAttribute('type');
+        $xmlArray = array();
+        $value = null;
+
+        // rewind the iterator and check if the position is valid
+        // if not, return the string it contains
+        $iterator->rewind();
+        if (!$iterator->valid()) {
+            return self::_typecastXmlValue($iterator);
+        }
+        for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+
+            $tmpArray = null;
+            $value = null;
+
+            // get the attribute type string for use in conditions below
+            $attributeType = $iterator->attributes()->type;
+
+            // extract the parent element via xpath query
+            $parentElement = $iterator->xpath($iterator->key() . '/..');
+            if ($parentElement[0] instanceof SimpleXMLIterator) {
+                $parentElement = $parentElement[0];
+            } else {
+                $parentElement = null;
+            }
+
+            $key = $iterator->key();
+
+            // process children recursively
+            if ($iterator->hasChildren()) {
+                // return the child elements
+                $value = self::_iteratorToArray($iterator->current());
+
+                // if the element is an array type,
+                // use numeric keys to allow multiple values
+                if ($attributeType != 'array') {
+                    $tmpArray[$key] = $value;
+                }
+            } else {
+                // cast values according to attributes
+                $tmpArray[$key] = self::_typecastXmlValue($iterator->current());
+            }
+
+            // set the output string
+            $output = isset($value) ? $value : $tmpArray[$key];
+
+            // determine if there are multiple tags of this name at the same level
+            if (isset($parentElement) &&
+                ($parentElement->attributes()->type == 'collection') &&
+                $iterator->hasChildren()) {
+              $xmlArray[$key][] = $output;
+              continue;
+            }
+
+            // if the element was an array type, output to a numbered key
+            // otherwise, use the element name
+            if ($attributeType == 'array') {
+                $xmlArray[] = $output;
+            } else {
+                $xmlArray[$key] = $output;
+            }
         }
 
-        switch($type) {
-        case 'array':
-            $array = [];
-            foreach ($node->childNodes as $child) {
-                $value = self::_nodeToValue($child);
-                if ($value !== null) {
-                    $array[] = $value;
-                }
-            }
-            return $array;
-        case 'collection':
-            $collection = [];
-            foreach ($node->childNodes as $child) {
-                $value = self::_nodetoValue($child);
-                if ($value !== null) {
-                    if (!isset($collection[$child->nodeName])) {
-                        $collection[$child->nodeName] = [];
-                    }
-                    $collection[$child->nodeName][] = self::_nodeToValue($child);
-                }
-            }
-            return $collection;
-        default:
-            $values = [];
-            if ($node->childNodes->length === 1 && $node->childNodes->item(0) instanceof DOMText) {
-                return $node->childNodes->item(0)->nodeValue;
-            } else {
-                foreach ($node->childNodes as $child) {
-                    if (!$child instanceof DOMText) {
-                        $values[$child->nodeName] = self::_nodeToValue($child);
-                    }
-                }
-                return $values;
-            }
-        }
+        return $xmlArray;
     }
 
     /**
-     * Converts a node to a PHP value
-     *
-     * @param DOMNode $node
-     * @return mixed
+     * typecast xml value based on attributes
+     * @param object $valueObj SimpleXMLElement
+     * @return mixed value for placing into array
      */
-    private static function _nodeToValue($node)
+    private static function _typecastXmlValue($valueObj)
     {
-        $type = null;
-        if ($node instanceof DOMElement) {
-            $type = $node->getAttribute('type');
+        // get the element attributes
+        $attribs = $valueObj->attributes();
+        // the element is null, so jump out here
+        if (isset($attribs->nil) && $attribs->nil) {
+            return null;
+        }
+        // switch on the type attribute
+        // switch works even if $attribs->type isn't set
+        switch ($attribs->type) {
+            case 'datetime':
+                return self::_timestampToUTC((string) $valueObj);
+                break;
+            case 'date':
+                return new DateTime((string)$valueObj);
+                break;
+            case 'integer':
+                return (int) $valueObj;
+                break;
+            case 'boolean':
+                $value =  (string) $valueObj;
+                // look for a number inside the string
+                if(is_numeric($value)) {
+                    return (bool) $value;
+                } else {
+                    // look for the string "true", return false in all other cases
+                    return ($value != "true") ? FALSE : TRUE;
+                }
+                break;
+            case 'array':
+                return array();
+            default:
+                return (string) $valueObj;
         }
 
-        switch($type) {
-        case 'datetime':
-            return self::_timestampToUTC((string) $node->nodeValue);
-        case 'date':
-            return new DateTime((string) $node->nodeValue);
-        case 'integer':
-            return (int) $node->nodeValue;
-        case 'boolean':
-            $value =  (string) $node->nodeValue;
-            if(is_numeric($value)) {
-                return (bool) $value;
-            } else {
-                return ($value !== "true") ? false : true;
-            }
-        case 'array':
-        case 'collection':
-            return self::_nodeToArray($node);
-        default:
-            if ($node->hasChildNodes()) {
-                return self::_nodeToArray($node);
-            } elseif (trim($node->nodeValue) === '') {
-                return null;
-            } else {
-                return $node->nodeValue;
-            }
-        }
     }
 
-
     /**
-     * Converts XML timestamps into DateTime instances
-     *
+     * convert xml timestamps into DateTime
      * @param string $timestamp
-     * @return DateTime
+     * @return string UTC formatted datetime string
      */
     private static function _timestampToUTC($timestamp)
     {
         $tz = new DateTimeZone('UTC');
+        // strangely DateTime requires an explicit set below
+        // to show the proper time zone
         $dateTime = new DateTime($timestamp, $tz);
         $dateTime->setTimezone($tz);
         return $dateTime;
     }
 }
-class_alias('Braintree\Xml\Parser', 'Braintree_Xml_Parser');

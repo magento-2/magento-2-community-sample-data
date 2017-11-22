@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
      */
     protected $_xsdFile;
 
-    protected function setUp()
+    public function setUp()
     {
         if (!function_exists('libxml_set_external_entity_loader')) {
             $this->markTestSkipped('Skipped on HHVM. Will be fixed in MAGETWO-45033');

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Test\Unit\Config;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ResourceConnection\Config\SchemaLocator
@@ -21,11 +21,12 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
-        $this->urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $this->urnResolverMock = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
         $this->model = new \Magento\Framework\ObjectManager\Config\SchemaLocator($this->urnResolverMock);
         $property = new \ReflectionProperty($this->model, 'urnResolver');
         $property->setAccessible(true);
         $property->setValue($this->model, $this->urnResolverMock);
+
     }
 
     public function testGetSchema()

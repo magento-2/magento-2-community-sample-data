@@ -2,7 +2,7 @@
 /**
  * Bundle Option Type Source Model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,7 +26,9 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     const KEY_CODE = 'code';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var array
+     */
     protected $options = [];
 
     /**
@@ -76,7 +78,6 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * {@inheritdoc}
      */
@@ -135,6 +136,5 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

@@ -1,56 +1,34 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\DownloadableSampleData\Setup;
 
 use Magento\Framework\Setup;
-use Magento\CatalogSampleData\Model\Category;
-use Magento\CatalogSampleData\Model\Attribute;
-use Magento\DownloadableSampleData\Model\Product;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Model\Store;
 
 class Installer implements Setup\SampleData\InstallerInterface
 {
     /**
-     * @var \Magento\CatalogSampleData\Model\Category
+     * Setup class for products
+     *
+     * @var \Magento\DownloadableSampleData\Model\Product
      */
-    protected $category;
+    protected $productSetup;
 
     /**
-     * @var Attribute
-     */
-    private $attribute;
-
-    /**
-     * @var Product
-     */
-    private $downloadableProduct;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @param Category  $category
-     * @param Attribute $attribute
-     * @param Product   $product
-     * @param StoreManagerInterface $storeManager
+     * @param \Magento\CatalogSampleData\Model\Category $category
+     * @param \Magento\CatalogSampleData\Model\Attribute $attribute
+     * @param \Magento\DownloadableSampleData\Model\Product $product
      */
     public function __construct(
-        Category $category,
-        Attribute $attribute,
-        Product $product,
-        StoreManagerInterface $storeManager = null
+        \Magento\CatalogSampleData\Model\Category $category,
+        \Magento\CatalogSampleData\Model\Attribute $attribute,
+        \Magento\DownloadableSampleData\Model\Product $product
     ) {
         $this->category = $category;
         $this->attribute = $attribute;
         $this->downloadableProduct = $product;
-        $this->storeManager = $storeManager ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(StoreManagerInterface::class);
     }
 
     /**
@@ -58,8 +36,6 @@ class Installer implements Setup\SampleData\InstallerInterface
      */
     public function install()
     {
-        $this->storeManager->setCurrentStore(Store::DISTRO_STORE_ID);
-
         $this->attribute->install(['Magento_DownloadableSampleData::fixtures/attributes.csv']);
         $this->category->install(['Magento_DownloadableSampleData::fixtures/categories.csv']);
         $this->downloadableProduct->install(

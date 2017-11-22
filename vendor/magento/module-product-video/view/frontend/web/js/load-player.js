@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -189,8 +189,6 @@ define(['jquery', 'jquery/ui'], function ($) {
                              */
                             'onReady': function onPlayerReady() {
                                 self._player.getDuration();
-                                self.element.closest('.fotorama__stage__frame')
-                                    .addClass('fotorama__product-video--loaded');
                             },
 
                             /**
@@ -317,7 +315,7 @@ define(['jquery', 'jquery/ui'], function ($) {
             if (this._loop) {
                 additionalParams += '&loop=1';
             }
-            src = window.location.protocol + '//player.vimeo.com/video/' +
+            src = 'http://player.vimeo.com/video/' +
                 this._code + '?api=1&player_id=vimeo' +
                 this._code +
                 timestamp +
@@ -332,13 +330,11 @@ define(['jquery', 'jquery/ui'], function ($) {
                     .attr('webkitallowfullscreen', '')
                     .attr('mozallowfullscreen', '')
                     .attr('allowfullscreen', '')
-                    .attr('referrerPolicy', 'origin')
             );
             this._player = window.$f(this.element.children(':first')[0]);
 
             // Froogaloop throws error without a registered ready event
-            this._player.addEvent('ready', function (id) {
-                $('#' + id).closest('.fotorama__stage__frame').addClass('fotorama__product-video--loaded');
+            this._player.addEvent('ready', function () {
             });
         },
 

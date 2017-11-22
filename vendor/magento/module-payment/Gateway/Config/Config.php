@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Gateway\Config;
@@ -9,13 +9,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * Default implementation of Payment Gateway Config.
- *
- * To process value retrieved from config implementation of \Magento\Payment\Gateway\Config\ValueHandlerInterface
- * should be used (inheritance and overriding of getValue method or introduction of new public methods
- * is not recommended).
- */
 class Config implements ConfigInterface
 {
     const DEFAULT_PATH_PATTERN = 'payment/%s/%s';
@@ -26,23 +19,23 @@ class Config implements ConfigInterface
     private $scopeConfig;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $methodCode;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $pathPattern;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
-     * @param string|null $methodCode
+     * @param string $methodCode
      * @param string $pathPattern
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        $methodCode = null,
+        $methodCode = '',
         $pathPattern = self::DEFAULT_PATH_PATTERN
     ) {
         $this->scopeConfig = $scopeConfig;
@@ -82,10 +75,6 @@ class Config implements ConfigInterface
      */
     public function getValue($field, $storeId = null)
     {
-        if ($this->methodCode === null || $this->pathPattern === null) {
-            return null;
-        }
-
         return $this->scopeConfig->getValue(
             sprintf($this->pathPattern, $this->methodCode, $field),
             ScopeInterface::SCOPE_STORE,

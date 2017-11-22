@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,8 +14,6 @@ use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 
 /**
  * Configured price model
- * @api
- * @since 100.0.2
  */
 class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPriceInterface
 {
@@ -35,31 +33,20 @@ class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPrice
     protected $item;
 
     /**
-     * Serializer interface instance.
-     *
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * @param Product $saleableItem
      * @param float $quantity
      * @param BundleCalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param ItemInterface $item
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
      */
     public function __construct(
         Product $saleableItem,
         $quantity,
         BundleCalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        ItemInterface $item = null,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        ItemInterface $item = null
     ) {
         $this->item = $item;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
     }
 
@@ -87,16 +74,13 @@ class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPrice
 
         // get bundle options
         $optionsQuoteItemOption = $this->item->getOptionByCode('bundle_option_ids');
-        $bundleOptionsIds = $optionsQuoteItemOption
-            ? $this->serializer->unserialize($optionsQuoteItemOption->getValue())
-            : [];
-
+        $bundleOptionsIds = $optionsQuoteItemOption ? unserialize($optionsQuoteItemOption->getValue()) : [];
         if ($bundleOptionsIds) {
             /** @var \Magento\Bundle\Model\ResourceModel\Option\Collection $optionsCollection */
             $optionsCollection = $typeInstance->getOptionsByIds($bundleOptionsIds, $bundleProduct);
             // get and add bundle selections collection
             $selectionsQuoteItemOption = $this->item->getOptionByCode('bundle_selection_ids');
-            $bundleSelectionIds = $this->serializer->unserialize($selectionsQuoteItemOption->getValue());
+            $bundleSelectionIds = unserialize($selectionsQuoteItemOption->getValue());
             if ($bundleSelectionIds) {
                 $selectionsCollection = $typeInstance->getSelectionsByIds($bundleSelectionIds, $bundleProduct);
                 $bundleOptions = $optionsCollection->appendSelections($selectionsCollection, true);

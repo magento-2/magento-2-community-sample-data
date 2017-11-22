@@ -1,24 +1,22 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Product;
 
-use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Controller\Adminhtml\Product;
+use Magento\Catalog\Model\Indexer\Product\Price\Processor;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 {
     /**
-     * @var \Magento\Catalog\Model\Indexer\Product\Price\Processor
+     * @var Processor
      */
     protected $_productPriceIndexerProcessor;
 
@@ -35,22 +33,23 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
     protected $collectionFactory;
 
     /**
-     * @param Action\Context $context
+     * @param Context $context
      * @param Builder $productBuilder
-     * @param \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor
+     * @param Processor $productPriceIndexerProcessor
      * @param Filter $filter
      * @param CollectionFactory $collectionFactory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
+        Context $context,
         Product\Builder $productBuilder,
-        \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor,
+        Processor $productPriceIndexerProcessor,
         Filter $filter,
         CollectionFactory $collectionFactory
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
         $this->_productPriceIndexerProcessor = $productPriceIndexerProcessor;
+
         parent::__construct($context, $productBuilder);
     }
 
@@ -65,7 +64,7 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
     public function _validateMassStatus(array $productIds, $status)
     {
         if ($status == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED) {
-            if (!$this->_objectManager->create(\Magento\Catalog\Model\Product::class)->isProductsHasSku($productIds)) {
+            if (!$this->_objectManager->create('Magento\Catalog\Model\Product')->isProductsHasSku($productIds)) {
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('Please make sure to define SKU values for all processed products.')
                 );
@@ -84,15 +83,18 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
         $productIds = $collection->getAllIds();
         $storeId = (int) $this->getRequest()->getParam('store', 0);
         $status = (int) $this->getRequest()->getParam('status');
-        $filters = (array)$this->getRequest()->getParam('filters', []);
+
+        /** @var array $filters */
+        $filters = (array) $this->getRequest()->getParam('filters', []);
 
         if (isset($filters['store_id'])) {
-            $storeId = (int)$filters['store_id'];
+            /** @var int $storeId */
+            $storeId = (int) $filters['store_id'];
         }
 
         try {
             $this->_validateMassStatus($productIds, $status);
-            $this->_objectManager->get(\Magento\Catalog\Model\Product\Action::class)
+            $this->_objectManager->get('Magento\Catalog\Model\Product\Action')
                 ->updateAttributes($productIds, ['status' => $status], $storeId);
             $this->messageManager->addSuccess(__('A total of %1 record(s) have been updated.', count($productIds)));
             $this->_productPriceIndexerProcessor->reindexList($productIds);
@@ -104,6 +106,7 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+
         return $resultRedirect->setPath('catalog/*/', ['store' => $storeId]);
     }
 }

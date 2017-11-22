@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductAlert\Model;
@@ -10,9 +10,6 @@ namespace Magento\ProductAlert\Model;
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Email extends \Magento\Framework\Model\AbstractModel
 {
@@ -264,7 +261,7 @@ class Email extends \Magento\Framework\Model\AbstractModel
     protected function _getPriceBlock()
     {
         if ($this->_priceBlock === null) {
-            $this->_priceBlock = $this->_productAlertData->createBlock(\Magento\ProductAlert\Block\Email\Price::class);
+            $this->_priceBlock = $this->_productAlertData->createBlock('Magento\ProductAlert\Block\Email\Price');
         }
         return $this->_priceBlock;
     }
@@ -277,7 +274,7 @@ class Email extends \Magento\Framework\Model\AbstractModel
     protected function _getStockBlock()
     {
         if ($this->_stockBlock === null) {
-            $this->_stockBlock = $this->_productAlertData->createBlock(\Magento\ProductAlert\Block\Email\Stock::class);
+            $this->_stockBlock = $this->_productAlertData->createBlock('Magento\ProductAlert\Block\Email\Stock');
         }
         return $this->_stockBlock;
     }
@@ -377,6 +374,8 @@ class Email extends \Magento\Framework\Model\AbstractModel
                 'customerName' => $this->_customerHelper->getCustomerName($this->_customer),
                 'alertGrid' => $alertGrid,
             ]
+        )->setScopeId(
+            $storeId
         )->setFrom(
             $this->_scopeConfig->getValue(
                 self::XML_PATH_EMAIL_IDENTITY,

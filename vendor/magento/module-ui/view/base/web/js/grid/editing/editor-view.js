@@ -1,11 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'ko',
     'Magento_Ui/js/lib/view/utils/async',
@@ -32,7 +29,7 @@ define([
                         '<!-- ko with: getRecord($row()._rowIndex, true) -->' +
                             '<!-- ko template: rowTmpl --><!-- /ko -->' +
                         '<!-- /ko -->' +
-                        '<!-- ko if: isSingleEditing && singleEditingButtons -->' +
+                        '<!-- ko if: isSingleEditing -->' +
                             '<!-- ko template: rowButtonsTmpl --><!-- /ko -->' +
                         '<!-- /ko -->' +
                     '<!-- /ko -->' +
@@ -162,7 +159,7 @@ define([
             return {
                 css: {
                     '_in-edit': ko.computed(function () {
-                        return model.hasActive() && !model.permanentlyActive;
+                        return model.hasActive();
                     })
                 }
             };

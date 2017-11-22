@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\EncryptionKey\Block\Adminhtml\Crypt\Key;
@@ -9,7 +9,7 @@ namespace Magento\EncryptionKey\Block\Adminhtml\Crypt\Key;
  * Test class for \Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Form
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -19,15 +19,15 @@ class FormTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $objectManager->get(\Magento\Framework\View\DesignInterface::class)
+        $objectManager->get('Magento\Framework\View\DesignInterface')
             ->setArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE)
             ->setDefaultDesignTheme();
 
-        $block = $objectManager->get(\Magento\Framework\View\LayoutInterface::class)
-            ->createBlock(\Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Form::class);
+        $block = $objectManager->get('Magento\Framework\View\LayoutInterface')
+            ->createBlock('Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Form');
 
         $prepareFormMethod = new \ReflectionMethod(
-            \Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Form::class,
+            'Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Form',
             '_prepareForm'
         );
         $prepareFormMethod->setAccessible(true);

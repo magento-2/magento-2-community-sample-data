@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model\Entity;
 
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Attribute model to be tested
@@ -15,7 +15,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_model = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['__wakeup']);
+        $this->_model = $this->getMock('Magento\Eav\Model\Entity\Attribute', ['__wakeup'], [], '', false);
     }
 
     protected function tearDown()

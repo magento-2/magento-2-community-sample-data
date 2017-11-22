@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,6 +11,7 @@ use Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProduc
 use Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search\Grid;
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Element;
+use Magento\Mtf\Client\Locator;
 
 /**
  * Grouped products tab.
@@ -18,39 +19,39 @@ use Magento\Mtf\Client\Element;
 class AssociatedProducts extends Tab
 {
     /**
-     * 'Add Products to Group' button.
+     * 'Create New Option' button.
      *
      * @var string
      */
-    protected $addNewOption = '[data-index="grouped_products_button"]';
+    protected $addNewOption = '#grouped-product-container>button';
 
     /**
      * Associated products grid locator.
      *
      * @var string
      */
-    protected $productSearchGrid = '.product_form_product_form_grouped_grouped_products_modal';
+    protected $productSearchGrid = './/*[@data-role="modal"][.//*[@data-role="add-product-dialog"]]';
 
     /**
      * Associated products list block.
      *
      * @var string
      */
-    protected $associatedProductsBlock = '[data-index="associated"]';
+    protected $associatedProductsBlock = '[data-role=grouped-product-grid]';
 
     /**
-     * Selector for remove button.
+     * Selector for delete button.
      *
      * @var string
      */
-    protected $deleteButton = '[data-action="remove_row"]';
+    protected $deleteButton = '[data-role="delete"]';
 
     /**
-     * Selector for spinner element.
+     * Selector for loading mask element.
      *
      * @var string
      */
-    protected $loadingMask = '[data-role="spinner"]';
+    protected $loadingMask = '.loading-mask';
 
     /**
      * Get search grid.
@@ -60,8 +61,8 @@ class AssociatedProducts extends Tab
     protected function getSearchGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search\Grid::class,
-            ['element' => $this->browser->find($this->productSearchGrid)]
+            'Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search\Grid',
+            ['element' => $this->browser->find($this->productSearchGrid, Locator::SELECTOR_XPATH)]
         );
     }
 
@@ -70,10 +71,10 @@ class AssociatedProducts extends Tab
      *
      * @return ListAssociatedProducts
      */
-    public function getListAssociatedProductsBlock()
+    protected function getListAssociatedProductsBlock()
     {
         return $this->blockFactory->create(
-            ListAssociatedProducts::class,
+            'Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\ListAssociatedProducts',
             ['element' => $this->_rootElement->find($this->associatedProductsBlock)]
         );
     }
@@ -85,7 +86,7 @@ class AssociatedProducts extends Tab
      * @param SimpleElement|null $element
      * @return $this
      */
-    public function setFieldsData(array $fields, SimpleElement $element = null)
+    public function fillFormTab(array $fields, SimpleElement $element = null)
     {
         if (isset($fields['associated'])) {
             $options = $this->_rootElement->getElements($this->deleteButton);
@@ -115,7 +116,7 @@ class AssociatedProducts extends Tab
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getFieldsData($fields = null, SimpleElement $element = null)
+    public function getDataFormTab($fields = null, SimpleElement $element = null)
     {
         $newFields = [];
         if (isset($fields['associated'])) {

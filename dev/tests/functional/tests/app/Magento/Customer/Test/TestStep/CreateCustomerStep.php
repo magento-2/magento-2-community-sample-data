@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -46,9 +46,7 @@ class CreateCustomerStep implements TestStepInterface
     {
         $this->logoutCustomerOnFrontend = $logout;
         $this->customer = $customer;
-        if ($checkoutMethod === 'register'
-            || $checkoutMethod === 'guest'
-            || $checkoutMethod === 'register_before_checkout') {
+        if ($checkoutMethod === 'register' || $checkoutMethod === 'guest') {
             $this->persistCustomer = false;
         }
     }

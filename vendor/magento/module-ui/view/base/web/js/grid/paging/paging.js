@@ -1,11 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'ko',
     'underscore',
@@ -21,7 +18,7 @@ define([
             totalTmpl: 'ui/grid/paging-total',
             pageSize: 20,
             current: 1,
-            selectProvider: 'ns = ${ $.ns }, index = ids',
+            selectProvider: '',
 
             sizesConfig: {
                 component: 'Magento_Ui/js/grid/paging/sizes',
@@ -111,26 +108,6 @@ define([
             layout([this.sizesConfig]);
 
             return this;
-        },
-
-        /**
-         * Gets first item index on current page.
-         *
-         * @returns {Number}
-         */
-        getFirstItemIndex: function () {
-            return this.pageSize * (this.current - 1) + 1;
-        },
-
-        /**
-         * Gets last item index on current page.
-         *
-         * @returns {Number}
-         */
-        getLastItemIndex: function () {
-            var lastItem = this.getFirstItemIndex() + this.pageSize - 1;
-
-            return this.totalRecords < lastItem ? this.totalRecords : lastItem;
         },
 
         /**

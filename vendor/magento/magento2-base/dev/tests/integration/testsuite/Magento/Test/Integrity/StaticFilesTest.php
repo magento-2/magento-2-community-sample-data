@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Test\Integrity;
 /**
  * An integrity test that searches for references to static files and asserts that they are resolved via fallback
  */
-class StaticFilesTest extends \PHPUnit\Framework\TestCase
+class StaticFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Design\FileResolution\Fallback\StaticFile
@@ -39,13 +39,11 @@ class StaticFilesTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $om = \Magento\TestFramework\Helper\Bootstrap::getObjectmanager();
-        $this->fallback = $om->get(\Magento\Framework\View\Design\FileResolution\Fallback\StaticFile::class);
-        $this->explicitFallback = $om->get(
-            \Magento\Framework\View\Design\FileResolution\Fallback\Resolver\Simple::class
-        );
-        $this->themeRepo = $om->get(\Magento\Framework\View\Design\Theme\FlyweightFactory::class);
-        $this->design = $om->get(\Magento\Framework\View\DesignInterface::class);
-        $this->baseTheme = $om->get(\Magento\Framework\View\Design\ThemeInterface::class);
+        $this->fallback = $om->get('Magento\Framework\View\Design\FileResolution\Fallback\StaticFile');
+        $this->explicitFallback = $om->get('Magento\Framework\View\Design\FileResolution\Fallback\Resolver\Simple');
+        $this->themeRepo = $om->get('Magento\Framework\View\Design\Theme\FlyweightFactory');
+        $this->design = $om->get('Magento\Framework\View\DesignInterface');
+        $this->baseTheme = $om->get('Magento\Framework\View\Design\ThemeInterface');
     }
 
     /**

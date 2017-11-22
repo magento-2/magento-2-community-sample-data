@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Model\ResourceModel\Product\Indexer\Price;
@@ -14,9 +14,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
- * @magentoAppArea adminhtml
+ * @magentoAppIsolation enabled
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var StoreManagerInterface

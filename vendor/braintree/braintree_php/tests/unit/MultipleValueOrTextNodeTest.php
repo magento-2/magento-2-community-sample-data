@@ -1,52 +1,47 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class MultipleValueOrTextNodeTest extends Setup
+class Braintree_MultipleValueOrTextNodeTest extends PHPUnit_Framework_TestCase
 {
-    public function testIn()
+    function testIn()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
-        $node->in(['firstValue', 'secondValue']);
-        $this->assertEquals(['firstValue', 'secondValue'], $node->toParam());
+        $node = new Braintree_MultipleValueOrTextNode('field');
+        $node->in(array('firstValue', 'secondValue'));
+        $this->assertEquals(array('firstValue', 'secondValue'), $node->toParam());
     }
 
-    public function testIs()
+    function testIs()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
+        $node = new Braintree_MultipleValueOrTextNode('field');
         $node->is('value');
-        $this->assertEquals(['is' => 'value'], $node->toParam());
+        $this->assertEquals(array('is' => 'value'), $node->toParam());
     }
 
-    public function testIsNot()
+    function testIsNot()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
+        $node = new Braintree_MultipleValueOrTextNode('field');
         $node->isNot('value');
-        $this->assertEquals(['is_not' => 'value'], $node->toParam());
+        $this->assertEquals(array('is_not' => 'value'), $node->toParam());
     }
 
-    public function testStartsWith()
+    function testStartsWith()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
+        $node = new Braintree_MultipleValueOrTextNode('field');
         $node->startsWith('beginning');
-        $this->assertEquals(['starts_with' => 'beginning'], $node->toParam());
+        $this->assertEquals(array('starts_with' => 'beginning'), $node->toParam());
     }
 
-    public function testEndsWith()
+    function testEndsWith()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
+        $node = new Braintree_MultipleValueOrTextNode('field');
         $node->endsWith('end');
-        $this->assertEquals(['ends_with' => 'end'], $node->toParam());
+        $this->assertEquals(array('ends_with' => 'end'), $node->toParam());
     }
 
-    public function testContains()
+    function testContains()
     {
-        $node = new Braintree\MultipleValueOrTextNode('field');
+        $node = new Braintree_MultipleValueOrTextNode('field');
         $node->contains('middle');
-        $this->assertEquals(['contains' => 'middle'], $node->toParam());
+        $this->assertEquals(array('contains' => 'middle'), $node->toParam());
     }
 }

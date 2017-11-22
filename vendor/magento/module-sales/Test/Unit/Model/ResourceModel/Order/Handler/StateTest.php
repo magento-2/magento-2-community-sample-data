@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Handler;
@@ -10,21 +10,22 @@ use Magento\Sales\Model\Order;
 /**
  * Class StateTest
  */
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Handler\State
      */
     protected $state;
-
     /**
      * @var \Magento\Sales\Model\Order|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $orderMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->orderMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, [
+        $this->orderMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [
                 '__wakeup',
                 'getId',
                 'hasCustomerNoteNotify',
@@ -40,14 +41,28 @@ class StateTest extends \PHPUnit\Framework\TestCase
                 'getTotalRefunded',
                 'hasForcedCanCreditmemo',
                 'getIsInProcess',
-                'getConfig',
-            ]);
+                'getConfig'
+            ],
+            [],
+            '',
+            false
+        );
         $this->orderMock->expects($this->any())
             ->method('getConfig')
             ->willReturnSelf();
-        $this->addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
-        $this->addressCollectionMock = $this->createMock(
-            \Magento\Sales\Model\ResourceModel\Order\Address\Collection::class
+        $this->addressMock = $this->getMock(
+            'Magento\Sales\Model\Order\Address',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->addressCollectionMock = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Address\Collection',
+            [],
+            [],
+            '',
+            false
         );
         $this->state = new \Magento\Sales\Model\ResourceModel\Order\Handler\State();
     }

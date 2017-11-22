@@ -1,14 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Cron;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\EntityManager\MetadataPool;
 
 class RefreshSpecialPrices
 {
@@ -46,11 +43,6 @@ class RefreshSpecialPrices
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
     protected $_connection;
-
-    /**
-     * @var MetadataPool
-     */
-    private $metadataPool;
 
     /**
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
@@ -139,49 +131,22 @@ class RefreshSpecialPrices
         $attribute = $this->_eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attrCode);
         $attributeId = $attribute->getAttributeId();
 
-        $linkField = $this->getMetadataPool()->getMetadata(CategoryInterface::class)->getLinkField();
-        $identifierField = $this->getMetadataPool()->getMetadata(CategoryInterface::class)->getIdentifierField();
-
         $connection = $this->_getConnection();
 
         $select = $connection->select()->from(
-            ['attr' => $this->_resource->getTableName(['catalog_product_entity', 'datetime'])],
-            [
-                $identifierField => 'cat.' . $identifierField,
-            ]
-        )->joinLeft(
-            ['cat' => $this->_resource->getTableName('catalog_product_entity')],
-            'cat.' . $linkField . '= attr.' . $linkField,
-            ''
+            $this->_resource->getTableName(['catalog_product_entity', 'datetime']),
+            ['entity_id']
         )->where(
-            'attr.attribute_id = ?',
+            'attribute_id = ?',
             $attributeId
         )->where(
-            'attr.store_id = ?',
+            'store_id = ?',
             $storeId
         )->where(
-            'attr.value = ?',
+            'value = ?',
             $attrConditionValue
         );
 
-        $selectData = $connection->fetchCol($select, $identifierField);
-
-        if (!empty($selectData)) {
-            $this->_processor->getIndexer()->reindexList($selectData);
-        }
-    }
-
-    /**
-     * Get MetadataPool instance
-     * @return MetadataPool
-     *
-     * @deprecated 101.0.0
-     */
-    private function getMetadataPool()
-    {
-        if (null === $this->metadataPool) {
-            $this->metadataPool = ObjectManager::getInstance()->get(MetadataPool::class);
-        }
-        return $this->metadataPool;
+        $this->_processor->getIndexer()->reindexList($connection->fetchCol($select, ['entity_id']));
     }
 }

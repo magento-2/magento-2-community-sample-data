@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Developer\Model\Config\Source;
 
+use Magento\Framework\App\State;
 use Magento\Framework\Option\ArrayInterface;
 
 /**
  * Class WorkflowType
  *
- * @api
- * @since 100.0.2
+ * @package Magento\Developer\Model\Config\Source
  */
 class WorkflowType implements ArrayInterface
 {

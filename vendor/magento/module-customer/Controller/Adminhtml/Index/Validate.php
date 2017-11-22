@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\Index;
@@ -28,7 +28,11 @@ class Validate extends \Magento\Customer\Controller\Adminhtml\Index
             $customerForm = $this->_formFactory->create(
                 'customer',
                 'adminhtml_customer',
-                [],
+                $this->_extensibleDataObjectConverter->toFlatArray(
+                    $customer,
+                    [],
+                    '\Magento\Customer\Api\Data\CustomerInterface'
+                ),
                 true
             );
             $customerForm->setInvisibleIgnored(true);
@@ -42,13 +46,8 @@ class Validate extends \Magento\Customer\Controller\Adminhtml\Index
             $this->dataObjectHelper->populateWithArray(
                 $customer,
                 $data,
-                \Magento\Customer\Api\Data\CustomerInterface::class
+                '\Magento\Customer\Api\Data\CustomerInterface'
             );
-            $submittedData = $this->getRequest()->getParam('customer');
-            if (isset($submittedData['entity_id'])) {
-                $entity_id = $submittedData['entity_id'];
-                $customer->setId($entity_id);
-            }
             $errors = $this->customerAccountManagement->validate($customer)->getMessages();
         } catch (\Magento\Framework\Validator\Exception $exception) {
             /* @var $error Error */

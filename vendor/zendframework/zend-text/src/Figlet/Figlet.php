@@ -60,7 +60,7 @@ class Figlet
      *
      * @var array
      */
-    protected $charList = [];
+    protected $charList = array();
 
     /**
      * Indicates if a font was loaded yet
@@ -82,7 +82,7 @@ class Figlet
      *
      * @var array
      */
-    protected $germanChars = [196, 214, 220, 228, 246, 252, 223];
+    protected $germanChars = array(196, 214, 220, 228, 246, 252, 223);
 
     /**
      * Output width, defaults to 80.
@@ -172,7 +172,7 @@ class Figlet
      *
      * @var array
      */
-    protected $fontOptions = [];
+    protected $fontOptions = array();
 
     /**
      * Previous character width
@@ -249,10 +249,10 @@ class Figlet
      *
      * @var array
      */
-    protected $skipOptions = [
+    protected $skipOptions = array(
         'options',
         'config',
-    ];
+    );
 
     /**
      * Instantiate the FIGlet with a specific font. If no font is given, the
@@ -421,7 +421,7 @@ class Figlet
         $strWrapper = StringUtils::getWrapper('UTF-8');
 
         $this->output     = '';
-        $this->outputLine = [];
+        $this->outputLine = array();
 
         $this->_clearLine();
 
@@ -1167,7 +1167,7 @@ class Figlet
      */
     protected function _loadChar($fp)
     {
-        $char = [];
+        $char = array();
 
         for ($i = 0; $i < $this->charHeight; $i++) {
             if (feof($fp)) {

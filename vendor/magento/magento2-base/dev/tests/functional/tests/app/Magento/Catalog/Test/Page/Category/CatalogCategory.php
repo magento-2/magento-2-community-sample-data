@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,7 +25,7 @@ class CatalogCategory extends Page
      *
      * @var string
      */
-    protected $formBlock = '//div[contains(@data-bind, "category_form")]';
+    protected $formBlock = '#category-edit-container';
 
     /**
      * Categories tree block.
@@ -80,7 +80,7 @@ class CatalogCategory extends Page
     public function getFormBlock()
     {
         return Factory::getBlockFactory()->getMagentoCatalogAdminhtmlCategoryEditCategoryForm(
-            $this->browser->find($this->formBlock, Locator::SELECTOR_XPATH)
+            $this->browser->find($this->formBlock, Locator::SELECTOR_CSS)
         );
     }
 

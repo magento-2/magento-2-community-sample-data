@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Product;
@@ -11,7 +11,8 @@ use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as Produ
 /**
  * Catalog product link model
  *
- * @api
+ * @method \Magento\Catalog\Model\ResourceModel\Product\Link _getResource()
+ * @method \Magento\Catalog\Model\ResourceModel\Product\Link getResource()
  * @method int getProductId()
  * @method \Magento\Catalog\Model\Product\Link setProductId(int $value)
  * @method int getLinkedProductId()
@@ -20,8 +21,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as Produ
  * @method \Magento\Catalog\Model\Product\Link setLinkTypeId(int $value)
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Link extends \Magento\Framework\Model\AbstractModel
 {
@@ -51,14 +50,7 @@ class Link extends \Magento\Framework\Model\AbstractModel
     protected $_linkCollectionFactory;
 
     /**
-     * @var \Magento\Catalog\Model\Product\Link\SaveHandler
-     * @since 101.0.0
-     */
-    protected $saveProductLinks;
-
-    /**
      * @var \Magento\CatalogInventory\Helper\Stock
-     * @deprecated 101.0.1
      */
     protected $stockHelper;
 
@@ -95,7 +87,7 @@ class Link extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Catalog\Model\ResourceModel\Product\Link::class);
+        $this->_init('Magento\Catalog\Model\ResourceModel\Product\Link');
     }
 
     /**
@@ -144,6 +136,7 @@ class Link extends \Magento\Framework\Model\AbstractModel
     public function getProductCollection()
     {
         $collection = $this->_productCollectionFactory->create()->setLinkModel($this);
+        $this->stockHelper->addIsInStockFilterToCollection($collection);
         return $collection;
     }
 
@@ -182,19 +175,18 @@ class Link extends \Magento\Framework\Model\AbstractModel
      */
     public function saveProductRelations($product)
     {
-        $this->getProductLinkSaveHandler()->execute(\Magento\Catalog\Api\Data\ProductInterface::class, $product);
-        return $this;
-    }
-
-    /**
-     * @return Link\SaveHandler
-     */
-    private function getProductLinkSaveHandler()
-    {
-        if (null === $this->saveProductLinks) {
-            $this->saveProductLinks = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Product\Link\SaveHandler::class);
+        $data = $product->getRelatedLinkData();
+        if ($data !== null) {
+            $this->_getResource()->saveProductLinks($product, $data, self::LINK_TYPE_RELATED);
         }
-        return $this->saveProductLinks;
+        $data = $product->getUpSellLinkData();
+        if ($data !== null) {
+            $this->_getResource()->saveProductLinks($product, $data, self::LINK_TYPE_UPSELL);
+        }
+        $data = $product->getCrossSellLinkData();
+        if ($data !== null) {
+            $this->_getResource()->saveProductLinks($product, $data, self::LINK_TYPE_CROSSSELL);
+        }
+        return $this;
     }
 }

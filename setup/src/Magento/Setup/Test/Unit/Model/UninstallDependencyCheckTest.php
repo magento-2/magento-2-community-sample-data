@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\UninstallDependencyCheck;
 
-class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
+class UninstallDependencyCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UninstallDependencyCheck
@@ -37,11 +37,28 @@ class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->composerInfo = $this->createMock(\Magento\Framework\Composer\ComposerInformation::class);
-        $this->packageDependencyChecker = $this->createMock(\Magento\Framework\Composer\DependencyChecker::class);
-        $this->themeDependencyChecker = $this->createMock(\Magento\Theme\Model\Theme\ThemeDependencyChecker::class);
-        $this->themeDependencyCheckerFactory =
-            $this->createMock(\Magento\Setup\Model\ThemeDependencyCheckerFactory::class);
+        $this->composerInfo = $this->getMock(\Magento\Framework\Composer\ComposerInformation::class, [], [], '', false);
+        $this->packageDependencyChecker = $this->getMock(
+            \Magento\Framework\Composer\DependencyChecker::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->themeDependencyChecker = $this->getMock(
+            \Magento\Theme\Model\Theme\ThemeDependencyChecker::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->themeDependencyCheckerFactory = $this->getMock(
+            \Magento\Setup\Model\ThemeDependencyCheckerFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->themeDependencyCheckerFactory->expects($this->any())->method('create')
             ->willReturn($this->themeDependencyChecker);
         $this->uninstallDependencyCheck = new UninstallDependencyCheck(
@@ -64,7 +81,12 @@ class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
         $this->packageDependencyChecker->expects($this->once())
             ->method('checkDependencies')
             ->with(array_keys($packages))
-            ->willReturn([]);
+            ->willReturn([
+                'verndor/module' => ['magento/magento2ce'],
+                'verndor/theme' => ['magento/magento2ee'],
+                'verndor/metapackage' => ['magento/magento2ce'],
+                'verndor/language' => ['magento/magento2ce'],
+            ]);
 
         $this->themeDependencyChecker->expects($this->once())
             ->method('checkChildThemeByPackagesName')
@@ -88,7 +110,12 @@ class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
         $this->packageDependencyChecker->expects($this->once())
             ->method('checkDependencies')
             ->with(array_keys($packages))
-            ->willReturn([]);
+            ->willReturn([
+                'verndor/module' => ['magento/magento2ce'],
+                'verndor/theme' => ['magento/magento2ee'],
+                'verndor/metapackage' => ['magento/magento2ce'],
+                'verndor/language' => ['magento/magento2ce'],
+            ]);
 
         $this->themeDependencyChecker->expects($this->once())
             ->method('checkChildThemeByPackagesName')

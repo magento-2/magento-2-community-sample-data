@@ -1,14 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Newsletter\Test\Unit\Model;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class QueueTest extends \PHPUnit\Framework\TestCase
+class QueueTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Newsletter\Model\Queue
@@ -60,37 +57,37 @@ class QueueTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManager;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->templateFilter = $this->getMockBuilder(\Magento\Newsletter\Model\Template\Filter::class)
+        $this->templateFilter = $this->getMockBuilder('\Magento\Newsletter\Model\Template\Filter')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->date = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\DateTime::class)
+        $this->date = $this->getMockBuilder('\Magento\Framework\Stdlib\DateTime\DateTime')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->templateFactory = $this->getMockBuilder(\Magento\Newsletter\Model\TemplateFactory::class)
+        $this->templateFactory = $this->getMockBuilder('\Magento\Newsletter\Model\TemplateFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load'])
             ->getMock();
-        $this->problemFactory = $this->getMockBuilder(\Magento\Newsletter\Model\ProblemFactory::class)
+        $this->problemFactory = $this->getMockBuilder('\Magento\Newsletter\Model\ProblemFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->transportBuilder = $this->getMockBuilder(\Magento\Newsletter\Model\Queue\TransportBuilder::class)
+        $this->transportBuilder = $this->getMockBuilder('\Magento\Newsletter\Model\Queue\TransportBuilder')
             ->disableOriginalConstructor()
             ->setMethods(
                 ['setTemplateData', 'setTemplateOptions', 'setTemplateVars', 'setFrom', 'addTo', 'getTransport']
             )
             ->getMock();
         $this->subscribersCollection =
-            $this->getMockBuilder(\Magento\Newsletter\Model\ResourceModel\Subscriber\Collection::class)
+            $this->getMockBuilder('\Magento\Newsletter\Model\ResourceModel\Subscriber\Collection')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resource = $this->getMockBuilder(\Magento\Newsletter\Model\ResourceModel\Queue::class)
+        $this->resource = $this->getMockBuilder('\Magento\Newsletter\Model\ResourceModel\Queue')
             ->disableOriginalConstructor()
             ->getMock();
         $this->subscribersCollectionFactory = $this->getMockBuilder(
-            \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory::class
+            '\Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory'
         )
             ->disableOriginalConstructor()
             ->setMethods(['create'])
@@ -102,7 +99,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->queue = $this->objectManager->getObject(
-            \Magento\Newsletter\Model\Queue::class,
+            '\Magento\Newsletter\Model\Queue',
             [
                 'templateFilter' => $this->templateFilter,
                 'date' => $this->date,
@@ -139,15 +136,15 @@ class QueueTest extends \PHPUnit\Framework\TestCase
     {
         $this->queue->setQueueStatus(1);
         $this->queue->setQueueStartAt(1);
-        $collection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
+        $collection = $this->getMockBuilder('\Magento\Framework\Data\Collection')
             ->disableOriginalConstructor()
             ->setMethods(['getItems'])
             ->getMock();
-        $item = $this->getMockBuilder(\Magento\Newsletter\Model\Subscriber::class)
+        $item = $this->getMockBuilder('\Magento\Newsletter\Model\Subscriber')
             ->disableOriginalConstructor()
             ->setMethods(['getStoreId', 'getSubscriberEmail', 'getSubscriberFullName', 'received'])
             ->getMock();
-        $transport = $this->createMock(\Magento\Framework\Mail\TransportInterface::class);
+        $transport = $this->getMock('\Magento\Framework\Mail\TransportInterface');
         $this->subscribersCollection->expects($this->once())->method('getQueueJoinedFlag')->willReturn(false);
         $this->subscribersCollection->expects($this->once())->method('useQueue')->with($this->queue)->willReturnSelf();
         $this->subscribersCollection->expects($this->once())->method('getSize')->willReturn(5);
@@ -189,7 +186,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTemplate()
     {
-        $template = $this->getMockBuilder(\Magento\Newsletter\Model\Template::class)
+        $template = $this->getMockBuilder('\Magento\Newsletter\Model\Template')
             ->disableOriginalConstructor()
             ->getMock();
         $this->queue->setTemplateId(2);

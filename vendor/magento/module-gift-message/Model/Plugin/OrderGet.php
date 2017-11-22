@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,24 +11,16 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 class OrderGet
 {
-    /**
-     * @var \Magento\GiftMessage\Api\OrderRepositoryInterface
-     */
+    /** @var \Magento\GiftMessage\Api\OrderRepositoryInterface */
     protected $giftMessageOrderRepository;
 
-    /**
-     * @var \Magento\GiftMessage\Api\OrderItemRepositoryInterface
-     */
+    /** @var \Magento\GiftMessage\Api\OrderItemRepositoryInterface */
     protected $giftMessageOrderItemRepository;
 
-    /**
-     * @var \Magento\Sales\Api\Data\OrderExtensionFactory
-     */
+    /** @var \Magento\Sales\Api\Data\OrderExtensionFactory */
     protected $orderExtensionFactory;
 
-    /**
-     * @var \Magento\Sales\Api\Data\OrderItemExtensionFactory
-     */
+    /** @var \Magento\Sales\Api\Data\OrderItemExtensionFactory */
     protected $orderItemExtensionFactory;
 
     /**
@@ -133,22 +125,5 @@ class OrderGet
             }
         }
         return $order;
-    }
-
-    /**
-     * @param \Magento\Sales\Api\OrderRepositoryInterface $subject
-     * @param \Magento\Sales\Model\ResourceModel\Order\Collection $resultOrder
-     * @return \Magento\Sales\Model\ResourceModel\Order\Collection
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function afterGetList(
-        \Magento\Sales\Api\OrderRepositoryInterface $subject,
-        \Magento\Sales\Model\ResourceModel\Order\Collection $resultOrder
-    ) {
-        /** @var  $order */
-        foreach ($resultOrder->getItems() as $order) {
-            $this->afterGet($subject, $order);
-        }
-        return $resultOrder;
     }
 }

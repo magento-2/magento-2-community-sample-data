@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit;
@@ -15,7 +15,7 @@ class Tabs extends \Magento\Catalog\Block\Adminhtml\Product\Edit\Tabs
     /**
      * @var string
      */
-    protected $_attributeTabBlock = \Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Attributes::class;
+    protected $_attributeTabBlock = 'Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Attributes';
 
     /**
      * @return $this|void

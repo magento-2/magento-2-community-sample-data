@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestModuleJoinDirectives\Api;
@@ -13,8 +13,8 @@ interface TestRepositoryInterface
     /**
      * Get list of quotes
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria
      * @return \Magento\Quote\Api\Data\CartSearchResultsInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria);
 }

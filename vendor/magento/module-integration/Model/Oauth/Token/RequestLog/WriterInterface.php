@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Model\Oauth\Token\RequestLog;
@@ -16,7 +16,6 @@ interface WriterInterface
      *
      * @param string $userName
      * @param int $userType
-     * @param return void
      * @return void
      */
     public function resetFailuresCount($userName, $userType);
@@ -26,7 +25,6 @@ interface WriterInterface
      *
      * @param string $userName
      * @param int $userType
-     * @param return void
      * @return void
      */
     public function incrementFailuresCount($userName, $userType);

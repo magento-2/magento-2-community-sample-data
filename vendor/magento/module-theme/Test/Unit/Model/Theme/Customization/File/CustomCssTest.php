@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Theme\Customization\File;
 
 use \Magento\Theme\Model\Theme\Customization\File\CustomCss;
 
-class CustomCssTest extends \PHPUnit\Framework\TestCase
+class CustomCssTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\View\Design\Theme\Customization\Path
@@ -32,16 +32,16 @@ class CustomCssTest extends \PHPUnit\Framework\TestCase
     /**
      * Initialize testable object
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->customizationPath = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\Customization\Path::class)
+        $this->customizationPath = $this->getMockBuilder('Magento\Framework\View\Design\Theme\Customization\Path')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileFactory = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\FileFactory::class)
+        $this->fileFactory = $this->getMockBuilder('Magento\Framework\View\Design\Theme\FileFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +58,7 @@ class CustomCssTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepareFile()
     {
-        $file = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\FileInterface::class)
+        $file = $this->getMockBuilder('Magento\Framework\View\Design\Theme\FileInterface')
             ->setMethods(
                 [
                     'delete',
@@ -101,7 +101,7 @@ class CustomCssTest extends \PHPUnit\Framework\TestCase
 
         /** @var $file \Magento\Framework\View\Design\Theme\FileInterface */
         $this->assertInstanceOf(
-            \Magento\Theme\Model\Theme\Customization\File\CustomCss::class,
+            'Magento\Theme\Model\Theme\Customization\File\CustomCss',
             $this->object->prepareFile($file)
         );
     }

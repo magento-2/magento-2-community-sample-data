@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Search\Model;
@@ -20,6 +20,8 @@ use Magento\Store\Model\StoreManagerInterface;
 /**
  * Search query model
  *
+ * @method \Magento\Search\Model\ResourceModel\Query _getResource()
+ * @method \Magento\Search\Model\ResourceModel\Query getResource()
  * @method \Magento\Search\Model\Query setQueryText(string $value)
  * @method int getNumResults()
  * @method \Magento\Search\Model\Query setNumResults(int $value)
@@ -27,6 +29,8 @@ use Magento\Store\Model\StoreManagerInterface;
  * @method \Magento\Search\Model\Query setPopularity(int $value)
  * @method string getRedirect()
  * @method \Magento\Search\Model\Query setRedirect(string $value)
+ * @method string getSynonymFor()
+ * @method \Magento\Search\Model\Query setSynonymFor(string $value)
  * @method int getDisplayInTerms()
  * @method \Magento\Search\Model\Query setDisplayInTerms(int $value)
  * @method \Magento\Search\Model\Query setQueryNameExceeded(bool $value)
@@ -37,10 +41,7 @@ use Magento\Store\Model\StoreManagerInterface;
  * @method string getUpdatedAt()
  * @method \Magento\Search\Model\Query setUpdatedAt(string $value)
  * @method \Magento\Search\Model\Query setIsQueryTextExceeded(bool $value)
- * @method \Magento\Search\Model\Query setIsQueryTextShort(bool $value)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Query extends AbstractModel implements QueryInterface
 {
@@ -130,7 +131,7 @@ class Query extends AbstractModel implements QueryInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Search\Model\ResourceModel\Query::class);
+        $this->_init('Magento\Search\Model\ResourceModel\Query');
     }
 
     /**
@@ -167,16 +168,23 @@ class Query extends AbstractModel implements QueryInterface
      *
      * @param string $text
      * @return $this
-     * @deprecated 100.1.0 "synonym for" feature has been removed
      */
     public function loadByQuery($text)
     {
-        $this->loadByQueryText($text);
+        $this->_getResource()->loadByQuery($this, $text);
+
+        $synonymFor = $this->getSynonymFor();
+        if (!empty($synonymFor)) {
+            $this->setQueryText($synonymFor);
+        }
+
+        $this->_afterLoad();
+        $this->setOrigData();
         return $this;
     }
 
     /**
-     * Load Query object only by query text
+     * Load Query object only by query text (skip 'synonym For')
      *
      * @param string $text
      * @return $this
@@ -304,15 +312,5 @@ class Query extends AbstractModel implements QueryInterface
     public function isQueryTextExceeded()
     {
         return $this->getData('is_query_text_exceeded');
-    }
-
-    /**
-     * @return bool
-     * @codeCoverageIgnore
-     * @since 100.1.0
-     */
-    public function isQueryTextShort()
-    {
-        return $this->getData('is_query_text_short');
     }
 }

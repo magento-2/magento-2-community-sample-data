@@ -1,29 +1,29 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Test\Constraint;
 
-use Magento\Checkout\Test\Fixture\Cart;
 use Magento\Sales\Test\Fixture\OrderInjectable;
 use Magento\Sales\Test\Page\Adminhtml\InvoiceIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesInvoiceView;
 
 /**
- * Assert invoice items on invoice view page.
+ * Class AssertInvoiceItems
+ * Assert invoice items on invoice view page
  */
 class AssertInvoiceItems extends AbstractAssertItems
 {
     /**
-     * Assert invoice items on invoice view page.
+     * Assert invoice items on invoice view page
      *
      * @param InvoiceIndex $invoiceIndex
      * @param SalesInvoiceView $salesInvoiceView
      * @param OrderInjectable $order
      * @param array $ids
-     * @param Cart|null $cart [optional]
+     * @param array|null $data [optional]
      * @return void
      */
     public function processAssert(
@@ -31,18 +31,16 @@ class AssertInvoiceItems extends AbstractAssertItems
         SalesInvoiceView $salesInvoiceView,
         OrderInjectable $order,
         array $ids,
-        Cart $cart = null
+        array $data = null
     ) {
+        $invoiceIndex->open();
         $orderId = $order->getId();
-        $invoicesData = $order->getInvoice();
-        $data = isset($invoicesData[0]['items_data']) ? $invoicesData[0]['items_data'] : [];
-        $productsData = $this->prepareOrderProducts($order, $data, $cart);
+        $productsData = $this->prepareOrderProducts($order, $data['items_data']);
         foreach ($ids['invoiceIds'] as $invoiceId) {
             $filter = [
                 'order_id' => $orderId,
                 'id' => $invoiceId,
             ];
-            $invoiceIndex->open();
             $invoiceIndex->getInvoicesGrid()->searchAndOpen($filter);
             $itemsData = $this->preparePageItems($salesInvoiceView->getItemsBlock()->getData());
             $error = $this->verifyData($productsData, $itemsData);
@@ -51,7 +49,7 @@ class AssertInvoiceItems extends AbstractAssertItems
     }
 
     /**
-     * Returns a string representation of the object.
+     * Returns a string representation of the object
      *
      * @return string
      */

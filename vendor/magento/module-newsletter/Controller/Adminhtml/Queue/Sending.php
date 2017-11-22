@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Newsletter\Controller\Adminhtml\Queue;
@@ -20,7 +20,7 @@ class Sending extends \Magento\Newsletter\Controller\Adminhtml\Queue
         $countOfSubscritions = 20;
 
         $collection = $this->_objectManager->create(
-            \Magento\Newsletter\Model\ResourceModel\Queue\Collection::class
+            'Magento\Newsletter\Model\ResourceModel\Queue\Collection'
         )->setPageSize(
             $countOfQueue
         )->setCurPage(

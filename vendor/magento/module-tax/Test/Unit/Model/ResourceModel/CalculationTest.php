@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Test\Unit\Model\ResourceModel;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CalculationTest extends \PHPUnit\Framework\TestCase
+class CalculationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests the building of the search templates for the postal code
@@ -19,10 +19,10 @@ class CalculationTest extends \PHPUnit\Framework\TestCase
     public function testCreateSearchPostCodeTemplates($postalCode, $exactPostalcode)
     {
         // create the mocks
-        $resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
+        $storeManager = $this->getMock('Magento\Store\Model\StoreManagerInterface', [], [], '', false);
 
-        $taxData = $this->createPartialMock(\Magento\Tax\Helper\Data::class, ['getPostCodeSubStringLength']);
+        $taxData = $this->getMock('Magento\Tax\Helper\Data', ['getPostCodeSubStringLength'], [], '', false);
         $taxData
             ->expects($this->any())
             ->method('getPostCodeSubStringLength')
@@ -30,7 +30,7 @@ class CalculationTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new ObjectManager($this);
         $calcMock = $objectManager->getObject(
-            \Magento\Tax\Model\ResourceModel\Calculation::class,
+            'Magento\Tax\Model\ResourceModel\Calculation',
             [
                 'resource' => $resource,
                 'taxData' => $taxData,
@@ -40,7 +40,7 @@ class CalculationTest extends \PHPUnit\Framework\TestCase
 
         // get access to the method
         $method = new \ReflectionMethod(
-            \Magento\Tax\Model\ResourceModel\Calculation::class,
+            'Magento\Tax\Model\ResourceModel\Calculation',
             '_createSearchPostCodeTemplates'
         );
         $method->setAccessible(true);

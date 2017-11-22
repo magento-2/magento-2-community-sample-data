@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -50,7 +50,7 @@ class PromotedSection extends Block
         $locator = sprintf($this->productItemByName, $product->getName());
 
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Product\ProductList\ProductItem::class,
+            'Magento\Catalog\Test\Block\Product\ProductList\ProductItem',
             ['element' => $this->_rootElement->find($locator, Locator::SELECTOR_XPATH)]
         );
     }
@@ -62,16 +62,12 @@ class PromotedSection extends Block
      */
     public function getProducts()
     {
-        if (!$this->_rootElement->isVisible($this->productItem)) {
-            return [];
-        }
-
         $elements = $this->_rootElement->getElements($this->productItem, Locator::SELECTOR_CSS);
         $result = [];
 
         foreach ($elements as $element) {
             $result[] = $this->blockFactory->create(
-                \Magento\Catalog\Test\Block\Product\ProductList\ProductItem::class,
+                'Magento\Catalog\Test\Block\Product\ProductList\ProductItem',
                 ['element' => $element]
             );
         }

@@ -1,32 +1,28 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
-/**
- * @var Magento\Catalog\Api\ProductRepositoryInterface $productRepository
- */
-$productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-try {
-    $product = $productRepository->get('simple', false, null, true);
-    $productRepository->delete($product);
-} catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-    //Product already removed
+/** @var $product \Magento\Catalog\Model\Product */
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->load(1);
+if ($product->getId()) {
+    $product->delete();
 }
 
-try {
-    $customDesignProduct = $productRepository->get('custom-design-simple-product', false, null, true);
-    $productRepository->delete($customDesignProduct);
-} catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-    //Product already removed
+/** @var $customDesignProduct \Magento\Catalog\Model\Product */
+$customDesignProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+    ->create('Magento\Catalog\Model\Product');
+$customDesignProduct->load(2);
+if ($customDesignProduct->getId()) {
+    $customDesignProduct->delete();
 }
 
 $registry->unregister('isSecureArea');

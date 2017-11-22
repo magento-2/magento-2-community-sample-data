@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -115,7 +115,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header' => __('Sender'),
                 'index' => 'template_sender_email',
-                'renderer' => \Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Sender::class,
+                'renderer' => 'Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Sender',
                 'header_css_class' => 'col-sender',
                 'column_css_class' => 'col-sender'
             ]
@@ -144,7 +144,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'sortable' => false,
                 'filter' => false,
                 'no_link' => true,
-                'renderer' => \Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Action::class,
+                'renderer' => 'Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Action',
                 'header_css_class' => 'col-actions',
                 'column_css_class' => 'col-actions'
             ]

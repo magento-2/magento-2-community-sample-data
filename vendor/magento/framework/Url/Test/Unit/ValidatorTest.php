@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Url\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Url\Validator */
     protected $object;
@@ -18,7 +18,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->object = $objectManager->getObject(\Magento\Framework\Url\Validator::class);
+        $this->object = $objectManager->getObject('Magento\Framework\Url\Validator');
     }
 
     public function testConstruct()

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,8 +12,6 @@ namespace Magento\CatalogSearch\Model\ResourceModel\Search;
  * Search collection
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection implements \Magento\Search\Model\SearchCollectionInterface
 {
@@ -39,7 +37,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected $_attributeCollectionFactory;
 
     /**
-     * Collection constructor.
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -121,9 +118,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addSearchFilter($query)
     {
         $this->_searchQuery = $query;
-        $this->addFieldToFilter(
-            $this->getEntity()->getLinkField(),
-            ['in' => new \Zend_Db_Expr($this->_getSearchEntityIdsSql($query))]);
+        $this->addFieldToFilter('entity_id', ['in' => new \Zend_Db_Expr($this->_getSearchEntityIdsSql($query))]);
         return $this;
     }
 
@@ -137,7 +132,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $this->_searchQuery = $query;
         $this->addFieldToFilter(
-            $this->getEntity()->getLinkField(),
+            'entity_id',
             ['in' => new \Zend_Db_Expr($this->_getSearchEntityIdsSql($query, false))]
         );
         return $this;
@@ -211,8 +206,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $likeOptions = ['position' => 'any'];
 
-        $linkField = $this->getEntity()->getLinkField();
-
         /**
          * Collect tables and attribute ids of attributes with string values
          */
@@ -228,7 +221,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 if ($attribute->getBackendType() == 'static') {
                     $selects[] = $this->getConnection()->select()->from(
                         $table,
-                        $linkField
+                        'entity_id'
                     )->where(
                         $this->_resourceHelper->getCILike($attributeCode, $this->_searchQuery, $likeOptions)
                     );
@@ -240,18 +233,18 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         if ($searchOnlyInCurrentStore) {
             $joinCondition = $this->getConnection()->quoteInto(
-                "t1.{$linkField} = t2.{$linkField} AND t1.attribute_id = t2.attribute_id AND t2.store_id = ?",
+                't1.entity_id = t2.entity_id AND t1.attribute_id = t2.attribute_id AND t2.store_id = ?',
                 $this->getStoreId()
             );
         } else {
-            $joinCondition = "t1.{$linkField} = t2.{$linkField} AND t1.attribute_id = t2.attribute_id";
+            $joinCondition = 't1.entity_id = t2.entity_id AND t1.attribute_id = t2.attribute_id';
         }
 
         $ifValueId = $this->getConnection()->getIfNullSql('t2.value', 't1.value');
         foreach ($tables as $table => $attributeIds) {
             $selects[] = $this->getConnection()->select()->from(
                 ['t1' => $table],
-                $linkField
+                'entity_id'
             )->joinLeft(
                 ['t2' => $table],
                 $joinCondition,
@@ -359,7 +352,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 if ($where) {
                     $selects[$frontendInput] = (string)$this->getConnection()->select()->from(
                         $attributeTables[$frontendInput],
-                        $this->getEntity()->getLinkField()
+                        'entity_id'
                     )->where(
                         implode(' OR ', $where)
                     );
@@ -368,6 +361,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $sql = $this->getConnection()->select()->union($selects, \Magento\Framework\DB\Select::SQL_UNION_ALL);
-        return (string)$sql;
+        return $sql;
     }
 }

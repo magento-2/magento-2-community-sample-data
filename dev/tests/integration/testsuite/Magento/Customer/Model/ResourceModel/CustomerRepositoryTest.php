@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,10 +13,8 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Checks Customer insert, update, search with repository
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
+class CustomerRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AccountManagementInterface */
     private $accountManagement;
@@ -42,31 +40,16 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Framework\Api\DataObjectHelper  */
     protected $dataObjectHelper;
 
-    /** @var \Magento\Framework\Encryption\EncryptorInterface */
-    protected $encryptor;
-
-    /** @var \Magento\Customer\Model\CustomerRegistry */
-    protected $customerRegistry;
-
     protected function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->customerRepository =
-            $this->objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-        $this->customerFactory =
-            $this->objectManager->create(\Magento\Customer\Api\Data\CustomerInterfaceFactory::class);
+        $this->customerRepository = $this->objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $this->customerFactory = $this->objectManager->create(\Magento\Customer\Api\Data\CustomerInterfaceFactory::class);
         $this->addressFactory = $this->objectManager->create(\Magento\Customer\Api\Data\AddressInterfaceFactory::class);
         $this->regionFactory = $this->objectManager->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class);
-        $this->accountManagement =
-            $this->objectManager->create(\Magento\Customer\Api\AccountManagementInterface::class);
+        $this->accountManagement = $this->objectManager->create(\Magento\Customer\Api\AccountManagementInterface::class);
         $this->converter = $this->objectManager->create(\Magento\Framework\Api\ExtensibleDataObjectConverter::class);
         $this->dataObjectHelper = $this->objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
-        $this->encryptor = $this->objectManager->create(\Magento\Framework\Encryption\EncryptorInterface::class);
-        $this->customerRegistry = $this->objectManager->create(\Magento\Customer\Model\CustomerRegistry::class);
-
-        /** @var \Magento\Framework\Config\CacheInterface $cache */
-        $cache = $this->objectManager->create(\Magento\Framework\Config\CacheInterface::class);
-        $cache->remove('extension_attributes_config');
     }
 
     protected function tearDown()
@@ -151,8 +134,6 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
         $email = 'savecustomer@example.com';
         $firstName = 'Firstsave';
         $lastName = 'Lastsave';
-        $newPassword = 'newPassword123';
-        $newPasswordHash = $this->encryptor->getHash($newPassword, true);
         $customerBefore = $this->customerRepository->getById($existingCustomerId);
         $customerData = array_merge($customerBefore->__toArray(), [
                 'id' => 1,
@@ -170,7 +151,7 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
             $customerData,
             \Magento\Customer\Api\Data\CustomerInterface::class
         );
-        $this->customerRepository->save($customerDetails, $newPasswordHash);
+        $this->customerRepository->save($customerDetails);
         $customerAfter = $this->customerRepository->getById($existingCustomerId);
         $this->assertEquals($email, $customerAfter->getEmail());
         $this->assertEquals($firstName, $customerAfter->getFirstname());
@@ -183,7 +164,8 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
             $defaultShipping
         );
         $this->assertEquals('Admin', $customerAfter->getCreatedIn());
-        $this->accountManagement->authenticate($customerAfter->getEmail(), $newPassword);
+        $passwordFromFixture = 'password';
+        $this->accountManagement->authenticate($customerAfter->getEmail(), $passwordFromFixture);
         $attributesBefore = $this->converter->toFlatArray(
             $customerBefore,
             [],
@@ -393,7 +375,7 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
         $customer = $this->customerRepository->get($fixtureCustomerEmail);
         $this->customerRepository->delete($customer);
         /** Ensure that customer was deleted */
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\NoSuchEntityException::class,
             'No such entity with email = customer@example.com, websiteId = 1'
         );
@@ -411,7 +393,7 @@ class CustomerRepositoryTest extends \PHPUnit\Framework\TestCase
         $fixtureCustomerId = 1;
         $this->customerRepository->deleteById($fixtureCustomerId);
         /** Ensure that customer was deleted */
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\NoSuchEntityException::class,
             'No such entity with email = customer@example.com, websiteId = 1'
         );

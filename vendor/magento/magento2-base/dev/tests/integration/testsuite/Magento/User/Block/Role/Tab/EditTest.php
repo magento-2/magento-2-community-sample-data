@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\User\Block\Role\Tab;
@@ -8,7 +8,7 @@ namespace Magento\User\Block\Role\Tab;
 /**
  * @magentoAppArea adminhtml
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\User\Block\Role\Tab\Edit
@@ -18,17 +18,17 @@ class EditTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $roleAdmin = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Authorization\Model\Role::class);
+            ->create('Magento\Authorization\Model\Role');
         $roleAdmin->load(\Magento\TestFramework\Bootstrap::ADMIN_ROLE_NAME, 'role_name');
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\RequestInterface::class
+            'Magento\Framework\App\RequestInterface'
         )->setParam(
             'rid',
             $roleAdmin->getId()
         );
 
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Block\Role\Tab\Edit::class
+            'Magento\User\Block\Role\Tab\Edit'
         );
     }
 

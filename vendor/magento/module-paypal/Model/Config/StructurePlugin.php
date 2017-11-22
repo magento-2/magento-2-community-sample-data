@@ -1,21 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\Config;
 
-use Magento\Config\Model\Config\ScopeDefiner;
-use Magento\Config\Model\Config\Structure;
-use Magento\Config\Model\Config\Structure\Element\Section;
-use Magento\Config\Model\Config\Structure\ElementInterface;
-use Magento\Paypal\Helper\Backend as BackendHelper;
-use Magento\Framework\App\ObjectManager;
-use Magento\Paypal\Model\Config\Structure\PaymentSectionModifier;
-
-/**
- * Plugin for \Magento\Config\Model\Config\Structure
- */
 class StructurePlugin
 {
     /**
@@ -24,24 +13,19 @@ class StructurePlugin
     const REQUEST_PARAM_COUNTRY = 'paypal_country';
 
     /**
-     * @var BackendHelper
+     * @var \Magento\Paypal\Helper\Backend
      */
-    private $backendHelper;
+    protected $_helper;
 
     /**
-     * @var ScopeDefiner
+     * @var \Magento\Config\Model\Config\ScopeDefiner
      */
-    private $scopeDefiner;
-
-    /**
-     * @var PaymentSectionModifier
-     */
-    private $paymentSectionModifier;
+    protected $_scopeDefiner;
 
     /**
      * @var string[]
      */
-    private static $paypalConfigCountries = [
+    private static $_paypalConfigCountries = [
         'payment_us',
         'payment_ca',
         'payment_au',
@@ -56,19 +40,15 @@ class StructurePlugin
     ];
 
     /**
-     * @param ScopeDefiner $scopeDefiner
-     * @param BackendHelper $backendHelper
-     * @param PaymentSectionModifier|null $paymentSectionModifier
+     * @param \Magento\Config\Model\Config\ScopeDefiner $scopeDefiner
+     * @param \Magento\Paypal\Helper\Backend $helper
      */
     public function __construct(
-        ScopeDefiner $scopeDefiner,
-        BackendHelper $backendHelper,
-        PaymentSectionModifier $paymentSectionModifier = null
+        \Magento\Config\Model\Config\ScopeDefiner $scopeDefiner,
+        \Magento\Paypal\Helper\Backend $helper
     ) {
-        $this->scopeDefiner = $scopeDefiner;
-        $this->backendHelper = $backendHelper;
-        $this->paymentSectionModifier = $paymentSectionModifier
-                                      ?: ObjectManager::getInstance()->get(PaymentSectionModifier::class);
+        $this->_scopeDefiner = $scopeDefiner;
+        $this->_helper = $helper;
     }
 
     /**
@@ -79,69 +59,46 @@ class StructurePlugin
      */
     public static function getPaypalConfigCountries($addOther = false)
     {
-        $countries = self::$paypalConfigCountries;
-
+        $countries = self::$_paypalConfigCountries;
         if ($addOther) {
             $countries[] = 'payment_other';
         }
-
         return $countries;
     }
 
     /**
      * Substitute payment section with PayPal configs
      *
-     * @param Structure $subject
+     * @param \Magento\Config\Model\Config\Structure $subject
      * @param \Closure $proceed
      * @param array $pathParts
-     * @return ElementInterface|null
-     *
+     * @return \Magento\Config\Model\Config\Structure\ElementInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundGetElementByPathParts(Structure $subject, \Closure $proceed, array $pathParts)
-    {
+    public function aroundGetElementByPathParts(
+        \Magento\Config\Model\Config\Structure $subject,
+        \Closure $proceed,
+        array $pathParts
+    ) {
         $isSectionChanged = $pathParts[0] == 'payment';
-
         if ($isSectionChanged) {
-            $requestedCountrySection = 'payment_' . strtolower($this->backendHelper->getConfigurationCountryCode());
-
+            $requestedCountrySection = 'payment_' . strtolower($this->_helper->getConfigurationCountryCode());
             if (in_array($requestedCountrySection, self::getPaypalConfigCountries())) {
                 $pathParts[0] = $requestedCountrySection;
             } else {
                 $pathParts[0] = 'payment_other';
             }
         }
-
+        /** @var \Magento\Config\Model\Config\Structure\ElementInterface $result */
         $result = $proceed($pathParts);
-
-        if ($isSectionChanged && $result) {
-            if ($result instanceof Section) {
-                $this->restructurePayments($result);
-                $result->setData(
-                    array_merge(
-                        $result->getData(),
-                        ['showInDefault' => true, 'showInWebsite' => true, 'showInStore' => true]
-                    ),
-                    $this->scopeDefiner->getScope()
-                );
+        if ($isSectionChanged && isset($result)) {
+            if ($result instanceof \Magento\Config\Model\Config\Structure\Element\Section) {
+                $result->setData(array_merge(
+                    $result->getData(),
+                    ['showInDefault' => true, 'showInWebsite' => true, 'showInStore' => true]
+                ), $this->_scopeDefiner->getScope());
             }
         }
-
         return $result;
-    }
-
-    /**
-     * Changes payment config structure.
-     *
-     * @param Section $result
-     * @return void
-     */
-    private function restructurePayments(Section $result)
-    {
-        $sectionData = $result->getData();
-        $sectionInitialStructure = isset($sectionData['children']) ? $sectionData['children'] : [];
-        $sectionChangedStructure = $this->paymentSectionModifier->modify($sectionInitialStructure);
-        $sectionData['children'] = $sectionChangedStructure;
-        $result->setData($sectionData, $this->scopeDefiner->getScope());
     }
 }

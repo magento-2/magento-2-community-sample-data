@@ -1,17 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CustomerImportExport\Model\Export;
 
 /**
- * Customer address export
- *
- * @api
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
 {
@@ -29,16 +24,6 @@ class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
 
     /**#@-*/
 
-    /**
-     * Country column name for index value
-     */
-    const COLUMN_COUNTRY_ID = 'country_id';
-
-    /**
-     * Name of region id column
-     */
-    const COLUMN_REGION_ID = 'region_id';
-
     /**#@+
      * Particular columns that contains of customer default addresses
      */
@@ -51,7 +36,7 @@ class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
     /**#@+
      * Attribute collection name
      */
-    const ATTRIBUTE_COLLECTION_NAME = \Magento\Customer\Model\ResourceModel\Address\Attribute\Collection::class;
+    const ATTRIBUTE_COLLECTION_NAME = 'Magento\Customer\Model\ResourceModel\Address\Attribute\Collection';
 
     /**#@-*/
 
@@ -62,16 +47,12 @@ class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
 
     /**#@-*/
 
-    /**#@-*/
-    protected $_permanentAttributes = [self::COLUMN_WEBSITE, self::COLUMN_EMAIL, self::COLUMN_ADDRESS_ID];
-
     /**
-     * Attributes with index (not label) value
+     * Permanent entity columns
      *
      * @var string[]
-     * @since 100.2.0
      */
-    protected $_indexValueAttributes = [self::COLUMN_COUNTRY_ID];
+    protected $_permanentAttributes = [self::COLUMN_WEBSITE, self::COLUMN_EMAIL, self::COLUMN_ADDRESS_ID];
 
     /**
      * Default addresses column names to appropriate customer attribute code
@@ -167,7 +148,7 @@ class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
             $data['address_collection']
         ) ? $data['address_collection'] : $addressColFactory->create();
 
-        $this->_initAttributeValues()->_initAttributeTypes()->_initWebsites(true);
+        $this->_initWebsites(true);
         $this->setFileName($this->getEntityTypeCode());
     }
 
@@ -261,7 +242,6 @@ class Address extends \Magento\ImportExport\Model\Export\Entity\AbstractEav
         $row[self::COLUMN_ADDRESS_ID] = $item['entity_id'];
         $row[self::COLUMN_EMAIL] = $customer['email'];
         $row[self::COLUMN_WEBSITE] = $this->_websiteIdToCode[$customer['website_id']];
-        $row[self::COLUMN_REGION_ID] = $item->getRegionId();
 
         $this->getWriter()->writeRow($row);
     }

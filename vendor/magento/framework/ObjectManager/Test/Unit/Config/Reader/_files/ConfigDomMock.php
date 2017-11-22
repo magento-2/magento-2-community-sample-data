@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 // @codingStandardsIgnoreFile
 
-class ConfigDomMock extends \PHPUnit\Framework\TestCase
+class ConfigDomMock extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param null|string $initialContents

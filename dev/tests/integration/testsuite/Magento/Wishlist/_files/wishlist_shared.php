@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -30,9 +30,7 @@ foreach ($simpleProduct->getOptions() as $option) {
 }
 
 /* @var $wishlist \Magento\Wishlist\Model\Wishlist */
-$wishlist = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Wishlist\Model\Wishlist::class
-);
+$wishlist = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Wishlist\Model\Wishlist');
 $wishlist->loadByCustomerId($customer->getId(), true);
 $wishlist->addNewItem($simpleProduct, new \Magento\Framework\DataObject(['options' => $options]));
 $wishlist->setSharingCode('fixture_unique_code')

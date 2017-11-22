@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Handler;
@@ -8,37 +8,41 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Handler;
 /**
  * Class AddressTest
  */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Handler\Address
      */
     protected $address;
-
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Address\Collection|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $addressCollectionMock;
-
     /**
      * @var \Magento\Sales\Model\ResourceModel\Attribute|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $attributeMock;
-
     /**
      * @var \Magento\Sales\Model\Order|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $orderMock;
-
     /**
      * @var \Magento\Sales\Model\Order\Address|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $addressMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->attributeMock = $this->createMock(\Magento\Sales\Model\ResourceModel\Attribute::class);
-        $this->orderMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, [
+        $this->attributeMock = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Attribute',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->orderMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [
                 '__wakeup',
                 'getAddresses',
                 'save',
@@ -52,10 +56,24 @@ class AddressTest extends \PHPUnit\Framework\TestCase
                 'getShippingAddressId',
                 'setShippingAddressId',
                 'unsShippingAddressId'
-            ]);
-        $this->addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
-        $this->addressCollectionMock = $this->createMock(
-            \Magento\Sales\Model\ResourceModel\Order\Address\Collection::class
+            ],
+            [],
+            '',
+            false
+        );
+        $this->addressMock = $this->getMock(
+            'Magento\Sales\Model\Order\Address',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->addressCollectionMock = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Address\Collection',
+            [],
+            [],
+            '',
+            false
         );
         $this->address = new \Magento\Sales\Model\ResourceModel\Order\Handler\Address(
             $this->attributeMock

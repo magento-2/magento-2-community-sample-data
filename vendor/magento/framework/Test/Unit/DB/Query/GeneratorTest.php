@@ -1,17 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Test\Unit\DB\Query;
 
-use Magento\Framework\DB\Query\BatchIterator;
-use Magento\Framework\DB\Query\BatchIteratorFactory;
-use Magento\Framework\DB\Query\BatchRangeIteratorFactory;
 use Magento\Framework\DB\Query\Generator;
+use Magento\Framework\DB\Query\BatchIteratorFactory;
 use Magento\Framework\DB\Select;
+use Magento\Framework\DB\Query\BatchIterator;
 
-class GeneratorTest extends \PHPUnit\Framework\TestCase
+class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Generator
@@ -34,20 +33,14 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
     private $iteratorMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $rangeFactoryMock;
-
-    /**
      * Setup test dependencies.
      */
     protected function setUp()
     {
-        $this->factoryMock = $this->createMock(BatchIteratorFactory::class);
-        $this->rangeFactoryMock = $this->createPartialMock(BatchRangeIteratorFactory::class, ['create']);
-        $this->selectMock = $this->createMock(Select::class);
-        $this->iteratorMock = $this->createMock(BatchIterator::class);
-        $this->model = new Generator($this->factoryMock, $this->rangeFactoryMock);
+        $this->factoryMock = $this->getMock(BatchIteratorFactory::class, [], [], '', false, false);
+        $this->selectMock = $this->getMock(Select::class, [], [], '', false, false);
+        $this->iteratorMock = $this->getMock(BatchIterator::class, [], [], '', false, false);
+        $this->model = new Generator($this->factoryMock);
     }
 
     /**
@@ -171,41 +164,5 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
             ]
         )->willReturn($this->iteratorMock);
         $this->assertEquals($this->iteratorMock, $this->model->generate('entity_id', $this->selectMock, 100));
-    }
-
-    /**
-     * Test success generate with non-unique strategy.
-     * @return void
-     */
-    public function testGenerateWithNonUniqueStrategy()
-    {
-        $map = [
-            [
-                Select::FROM,
-                [
-                    'cp' => ['joinType' => Select::FROM]
-                ]
-            ],
-            [
-                Select::COLUMNS,
-                [
-                    ['cp', 'entity_id', 'product_id']
-                ]
-            ]
-        ];
-        $this->selectMock->expects($this->exactly(2))->method('getPart')->willReturnMap($map);
-        $this->factoryMock->expects($this->once())->method('create')->with(
-            [
-                'select' => $this->selectMock,
-                'batchSize' => 100,
-                'correlationName' => 'cp',
-                'rangeField' => 'entity_id',
-                'rangeFieldAlias' => 'product_id'
-            ]
-        )->willReturn($this->iteratorMock);
-        $this->assertEquals(
-            $this->iteratorMock,
-            $this->model->generate('entity_id', $this->selectMock, 100, 'non_unique')
-        );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,9 +16,7 @@ use Magento\Wishlist\Helper\Data;
  */
 class CustomerLogin implements ObserverInterface
 {
-    /**
-     * @var \Magento\Wishlist\Helper\Data
-     */
+    /** @var Data */
     protected $wishlistData;
 
     /**

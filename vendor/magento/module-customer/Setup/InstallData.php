@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -125,7 +125,7 @@ class InstallData implements InstallDataInterface
             'customer_address',
             'street',
             'backend_model',
-            \Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend::class
+            'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend'
         );
 
         $migrationSetup = $setup->createMigrationSetup();

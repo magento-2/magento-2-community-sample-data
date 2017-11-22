@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel;
@@ -11,16 +11,7 @@ namespace Magento\Catalog\Model\ResourceModel;
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
-use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\App\ObjectManager;
 
-/**
- * Class Url
- * @package Magento\Catalog\Model\ResourceModel
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -97,19 +88,13 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $productResource;
 
     /**
-     * @var MetadataPool
-     */
-    protected $metadataPool;
-
-    /**
-     * Url constructor.
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Eav\Model\Config $eavConfig
      * @param Product $productResource
      * @param \Magento\Catalog\Model\Category $catalogCategory
      * @param \Psr\Log\LoggerInterface $logger
-     * @param null $connectionName
+     * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
@@ -165,9 +150,6 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _getCategoryAttribute($attributeCode, $categoryIds, $storeId)
     {
-        $linkField = $this->getMetadataPool()->getMetadata(CategoryInterface::class)->getLinkField();
-        $identifierFiled = $this->getMetadataPool()->getMetadata(CategoryInterface::class)->getIdentifierField();
-
         $connection = $this->getConnection();
         if (!isset($this->_categoryAttributes[$attributeCode])) {
             $attribute = $this->_catalogCategory->getResource()->getAttribute($attributeCode);
@@ -199,35 +181,26 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         } elseif ($this->_categoryAttributes[$attributeCode]['is_global'] || $storeId == 0) {
             $select->from(
-                ['t1' =>$this->getTable('catalog_category_entity')],
-                [$identifierFiled]
-            )->joinLeft(
-                ['e' => $attributeTable],
-                "t1.{$linkField} = e.{$linkField}",
-                ['value']
+                $attributeTable,
+                ['entity_id', 'value']
             )->where(
-                "t1.{$identifierFiled} IN(?)",
-                $categoryIds
+                'attribute_id = :attribute_id'
             )->where(
-                'e.attribute_id = :attribute_id'
-            )->where(
-                'e.store_id = ?',
+                'store_id = ?',
                 0
+            )->where(
+                'entity_id IN(?)',
+                $categoryIds
             );
-
             $bind['attribute_id'] = $this->_categoryAttributes[$attributeCode]['attribute_id'];
         } else {
             $valueExpr = $connection->getCheckSql('t2.value_id > 0', 't2.value', 't1.value');
             $select->from(
                 ['t1' => $attributeTable],
-                [$identifierFiled => 'e.'.$identifierFiled, 'value' => $valueExpr]
+                ['entity_id', 'value' => $valueExpr]
             )->joinLeft(
                 ['t2' => $attributeTable],
-                "t1.{$linkField} = t2.{$linkField} AND t1.attribute_id = t2.attribute_id AND t2.store_id = :store_id",
-                []
-            )->joinLeft(
-                ['e' => $this->getTable('catalog_category_entity')],
-                "e.{$linkField} = t1.{$linkField}",
+                't1.entity_id = t2.entity_id AND t1.attribute_id = t2.attribute_id AND t2.store_id = :store_id',
                 []
             )->where(
                 't1.store_id = ?',
@@ -235,9 +208,9 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             )->where(
                 't1.attribute_id = :attribute_id'
             )->where(
-                "e.entity_id IN(?)",
+                't1.entity_id IN(?)',
                 $categoryIds
-            )->group('e.entity_id');
+            );
 
             $bind['attribute_id'] = $this->_categoryAttributes[$attributeCode]['attribute_id'];
             $bind['store_id'] = $storeId;
@@ -247,7 +220,7 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $attributes = [];
         foreach ($rowSet as $row) {
-            $attributes[$row[$identifierFiled]] = $row['value'];
+            $attributes[$row['entity_id']] = $row['value'];
         }
         unset($rowSet);
         foreach ($categoryIds as $categoryId) {
@@ -401,9 +374,6 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $categories = [];
         $connection = $this->getConnection();
 
-        $meta = $this->getMetadataPool()->getMetadata(CategoryInterface::class);
-        $linkField = $meta->getLinkField();
-
         if (!is_array($categoryIds)) {
             $categoryIds = [$categoryIds];
         }
@@ -433,11 +403,11 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $table = $this->getTable('catalog_category_entity_int');
         $select->joinLeft(
             ['d' => $table],
-            "d.attribute_id = :attribute_id AND d.store_id = 0 AND d.{$linkField} = main_table.{$linkField}",
+            'd.attribute_id = :attribute_id AND d.store_id = 0 AND d.entity_id = main_table.entity_id',
             []
         )->joinLeft(
             ['c' => $table],
-            "c.attribute_id = :attribute_id AND c.store_id = :store_id AND c.{$linkField} = main_table.{$linkField}",
+            'c.attribute_id = :attribute_id AND c.store_id = :store_id AND c.entity_id = main_table.entity_id',
             []
         );
 
@@ -695,17 +665,5 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         return $result;
-    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     */
-    private function getMetadataPool()
-    {
-        if (null === $this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        }
-        return $this->metadataPool;
     }
 }

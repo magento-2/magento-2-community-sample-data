@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Test\Unit\Controller\Advanced;
 
-class ResultTest extends \PHPUnit\Framework\TestCase
+class ResultTest extends \PHPUnit_Framework_TestCase
 {
     public function testResultActionFiltersSetBeforeLoadLayout()
     {
         $filters = null;
         $expectedQuery = 'filtersData';
 
-        $view = $this->createPartialMock(\Magento\Framework\App\View::class, ['loadLayout', 'renderLayout']);
+        $view = $this->getMock('Magento\Framework\App\View', ['loadLayout', 'renderLayout'], [], '', false);
         $view->expects($this->once())->method('loadLayout')->will(
             $this->returnCallback(
                 function () use (&$filters, $expectedQuery) {
@@ -21,12 +21,15 @@ class ResultTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $request = $this->createPartialMock(\Magento\Framework\App\Console\Request::class, ['getQueryValue']);
+        $request = $this->getMock('Magento\Framework\App\Console\Request', ['getQueryValue'], [], '', false);
         $request->expects($this->once())->method('getQueryValue')->will($this->returnValue($expectedQuery));
 
-        $catalogSearchAdvanced = $this->createPartialMock(
-            \Magento\CatalogSearch\Model\Advanced::class,
-            ['addFilters', '__wakeup']
+        $catalogSearchAdvanced = $this->getMock(
+            'Magento\CatalogSearch\Model\Advanced',
+            ['addFilters', '__wakeup'],
+            [],
+            '',
+            false
         );
         $catalogSearchAdvanced->expects($this->once())->method('addFilters')->will(
             $this->returnCallback(
@@ -38,13 +41,13 @@ class ResultTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $context = $objectManager->getObject(
-            \Magento\Framework\App\Action\Context::class,
+            'Magento\Framework\App\Action\Context',
             ['view' => $view, 'request' => $request]
         );
 
         /** @var \Magento\CatalogSearch\Controller\Advanced\Result $instance */
         $instance = $objectManager->getObject(
-            \Magento\CatalogSearch\Controller\Advanced\Result::class,
+            'Magento\CatalogSearch\Controller\Advanced\Result',
             ['context' => $context, 'catalogSearchAdvanced' => $catalogSearchAdvanced]
         );
         $instance->execute();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Adapter\Mysql;
@@ -11,7 +11,6 @@ use Magento\Framework\ObjectManagerInterface;
  * TemporaryStorage Factory
  *
  * @codeCoverageIgnore
- * @api
  */
 class TemporaryStorageFactory
 {
@@ -37,7 +36,7 @@ class TemporaryStorageFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Search\Adapter\Mysql\TemporaryStorage::class
+        $instanceName = 'Magento\Framework\Search\Adapter\Mysql\TemporaryStorage'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

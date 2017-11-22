@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\I18n;
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Module\I18n;
 use Magento\Framework\Component\ComponentRegistrar;
 use \Magento\Setup\Module\I18n\Context;
 
-class ContextTest extends \PHPUnit\Framework\TestCase
+class ContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\I18n\Context
@@ -22,7 +22,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->componentRegistrar = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
+        $this->componentRegistrar = $this->getMock('Magento\Framework\Component\ComponentRegistrar', [], [], '', false);
     }
 
     /**
@@ -35,7 +35,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->componentRegistrar->expects($this->any())
             ->method('getPaths')
-            ->willReturnMap($pathValues);
+            ->will($this->returnValueMap($pathValues));
         $this->context = new Context($this->componentRegistrar);
         $this->assertEquals($context, $this->context->getContextByPath($path));
     }
@@ -102,8 +102,10 @@ class ContextTest extends \PHPUnit\Framework\TestCase
             $paths[$module[1]] = $module[2];
         }
         $this->componentRegistrar->expects($this->any())
-            ->method('getPath')
-            ->willReturnMap($registrar);
+            ->method('getPaths')
+            ->with(ComponentRegistrar::MODULE)
+            ->willReturn($paths);
+        $this->componentRegistrar->expects($this->any())->method('getPath')->will($this->returnValueMap($registrar));
         $this->context = new Context($this->componentRegistrar);
         $this->assertEquals($path, $this->context->buildPathToLocaleDirectoryByContext($context[0], $context[1]));
     }
@@ -115,27 +117,12 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                BP . '/app/code/Magento/Module/i18n/',
+                'app/code/Magento/Module/i18n/',
                 [Context::CONTEXT_TYPE_MODULE, 'Magento_Module'],
                 [[ComponentRegistrar::MODULE, 'Magento_Module', BP . '/app/code/Magento/Module']]
             ],
-            [
-                BP . '/app/design/frontend/Magento/luma/i18n/',
-                [Context::CONTEXT_TYPE_THEME, 'frontend/Magento/luma'],
-                [[ComponentRegistrar::THEME, 'frontend/Magento/luma', BP . '/app/design/frontend/Magento/luma']]
-            ],
-
-            [
-                null,
-                [Context::CONTEXT_TYPE_MODULE, 'Unregistered_Module'],
-                [[ComponentRegistrar::MODULE, 'Unregistered_Module', null]]
-            ],
-            [
-                null,
-                [Context::CONTEXT_TYPE_THEME, 'frontend/Magento/unregistered'],
-                [[ComponentRegistrar::THEME, 'frontend/Magento/unregistered', null]]
-            ],
-            [BP . '/lib/web/i18n/', [Context::CONTEXT_TYPE_LIB, 'lib/web/module/test.phtml'], []],
+            ['/i18n/', [Context::CONTEXT_TYPE_THEME, 'theme/test.phtml'], []],
+            ['lib/web/i18n/', [Context::CONTEXT_TYPE_LIB, 'lib/web/module/test.phtml'], []],
         ];
     }
 
@@ -145,8 +132,10 @@ class ContextTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuildPathToLocaleDirectoryByContextWithInvalidType()
     {
-        $this->componentRegistrar->expects($this->never())
-            ->method('getPath');
+        $this->componentRegistrar->expects($this->any())
+            ->method('getPaths')
+            ->with(ComponentRegistrar::MODULE)
+            ->willReturn(['module' => '/path/to/module']);
         $this->context = new Context($this->componentRegistrar);
         $this->context->buildPathToLocaleDirectoryByContext('invalid_type', 'Magento_Module');
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * Tests dev:tests:run command.  Only tests error case because DevTestsRunCommand calls phpunit with
  * passthru, so there is no good way to mock out running the tests.
  */
-class DevTestsRunCommandTest extends \PHPUnit\Framework\TestCase
+class DevTestsRunCommandTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -23,7 +23,7 @@ class DevTestsRunCommandTest extends \PHPUnit\Framework\TestCase
      */
     private $command;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->command = new DevTestsRunCommand();
     }

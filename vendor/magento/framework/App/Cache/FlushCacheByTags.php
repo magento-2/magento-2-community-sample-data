@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Cache;
@@ -27,28 +27,20 @@ class FlushCacheByTags
     private $cacheState;
 
     /**
-     * @var Tag\Resolver
-     */
-    private $tagResolver;
-
-    /**
      * FlushCacheByTags constructor.
      *
      * @param Type\FrontendPool $cachePool
      * @param StateInterface $cacheState
      * @param array $cacheList
-     * @param Tag\Resolver $tagResolver
      */
     public function __construct(
         \Magento\Framework\App\Cache\Type\FrontendPool $cachePool,
         \Magento\Framework\App\Cache\StateInterface $cacheState,
-        array $cacheList,
-        \Magento\Framework\App\Cache\Tag\Resolver $tagResolver
+        array $cacheList
     ) {
         $this->cachePool = $cachePool;
         $this->cacheState = $cacheState;
         $this->cacheList = $cacheList;
-        $this->tagResolver = $tagResolver;
     }
 
     /**
@@ -61,14 +53,18 @@ class FlushCacheByTags
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundSave(
-        \Magento\Framework\Model\ResourceModel\AbstractResource $subject,
+        $subject,
         \Closure $proceed,
-        \Magento\Framework\Model\AbstractModel $object
+        $object = null
     ) {
+        $tags = [];
+        if ($object instanceof \Magento\Framework\Model\AbstractModel) {
+            $tags = $object->getIdentities();
+        }
         $result = $proceed($object);
-        $tags = $this->tagResolver->getTags($object);
-        $this->cleanCacheByTags($tags);
-
+        if ($object instanceof \Magento\Framework\Model\AbstractModel) {
+            $this->cleanCacheByTags($tags);
+        }
         return $result;
     }
 
@@ -82,11 +78,14 @@ class FlushCacheByTags
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundDelete(
-        \Magento\Framework\Model\ResourceModel\AbstractResource $subject,
+        $subject,
         \Closure $proceed,
-        \Magento\Framework\Model\AbstractModel $object
+        $object = null
     ) {
-        $tags = $this->tagResolver->getTags($object);
+        $tags = [];
+        if ($object instanceof \Magento\Framework\Model\AbstractModel) {
+            $tags = $object->getIdentities();
+        }
         $result = $proceed($object);
         $this->cleanCacheByTags($tags);
         return $result;

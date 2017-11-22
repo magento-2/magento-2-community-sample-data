@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -11,18 +11,6 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
  */
 class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-    }
-
     public function testLoadBlockAction()
     {
         $this->getRequest()->setParam('block', ',');
@@ -36,11 +24,10 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testLoadBlockActionData()
     {
-        $product = $this->productRepository->get('simple');
         $this->_objectManager->get(
-            \Magento\Sales\Model\AdminOrder\Create::class
+            'Magento\Sales\Model\AdminOrder\Create'
         )->addProducts(
-            [$product->getId() => ['qty' => 1]]
+            [1 => ['qty' => 1]]
         );
         $this->getRequest()->setParam('block', 'data');
         $this->getRequest()->setParam('json', 1);
@@ -80,11 +67,10 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testLoadBlockActionItems()
     {
-        $product = $this->productRepository->get('simple');
         $this->_objectManager->get(
-            \Magento\Sales\Model\AdminOrder\Create::class
+            'Magento\Sales\Model\AdminOrder\Create'
         )->addProducts(
-            [$product->getId() => ['qty' => 1]]
+            [1 => ['qty' => 1]]
         );
         $this->getRequest()->setParam('block', 'items');
         $this->getRequest()->setParam('json', 1);
@@ -99,53 +85,18 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testIndexAction()
     {
-        $product = $this->productRepository->get('simple');
         /** @var $order \Magento\Sales\Model\AdminOrder\Create */
-        $order = $this->_objectManager->get(\Magento\Sales\Model\AdminOrder\Create::class);
-        $order->addProducts([$product->getId() => ['qty' => 1]]);
+        $order = $this->_objectManager->get('Magento\Sales\Model\AdminOrder\Create');
+        $order->addProducts([1 => ['qty' => 1]]);
         $this->dispatch('backend/sales/order_create/index');
         $html = $this->getResponse()->getBody();
 
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//div[@id="order-customer-selector"]',
-                $html
-            )
-        );
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@data-grid-id="sales_order_create_customer_grid"]',
-                $html
-            )
-        );
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//div[@id="order-billing_method_form"]',
-                $html
-            )
-        );
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="shipping-method-overlay"]',
-                $html
-            )
-        );
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//div[@id="sales_order_create_search_grid"]',
-                $html
-            )
-        );
-
-        $this->assertGreaterThanOrEqual(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath('//*[@id="coupons:code"]', $html)
-        );
+        $this->assertSelectCount('div#order-customer-selector', true, $html);
+        $this->assertSelectCount('[data-grid-id=sales_order_create_customer_grid]', true, $html);
+        $this->assertSelectCount('div#order-billing_method_form', true, $html);
+        $this->assertSelectCount('#shipping-method-overlay', true, $html);
+        $this->assertSelectCount('div#sales_order_create_search_grid', true, $html);
+        $this->assertSelectCount('#coupons:code', true, $html);
     }
 
     /**
@@ -158,14 +109,14 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testGetAclResource($actionName, $reordered, $expectedResult)
     {
-        $this->_objectManager->get(\Magento\Backend\Model\Session\Quote::class)->setReordered($reordered);
+        $this->_objectManager->get('Magento\Backend\Model\Session\Quote')->setReordered($reordered);
         $orderController = $this->_objectManager->get(
-            \Magento\Sales\Controller\Adminhtml\Order\Stub\OrderCreateStub::class
+            'Magento\Sales\Controller\Adminhtml\Order\Stub\OrderCreateStub'
         );
 
         $this->getRequest()->setActionName($actionName);
 
-        $method = new \ReflectionMethod(\Magento\Sales\Controller\Adminhtml\Order\Create::class, '_getAclResource');
+        $method = new \ReflectionMethod('\Magento\Sales\Controller\Adminhtml\Order\Create', '_getAclResource');
         $method->setAccessible(true);
         $result = $method->invoke($orderController);
         $this->assertEquals($result, $expectedResult);
@@ -196,8 +147,7 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testConfigureProductToAddAction()
     {
-        $product = $this->productRepository->get('configurable');
-        $this->getRequest()->setParam('id', $product->getEntityId())
+        $this->getRequest()->setParam('id', 1)
             ->setParam('isAjax', true);
 
         $this->dispatch('backend/sales/order_create/configureProductToAdd');
@@ -208,16 +158,17 @@ class CreateTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
         $this->assertContains('><span>Quantity</span></label>', $body);
         $this->assertContains('>Test Configurable</label>', $body);
         $this->assertContains('"code":"test_configurable","label":"Test Configurable"', $body);
-        $this->assertContains(sprintf('"productId":"%s"', $product->getEntityId()), $body);
+        $this->assertContains('"productId":"1"', $body);
     }
 
     public function testDeniedSaveAction()
     {
         $this->_objectManager->configure(
-            [\Magento\Backend\App\Action\Context::class => [
+            [
+                'Magento\Backend\App\Action\Context' => [
                     'arguments' => [
                         'authorization' => [
-                            'instance' => \Magento\Sales\Controller\Adminhtml\Order\AuthorizationMock::class,
+                            'instance' => 'Magento\Sales\Controller\Adminhtml\Order\AuthorizationMock',
                         ],
                     ],
                 ],

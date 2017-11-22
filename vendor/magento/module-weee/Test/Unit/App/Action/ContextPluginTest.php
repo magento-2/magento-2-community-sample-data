@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Weee\Test\Unit\App\Action;
@@ -11,7 +11,7 @@ namespace Magento\Weee\Test\Unit\App\Action;
  * @package Magento\Weee\Test\Unit\App\Action
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ContextPluginTest extends \PHPUnit\Framework\TestCase
+class ContextPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Helper\Data
@@ -67,23 +67,23 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->taxHelperMock = $this->getMockBuilder(\Magento\Tax\Helper\Data::class)
+        $this->taxHelperMock = $this->getMockBuilder('Magento\Tax\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->weeeHelperMock = $this->getMockBuilder(\Magento\Weee\Helper\Data::class)
+        $this->weeeHelperMock = $this->getMockBuilder('Magento\Weee\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->weeeTaxMock = $this->getMockBuilder(\Magento\Weee\Model\Tax::class)
+        $this->weeeTaxMock = $this->getMockBuilder('\Magento\Weee\Model\Tax')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->httpContextMock = $this->getMockBuilder(\Magento\Framework\App\Http\Context::class)
+        $this->httpContextMock = $this->getMockBuilder('Magento\Framework\App\Http\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerSessionMock = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSessionMock = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getDefaultTaxBillingAddress', 'getDefaultTaxShippingAddress', 'getCustomerTaxClassId',
@@ -91,24 +91,24 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->moduleManagerMock = $this->getMockBuilder(\Magento\Framework\Module\Manager::class)
+        $this->moduleManagerMock = $this->getMockBuilder('Magento\Framework\Module\Manager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->cacheConfigMock = $this->getMockBuilder(\Magento\PageCache\Model\Config::class)
+        $this->cacheConfigMock = $this->getMockBuilder('Magento\PageCache\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->contextPlugin = $this->objectManager->getObject(
-            \Magento\Weee\Model\App\Action\ContextPlugin::class,
+            'Magento\Weee\Model\App\Action\ContextPlugin',
             [
                 'customerSession' => $this->customerSessionMock,
                 'httpContext' => $this->httpContextMock,
@@ -123,7 +123,7 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBeforeDispatchBasedOnDefault()
+    public function testAroundDispatchBasedOnDefault()
     {
         $this->customerSessionMock->expects($this->once())
             ->method('isLoggedIn')
@@ -146,7 +146,7 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxBasedOn')
             ->willReturn('billing');
 
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -185,13 +185,16 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('setValue')
             ->with('weee_tax_region', ['countryId' => 'US', 'regionId' => 0], 0);
 
-        $action = $this->objectManager->getObject(\Magento\Framework\App\Test\Unit\Action\Stub\ActionStub::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getActionName']);
-
-        $this->contextPlugin->beforeDispatch($action, $request);
+        $action = $this->objectManager->getObject('Magento\Framework\App\Test\Unit\Action\Stub\ActionStub');
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', ['getActionName'], [], '', false);
+        $expectedResult = 'expectedResult';
+        $proceed = function ($request) use ($expectedResult) {
+            return $expectedResult;
+        };
+        $this->contextPlugin->aroundDispatch($action, $proceed, $request);
     }
 
-    public function testBeforeDispatchBasedOnOrigin()
+    public function testAroundDispatchBasedOnOrigin()
     {
         $this->customerSessionMock->expects($this->once())
             ->method('isLoggedIn')
@@ -214,13 +217,16 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxBasedOn')
             ->willReturn('origin');
 
-        $action = $this->objectManager->getObject(\Magento\Framework\App\Test\Unit\Action\Stub\ActionStub::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getActionName']);
-
-        $this->contextPlugin->beforeDispatch($action, $request);
+        $action = $this->objectManager->getObject('Magento\Framework\App\Test\Unit\Action\Stub\ActionStub');
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', ['getActionName'], [], '', false);
+        $expectedResult = 'expectedResult';
+        $proceed = function ($request) use ($expectedResult) {
+            return $expectedResult;
+        };
+        $this->contextPlugin->aroundDispatch($action, $proceed, $request);
     }
 
-    public function testBeforeDispatchBasedOnBilling()
+    public function testAroundDispatchBasedOnBilling()
     {
         $this->customerSessionMock->expects($this->once())
             ->method('isLoggedIn')
@@ -243,7 +249,7 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxBasedOn')
             ->willReturn('billing');
 
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -286,13 +292,16 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('setValue')
             ->with('weee_tax_region', ['countryId' => 'US', 'regionId' => 1], 0);
 
-        $action = $this->objectManager->getObject(\Magento\Framework\App\Test\Unit\Action\Stub\ActionStub::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getActionName']);
-
-        $this->contextPlugin->beforeDispatch($action, $request);
+        $action = $this->objectManager->getObject('Magento\Framework\App\Test\Unit\Action\Stub\ActionStub');
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', ['getActionName'], [], '', false);
+        $expectedResult = 'expectedResult';
+        $proceed = function ($request) use ($expectedResult) {
+            return $expectedResult;
+        };
+        $this->contextPlugin->aroundDispatch($action, $proceed, $request);
     }
 
-    public function testBeforeDispatchBasedOnShipping()
+    public function testAroundDispatchBasedOnShipping()
     {
         $this->customerSessionMock->expects($this->once())
             ->method('isLoggedIn')
@@ -315,7 +324,7 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxBasedOn')
             ->willReturn('shipping');
 
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -358,9 +367,12 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
             ->method('setValue')
             ->with('weee_tax_region', ['countryId' => 'US', 'regionId' => 1], 0);
 
-        $action = $this->objectManager->getObject(\Magento\Framework\App\Test\Unit\Action\Stub\ActionStub::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getActionName']);
-
-        $this->contextPlugin->beforeDispatch($action, $request);
+        $action = $this->objectManager->getObject('Magento\Framework\App\Test\Unit\Action\Stub\ActionStub');
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', ['getActionName'], [], '', false);
+        $expectedResult = 'expectedResult';
+        $proceed = function ($request) use ($expectedResult) {
+            return $expectedResult;
+        };
+        $this->contextPlugin->aroundDispatch($action, $proceed, $request);
     }
 }

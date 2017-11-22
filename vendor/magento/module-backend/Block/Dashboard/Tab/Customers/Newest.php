@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Dashboard\Tab\Customers;
@@ -8,9 +8,8 @@ namespace Magento\Backend\Block\Dashboard\Tab\Customers;
 /**
  * Adminhtml dashboard most recent customers grid
  *
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @api
- * @since 100.0.2
  */
 class Newest extends \Magento\Backend\Block\Dashboard\Grid
 {
@@ -79,14 +78,7 @@ class Newest extends \Magento\Backend\Block\Dashboard\Grid
 
         $this->addColumn(
             'orders_count',
-            [
-                'header' => __('Orders'),
-                'sortable' => false,
-                'index' => 'orders_count',
-                'type' => 'number',
-                'header_css_class' => 'col-orders',
-                'column_css_class' => 'col-orders'
-            ]
+            ['header' => __('Orders'), 'sortable' => false, 'index' => 'orders_count', 'type' => 'number']
         );
 
         $baseCurrencyCode = (string)$this->_storeManager->getStore(
@@ -101,7 +93,7 @@ class Newest extends \Magento\Backend\Block\Dashboard\Grid
                 'type' => 'currency',
                 'currency_code' => $baseCurrencyCode,
                 'index' => 'orders_avg_amount',
-                'renderer' => \Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency::class,
+                'renderer' => 'Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency',
                 'header_css_class' => 'col-avg',
                 'column_css_class' => 'col-avg'
             ]
@@ -115,7 +107,7 @@ class Newest extends \Magento\Backend\Block\Dashboard\Grid
                 'type' => 'currency',
                 'currency_code' => $baseCurrencyCode,
                 'index' => 'orders_sum_amount',
-                'renderer' => \Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency::class,
+                'renderer' => 'Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency',
                 'header_css_class' => 'col-total',
                 'column_css_class' => 'col-total'
             ]

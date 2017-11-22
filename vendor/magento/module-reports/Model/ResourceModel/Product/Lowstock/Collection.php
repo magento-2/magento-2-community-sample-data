@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,12 +11,8 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Product\Lowstock;
 
-use Magento\Framework\Exception\LocalizedException;
-
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Reports\Model\ResourceModel\Product\Collection
 {
@@ -50,7 +46,6 @@ class Collection extends \Magento\Reports\Model\ResourceModel\Product\Collection
     protected $_itemResource;
 
     /**
-     * Collection constructor.
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -77,7 +72,7 @@ class Collection extends \Magento\Reports\Model\ResourceModel\Product\Collection
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
      * @param \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
      * @param \Magento\CatalogInventory\Model\ResourceModel\Stock\Item $itemResource
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $connection
+     * @param mixed $connection
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -248,13 +243,12 @@ class Collection extends \Magento\Reports\Model\ResourceModel\Product\Collection
      * Add filter by product type(s)
      *
      * @param array|string $typeFilter
-     * @throws LocalizedException
      * @return $this
      */
     public function filterByProductType($typeFilter)
     {
         if (!is_string($typeFilter) && !is_array($typeFilter)) {
-            throw new LocalizedException(__('The product type filter specified is incorrect.'));
+            new \Magento\Framework\Exception\LocalizedException(__('The product type filter specified is incorrect.'));
         }
         $this->addAttributeToFilter('type_id', $typeFilter);
         return $this;

@@ -1,22 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework;
 
 /**
- * Magento escape methods
- *
- * @api
+ * Magento escape methods.
  */
-class Escaper
+class Escaper extends \Zend\Escaper\Escaper
 {
-    /**
-     * @var \Magento\Framework\ZendEscaper
-     */
-    private $escaper;
-
     /**
      * @var \Psr\Log\LoggerInterface
      */
@@ -38,11 +31,23 @@ class Escaper
     private $escapeAsUrlAttributes = ['href'];
 
     /**
-     * Escape string for HTML context. allowedTags will not be escaped, except the following: script, img, embed,
-     * iframe, video, source, object, audio
+     * @param string $encoding
+     * @param \Psr\Log\LoggerInterface|null $logger
+     */
+    public function __construct(
+        $encoding = null,
+        \Psr\Log\LoggerInterface $logger = null
+    ) {
+        parent::__construct($encoding);
+        $this->logger = $logger ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Psr\Log\LoggerInterface::class);
+    }
+
+    /**
+     * Escape HTML entities.
      *
      * @param string|array $data
-     * @param array|null $allowedTags
+     * @param array $allowedTags
      * @return string|array
      */
     public function escapeHtml($data, $allowedTags = null)
@@ -59,7 +64,7 @@ class Escaper
                     $this->notAllowedTags
                 );
                 if (!empty($notAllowedTags)) {
-                    $this->getLogger()->critical(
+                    $this->logger->critical(
                         'The following tag(s) are not allowed: ' . implode(', ', $notAllowedTags)
                     );
                     $allowedTags = array_diff($allowedTags, $this->notAllowedTags);
@@ -78,15 +83,13 @@ class Escaper
                     );
                 } catch (\Exception $e) {
                     restore_error_handler();
-                    $this->getLogger()->critical($e);
+                    $this->logger->critical($e);
                 }
                 restore_error_handler();
-
                 $this->removeNotAllowedTags($domDocument, $allowedTags);
                 $this->removeNotAllowedAttributes($domDocument);
                 $this->escapeText($domDocument);
                 $this->escapeAttributeValues($domDocument);
-
                 $result = mb_convert_encoding($domDocument->saveHTML(), 'UTF-8', 'HTML-ENTITIES');
                 preg_match('/<body id="' . $wrapperElementId . '">(.+)<\/body><\/html>$/si', $result, $matches);
                 return !empty($matches) ? $matches[1] : '';
@@ -96,11 +99,12 @@ class Escaper
         } else {
             $result = $data;
         }
+
         return $result;
     }
 
     /**
-     * Remove not allowed tags
+     * Remove not allowed tags.
      *
      * @param \DOMDocument $domDocument
      * @param string[] $allowedTags
@@ -122,7 +126,7 @@ class Escaper
     }
 
     /**
-     * Remove not allowed attributes
+     * Remove not allowed attributes.
      *
      * @param \DOMDocument $domDocument
      * @return void
@@ -141,7 +145,7 @@ class Escaper
     /**
      * Escape text
      *
-     * @param \DOMDocument $domDocument
+     * @param \DOMDocument $domDocument.
      * @return void
      */
     private function escapeText(\DOMDocument $domDocument)
@@ -149,12 +153,12 @@ class Escaper
         $xpath = new \DOMXPath($domDocument);
         $nodes = $xpath->query('//text()');
         foreach ($nodes as $node) {
-            $node->textContent = $this->escapeHtml($node->textContent);
+            $node->nodeValue = $this->escapeHtml($node->nodeValue);
         }
     }
 
     /**
-     * Escape attribute values
+     * Escape attribute values.
      *
      * @param \DOMDocument $domDocument
      * @return void
@@ -173,7 +177,7 @@ class Escaper
     }
 
     /**
-     * Escape attribute value using escapeHtml or escapeUrl
+     * Escape attribute value using escapeHtml or escapeUrl.
      *
      * @param string $name
      * @param string $value
@@ -185,81 +189,14 @@ class Escaper
     }
 
     /**
-     * Escape a string for the HTML attribute context
+     * Escape URL.
      *
-     * @param string $string
-     * @param boolean $escapeSingleQuote
-     * @return string
-     * @since 100.2.0
-     */
-    public function escapeHtmlAttr($string, $escapeSingleQuote = true)
-    {
-        if ($escapeSingleQuote) {
-            return $this->getEscaper()->escapeHtmlAttr((string) $string);
-        }
-        return htmlspecialchars($string, ENT_COMPAT, 'UTF-8', false);
-    }
-
-    /**
-     * Escape URL
-     *
-     * @param string $string
+     * @param string $data
      * @return string
      */
-    public function escapeUrl($string)
+    public function escapeUrl($data)
     {
-        return $this->escapeHtml($this->escapeXssInUrl($string));
-    }
-
-    /**
-     * Encode URL
-     *
-     * @param string $string
-     * @return string
-     * @since 100.2.0
-     */
-    public function encodeUrlParam($string)
-    {
-        return $this->getEscaper()->escapeUrl($string);
-    }
-
-    /**
-     * Escape string for the JavaScript context
-     *
-     * @param string $string
-     * @return string
-     * @since 100.2.0
-     */
-    public function escapeJs($string)
-    {
-        if ($string === '' || ctype_digit($string)) {
-            return $string;
-        }
-
-        return preg_replace_callback(
-            '/[^a-z0-9,\._]/iSu',
-            function ($matches) {
-                $chr = $matches[0];
-                if (strlen($chr) != 1) {
-                    $chr = mb_convert_encoding($chr, 'UTF-16BE', 'UTF-8');
-                    $chr = ($chr === false) ? '' : $chr;
-                }
-                return sprintf('\\u%04s', strtoupper(bin2hex($chr)));
-            },
-            $string
-        );
-    }
-
-    /**
-     * Escape string for the CSS context
-     *
-     * @param string $string
-     * @return string
-     * @since 100.2.0
-     */
-    public function escapeCss($string)
-    {
-        return $this->getEscaper()->escapeCss($string);
+        return $this->escapeHtml($this->escapeXssInUrl($data));
     }
 
     /**
@@ -268,7 +205,6 @@ class Escaper
      * @param string|array $data
      * @param string $quote
      * @return string|array
-     * @deprecated 100.2.0
      */
     public function escapeJsQuote($data, $quote = '\'')
     {
@@ -289,7 +225,6 @@ class Escaper
      *
      * @param string $data
      * @return string
-     * @deprecated 100.2.0
      */
     public function escapeXssInUrl($data)
     {
@@ -307,7 +242,6 @@ class Escaper
      * @param string $data
      * @param bool $addSlashes
      * @return string
-     * @deprecated 100.2.0
      */
     public function escapeQuote($data, $addSlashes = false)
     {
@@ -315,35 +249,5 @@ class Escaper
             $data = addslashes($data);
         }
         return htmlspecialchars($data, ENT_QUOTES, null, false);
-    }
-
-    /**
-     * Get escaper
-     *
-     * @return \Magento\Framework\ZendEscaper
-     * @deprecated 100.2.0
-     */
-    private function getEscaper()
-    {
-        if ($this->escaper == null) {
-            $this->escaper = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\ZendEscaper::class);
-        }
-        return $this->escaper;
-    }
-
-    /**
-     * Get logger
-     *
-     * @return \Psr\Log\LoggerInterface
-     * @deprecated 100.2.0
-     */
-    private function getLogger()
-    {
-        if ($this->logger == null) {
-            $this->logger = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Psr\Log\LoggerInterface::class);
-        }
-        return $this->logger;
     }
 }

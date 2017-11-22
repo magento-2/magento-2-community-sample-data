@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,8 +13,7 @@ use Magento\Framework\Exception\LocalizedException;
 /**
  * Action pager helper for iterating over search results
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Pager extends \Magento\Framework\App\Helper\AbstractHelper
 {

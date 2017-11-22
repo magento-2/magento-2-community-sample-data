@@ -1,24 +1,25 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search;
 
-use Magento\Ui\Test\Block\Adminhtml\DataGrid;
+use Magento\Backend\Test\Block\Widget\Grid as GridInterface;
 
 /**
- * 'Add Products to Grouped product list' grid.
+ * Class Grid
+ * 'Add Products to Grouped product list' grid
  */
-class Grid extends DataGrid
+class Grid extends GridInterface
 {
     /**
      * 'Add Selected Products' button
      *
      * @var string
      */
-    protected $addProducts = '.action-primary[data-role="action"]';
+    protected $addProducts = 'button.action-add';
 
     /**
      * Filters array mapping
@@ -27,9 +28,16 @@ class Grid extends DataGrid
      */
     protected $filters = [
         'name' => [
-            'selector' => '[name="name"]',
+            'selector' => '#grouped_grid_popup_filter_name',
         ],
     ];
+
+    /**
+     * An element locator which allows to select entities in grid
+     *
+     * @var string
+     */
+    protected $selectItem = '[data-column=entity_ids] input';
 
     /**
      * Press 'Add Selected Products' button

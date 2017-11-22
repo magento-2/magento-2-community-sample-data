@@ -1,63 +1,47 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\ObjectManager\Test\Unit\Code\Generator;
 
-use Magento\Framework\Code\Generator\Io;
-use Magento\Framework\ObjectManager\Code\Generator\Factory;
-use Magento\Framework\ObjectManager\Code\Generator\Sample;
-use \PHPUnit_Framework_MockObject_MockObject as MockObject;
-
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Io|MockObject;
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $ioGenerator;
+    protected $ioObjectMock;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->ioGenerator = $this->getMockBuilder(Io::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->ioObjectMock = $this->getMock('\Magento\Framework\Code\Generator\Io', [], [], '', false);
     }
 
-    /**
-     * Checks a test case when factory generator creates auto-generated factories.
-     */
     public function testGenerate()
     {
         require_once __DIR__ . '/_files/Sample.php';
+        $model = $this->getMock(
+            '\Magento\Framework\ObjectManager\Code\Generator\Factory',
+            ['_validateData'],
+            [
+                '\Magento\Framework\ObjectManager\Code\Generator\Sample',
+                null,
+                $this->ioObjectMock,
+                null,
+                null,
+                $this->getMock('Magento\Framework\Filesystem\FileResolver')
+            ]
+        );
 
-        /** @var Factory|MockObject $generator */
-        $generator = $this->getMockBuilder(Factory::class)
-            ->setMethods(['_validateData'])
-            ->setConstructorArgs(
-                [
-                    Sample::class,
-                    null,
-                    $this->ioGenerator
-                ]
-            )
-            ->getMock();
-
-        $this->ioGenerator
-            ->method('generateResultFileName')
-            ->with('\\' . \Magento\Framework\ObjectManager\Code\Generator\SampleFactory::class)
-            ->willReturn('sample_file.php');
+        $this->ioObjectMock->expects($this->once())->method('generateResultFileName')
+            ->with('\Magento\Framework\ObjectManager\Code\Generator\SampleFactory')
+            ->will($this->returnValue('sample_file.php'));
         $factoryCode = file_get_contents(__DIR__ . '/_files/SampleFactory.txt');
-        $this->ioGenerator->method('writeResultFile')
+        $this->ioObjectMock->expects($this->once())->method('writeResultFile')
             ->with('sample_file.php', $factoryCode);
 
-        $generator->method('_validateData')
-            ->willReturn(true);
-        $generated = $generator->generate();
-        $this->assertEquals('sample_file.php', $generated);
+        $model->expects($this->once())->method('_validateData')->will($this->returnValue(true));
+        $this->assertEquals('sample_file.php', $model->generate());
     }
 }

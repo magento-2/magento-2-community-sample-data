@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Block\Shipping;
@@ -9,10 +9,6 @@ use Magento\Checkout\Block\Cart\AbstractCart;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
 
-/**
- * Class Price
- * @deprecated 100.1.0
- */
 class Price extends AbstractCart
 {
     /**

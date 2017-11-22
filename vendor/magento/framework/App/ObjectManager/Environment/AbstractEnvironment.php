@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -28,7 +28,7 @@ abstract class AbstractEnvironment implements EnvironmentInterface
     /**
      * @var string
      */
-    protected $configPreference = \Magento\Framework\ObjectManager\Factory\Dynamic\Developer::class;
+    protected $configPreference = 'Magento\Framework\ObjectManager\Factory\Dynamic\Developer';
 
     /**
      * @var FactoryInterface

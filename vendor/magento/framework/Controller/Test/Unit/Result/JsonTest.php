@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Framework\Controller\Test\Unit\Result;
  *
  * @covers \Magento\Framework\Controller\Result\Json
  */
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return void
@@ -24,18 +24,17 @@ class JsonTest extends \PHPUnit\Framework\TestCase
         /** @var \Magento\Framework\Translate\InlineInterface|\PHPUnit_Framework_MockObject_MockObject
          * $translateInline
          */
-        $translateInline = $this->createMock(\Magento\Framework\Translate\InlineInterface::class);
+        $translateInline = $this->getMock('Magento\Framework\Translate\InlineInterface', [], [], '', false);
         $translateInline->expects($this->any())->method('processResponseBody')->with($json, true)->will(
             $this->returnValue($translatedJson)
         );
 
-        $response = $this->createMock(\Magento\Framework\App\Response\HttpInterface::class);
-        $response->expects($this->atLeastOnce())->method('setHeader')->with('Content-Type', 'application/json', true);
-        $response->expects($this->atLeastOnce())->method('setBody')->with($json);
+        $response = $this->getMock('Magento\Framework\App\Response\Http', ['representJson'], [], '', false);
+        $response->expects($this->atLeastOnce())->method('representJson')->with($json)->will($this->returnSelf());
 
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
-            ->getObject(\Magento\Framework\Controller\Result\Json::class, ['translateInline' => $translateInline]);
+            ->getObject('Magento\Framework\Controller\Result\Json', ['translateInline' => $translateInline]);
         $resultJson->setJsonData($json);
         $this->assertSame($resultJson, $resultJson->renderResult($response));
     }

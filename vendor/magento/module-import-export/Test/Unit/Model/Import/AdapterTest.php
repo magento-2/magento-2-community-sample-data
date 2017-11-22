@@ -1,22 +1,28 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ImportExport\Test\Unit\Model\Import;
 
 use Magento\ImportExport\Model\Import\Adapter as Adapter;
 
-class AdapterTest extends \PHPUnit\Framework\TestCase
+class AdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Adapter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $adapter;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->adapter = $this->createMock(\Magento\ImportExport\Model\Import\Adapter::class);
+        $this->adapter = $this->getMock(
+            '\Magento\ImportExport\Model\Import\Adapter',
+            [],
+            [],
+            '',
+            false
+        );
     }
 
     public function testFactory()

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -50,9 +50,7 @@ class Categories extends WidgetInstanceForm
         $mapping['entities']['value'] = implode('/', $this->prepareFullCategoryPath($category));
         $this->_fill($mapping, $element);
         $this->getTemplateBlock()->waitLoader();
-        if (!$this->clickOnElement($this->header, $this->apply, Locator::SELECTOR_CSS, Locator::SELECTOR_XPATH)) {
-            $this->clickOnElement($this->footer, $this->apply, Locator::SELECTOR_CSS, Locator::SELECTOR_XPATH);
-        }
+        $this->_rootElement->find($this->apply, Locator::SELECTOR_XPATH)->click();
     }
 
     /**

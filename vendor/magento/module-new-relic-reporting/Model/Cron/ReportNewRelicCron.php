@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Model\Cron;
@@ -42,6 +42,11 @@ class ReportNewRelicCron
     protected $deploymentsFactory;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Parameters to be sent to Insights
      * @var array
      */
@@ -55,19 +60,22 @@ class ReportNewRelicCron
      * @param Counter $counter
      * @param CronEventFactory $cronEventFactory
      * @param DeploymentsFactory $deploymentsFactory
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         Config $config,
         Collect $collect,
         Counter $counter,
         CronEventFactory $cronEventFactory,
-        DeploymentsFactory $deploymentsFactory
+        DeploymentsFactory $deploymentsFactory,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->config = $config;
         $this->collect = $collect;
         $this->counter = $counter;
         $this->cronEventFactory = $cronEventFactory;
         $this->deploymentsFactory = $deploymentsFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -147,7 +155,6 @@ class ReportNewRelicCron
      * Reports counts info to New Relic
      *
      * @return void
-     * @throws \Exception
      */
     protected function reportCounts()
     {
@@ -161,9 +168,19 @@ class ReportNewRelicCron
             Config::CUSTOMER_COUNT => $this->counter->getCustomerCount(),
         ]);
         if (!empty($this->customParameters)) {
-            $this->cronEventFactory->create()
-                ->addData($this->customParameters)
-                ->sendRequest();
+            try {
+                $this->cronEventFactory->create()
+                    ->addData($this->customParameters)
+                    ->sendRequest();
+            } catch (\Exception $e) {
+                $this->logger->critical(
+                    sprintf(
+                        "New Relic Cron Event exception: %s\n%s",
+                        $e->getMessage(),
+                        $e->getTraceAsString()
+                    )
+                );
+            }
         }
     }
 

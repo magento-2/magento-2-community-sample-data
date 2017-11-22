@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -39,7 +39,7 @@ class Mapper
      */
     public function toFlatArray($addressDataObject)
     {
-        $flatAddressArray = $this->extensibleDataObjectConverter->toFlatArray($addressDataObject, [], \Magento\Customer\Api\Data\AddressInterface::class);
+        $flatAddressArray = $this->extensibleDataObjectConverter->toFlatArray($addressDataObject, [], '\Magento\Customer\Api\Data\AddressInterface');
         //preserve street
         $street = $addressDataObject->getStreet();
         if (!empty($street) && is_array($street)) {

@@ -1,123 +1,114 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Test\Unit\Collection\Db\FetchStrategy;
 
-use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\Data\Collection\Db\FetchStrategy\Cache;
-use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
-use Magento\Framework\DB\Select;
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-
-class CacheTest extends \PHPUnit\Framework\TestCase
+class CacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Cache
+     * @var \Magento\Framework\Data\Collection\Db\FetchStrategy\Cache
      */
-    private $fetchStrategyCache;
+    private $_object;
 
     /**
-     * @var FrontendInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $cacheMock;
+    private $_cache;
 
     /**
-     * @var FetchStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $fetchStrategyMock;
+    private $_fetchStrategy;
 
     /**
-     * @var Select|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $selectMock;
+    private $_select;
 
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var array
      */
-    private $serializerMock;
+    private $_fixtureData = [
+        ['column_one' => 'row_one_value_one', 'column_two' => 'row_one_value_two'],
+        ['column_one' => 'row_two_value_one', 'column_two' => 'row_two_value_two'],
+    ];
 
     protected function setUp()
     {
-        $this->selectMock = $this->createPartialMock(Select::class, ['assemble']);
-        $this->selectMock->expects($this->once())
-            ->method('assemble')
-            ->willReturn('SELECT * FROM fixture_table');
-        $this->cacheMock = $this->createMock(FrontendInterface::class);
-        $this->fetchStrategyMock = $this->createMock(FetchStrategyInterface::class);
-        $this->serializerMock = $this->createMock(SerializerInterface::class);
-        $this->fetchStrategyCache = (new ObjectManager($this))->getObject(
-            Cache::class,
-            [
-                'cache' => $this->cacheMock,
-                'fetchStrategy' => $this->fetchStrategyMock,
-                'cacheIdPrefix' => 'fixture_',
-                'cacheTags' => ['fixture_tag_one', 'fixture_tag_two'],
-                'cacheLifetime' => 86400,
-                'serializer' => $this->serializerMock
-            ]
+        $this->_select = $this->getMock('Magento\Framework\DB\Select', ['assemble'], [], '', false);
+        $this->_select->expects(
+            $this->once()
+        )->method(
+            'assemble'
+        )->will(
+            $this->returnValue('SELECT * FROM fixture_table')
+        );
+
+        $this->_cache = $this->getMockForAbstractClass('Magento\Framework\Cache\FrontendInterface');
+        $this->_fetchStrategy = $this->getMockForAbstractClass(
+            'Magento\Framework\Data\Collection\Db\FetchStrategyInterface'
+        );
+
+        $this->_object = new \Magento\Framework\Data\Collection\Db\FetchStrategy\Cache(
+            $this->_cache,
+            $this->_fetchStrategy,
+            'fixture_',
+            ['fixture_tag_one', 'fixture_tag_two'],
+            86400
         );
     }
 
-    public function testFetchCached()
+    protected function tearDown()
     {
-        $data = ['foo' => 'bar'];
-        $serializedData = 'serialized data';
-        $this->cacheMock->expects($this->once())
-            ->method('load')
-            ->with('fixture_06a6b0cfd83bf997e76b1b403df86569')
-            ->willReturn($serializedData);
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedData)
-            ->willReturn($data);
-        $this->fetchStrategyMock->expects($this->never())
-            ->method('fetchAll');
-        $this->cacheMock->expects($this->never())
-            ->method('save');
-        $this->assertEquals(
-            $data,
-            $this->fetchStrategyCache->fetchAll($this->selectMock, [])
-        );
+        $this->_object = null;
+        $this->_cache = null;
+        $this->_fetchStrategy = null;
+        $this->_select = null;
     }
 
-    public function testFetchNotCached()
+    public function testFetchAllCached()
+    {
+        $this->_cache->expects(
+            $this->once()
+        )->method(
+            'load'
+        )->with(
+            'fixture_06a6b0cfd83bf997e76b1b403df86569'
+        )->will(
+            $this->returnValue(serialize($this->_fixtureData))
+        );
+        $this->_fetchStrategy->expects($this->never())->method('fetchAll');
+        $this->_cache->expects($this->never())->method('save');
+        $this->assertEquals($this->_fixtureData, $this->_object->fetchAll($this->_select, []));
+    }
+
+    public function testFetchAllDelegation()
     {
         $cacheId = 'fixture_06a6b0cfd83bf997e76b1b403df86569';
-        $data = ['foo' => 'bar'];
-        $serializedData = 'serialized data';
-        $bindParams = [
-            'param_one' => 'value_one',
-            'param_two' => 'value_two'
-        ];
-        $this->cacheMock->expects($this->once())
-            ->method('load')
-            ->with($cacheId)
-            ->willReturn(false);
-        $this->fetchStrategyMock->expects($this->once())
-            ->method('fetchAll')
-            ->with(
-                $this->selectMock,
-                $bindParams
-            )
-            ->willReturn($data);
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->with($data)
-            ->willReturn($serializedData);
-        $this->cacheMock->expects($this->once())
-            ->method('save')
-            ->with(
-                $serializedData,
-                $cacheId,
-                ['fixture_tag_one', 'fixture_tag_two'],
-                86400
-            );
-        $this->assertEquals(
-            $data,
-            $this->fetchStrategyCache->fetchAll($this->selectMock, $bindParams)
+        $bindParams = ['param_one' => 'value_one', 'param_two' => 'value_two'];
+        $this->_cache->expects($this->once())->method('load')->with($cacheId)->will($this->returnValue(false));
+        $this->_fetchStrategy->expects(
+            $this->once()
+        )->method(
+            'fetchAll'
+        )->with(
+            $this->_select,
+            $bindParams
+        )->will(
+            $this->returnValue($this->_fixtureData)
         );
+        $this->_cache->expects(
+            $this->once()
+        )->method(
+            'save'
+        )->with(
+            serialize($this->_fixtureData),
+            $cacheId,
+            ['fixture_tag_one', 'fixture_tag_two'],
+            86400
+        );
+        $this->assertEquals($this->_fixtureData, $this->_object->fetchAll($this->_select, $bindParams));
     }
 }

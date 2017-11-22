@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,25 +8,14 @@
 
 namespace Magento\Paypal\Model;
 
-use Magento\Payment\Helper\Formatter;
-
 /**
  * Config model that is aware of all \Magento\Paypal payment methods
  * Works with PayPal-specific system configuration
-
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Config extends AbstractConfig
 {
-
-    use Formatter;
-
-    /**
-     * PayPal Express
-     */
-    const METHOD_EXPRESS = 'paypal_express';
-
     /**
      * PayPal Standard - alias METHOD_WPP_EXPRESS
      */
@@ -866,9 +855,7 @@ class Config extends AbstractConfig
      */
     public function getExpressCheckoutStartUrl($token)
     {
-        return sprintf('https://www.%spaypal.com/checkoutnow%s',
-            $this->getValue('sandboxFlag') ? 'sandbox.' : '',
-            '?token=' . urlencode($token));
+        return $this->getPaypalUrl(['cmd' => '_express-checkout', 'token' => $token]);
     }
 
     /**
@@ -973,24 +960,14 @@ class Config extends AbstractConfig
             return $this->getPaymentMarkImageUrl($localeCode);
         }
 
-        return $this->getExpressCheckoutInContextImageUrl($localeCode);
-    }
-
-    /**
-     * Express in context checkout shortcut pic URL getter
-     *
-     * @param string $localeCode
-     * @return string
-     */
-    public function getExpressCheckoutInContextImageUrl($localeCode)
-    {
-        $localeCode = $this->_getSupportedLocaleCode($localeCode);
-
-        if ($localeCode === 'en_US') {
+        if ($this->_getSupportedLocaleCode($localeCode) == 'en_US') {
             return 'https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-medium.png';
         }
 
-        return sprintf('https://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif', $localeCode);
+        return sprintf(
+            'https://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif',
+            $this->_getSupportedLocaleCode($localeCode)
+        );
     }
 
     /**
@@ -1391,7 +1368,7 @@ class Config extends AbstractConfig
             'locale' => $this->_getSupportedLocaleCode($localeCode),
         ];
         if ($orderTotal) {
-            $params['ordertotal'] = $this->formatPrice($orderTotal);
+            $params['ordertotal'] = sprintf('%.2F', $orderTotal);
             if ($pal) {
                 $params['pal'] = $pal;
             }
@@ -1446,7 +1423,6 @@ class Config extends AbstractConfig
                 break;
             case self::METHOD_WPP_EXPRESS:
             case self::METHOD_WPP_PE_EXPRESS:
-            case self::METHOD_EXPRESS:
                 $path = $this->_mapExpressFieldset($fieldName);
                 break;
             case self::METHOD_BILLING_AGREEMENT:
@@ -1499,8 +1475,6 @@ class Config extends AbstractConfig
             case 'order_valid_period':
             case 'child_authorization_number':
             case 'allow_ba_signup':
-            case 'in_context':
-            case 'merchant_id':
                 return "payment/{$this->_methodCode}/{$fieldName}";
             default:
                 return $this->_mapMethodFieldset($fieldName);

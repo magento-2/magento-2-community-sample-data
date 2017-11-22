@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Legacy;
 
-class LibraryLocationTest extends \PHPUnit\Framework\TestCase
+class LibraryLocationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Root path of Magento
@@ -20,7 +20,7 @@ class LibraryLocationTest extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$root = BP;
+        self::$root = \Magento\Framework\App\Utility\Files::init()->getPathToSource();
     }
 
     public function testOldWebLibrariesLocation()

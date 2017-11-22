@@ -1,11 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'ko',
     'underscore',
@@ -17,6 +14,10 @@ define([
         defaults: {
             template: 'ui/grid/tree-massactions',
             submenuTemplate: 'ui/grid/submenu',
+            selectProvider: '',
+            modules: {
+                selections: '${ $.selectProvider }'
+            },
             listens: {
                 opened: 'hideSubmenus'
             }
@@ -38,20 +39,14 @@ define([
          * Recursive initializes observable actions.
          *
          * @param {Array} actions - Action objects.
-         * @param {String} [prefix] - An optional string that will be prepended
-         *      to the "type" field of all child actions.
          * @returns {Massactions} Chainable.
          */
-        recursiveObserveActions: function (actions, prefix) {
+        recursiveObserveActions: function (actions) {
             _.each(actions, function (action) {
-                if (prefix) {
-                    action.type = prefix + '.' + action.type;
-                }
-
                 if (action.actions) {
                     action.visible = ko.observable(false);
                     action.parent = actions;
-                    this.recursiveObserveActions(action.actions, action.type);
+                    this.recursiveObserveActions(action.actions);
                 }
             }, this);
 

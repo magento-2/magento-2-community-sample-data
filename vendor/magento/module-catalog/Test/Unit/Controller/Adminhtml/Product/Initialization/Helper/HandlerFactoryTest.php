@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Initialization\Helper;
 
 use \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\HandlerFactory;
 
-class HandlerFactoryTest extends \PHPUnit\Framework\TestCase
+class HandlerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var HandlerFactory
@@ -21,19 +21,19 @@ class HandlerFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->getMock('\Magento\Framework\ObjectManagerInterface');
         $this->_model = new HandlerFactory($this->_objectManagerMock);
     }
 
     public function testCreateWithInvalidType()
     {
-        $this->expectException(
+        $this->setExpectedException(
             '\InvalidArgumentException',
-            \Magento\Framework\DataObject::class . ' does not implement ' .
-            \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\HandlerInterface::class
+            'Magento\Framework\DataObject does not implement ' .
+            'Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\HandlerInterface'
         );
         $this->_objectManagerMock->expects($this->never())->method('create');
-        $this->_model->create(\Magento\Framework\DataObject::class);
+        $this->_model->create('Magento\Framework\DataObject');
     }
 
     public function testCreateWithValidType()
@@ -43,14 +43,14 @@ class HandlerFactoryTest extends \PHPUnit\Framework\TestCase
         )->method(
             'create'
         )->with(
-            \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Handler\Composite::class
+            '\Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Handler\Composite'
         )->will(
             $this->returnValue('object')
         );
         $this->assertEquals(
             'object',
             $this->_model->create(
-                \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Handler\Composite::class
+                '\Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Handler\Composite'
             )
         );
     }

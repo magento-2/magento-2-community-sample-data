@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Gateway\Validator;
 
-class CountryValidatorTest extends \PHPUnit\Framework\TestCase
+class CountryValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Payment\Gateway\Validator\CountryValidator */
     protected $model;
@@ -27,14 +27,13 @@ class CountryValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->getMockBuilder(\Magento\Payment\Gateway\ConfigInterface::class)
+        $this->configMock = $this->getMockBuilder('Magento\Payment\Gateway\ConfigInterface')
             ->getMockForAbstractClass();
-        $this->resultFactoryMock = $this->getMockBuilder(
-            \Magento\Payment\Gateway\Validator\ResultInterfaceFactory::class
-        )->setMethods(['create'])
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Payment\Gateway\Validator\ResultInterfaceFactory')
+            ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultMock = $this->getMockBuilder(\Magento\Payment\Gateway\Validator\Result::class)
+        $this->resultMock = $this->getMockBuilder('Magento\Payment\Gateway\Validator\Result')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -43,6 +42,7 @@ class CountryValidatorTest extends \PHPUnit\Framework\TestCase
             $this->configMock
         );
     }
+
 
     /**
      * @dataProvider validateAllowspecificTrueDataProvider

@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Module\Test\Unit;
 
-use Magento\Framework\Module\ModuleList;
 use \Magento\Framework\Module\PackageInfo;
 
-class PackageInfoTest extends \PHPUnit\Framework\TestCase
+class PackageInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Component\ComponentRegistrar|\PHPUnit_Framework_MockObject_MockObject
@@ -25,10 +24,10 @@ class PackageInfoTest extends \PHPUnit\Framework\TestCase
      */
     private $packageInfo;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->componentRegistrar = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
-        $this->reader = $this->createMock(\Magento\Framework\Module\Dir\Reader::class);
+        $this->componentRegistrar = $this->getMock('Magento\Framework\Component\ComponentRegistrar', [], [], '', false);
+        $this->reader = $this->getMock('Magento\Framework\Module\Dir\Reader', [], [], '', false);
         $this->componentRegistrar->expects($this->once())
             ->method('getPaths')
             ->will($this->returnValue(['A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E']));
@@ -40,7 +39,7 @@ class PackageInfoTest extends \PHPUnit\Framework\TestCase
             'D/composer.json' => '{"name":"d", "conflict":{"c":"0.1"}, "version":"0.3"}',
             'E/composer.json' => '{"name":"e", "version":"0.4"}',
         ];
-        $fileIteratorMock = $this->createMock(\Magento\Framework\Config\FileIterator::class);
+        $fileIteratorMock = $this->getMock('Magento\Framework\Config\FileIterator', [], [], '', false);
         $fileIteratorMock->expects($this->once())
             ->method('toArray')
             ->will($this->returnValue($composerData));
@@ -100,10 +99,5 @@ class PackageInfoTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('0.3', $this->packageInfo->getVersion('D'));
         $this->assertEquals('0.4', $this->packageInfo->getVersion('E'));
         $this->assertEquals('', $this->packageInfo->getVersion('F'));
-    }
-
-    public function testGetRequiredBy()
-    {
-        $this->assertEquals(['A'], $this->packageInfo->getRequiredBy('b'));
     }
 }

@@ -1,18 +1,19 @@
 <?php
 /***
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Setup\Test\Unit\Model;
+
 
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\App\State;
 
-class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
+class ConfigGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\App\DeploymentConfig | \PHPUnit_Framework_MockObject_MockObject */
     private $deploymentConfigMock;
-
     /** @var  \Magento\Setup\Model\ConfigGenerator | \PHPUnit_Framework_MockObject_MockObject */
     private $model;
 
@@ -20,11 +21,11 @@ class ConfigGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->deploymentConfigMock = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig::class)
+        $this->deploymentConfigMock = $this->getMockBuilder('Magento\Framework\App\DeploymentConfig')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = $objectManager->getObject(
-            \Magento\Setup\Model\ConfigGenerator::class,
+            'Magento\Setup\Model\ConfigGenerator',
             ['deploymentConfig' => $this->deploymentConfigMock]
         );
     }

@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'mageUtils',
@@ -15,7 +11,7 @@ define([
 
     return Column.extend({
         defaults: {
-            dateFormat: 'MMM d, YYYY h:mm:ss A'
+            dateFormat: 'MMM D, YYYY h:mm:ss A'
         },
 
         /**
@@ -36,11 +32,11 @@ define([
          *
          * @returns {String} Formatted date.
          */
-        getLabel: function (value, format) {
+        getLabel: function () {
             var date = moment(this._super());
 
             date = date.isValid() ?
-                date.format(format || this.dateFormat) :
+                date.format(this.dateFormat) :
                 '';
 
             return date;

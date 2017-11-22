@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class VisitorTest
  * @package Magento\Customer\Model
  */
-class VisitorTest extends \PHPUnit\Framework\TestCase
+class VisitorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Visitor
@@ -41,15 +41,15 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
-        $this->session = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->registry = $this->getMock('Magento\Framework\Registry');
+        $this->session = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods(['getSessionId', 'getVisitorData', 'setVisitorData'])
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->resource = $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\Visitor::class)
+        $this->resource = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\Visitor')
             ->setMethods([
                 'beginTransaction',
                 '__sleep',
@@ -64,7 +64,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
         $this->resource->expects($this->any())->method('addCommitCallback')->will($this->returnSelf());
 
         $arguments = $this->objectManagerHelper->getConstructArguments(
-            \Magento\Customer\Model\Visitor::class,
+            'Magento\Customer\Model\Visitor',
             [
                 'registry' => $this->registry,
                 'session' => $this->session,
@@ -72,7 +72,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->visitor = $this->objectManagerHelper->getObject(\Magento\Customer\Model\Visitor::class, $arguments);
+        $this->visitor = $this->objectManagerHelper->getObject('Magento\Customer\Model\Visitor', $arguments);
     }
 
     public function testInitByRequest()
@@ -96,7 +96,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
     public function testIsModuleIgnored()
     {
         $this->visitor = $this->objectManagerHelper->getObject(
-            \Magento\Customer\Model\Visitor::class,
+            'Magento\Customer\Model\Visitor',
             [
                 'registry' => $this->registry,
                 'session' => $this->session,

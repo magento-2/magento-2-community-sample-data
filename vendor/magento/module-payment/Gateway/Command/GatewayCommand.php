@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Gateway\Command;
 
-use Magento\Framework\Phrase;
 use Magento\Payment\Gateway\CommandInterface;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferFactoryInterface;
@@ -14,14 +13,7 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Gateway\Response;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Gateway\Validator\ValidatorInterface;
-use Psr\Log\LoggerInterface;
 
-/**
- * Class GatewayCommand
- * @api
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
- */
 class GatewayCommand implements CommandInterface
 {
     /**
@@ -50,15 +42,9 @@ class GatewayCommand implements CommandInterface
     private $validator;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param BuilderInterface $requestBuilder
      * @param TransferFactoryInterface $transferFactory
      * @param ClientInterface $client
-     * @param LoggerInterface $logger
      * @param HandlerInterface $handler
      * @param ValidatorInterface $validator
      */
@@ -66,7 +52,6 @@ class GatewayCommand implements CommandInterface
         BuilderInterface $requestBuilder,
         TransferFactoryInterface $transferFactory,
         ClientInterface $client,
-        LoggerInterface $logger,
         HandlerInterface $handler = null,
         ValidatorInterface $validator = null
     ) {
@@ -75,15 +60,14 @@ class GatewayCommand implements CommandInterface
         $this->client = $client;
         $this->handler = $handler;
         $this->validator = $validator;
-        $this->logger = $logger;
     }
 
     /**
      * Executes command basing on business object
      *
      * @param array $commandSubject
-     * @return void
-     * @throws CommandException
+     * @return null
+     * @throws \Exception
      */
     public function execute(array $commandSubject)
     {
@@ -98,9 +82,8 @@ class GatewayCommand implements CommandInterface
                 array_merge($commandSubject, ['response' => $response])
             );
             if (!$result->isValid()) {
-                $this->logExceptions($result->getFailsDescription());
                 throw new CommandException(
-                    __('Transaction has been declined. Please try again later.')
+                    __(implode("\n", $result->getFailsDescription()))
                 );
             }
         }
@@ -110,17 +93,6 @@ class GatewayCommand implements CommandInterface
                 $commandSubject,
                 $response
             );
-        }
-    }
-
-    /**
-     * @param Phrase[] $fails
-     * @return void
-     */
-    private function logExceptions(array $fails)
-    {
-        foreach ($fails as $failPhrase) {
-            $this->logger->critical((string) $failPhrase);
         }
     }
 }

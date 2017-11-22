@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Config;
@@ -9,9 +9,6 @@ use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManager\ConfigCacheInterface;
 use Magento\Framework\ObjectManager\RelationsInterface;
 
-/**
- * Provides object manager configuration when in compiled mode
- */
 class Compiled implements ConfigInterface
 {
     /**
@@ -34,12 +31,9 @@ class Compiled implements ConfigInterface
      */
     public function __construct($data)
     {
-        $this->arguments = isset($data['arguments']) && is_array($data['arguments'])
-            ? $data['arguments'] : [];
-        $this->virtualTypes = isset($data['instanceTypes']) && is_array($data['instanceTypes'])
-            ? $data['instanceTypes'] : [];
-        $this->preferences = isset($data['preferences']) && is_array($data['preferences'])
-            ? $data['preferences'] : [];
+        $this->arguments = $data['arguments'];
+        $this->virtualTypes = $data['instanceTypes'];
+        $this->preferences = $data['preferences'];
     }
 
     /**
@@ -76,13 +70,13 @@ class Compiled implements ConfigInterface
      */
     public function getArguments($type)
     {
-        if (array_key_exists($type, $this->arguments)) {
-            if ($this->arguments[$type] === null) {
-                $this->arguments[$type] = [];
+        if (isset($this->arguments[$type])) {
+            if (is_string($this->arguments[$type])) {
+                $this->arguments[$type] = unserialize($this->arguments[$type]);
             }
             return $this->arguments[$type];
         } else {
-            return null;
+            return [['_i_' => \Magento\Framework\ObjectManagerInterface::class]];
         }
     }
 
@@ -121,7 +115,6 @@ class Compiled implements ConfigInterface
      */
     public function getPreference($type)
     {
-        $type = ltrim($type, '\\');
         if (isset($this->preferences[$type])) {
             return $this->preferences[$type];
         }
@@ -136,15 +129,23 @@ class Compiled implements ConfigInterface
      */
     public function extend(array $configuration)
     {
-        $this->arguments = isset($configuration['arguments']) && is_array($configuration['arguments'])
-            ? array_replace($this->arguments, $configuration['arguments'])
-            : $this->arguments;
-        $this->virtualTypes = isset($configuration['instanceTypes']) && is_array($configuration['instanceTypes'])
-            ? array_replace($this->virtualTypes, $configuration['instanceTypes'])
-            : $this->virtualTypes;
-        $this->preferences = isset($configuration['preferences']) && is_array($configuration['preferences'])
-            ? array_replace($this->preferences, $configuration['preferences'])
-            : $this->preferences;
+        $this->arguments = isset($configuration['arguments'])
+            ? array_replace(
+                $this->arguments ?: [],
+                $configuration['arguments']
+            ) : $this->arguments;
+
+        $this->virtualTypes = isset($configuration['instanceTypes'])
+            ? array_replace(
+                $this->virtualTypes ?: [],
+                $configuration['instanceTypes']
+            ) : $this->virtualTypes;
+
+        $this->preferences = isset($configuration['preferences'])
+            ? array_replace(
+                $this->preferences ?: [],
+                $configuration['preferences']
+            ) : $this->preferences;
     }
 
     /**

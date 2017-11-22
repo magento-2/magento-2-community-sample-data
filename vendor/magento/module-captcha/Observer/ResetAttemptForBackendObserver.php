@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Captcha\Observer;
@@ -9,9 +9,9 @@ use Magento\Framework\Event\ObserverInterface;
 
 class ResetAttemptForBackendObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\Captcha\Model\ResourceModel\LogFactory
-     */
+    /*
+      * @var \Magento\Captcha\Model\ResourceModel\LogFactory
+      */
     public $resLogFactory;
 
     /**
@@ -22,6 +22,7 @@ class ResetAttemptForBackendObserver implements ObserverInterface
     ) {
         $this->resLogFactory = $resLogFactory;
     }
+
 
     /**
      * Reset Attempts For Backend

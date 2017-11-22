@@ -1,19 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-$registry = $objectManager->get(\Magento\Framework\Registry::class);
+$registry = $objectManager->get('Magento\Framework\Registry');
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
-$quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+$quote = $objectManager->create('Magento\Quote\Model\Quote');
 $quote->load('test_order_item_with_items', 'reserved_order_id');
 $quoteId = $quote->getId();
 if ($quote->getId()) {
     $quote->delete();
 }
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 $product->load($product->getIdBySku('simple_one'));
 if ($product->getId()) {
     $product->delete();

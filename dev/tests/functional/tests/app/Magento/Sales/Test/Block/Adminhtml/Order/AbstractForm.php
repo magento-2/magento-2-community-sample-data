@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -68,9 +68,8 @@ abstract class AbstractForm extends Form
     {
         $data = $this->prepareData($data);
         if (isset($data['items_data']) && $products !== null) {
-            foreach ($data['items_data'] as $key => $item) {
-                $productSku = is_array($products[$key]) ?  $products[$key]['sku'] : $products[$key]->getData()['sku'];
-                $this->getItemsBlock()->getItemProductBlock($productSku)->fillProduct($item);
+            foreach ($products as $key => $product) {
+                $this->getItemsBlock()->getItemProductBlock($product)->fillProduct($data['items_data'][$key]);
             }
         }
     }

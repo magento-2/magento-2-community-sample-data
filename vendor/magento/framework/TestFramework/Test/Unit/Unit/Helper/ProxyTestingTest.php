@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\TestFramework\Test\Unit\Unit\Helper;
 
-class ProxyTestingTest extends \PHPUnit\Framework\TestCase
+class ProxyTestingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $method
@@ -30,14 +30,14 @@ class ProxyTestingTest extends \PHPUnit\Framework\TestCase
         $expectedResult
     ) {
         // Create proxied object with $callProxiedMethod
-        $proxiedObject = $this->createPartialMock('stdClass', [$callProxiedMethod]);
+        $proxiedObject = $this->getMock('stdClass', [$callProxiedMethod]);
 
         // Create object, which reacts on called $method by calling $callProxiedMethod from proxied object
         $callProxy = function () use ($proxiedObject, $callProxiedMethod, $passProxiedParams) {
             return call_user_func_array([$proxiedObject, $callProxiedMethod], $passProxiedParams);
         };
 
-        $object = $this->createPartialMock('stdClass', [$method]);
+        $object = $this->getMock('stdClass', [$method]);
         $builder = $object->expects($this->once())->method($method);
         call_user_func_array([$builder, 'with'], $params);
         $builder->will($this->returnCallback($callProxy));

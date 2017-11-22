@@ -1,11 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
+/*jshint browser:true */
 define([
     'jquery',
     'mage/template',
@@ -64,7 +61,7 @@ define([
 
             productExists = this.$grid.find('[data-role=id]')
                 .filter(function (index, element) {
-                    return $(element).val() == product.id; //eslint-disable-line eqeqeq
+                    return $(element).val() == product.id;
                 }).length;
 
             if (!productExists) {
@@ -105,16 +102,13 @@ define([
         _bindDialog: function () {
             var widget = this,
                 selectedProductList = {},
-                popup = $('[data-role=add-product-dialog]'),
-                gridPopup;
+                popup = $('[data-role=add-product-dialog]');
 
             popup.modal({
                 type: 'slide',
                 innerScroll: true,
                 title: $.mage.__('Add Products to Group'),
                 modalClass: 'grouped',
-
-                /** @inheritdoc */
                 open: function () {
                     $(this).addClass('admin__scope-old'); // ToDo UI: remove with old styles removal
                 },
@@ -122,8 +116,6 @@ define([
                     id: 'grouped-product-dialog-apply-button',
                     text: $.mage.__('Add Selected Products'),
                     'class': 'action-primary action-add',
-
-                    /** @inheritdoc */
                     click: function () {
                         $.each(selectedProductList, function (index, product) {
                             widget._add(null, product);
@@ -158,8 +150,8 @@ define([
                     if (element.is(':checked')) {
                         product.id = element.val();
                         product.qty = 0;
-                        element.closest('[data-role=row]').find('[data-column]').each(function (index, el) {
-                            product[$(el).data('column')] = $.trim($(el).text());
+                        element.closest('[data-role=row]').find('[data-column]').each(function (index, element) {
+                            product[$(element).data('column')] = $.trim($(element).text());
                         });
                         selectedProductList[product.id] = product;
                     } else {
@@ -168,7 +160,7 @@ define([
                 }, this)
             );
 
-            gridPopup = $(this.options.gridPopup).data('gridObject');
+            var gridPopup = $(this.options.gridPopup).data('gridObject');
 
             $('[data-role=add-product]').on('click', function (event) {
                 event.preventDefault();
@@ -177,23 +169,24 @@ define([
                 selectedProductList = {};
             });
 
-            $('#' + gridPopup.containerId).on('gridajaxsettings', function (event, ajaxSettings) {
-                var ids = widget.$grid.find('[data-role=id]').map(function (index, element) {
-                    return $(element).val();
-                }).toArray();
-
-                ajaxSettings.data.filter = $.extend(ajaxSettings.data.filter || {}, {
-                    'entity_ids': ids
-                });
-            }).on('gridajax', function (event, ajaxRequest) {
-                ajaxRequest.done(function () {
-                    popup.find('[data-role=row] [data-column=entity_ids] input').each(function (index, element) {
-                        var $element = $(element);
-
-                        $element.prop('checked', !!selectedProductList[$element.val()]);
+            $('#' + gridPopup.containerId)
+                .on('gridajaxsettings', function (event, ajaxSettings) {
+                    var ids = widget.$grid.find('[data-role=id]').map(function (index, element) {
+                        return $(element).val();
+                    }).toArray();
+                    ajaxSettings.data.filter = $.extend(ajaxSettings.data.filter || {}, {
+                        'entity_ids': ids
+                    });
+                })
+                .on('gridajax', function (event, ajaxRequest) {
+                    ajaxRequest.done(function () {
+                        popup.find('[data-role=row] [data-column=entity_ids] input')
+                            .each(function (index, element) {
+                                var $element = $(element);
+                                $element.prop('checked', !!selectedProductList[$element.val()]);
+                            });
                     });
                 });
-            });
         },
 
         /**
@@ -202,7 +195,6 @@ define([
          */
         _updateGridVisibility: function () {
             var showGrid = this.element.find('[data-role=id]').length > 0;
-
             this.element.find('.grid-container').toggle(showGrid);
             this.element.find('.no-products-message').toggle(!showGrid);
         }

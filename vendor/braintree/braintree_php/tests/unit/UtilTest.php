@@ -1,269 +1,233 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use stdClass;
-use DateTime;
-use Test\Setup;
-use Braintree;
-
-class UtilTest extends Setup
+class Braintree_UtilTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @expectedException Braintree\Exception\Authentication
-     */
-    public function testThrow401Exception()
-    {
-        Braintree\Util::throwStatusCodeException(401);
-    }
 
+    // test throwStatusCodeException
     /**
-     * @expectedException Braintree\Exception\Authorization
+     * @expectedException Braintree_Exception_Authentication
      */
-    public function testThrow403Exception()
+    function testThrow401Exception()
     {
-        Braintree\Util::throwStatusCodeException(403);
+        Braintree_Util::throwStatusCodeException(401);
     }
 
     /**
-     * @expectedException Braintree\Exception\NotFound
+     * @expectedException Braintree_Exception_Authorization
      */
-    public function testThrow404Exception()
+    function testThrow403Exception()
     {
-        Braintree\Util::throwStatusCodeException(404);
+        Braintree_Util::throwStatusCodeException(403);
     }
 
     /**
-     * @expectedException Braintree\Exception\UpgradeRequired
+     * @expectedException Braintree_Exception_NotFound
      */
-    public function testThrow426Exception()
+    function testThrow404Exception()
     {
-        Braintree\Util::throwStatusCodeException(426);
+        Braintree_Util::throwStatusCodeException(404);
     }
 
     /**
-     * @expectedException Braintree\Exception\TooManyRequests
+     * @expectedException Braintree_Exception_UpgradeRequired
      */
-    public function testThrow429Exception()
+    function testThrow426Exception()
     {
-        Braintree\Util::throwStatusCodeException(429);
+        Braintree_Util::throwStatusCodeException(426);
     }
 
     /**
-     * @expectedException Braintree\Exception\ServerError
+     * @expectedException Braintree_Exception_ServerError
      */
-    public function testThrow500Exception()
+    function testThrow500Exception()
     {
-        Braintree\Util::throwStatusCodeException(500);
+        Braintree_Util::throwStatusCodeException(500);
     }
 
     /**
-     * @expectedException Braintree\Exception\DownForMaintenance
+     * @expectedException Braintree_Exception_DownForMaintenance
      */
-    public function testThrow503Exception()
+    function testThrow503Exception()
     {
-        Braintree\Util::throwStatusCodeException(503);
+        Braintree_Util::throwStatusCodeException(503);
     }
 
     /**
-     * @expectedException Braintree\Exception\Unexpected
+     * @expectedException Braintree_Exception_Unexpected
      */
-    public function testThrowUnknownException()
+    function testThrowUnknownException()
     {
-        Braintree\Util::throwStatusCodeException(999);
+        Braintree_Util::throwStatusCodeException(999);
     }
 
-    public function testExtractAttributeAsArrayReturnsEmptyArray()
+    function testExtractAttributeAsArrayReturnsEmptyArray()
     {
-        $attributes = [];
-        $this->assertEquals([], Braintree\Util::extractAttributeAsArray($attributes, "foo"));
+        $attributes = array();
+        $this->assertEquals(array(), Braintree_Util::extractAttributeAsArray($attributes, "foo"));
     }
 
-    public function testExtractAttributeAsArrayReturnsSingleElementArray()
+    function testDelimeterToUnderscore()
     {
-        $attributes = ['verification' => 'val1'];
-        $this->assertEquals(['val1'], Braintree\Util::extractAttributeAsArray($attributes, "verification"));
+        $this->assertEquals("a_b_c", Braintree_Util::delimiterToUnderscore("a-b-c"));
     }
 
-    public function testExtractAttributeAsArrayReturnsArrayOfObjects()
+    function testCleanClassName()
     {
-        $attributes = ['verification' => [['status' => 'val1']]];
-        $expected = new Braintree\CreditCardVerification(['status' => 'val1']);
-        $this->assertEquals([$expected], Braintree\Util::extractAttributeAsArray($attributes, "verification"));
-    }
-
-    public function testDelimeterToUnderscore()
-    {
-        $this->assertEquals("a_b_c", Braintree\Util::delimiterToUnderscore("a-b-c"));
-    }
-
-    public function testCleanClassName()
-    {
-        $cn = Braintree\Util::cleanClassName('Braintree\Transaction');
+        $cn = Braintree_Util::cleanClassName('Braintree_Transaction');
         $this->assertEquals('transaction', $cn);
     }
-
-    public function testBuildClassName()
+    function testimplodeAssociativeArray()
     {
-        $cn = Braintree\Util::buildClassName('creditCard');
-        $this->assertEquals('Braintree\CreditCard', $cn);
+        $array = array('test1' => 'val1',
+                       'test2' => 'val2');
+        $string = Braintree_Util::implodeAssociativeArray($array);
+        $this->assertEquals('test1=val1, test2=val2', $string);
     }
-
-    public function testimplodeAssociativeArray()
+    function testVerifyKeys_withThreeLevels()
     {
-        $array = [
-            'test1' => 'val1',
-            'test2' => 'val2',
-            'test3' => new DateTime('2015-05-15 17:21:00'),
-        ];
-        $string = Braintree\Util::implodeAssociativeArray($array);
-        $this->assertEquals('test1=val1, test2=val2, test3=Fri, 15 May 2015 17:21:00 +0000', $string);
-    }
-
-    public function testVerifyKeys_withThreeLevels()
-    {
-        $signature = [
+        $signature = array(
             'firstName',
-            ['creditCard' => ['number', ['billingAddress' => ['streetAddress']]]]
-        ];
-        $data = [
+            array('creditCard' => array('number', array('billingAddress' => array('streetAddress'))))
+        );
+        $data = array(
             'firstName' => 'Dan',
-            'creditCard' => [
+            'creditCard' => array(
                 'number' => '5100',
-                'billingAddress' => [
+                'billingAddress' => array(
                     'streetAddress' => '1 E Main St'
-                ]
-            ]
-        ];
-        Braintree\Util::verifyKeys($signature, $data);
+                )
+            )
+        );
+        Braintree_Util::verifyKeys($signature, $data);
     }
 
-	public function testVerifyKeys_withArrayOfArrays()
+	function testVerifyKeys_withArrayOfArrays()
 	{
-        $signature = [
-			['addOns' => [['update' => ['amount', 'existingId']]]]
-		];
+        $signature = array(
+			array('addOns' => array(array('update' => array('amount', 'existingId'))))
+		);
 
-		$goodData = [
-            'addOns' => [
-                'update' => [
-                    [
+		$goodData = array(
+            'addOns' => array(
+                'update' => array(
+                    array(
                         'amount' => '50.00',
                         'existingId' => 'increase_10',
-                    ],
-                    [
+                    ),
+                    array(
                         'amount' => '60.00',
                         'existingId' => 'increase_20',
-                    ]
-                ]
-            ]
-		];
+                    )
+                )
+            )
+		);
 
-        Braintree\Util::verifyKeys($signature, $goodData);
+        Braintree_Util::verifyKeys($signature, $goodData);
 
-		$badData = [
-            'addOns' => [
-                'update' => [
-                    [
+		$badData = array(
+            'addOns' => array(
+                'update' => array(
+                    array(
                         'invalid' => '50.00',
-                    ]
-                ]
-            ]
-		];
+                    )
+                )
+            )
+		);
 
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\Util::verifyKeys($signature, $badData);
+        Braintree_Util::verifyKeys($signature, $badData);
 	}
 
-    public function testVerifyKeys_arrayAsValue()
+    function testVerifyKeys_arrayAsValue()
     {
-        $signature = ['key'];
-        $data = ['key' => ['value']];
+        $signature = array('key');
+        $data = array('key' => array('value'));
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\Util::verifyKeys($signature, $data);
+        Braintree_Util::verifyKeys($signature, $data);
     }
 
-    public function testVerifyKeys()
+    function testVerifyKeys()
     {
-        $signature = [
+        $signature = array(
                 'amount', 'customerId', 'orderId', 'channel', 'paymentMethodToken', 'type',
 
-                ['creditCard'   =>
-                    ['token', 'cvv', 'expirationDate', 'number'],
-                ],
-                ['customer'      =>
-                    [
+                array('creditCard'   =>
+                    array('token', 'cvv', 'expirationDate', 'number'),
+                ),
+                array('customer'      =>
+                    array(
                         'id', 'company', 'email', 'fax', 'firstName',
-                        'lastName', 'phone', 'website'],
-                ],
-                ['billing'       =>
-                    [
+                        'lastName', 'phone', 'website'),
+                ),
+                array('billing'       =>
+                    array(
                         'firstName', 'lastName', 'company', 'countryName',
                         'extendedAddress', 'locality', 'postalCode', 'region',
-                        'streetAddress'],
-                ],
-                ['shipping'      =>
-                    [
+                        'streetAddress'),
+                ),
+                array('shipping'      =>
+                    array(
                         'firstName', 'lastName', 'company', 'countryName',
                         'extendedAddress', 'locality', 'postalCode', 'region',
-                        'streetAddress'],
-                ],
-                ['options'       =>
-                    [
+                        'streetAddress'),
+                ),
+                array('options'       =>
+                    array(
                         'storeInVault', 'submitForSettlement',
-                        'addBillingAddressToPaymentMethod'],
-                ],
-                ['customFields' => ['_anyKey_']
-                ],
-        ];
+                        'addBillingAddressToPaymentMethod'),
+                ),
+                array('customFields' => array('_anyKey_')
+                ),
+        );
 
         // test valid
-        $userKeys = [
+        $userKeys = array(
                 'amount' => '100.00',
-                'customFields'   => ['HEY' => 'HO',
-                                          'WAY' => 'NO'],
-                'creditCard' => [
+                'customFields'   => array('HEY' => 'HO',
+                                          'WAY' => 'NO'),
+                'creditCard' => array(
                     'number' => '5105105105105100',
                     'expirationDate' => '05/12',
-                    ],
-                ];
+                    ),
+                );
 
-        $n = Braintree\Util::verifyKeys($signature, $userKeys);
+        $n = Braintree_Util::verifyKeys($signature, $userKeys);
         $this->assertNull($n);
 
-        $userKeys = [
+        $userKeys = array(
                 'amount' => '100.00',
-                'customFields'   => ['HEY' => 'HO',
-                                          'WAY' => 'NO'],
+                'customFields'   => array('HEY' => 'HO',
+                                          'WAY' => 'NO'),
                 'bogus' => 'FAKE',
                 'totallyFake' => 'boom',
-                'creditCard' => [
+                'creditCard' => array(
                     'number' => '5105105105105100',
                     'expirationDate' => '05/12',
-                    ],
-                ];
+                    ),
+                );
 
         // test invalid
         $this->setExpectedException('InvalidArgumentException');
 
-        Braintree\Util::verifyKeys($signature, $userKeys);
+        Braintree_Util::verifyKeys($signature, $userKeys);
     }
 
     /**
-     * @expectedException Braintree\Exception\ValidationsFailed
+     * @expectedException Braintree_Exception_ValidationsFailed
      */
-    public function testReturnException()
+    function testReturnException()
     {
         $this->success = false;
-        Braintree\Util::returnObjectOrThrowException('Braintree\Transaction', $this);
+        Braintree_Util::returnObjectOrThrowException('Braintree_Transaction', $this);
     }
 
-    public function testReturnObject()
+    function testReturnObject()
     {
         $this->success = true;
         $this->transaction = new stdClass();
-        $t = Braintree\Util::returnObjectOrThrowException('Braintree\Transaction', $this);
+        $t = Braintree_Util::returnObjectOrThrowException('Braintree_Transaction', $this);
         $this->assertInternalType('object', $t);
     }
+
 }

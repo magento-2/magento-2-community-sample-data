@@ -1,35 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Review\Test\Block\Adminhtml\Customer\Edit\Tab;
 
-use Magento\Backend\Test\Block\Widget\Tab;
+use Magento\Review\Test\Block\Adminhtml\ReviewsTab;
 
 /**
- * Reviews tab on customer edit page.
+ * Class Reviews
+ * Reviews tab on customer edit page
  */
-class Reviews extends Tab
+class Reviews extends ReviewsTab
 {
-    /**
-     * Product reviews block selector.
-     *
-     * @var string
-     */
-    protected $reviews = '#reviwGrid';
-
-    /**
-     * Returns product reviews grid.
-     *
-     * @return \Magento\Review\Test\Block\Adminhtml\Grid
-     */
-    public function getReviewsGrid()
-    {
-        return $this->blockFactory->create(
-            \Magento\Review\Test\Block\Adminhtml\Grid::class,
-            ['element' => $this->_rootElement->find($this->reviews)]
-        );
-    }
+    //
 }

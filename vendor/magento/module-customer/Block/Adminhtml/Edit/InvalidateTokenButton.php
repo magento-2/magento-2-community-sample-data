@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Adminhtml\Edit;
@@ -21,12 +21,13 @@ class InvalidateTokenButton extends GenericButton implements ButtonProviderInter
         $customerId = $this->getCustomerId();
         $data = [];
         if ($customerId) {
-            $deleteConfirmMsg = __("Are you sure you want to revoke the customer's tokens?");
+            $deleteConfirmMsg = __("Are you sure you want to revoke the customer\'s tokens?");
             $data = [
                 'label' => __('Force Sign-In'),
                 'class' => 'invalidate-token',
-                'on_click' => 'deleteConfirm("' . $deleteConfirmMsg . '", "' . $this->getInvalidateTokenUrl() . '")',
-                'sort_order' => 65,
+                'on_click' => 'deleteConfirm(\'' . $deleteConfirmMsg . '\', \'' . $this->getInvalidateTokenUrl() .
+                    '\')',
+                'sort_order' => 50,
             ];
         }
         return $data;

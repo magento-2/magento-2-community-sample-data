@@ -2,12 +2,12 @@
 /**
  * Backwards-incompatible changes in file system
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Test\Legacy;
 
-class PhtmlTemplateTest extends \PHPUnit\Framework\TestCase
+class PhtmlTemplateTest extends \PHPUnit_Framework_TestCase
 {
     public function testBlockVariableInsteadOfThis()
     {

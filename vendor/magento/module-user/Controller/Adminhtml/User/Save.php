@@ -1,39 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\User\Controller\Adminhtml\User;
 
 use Magento\Framework\Exception\AuthenticationException;
-use Magento\Framework\Exception\State\UserLockedException;
-use Magento\Security\Model\SecurityCookie;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Save extends \Magento\User\Controller\Adminhtml\User
 {
-    /**
-     * @var SecurityCookie
-     */
-    private $securityCookie;
-
-    /**
-     * Get security cookie
-     *
-     * @return SecurityCookie
-     * @deprecated 100.1.0
-     */
-    private function getSecurityCookie()
-    {
-        if (!($this->securityCookie instanceof SecurityCookie)) {
-            return \Magento\Framework\App\ObjectManager::getInstance()->get(SecurityCookie::class);
-        } else {
-            return $this->securityCookie;
-        }
-    }
-
     /**
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -55,19 +30,21 @@ class Save extends \Magento\User\Controller\Adminhtml\User
             return;
         }
         $model->setData($this->_getAdminUserData($data));
-        $userRoles = $this->getRequest()->getParam('roles', []);
-        if (count($userRoles)) {
-            $model->setRoleId($userRoles[0]);
+        $uRoles = $this->getRequest()->getParam('roles', []);
+        if (count($uRoles)) {
+            $model->setRoleId($uRoles[0]);
         }
 
         /** @var $currentUser \Magento\User\Model\User */
-        $currentUser = $this->_objectManager->get(\Magento\Backend\Model\Auth\Session::class)->getUser();
-        if ($userId == $currentUser->getId()
-            && $this->_objectManager->get(\Magento\Framework\Validator\Locale::class)
-                ->isValid($data['interface_locale'])
+        $currentUser = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser();
+        if ($userId == $currentUser->getId() && $this->_objectManager->get(
+            'Magento\Framework\Validator\Locale'
+        )->isValid(
+            $data['interface_locale']
+        )
         ) {
             $this->_objectManager->get(
-                \Magento\Backend\Model\Locale\Manager::class
+                'Magento\Backend\Model\Locale\Manager'
             )->switchBackendInterfaceLocale(
                 $data['interface_locale']
             );
@@ -78,26 +55,13 @@ class Save extends \Magento\User\Controller\Adminhtml\User
         $isCurrentUserPasswordValid = isset($data[$currentUserPasswordField])
             && !empty($data[$currentUserPasswordField]) && is_string($data[$currentUserPasswordField]);
         try {
-            if (!($isCurrentUserPasswordValid)) {
+            if (!($isCurrentUserPasswordValid && $currentUser->verifyIdentity($data[$currentUserPasswordField]))) {
                 throw new AuthenticationException(__('You have entered an invalid password for current user.'));
             }
-            $currentUser->performIdentityCheck($data[$currentUserPasswordField]);
             $model->save();
-
-            $model->sendNotificationEmailsIfRequired();
-
             $this->messageManager->addSuccess(__('You saved the user.'));
             $this->_getSession()->setUserData(false);
             $this->_redirect('adminhtml/*/');
-        } catch (UserLockedException $e) {
-            $this->_auth->logout();
-            $this->getSecurityCookie()->setLogoutReasonCookie(
-                \Magento\Security\Model\AdminSessionsManager::LOGOUT_REASON_USER_LOCKED
-            );
-            $this->_redirect('adminhtml/*/');
-        } catch (\Magento\Framework\Exception\AuthenticationException $e) {
-            $this->messageManager->addError(__('You have entered an invalid password for current user.'));
-            $this->redirectToEdit($model, $data);
         } catch (\Magento\Framework\Validator\Exception $e) {
             $messages = $e->getMessages();
             $this->messageManager->addMessages($messages);

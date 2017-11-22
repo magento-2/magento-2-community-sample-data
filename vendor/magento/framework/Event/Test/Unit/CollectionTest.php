@@ -2,7 +2,7 @@
 /**
  * @category   Magento
  * @package    Magento_Event
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,7 +17,7 @@ use Magento\Framework\Event;
  *
  * @package Magento\Framework\Event
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Event\Collection
@@ -36,7 +36,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected $observers;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->events = [
             'eventName1' => 'someEvent1',
@@ -66,7 +66,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testGetEventByNameNotSet()
     {
         $eventName = 'eventName';
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('\Magento\Framework\Event', ['getName'], [], '', false, false);
         $eventMock->setData('name', $eventName);
         $eventObj = $this->collection->getEventByName($eventName);
         $this->assertEquals($eventMock->getData('name'), $eventObj->getName());
@@ -75,7 +75,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testAddEvent()
     {
         $eventName = 'eventName';
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('\Magento\Framework\Event', ['getName'], [], '', false, false);
         $eventMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue($eventName));
@@ -89,7 +89,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $observer->setData('event_name', $testEvent);
 
         $eventName = 'eventName';
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('\Magento\Framework\Event', ['getName'], [], '', false, false);
         $eventMock->setData('name', $eventName);
 
         $this->collection->addObserver($observer);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Ui\Component\Listing\Column;
@@ -12,7 +12,7 @@ use Magento\Sales\Ui\Component\Listing\Column\Price;
 /**
  * Class PurchasedPriceTest
  */
-class PurchasedPriceTest extends \PHPUnit\Framework\TestCase
+class PurchasedPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Price
@@ -24,20 +24,18 @@ class PurchasedPriceTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceFormatterMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->priceFormatterMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Pricing\PriceCurrencyInterface::class
-        );
+        $contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->priceFormatterMock = $this->getMockForAbstractClass('Magento\Framework\Pricing\PriceCurrencyInterface');
         $this->model = $objectManager->getObject(
-            \Magento\Sales\Ui\Component\Listing\Column\PurchasedPrice::class,
+            'Magento\Sales\Ui\Component\Listing\Column\PurchasedPrice',
             ['priceFormatter' => $this->priceFormatterMock, 'context' => $contextMock]
         );
     }

@@ -1,7 +1,5 @@
 <?php
-namespace Braintree;
-
-class DiscountGateway
+class Braintree_DiscountGateway
 {
     private $_gateway;
     private $_config;
@@ -12,7 +10,7 @@ class DiscountGateway
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
         $this->_config->assertHasAccessTokenOrKeys();
-        $this->_http = new Http($gateway->config);
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
     public function all()
@@ -20,12 +18,11 @@ class DiscountGateway
         $path = $this->_config->merchantPath() . '/discounts';
         $response = $this->_http->get($path);
 
-        $discounts = ["discount" => $response['discounts']];
+        $discounts = array("discount" => $response['discounts']);
 
-        return Util::extractAttributeAsArray(
+        return Braintree_Util::extractAttributeAsArray(
             $discounts,
             'discount'
         );
     }
 }
-class_alias('Braintree\DiscountGateway', 'Braintree_DiscountGateway');

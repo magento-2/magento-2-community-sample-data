@@ -2,7 +2,7 @@
 /**
  * @category    Magento
  * @package     Magento_Code
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Api\Code\Generator;
@@ -22,9 +22,8 @@ class SearchResults extends EntityAbstract
 
     /**
      * Search result default class
-     * @deprecated
      */
-    const SEARCH_RESULT = '\\' . \Magento\Framework\Api\SearchResults::class;
+    const SEARCH_RESULT = '\\Magento\Framework\Api\SearchResults';
 
     /**
      * Retrieve class properties
@@ -78,7 +77,7 @@ class SearchResults extends EntityAbstract
     protected function _generateCode()
     {
         $this->_classGenerator->setName($this->_getResultClassName())
-            ->setExtendedClass('\\' . \Magento\Framework\Api\SearchResults::class)
+            ->setExtendedClass(self::SEARCH_RESULT)
             ->addMethods($this->_getClassMethods());
         return $this->_getGeneratedCode();
     }

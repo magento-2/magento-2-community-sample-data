@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Test\Unit\Model\Template;
 
 /**
- * Work with catalog(store, website) urls
- *
  * @covers \Magento\Cms\Model\Template\Filter
  */
-class FilterTest extends \PHPUnit\Framework\TestCase
+class FilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,15 +27,15 @@ class FilterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->filter = $objectManager->getObject(
-            \Magento\Cms\Model\Template\Filter::class,
+            'Magento\Cms\Model\Template\Filter',
             ['storeManager' => $this->storeManagerMock]
         );
         $this->storeManagerMock->expects($this->any())

@@ -1,11 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Category;
 
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
+use Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory as CategoryFlatCollectionFactory;
 use Magento\Framework\App\ObjectManager;
 
 /**
@@ -69,7 +70,7 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
      * Category collection factory
      *
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
-     * @deprecated 100.0.12
+     * @deprecated
      */
     protected $_categoryCollectionFactory;
 
@@ -81,12 +82,12 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
     protected $_categoryFactory;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory
+     * @var CategoryFlatCollectionFactory
      */
     private $categoryFlatCollectionFactory;
 
     /**
-     * Constructor
+     * Class constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Framework\Indexer\Table\StrategyInterface $tableStrategy
@@ -96,7 +97,6 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
      * @param \Magento\Catalog\Model\Config $catalogConfig
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param string $connectionName
-     * @param \Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory|null $categoryFlatCollectionFactory
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
@@ -106,16 +106,13 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Config $catalogConfig,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        $connectionName = null,
-        \Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory $categoryFlatCollectionFactory = null
+        $connectionName = null
     ) {
         $this->_categoryFactory = $categoryFactory;
         $this->_categoryCollectionFactory = $categoryCollectionFactory;
         $this->_storeManager = $storeManager;
         $this->_catalogConfig = $catalogConfig;
         $this->_eventManager = $eventManager;
-        $this->categoryFlatCollectionFactory = $categoryFlatCollectionFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory::class);
         parent::__construct($context, $tableStrategy, $connectionName);
     }
 
@@ -410,7 +407,7 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
             );
             $parentPath = $this->getConnection()->fetchOne($select);
 
-            $collection = $this->categoryFlatCollectionFactory
+            $collection = $this->getCategoryFlatCollectionFactory()
                 ->create()
                 ->addNameToResult()
                 ->addUrlRewriteToResult()
@@ -700,5 +697,20 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
         $bind = ['category_id' => (int)$category->getId()];
 
         return $this->getConnection()->fetchPairs($select, $bind);
+    }
+
+    /**
+     * Get instance of CategoryFlatCollectionFactory
+     *
+     * @return CategoryFlatCollectionFactory
+     */
+    private function getCategoryFlatCollectionFactory()
+    {
+        if (!$this->categoryFlatCollectionFactory instanceof CategoryFlatCollectionFactory) {
+            $this->categoryFlatCollectionFactory = ObjectManager::getInstance()
+                ->get(CategoryFlatCollectionFactory::class);
+        }
+
+        return $this->categoryFlatCollectionFactory;
     }
 }

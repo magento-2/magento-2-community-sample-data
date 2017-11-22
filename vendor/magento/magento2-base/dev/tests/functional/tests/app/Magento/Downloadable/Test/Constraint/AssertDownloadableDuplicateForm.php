@@ -1,12 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Downloadable\Test\Constraint;
 
 use Magento\Catalog\Test\Constraint\AssertProductDuplicateForm;
+use Magento\Catalog\Test\Page\Adminhtml\CatalogProductEdit;
+use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
+use Magento\Mtf\Fixture\FixtureInterface;
 
 /**
  * Class AssertDownloadableDuplicateForm
@@ -14,11 +17,26 @@ use Magento\Catalog\Test\Constraint\AssertProductDuplicateForm;
 class AssertDownloadableDuplicateForm extends AssertProductDuplicateForm
 {
     /**
-     * {@inheritdoc}
+     * Assert form data equals duplicate product downloadable data
+     *
+     * @param FixtureInterface $product
+     * @param CatalogProductIndex $productGrid
+     * @param CatalogProductEdit $productPage
+     * @return void
      */
-    protected function prepareFixtureData(array $data, array $sortFields = [])
-    {
-        return $this->prepareDownloadableArray(parent::prepareFixtureData($data));
+    public function processAssert(
+        FixtureInterface $product,
+        CatalogProductIndex $productGrid,
+        CatalogProductEdit $productPage
+    ) {
+        $filter = ['sku' => $product->getSku() . '-1'];
+        $productGrid->open()->getProductGrid()->searchAndOpen($filter);
+
+        $formData = $productPage->getProductForm()->getData($product);
+        $fixtureData = $this->convertDownloadableArray($this->prepareFixtureData($product->getData()));
+        $errors = $this->verifyData($fixtureData, $formData);
+
+        \PHPUnit_Framework_Assert::assertEmpty($errors, $errors);
     }
 
     /**
@@ -49,7 +67,7 @@ class AssertDownloadableDuplicateForm extends AssertProductDuplicateForm
      * @param array $fields
      * @return array
      */
-    protected function prepareDownloadableArray(array $fields)
+    protected function convertDownloadableArray(array $fields)
     {
         if (isset($fields['downloadable_links']['downloadable']['link'])) {
             $fields['downloadable_links']['downloadable']['link'] = $this->sortDownloadableArray(

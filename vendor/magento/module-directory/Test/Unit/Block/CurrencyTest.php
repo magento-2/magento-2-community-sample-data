@@ -1,11 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Directory\Test\Unit\Block;
 
-class CurrencyTest extends \PHPUnit\Framework\TestCase
+class CurrencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Block\Currency
@@ -15,51 +16,46 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $postDataHelperMock;
+    protected $postDataHelper;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $urlBuilderMock;
+    protected $urlBuilder;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->urlBuilderMock = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->urlBuilderMock->expects($this->any())->method('getUrl')->will($this->returnArgument(0));
+        $this->urlBuilder = $this->getMock(
+            '\Magento\Framework\UrlInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->urlBuilder->expects($this->any())->method('getUrl')->will($this->returnArgument(0));
 
-        /**
-         * @var \Magento\Framework\View\Element\Template\Context|\PHPUnit_Framework_MockObject_MockObject $contextMock
-         */
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $contextMock->expects($this->any())->method('getUrlBuilder')->will($this->returnValue($this->urlBuilderMock));
+        /** @var \Magento\Framework\View\Element\Template\Context $context */
+        $context = $this->getMock(
+            '\Magento\Framework\View\Element\Template\Context',
+            ['getUrlBuilder'],
+            [],
+            '',
+            false
+        );
+        $context->expects($this->any())->method('getUrlBuilder')->will($this->returnValue($this->urlBuilder));
 
-        $escaperMock = $this->getMockBuilder(\Magento\Framework\Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $escaperMock->method('escapeUrl')
-            ->willReturnCallback(
-                function ($string) {
-                    return 'escapeUrl' . $string;
-                }
-            );
-        $contextMock->expects($this->once())
-            ->method('getEscaper')
-            ->willReturn($escaperMock);
+        /** @var \Magento\Directory\Model\CurrencyFactory $currencyFactory */
+        $currencyFactory = $this->getMock('\Magento\Directory\Model\CurrencyFactory', [], [], '', false);
+        $this->postDataHelper = $this->getMock('Magento\Framework\Data\Helper\PostHelper', [], [], '', false);
 
-        /** @var \Magento\Directory\Model\CurrencyFactory $currencyFactoryMock */
-        $currencyFactoryMock = $this->createMock(\Magento\Directory\Model\CurrencyFactory::class);
-        $this->postDataHelperMock = $this->createMock(\Magento\Framework\Data\Helper\PostHelper::class);
-
-        /** @var \Magento\Framework\Locale\ResolverInterface $localeResolverMock */
-        $localeResolverMock = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
+        /** @var \Magento\Framework\Locale\ResolverInterface $localeResolver */
+        $localeResolver = $this->getMock('\Magento\Framework\Locale\ResolverInterface', [], [], '', false);
 
         $this->object = new \Magento\Directory\Block\Currency(
-            $contextMock,
-            $currencyFactoryMock,
-            $this->postDataHelperMock,
-            $localeResolverMock
+            $context,
+            $currencyFactory,
+            $this->postDataHelper,
+            $localeResolver
         );
     }
 
@@ -67,9 +63,9 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
     {
         $expectedResult = 'post_data';
         $expectedCurrencyCode = 'test';
-        $switchUrl = 'escapeUrldirectory/currency/switch';
+        $switchUrl = 'directory/currency/switch';
 
-        $this->postDataHelperMock->expects($this->once())
+        $this->postDataHelper->expects($this->once())
             ->method('getPostData')
             ->with($this->equalTo($switchUrl), $this->equalTo(['currency' => $expectedCurrencyCode]))
             ->will($this->returnValue($expectedResult));

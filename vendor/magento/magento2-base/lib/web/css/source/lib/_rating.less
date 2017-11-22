@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -18,7 +18,6 @@
     @_icon-color-active: @rating-icon__active__color
 ) {
     overflow: hidden;
-
     &:before {
         ._lib-rating-icon-defalt(
             @_icon-font,
@@ -34,10 +33,8 @@
         position: absolute;
         z-index: 1;
     }
-
     input[type="radio"] {
         .lib-visually-hidden();
-
         &:focus,
         &:checked {
             + label {
@@ -47,16 +44,13 @@
             }
         }
     }
-
     label {
         cursor: pointer;
         display: block;
         position: absolute;
-
         span {
             .lib-visually-hidden();
         }
-
         &:before {
             ._lib-rating-icon-defalt(
                 @_icon-font,
@@ -66,12 +60,10 @@
             );
             opacity: 0;
         }
-
         &:hover {
             &:before {
                 opacity: 1;
             }
-
             ~ label {
                 &:before {
                     opacity: 0;
@@ -79,7 +71,6 @@
             }
         }
     }
-
     ._lib-rating-iteration(
         @_icon-content,
         @_icon-count
@@ -100,7 +91,6 @@
     overflow: hidden;
     white-space: nowrap;
     ._lib-rating-label-hide(@_label-hide);
-
     .rating-result {
         .lib-css(width, (@_icon-font-size * @_icon-count) + ceil(@_icon-letter-spacing * (@_icon-count - 1)));
         display: inline-block;
@@ -126,7 +116,6 @@
         > span {
             display: block;
             overflow: hidden;
-
             &:before {
                 position: relative;
                 z-index: 2;
@@ -165,7 +154,6 @@
     .loopingClass (@_index) when (@_index > 0) {
         .rating-@{_index} {
             z-index: @_icon-count - (@_index - 2);
-
             &:before {
                .lib-rating-icons-content(@_index, @_icon-content);
             }
@@ -173,7 +161,6 @@
         //  Next iteration
         .loopingClass(@_index - 1);
     }
-
     .loopingClass (0) {}
     .loopingClass (@_icon-count);
 }

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ImportExport\Test\Unit\Model\Import\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ImportExport\Model\Import\Config\Converter
@@ -22,13 +22,13 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
      */
     protected $moduleManager;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->filePath = realpath(__DIR__) . '/_files/';
-        $this->moduleManager = $this->createPartialMock(\Magento\Framework\Module\Manager::class, ['isOutputEnabled']);
+        $this->moduleManager = $this->getMock('Magento\Framework\Module\Manager', ['isOutputEnabled'], [], '', false);
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\ImportExport\Model\Import\Config\Converter::class,
+            '\Magento\ImportExport\Model\Import\Config\Converter',
             [
                 'moduleManager' => $this->moduleManager
             ]

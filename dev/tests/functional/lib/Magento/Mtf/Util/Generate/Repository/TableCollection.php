@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -38,8 +38,8 @@ class TableCollection extends AbstractCollection
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
         array $fixture = []
     ) {
-        $this->setModel(\Magento\Framework\DataObject::class);
-        $this->setResourceModel(\Magento\Mtf\Util\Generate\Repository\RepositoryResource::class);
+        $this->setModel('Magento\Framework\DataObject');
+        $this->setResourceModel('Magento\Mtf\Util\Generate\Repository\RepositoryResource');
 
         $resource = $this->getResource();
         $resource->setFixture($fixture);

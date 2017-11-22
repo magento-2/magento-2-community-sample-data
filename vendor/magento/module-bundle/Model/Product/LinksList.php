@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\Product;
@@ -58,7 +58,7 @@ class LinksList
             $this->dataObjectHelper->populateWithArray(
                 $productLink,
                 $selection->getData(),
-                \Magento\Bundle\Api\Data\LinkInterface::class
+                '\Magento\Bundle\Api\Data\LinkInterface'
             );
             $productLink->setIsDefault($selection->getIsDefault())
                 ->setId($selection->getSelectionId())

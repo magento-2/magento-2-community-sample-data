@@ -1,9 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Locale;
+
+use Magento\Framework\Locale\Bundle\DataBundle;
 
 class Format implements \Magento\Framework\Locale\FormatInterface
 {
@@ -38,7 +40,7 @@ class Format implements \Magento\Framework\Locale\FormatInterface
     }
 
     /**
-     * Returns the first found number from a string
+     * Returns the first found number from an string
      * Parsing depends on given locale (grouping and decimal)
      *
      * Examples for input:
@@ -61,7 +63,7 @@ class Format implements \Magento\Framework\Locale\FormatInterface
         }
 
         if (!is_string($value)) {
-            return (float)$value;
+            return floatval($value);
         }
 
         //trim spaces and apostrophes
@@ -72,7 +74,8 @@ class Format implements \Magento\Framework\Locale\FormatInterface
 
         if ($separatorComa !== false && $separatorDot !== false) {
             if ($separatorComa > $separatorDot) {
-                $value = str_replace(['.', ','], ['', '.'], $value);
+                $value = str_replace('.', '', $value);
+                $value = str_replace(',', '.', $value);
             } else {
                 $value = str_replace(',', '', $value);
             }
@@ -80,15 +83,17 @@ class Format implements \Magento\Framework\Locale\FormatInterface
             $value = str_replace(',', '.', $value);
         }
 
-        return (float)$value;
+        return floatval($value);
     }
 
     /**
-     * Returns an array with price formatting info
+     * Functions returns array with price formatting info
      *
      * @param string $localeCode Locale code.
      * @param string $currencyCode Currency code.
      * @return array
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getPriceFormat($localeCode = null, $currencyCode = null)
     {
@@ -98,17 +103,19 @@ class Format implements \Magento\Framework\Locale\FormatInterface
         } else {
             $currency = $this->_scopeResolver->getScope()->getCurrentCurrency();
         }
-
-        $formatter = new \NumberFormatter($localeCode, \NumberFormatter::CURRENCY);
-        $format = $formatter->getPattern();
-        $decimalSymbol = $formatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
-        $groupSymbol = $formatter->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+        $localeData = (new DataBundle())->get($localeCode);
+        $format = $localeData['NumberElements']['latn']['patterns']['currencyFormat']
+            ?: explode(';', $localeData['NumberPatterns'][1])[0];
+        $decimalSymbol = $localeData['NumberElements']['latn']['symbols']['decimal']
+            ?: $localeData['NumberElements'][0];
+        $groupSymbol = $localeData['NumberElements']['latn']['symbols']['group']
+            ?: $localeData['NumberElements'][1];
 
         $pos = strpos($format, ';');
         if ($pos !== false) {
             $format = substr($format, 0, $pos);
         }
-        $format = preg_replace("/[^0\#\.,]/", '', $format);
+        $format = preg_replace("/[^0\#\.,]/", "", $format);
         $totalPrecision = 0;
         $decimalPoint = strpos($format, '.');
         if ($decimalPoint !== false) {

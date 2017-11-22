@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,13 +12,11 @@
 namespace Magento\Config\Block\System\Config;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Edit extends \Magento\Backend\Block\Widget
 {
-    const DEFAULT_SECTION_BLOCK = \Magento\Config\Block\System\Config\Form::class;
+    const DEFAULT_SECTION_BLOCK = 'Magento\Config\Block\System\Config\Form';
 
     /**
      * Form block class name
@@ -73,7 +71,7 @@ class Edit extends \Magento\Backend\Block\Widget
 
         $this->getToolbar()->addChild(
             'save_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'id' => 'save',
                 'label' => __('Save Config'),

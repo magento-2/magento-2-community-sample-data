@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Cms Controller Router
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Router implements \Magento\Framework\App\RouterInterface
 {
@@ -85,7 +87,7 @@ class Router implements \Magento\Framework\App\RouterInterface
      * Validate and Match Cms Page and modify request
      *
      * @param \Magento\Framework\App\RequestInterface $request
-     * @return \Magento\Framework\App\ActionInterface|null
+     * @return bool
      */
     public function match(\Magento\Framework\App\RequestInterface $request)
     {
@@ -101,7 +103,7 @@ class Router implements \Magento\Framework\App\RouterInterface
         if ($condition->getRedirectUrl()) {
             $this->_response->setRedirect($condition->getRedirectUrl());
             $request->setDispatched(true);
-            return $this->actionFactory->create(\Magento\Framework\App\Action\Redirect::class);
+            return $this->actionFactory->create('Magento\Framework\App\Action\Redirect');
         }
 
         if (!$condition->getContinue()) {
@@ -118,6 +120,6 @@ class Router implements \Magento\Framework\App\RouterInterface
         $request->setModuleName('cms')->setControllerName('page')->setActionName('view')->setParam('page_id', $pageId);
         $request->setAlias(\Magento\Framework\Url::REWRITE_REQUEST_PATH_ALIAS, $identifier);
 
-        return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
+        return $this->actionFactory->create('Magento\Framework\App\Action\Forward');
     }
 }

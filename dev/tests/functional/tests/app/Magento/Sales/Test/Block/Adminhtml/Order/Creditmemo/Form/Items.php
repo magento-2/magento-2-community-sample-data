@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,6 +9,7 @@ namespace Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form;
 use Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form\Items\Product;
 use Magento\Mtf\Block\Block;
 use Magento\Mtf\Client\Locator;
+use Magento\Mtf\Fixture\FixtureInterface;
 
 /**
  * Credit Memo Items block on Credit Memo new page.
@@ -32,14 +33,14 @@ class Items extends Block
     /**
      * Get item product block.
      *
-     * @param string $productSku
+     * @param FixtureInterface $product
      * @return Product
      */
-    public function getItemProductBlock($productSku)
+    public function getItemProductBlock(FixtureInterface $product)
     {
-        $selector = sprintf($this->productItems, $productSku);
+        $selector = sprintf($this->productItems, $product->getSku());
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form\Items\Product::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form\Items\Product',
             ['element' => $this->_rootElement->find($selector, Locator::SELECTOR_XPATH)]
         );
     }

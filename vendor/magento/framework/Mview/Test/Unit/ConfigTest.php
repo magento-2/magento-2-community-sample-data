@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ namespace Magento\Framework\Mview\Test\Unit;
 
 use \Magento\Framework\Mview\Config;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Mview\Config
@@ -24,7 +24,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->dataMock = $this->createMock(\Magento\Framework\Mview\Config\Data::class);
+        $this->dataMock = $this->getMock(
+            'Magento\Framework\Mview\Config\Data', [], [], '', false
+        );
         $this->model = new Config(
             $this->dataMock
         );

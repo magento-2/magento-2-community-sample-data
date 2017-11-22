@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,9 @@ namespace Magento\Downloadable\Api;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
+use Magento\Bundle\Api\Data\LinkInterface;
 
 /**
  * Class ProductRepositoryTest for testing ProductRepository interface with Downloadable Product
@@ -222,12 +224,15 @@ class ProductRepositoryTest extends WebapiAbstract
             'price' => 5.0,
             'number_of_downloads' => 999,
             'link_type' => 'file',
-            'sample_type' => 'file'
+            'sample_type' => 'file',
+            'link_file' =>  'http://www.example.com/invalid', //this field will be overridden
+            'sample_file' => 'http://www.example.com/invalid', //this field will be overridden
         ];
         $linkData = $this->getLinkData();
 
         $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"] =
             [$updatedLink1Data, $linkData['link1'], $linkData['link2']];
+        unset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"]);
 
         $response = $this->saveProduct($response);
         $this->assertTrue(
@@ -330,6 +335,7 @@ class ProductRepositoryTest extends WebapiAbstract
 
         $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"] =
             [$updatedLink1Data, $updatedLink2Data];
+        unset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"]);
 
         $response = $this->saveProduct($response);
         $this->assertTrue(
@@ -407,6 +413,7 @@ class ProductRepositoryTest extends WebapiAbstract
         ];
         $sampleData = $this->getSampleData();
 
+        unset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"]);
         $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"] =
             [$updatedSample1Data, $sampleData['sample1'], $sampleData['sample2']];
 
@@ -474,6 +481,7 @@ class ProductRepositoryTest extends WebapiAbstract
             'sample_type' => 'file',
         ];
 
+        unset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"]);
         $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"] =
             [$updatedSample1Data, $updatedSamp2e1Data];
 

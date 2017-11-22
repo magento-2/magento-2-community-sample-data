@@ -1,37 +1,58 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Test\Unit\Model\Order;
 
-class TrackTest extends \PHPUnit\Framework\TestCase
+class TrackTest extends \PHPUnit_Framework_TestCase
 {
     public function testLookup()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $carrier = $this->createPartialMock(
-            \Magento\OfflineShipping\Model\Carrier\Freeshipping::class,
-            ['setStore', 'getTrackingInfo']
+        $carrier = $this->getMock(
+            'Magento\OfflineShipping\Model\Carrier\Freeshipping',
+            ['setStore', 'getTrackingInfo'],
+            [],
+            '',
+            false
         );
         $carrier->expects($this->once())->method('setStore')->with('');
         $carrier->expects($this->once())->method('getTrackingInfo')->will($this->returnValue('trackingInfo'));
 
-        $carrierFactory = $this->createPartialMock(\Magento\Shipping\Model\CarrierFactory::class, ['create']);
+        $carrierFactory = $this->getMock(
+            '\Magento\Shipping\Model\CarrierFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
         $carrierFactory->expects($this->once())->method('create')->will($this->returnValue($carrier));
 
-        $shipment = $this->createMock(\Magento\OfflineShipping\Model\Carrier\Freeshipping::class);
+        $shipment = $this->getMock(
+            'Magento\OfflineShipping\Model\Carrier\Freeshipping',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $shipmentRepository = $this->createPartialMock(\Magento\Sales\Model\Order\ShipmentRepository::class, ['get']);
+        $shipmentRepository = $this->getMock(
+            'Magento\Sales\Model\Order\ShipmentRepository',
+            ['get'],
+            [],
+            '',
+            false
+        );
         $shipmentRepository->expects($this->any())->method('get')->willReturn($shipment);
 
         /** @var \Magento\Shipping\Model\Order\Track $model */
         $model = $helper->getObject(
-            \Magento\Shipping\Model\Order\Track::class,
+            'Magento\Shipping\Model\Order\Track',
             ['carrierFactory' => $carrierFactory, 'shipmentRepository' => $shipmentRepository]
         );
-        $model->setParentId(1);
+
         $this->assertEquals('trackingInfo', $model->getNumberDetail());
     }
 }

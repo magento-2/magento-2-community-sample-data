@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order\Creditmemo;
@@ -12,9 +12,7 @@ use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 class Save extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_creditmemo';
 
@@ -100,9 +98,8 @@ class Save extends \Magento\Backend\App\Action
                     }
                 }
                 $creditmemoManagement = $this->_objectManager->create(
-                    \Magento\Sales\Api\CreditmemoManagementInterface::class
+                    'Magento\Sales\Api\CreditmemoManagementInterface'
                 );
-                $creditmemo->getOrder()->setCustomerNoteNotify(!empty($data['send_email']));
                 $creditmemoManagement->refund($creditmemo, (bool)$data['do_offline']);
 
                 if (!empty($data['send_email'])) {
@@ -122,7 +119,7 @@ class Save extends \Magento\Backend\App\Action
             $this->messageManager->addError($e->getMessage());
             $this->_getSession()->setFormData($data);
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $this->messageManager->addError(__('We can\'t save the credit memo right now.'));
         }
         $resultRedirect->setPath('sales/*/new', ['_current' => true]);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Setup\Test\Unit\Console\Command;
 use Magento\Setup\Console\Command\MaintenanceStatusCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class MaintenanceStatusCommandTest extends \PHPUnit\Framework\TestCase
+class MaintenanceStatusCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\MaintenanceMode|\PHPUnit_Framework_MockObject_MockObject
@@ -23,7 +23,7 @@ class MaintenanceStatusCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
+        $this->maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
         $this->command = new MaintenanceStatusCommand($this->maintenanceMode);
     }
 
@@ -39,6 +39,7 @@ class MaintenanceStatusCommandTest extends \PHPUnit\Framework\TestCase
         $tester = new CommandTester($this->command);
         $tester->execute([]);
         $this->assertEquals($expectedMessage, $tester->getDisplay());
+
     }
 
     /**

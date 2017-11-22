@@ -1,16 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Plugin\Indexer\Product\Save;
 
 use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
-use Magento\Catalog\Model\Product;
 
-/**
- * Plugin for Magento\Catalog\Model\Product
- */
 class ApplyRulesAfterReindex
 {
     /**
@@ -29,11 +25,16 @@ class ApplyRulesAfterReindex
     /**
      * Apply catalog rules after product resource model save
      *
-     * @param Product $subject
-     * @return void
+     * @param \Magento\Catalog\Model\Product $subject
+     * @param callable $proceed
+     * @return \Magento\Catalog\Model\Product
      */
-    public function afterReindex(Product $subject)
-    {
+    public function aroundReindex(
+        \Magento\Catalog\Model\Product $subject,
+        callable $proceed
+    ) {
+        $proceed();
         $this->productRuleProcessor->reindexRow($subject->getId());
+        return;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CheckoutAgreements\Block\Adminhtml\Agreement\Edit;
@@ -121,7 +121,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $field = $fieldset->addField(
-                'stores',
+                'store_id',
                 'multiselect',
                 [
                     'name' => 'stores[]',
@@ -132,12 +132,12 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 ]
             );
             $renderer = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class
+                'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element'
             );
             $field->setRenderer($renderer);
         } else {
             $fieldset->addField(
-                'stores',
+                'store_id',
                 'hidden',
                 ['name' => 'stores[]', 'value' => $this->_storeManager->getStore(true)->getId()]
             );

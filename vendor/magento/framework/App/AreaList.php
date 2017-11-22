@@ -2,7 +2,7 @@
 /**
  * Application area list
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App;
@@ -124,7 +124,7 @@ class AreaList
     {
         if (!isset($this->_areaInstances[$code])) {
             $this->_areaInstances[$code] = $this->objectManager->create(
-                \Magento\Framework\App\AreaInterface::class,
+                'Magento\Framework\App\AreaInterface',
                 ['areaCode' => $code]
             );
         }

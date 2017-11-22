@@ -1,20 +1,24 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Weee\Observer;
 
-use Magento\Customer\Model\Address;
+use Magento\Customer\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Module\Manager;
 use Magento\PageCache\Model\Config;
-use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
 
 class AfterAddressSave implements ObserverInterface
 {
+    /**
+     * @var Session
+     */
+    protected $customerSession;
+
     /**
      * @var Data
      */
@@ -35,28 +39,21 @@ class AfterAddressSave implements ObserverInterface
     private $cacheConfig;
 
     /**
-     * Manager to save data in customer session.
-     *
-     * @var TaxAddressManagerInterface
-     */
-    private $addressManager;
-
-    /**
+     * @param Session $customerSession
      * @param Data $weeeHelper
      * @param Manager $moduleManager
      * @param Config $cacheConfig
-     * @param TaxAddressManagerInterface $addressManager
      */
     public function __construct(
+        Session $customerSession,
         Data $weeeHelper,
         Manager $moduleManager,
-        Config $cacheConfig,
-        TaxAddressManagerInterface $addressManager
+        Config $cacheConfig
     ) {
+        $this->customerSession = $customerSession;
         $this->weeeHelper = $weeeHelper;
         $this->moduleManager = $moduleManager;
         $this->cacheConfig = $cacheConfig;
-        $this->addressManager = $addressManager;
     }
 
     /**
@@ -66,13 +63,31 @@ class AfterAddressSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->moduleManager->isEnabled('Magento_PageCache')
-            && $this->cacheConfig->isEnabled()
-            && $this->weeeHelper->isEnabled()
-        ) {
+        if ($this->moduleManager->isEnabled('Magento_PageCache') && $this->cacheConfig->isEnabled() &&
+            $this->weeeHelper->isEnabled()) {
             /** @var $customerAddress Address */
             $address = $observer->getCustomerAddress();
-            $this->addressManager->setDefaultAddressAfterSave($address);
+
+            // Check if the address is either the default billing, shipping, or both
+            if ($address->getIsPrimaryBilling() || $address->getIsDefaultBilling()) {
+                $this->customerSession->setDefaultTaxBillingAddress(
+                    [
+                        'country_id' => $address->getCountryId(),
+                        'region_id'  => $address->getRegion() ? $address->getRegionId() : null,
+                        'postcode'   => $address->getPostcode(),
+                    ]
+                );
+            }
+
+            if ($address->getIsPrimaryShipping() || $address->getIsDefaultShipping()) {
+                $this->customerSession->setDefaultTaxShippingAddress(
+                    [
+                        'country_id' => $address->getCountryId(),
+                        'region_id'  => $address->getRegion() ? $address->getRegionId() : null,
+                        'postcode'   => $address->getPostcode(),
+                    ]
+                );
+            }
         }
     }
 }

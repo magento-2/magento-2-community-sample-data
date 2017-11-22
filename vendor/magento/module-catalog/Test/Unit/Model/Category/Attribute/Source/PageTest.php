@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Category\Attribute\Source;
@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Category\Attribute\Source;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -31,7 +31,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Category\Attribute\Source\Page::class,
+            '\Magento\Catalog\Model\Category\Attribute\Source\Page',
             [
                 'blockCollectionFactory' => $this->getMockedBlockCollectionFactory()
             ]
@@ -45,7 +45,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
     {
         $mockedCollection = $this->getMockedCollection();
 
-        $mockBuilder = $this->getMockBuilder(\Magento\Cms\Model\ResourceModel\Block\CollectionFactory::class);
+        $mockBuilder = $this->getMockBuilder('Magento\Cms\Model\ResourceModel\Block\CollectionFactory');
         $mock = $mockBuilder->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -62,7 +62,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedCollection()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Framework\Data\Collection::class);
+        $mockBuilder = $this->getMockBuilder('\Magento\Framework\Data\Collection');
         $mock = $mockBuilder->disableOriginalConstructor()
             ->getMock();
 

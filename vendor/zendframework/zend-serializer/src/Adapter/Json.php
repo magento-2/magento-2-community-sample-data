@@ -45,7 +45,6 @@ class Json extends AbstractAdapter
         if ($this->options === null) {
             $this->options = new JsonOptions();
         }
-
         return $this->options;
     }
 
@@ -61,10 +60,10 @@ class Json extends AbstractAdapter
     {
         $options    = $this->getOptions();
         $cycleCheck = $options->getCycleCheck();
-        $opts = [
+        $opts = array(
             'enableJsonExprFinder' => $options->getEnableJsonExprFinder(),
             'objectDecodeType'     => $options->getObjectDecodeType(),
-        ];
+        );
 
         try {
             return ZendJson::encode($value, $cycleCheck, $opts);

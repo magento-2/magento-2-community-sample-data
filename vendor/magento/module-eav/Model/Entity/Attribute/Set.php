@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /**
  * Eav attribute set model
  *
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set getResource()
  * @method int getEntityTypeId()
  * @method \Magento\Eav\Model\Entity\Attribute\Set setEntityTypeId(int $value)
  * @method string getAttributeSetName()
@@ -18,9 +19,9 @@
  */
 namespace Magento\Eav\Model\Entity\Attribute;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\Api\AttributeValueFactory;
-use Magento\Framework\Exception\LocalizedException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -37,7 +38,11 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
     const KEY_ENTITY_TYPE_ID = 'entity_type_id';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Resource instance
+     *
+     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set
+     */
     protected $_resource;
 
     /**
@@ -118,7 +123,7 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Set::class);
+        $this->_init('Magento\Eav\Model\ResourceModel\Entity\Attribute\Set');
     }
 
     /**
@@ -168,7 +173,6 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @param array $data
      * @return $this
-     * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -216,17 +220,10 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
 
         if ($data['not_attributes']) {
             $modelAttributeArray = [];
-            $data['not_attributes'] = array_filter($data['not_attributes']);
-            foreach ($data['not_attributes'] as $entityAttributeId) {
-                $entityAttribute = $this->_resourceAttribute->getEntityAttribute($entityAttributeId);
-                if (!$entityAttribute) {
-                    throw new LocalizedException(__('Entity attribute with id "%1" not found', $entityAttributeId));
-                }
-                $modelAttribute = $this->_eavConfig->getAttribute(
-                    $this->getEntityTypeId(),
-                    $entityAttribute['attribute_id']
-                );
-                $modelAttribute->setEntityAttributeId($entityAttributeId);
+            foreach ($data['not_attributes'] as $attributeId) {
+                $modelAttribute = $this->_attributeFactory->create();
+
+                $modelAttribute->setEntityAttributeId($attributeId);
                 $modelAttributeArray[] = $modelAttribute;
             }
             $this->setRemoveAttributes($modelAttributeArray);
@@ -368,7 +365,6 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
      * Get resource instance
      *
      * @return \Magento\Framework\Model\ResourceModel\Db\AbstractDb
-     * @deprecated 100.2.0 because resource models should be used directly
      */
     protected function _getResource()
     {
@@ -483,6 +479,5 @@ class Set extends \Magento\Framework\Model\AbstractExtensibleModel implements
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

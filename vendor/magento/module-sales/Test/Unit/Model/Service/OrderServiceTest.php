@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Service;
 
 /**
  * Class OrderUnHoldTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class OrderServiceTest extends \PHPUnit\Framework\TestCase
+class OrderServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Service\OrderService
@@ -80,62 +78,62 @@ class OrderServiceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->orderRepositoryMock = $this->getMockBuilder(
-            \Magento\Sales\Api\OrderRepositoryInterface::class
+            'Magento\Sales\Api\OrderRepositoryInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderStatusHistoryRepositoryMock = $this->getMockBuilder(
-            \Magento\Sales\Api\OrderStatusHistoryRepositoryInterface::class
+            'Magento\Sales\Api\OrderStatusHistoryRepositoryInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->searchCriteriaBuilderMock = $this->getMockBuilder(
-            \Magento\Framework\Api\SearchCriteriaBuilder::class
+            'Magento\Framework\Api\SearchCriteriaBuilder'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->searchCriteriaMock = $this->getMockBuilder(
-            \Magento\Framework\Api\SearchCriteria::class
+            'Magento\Framework\Api\SearchCriteria'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->filterBuilderMock = $this->getMockBuilder(
-            \Magento\Framework\Api\FilterBuilder::class
+            'Magento\Framework\Api\FilterBuilder'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->filterMock = $this->getMockBuilder(
-            \Magento\Framework\Api\Filter::class
+            'Magento\Framework\Api\Filter'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderNotifierMock = $this->getMockBuilder(
-            \Magento\Sales\Model\OrderNotifier::class
+            'Magento\Sales\Model\OrderNotifier'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderMock = $this->getMockBuilder(
-            \Magento\Sales\Model\Order::class
+            'Magento\Sales\Model\Order'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderStatusHistoryMock = $this->getMockBuilder(
-            \Magento\Sales\Model\Order\Status\History::class
+            'Magento\Sales\Model\Order\Status\History'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderSearchResultMock = $this->getMockBuilder(
-            \Magento\Sales\Api\Data\OrderStatusHistorySearchResultInterface::class
+            'Magento\Sales\Api\Data\OrderStatusHistorySearchResultInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventManagerMock = $this->getMockBuilder(
-            \Magento\Framework\Event\ManagerInterface::class
+            'Magento\Framework\Event\ManagerInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderCommentSender = $this->getMockBuilder(
-            \Magento\Sales\Model\Order\Email\Sender\OrderCommentSender::class
+            'Magento\Sales\Model\Order\Email\Sender\OrderCommentSender'
         )
             ->disableOriginalConstructor()
             ->getMock();

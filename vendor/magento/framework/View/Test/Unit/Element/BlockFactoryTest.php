@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Element;
 
-class BlockFactoryTest extends \PHPUnit\Framework\TestCase
+class BlockFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\BlockFactory
@@ -17,24 +17,23 @@ class BlockFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManagerMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
-        $this->blockFactory = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\BlockFactory::class,
-            ['objectManager' => $this->objectManagerMock]
-        );
+        $this->blockFactory = $objectManagerHelper->getObject('Magento\Framework\View\Element\BlockFactory', [
+            'objectManager' => $this->objectManagerMock
+        ]);
     }
 
     public function testCreateBlock()
     {
-        $className = \Magento\Framework\View\Element\Template::class;
+        $className = 'Magento\Framework\View\Element\Template';
         $argumentsResult = ['arg1', 'arg2'];
 
-        $templateMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template::class)
+        $templateMock = $this->getMockBuilder('Magento\Framework\View\Element\Template')
             ->disableOriginalConstructor()->getMock();
 
         $this->objectManagerMock->expects($this->once())
@@ -43,7 +42,7 @@ class BlockFactoryTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($templateMock));
 
         $this->assertInstanceOf(
-            \Magento\Framework\View\Element\BlockInterface::class,
+            'Magento\Framework\View\Element\BlockInterface',
             $this->blockFactory->createBlock($className, $argumentsResult)
         );
     }

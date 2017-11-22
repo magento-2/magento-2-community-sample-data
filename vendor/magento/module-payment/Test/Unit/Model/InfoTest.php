@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Payment\Test\Unit\Model;
 use Magento\Payment\Model\Method;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class InfoTest extends \PHPUnit\Framework\TestCase
+class InfoTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Payment\Model\InfoInterface */
     protected $info;
@@ -34,16 +34,22 @@ class InfoTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->paymentHelperMock = $this->createPartialMock(\Magento\Payment\Helper\Data::class, ['getMethodInstance']);
-        $this->encryptorInterfaceMock = $this->createMock(\Magento\Framework\Encryption\EncryptorInterface::class);
-        $this->methodInstanceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $this->contextMock = $this->getMock('Magento\Framework\Model\Context', [], [], '', false);
+        $this->registryMock = $this->getMock('Magento\Framework\Registry');
+        $this->paymentHelperMock = $this->getMock('Magento\Payment\Helper\Data', ['getMethodInstance'], [], '', false);
+        $this->encryptorInterfaceMock = $this->getMock(
+            'Magento\Framework\Encryption\EncryptorInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->methodInstanceMock = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->getMockForAbstractClass();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->info = $this->objectManagerHelper->getObject(
-            \Magento\Payment\Model\Info::class,
+            'Magento\Payment\Model\Info',
             [
                 'context' => $this->contextMock,
                 'registry' => $this->registryMock,
@@ -132,7 +138,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $this->info->setData('method', false);
         $this->info->getMethodInstance();
     }
-
+    
     public function testGetMethodInstanceRequestedMethod()
     {
         $code = 'real_method';

@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Total\Config;
-
-use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Configuration class for totals
@@ -43,18 +41,16 @@ class Base extends \Magento\Sales\Model\Config\Ordered
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Sales\Model\Config $salesConfig
      * @param \Magento\Sales\Model\Order\TotalFactory $orderTotalFactory
-     * @param \Magento\Framework\Simplexml\Element|mixed $sourceData
-     * @param SerializerInterface $serializer
+     * @param mixed $sourceData
      */
     public function __construct(
         \Magento\Framework\App\Cache\Type\Config $configCacheType,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Sales\Model\Config $salesConfig,
         \Magento\Sales\Model\Order\TotalFactory $orderTotalFactory,
-        $sourceData = null,
-        SerializerInterface $serializer = null
+        $sourceData = null
     ) {
-        parent::__construct($configCacheType, $logger, $salesConfig, $sourceData, $serializer);
+        parent::__construct($configCacheType, $logger, $salesConfig, $sourceData);
         $this->_orderTotalFactory = $orderTotalFactory;
     }
 

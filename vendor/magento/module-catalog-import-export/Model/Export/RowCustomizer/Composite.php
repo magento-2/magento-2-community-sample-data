@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Export\RowCustomizer;
@@ -8,12 +8,6 @@ namespace Magento\CatalogImportExport\Model\Export\RowCustomizer;
 use Magento\CatalogImportExport\Model\Export\RowCustomizerInterface;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class Composite
- *
- * @api
- * @since 100.0.2
- */
 class Composite implements RowCustomizerInterface
 {
     /**

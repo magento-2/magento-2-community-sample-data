@@ -1,17 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Backup object factory.
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * Backup object factory.
- */
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Backup;
 
-/**
- * @api
- */
 class Factory
 {
     /**

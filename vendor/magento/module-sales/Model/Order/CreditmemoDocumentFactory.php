@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order;
 
 /**
  * Class CreditmemoDocumentFactory
- *
- * @api
- * @since 100.1.3
  */
 class CreditmemoDocumentFactory
 {
@@ -24,11 +21,6 @@ class CreditmemoDocumentFactory
     private $commentFactory;
 
     /**
-     * @var \Magento\Framework\EntityManager\HydratorPool
-     */
-    private $hydratorPool;
-
-    /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
     private $orderRepository;
@@ -38,18 +30,15 @@ class CreditmemoDocumentFactory
      *
      * @param \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory
      * @param \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory $commentFactory
-     * @param \Magento\Framework\EntityManager\HydratorPool $hydratorPool
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
         \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory $commentFactory,
-        \Magento\Framework\EntityManager\HydratorPool $hydratorPool,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
     ) {
         $this->creditmemoFactory = $creditmemoFactory;
         $this->commentFactory = $commentFactory;
-        $this->hydratorPool = $hydratorPool;
         $this->orderRepository = $orderRepository;
     }
 
@@ -69,10 +58,15 @@ class CreditmemoDocumentFactory
             $data['qtys'][$item->getOrderItemId()] = $item->getQty();
         }
         if ($arguments) {
-            $hydrator = $this->hydratorPool->getHydrator(
-                \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface::class
+
+            $data = array_merge(
+                [
+                    'shipping_amount' => $arguments->getShippingAmount(),
+                    'adjustment_positive' => $arguments->getAdjustmentPositive(),
+                    'adjustment_negative' => $arguments->getAdjustmentNegative(),
+                ],
+                $data
             );
-            $data = array_merge($hydrator->extract($arguments), $data);
         }
         return $data;
     }
@@ -90,9 +84,10 @@ class CreditmemoDocumentFactory
         \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface $comment,
         $appendComment = false
     ) {
-        $commentData = $this->hydratorPool->getHydrator(
-            \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface::class
-        )->extract($comment);
+        $commentData = [
+            'comment' => $comment->getComment(),
+            'is_visible_on_front' => $comment->getIsVisibleOnFront()
+        ];
         $comment = $this->commentFactory->create(['data' => $commentData]);
         $comment->setParentId($creditmemo->getEntityId())
             ->setStoreId($creditmemo->getStoreId())
@@ -100,6 +95,7 @@ class CreditmemoDocumentFactory
             ->setIsCustomerNotified($appendComment);
         $creditmemo->setComments([$comment]);
         return $creditmemo;
+
     }
 
     /**
@@ -110,7 +106,6 @@ class CreditmemoDocumentFactory
      * @param bool|null $appendComment
      * @param \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface|null $arguments
      * @return \Magento\Sales\Api\Data\CreditmemoInterface
-     * @since 100.1.3
      */
     public function createFromOrder(
         \Magento\Sales\Api\Data\OrderInterface $order,
@@ -134,7 +129,6 @@ class CreditmemoDocumentFactory
      * @param bool|null $appendComment
      * @param \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface|null $arguments
      * @return \Magento\Sales\Api\Data\CreditmemoInterface
-     * @since 100.1.3
      */
     public function createFromInvoice(
         \Magento\Sales\Api\Data\InvoiceInterface $invoice,

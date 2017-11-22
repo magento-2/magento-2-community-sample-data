@@ -1,14 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Eav\Model\Entity\Attribute;
 
 use Magento\Framework\Api\AttributeValueFactory;
 
 /**
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
+ *
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group _getResource()
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group getResource()
  * @method int getSortOrder()
  * @method \Magento\Eav\Model\Entity\Attribute\Group setSortOrder(int $value)
  * @method int getDefaultId()
@@ -17,7 +21,6 @@ use Magento\Framework\Api\AttributeValueFactory;
  * @method \Magento\Eav\Model\Entity\Attribute\Group setAttributeGroupCode(string $value)
  * @method string getTabGroupCode()
  * @method \Magento\Eav\Model\Entity\Attribute\Group setTabGroupCode(string $value)
- * @since 100.0.2
  */
 class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\Eav\Api\Data\AttributeGroupInterface
@@ -67,7 +70,7 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Group::class);
+        $this->_init('Magento\Eav\Model\ResourceModel\Entity\Attribute\Group');
     }
 
     /**
@@ -144,9 +147,11 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     {
         return $this->getData(self::ATTRIBUTE_SET_ID);
     }
-
     /**
-     * {@inheritdoc}
+     * Set id
+     *
+     * @param string $attributeGroupId
+     * @return $this
      */
     public function setAttributeGroupId($attributeGroupId)
     {
@@ -154,7 +159,10 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * Set name
+     *
+     * @param string $attributeGroupName
+     * @return $this
      */
     public function setAttributeGroupName($attributeGroupName)
     {
@@ -162,7 +170,10 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * Set attribute set id
+     *
+     * @param int $attributeSetId
+     * @return $this
      */
     public function setAttributeSetId($attributeSetId)
     {
@@ -190,6 +201,5 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

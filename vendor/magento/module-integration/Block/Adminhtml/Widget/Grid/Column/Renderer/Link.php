@@ -2,7 +2,7 @@
 /**
  * Renders HTML anchor or nothing depending on isVisible().
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Block\Adminhtml\Widget\Grid\Column\Renderer;
@@ -12,9 +12,7 @@ use Magento\Framework\DataObject;
 
 class Link extends AbstractRenderer
 {
-    /**
-     * @var \Magento\Framework\DataObject
-     */
+    /** @var \Magento\Framework\DataObject */
     protected $_row;
 
     /**
@@ -120,7 +118,7 @@ class Link extends AbstractRenderer
             if ($value === null || $value == '') {
                 continue;
             }
-            $html[] = sprintf('%s="%s"', $key, $this->escapeHtmlAttr($value, false));
+            $html[] = sprintf('%s="%s"', $key, $this->escapeHtml($value));
         }
 
         return join(' ', $html);

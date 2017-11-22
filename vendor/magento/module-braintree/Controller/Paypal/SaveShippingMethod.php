@@ -1,83 +1,48 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Braintree\Controller\Paypal;
+namespace Magento\Braintree\Controller\PayPal;
 
-use Magento\Checkout\Model\Session;
-use Magento\Framework\View\Result\Page;
-use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Model\Paypal\Helper\ShippingMethodUpdater;
 
-/**
- * Class SaveShippingMethod
- */
-class SaveShippingMethod extends AbstractAction
+class SaveShippingMethod extends \Magento\Braintree\Controller\PayPal
 {
     /**
-     * @var ShippingMethodUpdater
-     */
-    private $shippingMethodUpdater;
-
-    /**
-     * Constructor
+     * Update shipping method (combined action for ajax and regular request)
      *
-     * @param Context $context
-     * @param Config $config
-     * @param Session $checkoutSession
-     * @param ShippingMethodUpdater $shippingMethodUpdater
-     */
-    public function __construct(
-        Context $context,
-        Config $config,
-        Session $checkoutSession,
-        ShippingMethodUpdater $shippingMethodUpdater
-    ) {
-        parent::__construct($context, $config, $checkoutSession);
-        $this->shippingMethodUpdater = $shippingMethodUpdater;
-    }
-
-    /**
-     * @inheritdoc
+     * @return void
      */
     public function execute()
     {
-        $isAjax = $this->getRequest()->getParam('isAjax');
-        $quote = $this->checkoutSession->getQuote();
-
         try {
-            $this->validateQuote($quote);
-
-            $this->shippingMethodUpdater->execute(
-                $this->getRequest()->getParam('shipping_method'),
-                $quote
-            );
-
+            $isAjax = $this->getRequest()->getParam('isAjax');
+            $this->initCheckout();
+            $this->getCheckout()->updateShippingMethod($this->getRequest()->getParam('shipping_method'));
             if ($isAjax) {
-                /** @var Page $response */
+                /** @var \Magento\Framework\View\Result\Page $response */
                 $response = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
                 $layout = $response->addHandle('paypal_express_review_details')->getLayout();
 
                 $response = $layout->getBlock('page.block')->toHtml();
                 $this->getResponse()->setBody($response);
-
                 return;
             }
-        } catch (\Exception $e) {
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
+        } catch (\Exception $e) {
+            $this->messageManager->addExceptionMessage($e, __('We can\'t update shipping method.'));
         }
-
-        $path = $this->_url->getUrl('*/*/review', ['_secure' => true]);
-
         if ($isAjax) {
-            $this->getResponse()->setBody(sprintf('<script>window.location.href = "%s";</script>', $path));
-
-            return;
+            $this->getResponse()->setBody(
+                '<script>window.location.href = '
+                . $this->_url->getUrl('*/*/review', ['_secure' => true])
+                . ';</script>'
+            );
+        } else {
+            $this->_redirect('*/*/review', ['_secure' => true]);
         }
-
-        $this->_redirect($path);
     }
 }

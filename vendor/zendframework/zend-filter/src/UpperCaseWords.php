@@ -14,9 +14,9 @@ final class UpperCaseWords extends AbstractUnicode
     /**
      * {@inheritDoc}
      */
-    protected $options = [
+    protected $options = array(
         'encoding' => null
-    ];
+    );
 
     /**
      * Constructor

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Model\Plugin;
@@ -10,11 +10,18 @@ use Magento\Integration\Api\AuthorizationServiceInterface as IntegrationAuthoriz
 use Magento\Integration\Model\IntegrationConfig;
 
 /**
- * Plugin for @see \Magento\Integration\Model\ConfigBasedIntegrationManager model to manage resource permissions of
+ * Plugin for ConfigBasedIntegrationManager model to manage resource permissions of
  * integration installed from config file
  */
 class Manager
 {
+    /**
+     * API Integration config
+     *
+     * @var IntegrationConfig
+     */
+    protected $_integrationConfig;
+
     /**
      * Integration service
      *
@@ -28,27 +35,20 @@ class Manager
     protected $integrationAuthorizationService;
 
     /**
-     * API Integration config
-     *
-     * @var IntegrationConfig
-     */
-    protected $integrationConfig;
-
-    /**
      * Construct Setup plugin instance
      *
+     * @param IntegrationConfig $integrationConfig
      * @param IntegrationAuthorizationInterface $integrationAuthorizationService
      * @param \Magento\Integration\Api\IntegrationServiceInterface $integrationService
-     * @param IntegrationConfig $integrationConfig
      */
     public function __construct(
+        IntegrationConfig $integrationConfig,
         IntegrationAuthorizationInterface $integrationAuthorizationService,
-        \Magento\Integration\Api\IntegrationServiceInterface $integrationService,
-        IntegrationConfig $integrationConfig
+        \Magento\Integration\Api\IntegrationServiceInterface $integrationService
     ) {
+        $this->_integrationConfig = $integrationConfig;
         $this->integrationAuthorizationService = $integrationAuthorizationService;
         $this->_integrationService = $integrationService;
-        $this->integrationConfig = $integrationConfig;
     }
 
     /**
@@ -59,7 +59,6 @@ class Manager
      *
      * @return string[]
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @deprecated 100.1.0
      */
     public function afterProcessIntegrationConfig(
         ConfigBasedIntegrationManager $subject,
@@ -69,47 +68,18 @@ class Manager
             return [];
         }
         /** @var array $integrations */
-        $integrations = $this->integrationConfig->getIntegrations();
+        $integrations = $this->_integrationConfig->getIntegrations();
         foreach ($integrationNames as $name) {
             if (isset($integrations[$name])) {
                 $integration = $this->_integrationService->findByName($name);
                 if ($integration->getId()) {
                     $this->integrationAuthorizationService->grantPermissions(
                         $integration->getId(),
-                        $integrations[$name]['resource']
+                        $integrations[$name]['resources']
                     );
                 }
             }
         }
         return $integrationNames;
-    }
-
-    /**
-     * Process integration resource permissions after the integration is created
-     *
-     * @param ConfigBasedIntegrationManager $subject
-     * @param array $integrations integrations passed as array from the invocation chain
-     *
-     * @return array
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function afterProcessConfigBasedIntegrations(
-        ConfigBasedIntegrationManager $subject,
-        $integrations
-    ) {
-        if (empty($integrations)) {
-            return [];
-        }
-
-        foreach (array_keys($integrations) as $name) {
-            $integration = $this->_integrationService->findByName($name);
-            if ($integration->getId()) {
-                $this->integrationAuthorizationService->grantPermissions(
-                    $integration->getId(),
-                    $integrations[$name]['resource']
-                );
-            }
-        }
-        return $integrations;
     }
 }

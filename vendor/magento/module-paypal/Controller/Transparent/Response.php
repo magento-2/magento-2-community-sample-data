@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Controller\Transparent;
@@ -13,7 +13,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Block\Transparent\Iframe;
 use Magento\Paypal\Model\Payflow\Service\Response\Transaction;
 use Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator;
-use Magento\Paypal\Model\Payflow\Transparent;
 
 /**
  * Class Response
@@ -38,16 +37,6 @@ class Response extends \Magento\Framework\App\Action\Action
     private $responseValidator;
 
     /**
-     * @var LayoutFactory
-     */
-    private $resultLayoutFactory;
-
-    /**
-     * @var Transparent
-     */
-    private $transparent;
-
-    /**
      * Constructor
      *
      * @param Context $context
@@ -55,22 +44,19 @@ class Response extends \Magento\Framework\App\Action\Action
      * @param Transaction $transaction
      * @param ResponseValidator $responseValidator
      * @param LayoutFactory $resultLayoutFactory
-     * @param Transparent $transparent
      */
     public function __construct(
         Context $context,
         Registry $coreRegistry,
         Transaction $transaction,
         ResponseValidator $responseValidator,
-        LayoutFactory $resultLayoutFactory,
-        Transparent $transparent
+        LayoutFactory $resultLayoutFactory
     ) {
         parent::__construct($context);
         $this->coreRegistry = $coreRegistry;
         $this->transaction = $transaction;
         $this->responseValidator = $responseValidator;
         $this->resultLayoutFactory = $resultLayoutFactory;
-        $this->transparent = $transparent;
     }
 
     /**
@@ -81,7 +67,7 @@ class Response extends \Magento\Framework\App\Action\Action
         $parameters = [];
         try {
             $response = $this->transaction->getResponseObject($this->getRequest()->getPostValue());
-            $this->responseValidator->validate($response, $this->transparent);
+            $this->responseValidator->validate($response);
             $this->transaction->savePaymentInQuote($response);
         } catch (LocalizedException $exception) {
             $parameters['error'] = true;

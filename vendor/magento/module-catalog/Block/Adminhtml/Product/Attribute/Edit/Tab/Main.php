@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,7 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab;
 use Magento\Eav\Block\Adminhtml\Attribute\Edit\Main\AbstractMain;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class Main extends AbstractMain
 {
@@ -72,10 +70,10 @@ class Main extends AbstractMain
         }
         $this->_coreRegistry->register('attribute_type_hidden_fields', $_hiddenFields);
 
+        $this->_eventManager->dispatch('product_attribute_form_build_main_tab', ['form' => $form]);
+
         $frontendInputValues = array_merge($frontendInputElm->getValues(), $additionalTypes);
         $frontendInputElm->setValues($frontendInputValues);
-
-        $this->_eventManager->dispatch('product_attribute_form_build_main_tab', ['form' => $form]);
 
         return $this;
     }
@@ -87,6 +85,6 @@ class Main extends AbstractMain
      */
     protected function _getAdditionalElementTypes()
     {
-        return ['apply' => \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::class];
+        return ['apply' => 'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply'];
     }
 }

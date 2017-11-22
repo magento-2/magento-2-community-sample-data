@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class MinsaleqtyTest
  */
-class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
+class MinsaleqtyTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\CatalogInventory\Helper\Minsaleqty */
     protected $minsaleqty;
@@ -25,23 +25,20 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Framework\Math\Random|\PHPUnit_Framework_MockObject_MockObject */
     protected $randomMock;
 
-    /** @var \Magento\Framework\Serialize\Serializer\Json|\PHPUnit_Framework_MockObject_MockObject */
-    private $serializerMock;
-
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->randomMock = $this->createMock(\Magento\Framework\Math\Random::class);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->randomMock = $this->getMock('Magento\Framework\Math\Random');
         $this->randomMock->expects($this->any())
             ->method('getUniqueHash')
             ->with($this->equalTo('_'))
             ->will($this->returnValue('unique_hash'));
 
-        $groupManagement = $this->getMockBuilder(\Magento\Customer\Api\GroupManagementInterface::class)
+        $groupManagement = $this->getMockBuilder('Magento\Customer\Api\GroupManagementInterface')
             ->setMethods(['getAllCustomersGroup'])
             ->getMockForAbstractClass();
 
-        $allGroup = $this->getMockBuilder(\Magento\Customer\Api\Data\GroupInterface::class)
+        $allGroup = $this->getMockBuilder('Magento\Customer\Api\Data\GroupInterface')
             ->setMethods(['getId'])
             ->getMockForAbstractClass();
 
@@ -53,16 +50,13 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
             ->method('getAllCustomersGroup')
             ->will($this->returnValue($allGroup));
 
-        $this->serializerMock = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
-
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->minsaleqty = $this->objectManagerHelper->getObject(
-            \Magento\CatalogInventory\Helper\Minsaleqty::class,
+            'Magento\CatalogInventory\Helper\Minsaleqty',
             [
                 'scopeConfig' => $this->scopeConfigMock,
                 'mathRandom' => $this->randomMock,
-                'groupManagement' => $groupManagement,
-                'serializer' => $this->serializerMock
+                'groupManagement' => $groupManagement
             ]
         );
     }
@@ -74,7 +68,7 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
      * @param float|null $result
      * @dataProvider getConfigValueDataProvider
      */
-    public function testGetConfigValue($customerGroupId, $store, $minSaleQty, $result, $minSaleQtyDecoded = null)
+    public function testGetConfigValue($customerGroupId, $store, $minSaleQty, $result)
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
@@ -84,12 +78,6 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo($store)
             )
             ->will($this->returnValue($minSaleQty));
-
-        $this->serializerMock->expects($this->exactly($minSaleQtyDecoded ? 1 : 0))
-            ->method('unserialize')
-            ->with($minSaleQty)
-            ->willReturn($minSaleQtyDecoded);
-
         $this->assertSame($result, $this->minsaleqty->getConfigValue($customerGroupId, $store));
     }
 
@@ -99,72 +87,23 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
     public function getConfigValueDataProvider()
     {
         return [
-            'valid numeric' => [1, 2, '20', 20.],
-            'null global group' => [0, null, '', null],
-            'null retailer group' => [3, null, '', null],
-            'valid serialized - wholesale group' => [
-                2,
-                1,
-                '{"1":20.5,"2":34.2}',
-                34.2,
-                [
-                    1 => 20.5,
-                    2 => 34.2
-                ]
-            ],
-            'valid serialized - general group' => [
-                1,
-                44,
-                '{"1":20.5,"2":34.2}',
-                20.5,
-                [
-                    1 => 20.5,
-                    2 => 34.2
-                ]
-            ],
-            // custom group_id matches id in config
-            'valid serialized - custom group match' => [
-                5,
-                4,
-                '[{"customer_group_id":5,"min_sale_qty":40.10000000000}]',
-                40.1,
-                [
-                    [
-                        'customer_group_id' => 5,
-                        'min_sale_qty' => 40.1
-                    ]
-                ]
-            ],
-            // scenario where group_id doesn't match an id in the config
-            // calls getAllCustomersGroupId method, which will return the all customers group id and match
-            'valid serialized - custom group no match' => [
-                5,
-                4,
-                '[{"customer_group_id":32000,"min_sale_qty":2.5}]',
-                2.5,
-                [
-                    [
-                        'customer_group_id' => 32000,
-                        'min_sale_qty' => 2.5
-                    ]
-                ]
-            ]
+            [1, 2, '20', 20.],
+            [0, null, '', null],
+            [3, null, '', null],
+            [2, 1, 'a:2:{i:1;s:4:"20.5";i:2;s:4:"34.2";}', 34.2],
+            [1, 44, 'a:2:{i:1;s:4:"20.5";i:2;s:4:"34.2";}', 20.5],
+            [5, 4, 'a:1:{i:0;a:2:{s:17:"customer_group_id";i:5;s:12:"min_sale_qty";d:40.10000000000000;}}', 40.1],
+            [5, 4, 'a:1:{i:0;a:2:{s:17:"customer_group_id";i:32000;s:12:"min_sale_qty";d:2.5;}}', 2.5],
         ];
     }
 
     /**
      * @param string|array $value
      * @param array $result
-     * @param int $serializeCallCount
      * @dataProvider makeArrayFieldValueDataProvider
      */
-    public function testMakeArrayFieldValue($value, $result, $serializeCallCount = 0)
+    public function testMakeArrayFieldValue($value, $result)
     {
-        $this->serializerMock->expects($this->exactly($serializeCallCount))
-            ->method('unserialize')
-            ->with($value)
-            ->willReturn($result);
-
         $this->assertSame($result, $this->minsaleqty->makeArrayFieldValue($value));
     }
 
@@ -174,21 +113,11 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
     public function makeArrayFieldValueDataProvider()
     {
         return [
-            'empty string' => ['', []],
-            'valid with getAllCustomersGroupId lookup' => [
-                '20',
-                [
-                    'unique_hash' => [
-                        'customer_group_id' => 32000, 'min_sale_qty' => 20.
-                    ]
-                ]
-            ],
-            'valid with unserialize' => [
-                '[{"customer_group_id":32000,"min_sale_qty":2.5}]',
-                [
-                    ['customer_group_id' => 32000, 'min_sale_qty' => 2.5]
-                ],
-                1
+            ['', []],
+            ['20', ['unique_hash' => ['customer_group_id' => 32000, 'min_sale_qty' => 20.]]],
+            [
+                'a:1:{i:0;a:2:{s:17:"customer_group_id";i:32000;s:12:"min_sale_qty";d:2.5;}} ',
+                [['customer_group_id' => 32000, 'min_sale_qty' => 2.5]]
             ],
         ];
     }
@@ -196,17 +125,10 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string|array $value
      * @param string $result
-     * @param int $serializeCallCount
-     * @param null|array $decodedValue
      * @dataProvider makeStorableArrayFieldValueDataProvider
      */
-    public function testMakeStorableArrayFieldValue($value, $result, $serializeCallCount = 0, $decodedValue = null)
+    public function testMakeStorableArrayFieldValue($value, $result)
     {
-        $this->serializerMock->expects($this->exactly($serializeCallCount))
-            ->method('serialize')
-            ->with($decodedValue ?: $value)
-            ->willReturn($result);
-
         $this->assertSame($result, $this->minsaleqty->makeStorableArrayFieldValue($value));
     }
 
@@ -216,31 +138,26 @@ class MinsaleqtyTest extends \PHPUnit\Framework\TestCase
     public function makeStorableArrayFieldValueDataProvider()
     {
         return [
-            'invalid bool' => [false, ''],
-            'invalid empty string' => ['', ''],
-            'valid numeric' => ['22', '22'],
-            'valid empty array' => [[], '[]', 1],
-            'valid no key match' => [
+            [false, ''],
+            ['', ''],
+            ['22', '22'],
+            [[], 'a:0:{}'],
+            [
                 ['customer_group_id' => 32000, 'min_sale_qty' => 2.5],
-                '{"customer_group_id":32000,"min_sale_qty":2.5}',
-                1
+                'a:2:{s:17:"customer_group_id";d:32000;s:12:"min_sale_qty";d:2.5;}'
             ],
-            'valid key match' => [
+            [
                 [['customer_group_id' => 32000, 'min_sale_qty' => 2.5]],
                 '2.5'
             ],
-            'valid wholesale' => [
+            [
                 [['customer_group_id' => 2, 'min_sale_qty' => 2.5]],
-                '{"2":2.5}',
-                1,
-                [2 => 2.5]
+                'a:1:{i:2;d:2.5;}'
             ],
-            'invalid - cannot override not logged in group' => [
+            [
                 [['min_sale_qty' => 2.5]],
-                '[1]',
-                1,
-                [0 => 1.0]
-            ]
+                'a:1:{i:0;d:1;}'
+            ],
         ];
     }
 }

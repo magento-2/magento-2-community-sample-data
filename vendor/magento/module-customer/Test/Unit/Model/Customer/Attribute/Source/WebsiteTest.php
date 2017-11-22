@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Customer\Attribute\Source;
@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Model\Customer\Attribute\Source;
 use Magento\Customer\Model\Customer\Attribute\Source\Website;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory;
 
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Website */
     protected $model;
@@ -25,14 +25,14 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->collectionFactoryMock =
-            $this->getMockBuilder(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory::class)
+            $this->getMockBuilder('Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $this->optionFactoryMock =
-            $this->getMockBuilder(\Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory::class)
+            $this->getMockBuilder('Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\System\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Store\Model\System\Store')
             ->disableOriginalConstructor()
             ->getMock();
 

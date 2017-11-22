@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -57,7 +57,7 @@ class BackslashTrim implements ModificationInterface
         }
 
         foreach ($argument as $key => &$value) {
-            if (in_array($key, ['_i_', '_ins_'], true)) {
+            if (in_array($key, ['_i_', '_ins_'])) {
                 $value = ltrim($value, '\\');
                 continue;
             }

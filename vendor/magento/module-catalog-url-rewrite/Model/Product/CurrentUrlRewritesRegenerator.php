@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Model\Product;
 
 use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\Product;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewrite\Model\OptionProvider;
@@ -15,237 +14,147 @@ use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
-use Magento\CatalogUrlRewrite\Model\Map\UrlRewriteFinder;
-use Magento\Framework\App\ObjectManager;
-use Magento\UrlRewrite\Model\MergeDataProviderFactory;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CurrentUrlRewritesRegenerator
 {
-    /**
-     * @var Product
-     * @deprecated 100.1.4
-     */
+    /** @var Product */
     protected $product;
 
-    /**
-     * @var ObjectRegistry
-     * @deprecated 100.1.4
-     */
+    /** @var ObjectRegistry */
     protected $productCategories;
 
-    /**
-     * @var UrlFinderInterface
-     * @deprecated 100.1.4
-     */
+    /** @var UrlFinderInterface */
     protected $urlFinder;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator
-     */
+    /** @var ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
 
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var UrlRewriteFactory */
     protected $urlRewriteFactory;
-
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewrite
-     */
-    private $urlRewritePrototype;
-
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Map\UrlRewriteFinder
-     */
-    private $urlRewriteFinder;
-
-    /**
-     * @var \Magento\UrlRewrite\Model\MergeDataProvider
-     */
-    private $mergeDataProviderPrototype;
-
-    /**
-     * @var \Magento\Catalog\Model\CategoryRepository
-     */
-    private $categoryRepository;
 
     /**
      * @param UrlFinderInterface $urlFinder
      * @param ProductUrlPathGenerator $productUrlPathGenerator
      * @param UrlRewriteFactory $urlRewriteFactory
-     * @param UrlRewriteFinder|null $urlRewriteFinder
-     * @param \Magento\UrlRewrite\Model\MergeDataProviderFactory|null $mergeDataProviderFactory
-     * @param CategoryRepository|null $categoryRepository
      */
     public function __construct(
         UrlFinderInterface $urlFinder,
         ProductUrlPathGenerator $productUrlPathGenerator,
-        UrlRewriteFactory $urlRewriteFactory,
-        UrlRewriteFinder $urlRewriteFinder = null,
-        MergeDataProviderFactory $mergeDataProviderFactory = null,
-        CategoryRepository $categoryRepository = null
+        UrlRewriteFactory $urlRewriteFactory
     ) {
         $this->urlFinder = $urlFinder;
         $this->productUrlPathGenerator = $productUrlPathGenerator;
         $this->urlRewriteFactory = $urlRewriteFactory;
-        $this->urlRewritePrototype = $urlRewriteFactory->create();
-        $this->urlRewriteFinder = $urlRewriteFinder ?: ObjectManager::getInstance()->get(UrlRewriteFinder::class);
-        if (!isset($mergeDataProviderFactory)) {
-            $mergeDataProviderFactory = ObjectManager::getInstance()->get(MergeDataProviderFactory::class);
-        }
-        $this->categoryRepository = $categoryRepository ?: ObjectManager::getInstance()->get(CategoryRepository::class);
-        $this->mergeDataProviderPrototype = $mergeDataProviderFactory->create();
     }
 
     /**
-     * Generate product rewrites based on current rewrites without anchor categories
+     * Generate list based on current rewrites
      *
      * @param int $storeId
      * @param Product $product
      * @param ObjectRegistry $productCategories
-     * @param int|null $rootCategoryId
      * @return UrlRewrite[]
      */
-    public function generate($storeId, Product $product, ObjectRegistry $productCategories, $rootCategoryId = null)
+    public function generate($storeId, Product $product, ObjectRegistry $productCategories)
     {
-        $mergeDataProvider = clone $this->mergeDataProviderPrototype;
-        $currentUrlRewrites = $this->urlRewriteFinder->findAllByData(
-            $product->getEntityId(),
-            $storeId,
-            ProductUrlRewriteGenerator::ENTITY_TYPE,
-            $rootCategoryId
+        $this->product = $product;
+        $this->productCategories = $productCategories;
+
+        $currentUrlRewrites = $this->urlFinder->findAllByData(
+            [
+                UrlRewrite::STORE_ID => $storeId,
+                UrlRewrite::ENTITY_ID => $this->product->getId(),
+                UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
+            ]
         );
 
+        $urlRewrites = [];
         foreach ($currentUrlRewrites as $currentUrlRewrite) {
-            $category = $this->retrieveCategoryFromMetadata($currentUrlRewrite, $productCategories);
+            $category = $this->retrieveCategoryFromMetadata($currentUrlRewrite);
             if ($category === false) {
                 continue;
             }
-            $mergeDataProvider->merge(
-                $currentUrlRewrite->getIsAutogenerated()
-                ? $this->generateForAutogenerated($currentUrlRewrite, $storeId, $category, $product)
-                : $this->generateForCustom($currentUrlRewrite, $storeId, $category, $product)
-            );
+            $url = $currentUrlRewrite->getIsAutogenerated()
+                ? $this->generateForAutogenerated($currentUrlRewrite, $storeId, $category)
+                : $this->generateForCustom($currentUrlRewrite, $storeId, $category);
+            $urlRewrites = array_merge($urlRewrites, $url);
         }
 
-        return $mergeDataProvider->getData();
-    }
-
-    /**
-     * Generate product rewrites for anchor categories based on current rewrites
-     *
-     * @param int $storeId
-     * @param Product $product
-     * @param ObjectRegistry $productCategories
-     * @param int|null $rootCategoryId
-     * @return UrlRewrite[]
-     */
-    public function generateAnchor(
-        $storeId,
-        Product $product,
-        ObjectRegistry $productCategories,
-        $rootCategoryId = null
-    ) {
-        $anchorCategoryIds = [];
-        $mergeDataProvider = clone $this->mergeDataProviderPrototype;
-
-        $currentUrlRewrites = $this->urlRewriteFinder->findAllByData(
-            $product->getEntityId(),
-            $storeId,
-            ProductUrlRewriteGenerator::ENTITY_TYPE,
-            $rootCategoryId
-        );
-
-        foreach ($productCategories->getList() as $productCategory) {
-            $anchorCategoryIds = array_merge($productCategory->getAnchorsAbove(), $anchorCategoryIds);
-        }
-
-        foreach ($currentUrlRewrites as $currentUrlRewrite) {
-            $metadata = $currentUrlRewrite->getMetadata();
-            if (isset($metadata['category_id']) && $metadata['category_id'] > 0) {
-                $category = $this->categoryRepository->get($metadata['category_id'], $storeId);
-                if (in_array($category->getId(), $anchorCategoryIds)) {
-                    $mergeDataProvider->merge(
-                        $currentUrlRewrite->getIsAutogenerated()
-                        ? $this->generateForAutogenerated($currentUrlRewrite, $storeId, $category, $product)
-                        : $this->generateForCustom($currentUrlRewrite, $storeId, $category, $product)
-                    );
-                }
-            }
-        }
-
-        return $mergeDataProvider->getData();
+        $this->product = null;
+        $this->productCategories = null;
+        return $urlRewrites;
     }
 
     /**
      * @param UrlRewrite $url
      * @param int $storeId
      * @param Category|null $category
-     * @param Product|null $product
-     * @return UrlRewrite[]
+     * @return array
      */
-    protected function generateForAutogenerated($url, $storeId, $category, $product = null)
+    protected function generateForAutogenerated($url, $storeId, $category)
     {
-        if ($product->getData('save_rewrites_history')) {
-            $targetPath = $this->productUrlPathGenerator->getUrlPathWithSuffix($product, $storeId, $category);
-            if ($url->getRequestPath() !== $targetPath) {
-                $generatedUrl = clone $this->urlRewritePrototype;
-                $generatedUrl->setEntityType(ProductUrlRewriteGenerator::ENTITY_TYPE)
-                    ->setEntityId($product->getEntityId())
-                    ->setRequestPath($url->getRequestPath())
-                    ->setTargetPath($targetPath)
-                    ->setRedirectType(OptionProvider::PERMANENT)
-                    ->setStoreId($storeId)
-                    ->setDescription($url->getDescription())
-                    ->setIsAutogenerated(0)
-                    ->setMetadata($url->getMetadata());
-                return [$generatedUrl];
-            }
+        if (!$this->product->getData('save_rewrites_history')) {
+            return [];
         }
-        return [];
+        $targetPath = $this->productUrlPathGenerator->getUrlPathWithSuffix($this->product, $storeId, $category);
+        if ($url->getRequestPath() === $targetPath) {
+            return [];
+        }
+        return [
+            $this->urlRewriteFactory->create()
+                ->setEntityType(ProductUrlRewriteGenerator::ENTITY_TYPE)
+                ->setEntityId($this->product->getId())
+                ->setRequestPath($url->getRequestPath())
+                ->setTargetPath($targetPath)
+                ->setRedirectType(OptionProvider::PERMANENT)
+                ->setStoreId($storeId)
+                ->setDescription($url->getDescription())
+                ->setIsAutogenerated(0)
+                ->setMetadata($url->getMetadata())
+        ];
     }
 
     /**
      * @param UrlRewrite $url
      * @param int $storeId
      * @param Category|null $category
-     * @param Product|null $product
-     * @return UrlRewrite[]
+     * @return array
      */
-    protected function generateForCustom($url, $storeId, $category, $product = null)
+    protected function generateForCustom($url, $storeId, $category)
     {
         $targetPath = $url->getRedirectType()
-            ? $this->productUrlPathGenerator->getUrlPathWithSuffix($product, $storeId, $category)
+            ? $this->productUrlPathGenerator->getUrlPathWithSuffix($this->product, $storeId, $category)
             : $url->getTargetPath();
-        if ($url->getRequestPath() !== $targetPath) {
-            $generatedUrl = clone $this->urlRewritePrototype;
-            $generatedUrl->setEntityType(ProductUrlRewriteGenerator::ENTITY_TYPE)
-                ->setEntityId($product->getEntityId())
+        if ($url->getRequestPath() === $targetPath) {
+            return [];
+        }
+        return [
+            $this->urlRewriteFactory->create()
+                ->setEntityType(ProductUrlRewriteGenerator::ENTITY_TYPE)
+                ->setEntityId($this->product->getId())
                 ->setRequestPath($url->getRequestPath())
                 ->setTargetPath($targetPath)
                 ->setRedirectType($url->getRedirectType())
                 ->setStoreId($storeId)
                 ->setDescription($url->getDescription())
                 ->setIsAutogenerated(0)
-                ->setMetadata($url->getMetadata());
-            return [$generatedUrl];
-        }
-        return [];
+                ->setMetadata($url->getMetadata())
+        ];
     }
 
     /**
      * @param UrlRewrite $url
-     * @param ObjectRegistry|null $productCategories
      * @return Category|null|bool
      */
-    protected function retrieveCategoryFromMetadata($url, ObjectRegistry $productCategories = null)
+    protected function retrieveCategoryFromMetadata($url)
     {
         $metadata = $url->getMetadata();
         if (isset($metadata['category_id'])) {
-            $category = $productCategories->get($metadata['category_id']);
+            $category = $this->productCategories->get($metadata['category_id']);
             return $category === null ? false : $category;
         }
         return null;

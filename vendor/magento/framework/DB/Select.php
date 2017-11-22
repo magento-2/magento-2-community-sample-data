@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB;
@@ -11,7 +11,6 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 /**
  * Class for SQL SELECT generation and results.
  *
- * @api
  * @method \Magento\Framework\DB\Select from($name, $cols = '*', $schema = null)
  * @method \Magento\Framework\DB\Select join($name, $cond, $cols = '*', $schema = null)
  * @method \Magento\Framework\DB\Select joinInner($name, $cond, $cols = '*', $schema = null)
@@ -28,6 +27,8 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
  * @method \Magento\Framework\DB\Select distinct($flag = true)
  * @method \Magento\Framework\DB\Select reset($part = null)
  * @method \Magento\Framework\DB\Select columns($cols = '*', $correlationName = null)
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Select extends \Zend_Db_Select
 {
@@ -47,29 +48,17 @@ class Select extends \Zend_Db_Select
     const SQL_STRAIGHT_JOIN = 'STRAIGHT_JOIN';
 
     /**
-     * @var Select\SelectRenderer
-     */
-    private $selectRenderer;
-
-    /**
      * Class constructor
      * Add straight join support
      *
-     * @param Adapter\Pdo\Mysql $adapter
-     * @param Select\SelectRenderer $selectRenderer
-     * @param array $parts
+     * @param \Magento\Framework\DB\Adapter\Pdo\Mysql $adapter
      */
-    public function __construct(
-        \Magento\Framework\DB\Adapter\Pdo\Mysql $adapter,
-        \Magento\Framework\DB\Select\SelectRenderer $selectRenderer,
-        $parts = []
-    ) {
-        self::$_partsInit = array_merge(self::$_partsInit, $parts);
+    public function __construct(\Magento\Framework\DB\Adapter\Pdo\Mysql $adapter)
+    {
         if (!isset(self::$_partsInit[self::STRAIGHT_JOIN])) {
             self::$_partsInit = [self::STRAIGHT_JOIN => false] + self::$_partsInit;
         }
 
-        $this->selectRenderer = $selectRenderer;
         parent::__construct($adapter);
     }
 
@@ -496,21 +485,9 @@ class Select extends \Zend_Db_Select
     {
         return $this->_adapter;
     }
-
-    /**
-     * Converts this object to an SQL SELECT string.
-     *
-     * @return string|null This object as a SELECT string. (or null if a string cannot be produced.)
-     * @since 100.1.0
-     */
-    public function assemble()
-    {
-        return $this->selectRenderer->render($this);
-    }
-
+    
     /**
      * @return string[]
-     * @since 100.0.11
      */
     public function __sleep()
     {
@@ -519,7 +496,6 @@ class Select extends \Zend_Db_Select
             $properties,
             [
                 '_adapter',
-                'selectRenderer'
             ]
         );
         return $properties;
@@ -529,12 +505,10 @@ class Select extends \Zend_Db_Select
      * Init not serializable fields
      *
      * @return void
-     * @since 100.0.11
      */
     public function __wakeup()
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_adapter = $objectManager->get(ResourceConnection::class)->getConnection();
-        $this->selectRenderer = $objectManager->get(\Magento\Framework\DB\Select\SelectRenderer::class);
     }
 }

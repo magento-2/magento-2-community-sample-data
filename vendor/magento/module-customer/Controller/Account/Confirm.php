@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Account;
@@ -26,50 +26,28 @@ use Magento\Framework\Controller\ResultFactory;
  */
 class Confirm extends \Magento\Customer\Controller\AbstractAccount
 {
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var ScopeConfigInterface */
     protected $scopeConfig;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
+    /** @var StoreManagerInterface */
     protected $storeManager;
 
-    /**
-     * @var \Magento\Customer\Api\AccountManagementInterface
-     */
+    /** @var AccountManagementInterface  */
     protected $customerAccountManagement;
 
-    /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
-     */
+    /** @var CustomerRepositoryInterface  */
     protected $customerRepository;
 
-    /**
-     * @var \Magento\Customer\Helper\Address
-     */
+    /** @var Address */
     protected $addressHelper;
 
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
+    /** @var \Magento\Framework\UrlInterface */
     protected $urlModel;
 
     /**
      * @var Session
      */
     protected $session;
-
-    /**
-     * @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
-     */
-    private $cookieMetadataFactory;
-
-    /**
-     * @var \Magento\Framework\Stdlib\Cookie\PhpCookieManager
-     */
-    private $cookieMetadataManager;
 
     /**
      * @param Context $context
@@ -102,38 +80,6 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
     }
 
     /**
-     * Retrieve cookie manager
-     *
-     * @deprecated 100.2.0
-     * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
-     */
-    private function getCookieManager()
-    {
-        if (!$this->cookieMetadataManager) {
-            $this->cookieMetadataManager = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Stdlib\Cookie\PhpCookieManager::class
-            );
-        }
-        return $this->cookieMetadataManager;
-    }
-
-    /**
-     * Retrieve cookie metadata factory
-     *
-     * @deprecated 100.2.0
-     * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
-     */
-    private function getCookieMetadataFactory()
-    {
-        if (!$this->cookieMetadataFactory) {
-            $this->cookieMetadataFactory = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
-            );
-        }
-        return $this->cookieMetadataFactory;
-    }
-
-    /**
      * Confirm customer account by id and confirmation key
      *
      * @return \Magento\Framework\Controller\Result\Redirect
@@ -158,11 +104,7 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
             $customerEmail = $this->customerRepository->getById($customerId)->getEmail();
             $customer = $this->customerAccountManagement->activate($customerEmail, $key);
             $this->session->setCustomerDataAsLoggedIn($customer);
-            if ($this->getCookieManager()->getCookie('mage-cache-sessid')) {
-                $metadata = $this->getCookieMetadataFactory()->createCookieMetadata();
-                $metadata->setPath('/');
-                $this->getCookieManager()->deleteCookie('mage-cache-sessid', $metadata);
-            }
+
             $this->messageManager->addSuccess($this->getSuccessMessage());
             $resultRedirect->setUrl($this->getSuccessRedirect());
             return $resultRedirect;

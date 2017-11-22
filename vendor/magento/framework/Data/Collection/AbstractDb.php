@@ -1,22 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Collection;
 
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Api\ExtensionAttribute\JoinDataInterface;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Psr\Log\LoggerInterface as Logger;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Base items collection class
- *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractDb extends \Magento\Framework\Data\Collection
@@ -886,7 +884,6 @@ abstract class AbstractDb extends \Magento\Framework\Data\Collection
 
     /**
      * @inheritdoc
-     * @since 100.0.11
      */
     public function __sleep()
     {
@@ -898,14 +895,13 @@ abstract class AbstractDb extends \Magento\Framework\Data\Collection
 
     /**
      * @inheritdoc
-     * @since 100.0.11
      */
     public function __wakeup()
     {
         parent::__wakeup();
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $this->_logger = $objectManager->get(Logger::class);
-        $this->_fetchStrategy = $objectManager->get(FetchStrategyInterface::class);
+        $this->_fetchStrategy = $objectManager->get(Logger::class);
+        $this->_logger = $objectManager->get(FetchStrategyInterface::class);
         $this->_conn = $objectManager->get(ResourceConnection::class)->getConnection();
     }
 }

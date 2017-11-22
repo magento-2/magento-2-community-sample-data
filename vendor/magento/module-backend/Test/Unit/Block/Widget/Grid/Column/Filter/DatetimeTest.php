@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Column\Filter;
  * Class DateTimeTest to test Magento\Backend\Block\Widget\Grid\Column\Filter\Date
  *
  */
-class DatetimeTest extends \PHPUnit\Framework\TestCase
+class DatetimeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime */
     protected $model;
@@ -32,35 +32,35 @@ class DatetimeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->mathRandomMock = $this->getMockBuilder(\Magento\Framework\Math\Random::class)
+        $this->mathRandomMock = $this->getMockBuilder('Magento\Framework\Math\Random')
             ->disableOriginalConstructor()
             ->setMethods(['getUniqueHash'])
             ->getMock();
 
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $this->dateTimeFormatterMock = $this
-            ->getMockBuilder(\Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface::class)
+            ->getMockBuilder('Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->columnMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Grid\Column::class)
+        $this->columnMock = $this->getMockBuilder('Magento\Backend\Block\Widget\Grid\Column')
             ->disableOriginalConstructor()
             ->setMethods(['getTimezone', 'getHtmlId', 'getId'])
             ->getMock();
 
-        $this->localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDateMock = $this->getMockBuilder('\Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime::class,
+            'Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime',
             [
                 'mathRandom' => $this->mathRandomMock,
                 'localeResolver' => $this->localeResolverMock,

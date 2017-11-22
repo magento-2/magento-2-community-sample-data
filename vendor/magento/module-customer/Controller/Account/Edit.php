@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Account;
@@ -14,14 +14,10 @@ use Magento\Framework\App\Action\Context;
 
 class Edit extends \Magento\Customer\Controller\AbstractAccount
 {
-    /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
-     */
+    /** @var CustomerRepositoryInterface  */
     protected $customerRepository;
 
-    /**
-     * @var \Magento\Framework\Api\DataObjectHelper
-     */
+    /** @var DataObjectHelper */
     protected $dataObjectHelper;
 
     /**
@@ -77,13 +73,14 @@ class Edit extends \Magento\Customer\Controller\AbstractAccount
             $this->dataObjectHelper->populateWithArray(
                 $customerDataObject,
                 $data,
-                \Magento\Customer\Api\Data\CustomerInterface::class
+                '\Magento\Customer\Api\Data\CustomerInterface'
             );
         }
         $this->session->setCustomerData($customerDataObject);
         $this->session->setChangePassword($this->getRequest()->getParam('changepass') == 1);
 
         $resultPage->getConfig()->getTitle()->set(__('Account Information'));
+        $resultPage->getLayout()->getBlock('messages')->setEscapeMessageFlag(true);
         return $resultPage;
     }
 }

@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Url;
-
-use Magento\Framework\Url\RouteParamsResolverInterface;
 
 /**
  * Route params resolver.
@@ -32,23 +30,27 @@ class RouteParamsResolver extends \Magento\Framework\DataObject implements Route
     protected $queryParamsResolver;
 
     /**
-     * @var \Magento\Framework\Escaper
+     * @var \Magento\Framework\Url\ParamEncoder
      */
-    protected $escaper;
+    private $paramEncoder;
 
     /**
      * @param \Magento\Framework\App\RequestInterface $request
      * @param \Magento\Framework\Url\QueryParamsResolverInterface $queryParamsResolver
      * @param array $data
+     * @param \Magento\Framework\Url\ParamEncoder $paramEncoder
      */
     public function __construct(
         \Magento\Framework\App\RequestInterface $request,
         \Magento\Framework\Url\QueryParamsResolverInterface $queryParamsResolver,
-        array $data = []
+        array $data = [],
+        \Magento\Framework\Url\ParamEncoder $paramEncoder = null
     ) {
         parent::__construct($data);
         $this->request = $request;
         $this->queryParamsResolver = $queryParamsResolver;
+        $this->paramEncoder = $paramEncoder ?: \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\Url\ParamEncoder::class);
     }
 
     /**
@@ -111,8 +113,8 @@ class RouteParamsResolver extends \Magento\Framework\DataObject implements Route
                 $this->setRouteParam($key, $value);
             } else {
                 $this->setRouteParam(
-                    $this->getEscaper()->encodeUrlParam($key),
-                    $this->getEscaper()->encodeUrlParam($value)
+                    $this->paramEncoder->encode($key),
+                    $this->paramEncoder->encode($value)
                 );
             }
         }
@@ -148,20 +150,5 @@ class RouteParamsResolver extends \Magento\Framework\DataObject implements Route
     public function getRouteParam($key)
     {
         return $this->getData('route_params', $key);
-    }
-
-    /**
-     * Get escaper
-     *
-     * @return \Magento\Framework\Escaper
-     * @deprecated 100.2.0
-     */
-    private function getEscaper()
-    {
-        if ($this->escaper == null) {
-            $this->escaper = \Magento\Framework\App\ObjectManager::getInstance()
-                    ->get(\Magento\Framework\Escaper::class);
-        }
-        return $this->escaper;
     }
 }

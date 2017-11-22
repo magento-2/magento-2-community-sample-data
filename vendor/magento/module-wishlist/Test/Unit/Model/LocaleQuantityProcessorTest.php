@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Test\Unit\Model;
 
 use \Magento\Wishlist\Model\LocaleQuantityProcessor;
 
-class LocaleQuantityProcessorTest extends \PHPUnit\Framework\TestCase
+class LocaleQuantityProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var LocaleQuantityProcessor
@@ -24,10 +24,10 @@ class LocaleQuantityProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected $filter;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->resolver = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)->getMock();
-        $this->filter   = $this->getMockBuilder(\Magento\Framework\Filter\LocalizedToNormalized::class)
+        $this->resolver = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')->getMock();
+        $this->filter   = $this->getMockBuilder('Magento\Framework\Filter\LocalizedToNormalized')
             ->disableOriginalConstructor()
             ->getMock();
         $this->processor = new LocaleQuantityProcessor($this->resolver, $this->filter);

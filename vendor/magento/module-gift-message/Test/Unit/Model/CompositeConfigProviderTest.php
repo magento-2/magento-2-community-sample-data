@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GiftMessage\Test\Unit\Model;
 
-class CompositeConfigProviderTest extends \PHPUnit\Framework\TestCase
+class CompositeConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GiftMessage\Model\CompositeConfigProvider
@@ -19,7 +19,7 @@ class CompositeConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configProviderMock = $this->createMock(\Magento\Checkout\Model\ConfigProviderInterface::class);
+        $this->configProviderMock = $this->getMock('\Magento\Checkout\Model\ConfigProviderInterface');
         $this->model = new \Magento\GiftMessage\Model\CompositeConfigProvider([$this->configProviderMock]);
     }
 

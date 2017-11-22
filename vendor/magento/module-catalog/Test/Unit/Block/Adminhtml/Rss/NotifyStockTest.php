@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Rss;
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class NotifyStockTest
  * @package Magento\Catalog\Block\Adminhtml\Rss
  */
-class NotifyStockTest extends \PHPUnit\Framework\TestCase
+class NotifyStockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Adminhtml\Rss\NotifyStock
@@ -56,21 +56,20 @@ class NotifyStockTest extends \PHPUnit\Framework\TestCase
                 'title' => 'Low Stock Product',
                 'description' => 'Low Stock Product has reached a quantity of 1.',
                 'link' => 'http://magento.com/catalog/product/edit/id/1',
-
             ],
         ],
     ];
 
     protected function setUp()
     {
-        $this->rssModel = $this->getMockBuilder(\Magento\Catalog\Model\Rss\Product\NotifyStock::class)
+        $this->rssModel = $this->getMockBuilder('Magento\Catalog\Model\Rss\Product\NotifyStock')
             ->setMethods(['getProductsCollection', '__wakeup'])
             ->disableOriginalConstructor()->getMock();
-        $this->rssUrlBuilder = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
-        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->rssUrlBuilder = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
+        $this->urlBuilder = $this->getMock('Magento\Framework\UrlInterface');
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $this->objectManagerHelper->getObject(
-            \Magento\Catalog\Block\Adminhtml\Rss\NotifyStock::class,
+            'Magento\Catalog\Block\Adminhtml\Rss\NotifyStock',
             [
                 'urlBuilder' => $this->urlBuilder,
                 'rssModel' => $this->rssModel,
@@ -83,7 +82,7 @@ class NotifyStockTest extends \PHPUnit\Framework\TestCase
     {
         $this->rssUrlBuilder->expects($this->once())->method('getUrl')
             ->will($this->returnValue('http://magento.com/rss/feeds/index/type/notifystock'));
-        $item = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $item = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->setMethods(['__sleep', '__wakeup', 'getId', 'getQty', 'getName'])
             ->disableOriginalConstructor()
             ->getMock();

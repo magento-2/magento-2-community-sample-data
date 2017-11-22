@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Config\Test\Unit\Block\System\Config\Form\Field;
 
-class NotificationTest extends \PHPUnit\Framework\TestCase
+class NotificationTest extends \PHPUnit_Framework_TestCase
 {
     public function testRender()
     {
@@ -19,33 +19,26 @@ class NotificationTest extends \PHPUnit\Framework\TestCase
         $testDatetime = (new \DateTime(null, new \DateTimeZone('UTC')))->setTimestamp($testCacheValue);
 
         /** @var \Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface $dateTimeFormatter */
-        $dateTimeFormatter = $objectManager->getObject(\Magento\Framework\Stdlib\DateTime\DateTimeFormatter::class);
-        $localeResolver = $objectManager->getObject(\Magento\Framework\Locale\Resolver::class);
-
-        $reflection = new \ReflectionClass(\Magento\Framework\Stdlib\DateTime\DateTimeFormatter::class);
-        $reflectionProperty = $reflection->getProperty('localeResolver');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($dateTimeFormatter, $localeResolver);
-
+        $dateTimeFormatter = $objectManager->getObject('Magento\Framework\Stdlib\DateTime\DateTimeFormatter');
         $formattedDate = $dateTimeFormatter->formatObject($testDatetime);
 
         $htmlId = 'test_HTML_id';
         $label = 'test_label';
 
-        $localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $localeDateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $localeDateMock->expects($this->any())->method('date')->willReturn($testDatetime);
         $localeDateMock->expects($this->any())->method('getDateTimeFormat')->willReturn(null);
 
-        $elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+        $elementMock = $this->getMockBuilder('Magento\Framework\Data\Form\Element\AbstractElement')
             ->disableOriginalConstructor()
             ->setMethods(['getHtmlId', 'getLabel'])
             ->getMock();
         $elementMock->expects($this->any())->method('getHtmlId')->willReturn($htmlId);
         $elementMock->expects($this->any())->method('getLabel')->willReturn($label);
 
-        $dateTimeFormatter = $this->createMock(\Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface::class);
+        $dateTimeFormatter = $this->getMock('Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface');
         $dateTimeFormatter->expects($this->once())
             ->method('formatObject')
             ->with($testDatetime)
@@ -53,7 +46,7 @@ class NotificationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Config\Block\System\Config\Form\Field\Notification $notification */
         $notification = $objectManager->getObject(
-            \Magento\Config\Block\System\Config\Form\Field\Notification::class,
+            'Magento\Config\Block\System\Config\Form\Field\Notification',
             [
                 'localeDate' => $localeDateMock,
                 'dateTimeFormatter' => $dateTimeFormatter,
@@ -65,11 +58,12 @@ class NotificationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             '<tr id="row_' . $htmlId . '">' .
             '<td class="label">' .
-            '<label for="' . $htmlId . '"><span>' . $label . '</span></label>' .
+            '<label for="' . $htmlId . '">' . $label . '</label>' .
             '</td>' .
             '<td class="value">' .
             $formattedDate .
             '</td>' .
+            '<td class="scope-label"></td>' .
             '<td class=""></td>' .
             '</tr>',
             $html

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Api\Data;
@@ -10,7 +10,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Interface StockItem
  * @api
- * @since 100.0.2
  */
 interface StockItemInterface extends ExtensibleDataInterface
 {

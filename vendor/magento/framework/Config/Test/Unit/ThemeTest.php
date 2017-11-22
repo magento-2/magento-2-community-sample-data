@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config\Test\Unit;
 
-class ThemeTest extends \PHPUnit\Framework\TestCase
+class ThemeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Config\Dom\UrnResolver $urnResolverMock */
     protected $urnResolver;
@@ -16,7 +16,7 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
-        $this->urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $this->urnResolverMock = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
     }
 
     public function testGetSchemaFile()

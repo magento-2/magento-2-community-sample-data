@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Asset\MergeStrategy;
@@ -10,7 +10,7 @@ use \Magento\Framework\View\Asset\MergeStrategy\Checksum;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\View\Asset\Source;
 
-class ChecksumTest extends \PHPUnit\Framework\TestCase
+class ChecksumTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\View\Asset\MergeStrategyInterface
@@ -49,7 +49,7 @@ class ChecksumTest extends \PHPUnit\Framework\TestCase
         $this->targetDir = $this->getMockForAbstractClass(
             \Magento\Framework\Filesystem\Directory\WriteInterface::class
         );
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $filesystem = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $filesystem->expects($this->once())
             ->method('getDirectoryRead')
             ->with(DirectoryList::ROOT)
@@ -68,7 +68,7 @@ class ChecksumTest extends \PHPUnit\Framework\TestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->checksum, $this->assetSource);
 
-        $this->resultAsset = $this->createMock(\Magento\Framework\View\Asset\File::class);
+        $this->resultAsset = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
     }
 
     public function testMergeNoAssets()
@@ -128,8 +128,8 @@ class ChecksumTest extends \PHPUnit\Framework\TestCase
      */
     private function getAssetsToMerge()
     {
-        $one = $this->createMock(\Magento\Framework\View\Asset\File::class);
-        $two = $this->createMock(\Magento\Framework\View\Asset\File::class);
+        $one = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
+        $two = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
         $one->expects($this->never())
             ->method('getSourceFile');
         $two->expects($this->never())

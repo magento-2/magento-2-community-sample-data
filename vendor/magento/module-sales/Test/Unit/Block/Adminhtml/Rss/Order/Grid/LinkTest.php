@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Rss\Order\Grid;
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class LinkTest
  * @package Magento\Sales\Block\Adminhtml\Rss\Order\Grid
  */
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Adminhtml\Rss\Order\Grid\Link
@@ -40,13 +40,13 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
-        $this->urlBuilderInterface = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
+        $this->urlBuilderInterface = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->link = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Block\Adminhtml\Rss\Order\Grid\Link::class,
+            'Magento\Sales\Block\Adminhtml\Rss\Order\Grid\Link',
             [
                 'context' => $this->context,
                 'rssUrlBuilder' => $this->urlBuilderInterface,

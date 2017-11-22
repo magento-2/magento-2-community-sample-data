@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Block\System\Config;
 
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Block\System\Config\Edit
@@ -39,9 +39,23 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_systemConfigMock = $this->createMock(\Magento\Config\Model\Config\Structure::class);
+        $this->_systemConfigMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
 
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->_requestMock = $this->getMock(
+            'Magento\Framework\App\RequestInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
         $this->_requestMock->expects(
             $this->any()
         )->method(
@@ -52,11 +66,17 @@ class EditTest extends \PHPUnit\Framework\TestCase
             $this->returnValue('test_section')
         );
 
-        $this->_layoutMock = $this->createMock(\Magento\Framework\View\Layout::class);
+        $this->_layoutMock = $this->getMock('Magento\Framework\View\Layout', [], [], '', false, false);
 
-        $this->_urlModelMock = $this->createMock(\Magento\Backend\Model\Url::class);
+        $this->_urlModelMock = $this->getMock('Magento\Backend\Model\Url', [], [], '', false, false);
 
-        $this->_sectionMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Section::class);
+        $this->_sectionMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Section',
+            [],
+            [],
+            '',
+            false
+        );
         $this->_systemConfigMock->expects(
             $this->any()
         )->method(
@@ -76,7 +96,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         ];
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_object = $helper->getObject(\Magento\Config\Block\System\Config\Edit::class, $data);
+        $this->_object = $helper->getObject('Magento\Config\Block\System\Config\Edit', $data);
     }
 
     public function testGetSaveButtonHtml()
@@ -132,7 +152,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $expectedLabel  = 'Test  Label';
         $expectedBlock  = 'Test  Block';
 
-        $blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template::class)
+        $blockMock = $this->getMockBuilder('Magento\Framework\View\Element\Template')
             ->disableOriginalConstructor()
             ->getMock();
 

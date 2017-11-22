@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,7 +20,6 @@ use Magento\Framework\Exception\InputException;
  * The cookie manager will make it possible for an application to indicate if a cookie contains sensitive data,
  * this will allow extra protection to be added to the contents of the cookie as well sending directives to the browser
  * about how the cookie should be stored and whether JavaScript can access the cookie.
- *
  * @api
  */
 interface CookieManagerInterface extends CookieReaderInterface

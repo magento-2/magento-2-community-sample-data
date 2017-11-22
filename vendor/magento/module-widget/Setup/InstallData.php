@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,7 +22,7 @@ class InstallData implements InstallDataInterface
     {
         $installer = $setup->createMigrationSetup();
         $setup->startSetup();
-
+        
         $installer->appendClassAliasReplace(
             'widget_instance',
             'instance_type',
@@ -42,5 +42,6 @@ class InstallData implements InstallDataInterface
         $installer->doUpdateClassAliases();
 
         $setup->endSetup();
+        
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\TemplateEngine\Xhtml;
@@ -36,7 +36,7 @@ class ResultFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\View\TemplateEngine\Xhtml\ResultInterface::class
+        $instanceName = 'Magento\Framework\View\TemplateEngine\Xhtml\ResultInterface'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

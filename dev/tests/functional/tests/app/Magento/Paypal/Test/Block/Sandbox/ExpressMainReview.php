@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -19,6 +19,13 @@ class ExpressMainReview extends Block
      * @var string
      */
     protected $expressReview = '#memberReview';
+
+    /**
+     * Old Express Review Block selector.
+     *
+     * @var string
+     */
+    protected $expressOldReview = '#stdpage';
 
     /**
      * Determines whether new review block or old is shown.

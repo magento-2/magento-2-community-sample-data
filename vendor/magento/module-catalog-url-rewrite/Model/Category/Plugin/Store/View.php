@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Model\Category\Plugin\Store;
@@ -15,43 +15,24 @@ use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 /**
- * Plugin which is listening store resource model and on save or on delete replace catalog url rewrites
- *
- * @see \Magento\Store\Model\ResourceModel\Store
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @package Magento\CatalogUrlRewrite\Model\Category\Plugin\Store
  */
 class View
 {
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlPersistInterface
-     */
+    /** @var UrlPersistInterface */
     protected $urlPersist;
 
-    /**
-     * @var \Magento\Catalog\Model\CategoryFactory
-     */
+    /** @var CategoryFactory */
     protected $categoryFactory;
 
-    /**
-     * @var \Magento\Catalog\Model\ProductFactory
-     */
+    /** @var ProductFactory */
     protected $productFactory;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator
-     */
+    /** @var CategoryUrlRewriteGenerator */
     protected $categoryUrlRewriteGenerator;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator
-     */
+    /** @var ProductUrlRewriteGenerator */
     protected $productUrlRewriteGenerator;
-
-    /**
-     * @var AbstractModel
-     */
-    private $origStore;
 
     /**
      * @param UrlPersistInterface $urlPersist
@@ -76,47 +57,33 @@ class View
 
     /**
      * @param \Magento\Store\Model\ResourceModel\Store $object
+     * @param callable $proceed
      * @param AbstractModel $store
-     * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function beforeSave(
-        \Magento\Store\Model\ResourceModel\Store $object,
-        AbstractModel $store
-    ) {
-        $this->origStore = $store;
-    }
-
-    /**
-     * Regenerate urls on store after save
-     *
-     * @param \Magento\Store\Model\ResourceModel\Store $object
-     * @param \Magento\Store\Model\ResourceModel\Store $store
      * @return \Magento\Store\Model\ResourceModel\Store
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(
+    public function aroundSave(
         \Magento\Store\Model\ResourceModel\Store $object,
-        \Magento\Store\Model\ResourceModel\Store $store
+        \Closure $proceed,
+        AbstractModel $store
     ) {
-        if ($this->origStore->isObjectNew() || $this->origStore->dataHasChangedFor('group_id')) {
-            if (!$this->origStore->isObjectNew()) {
-                $this->urlPersist->deleteByData([UrlRewrite::STORE_ID => $this->origStore->getId()]);
+        $originStore = $store;
+        $result = $proceed($originStore);
+        if ($store->isObjectNew() || $store->dataHasChangedFor('group_id')) {
+            if (!$store->isObjectNew()) {
+                $this->urlPersist->deleteByData([UrlRewrite::STORE_ID => $store->getId()]);
             }
 
             $this->urlPersist->replace(
-                $this->generateCategoryUrls($this->origStore->getRootCategoryId(), $this->origStore->getId())
+                $this->generateCategoryUrls($store->getRootCategoryId(), $store->getId())
             );
 
             $this->urlPersist->replace(
-                $this->generateProductUrls(
-                    $this->origStore->getWebsiteId(),
-                    $this->origStore->getOrigData('website_id'),
-                    $this->origStore->getId()
-                )
+                $this->generateProductUrls($store->getWebsiteId(), $store->getOrigData('website_id'), $store->getId())
             );
         }
-        return $store;
+
+        return $result;
     }
 
     /**
@@ -170,21 +137,19 @@ class View
     }
 
     /**
-     * Delete unused url rewrites
-     *
-     * @param \Magento\Store\Model\ResourceModel\Store $subject
-     * @param \Magento\Store\Model\ResourceModel\Store $result
+     * @param \Magento\Store\Model\ResourceModel\Store $object
+     * @param callable $proceed
      * @param AbstractModel $store
-     * @return \Magento\Store\Model\ResourceModel\Store
+     * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterDelete(
-        \Magento\Store\Model\ResourceModel\Store $subject,
-        \Magento\Store\Model\ResourceModel\Store $result,
+    public function aroundDelete(
+        \Magento\Store\Model\ResourceModel\Store $object,
+        \Closure $proceed,
         AbstractModel $store
     ) {
+        $result = $proceed($store);
         $this->urlPersist->deleteByData([UrlRewrite::STORE_ID => $store->getId()]);
-
         return $result;
     }
 }

@@ -39,7 +39,7 @@ class Scheme implements RouteInterface
      * @param  string $scheme
      * @param  array  $defaults
      */
-    public function __construct($scheme, array $defaults = [])
+    public function __construct($scheme, array $defaults = array())
     {
         $this->scheme   = $scheme;
         $this->defaults = $defaults;
@@ -53,7 +53,7 @@ class Scheme implements RouteInterface
      * @return Scheme
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -66,7 +66,7 @@ class Scheme implements RouteInterface
         }
 
         if (!isset($options['defaults'])) {
-            $options['defaults'] = [];
+            $options['defaults'] = array();
         }
 
         return new static($options['scheme'], $options['defaults']);
@@ -103,7 +103,7 @@ class Scheme implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         if (isset($options['uri'])) {
             $options['uri']->setScheme($this->scheme);
@@ -121,6 +121,6 @@ class Scheme implements RouteInterface
      */
     public function getAssembledParams()
     {
-        return [];
+        return array();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,11 +15,6 @@ use Magento\Framework\Setup\SchemaSetupInterface;
  */
 class InstallSchema implements InstallSchemaInterface
 {
-    /**
-     * @var string
-     */
-    private static $connectionName = 'checkout';
-
     /**
      * {@inheritdoc}
      */
@@ -102,8 +97,8 @@ class InstallSchema implements InstallSchemaInterface
          * Alter quote table with is_persistent flag
          *
          */
-        $installer->getConnection(self::$connectionName)->addColumn(
-            $installer->getTable('quote', self::$connectionName),
+        $installer->getConnection()->addColumn(
+            $installer->getTable('quote'),
             'is_persistent',
             [
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
@@ -114,5 +109,6 @@ class InstallSchema implements InstallSchemaInterface
         );
 
         $installer->endSetup();
+
     }
 }

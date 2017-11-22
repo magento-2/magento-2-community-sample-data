@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Helper\Dashboard;
@@ -10,9 +10,6 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
 
 /**
  * Data helper for dashboard
- *
- * @api
- * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {

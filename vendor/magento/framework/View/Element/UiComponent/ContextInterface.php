@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Element\UiComponent;
 
+use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\Element\UiComponent\ContentType\ContentTypeInterface;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Framework\View\LayoutInterface as PageLayoutInterface;
-use Magento\Framework\View\Element\UiComponentFactory;
 
 /**
  * Interface ContextInterface
@@ -123,15 +123,6 @@ interface ContextInterface
     public function addButtons(array $buttons, UiComponentInterface $component);
 
     /**
-     * Add html block in the actions toolbar
-     *
-     * @param array $htmlBlocks
-     * @param UiComponentInterface $component
-     * @return void
-     */
-    public function addHtmlBlocks(array $htmlBlocks, UiComponentInterface $component);
-
-    /**
      * Get render engine
      *
      * @return ContentTypeInterface
@@ -153,11 +144,4 @@ interface ContextInterface
      * @return Processor
      */
     public function getProcessor();
-
-    /**
-     * Get Ui Component Factory
-     *
-     * @return UiComponentFactory
-     */
-    public function getUiComponentFactory();
 }

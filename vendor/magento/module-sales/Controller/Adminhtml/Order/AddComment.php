@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -12,9 +12,7 @@ use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
 class AddComment extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::comment';
 
@@ -46,7 +44,7 @@ class AddComment extends \Magento\Sales\Controller\Adminhtml\Order
                 $order->save();
                 /** @var OrderCommentSender $orderCommentSender */
                 $orderCommentSender = $this->_objectManager
-                    ->create(\Magento\Sales\Model\Order\Email\Sender\OrderCommentSender::class);
+                    ->create('Magento\Sales\Model\Order\Email\Sender\OrderCommentSender');
 
                 $orderCommentSender->send($order, $notify, $comment);
 

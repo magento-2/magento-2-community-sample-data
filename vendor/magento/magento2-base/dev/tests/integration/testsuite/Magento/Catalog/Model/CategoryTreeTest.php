@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model;
@@ -11,10 +11,8 @@ namespace Magento\Catalog\Model;
  *
  * @see \Magento\Catalog\Model\CategoryTest
  * @magentoDataFixture Magento/Catalog/_files/categories.php
- * @magentoAppIsolation enabled
- * @magentoDbIsolation enabled
  */
-class CategoryTreeTest extends \PHPUnit\Framework\TestCase
+class CategoryTreeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Category
@@ -24,7 +22,7 @@ class CategoryTreeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
     }
 
@@ -125,7 +123,7 @@ class CategoryTreeTest extends \PHPUnit\Framework\TestCase
     public function testGetChildren()
     {
         $this->_model->load(3);
-        $this->assertEquals(array_diff([4, 13], explode(',', $this->_model->getChildren())), []);
+        $this->assertEquals('4', $this->_model->getChildren());
     }
 
     public function testGetPathInStore()
@@ -186,7 +184,7 @@ class CategoryTreeTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model->load(3);
         $children = $this->_model->getChildrenCategories();
-        $this->assertEquals(2, count($children));
+        $this->assertEquals(1, count($children));
     }
 
     public function testGetChildrenCategoriesEmpty()

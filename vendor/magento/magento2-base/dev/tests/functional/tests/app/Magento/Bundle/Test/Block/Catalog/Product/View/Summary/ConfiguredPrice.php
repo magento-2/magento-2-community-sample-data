@@ -1,15 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Bundle\Test\Block\Catalog\Product\View\Summary;
 
+use Magento\Catalog\Test\Block\AbstractPriceBlock;
+
 /**
  * This class is used to access the price related information from the storefront.
  */
-class ConfiguredPrice extends \Magento\Catalog\Test\Block\AbstractPriceBlock
+class ConfiguredPrice extends AbstractPriceBlock
 {
     /**
      * Mapping for different type of price.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\ResourceModel\Stock;
@@ -57,13 +57,13 @@ class Item extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param \Magento\CatalogInventory\Api\Data\StockItemInterface $item
      * @param int $productId
-     * @param int $stockId
+     * @param int $websiteId
      * @return $this
      */
-    public function loadByProductId(\Magento\CatalogInventory\Api\Data\StockItemInterface $item, $productId, $stockId)
+    public function loadByProductId(\Magento\CatalogInventory\Api\Data\StockItemInterface $item, $productId, $websiteId)
     {
-        $select = $this->_getLoadSelect('product_id', $productId, $item)->where('stock_id = :stock_id');
-        $data = $this->getConnection()->fetchRow($select, [':stock_id' => $stockId]);
+        $select = $this->_getLoadSelect('product_id', $productId, $item)->where('website_id = :website_id');
+        $data = $this->getConnection()->fetchRow($select, [':website_id' => $websiteId]);
         if ($data) {
             $item->setData($data);
         } else {

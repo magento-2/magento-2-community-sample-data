@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\OfflineShipping\Test\Unit\Block\Adminhtml\Carrier\Tablerate;
 
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid
@@ -41,26 +41,24 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = $objectManager->getObject(
-            \Magento\Backend\Block\Template\Context::class,
-            ['storeManager' => $this->storeManagerMock]
-        );
+        $this->context = $objectManager->getObject('Magento\Backend\Block\Template\Context', [
+            'storeManager' => $this->storeManagerMock
+        ]);
 
-        $this->backendHelperMock = $this->getMockBuilder(\Magento\Backend\Helper\Data::class)
+        $this->backendHelperMock = $this->getMockBuilder('\Magento\Backend\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->collectionFactoryMock =
-            $this->getMockBuilder(
-                \Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CollectionFactory::class
-            )->disableOriginalConstructor()
+            $this->getMockBuilder('\Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CollectionFactory')
+            ->disableOriginalConstructor()
             ->getMock();
 
-        $this->tablerateMock = $this->getMockBuilder(\Magento\OfflineShipping\Model\Carrier\Tablerate::class)
+        $this->tablerateMock = $this->getMockBuilder('Magento\OfflineShipping\Model\Carrier\Tablerate')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -76,7 +74,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         $websiteId = 1;
 
-        $websiteMock = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+        $websiteMock = $this->getMockBuilder('Magento\Store\Model\Website')
             ->setMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,7 +96,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         $websiteId = 10;
 
-        $websiteMock = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+        $websiteMock = $this->getMockBuilder('Magento\Store\Model\Website')
             ->disableOriginalConstructor()
             ->setMethods(['getId'])
             ->getMock();

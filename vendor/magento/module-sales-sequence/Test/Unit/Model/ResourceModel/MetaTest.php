@@ -1,16 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesSequence\Test\Unit\Model\ResourceModel;
 
+use Magento\Framework\App\ResourceConnection;
 use Magento\SalesSequence\Model\ResourceModel\Meta;
 
 /**
  * Class MetaTest
  */
-class MetaTest extends \PHPUnit\Framework\TestCase
+class MetaTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -63,7 +64,7 @@ class MetaTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->connectionMock = $this->getMockForAbstractClass(
-            \Magento\Framework\DB\Adapter\AdapterInterface::class,
+            'Magento\Framework\DB\Adapter\AdapterInterface',
             [],
             '',
             false,
@@ -71,20 +72,56 @@ class MetaTest extends \PHPUnit\Framework\TestCase
             true,
             ['query']
         );
-        $this->dbContext = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
-        $this->metaFactory = $this->createPartialMock(\Magento\SalesSequence\Model\MetaFactory::class, ['create']);
-        $this->resourceProfile = $this->createPartialMock(
-            \Magento\SalesSequence\Model\ResourceModel\Profile::class,
-            ['loadActiveProfile', 'save']
+        $this->dbContext = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\Db\Context',
+            [],
+            [],
+            '',
+            false
         );
-        $this->resourceMock = $this->createPartialMock(
-            \Magento\Framework\App\ResourceConnection::class,
-            ['getConnection', 'getTableName']
+        $this->metaFactory = $this->getMock(
+            'Magento\SalesSequence\Model\MetaFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $this->resourceProfile = $this->getMock(
+            'Magento\SalesSequence\Model\ResourceModel\Profile',
+            ['loadActiveProfile', 'save'],
+            [],
+            '',
+            false
+        );
+        $this->resourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            ['getConnection', 'getTableName'],
+            [],
+            '',
+            false
         );
         $this->dbContext->expects($this->once())->method('getResources')->willReturn($this->resourceMock);
-        $this->select = $this->createMock(\Magento\Framework\DB\Select::class);
-        $this->meta = $this->createMock(\Magento\SalesSequence\Model\Meta::class);
-        $this->profile = $this->createMock(\Magento\SalesSequence\Model\Profile::class);
+        $this->select = $this->getMock(
+            'Magento\Framework\DB\Select',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->meta = $this->getMock(
+            'Magento\SalesSequence\Model\Meta',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->profile = $this->getMock(
+            'Magento\SalesSequence\Model\Profile',
+            [],
+            [],
+            '',
+            false
+        );
         $this->resource = new Meta(
             $this->dbContext,
             $this->metaFactory,
@@ -124,7 +161,6 @@ class MetaTest extends \PHPUnit\Framework\TestCase
             ->willReturn($metaId);
         $this->metaFactory->expects($this->once())->method('create')->willReturn($this->meta);
         $this->stepCheckSaveWithActiveProfile($metaData);
-        $this->meta->expects($this->once())->method('beforeLoad');
         $this->assertEquals($this->meta, $this->resource->loadByEntityTypeAndStore($entityType, $storeId));
     }
 
@@ -141,5 +177,7 @@ class MetaTest extends \PHPUnit\Framework\TestCase
             ->method('quoteIdentifier');
         $this->connectionMock->expects($this->once())->method('fetchRow')->willReturn($metaData);
         $this->resourceProfile->expects($this->once())->method('loadActiveProfile')->willReturn($this->profile);
+        $this->meta->expects($this->at(0))->method('setData')->with($metaData);
+        $this->meta->expects($this->at(2))->method('setData')->with('active_profile', $this->profile);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Test\Unit\Model\Quote\Address;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class RelationTest extends \PHPUnit\Framework\TestCase
+class RelationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\AbstractModel | \PHPUnit_Framework_MockObject_MockObject
@@ -22,22 +22,36 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->modelMock = $this->createPartialMock(\Magento\Framework\Model\AbstractModel::class, [
+        $this->modelMock = $this->getMock(
+            'Magento\Framework\Model\AbstractModel',
+            [
                 'getItemsCollection',
                 'getShippingRatesCollection',
                 'itemsCollectionWasSet',
                 'shippingRatesCollectionWasSet'
-            ]);
-        $this->relation = $objectManager->getObject(\Magento\Quote\Model\Quote\Address\Relation::class, []);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->relation = $objectManager->getObject('Magento\Quote\Model\Quote\Address\Relation', []);
     }
 
     public function testProcessRelation()
     {
-        $itemsCollection = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class
+        $itemsCollection = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection',
+            [],
+            [],
+            '',
+            false
         );
-        $shippingRatesCollection = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class
+        $shippingRatesCollection = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection',
+            [],
+            [],
+            '',
+            false
         );
         $this->modelMock->expects($this->once())->method('itemsCollectionWasSet')->willReturn(true);
         $this->modelMock->expects($this->once())->method('getItemsCollection')->willReturn($itemsCollection);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -68,13 +68,13 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'callback_url',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            512,
+            255,
             [],
             'Callback URL'
         )->addColumn(
             'rejected_callback_url',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            512,
+            255,
             ['nullable' => false],
             'Rejected callback URL'
         )->addIndex(
@@ -163,7 +163,7 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'callback_url',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            512,
+            255,
             ['nullable' => false],
             'Token Callback URL'
         )->addColumn(
@@ -360,5 +360,6 @@ class InstallSchema implements InstallSchemaInterface
         $installer->getConnection()->createTable($table);
 
         $installer->endSetup();
+
     }
 }

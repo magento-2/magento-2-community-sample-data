@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Test\Unit\Model\Soap;
@@ -10,7 +10,7 @@ use \Magento\Webapi\Model\Soap\Fault;
 /**
  * Test SOAP fault model.
  */
-class FaultTest extends \PHPUnit\Framework\TestCase
+class FaultTest extends \PHPUnit_Framework_TestCase
 {
     const WSDL_URL = 'http://host.com/?wsdl&services=customerV1';
 
@@ -25,7 +25,7 @@ class FaultTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Webapi\Model\Soap\Fault */
     protected $_soapFault;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit_Framework_MockObject_MockObject*/
     protected $_localeResolverMock;
 
     /**
@@ -35,23 +35,24 @@ class FaultTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->_requestMock = $this->getMock('\Magento\Framework\App\RequestInterface');
         /** Initialize SUT. */
+        $message = "Soap fault reason.";
         $details = ['param1' => 'value1', 'param2' => 2];
         $code = 111;
         $webapiException = new \Magento\Framework\Webapi\Exception(
-            __('Soap fault reason.'),
+            __($message),
             $code,
             \Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR,
             $details
         );
         $this->_soapServerMock = $this->getMockBuilder(
-            \Magento\Webapi\Model\Soap\Server::class
+            'Magento\Webapi\Model\Soap\Server'
         )->disableOriginalConstructor()->getMock();
         $this->_soapServerMock->expects($this->any())->method('generateUri')->will($this->returnValue(self::WSDL_URL));
 
         $this->_localeResolverMock = $this->getMockBuilder(
-            \Magento\Framework\Locale\Resolver::class
+            'Magento\Framework\Locale\Resolver'
         )->disableOriginalConstructor()->getMock();
         $this->_localeResolverMock->expects(
             $this->any()
@@ -61,7 +62,7 @@ class FaultTest extends \PHPUnit\Framework\TestCase
             $this->returnValue('en_US')
         );
 
-        $this->_appStateMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->_appStateMock = $this->getMock('\Magento\Framework\App\State', [], [], '', false);
 
         $this->_soapFault = new \Magento\Webapi\Model\Soap\Fault(
             $this->_requestMock,
@@ -210,7 +211,7 @@ XML;
         $details = ['param1' => 'value1', 'param2' => 2];
         $code = 111;
         $webapiException = new \Magento\Framework\Webapi\Exception(
-            __('Soap fault reason.'),
+            __($message),
             $code,
             \Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR,
             $details

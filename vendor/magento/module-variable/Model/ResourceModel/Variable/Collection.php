@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Variable\Model\ResourceModel\Variable;
@@ -27,7 +27,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(\Magento\Variable\Model\Variable::class, \Magento\Variable\Model\ResourceModel\Variable::class);
+        $this->_init('Magento\Variable\Model\Variable', 'Magento\Variable\Model\ResourceModel\Variable');
     }
 
     /**

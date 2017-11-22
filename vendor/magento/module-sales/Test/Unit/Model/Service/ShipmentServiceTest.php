@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Service;
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class ShipmentServiceTest
  */
-class ShipmentServiceTest extends \PHPUnit\Framework\TestCase
+class ShipmentServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Repository
@@ -60,29 +60,41 @@ class ShipmentServiceTest extends \PHPUnit\Framework\TestCase
         $objectManager = new ObjectManagerHelper($this);
 
         $this->commentRepositoryMock = $this->getMockForAbstractClass(
-            \Magento\Sales\Api\ShipmentCommentRepositoryInterface::class,
+            'Magento\Sales\Api\ShipmentCommentRepositoryInterface',
             ['getList'],
             '',
             false
         );
-        $this->searchCriteriaBuilderMock = $this->createPartialMock(
-            \Magento\Framework\Api\SearchCriteriaBuilder::class,
-            ['create', 'addFilters']
+        $this->searchCriteriaBuilderMock = $this->getMock(
+            'Magento\Framework\Api\SearchCriteriaBuilder',
+            ['create', 'addFilters'],
+            [],
+            '',
+            false
         );
-        $this->filterBuilderMock = $this->createPartialMock(
-            \Magento\Framework\Api\FilterBuilder::class,
-            ['setField', 'setValue', 'setConditionType', 'create']
+        $this->filterBuilderMock = $this->getMock(
+            'Magento\Framework\Api\FilterBuilder',
+            ['setField', 'setValue', 'setConditionType', 'create'],
+            [],
+            '',
+            false
         );
         $this->repositoryMock = $this->getMockForAbstractClass(
-            \Magento\Sales\Api\ShipmentRepositoryInterface::class,
+            'Magento\Sales\Api\ShipmentRepositoryInterface',
             ['get'],
             '',
             false
         );
-        $this->notifierMock = $this->createPartialMock(\Magento\Shipping\Model\ShipmentNotifier::class, ['notify']);
+        $this->notifierMock = $this->getMock(
+            'Magento\Shipping\Model\ShipmentNotifier',
+            ['notify'],
+            [],
+            '',
+            false
+        );
 
         $this->shipmentService = $objectManager->getObject(
-            \Magento\Sales\Model\Service\ShipmentService::class,
+            'Magento\Sales\Model\Service\ShipmentService',
             [
                 'commentRepository' => $this->commentRepositoryMock,
                 'criteriaBuilder' => $this->searchCriteriaBuilderMock,
@@ -101,7 +113,13 @@ class ShipmentServiceTest extends \PHPUnit\Framework\TestCase
         $id = 145;
         $returnValue = 'return-value';
 
-        $shipmentMock = $this->createPartialMock(\Magento\Sales\Model\Order\Shipment::class, ['getShippingLabel']);
+        $shipmentMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment',
+            ['getShippingLabel'],
+            [],
+            '',
+            false
+        );
 
         $this->repositoryMock->expects($this->once())
             ->method('get')
@@ -122,8 +140,20 @@ class ShipmentServiceTest extends \PHPUnit\Framework\TestCase
         $id = 25;
         $returnValue = 'return-value';
 
-        $filterMock = $this->createMock(\Magento\Framework\Api\Filter::class);
-        $searchCriteriaMock = $this->createMock(\Magento\Framework\Api\SearchCriteria::class);
+        $filterMock = $this->getMock(
+            'Magento\Framework\Api\Filter',
+            [],
+            [],
+            '',
+            false
+        );
+        $searchCriteriaMock = $this->getMock(
+            'Magento\Framework\Api\SearchCriteria',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->filterBuilderMock->expects($this->once())
             ->method('setField')
@@ -163,7 +193,7 @@ class ShipmentServiceTest extends \PHPUnit\Framework\TestCase
         $returnValue = 'return-value';
 
         $modelMock = $this->getMockForAbstractClass(
-            \Magento\Sales\Model\AbstractModel::class,
+            'Magento\Sales\Model\AbstractModel',
             [],
             '',
             false

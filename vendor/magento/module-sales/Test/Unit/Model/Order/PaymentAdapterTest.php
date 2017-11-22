@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order;
 /**
  * Unit test for payment adapter.
  */
-class PaymentAdapterTest extends \PHPUnit\Framework\TestCase
+class PaymentAdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\PaymentAdapter
@@ -44,12 +44,11 @@ class PaymentAdapterTest extends \PHPUnit\Framework\TestCase
         $this->creditmemoMock = $this->getMockBuilder(\Magento\Sales\Api\Data\CreditmemoInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-
         $this->invoiceMock = $this->getMockBuilder(\Magento\Sales\Api\Data\InvoiceInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->payOperationMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice\PayOperation::class)
+        $this->payOperationMock =$this->getMockBuilder(\Magento\Sales\Model\Order\Invoice\PayOperation::class)
             ->disableOriginalConstructor()
             ->getMock();
 

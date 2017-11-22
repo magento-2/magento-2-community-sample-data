@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ImportExport\Model\Export\Entity;
@@ -11,11 +11,9 @@ use Magento\ImportExport\Model\Export\Adapter\AbstractAdapter;
 /**
  * Export entity abstract model
  *
- * @api
- *
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class AbstractEntity
 {
@@ -545,14 +543,5 @@ abstract class AbstractEntity
         $this->_writer = $writer;
 
         return $this;
-    }
-
-    /**
-     * Clean cached values
-     * @since 100.1.2
-     */
-    public function __destruct()
-    {
-        self::$attrCodes = null;
     }
 }

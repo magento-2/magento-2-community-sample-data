@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model\Metadata;
@@ -8,10 +8,6 @@ namespace Magento\Customer\Model\Metadata;
 use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Form
 {
     /**#@+
@@ -23,7 +19,9 @@ class Form
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var CustomerMetadataInterface
+     */
     protected $_customerMetadataService;
 
     /**

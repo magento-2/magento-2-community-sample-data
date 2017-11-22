@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Controller\Test\Unit\Controller\Index;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecute()
     {
@@ -15,7 +15,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         /**
          * @var \Magento\Framework\Controller\Index\Index
          */
-        $controller = $objectManager->getObject(\Magento\Framework\Controller\Index\Index::class);
+        $controller = $objectManager->getObject('Magento\Framework\Controller\Index\Index');
 
         // The execute method is empty and returns void, just calling to verify
         // the method exists and does not throw an exception

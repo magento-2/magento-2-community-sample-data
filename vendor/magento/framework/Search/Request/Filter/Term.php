@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Request\Filter;
@@ -10,7 +10,6 @@ use Magento\Framework\Search\Request\FilterInterface;
 
 /**
  * Term Filter
- * @api
  */
 class Term extends AbstractKeyValuePair implements FilterInterface
 {

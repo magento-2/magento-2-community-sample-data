@@ -42,14 +42,6 @@ class Bitrix24 extends AbstractService
     /**
      * {@inheritdoc}
      */
-    protected function getAuthorizationMethod()
-    {
-        return static::AUTHORIZATION_METHOD_QUERY_STRING_V4;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function requestAccessToken($code, $state = null)
     {
         if (null !== $state) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Magento\Framework\Event\Config\Data;
  *
  * @package Magento\Framework\Event
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Data|\PHPUnit_Framework_MockObject_MockObject
@@ -27,9 +27,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     protected $config;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->dataContainerMock = $this->createPartialMock(\Magento\Framework\Event\Config\Data::class, ['get']);
+        $this->dataContainerMock = $this->getMock('Magento\Framework\Event\Config\Data', ['get'], [], '', false, false);
         $this->config = new Config($this->dataContainerMock);
     }
 

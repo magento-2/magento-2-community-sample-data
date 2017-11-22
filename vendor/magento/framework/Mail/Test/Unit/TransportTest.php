@@ -1,26 +1,26 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mail\Test\Unit;
 
-class TransportTest extends \PHPUnit\Framework\TestCase
+class TransportTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit\Framework_MockObject
+     * @var \PHPUnit_Framework_MockObject
      */
-    protected $messageMock;
+    protected $_messageMock;
 
     /**
      * @var \Magento\Framework\Mail\Transport
      */
-    protected $transport;
+    protected $_transport;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->messageMock = $this->createMock(\Magento\Framework\Mail\Message::class);
-        $this->transport = new \Magento\Framework\Mail\Transport($this->messageMock);
+        $this->_messageMock = $this->getMock('\Magento\Framework\Mail\Message', [], [], '', false);
+        $this->_transport = new \Magento\Framework\Mail\Transport($this->_messageMock);
     }
 
     /**
@@ -29,8 +29,8 @@ class TransportTest extends \PHPUnit\Framework\TestCase
      */
     public function testTransportWithIncorrectMessageObject()
     {
-        $this->messageMock = $this->createMock(\Magento\Framework\Mail\MessageInterface::class);
-        $this->transport = new \Magento\Framework\Mail\Transport($this->messageMock);
+        $this->_messageMock = $this->getMock('\Magento\Framework\Mail\MessageInterface');
+        $this->_transport = new \Magento\Framework\Mail\Transport($this->_messageMock);
     }
 
     /**
@@ -40,15 +40,10 @@ class TransportTest extends \PHPUnit\Framework\TestCase
      */
     public function testSendMessageBrokenMessage()
     {
-        $this->messageMock->expects($this->any())
+        $this->_messageMock->expects($this->any())
             ->method('getParts')
             ->will($this->returnValue(['a', 'b']));
 
-        $this->transport->sendMessage();
-    }
-
-    public function testGetMessage()
-    {
-        $this->assertSame($this->messageMock, $this->transport->getMessage());
+        $this->_transport->sendMessage();
     }
 }

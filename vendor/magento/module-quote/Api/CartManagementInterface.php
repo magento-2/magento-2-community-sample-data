@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Api;
@@ -10,7 +10,6 @@ use Magento\Quote\Api\Data\PaymentInterface;
 /**
  * Interface CartManagementInterface
  * @api
- * @since 100.0.2
  */
 interface CartManagementInterface
 {
@@ -28,10 +27,10 @@ interface CartManagementInterface
     public function createEmptyCart();
 
     /**
-     * Creates an empty cart and quote for a specified customer if customer does not have a cart yet.
+     * Creates an empty cart and quote for a specified customer.
      *
      * @param int $customerId The customer ID.
-     * @return int new cart ID if customer did not have a cart or ID of the existing cart otherwise.
+     * @return int Cart ID.
      * @throws \Magento\Framework\Exception\CouldNotSaveException The empty cart and quote could not be created.
      */
     public function createEmptyCartForCustomer($customerId);

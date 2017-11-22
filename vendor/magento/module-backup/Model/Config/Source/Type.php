@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backup\Model\Config\Source;
@@ -9,8 +9,6 @@ namespace Magento\Backup\Model\Config\Source;
  * Backups types' source model for system configuration
  *
  * @author     Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Type implements \Magento\Framework\Option\ArrayInterface
 {

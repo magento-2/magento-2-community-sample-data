@@ -41,16 +41,16 @@ class NewRelicHandler extends AbstractProcessingHandler
      * Some context and extra data is passed into the handler as arrays of values. Do we send them as is
      * (useful if we are using the API), or explode them for display on the NewRelic RPM website?
      *
-     * @var bool
+     * @var boolean
      */
     protected $explodeArrays;
 
     /**
      * {@inheritDoc}
      *
-     * @param string $appName
-     * @param bool   $explodeArrays
-     * @param string $transactionName
+     * @param string  $appName
+     * @param boolean $explodeArrays
+     * @param string  $transactionName
      */
     public function __construct(
         $level = Logger::ERROR,
@@ -91,27 +91,23 @@ class NewRelicHandler extends AbstractProcessingHandler
             newrelic_notice_error($record['message']);
         }
 
-        if (isset($record['formatted']['context']) && is_array($record['formatted']['context'])) {
-            foreach ($record['formatted']['context'] as $key => $parameter) {
-                if (is_array($parameter) && $this->explodeArrays) {
-                    foreach ($parameter as $paramKey => $paramValue) {
-                        $this->setNewRelicParameter('context_' . $key . '_' . $paramKey, $paramValue);
-                    }
-                } else {
-                    $this->setNewRelicParameter('context_' . $key, $parameter);
+        foreach ($record['formatted']['context'] as $key => $parameter) {
+            if (is_array($parameter) && $this->explodeArrays) {
+                foreach ($parameter as $paramKey => $paramValue) {
+                    $this->setNewRelicParameter('context_' . $key . '_' . $paramKey, $paramValue);
                 }
+            } else {
+                $this->setNewRelicParameter('context_' . $key, $parameter);
             }
         }
 
-        if (isset($record['formatted']['extra']) && is_array($record['formatted']['extra'])) {
-            foreach ($record['formatted']['extra'] as $key => $parameter) {
-                if (is_array($parameter) && $this->explodeArrays) {
-                    foreach ($parameter as $paramKey => $paramValue) {
-                        $this->setNewRelicParameter('extra_' . $key . '_' . $paramKey, $paramValue);
-                    }
-                } else {
-                    $this->setNewRelicParameter('extra_' . $key, $parameter);
+        foreach ($record['formatted']['extra'] as $key => $parameter) {
+            if (is_array($parameter) && $this->explodeArrays) {
+                foreach ($parameter as $paramKey => $paramValue) {
+                    $this->setNewRelicParameter('extra_' . $key . '_' . $paramKey, $paramValue);
                 }
+            } else {
+                $this->setNewRelicParameter('extra_' . $key, $parameter);
             }
         }
     }

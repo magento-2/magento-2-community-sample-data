@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Gateway\Request;
@@ -8,15 +8,15 @@ namespace Magento\Payment\Test\Unit\Gateway\Request;
 use Magento\Payment\Gateway\Request\BuilderComposite;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 
-class BuilderCompositeTest extends \PHPUnit\Framework\TestCase
+class BuilderCompositeTest extends \PHPUnit_Framework_TestCase
 {
     public function testBuildEmpty()
     {
-        $tMapFactory = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMapFactory::class)
+        $tMapFactory = $this->getMockBuilder('Magento\Framework\ObjectManager\TMapFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $tMap = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMap::class)
+        $tMap = $this->getMockBuilder('Magento\Framework\ObjectManager\TMap')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -37,52 +37,55 @@ class BuilderCompositeTest extends \PHPUnit\Framework\TestCase
         static::assertEquals([], $builder->build([]));
     }
 
-    /**
-     * @param array $expected
-     * @covers \Magento\Payment\Gateway\Request\BuilderComposite::build
-     * @dataProvider buildDataProvider
-     */
-    public function testBuild(array $expected)
+    public function testBuild()
     {
-        $tMapFactory = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMapFactory::class)
+        $expectedRequest = [
+            'user' => 'Mrs G. Crump',
+            'url' => 'https://url.in',
+            'amount' => 10.00,
+            'currency' => 'pound',
+            'address' => '46 Egernon Crescent',
+            'item' => 'gas cooker',
+            'quantity' => 1
+        ];
+
+        $tMapFactory = $this->getMockBuilder('Magento\Framework\ObjectManager\TMapFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $tMap = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMap::class)
+        $tMap = $this->getMockBuilder('Magento\Framework\ObjectManager\TMap')
             ->disableOriginalConstructor()
             ->getMock();
-        $customerBuilder = $this->getMockBuilder(\Magento\Payment\Gateway\Request\BuilderInterface::class)
+        $customerBuilder = $this->getMockBuilder('Magento\Payment\Gateway\Request\BuilderInterface')
             ->getMockForAbstractClass();
-        $productBuilder = $this->getMockBuilder(\Magento\Payment\Gateway\Request\BuilderInterface::class)
+        $productBuilder = $this->getMockBuilder('Magento\Payment\Gateway\Request\BuilderInterface')
             ->getMockForAbstractClass();
-        $magentoBuilder = $this->getMockBuilder(\Magento\Payment\Gateway\Request\BuilderInterface::class)
+        $magentoBuilder = $this->getMockBuilder('Magento\Payment\Gateway\Request\BuilderInterface')
             ->getMockForAbstractClass();
 
         $customerBuilder->expects(static::once())
             ->method('build')
             ->willReturn(
                 [
-                    'user' => $expected['user'],
-                    'address' => $expected['address']
+                    'user' => 'Mrs G. Crump',
+                    'address' => '46 Egernon Crescent'
                 ]
             );
         $productBuilder->expects(static::once())
             ->method('build')
             ->willReturn(
                 [
-                    'amount' => $expected['amount'],
-                    'currency' => $expected['currency'],
-                    'item' => $expected['item'],
-                    'quantity' => $expected['quantity'],
-                    'options' => ['product' => $expected['options']['product']]
+                    'amount' => 10.00,
+                    'currency' => 'pound',
+                    'item' => 'gas cooker',
+                    'quantity' => 1
                 ]
             );
         $magentoBuilder->expects(static::once())
             ->method('build')
             ->willReturn(
                 [
-                    'url' => $expected['url'],
-                    'options' => ['magento' => $expected['options']['magento']]
+                    'url' => 'https://url.in'
                 ]
             );
 
@@ -91,9 +94,9 @@ class BuilderCompositeTest extends \PHPUnit\Framework\TestCase
             ->with(
                 [
                     'array' => [
-                        'customer' => \Magento\Payment\Gateway\Request\BuilderInterface::class,
-                        'product' => \Magento\Payment\Gateway\Request\BuilderInterface::class,
-                        'magento' => \Magento\Payment\Gateway\Request\BuilderInterface::class
+                        'customer' => 'Magento\Payment\Gateway\Request\BuilderInterface',
+                        'product' => 'Magento\Payment\Gateway\Request\BuilderInterface',
+                        'magento' => 'Magento\Payment\Gateway\Request\BuilderInterface'
                     ],
                     'type' => BuilderInterface::class
                 ]
@@ -106,51 +109,12 @@ class BuilderCompositeTest extends \PHPUnit\Framework\TestCase
         $builder = new BuilderComposite(
             $tMapFactory,
             [
-                'customer' => \Magento\Payment\Gateway\Request\BuilderInterface::class,
-                'product' => \Magento\Payment\Gateway\Request\BuilderInterface::class,
-                'magento' => \Magento\Payment\Gateway\Request\BuilderInterface::class
+                'customer' => 'Magento\Payment\Gateway\Request\BuilderInterface',
+                'product' => 'Magento\Payment\Gateway\Request\BuilderInterface',
+                'magento' => 'Magento\Payment\Gateway\Request\BuilderInterface'
             ]
         );
 
-        static::assertEquals($expected, $builder->build([]));
-    }
-
-    /**
-     * Get list of variations
-     */
-    public function buildDataProvider()
-    {
-        return [
-            [[
-                'user' => 'Mrs G. Crump',
-                'address' => '46 Egernon Crescent',
-                'amount' => 10.00,
-                'currency' => 'pound',
-                'item' => 'gas cooker',
-                'quantity' => 1,
-                'options' => ['product' => '', 'magento' => 'magento'],
-                'url' => 'https://url.in',
-            ]],
-            [[
-                'user' => 'John Doe',
-                'address' => '46 Main Street',
-                'amount' => 250.00,
-                'currency' => 'usd',
-                'item' => 'phone',
-                'quantity' => 2,
-                'options' => ['product' => 'product', 'magento' => 'magento'],
-                'url' => 'https://url.io',
-            ]],
-            [[
-                'user' => 'John Smit',
-                'address' => '46 Egernon Crescent',
-                'amount' => 1100.00,
-                'currency' => 'usd',
-                'item' => 'notebook',
-                'quantity' => 1,
-                'options' => ['product' => ['discount' => ['price' => 2.00]], 'magento' => 'magento'],
-                'url' => 'http://url.ua',
-            ]],
-        ];
+        static::assertEquals($expectedRequest, $builder->build([]));
     }
 }

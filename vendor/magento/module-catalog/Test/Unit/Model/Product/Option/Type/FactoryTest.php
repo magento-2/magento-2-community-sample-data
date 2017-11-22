@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Option\Type;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -19,20 +19,20 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_factory = $objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Product\Option\Type\Factory::class,
+            'Magento\Catalog\Model\Product\Option\Type\Factory',
             ['objectManager' => $this->_objectManagerMock]
         );
     }
 
     public function testCreate()
     {
-        $className = \Magento\Catalog\Model\Product\Option\Type\DefaultType::class;
+        $className = 'Magento\Catalog\Model\Product\Option\Type\DefaultType';
 
-        $filterMock = $this->createMock($className);
+        $filterMock = $this->getMock($className, [], [], '', false);
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(
@@ -49,10 +49,10 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateWithArguments()
     {
-        $className = \Magento\Catalog\Model\Product\Option\Type\DefaultType::class;
+        $className = 'Magento\Catalog\Model\Product\Option\Type\DefaultType';
         $arguments = ['foo', 'bar'];
 
-        $filterMock = $this->createMock($className);
+        $filterMock = $this->getMock($className, [], [], '', false);
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(
@@ -75,7 +75,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         $className = 'WrongClass';
 
-        $filterMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
+        $filterMock = $this->getMock($className, [], [], '', false);
         $this->_objectManagerMock->expects($this->once())->method('create')->will($this->returnValue($filterMock));
 
         $this->_factory->create($className);

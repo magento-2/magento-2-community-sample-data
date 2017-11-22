@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -19,15 +19,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 4. Save
  * 5. Perform all assertions
  *
- * @group Terms_and_Conditions
+ * @group Terms_and_Conditions_(CS)
  * @ZephyrId MAGETWO-29586, MAGETWO-32499
  */
 class CreateTermEntityTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'extended_acceptance_test';
-    const SEVERITY = 'S3';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

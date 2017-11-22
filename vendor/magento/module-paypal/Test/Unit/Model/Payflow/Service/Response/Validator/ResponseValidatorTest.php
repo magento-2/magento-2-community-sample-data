@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Payflow\Service\Response\Validator;
 
 use Magento\Framework\DataObject;
-use Magento\Paypal\Model\Payflow\Transparent;
 use Magento\Paypal\Model\Payflowpro;
 use Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface;
 use Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator;
@@ -16,7 +15,7 @@ use Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator;
  *
  * Test for class \Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator
  */
-class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
+class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ResponseValidator
@@ -28,22 +27,13 @@ class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validatorMock;
 
-    /**
-     * @var Transparent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $payflowFacade;
-
     protected function setUp()
     {
         $this->validatorMock = $this->getMockBuilder(
-            \Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface::class
+            'Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface'
         )
             ->setMethods(['validate'])
             ->getMockForAbstractClass();
-        $this->payflowFacade = $this->getMockBuilder(Transparent::class)
-            ->disableOriginalConstructor()
-            ->setMethods([])
-            ->getMock();
 
         $this->responseValidator = new ResponseValidator([$this->validatorMock]);
     }
@@ -60,7 +50,7 @@ class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('validate')
             ->with($response);
 
-        $this->responseValidator->validate($response, $this->payflowFacade);
+        $this->responseValidator->validate($response);
     }
 
     /**
@@ -102,7 +92,7 @@ class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($response)
             ->willReturn(false);
 
-        $this->responseValidator->validate($response, $this->payflowFacade);
+        $this->responseValidator->validate($response);
     }
 
     /**
@@ -123,6 +113,6 @@ class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($response)
             ->willReturn(false);
 
-        $this->responseValidator->validate($response, $this->payflowFacade);
+        $this->responseValidator->validate($response);
     }
 }

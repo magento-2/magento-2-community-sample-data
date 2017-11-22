@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Action;
@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  *
  * getRequest,getResponse of AbstractAction class is also tested
  */
-class ForwardTest extends \PHPUnit\Framework\TestCase
+class ForwardTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Action\Forward
@@ -33,13 +33,13 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
         $cookieMetadataFactoryMock = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+            'Magento\Framework\Stdlib\Cookie\CookieMetadataFactory'
         )->disableOriginalConstructor()->getMock();
-        $cookieManagerMock = $this->createMock(\Magento\Framework\Stdlib\CookieManagerInterface::class);
-        $contextMock = $this->getMockBuilder(\Magento\Framework\App\Http\Context::class)->disableOriginalConstructor()
+        $cookieManagerMock = $this->getMock('Magento\Framework\Stdlib\CookieManagerInterface');
+        $contextMock = $this->getMockBuilder('Magento\Framework\App\Http\Context')->disableOriginalConstructor()
             ->getMock();
         $this->response = $objectManager->getObject(
-            \Magento\Framework\App\Response\Http::class,
+            'Magento\Framework\App\Response\Http',
             [
                 'cookieManager' => $cookieManagerMock,
                 'cookieMetadataFactory' => $cookieMetadataFactoryMock,
@@ -47,11 +47,11 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()->getMock();
 
         $this->actionAbstract = $objectManager->getObject(
-            \Magento\Framework\App\Action\Forward::class,
+            'Magento\Framework\App\Action\Forward',
             [
                 'request' => $this->request,
                 'response' => $this->response

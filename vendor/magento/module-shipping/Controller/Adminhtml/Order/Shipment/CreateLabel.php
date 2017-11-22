@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -11,9 +11,7 @@ use Magento\Backend\App\Action;
 class CreateLabel extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -64,7 +62,7 @@ class CreateLabel extends \Magento\Backend\App\Action
             $response->setError(true);
             $response->setMessage($e->getMessage());
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $response->setError(true);
             $response->setMessage(__('An error occurred while creating shipping label.'));
         }

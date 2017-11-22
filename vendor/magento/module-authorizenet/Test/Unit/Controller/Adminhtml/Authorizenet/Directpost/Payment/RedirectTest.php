@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Test\Unit\Controller\Adminhtml\Authorizenet\Directpost\Payment;
@@ -14,7 +14,7 @@ use Magento\Payment\Block\Transparent\Iframe;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RedirectTest extends \PHPUnit\Framework\TestCase
+class RedirectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorizenet\Model\Directpost
@@ -98,7 +98,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->directpostSessionMock = $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost\Session::class)
+        $this->directpostSessionMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost\Session')
             ->setMethods([
                     'getLastOrderIncrementId',
                     'removeCheckoutOrderIncrementId',
@@ -107,42 +107,42 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
                 ])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->setMethods(['getId', 'getState', 'getIncrementId', 'registerCancellation', 'loadByIncrementId', 'save'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->adminOrderCreateMock = $this->getMockBuilder(\Magento\Sales\Model\AdminOrder\Create::class)
+        $this->adminOrderCreateMock = $this->getMockBuilder('Magento\Sales\Model\AdminOrder\Create')
             ->setMethods(['getSession'])
             ->disableOriginalConstructor()
             ->getMock();
-        $sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
+        $sessionMock = $this->getMockBuilder('Magento\Backend\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionQuoteMock = $this->getMockBuilder(\Magento\Backend\Model\Session\Quote::class)
+        $this->sessionQuoteMock = $this->getMockBuilder('Magento\Backend\Model\Session\Quote')
             ->setMethods(['getOrder', 'clearStorage'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('get')
             ->willReturnMap([
-                [\Magento\Authorizenet\Model\Directpost\Session::class, $this->directpostSessionMock],
-                [\Magento\Sales\Model\AdminOrder\Create::class, $this->adminOrderCreateMock],
-                [\Magento\Backend\Model\Session\Quote::class, $this->sessionQuoteMock],
-                [\Magento\Backend\Model\Session::class, $sessionMock],
+                ['Magento\Authorizenet\Model\Directpost\Session', $this->directpostSessionMock],
+                ['Magento\Sales\Model\AdminOrder\Create', $this->adminOrderCreateMock],
+                ['Magento\Backend\Model\Session\Quote', $this->sessionQuoteMock],
+                ['Magento\Backend\Model\Session', $sessionMock],
             ]);
         $this->objectManagerMock->expects($this->any())
             ->method('create')
-            ->with(\Magento\Sales\Model\Order::class)
+            ->with('Magento\Sales\Model\Order')
             ->willReturn($this->orderMock);
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->setMethods(['getParams'])
             ->getMockForAbstractClass();
-        $responseMock = $this->getMockForAbstractClass(\Magento\Framework\App\ResponseInterface::class);
-        $redirectMock = $this->createMock(\Magento\Framework\App\Response\RedirectInterface::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $responseMock = $this->getMockForAbstractClass('Magento\Framework\App\ResponseInterface');
+        $redirectMock = $this->getMock('Magento\Framework\App\Response\RedirectInterface');
+        $this->messageManagerMock = $this->getMock('Magento\Framework\Message\ManagerInterface');
 
-        $this->contextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->setMethods(['getObjectManager', 'getRequest', 'getResponse', 'getRedirect', 'getMessageManager'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -152,34 +152,34 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())->method('getRedirect')->willReturn($redirectMock);
         $this->contextMock->expects($this->any())->method('getMessageManager')->willReturn($this->messageManagerMock);
 
-        $this->productHelperMock = $this->getMockBuilder(\Magento\Catalog\Helper\Product::class)
+        $this->productHelperMock = $this->getMockBuilder('Magento\Catalog\Helper\Product')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->escaperMock = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $this->escaperMock = $this->getMockBuilder('Magento\Framework\Escaper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->forwardFactoryMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\ForwardFactory::class)
+        $this->forwardFactoryMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\ForwardFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->coreRegistryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->coreRegistryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->setMethods(['register'])
             ->disableOriginalConstructor()
             ->getMock();
-        $resultLayoutMock = $this->getMockBuilder(\Magento\Framework\View\Result\Layout::class)
+        $resultLayoutMock = $this->getMockBuilder('Magento\Framework\View\Result\Layout')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultLayoutFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\LayoutFactory::class)
+        $this->resultLayoutFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\LayoutFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultLayoutFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($resultLayoutMock);
-        $this->helperMock = $this->getMockBuilder(\Magento\Authorizenet\Helper\Backend\Data::class)
+        $this->helperMock = $this->getMockBuilder('Magento\Authorizenet\Helper\Backend\Data')
             ->setMethods(['getSuccessOrderUrl'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -238,7 +238,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
             ->method('register')
             ->with(Iframe::REGISTRY_KEY);
 
-        $this->assertInstanceOf(\Magento\Framework\View\Result\Layout::class, $this->controller->execute());
+        $this->assertInstanceOf('\Magento\Framework\View\Result\Layout', $this->controller->execute());
     }
 
     public function testExecuteErrorMsgWithCancelOrder()
@@ -273,7 +273,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
             ->method('register')
             ->with(Iframe::REGISTRY_KEY);
 
-        $this->assertInstanceOf(\Magento\Framework\View\Result\Layout::class, $this->controller->execute());
+        $this->assertInstanceOf('\Magento\Framework\View\Result\Layout', $this->controller->execute());
     }
 
     public function testExecuteSuccess()
@@ -307,6 +307,6 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
             ->method('register')
             ->with(Iframe::REGISTRY_KEY);
 
-        $this->assertInstanceOf(\Magento\Framework\View\Result\Layout::class, $this->controller->execute());
+        $this->assertInstanceOf('\Magento\Framework\View\Result\Layout', $this->controller->execute());
     }
 }

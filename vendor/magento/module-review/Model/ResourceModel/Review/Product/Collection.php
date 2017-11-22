@@ -1,21 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Model\ResourceModel\Review\Product;
 
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\DB\Select;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitationFactory;
 
 /**
  * Review Product Collection
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -62,8 +59,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected $_voteFactory;
 
     /**
-     * Collection constructor
-     *
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -85,9 +80,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
      * @param \Magento\Review\Model\RatingFactory $ratingFactory
      * @param \Magento\Review\Model\Rating\Option\VoteFactory $voteFactory
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $connection
-     * @param ProductLimitationFactory|null $productLimitationFactory
-     * @param MetadataPool|null $metadataPool
+     * @param mixed $connection
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -113,9 +106,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Magento\Review\Model\RatingFactory $ratingFactory,
         \Magento\Review\Model\Rating\Option\VoteFactory $voteFactory,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        ProductLimitationFactory $productLimitationFactory = null,
-        MetadataPool $metadataPool = null
+        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
     ) {
         $this->_ratingFactory = $ratingFactory;
         $this->_voteFactory = $voteFactory;
@@ -139,9 +130,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $customerSession,
             $dateTime,
             $groupManagement,
-            $connection,
-            $productLimitationFactory,
-            $metadataPool
+            $connection
         );
     }
 
@@ -152,7 +141,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Catalog\Model\Product::class, \Magento\Catalog\Model\ResourceModel\Product::class);
+        $this->_init('Magento\Catalog\Model\Product', 'Magento\Catalog\Model\ResourceModel\Product');
         $this->setRowIdFieldName('review_id');
         $this->_reviewStoreTable = $this->_resource->getTableName('review_store');
         $this->_initTables();

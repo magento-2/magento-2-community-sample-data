@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,10 +16,11 @@ use Magento\Setup\Model\StoreConfigurationDataMapper;
 use Magento\Setup\Model\ObjectManagerProvider;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Validator\Locale as LocaleValidator;
-use Magento\Framework\Validator\Timezone as TimezoneValidator;
-use Magento\Framework\Validator\Currency as CurrencyValidator;
-use Magento\Framework\Validator\Url as UrlValidator;
+use Magento\Store\Model\Store;
+use Magento\Framework\Validator\Locale;
+use Magento\Framework\Validator\Timezone;
+use Magento\Framework\Validator\Currency;
+use Magento\Framework\Url\Validator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -42,29 +43,8 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      * Object Manager
      *
      * @var ObjectManagerInterface
-     * @deprecated 2.2.0
      */
     private $objectManager;
-
-    /**
-     * @var LocaleValidator
-     */
-    private $localeValidator;
-
-    /**
-     * @var TimezoneValidator
-     */
-    private $timezoneValidator;
-
-    /**
-     * @var CurrencyValidator
-     */
-    private $currencyValidator;
-
-    /**
-     * @var UrlValidator
-     */
-    private $urlValidator;
 
     /**
      * Inject dependencies
@@ -72,27 +52,15 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      * @param InstallerFactory $installerFactory
      * @param DeploymentConfig $deploymentConfig
      * @param ObjectManagerProvider $objectManagerProvider
-     * @param LocaleValidator $localeValidator,
-     * @param TimezoneValidator $timezoneValidator,
-     * @param CurrencyValidator $currencyValidator,
-     * @param UrlValidator $urlValidator
      */
     public function __construct(
         InstallerFactory $installerFactory,
         DeploymentConfig $deploymentConfig,
-        ObjectManagerProvider $objectManagerProvider,
-        LocaleValidator $localeValidator,
-        TimezoneValidator $timezoneValidator,
-        CurrencyValidator $currencyValidator,
-        UrlValidator $urlValidator
+        ObjectManagerProvider $objectManagerProvider
     ) {
         $this->installerFactory = $installerFactory;
         $this->deploymentConfig = $deploymentConfig;
         $this->objectManager = $objectManagerProvider->get();
-        $this->localeValidator = $localeValidator;
-        $this->timezoneValidator = $timezoneValidator;
-        $this->currencyValidator = $currencyValidator;
-        $this->urlValidator = $urlValidator;
         parent::__construct();
     }
 
@@ -102,7 +70,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     protected function configure()
     {
         $this->setName('setup:store-config:set')
-            ->setDescription('Installs the store configuration. Deprecated since 2.2.0. Use config:set instead')
+            ->setDescription('Installs the store configuration')
             ->setDefinition($this->getOptionsList());
         parent::configure();
     }
@@ -116,14 +84,12 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
             $output->writeln(
                 "<info>Store settings can't be saved because the Magento application is not installed.</info>"
             );
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         $errors = $this->validate($input);
         if ($errors) {
             $output->writeln($errors);
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         $installer = $this->installerFactory->create(new ConsoleLogger($output));
         $installer->installUserConfig($input->getOptions());
@@ -141,65 +107,55 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
                 StoreConfigurationDataMapper::KEY_BASE_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'URL the store is supposed to be available at. '
-                . 'Deprecated, use config:set with path web/unsecure/base_url'
+                'URL the store is supposed to be available at'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_LANGUAGE,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Default language code. '
-                . 'Deprecated, use config:set with path general/locale/code'
+                'Default language code'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_TIMEZONE,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Default time zone code. '
-                . 'Deprecated, use config:set with path general/locale/timezone'
+                'Default time zone code'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_CURRENCY,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Default currency code. '
-                . 'Deprecated, use config:set with path currency/options/base, currency/options/default'
-                . ' and currency/options/allow'
+                'Default currency code'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_USE_SEF_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Use rewrites. '
-                . 'Deprecated, use config:set with path web/seo/use_rewrites'
+                'Use rewrites'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_IS_SECURE,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Use secure URLs. Enable this option only if SSL is available. '
-                . 'Deprecated, use config:set with path web/secure/use_in_frontend'
+                'Use secure URLs. Enable this option only if SSL is available.'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_BASE_URL_SECURE,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Base URL for SSL connection. '
-                . 'Deprecated, use config:set with path web/secure/base_url'
+                'Base URL for SSL connection'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_IS_SECURE_ADMIN,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Run admin interface with SSL. '
-                . 'Deprecated, use config:set with path web/secure/use_in_adminhtml'
+                'Run admin interface with SSL'
             ),
             new InputOption(
                 StoreConfigurationDataMapper::KEY_ADMIN_USE_SECURITY_KEY,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Whether to use a "security key" feature in Magento Admin URLs and forms. '
-                . 'Deprecated, use config:set with path admin/security/use_form_key'
+                'Whether to use a "security key" feature in Magento Admin URLs and forms'
             ),
         ];
     }
@@ -215,7 +171,6 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     public function validate(InputInterface $input)
     {
         $errors = [];
-        $errorMsg = '';
         $options = $input->getOptions();
         foreach ($options as $key => $value) {
             if (!$value) {
@@ -223,68 +178,98 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
             }
             switch ($key) {
                 case StoreConfigurationDataMapper::KEY_BASE_URL:
+                    /** @var Validator $url */
                     if (strcmp($value, '{{base_url}}') == 0) {
                         break;
                     }
-                    $errorMsg = $this->validateUrl(
-                        $value,
-                        StoreConfigurationDataMapper::KEY_BASE_URL,
-                        ['http', 'https']
-                    );
-
+                    $url = $this->objectManager->get('Magento\Framework\Url\Validator');
+                    if (!$url->isValid($value)) {
+                        $errorMsgs = $url->getMessages();
+                        $errors[] = '<error>' . 'Command option \'' . StoreConfigurationDataMapper::KEY_BASE_URL
+                            . '\': ' . $errorMsgs[Validator::INVALID_URL] .'</error>';
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_LANGUAGE:
-                    $errorMsg = $this->validateCodes(
-                        $this->localeValidator,
-                        $value,
-                        StoreConfigurationDataMapper::KEY_LANGUAGE
-                    );
+                    /** @var Locale $lists */
+                    $lists = $this->objectManager->get('Magento\Framework\Validator\Locale');
+                    $errorMsg = $this->validateCodes($lists, $value, StoreConfigurationDataMapper::KEY_LANGUAGE);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_TIMEZONE:
-                    $errorMsg = $this->validateCodes(
-                        $this->timezoneValidator,
-                        $value,
-                        StoreConfigurationDataMapper::KEY_TIMEZONE
-                    );
+                    /** @var Timezone $lists */
+                    $lists = $this->objectManager->get('Magento\Framework\Validator\Timezone');
+                    $errorMsg = $this->validateCodes($lists, $value, StoreConfigurationDataMapper::KEY_TIMEZONE);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_CURRENCY:
-                    $errorMsg = $this->validateCodes(
-                        $this->currencyValidator,
-                        $value,
-                        StoreConfigurationDataMapper::KEY_CURRENCY
-                    );
+                    /** @var Currency $lists */
+                    $lists = $this->objectManager->get('Magento\Framework\Validator\Currency');
+                    $errorMsg = $this->validateCodes($lists, $value, StoreConfigurationDataMapper::KEY_CURRENCY);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_USE_SEF_URL:
                     $errorMsg = $this->validateBinaryValue($value, StoreConfigurationDataMapper::KEY_USE_SEF_URL);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_IS_SECURE:
                     $errorMsg = $this->validateBinaryValue($value, StoreConfigurationDataMapper::KEY_IS_SECURE);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_BASE_URL_SECURE:
-                    $errorMsg = $this->validateUrl(
-                        $value,
-                        StoreConfigurationDataMapper::KEY_BASE_URL_SECURE,
-                        ['https']
-                    );
+                    try {
+                        /** @var Validator $url */
+                        $url = $this->objectManager->get('Magento\Framework\Url\Validator');
+                        $errorMsgs = '';
+                        if (!$url->isValid($value)) {
+                            $errorMsgs = $url->getMessages();
+                            if (!empty($errorMsgs)) {
+                                $errors[] = '<error>' . 'Command option \''
+                                    . StoreConfigurationDataMapper::KEY_BASE_URL_SECURE
+                                    . '\': ' . $errorMsgs[Validator::INVALID_URL] .'</error>';
+                            }
+                        }
+                        if (empty($errorMsgs) && strpos($value, 'https:') === false) {
+                            throw new LocalizedException(new \Magento\Framework\Phrase("Invalid secure URL."));
+                        }
+                    } catch (LocalizedException $e) {
+                        $errors[] = '<error>' . 'Command option \'' . StoreConfigurationDataMapper::KEY_BASE_URL_SECURE
+                            . '\': ' . $e->getLogMessage() .'</error>';
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_IS_SECURE_ADMIN:
                     $errorMsg = $this->validateBinaryValue($value, StoreConfigurationDataMapper::KEY_IS_SECURE_ADMIN);
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_ADMIN_USE_SECURITY_KEY:
                     $errorMsg = $this->validateBinaryValue(
                         $value,
                         StoreConfigurationDataMapper::KEY_ADMIN_USE_SECURITY_KEY
                     );
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
                 case StoreConfigurationDataMapper::KEY_JS_LOGGING:
                     $errorMsg = $this->validateBinaryValue(
                         $value,
                         StoreConfigurationDataMapper::KEY_JS_LOGGING
                     );
+                    if ($errorMsg !== '') {
+                        $errors[] = $errorMsg;
+                    }
                     break;
-            }
-            if ($errorMsg !== '') {
-                $errors[] = $errorMsg;
             }
         }
         return $errors;
@@ -309,7 +294,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     /**
      * Validate codes for languages, currencies or timezones
      *
-     * @param LocaleValidator|TimezoneValidator|CurrencyValidator  $lists
+     * @param Locale|Timezone|Currency  $lists
      * @param string  $code
      * @param string  $type
      * @return string
@@ -321,33 +306,6 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
             $errorMsg = '<error>' . 'Command option \'' . $type . '\': Invalid value. To see possible values, '
                 . "run command 'bin/magento info:" . $type . ':list\'.</error>';
         }
-        return $errorMsg;
-    }
-
-    /**
-     * Validate URL
-     *
-     * @param string $url
-     * @param string $option
-     * @param array $allowedSchemes
-     * @return string
-     */
-    private function validateUrl($url, $option, array $allowedSchemes)
-    {
-        $errorMsg = '';
-
-        if (!$this->urlValidator->isValid($url, $allowedSchemes)) {
-            $errorTemplate = '<error>Command option \'%s\': Invalid URL \'%s\'.'
-                . ' Domain Name should contain only letters, digits and hyphen.'
-                . ' And you should use only following schemes: \'%s\'.</error>';
-            $errorMsg = sprintf(
-                $errorTemplate,
-                $option,
-                $url,
-                implode(', ', $allowedSchemes)
-            );
-        }
-
         return $errorMsg;
     }
 }

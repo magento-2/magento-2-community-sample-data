@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Layout\Reader;
@@ -29,7 +29,9 @@ class Container implements Layout\ReaderInterface
     const CONTAINER_OPT_DISPLAY = 'display';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Magento\Framework\View\Layout\ScheduledStructure\Helper
+     */
     protected $helper;
 
     /**
@@ -139,12 +141,11 @@ class Container implements Layout\ReaderInterface
     ) {
         $containerName = $currentElement->getAttribute('name');
         $containerRemove = filter_var($currentElement->getAttribute('remove'), FILTER_VALIDATE_BOOLEAN);
+
         if ($containerRemove) {
             $scheduledStructure->setElementToRemoveList($containerName);
-            return;
-        } elseif ($currentElement->getAttribute('remove')) {
-            $scheduledStructure->unsetElementFromListToRemove($containerName);
+        } else {
+            $this->mergeContainerAttributes($scheduledStructure, $currentElement);
         }
-        $this->mergeContainerAttributes($scheduledStructure, $currentElement);
     }
 }

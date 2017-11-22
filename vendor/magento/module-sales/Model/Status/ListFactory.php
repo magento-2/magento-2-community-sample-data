@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Status;
 
-/**
- * Class ListFactory
- * @internal
- */
 class ListFactory
 {
     /**
@@ -32,6 +28,6 @@ class ListFactory
      */
     public function create(array $arguments = [])
     {
-        return $this->_objectManager->create(\Magento\Sales\Model\Status\ListStatus::class, $arguments);
+        return $this->_objectManager->create('Magento\Sales\Model\Status\ListStatus', $arguments);
     }
 }

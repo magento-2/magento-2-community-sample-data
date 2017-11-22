@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Transactions;
@@ -13,9 +13,7 @@ use Magento\Framework\Controller\ResultFactory;
 class Fetch extends \Magento\Sales\Controller\Adminhtml\Transactions
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::transactions_fetch';
 
@@ -33,17 +31,14 @@ class Fetch extends \Magento\Sales\Controller\Adminhtml\Transactions
             return $resultRedirect->setPath('sales/*/');
         }
         try {
-            $this->orderPaymentRepository
-                ->get($txn->getPaymentId())
-                ->setOrder($txn->getOrder())
-                ->importTransactionInfo($txn);
+            $this->orderPaymentRepository->get($txn->getId())->setOrder($txn->getOrder())->importTransactionInfo($txn);
             $txn->save();
             $this->messageManager->addSuccess(__('The transaction details have been updated.'));
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addError(__('We can\'t update the transaction details.'));
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
         }
 
         return $resultRedirect->setPath('sales/transactions/view', ['_current' => true]);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Framework\View\Test\Unit\Element\Text\TextList;
 
 use \Magento\Framework\View\Element\Text\TextList\Item;
 
-class ItemTest extends \PHPUnit\Framework\TestCase
+class ItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Item
@@ -21,7 +21,7 @@ class ItemTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->item = $objectManager->getObject(\Magento\Framework\View\Element\Text\TextList\Item::class);
+        $this->item = $objectManager->getObject('Magento\Framework\View\Element\Text\TextList\Item');
     }
 
     public function testSetLink()
@@ -42,13 +42,18 @@ class ItemTest extends \PHPUnit\Framework\TestCase
      * @dataProvider toHtmlDataProvider
      *
      * @param array $liParams
+     * @param string $attrName
+     * @param string $attrValue
      * @param string $innerText
      */
-    public function testToHtml($liParams, $innerText, $expectedHtml)
+    public function testToHtml($liParams, $attrName, $attrValue, $innerText)
     {
         $this->item->setLink($liParams, $innerText);
-
-        $this->assertEquals($expectedHtml, $this->item->toHtml());
+        $this->assertTag([
+            'tag' => 'li',
+            'attributes' => [$attrName => $attrValue],
+            'content' => $innerText,
+        ], $this->item->toHtml());
     }
 
     public function toHtmlDataProvider()
@@ -56,13 +61,15 @@ class ItemTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'liParams' => ['class' => 'some-css-class'],
+                'attrName' => 'class',
+                'attrValue' => 'some-css-class',
                 'innerText' => 'text',
-                'expectedHtml' => '<li class="some-css-class">text</li>' . "\r\n"
             ],
             [
                 'liParams' => 'class="some-css-class"',
+                'attrName' => 'class',
+                'attrValue' => 'some-css-class',
                 'innerText' => 'text',
-                'expectedHtml' => '<li class="some-css-class">text</li>' . "\r\n"
             ]
         ];
     }

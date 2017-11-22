@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -24,13 +24,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click button Refresh
  * 5. Perform all assertions
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-28358
  */
 class CustomersOrderTotalReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

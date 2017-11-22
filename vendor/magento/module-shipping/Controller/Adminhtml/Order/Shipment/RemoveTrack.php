@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -11,9 +11,7 @@ use Magento\Backend\App\Action;
 class RemoveTrack extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -43,7 +41,7 @@ class RemoveTrack extends \Magento\Backend\App\Action
     {
         $trackId = $this->getRequest()->getParam('track_id');
         /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
-        $track = $this->_objectManager->create(\Magento\Sales\Model\Order\Shipment\Track::class)->load($trackId);
+        $track = $this->_objectManager->create('Magento\Sales\Model\Order\Shipment\Track')->load($trackId);
         if ($track->getId()) {
             try {
                 $this->shipmentLoader->setOrderId($this->getRequest()->getParam('order_id'));
@@ -73,7 +71,7 @@ class RemoveTrack extends \Magento\Backend\App\Action
             ];
         }
         if (is_array($response)) {
-            $response = $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($response);
+            $response = $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($response);
             $this->getResponse()->representJson($response);
         } else {
             $this->getResponse()->setBody($response);

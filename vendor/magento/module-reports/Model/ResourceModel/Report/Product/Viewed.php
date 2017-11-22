@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Report\Product;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Viewed extends \Magento\Sales\Model\ResourceModel\Report\AbstractReport
 {
     /**
@@ -160,7 +156,6 @@ class Viewed extends \Magento\Sales\Model\ResourceModel\Report\AbstractReport
             \Magento\Reports\Model\Event::EVENT_PRODUCT_VIEW
         );
 
-        $productLinkField = $this->_productResource->getLinkField();
         $select->joinInner(
             ['product' => $this->getTable('catalog_product_entity')],
             'product.entity_id = source_table.object_id',
@@ -170,13 +165,13 @@ class Viewed extends \Magento\Sales\Model\ResourceModel\Report\AbstractReport
         // join product attributes Name & Price
         $nameAttribute = $this->_productResource->getAttribute('name');
         $joinExprProductName = [
-            "product_name.{$productLinkField} = product.{$productLinkField}",
+            'product_name.entity_id = product.entity_id',
             'product_name.store_id = source_table.store_id',
             $connection->quoteInto('product_name.attribute_id = ?', $nameAttribute->getAttributeId()),
         ];
         $joinExprProductName = implode(' AND ', $joinExprProductName);
         $joinProductName = [
-            "product_default_name.{$productLinkField} = product.{$productLinkField}",
+            'product_default_name.entity_id = product.entity_id',
             'product_default_name.store_id = 0',
             $connection->quoteInto('product_default_name.attribute_id = ?', $nameAttribute->getAttributeId()),
         ];
@@ -192,14 +187,14 @@ class Viewed extends \Magento\Sales\Model\ResourceModel\Report\AbstractReport
         );
         $priceAttribute = $this->_productResource->getAttribute('price');
         $joinExprProductPrice = [
-            "product_price.{$productLinkField} = product.{$productLinkField}",
+            'product_price.entity_id = product.entity_id',
             'product_price.store_id = source_table.store_id',
             $connection->quoteInto('product_price.attribute_id = ?', $priceAttribute->getAttributeId()),
         ];
         $joinExprProductPrice = implode(' AND ', $joinExprProductPrice);
 
         $joinProductPrice = [
-            "product_default_price.{$productLinkField} = product.{$productLinkField}",
+            'product_default_price.entity_id = product.entity_id',
             'product_default_price.store_id = 0',
             $connection->quoteInto('product_default_price.attribute_id = ?', $priceAttribute->getAttributeId()),
         ];

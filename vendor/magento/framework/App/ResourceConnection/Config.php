@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Resource configuration. Uses application configuration to retrieve resource connection information.
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\ResourceConnection;
 
 use Magento\Framework\Config\ConfigOptionsListConstants;
-use Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Resource configuration, uses application configuration to retrieve resource connection information
- */
 class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInterface
 {
     /**
@@ -21,24 +19,11 @@ class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInte
     protected $_connectionNames = [];
 
     /**
-     * @var \Magento\Framework\App\DeploymentConfig
-     */
-    private $deploymentConfig;
-
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    /**
-     * Constructor
-     *
      * @param Config\Reader $reader
      * @param \Magento\Framework\Config\ScopeInterface $configScope
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param \Magento\Framework\App\DeploymentConfig $deploymentConfig
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param string $cacheId
      * @throws \InvalidArgumentException
      */
     public function __construct(
@@ -46,11 +31,17 @@ class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInte
         \Magento\Framework\Config\ScopeInterface $configScope,
         \Magento\Framework\Config\CacheInterface $cache,
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
-        $cacheId = 'resourcesCache',
-        SerializerInterface $serializer = null
+        $cacheId = 'resourcesCache'
     ) {
-        parent::__construct($reader, $configScope, $cache, $cacheId, $serializer);
-        $this->deploymentConfig = $deploymentConfig;
+        parent::__construct($reader, $configScope, $cache, $cacheId);
+
+        $resource = $deploymentConfig->getConfigData(ConfigOptionsListConstants::KEY_RESOURCE);
+        foreach ($resource as $resourceName => $resourceData) {
+            if (!isset($resourceData['connection'])) {
+                throw new \InvalidArgumentException('Invalid initial resource configuration');
+            }
+            $this->_connectionNames[$resourceName] = $resourceData['connection'];
+        }
     }
 
     /**
@@ -61,9 +52,10 @@ class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInte
      */
     public function getConnectionName($resourceName)
     {
-        $this->initConnections();
         $connectionName = \Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION;
- 
+
+        $resourceName = preg_replace("/_setup$/", '', $resourceName);
+
         if (!isset($this->_connectionNames[$resourceName])) {
             $resourcesConfig = $this->get();
             $pointerResourceName = $resourceName;
@@ -87,24 +79,5 @@ class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInte
         }
 
         return $connectionName;
-    }
-
-    /**
-     * Initialise connections
-     *
-     * @return void
-     */
-    private function initConnections()
-    {
-        if (!$this->initialized) {
-            $this->initialized = true;
-            $resource = $this->deploymentConfig->getConfigData(ConfigOptionsListConstants::KEY_RESOURCE) ?: [];
-            foreach ($resource as $resourceName => $resourceData) {
-                if (!isset($resourceData['connection'])) {
-                    throw new \InvalidArgumentException('Invalid initial resource configuration');
-                }
-                $this->_connectionNames[$resourceName] = $resourceData['connection'];
-            }
-        }
     }
 }

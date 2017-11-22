@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Page;
@@ -46,15 +46,13 @@ class PostDataProcessor
      */
     public function filter($data)
     {
-        $filterRules = [];
-
-        foreach (['custom_theme_from', 'custom_theme_to'] as $dateField) {
-            if (!empty($data[$dateField])) {
-                $filterRules[$dateField] = $this->dateFilter;
-            }
-        }
-
-        return (new \Zend_Filter_Input($filterRules, [], $data))->getUnescaped();
+        $inputFilter = new \Zend_Filter_Input(
+            ['custom_theme_from' => $this->dateFilter, 'custom_theme_to' => $this->dateFilter],
+            [],
+            $data
+        );
+        $data = $inputFilter->getUnescaped();
+        return $data;
     }
 
     /**

@@ -1,13 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\Di\Code\Reader\InstancesNamesList;
 
 use Magento\Setup\Module\Di\Compiler\Log\Log;
 
-class DirectoryTest extends \PHPUnit\Framework\TestCase
+/**
+ * Class DirectoryTest
+ *
+ * @package Magento\Setup\Module\Di\Code\Reader\Decorator
+ */
+class DirectoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Reader\ClassesScanner | \PHPUnit_Framework_MockObject_MockObject
@@ -34,27 +39,24 @@ class DirectoryTest extends \PHPUnit\Framework\TestCase
      */
     private $logMock;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->logMock = $this->getMockBuilder(\Magento\Setup\Module\Di\Compiler\Log\Log::class)
+        $this->logMock = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Log\Log')
             ->disableOriginalConstructor()
             ->setMethods(['add'])
             ->getMock();
 
-        $this->classesScanner = $this->getMockBuilder(\Magento\Setup\Module\Di\Code\Reader\ClassesScanner::class)
+        $this->classesScanner = $this->getMockBuilder('\Magento\Setup\Module\Di\Code\Reader\ClassesScanner')
             ->disableOriginalConstructor()
             ->setMethods(['getList'])
             ->getMock();
 
-        $this->classReaderMock = $this->getMockBuilder(\Magento\Framework\Code\Reader\ClassReader::class)
+        $this->classReaderMock = $this->getMockBuilder('\Magento\Framework\Code\Reader\ClassReader')
             ->disableOriginalConstructor()
             ->setMethods(['getParents'])
             ->getMock();
 
-        $this->validatorMock = $this->getMockBuilder(\Magento\Framework\Code\Validator::class)
+        $this->validatorMock = $this->getMockBuilder('\Magento\Framework\Code\Validator')
             ->disableOriginalConstructor()
             ->setMethods(['validate'])
             ->getMock();
@@ -64,7 +66,7 @@ class DirectoryTest extends \PHPUnit\Framework\TestCase
             $this->classReaderMock,
             $this->classesScanner,
             $this->validatorMock,
-            '/generated/code'
+            '/var/generation'
         );
     }
 
@@ -109,7 +111,7 @@ class DirectoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetListNoValidation()
     {
-        $path = '/generated/code';
+        $path = '/var/generation';
 
         $classes = ['NameSpace1\ClassName1', 'NameSpace1\ClassName2'];
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test SendFriend
  *
  */
-class SendFriendTest extends \PHPUnit\Framework\TestCase
+class SendFriendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SendFriend\Model\SendFriend
@@ -29,16 +29,16 @@ class SendFriendTest extends \PHPUnit\Framework\TestCase
      */
     protected $sendfriendDataMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->sendfriendDataMock = $this->getMockBuilder(\Magento\SendFriend\Helper\Data::class)
+        $this->sendfriendDataMock = $this->getMockBuilder('Magento\SendFriend\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cookieManagerMock = $this->createMock(\Magento\Framework\Stdlib\CookieManagerInterface::class);
+        $this->cookieManagerMock = $this->getMock('Magento\Framework\Stdlib\CookieManagerInterface');
 
         $this->model = $objectManager->getObject(
-            \Magento\SendFriend\Model\SendFriend::class,
+            'Magento\SendFriend\Model\SendFriend',
             [
                 'sendfriendData' => $this->sendfriendDataMock,
                 'cookieManager' => $this->cookieManagerMock,
@@ -69,7 +69,7 @@ class SendFriendTest extends \PHPUnit\Framework\TestCase
 
         $this->cookieManagerMock->expects($this->once())->method('getCookie')->with($cookieName);
         $this->cookieManagerMock->expects($this->once())->method('setSensitiveCookie');
-        $sendFriendClass = new \ReflectionClass(\Magento\SendFriend\Model\SendFriend::class);
+        $sendFriendClass = new \ReflectionClass('Magento\SendFriend\Model\SendFriend');
         $method = $sendFriendClass->getMethod('_sentCountByCookies');
         $method->setAccessible(true);
         $method->invokeArgs($this->model, [true]);

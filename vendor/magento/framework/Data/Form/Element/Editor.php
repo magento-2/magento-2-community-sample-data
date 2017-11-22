@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\Data\Form\Element;
 
@@ -16,25 +18,16 @@ use Magento\Framework\Escaper;
 class Editor extends Textarea
 {
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * Editor constructor.
      * @param Factory $factoryElement
      * @param CollectionFactory $factoryCollection
      * @param Escaper $escaper
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
-        $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        $data = []
     ) {
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
@@ -45,8 +38,6 @@ class Editor extends Textarea
             $this->setType('textarea');
             $this->setExtType('textarea');
         }
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -61,21 +52,6 @@ class Editor extends Textarea
         ];
 
         return $buttonTranslations;
-    }
-
-    /**
-     * @return bool|string
-     * @throws \InvalidArgumentException
-     */
-    private function getJsonConfig()
-    {
-        if (is_object($this->getConfig()) && method_exists($this->getConfig(), 'toJson')) {
-            return $this->getConfig()->toJson();
-        } else {
-            return $this->serializer->serialize(
-                $this->getConfig()
-            );
-        }
     }
 
     /**
@@ -116,7 +92,7 @@ class Editor extends Textarea
                 if ($this->getForceLoad()) {
                     $forceLoad = $jsSetupObject . '.setup("exact");';
                 } else {
-                    $forceLoad = 'jQuery(window).on("load", ' .
+                    $forceLoad = 'Event.observe(window, "load", ' .
                         $jsSetupObject .
                         '.setup.bind(' .
                         $jsSetupObject .
@@ -147,18 +123,10 @@ class Editor extends Textarea
                 '
                 <script type="text/javascript">
                 //<![CDATA[
-                window.tinyMCE_GZ = window.tinyMCE_GZ || {}; 
-                window.tinyMCE_GZ.loaded = true;
-                require([
-                "jquery", 
-                "mage/translate", 
-                "mage/adminhtml/events", 
-                "mage/adminhtml/wysiwyg/tiny_mce/setup", 
-                "mage/adminhtml/wysiwyg/widget"
-                ], function(jQuery){' .
+                require(["jquery", "mage/translate", "mage/adminhtml/events", "mage/adminhtml/wysiwyg/tiny_mce/setup", "mage/adminhtml/wysiwyg/widget"], function(jQuery){' .
                 "\n" .
-                '  (function($) {$.mage.translate.add(' .
-                $this->serializer->serialize(
+                '(function($) {$.mage.translate.add(' .
+                \Zend_Json::encode(
                     $this->getButtonTranslations()
                 ) .
                 ')})(jQuery);' .
@@ -167,7 +135,9 @@ class Editor extends Textarea
                 ' = new tinyMceWysiwygSetup("' .
                 $this->getHtmlId() .
                 '", ' .
-                $this->getJsonConfig() .
+                \Zend_Json::encode(
+                    $this->getConfig()
+                ) .
                 ');' .
                 $forceLoad .
                 '
@@ -204,7 +174,7 @@ class Editor extends Textarea
                     //<![CDATA[
                     require(["jquery", "mage/translate", "mage/adminhtml/wysiwyg/widget"], function(jQuery){
                         (function($) {
-                            $.mage.translate.add(' . $this->serializer->serialize($this->getButtonTranslations()) . ')
+                            $.mage.translate.add(' . \Zend_Json::encode($this->getButtonTranslations()) . ')
                         })(jQuery);
                     });
                     //]]>
@@ -238,8 +208,7 @@ class Editor extends Textarea
     {
         $buttonsHtml = '<div id="buttons' . $this->getHtmlId() . '" class="buttons-set">';
         if ($this->isEnabled()) {
-            $buttonsHtml .= $this->_getToggleButtonHtml($this->isToggleButtonVisible());
-            $buttonsHtml .= $this->_getPluginButtonsHtml($this->isHidden());
+            $buttonsHtml .= $this->_getToggleButtonHtml() . $this->_getPluginButtonsHtml($this->isHidden());
         } else {
             $buttonsHtml .= $this->_getPluginButtonsHtml(true);
         }
@@ -284,9 +253,9 @@ class Editor extends Textarea
             $buttonsHtml .= $this->_getButtonHtml(
                 [
                     'title' => $this->translate('Insert Widget...'),
-                    'onclick' => "widgetTools.openDialog('"
-                        . $this->getConfig('widget_window_url')
-                        . "widget_target_id/" . $this->getHtmlId() . "')",
+                    'onclick' => "widgetTools.openDialog('" . $this->getConfig(
+                        'widget_window_url'
+                    ) . "widget_target_id/" . $this->getHtmlId() . "')",
                     'class' => 'action-add-widget plugin',
                     'style' => $visible ? '' : 'display:none',
                 ]
@@ -298,12 +267,13 @@ class Editor extends Textarea
             $buttonsHtml .= $this->_getButtonHtml(
                 [
                     'title' => $this->translate('Insert Image...'),
-                    'onclick' => "MediabrowserUtility.openDialog('"
-                        . $this->getConfig('files_browser_window_url')
-                        . "target_element_id/" . $this->getHtmlId() . "/"
-                        . (null !== $this->getConfig('store_id') ? 'store/'
-                            . $this->getConfig('store_id') . '/' : '')
-                        . "')",
+                    'onclick' => "MediabrowserUtility.openDialog('" . $this->getConfig(
+                        'files_browser_window_url'
+                    ) . "target_element_id/" . $this->getHtmlId() . "/" . (null !== $this->getConfig(
+                        'store_id'
+                    ) ? 'store/' . $this->getConfig(
+                        'store_id'
+                    ) . '/' : '') . "')",
                     'class' => 'action-add-image plugin',
                     'style' => $visible ? '' : 'display:none',
                 ]
@@ -418,11 +388,13 @@ class Editor extends Textarea
             return '<div class="admin__control-wysiwig">' .$html . '</div>';
         }
 
-        $html = '<div id="editor' . $this->getHtmlId() . '"'
-            . ($this->getConfig('no_display') ? ' style="display:none;"' : '')
-            . ($this->getConfig('container_class') ? ' class="admin__control-wysiwig '
-                . $this->getConfig('container_class') . '"' : '')
-            . '>' . $html . '</div>';
+        $html = '<div id="editor' . $this->getHtmlId() . '"' . ($this->getConfig(
+            'no_display'
+        ) ? ' style="display:none;"' : '') . ($this->getConfig(
+            'container_class'
+        ) ? ' class="admin__control-wysiwig ' . $this->getConfig(
+            'container_class'
+        ) . '"' : '') . '>' . $html . '</div>';
 
         return $html;
     }
@@ -463,11 +435,10 @@ class Editor extends Textarea
      */
     public function isEnabled()
     {
-        $result = false;
-        if ($this->getConfig('enabled')) {
-            $result = $this->hasData('wysiwyg') ? $result = $this->getWysiwyg() : true;
+        if ($this->hasData('wysiwyg')) {
+            return $this->getWysiwyg();
         }
-        return $result;
+        return $this->getConfig('enabled');
     }
 
     /**
@@ -478,13 +449,5 @@ class Editor extends Textarea
     public function isHidden()
     {
         return $this->getConfig('hidden');
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isToggleButtonVisible()
-    {
-        return !$this->getConfig()->hasData('toggle_button') || $this->getConfig('toggle_button');
     }
 }

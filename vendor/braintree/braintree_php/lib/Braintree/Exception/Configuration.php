@@ -1,17 +1,12 @@
 <?php
-namespace Braintree\Exception;
-
-use Braintree\Exception;
-
 /**
  * Raised when the Braintree library is not completely configured.
  *
  * @package    Braintree
  * @subpackage Exception
- * @see        Configuration
+ * @see        Braintree_Configuration
  */
-class Configuration extends Exception
+class Braintree_Exception_Configuration extends Braintree_Exception
 {
 
 }
-class_alias('Braintree\Exception\Configuration', 'Braintree_Exception_Configuration');

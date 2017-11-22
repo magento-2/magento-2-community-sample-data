@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Shipment;
@@ -8,7 +8,6 @@ namespace Magento\Sales\Model\Order\Shipment;
 /**
  * Class Package
  * @api
- * @since 100.1.2
  */
 class Package implements \Magento\Sales\Api\Data\ShipmentPackageInterface
 {
@@ -19,7 +18,6 @@ class Package implements \Magento\Sales\Api\Data\ShipmentPackageInterface
 
     /**
      * {@inheritdoc}
-     * @since 100.1.2
      */
     public function getExtensionAttributes()
     {
@@ -28,7 +26,6 @@ class Package implements \Magento\Sales\Api\Data\ShipmentPackageInterface
 
     /**
      * {@inheritdoc}
-     * @since 100.1.2
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\ShipmentPackageExtensionInterface $extensionAttributes

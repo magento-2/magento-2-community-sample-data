@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -39,9 +39,7 @@ class ProcessFrontFinalPriceObserver implements ObserverInterface
      */
     protected $resourceRuleFactory;
 
-    /**
-     * @var \Magento\CatalogRule\Observer\RulePricesStorage
-     */
+    /** @var RulePricesStorage  */
     protected $rulePricesStorage;
 
     /**

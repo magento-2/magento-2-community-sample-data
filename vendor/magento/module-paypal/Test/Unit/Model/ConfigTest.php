@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model;
@@ -8,7 +8,7 @@ namespace Magento\Paypal\Test\Unit\Model;
 use Magento\Paypal\Model\Config;
 use Magento\Store\Model\ScopeInterface;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config
@@ -42,19 +42,19 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
-        $this->directoryHelper = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
+        $this->directoryHelper = $this->getMockBuilder('Magento\Directory\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManager = $this->getMock('Magento\Store\Model\StoreManagerInterface');
 
-        $this->ccTypeFactory = $this->getMockBuilder(\Magento\Payment\Model\Source\CctypeFactory::class)
+        $this->ccTypeFactory = $this->getMockBuilder('Magento\Payment\Model\Source\CctypeFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->certFactory = $this->getMockBuilder(\Magento\Paypal\Model\CertFactory::class)
+        $this->certFactory = $this->getMockBuilder('Magento\Paypal\Model\CertFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -99,6 +99,17 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertNotContains(Config::METHOD_WPP_BML, $this->model->getCountryMethods('DE'));
     }
 
+    public function testGetBuildNotationCode()
+    {
+        $this->model->setMethod('payflow_direct');
+        $this->model->setStoreId(123);
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('paypal/bncode', ScopeInterface::SCOPE_STORE, 123)
+            ->will($this->returnValue('some BN code'));
+        $this->assertEquals('some BN code', $this->model->getBuildNotationCode());
+    }
+
     public function testIsMethodActive()
     {
         $this->assertFalse($this->model->isMethodActive('payflow_direct'));
@@ -129,6 +140,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->model->setMethod($methodName);
         $this->assertEquals($expected, $this->model->isMethodAvailable($methodName));
     }
+
 
     public function testGetMerchantCountryPaypal()
     {

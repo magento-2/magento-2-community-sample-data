@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 /** @var \Magento\Paypal\Model\Billing\Agreement $billingAgreement */
 $billingAgreement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Paypal\Model\Billing\Agreement::class
+    'Magento\Paypal\Model\Billing\Agreement'
 )->setAgreementLabel(
     'TEST'
 )->setCustomerId(

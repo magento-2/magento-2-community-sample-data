@@ -2,9 +2,11 @@
 /**
  * Inline Translations Library
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\Translate;
 
@@ -205,7 +207,7 @@ class Inline implements \Magento\Framework\Translate\InlineInterface
     protected function getInlineScript()
     {
         /** @var $block \Magento\Framework\View\Element\Template */
-        $block = $this->layout->createBlock(\Magento\Framework\View\Element\Template::class);
+        $block = $this->layout->createBlock('Magento\Framework\View\Element\Template');
 
         $block->setAjaxUrl($this->getAjaxUrl());
         $block->setTemplate($this->templateFileName);
@@ -240,11 +242,7 @@ class Inline implements \Magento\Framework\Translate\InlineInterface
             }
         } else {
             if (is_string($body)) {
-                $body = preg_replace(
-                    '#' . \Magento\Framework\Translate\Inline\ParserInterface::REGEXP_TOKEN . '#',
-                    '$1',
-                    $body
-                );
+                $body = preg_replace('#' . \Magento\Framework\Translate\Inline\ParserInterface::REGEXP_TOKEN . '#', '$1', $body);
             }
         }
         return $this;

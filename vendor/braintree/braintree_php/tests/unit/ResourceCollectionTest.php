@@ -1,52 +1,47 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class TestResource
+class Braintree_TestResource
 {
     public function lookup($id) {
-        return ResourceCollectionTest::$values[intval($id)];
+        return Braintree_ResourceCollectionTest::$values[intval($id)];
     }
 
     public function fetch($ids)
     {
 
-        return array_map(__NAMESPACE__ . '\TestResource::lookup', $ids);
+        return array_map("Braintree_TestResource::lookup", $ids);
     }
 }
 
-class ResourceCollectionTest extends Setup
+class Braintree_ResourceCollectionTest extends PHPUnit_Framework_TestCase
 {
-    public static $values = ["a", "b", "c", "d", "e"];
+    public static $values = array("a", "b", "c", "d", "e");
 
-    public function testIterateOverResults()
+    function testIterateOverResults()
     {
 
-        $response = [
-            'searchResults' => [
+        $response = array(
+            'searchResults' => array(
                 'pageSize' => 2,
-                'ids' => ['0', '1', '2', '3', '4']
-            ]
-        ];
+                'ids' => array('0', '1', '2', '3', '4')
+            )
+        );
 
-        $object = new TestResource();
-        $pager = [
+        $object = new Braintree_TestResource();
+        $pager = array(
             'object' => $object,
             'method' => 'fetch',
-            'methodArgs' => []
-        ];
+            'methodArgs' => array()
+        );
 
-        $collection = new Braintree\ResourceCollection($response, $pager);
+        $collection = new Braintree_ResourceCollection($response, $pager);
 
         $count = 0;
         $index = 0;
         foreach ($collection as $value)
         {
-            $this->assertEquals(self::$values[$index], $value);
+            $this->assertEquals(Braintree_ResourceCollectionTest::$values[$index], $value);
             $index += 1;
             $count += 1;
         }
@@ -54,24 +49,24 @@ class ResourceCollectionTest extends Setup
         $this->assertEquals(5, $count);
     }
 
-    public function testDoesntIterateWhenNoResults()
+    function testDoesntIterateWhenNoResults()
     {
 
-        $response = [
-            'searchResults' => [
+        $response = array(
+            'searchResults' => array(
                 'pageSize' => 2,
-                'ids' => []
-            ]
-        ];
+                'ids' => array()
+            )
+        );
 
-        $object = new TestResource();
-        $pager = [
+        $object = new Braintree_TestResource();
+        $pager = array(
             'object' => $object,
             'method' => 'fetch',
-            'methodArgs' => []
-        ];
+            'methodArgs' => array()
+        );
 
-        $collection = new Braintree\ResourceCollection($response, $pager);
+        $collection = new Braintree_ResourceCollection($response, $pager);
 
         $count = 0;
         $index = 0;
@@ -84,49 +79,5 @@ class ResourceCollectionTest extends Setup
 
         $this->assertEquals(0, $count);
         $this->assertEquals(0, $index);
-    }
-
-    public function testGetIdsReturnsArrayOfIds()
-    {
-
-        $response = [
-            'searchResults' => [
-                'pageSize' => 2,
-                'ids' => ["1", "2", "3"]
-            ]
-        ];
-
-        $object = new TestResource();
-        $pager = [
-            'object' => $object,
-            'method' => 'fetch',
-            'methodArgs' => []
-        ];
-
-        $collection = new Braintree\ResourceCollection($response, $pager);
-
-        $this->assertEquals($collection->getIds(), ["1", "2", "3"]);
-    }
-
-    public function testGetIdsReturnsAnEmptyArrayIfNoIds()
-    {
-
-        $response = [
-            'searchResults' => [
-                'pageSize' => 2,
-                'ids' => []
-            ]
-        ];
-
-        $object = new TestResource();
-        $pager = [
-            'object' => $object,
-            'method' => 'fetch',
-            'methodArgs' => []
-        ];
-
-        $collection = new Braintree\ResourceCollection($response, $pager);
-
-        $this->assertEquals($collection->getIds(), []);
     }
 }

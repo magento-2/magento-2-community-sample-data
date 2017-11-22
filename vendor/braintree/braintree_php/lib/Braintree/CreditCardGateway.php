@@ -1,8 +1,4 @@
 <?php
-namespace Braintree;
-
-use InvalidArgumentException;
-
 /**
  * Braintree CreditCardGateway module
  * Creates and manages Braintree CreditCards
@@ -14,9 +10,9 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class CreditCardGateway
+class Braintree_CreditCardGateway
 {
     private $_gateway;
     private $_config;
@@ -27,86 +23,84 @@ class CreditCardGateway
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
         $this->_config->assertHasAccessTokenOrKeys();
-        $this->_http = new Http($gateway->config);
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
     public function create($attribs)
     {
-        Util::verifyKeys(self::createSignature(), $attribs);
-        return $this->_doCreate('/payment_methods', ['credit_card' => $attribs]);
+        Braintree_Util::verifyKeys(self::createSignature(), $attribs);
+        return $this->_doCreate('/payment_methods', array('credit_card' => $attribs));
     }
 
     /**
      * attempts the create operation assuming all data will validate
-     * returns a CreditCard object instead of a Result
+     * returns a Braintree_CreditCard object instead of a Result
      *
      * @access public
      * @param array $attribs
-     * @return CreditCard
-     * @throws Exception\ValidationError
+     * @return object
+     * @throws Braintree_Exception_ValidationError
      */
     public function createNoValidate($attribs)
     {
         $result = $this->create($attribs);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
     /**
      * create a customer from a TransparentRedirect operation
      *
-     * @deprecated since version 2.3.0
      * @access public
      * @param array $attribs
-     * @return Result\Successful|Result\Error
+     * @return object
      */
     public function createFromTransparentRedirect($queryString)
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::confirm", E_USER_NOTICE);
-        $params = TransparentRedirect::parseAndValidateQueryString(
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::confirm", E_USER_NOTICE);
+        $params = Braintree_TransparentRedirect::parseAndValidateQueryString(
             $queryString
         );
         return $this->_doCreate(
             '/payment_methods/all/confirm_transparent_redirect_request',
-            ['id' => $params['id']]
+            array('id' => $params['id'])
         );
     }
 
     /**
      *
-     * @deprecated since version 2.3.0
      * @access public
      * @param none
      * @return string
      */
     public function createCreditCardUrl()
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::url", E_USER_NOTICE);
-        return $this->_config->baseUrl() . $this->_config->merchantPath().
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::url", E_USER_NOTICE);
+        return $this->_config->baseUrl() . $this->_config->merchantPath() .
                 '/payment_methods/all/create_via_transparent_redirect_request';
     }
 
     /**
      * returns a ResourceCollection of expired credit cards
-     * @return ResourceCollection
+     * @return object ResourceCollection
      */
     public function expired()
     {
         $path = $this->_config->merchantPath() . '/payment_methods/all/expired_ids';
         $response = $this->_http->post($path);
-        $pager = [
+        $pager = array(
             'object' => $this,
             'method' => 'fetchExpired',
-            'methodArgs' => []
-        ];
+            'methodArgs' => array()
+        );
 
-        return new ResourceCollection($response, $pager);
+        return new Braintree_ResourceCollection($response, $pager);
     }
 
     public function fetchExpired($ids)
     {
         $path = $this->_config->merchantPath() . "/payment_methods/all/expired";
-        $response = $this->_http->post($path, ['search' => ['ids' => $ids]]);
+        $response = $this->_http->post($path, array('search' => array('ids' => $ids)));
 
-        return Util::extractattributeasarray(
+        return Braintree_Util::extractattributeasarray(
             $response['paymentMethods'],
             'creditCard'
         );
@@ -114,27 +108,27 @@ class CreditCardGateway
     /**
      * returns a ResourceCollection of credit cards expiring between start/end
      *
-     * @return ResourceCollection
+     * @return object ResourceCollection
      */
     public function expiringBetween($startDate, $endDate)
     {
         $queryPath = $this->_config->merchantPath() . '/payment_methods/all/expiring_ids?start=' . date('mY', $startDate) . '&end=' . date('mY', $endDate);
         $response = $this->_http->post($queryPath);
-        $pager = [
+        $pager = array(
             'object' => $this,
             'method' => 'fetchExpiring',
-            'methodArgs' => [$startDate, $endDate]
-        ];
+            'methodArgs' => array($startDate, $endDate)
+        );
 
-        return new ResourceCollection($response, $pager);
+        return new Braintree_ResourceCollection($response, $pager);
     }
 
     public function fetchExpiring($startDate, $endDate, $ids)
     {
         $queryPath = $this->_config->merchantPath() . '/payment_methods/all/expiring?start=' . date('mY', $startDate) . '&end=' . date('mY', $endDate);
-        $response = $this->_http->post($queryPath, ['search' => ['ids' => $ids]]);
+        $response = $this->_http->post($queryPath, array('search' => array('ids' => $ids)));
 
-        return Util::extractAttributeAsArray(
+        return Braintree_Util::extractAttributeAsArray(
             $response['paymentMethods'],
             'creditCard'
         );
@@ -145,8 +139,8 @@ class CreditCardGateway
      *
      * @access public
      * @param string $token credit card unique id
-     * @return CreditCard
-     * @throws Exception\NotFound
+     * @return object Braintree_CreditCard
+     * @throws Braintree_Exception_NotFound
      */
     public function find($token)
     {
@@ -154,9 +148,9 @@ class CreditCardGateway
         try {
             $path = $this->_config->merchantPath() . '/payment_methods/credit_card/' . $token;
             $response = $this->_http->get($path);
-            return CreditCard::factory($response['creditCard']);
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
+            return Braintree_CreditCard::factory($response['creditCard']);
+        } catch (Braintree_Exception_NotFound $e) {
+            throw new Braintree_Exception_NotFound(
                 'credit card with token ' . $token . ' not found'
             );
         }
@@ -168,8 +162,8 @@ class CreditCardGateway
      *
      * @access public
      * @param string $nonce payment method nonce
-     * @return CreditCard
-     * @throws Exception\NotFound
+     * @return object Braintree_CreditCard
+     * @throws Braintree_Exception_NotFound
      */
     public function fromNonce($nonce)
     {
@@ -177,9 +171,9 @@ class CreditCardGateway
         try {
             $path = $this->_config->merchantPath() . '/payment_methods/from_nonce/' . $nonce;
             $response = $this->_http->get($path);
-            return CreditCard::factory($response['creditCard']);
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
+            return Braintree_CreditCard::factory($response['creditCard']);
+        } catch (Braintree_Exception_NotFound $e) {
+            throw new Braintree_Exception_NotFound(
                 'credit card with nonce ' . $nonce . ' locked, consumed or not found'
             );
         }
@@ -191,15 +185,15 @@ class CreditCardGateway
      *
      * @access public
      * @param array $attribs
-     * @return Result\Successful|Result\Error
+     * @return object Braintree_Result_Successful or Braintree_Result_Error
      */
     public function credit($token, $transactionAttribs)
     {
         $this->_validateId($token);
-        return Transaction::credit(
+        return Braintree_Transaction::credit(
             array_merge(
                 $transactionAttribs,
-                ['paymentMethodToken' => $token]
+                array('paymentMethodToken' => $token)
             )
         );
     }
@@ -207,17 +201,17 @@ class CreditCardGateway
     /**
      * create a credit on this card, assuming validations will pass
      *
-     * returns a Transaction object on success
+     * returns a Braintree_Transaction object on success
      *
      * @access public
      * @param array $attribs
-     * @return Transaction
-     * @throws Exception\ValidationError
+     * @return object Braintree_Transaction
+     * @throws Braintree_Exception_ValidationError
      */
     public function creditNoValidate($token, $transactionAttribs)
     {
         $result = $this->credit($token, $transactionAttribs);
-        return Util::returnObjectOrThrowException('Braintree\Transaction', $result);
+        return Braintree_Util::returnObjectOrThrowException('Transaction', $result);
     }
 
     /**
@@ -225,16 +219,16 @@ class CreditCardGateway
      *
      * @param string $token
      * @param array $transactionAttribs
-     * @return Result\Successful|Result\Error
-     * @see Transaction::sale()
+     * @return object Braintree_Result_Successful or Braintree_Result_Error
+     * @see Braintree_Transaction::sale()
      */
     public function sale($token, $transactionAttribs)
     {
         $this->_validateId($token);
-        return Transaction::sale(
+        return Braintree_Transaction::sale(
             array_merge(
                 $transactionAttribs,
-                ['paymentMethodToken' => $token]
+                array('paymentMethodToken' => $token)
             )
         );
     }
@@ -242,19 +236,19 @@ class CreditCardGateway
     /**
      * create a new sale using this card, assuming validations will pass
      *
-     * returns a Transaction object on success
+     * returns a Braintree_Transaction object on success
      *
      * @access public
      * @param array $transactionAttribs
      * @param string $token
-     * @return Transaction
-     * @throws Exception\ValidationsFailed
-     * @see Transaction::sale()
+     * @return object Braintree_Transaction
+     * @throws Braintree_Exception_ValidationsFailed
+     * @see Braintree_Transaction::sale()
      */
     public function saleNoValidate($token, $transactionAttribs)
     {
         $result = $this->sale($token, $transactionAttribs);
-        return Util::returnObjectOrThrowException('Braintree\Transaction', $result);
+        return Braintree_Util::returnObjectOrThrowException('Transaction', $result);
     }
 
     /**
@@ -266,13 +260,13 @@ class CreditCardGateway
      * @access public
      * @param array $attributes
      * @param string $token (optional)
-     * @return Result\Successful|Result\Error
+     * @return object Braintree_Result_Successful or Braintree_Result_Error
      */
     public function update($token, $attributes)
     {
-        Util::verifyKeys(self::updateSignature(), $attributes);
+        Braintree_Util::verifyKeys(self::updateSignature(), $attributes);
         $this->_validateId($token);
-        return $this->_doUpdate('put', '/payment_methods/credit_card/' . $token, ['creditCard' => $attributes]);
+        return $this->_doUpdate('put', '/payment_methods/credit_card/' . $token, array('creditCard' => $attributes));
     }
 
     /**
@@ -280,18 +274,18 @@ class CreditCardGateway
      *
      * if calling this method in context, $token
      * is the 2nd attribute. $token is not sent in object context.
-     * returns a CreditCard object on success
+     * returns a Braintree_CreditCard object on success
      *
      * @access public
      * @param array $attributes
      * @param string $token
-     * @return CreditCard
-     * @throws Exception\ValidationsFailed
+     * @return object Braintree_CreditCard
+     * @throws Braintree_Exception_ValidationsFailed
      */
     public function updateNoValidate($token, $attributes)
     {
         $result = $this->update($token, $attributes);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
     /**
      *
@@ -301,7 +295,7 @@ class CreditCardGateway
      */
     public function updateCreditCardUrl()
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::url", E_USER_NOTICE);
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::url", E_USER_NOTICE);
         return $this->_config->baseUrl() . $this->_config->merchantPath() .
                 '/payment_methods/all/update_via_transparent_redirect_request';
     }
@@ -309,21 +303,20 @@ class CreditCardGateway
     /**
      * update a customer from a TransparentRedirect operation
      *
-     * @deprecated since version 2.3.0
      * @access public
      * @param array $attribs
      * @return object
      */
     public function updateFromTransparentRedirect($queryString)
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::confirm", E_USER_NOTICE);
-        $params = TransparentRedirect::parseAndValidateQueryString(
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::confirm", E_USER_NOTICE);
+        $params = Braintree_TransparentRedirect::parseAndValidateQueryString(
             $queryString
         );
         return $this->_doUpdate(
             'post',
             '/payment_methods/all/confirm_transparent_redirect_request',
-            ['id' => $params['id']]
+            array('id' => $params['id'])
         );
     }
 
@@ -332,43 +325,38 @@ class CreditCardGateway
         $this->_validateId($token);
         $path = $this->_config->merchantPath() . '/payment_methods/credit_card/' . $token;
         $this->_http->delete($path);
-        return new Result\Successful();
+        return new Braintree_Result_Successful();
     }
 
     private static function baseOptions()
     {
-        return ['makeDefault', 'verificationMerchantAccountId', 'verifyCard', 'verificationAmount', 'venmoSdkSession'];
+        return array('makeDefault', 'verificationMerchantAccountId', 'verifyCard', 'verificationAmount', 'venmoSdkSession');
     }
 
     private static function baseSignature($options)
     {
-         return [
+         return array(
              'billingAddressId', 'cardholderName', 'cvv', 'number', 'deviceSessionId',
              'expirationDate', 'expirationMonth', 'expirationYear', 'token', 'venmoSdkPaymentMethodCode',
              'deviceData', 'fraudMerchantId', 'paymentMethodNonce',
-             ['options' => $options],
-             [
-                 'billingAddress' => self::billingAddressSignature()
-             ],
-         ];
-    }
-
-    public static function billingAddressSignature()
-    {
-        return [
-            'firstName',
-            'lastName',
-            'company',
-            'countryCodeAlpha2',
-            'countryCodeAlpha3',
-            'countryCodeNumeric',
-            'countryName',
-            'extendedAddress',
-            'locality',
-            'region',
-            'postalCode',
-            'streetAddress'
-        ];
+             array('options' => $options),
+             array(
+                 'billingAddress' => array(
+                     'firstName',
+                     'lastName',
+                     'company',
+                     'countryCodeAlpha2',
+                     'countryCodeAlpha3',
+                     'countryCodeNumeric',
+                     'countryName',
+                     'extendedAddress',
+                     'locality',
+                     'region',
+                     'postalCode',
+                     'streetAddress'
+                 ),
+             ),
+         );
     }
 
     public static function createSignature()
@@ -382,25 +370,23 @@ class CreditCardGateway
 
     public static function updateSignature()
     {
-        $options = self::baseOptions();
-        $options[] = "failOnDuplicatePaymentMethod";
-        $signature = self::baseSignature($options);
+         $signature = self::baseSignature(self::baseOptions());
 
-        $updateExistingBillingSignature = [
-            [
-                'options' => [
-                    'updateExisting'
-                ]
-            ]
-        ];
+         $updateExistingBillingSignature = array(
+             array(
+                 'options' => array(
+                     'updateExisting'
+                 )
+             )
+         );
 
-        foreach($signature AS $key => $value) {
-            if(is_array($value) and array_key_exists('billingAddress', $value)) {
-                $signature[$key]['billingAddress'] = array_merge_recursive($value['billingAddress'], $updateExistingBillingSignature);
-            }
-        }
+         foreach($signature AS $key => $value) {
+             if(is_array($value) and array_key_exists('billingAddress', $value)) {
+                 $signature[$key]['billingAddress'] = array_merge_recursive($value['billingAddress'], $updateExistingBillingSignature);
+             }
+         }
 
-        return $signature;
+         return $signature;
     }
 
     /**
@@ -458,30 +444,29 @@ class CreditCardGateway
     /**
      * generic method for validating incoming gateway responses
      *
-     * creates a new CreditCard object and encapsulates
-     * it inside a Result\Successful object, or
-     * encapsulates a Errors object inside a Result\Error
-     * alternatively, throws an Unexpected exception if the response is invalid
+     * creates a new Braintree_CreditCard object and encapsulates
+     * it inside a Braintree_Result_Successful object, or
+     * encapsulates a Braintree_Errors object inside a Result_Error
+     * alternatively, throws an Unexpected exception if the response is invalid.
      *
      * @ignore
      * @param array $response gateway response values
-     * @return Result\Successful|Result\Error
-     * @throws Exception\Unexpected
+     * @return object Result_Successful or Result_Error
+     * @throws Braintree_Exception_Unexpected
      */
     private function _verifyGatewayResponse($response)
     {
         if (isset($response['creditCard'])) {
-            // return a populated instance of Address
-            return new Result\Successful(
-                    CreditCard::factory($response['creditCard'])
+            // return a populated instance of Braintree_Address
+            return new Braintree_Result_Successful(
+                    Braintree_CreditCard::factory($response['creditCard'])
             );
-        } elseif (isset($response['apiErrorResponse'])) {
-            return new Result\Error($response['apiErrorResponse']);
+        } else if (isset($response['apiErrorResponse'])) {
+            return new Braintree_Result_Error($response['apiErrorResponse']);
         } else {
-            throw new Exception\Unexpected(
+            throw new Braintree_Exception_Unexpected(
             "Expected address or apiErrorResponse"
             );
         }
     }
 }
-class_alias('Braintree\CreditCardGateway', 'Braintree_CreditCardGateway');

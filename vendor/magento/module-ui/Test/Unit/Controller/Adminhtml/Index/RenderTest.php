@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Controller\Adminhtml\Index;
@@ -8,29 +8,29 @@ namespace Magento\Ui\Test\Unit\Controller\Adminhtml\Index;
 use \Magento\Ui\Controller\Adminhtml\Index\Render;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Class RenderTest
  */
-class RenderTest extends \PHPUnit\Framework\TestCase
+class RenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Render
      */
-    private $render;
+    protected $render;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $requestMock;
+    protected $requestMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $responseMock;
+    protected $responseMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $uiFactoryMock;
+    protected $uiFactoryMock;
 
     /**
      * @var \Magento\Backend\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -57,31 +57,15 @@ class RenderTest extends \PHPUnit\Framework\TestCase
      */
     private $helperMock;
 
-    /**
-     * @var \Magento\Framework\View\Element\UiComponent\ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uiComponentContextMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface|
-     *      \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $dataProviderMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uiComponentMock;
-
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->contextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->uiFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentFactory::class)
@@ -98,21 +82,6 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->helperMock = $this->getMockBuilder(\Magento\Backend\Helper\Data::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->uiComponentContextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class
-        );
-        $this->dataProviderMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class
-        );
-        $this->uiComponentMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponentInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['render']
-        );
 
         $this->contextMock->expects($this->any())
             ->method('getRequest')
@@ -132,9 +101,6 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())
             ->method('getHelper')
             ->willReturn($this->helperMock);
-        $this->uiComponentContextMock->expects($this->once())
-            ->method('getDataProvider')
-            ->willReturn($this->dataProviderMock);
 
         $this->render = new Render($this->contextMock, $this->uiFactoryMock);
     }
@@ -154,33 +120,38 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->responseMock->expects($this->once())
             ->method('appendBody')
             ->with($renderedData);
-        $this->dataProviderMock->expects($this->once())
-            ->method('getConfigData')
-            ->willReturn([]);
 
-        $this->uiComponentMock->expects($this->once())
+        /**
+         * @var \Magento\Framework\View\Element\UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject $viewMock
+         */
+        $viewMock = $this->getMockForAbstractClass(
+            'Magento\Framework\View\Element\UiComponentInterface',
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['render']
+        );
+        $viewMock->expects($this->once())
             ->method('render')
             ->willReturn($renderedData);
-        $this->uiComponentMock->expects($this->once())
+        $viewMock->expects($this->once())
             ->method('getChildComponents')
             ->willReturn([]);
-        $this->uiComponentMock->expects($this->once())
-            ->method('getContext')
-            ->willReturn($this->uiComponentContextMock);
         $this->uiFactoryMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->uiComponentMock);
+            ->willReturn($viewMock);
 
         $this->render->executeAjaxRequest();
     }
 
     /**
-     * @param array $dataProviderConfig
-     * @param bool|null $isAllowed
-     * @param int $authCallCount
+     * @param string $acl
+     * @param bool $isAllowed
      * @dataProvider executeAjaxRequestWithoutPermissionsDataProvider
      */
-    public function testExecuteAjaxRequestWithoutPermissions(array $dataProviderConfig, $isAllowed, $authCallCount = 1)
+    public function testExecuteAjaxRequestWithoutPermissions($acl, $isAllowed)
     {
         $name = 'test-name';
         $renderedData = '<html>data</html>';
@@ -195,28 +166,33 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->responseMock->expects($this->any())
             ->method('appendBody')
             ->with($renderedData);
-
-        $this->dataProviderMock->expects($this->once())
-            ->method('getConfigData')
-            ->willReturn($dataProviderConfig);
-
-        $this->authorizationMock->expects($this->exactly($authCallCount))
+        $this->authorizationMock->expects($acl ? $this->once() : $this->never())
             ->method('isAllowed')
-            ->with(isset($dataProviderConfig['aclResource']) ? $dataProviderConfig['aclResource'] : null)
+            ->with($acl)
             ->willReturn($isAllowed);
 
-        $this->uiComponentMock->expects($this->any())
+        $componentMock = $this->getMockForAbstractClass(
+            \Magento\Framework\View\Element\UiComponentInterface::class,
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['render']
+        );
+        $componentMock->expects($this->any())
             ->method('render')
             ->willReturn($renderedData);
-        $this->uiComponentMock->expects($this->any())
+        $componentMock->expects($this->any())
             ->method('getChildComponents')
             ->willReturn([]);
-        $this->uiComponentMock->expects($this->once())
-            ->method('getContext')
-            ->willReturn($this->uiComponentContextMock);
+        $componentMock->expects($this->any())
+            ->method('getData')
+            ->with('acl')
+            ->willReturn($acl);
         $this->uiFactoryMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->uiComponentMock);
+            ->willReturn($componentMock);
 
         $this->render->executeAjaxRequest();
     }
@@ -226,21 +202,10 @@ class RenderTest extends \PHPUnit\Framework\TestCase
      */
     public function executeAjaxRequestWithoutPermissionsDataProvider()
     {
-        $aclResource = 'Magento_Test::index_index';
         return [
-            [
-                'dataProviderConfig' => ['aclResource' => $aclResource],
-                'isAllowed' => true
-            ],
-            [
-                'dataProviderConfig' => ['aclResource' => $aclResource],
-                'isAllowed' => false
-            ],
-            [
-                'dataProviderConfig' => [],
-                'isAllowed' => null,
-                'authCallCount' => 0
-            ],
+            ['Magento_Test::index_index', true],
+            ['Magento_Test::index_index', false],
+            ['', null],
         ];
     }
 }

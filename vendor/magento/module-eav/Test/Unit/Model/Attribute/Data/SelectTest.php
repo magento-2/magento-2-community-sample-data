@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model\Attribute\Data;
 
-class SelectTest extends \PHPUnit\Framework\TestCase
+class SelectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Attribute\Data\Select
@@ -14,9 +14,9 @@ class SelectTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $timezoneMock = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $localeResolverMock = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
+        $timezoneMock = $this->getMock('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+        $loggerMock = $this->getMock('\Psr\Log\LoggerInterface', [], [], '', false);
+        $localeResolverMock = $this->getMock('\Magento\Framework\Locale\ResolverInterface');
 
         $this->model = new \Magento\Eav\Model\Attribute\Data\Select($timezoneMock, $loggerMock, $localeResolverMock);
     }
@@ -31,13 +31,13 @@ class SelectTest extends \PHPUnit\Framework\TestCase
      */
     public function testOutputValue($format, $value, $expectedResult)
     {
-        $entityMock = $this->createMock(\Magento\Framework\Model\AbstractModel::class);
+        $entityMock = $this->getMock('\Magento\Framework\Model\AbstractModel', [], [], '', false);
         $entityMock->expects($this->once())->method('getData')->will($this->returnValue($value));
 
-        $sourceMock = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class);
+        $sourceMock = $this->getMock('\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource', [], [], '', false);
         $sourceMock->expects($this->any())->method('getOptionText')->will($this->returnValue(123));
 
-        $attributeMock = $this->createMock(\Magento\Eav\Model\Attribute::class);
+        $attributeMock = $this->getMock('\Magento\Eav\Model\Attribute', [], [], '', false);
         $attributeMock->expects($this->any())->method('getSource')->will($this->returnValue($sourceMock));
 
         $this->model->setEntity($entityMock);
@@ -80,10 +80,10 @@ class SelectTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateValue($value, $originalValue, $isRequired, $expectedResult)
     {
-        $entityMock = $this->createMock(\Magento\Framework\Model\AbstractModel::class);
+        $entityMock = $this->getMock('\Magento\Framework\Model\AbstractModel', [], [], '', false);
         $entityMock->expects($this->any())->method('getData')->will($this->returnValue($originalValue));
 
-        $attributeMock = $this->createMock(\Magento\Eav\Model\Attribute::class);
+        $attributeMock = $this->getMock('\Magento\Eav\Model\Attribute', [], [], '', false);
         $attributeMock->expects($this->any())->method('getStoreLabel')->will($this->returnValue('Label'));
         $attributeMock->expects($this->any())->method('getIsRequired')->will($this->returnValue($isRequired));
 
@@ -136,10 +136,10 @@ class SelectTest extends \PHPUnit\Framework\TestCase
      */
     public function testCompactValue()
     {
-        $entityMock = $this->createMock(\Magento\Framework\Model\AbstractModel::class);
+        $entityMock = $this->getMock('\Magento\Framework\Model\AbstractModel', [], [], '', false);
         $entityMock->expects($this->once())->method('setData')->with('attrCode', 'value');
 
-        $attributeMock = $this->createMock(\Magento\Eav\Model\Attribute::class);
+        $attributeMock = $this->getMock('\Magento\Eav\Model\Attribute', [], [], '', false);
         $attributeMock->expects($this->any())->method('getAttributeCode')->will($this->returnValue('attrCode'));
 
         $this->model->setAttribute($attributeMock);
@@ -152,7 +152,7 @@ class SelectTest extends \PHPUnit\Framework\TestCase
      */
     public function testCompactValueWithFalseValue()
     {
-        $entityMock = $this->createMock(\Magento\Framework\Model\AbstractModel::class);
+        $entityMock = $this->getMock('\Magento\Framework\Model\AbstractModel', [], [], '', false);
         $entityMock->expects($this->never())->method('setData');
 
         $this->model->setEntity($entityMock);

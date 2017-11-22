@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,11 +26,11 @@ class LinkedProductSelectBuilderComposite implements LinkedProductSelectBuilderI
      */
     public function build($productId)
     {
-        $selects = [];
+        $select = [];
         foreach ($this->linkedProductSelectBuilder as $productSelectBuilder) {
-            $selects = array_merge($selects, $productSelectBuilder->build($productId));
+            $select = array_merge($select, $productSelectBuilder->build($productId));
         }
 
-        return $selects;
+        return $select;
     }
 }

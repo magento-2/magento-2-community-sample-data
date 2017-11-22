@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 // @codingStandardsIgnoreFile
+
 
 /**
  * Catalog product gallery attribute
@@ -13,79 +14,40 @@
  */
 namespace Magento\Catalog\Block\Adminhtml\Product\Helper\Form;
 
-use Magento\Framework\Registry;
-use Magento\Catalog\Model\Product;
+use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Eav\Model\Entity\Attribute;
-use Magento\Catalog\Api\Data\ProductInterface;
 
-class Gallery extends \Magento\Framework\View\Element\AbstractBlock
+class Gallery extends AbstractElement
 {
-    /**
-     * Gallery field name suffix
-     *
-     * @var string
-     */
-    protected $fieldNameSuffix = 'product';
-
-    /**
-     * Gallery html id
-     *
-     * @var string
-     */
-    protected $htmlId = 'media_gallery';
-
-    /**
-     * Gallery name
-     *
-     * @var string
-     */
-    protected $name = 'product[media_gallery]';
-
-    /**
-     * Html id for data scope
-     *
-     * @var string
-     */
-    protected $image = 'image';
-
-    /**
-     * @var string
-     */
-    protected $formName = 'product_form';
-
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
-    protected $storeManager;
+    protected $_storeManager;
 
     /**
-     * @var \Magento\Framework\Data\Form
+     * @var \Magento\Framework\View\LayoutInterface
      */
-    protected $form;
+    protected $_layout;
 
     /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
-     * @param \Magento\Framework\View\Element\Context $context
+     * @param \Magento\Framework\Data\Form\Element\Factory $factoryElement
+     * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
+     * @param \Magento\Framework\Escaper $escaper
+     * @param \Magento\Framework\View\LayoutInterface $layout
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param Registry $registry
-     * @param \Magento\Framework\Data\Form $form
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\View\Element\Context $context,
+        \Magento\Framework\Data\Form\Element\Factory $factoryElement,
+        \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection,
+        \Magento\Framework\Escaper $escaper,
+        \Magento\Framework\View\LayoutInterface $layout,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        Registry $registry,
-        \Magento\Framework\Data\Form $form,
         $data = []
     ) {
-        $this->storeManager = $storeManager;
-        $this->registry = $registry;
-        $this->form = $form;
-        parent::__construct($context, $data);
+        $this->_layout = $layout;
+        $this->_storeManager = $storeManager;
+        parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
     }
 
     /**
@@ -98,26 +60,16 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     }
 
     /**
-     * Get product images
-     *
-     * @return array|null
-     */
-    public function getImages()
-    {
-        return $this->registry->registry('current_product')->getData('media_gallery') ?: null;
-    }
-
-    /**
      * Prepares content block
      *
      * @return string
      */
     public function getContentHtml()
     {
+
         /* @var $content \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content */
-        $content = $this->getChildBlock('content');
+        $content = $this->_layout->createBlock('Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content');
         $content->setId($this->getHtmlId() . '_content')->setElement($this);
-        $content->setFormName($this->formName);
         $galleryJs = $content->getJsObjectName();
         $content->getUploader()->getConfig()->setMegiaGallery($galleryJs);
         return $content->toHtml();
@@ -126,33 +78,9 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     /**
      * @return string
      */
-    protected function getHtmlId()
+    public function getLabel()
     {
-        return $this->htmlId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFieldNameSuffix()
-    {
-        return $this->fieldNameSuffix;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDataScopeHtmlId()
-    {
-        return $this->image;
+        return '';
     }
 
     /**
@@ -205,16 +133,16 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     public function getScopeLabel($attribute)
     {
         $html = '';
-        if ($this->storeManager->isSingleStoreMode()) {
+        if ($this->_storeManager->isSingleStoreMode()) {
             return $html;
         }
 
         if ($attribute->isScopeGlobal()) {
-            $html .= __('[GLOBAL]');
+            $html .= '<br/>' . __('[GLOBAL]');
         } elseif ($attribute->isScopeWebsite()) {
-            $html .= __('[WEBSITE]');
+            $html .= '<br/>' . __('[WEBSITE]');
         } elseif ($attribute->isScopeStore()) {
-            $html .= __('[STORE VIEW]');
+            $html .= '<br/>' . __('[STORE VIEW]');
         }
         return $html;
     }
@@ -222,11 +150,11 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     /**
      * Retrieve data object related with form
      *
-     * @return ProductInterface|Product
+     *@return mixed
      */
     public function getDataObject()
     {
-        return $this->registry->registry('current_product');
+        return $this->getForm()->getDataObject();
     }
 
     /**
@@ -239,10 +167,30 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     public function getAttributeFieldName($attribute)
     {
         $name = $attribute->getAttributeCode();
-        if ($suffix = $this->getFieldNameSuffix()) {
-            $name = $this->form->addSuffixToName($name, $suffix);
+        if ($suffix = $this->getForm()->getFieldNameSuffix()) {
+            $name = $this->getForm()->addSuffixToName($name, $suffix);
         }
         return $name;
+    }
+
+    /**
+     * Check readonly attribute
+     *
+     * @param Attribute|string $attribute
+     * @return boolean
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getAttributeReadonly($attribute)
+    {
+        if (is_object($attribute)) {
+            $attribute = $attribute->getAttributeCode();
+        }
+
+        if ($this->getDataObject()->isLockedAttribute($attribute)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -250,7 +198,7 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
      */
     public function toHtml()
     {
-        return $this->getElementHtml();
+        return '<tr><td class="value" colspan="3">' . $this->getElementHtml() . '</td></tr>';
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model;
 
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Form
@@ -42,7 +42,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = $this->getMockBuilder(
-            \Magento\Eav\Model\Form::class
+            'Magento\Eav\Model\Form'
         )->setMethods(
             ['_getFilteredFormAttributeCollection', '_getValidator', 'getEntity']
         )->disableOriginalConstructor()->getMock();
@@ -125,7 +125,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     public function testValidateDataPassed($isValid, $expected, $messages = null)
     {
         $validator = $this->getMockBuilder(
-            \Magento\Eav\Model\Validator\Attribute\Data::class
+            'Magento\Eav\Model\Validator\Attribute\Data'
         )->disableOriginalConstructor()->setMethods(
             ['isValid', 'getMessages']
         )->getMock();

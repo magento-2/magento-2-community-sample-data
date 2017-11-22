@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml;
@@ -9,10 +9,12 @@ use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Controller\RegistryConstants;
-use Magento\Customer\Model\EmailNotification;
+use Magento\Newsletter\Model\Subscriber;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
+ * Class IndexTest
+ *
  * @magentoAppArea adminhtml
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -37,12 +39,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     /** @var \Magento\Framework\Data\Form\FormKey */
     protected $formKey;
 
-    /**@var \Magento\Customer\Helper\View */
-    protected $customerViewHelper;
-
-    /** @var \Magento\TestFramework\ObjectManager */
-    protected $objectManager;
-
     protected function setUp()
     {
         parent::setUp();
@@ -56,13 +52,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->accountManagement = Bootstrap::getObjectManager()->get(
             \Magento\Customer\Api\AccountManagementInterface::class
         );
+
         $this->formKey = Bootstrap::getObjectManager()->get(
             \Magento\Framework\Data\Form\FormKey::class
-        );
-
-        $this->objectManager = Bootstrap::getObjectManager();
-        $this->customerViewHelper = $this->objectManager->get(
-            \Magento\Customer\Helper\View::class
         );
     }
 
@@ -109,7 +101,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
          */
         $this->assertEquals(
             $post,
-            $this->objectManager->get(\Magento\Backend\Model\Session::class)->getCustomerFormData()
+            Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->getCustomerData()
         );
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'new'));
     }
@@ -145,7 +137,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
          */
         $this->assertEquals(
             $post,
-            $this->objectManager->get(\Magento\Backend\Model\Session::class)->getCustomerFormData()
+            Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->getCustomerData()
         );
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'new'));
     }
@@ -155,6 +147,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
      */
     public function testSaveActionWithValidCustomerDataAndValidAddressData()
     {
+        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        $objectManager = Bootstrap::getObjectManager();
+
         $post = [
             'customer' => [
                 'middlename' => 'test middlename',
@@ -172,7 +167,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                     'lastname' => 'test lastname',
                     'street' => ['test street'],
                     'city' => 'test city',
-                    'region_id' => 10,
                     'country_id' => 'US',
                     'postcode' => '01001',
                     'telephone' => '+7000000001',
@@ -184,7 +178,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->getRequest()->setParam('back', '1');
 
         // Emulate setting customer data to session in editAction
-        $this->objectManager->get(\Magento\Backend\Model\Session::class)->setCustomerFormData($post);
+        $objectManager->get(\Magento\Backend\Model\Session::class)->setCustomerData($post);
 
         $this->dispatch('backend/customer/index/save');
         /**
@@ -195,7 +189,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         /**
          * Check that customer data were cleaned after it was saved successfully
          */
-        $this->assertEmpty($this->objectManager->get(\Magento\Backend\Model\Session::class)->getCustomerData());
+        $this->assertEmpty($objectManager->get(\Magento\Backend\Model\Session::class)->getCustomerData());
 
         /**
          * Check that success message is set
@@ -205,10 +199,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
 
-        /**
-         * Check that customer id set and addresses saved
-         */
-        $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
+        /** Check that customer id set and addresses saved */
+        /** @var \Magento\Framework\Registry $registry */
+        $registry = $objectManager->get(\Magento\Framework\Registry::class);
         $customerId = $registry->registry(RegistryConstants::CURRENT_CUSTOMER_ID);
         $customer = $this->customerRepository->getById($customerId);
         $this->assertEquals('test firstname', $customer->getFirstname());
@@ -222,7 +215,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         );
 
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-        $subscriber = $this->objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
+        $subscriber = $objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
         $this->assertEmpty($subscriber->getId());
         $subscriber->loadByCustomerId($customerId);
         $this->assertEmpty($subscriber->getId());
@@ -255,7 +248,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                     'lastname' => 'update lastname',
                     'street' => ['update street'],
                     'city' => 'update city',
-                    'region_id' => 10,
                     'country_id' => 'US',
                     'postcode' => '01001',
                     'telephone' => '+7000000001',
@@ -266,7 +258,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                     'lastname' => 'new lastname',
                     'street' => ['new street'],
                     'city' => 'new city',
-                    'region_id' => 10,
                     'country_id' => 'US',
                     'postcode' => '01001',
                     'telephone' => '+7000000001',
@@ -277,7 +268,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                     'lastname' => '',
                     'street' => [],
                     'city' => '',
-                    'region_id' => 10,
                     'country_id' => 'US',
                     'postcode' => '',
                     'telephone' => '',
@@ -288,15 +278,20 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->getRequest()->setPostValue($post);
         $this->getRequest()->setParam('id', 1);
         $this->dispatch('backend/customer/index/save');
-
-        /** Check that success message is set */
+        /**
+         * Check that success message is set
+         */
         $this->assertSessionMessages(
             $this->equalTo(['You saved the customer.']),
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
 
+        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        $objectManager = Bootstrap::getObjectManager();
+
         /** Check that customer id set and addresses saved */
-        $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
+        /** @var \Magento\Framework\Registry $registry */
+        $registry = $objectManager->get(\Magento\Framework\Registry::class);
         $customerId = $registry->registry(RegistryConstants::CURRENT_CUSTOMER_ID);
         $customer = $this->customerRepository->getById($customerId);
         $this->assertEquals('test firstname', $customer->getFirstname());
@@ -313,17 +308,16 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertEquals(2, count($addresses));
         $updatedAddress = $this->addressRepository->getById(1);
         $this->assertEquals('update firstname', $updatedAddress->getFirstname());
-        $this->assertTrue($updatedAddress->isDefaultBilling());
-        $this->assertEquals($updatedAddress->getId(), $customer->getDefaultBilling());
         $newAddress = $this->accountManagement->getDefaultShippingAddress($customerId);
         $this->assertEquals('new firstname', $newAddress->getFirstname());
 
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-        $subscriber = $this->objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
+        $subscriber = $objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
         $this->assertEmpty($subscriber->getId());
         $subscriber->loadByCustomerId($customerId);
         $this->assertNotEmpty($subscriber->getId());
         $this->assertEquals(1, $subscriber->getStatus());
+
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'index/key/'));
     }
 
@@ -333,9 +327,11 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     public function testSaveActionExistingCustomerUnsubscribeNewsletter()
     {
         $customerId = 1;
+        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        $objectManager = Bootstrap::getObjectManager();
 
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-        $subscriber = $this->objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
+        $subscriber = $objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
         $this->assertEmpty($subscriber->getId());
         $subscriber->loadByCustomerId($customerId);
         $this->assertNotEmpty($subscriber->getId());
@@ -348,14 +344,14 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                 'firstname' => 'test firstname',
                 'lastname' => 'test lastname',
             ],
-            'subscription' => '0'
+            'subscription' => 'false'
         ];
         $this->getRequest()->setPostValue($post);
         $this->getRequest()->setParam('id', 1);
         $this->dispatch('backend/customer/index/save');
 
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
-        $subscriber = $this->objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
+        $subscriber = $objectManager->get(\Magento\Newsletter\Model\SubscriberFactory::class)->create();
         $this->assertEmpty($subscriber->getId());
         $subscriber->loadByCustomerId($customerId);
         $this->assertNotEmpty($subscriber->getId());
@@ -370,95 +366,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         );
 
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'index/key/'));
-    }
-
-    /**
-     * Ensure that an email is sent during save action
-     *
-     * @magentoConfigFixture current_store customer/account_information/change_email_template change_email_template
-     * @magentoConfigFixture current_store customer/password/forgot_email_identity support
-     * @magentoDataFixture Magento/Customer/_files/customer_sample.php
-     */
-    public function testSaveActionExistingCustomerChangeEmail()
-    {
-        $customerId = 1;
-        $newEmail = 'newcustomer@example.com';
-        $transportBuilderMock = $this->prepareEmailMock(
-            2,
-            'change_email_template',
-            'support',
-            $customerId,
-            $newEmail
-        );
-        $this->addEmailMockToClass($transportBuilderMock, EmailNotification::class);
-        $post = [
-            'customer' => ['entity_id' => $customerId,
-                'middlename' => 'test middlename',
-                'group_id' => 1,
-                'website_id' => 1,
-                'firstname' => 'test firstname',
-                'lastname' => 'test lastname',
-                'email' => $newEmail,
-                'new_password' => 'auto',
-                'sendemail_store_id' => '1',
-                'sendemail' => '1',
-                'created_at' => '2000-01-01 00:00:00',
-                'default_shipping' => '_item1',
-                'default_billing' => 1,
-            ]
-        ];
-        $this->getRequest()->setPostValue($post);
-        $this->getRequest()->setParam('id', 1);
-        $this->dispatch('backend/customer/index/save');
-
-        /**
-         * Check that no errors were generated and set to session
-         */
-        $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
-        $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'index/key/'));
-    }
-
-    /**
-     * Ensure that an email is sent during inlineEdit action
-     *
-     * @magentoConfigFixture current_store customer/account_information/change_email_template change_email_template
-     * @magentoConfigFixture current_store customer/password/forgot_email_identity support
-     * @magentoDataFixture Magento/Customer/_files/customer_sample.php
-     */
-    public function testInlineEditChangeEmail()
-    {
-        $customerId = 1;
-        $newEmail = 'newcustomer@example.com';
-        $transportBuilderMock = $this->prepareEmailMock(
-            2,
-            'change_email_template',
-            'support',
-            $customerId,
-            $newEmail
-        );
-        $this->addEmailMockToClass($transportBuilderMock, EmailNotification::class);
-        $post = [
-            'items' => [
-                $customerId => [
-                    'middlename' => 'test middlename',
-                    'group_id' => 1,
-                    'website_id' => 1,
-                    'firstname' => 'test firstname',
-                    'lastname' => 'test lastname',
-                    'email' => $newEmail,
-                    'password' => 'password',
-                ],
-            ]
-        ];
-        $this->getRequest()->setParam('ajax', true)->setParam('isAjax', true);
-        $this->getRequest()->setPostValue($post);
-        $this->getRequest()->setParam('id', 1);
-        $this->dispatch('backend/customer/index/inlineEdit');
-
-        /**
-         * Check that no errors were generated and set to session
-         */
-        $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
     }
 
     /**
@@ -488,7 +395,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         );
         $this->assertEquals(
             $post,
-            Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->getCustomerFormData()
+            Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->getCustomerData()
         );
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'new/key/'));
     }
@@ -497,6 +404,88 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
      * @magentoDataFixture Magento/Customer/_files/customer_sample.php
      */
     public function testEditAction()
+    {
+        $customerData = [
+            'customer_id' => '1',
+            'account' => [
+                'middlename' => 'new middlename',
+                'group_id' => 1,
+                'website_id' => 1,
+                'firstname' => 'new firstname',
+                'lastname' => 'new lastname',
+                'email' => 'customer@example.com',
+                'default_shipping' => '_item1',
+                'new_password' => 'auto',
+                'sendemail_store_id' => '1',
+                'sendemail' => '1',
+                'created_at' => '2000-01-01 00:00:00',
+                'customer_address' => [
+                    '1' => [
+                        'firstname' => 'update firstname',
+                        'lastname' => 'update lastname',
+                        'street' => ['update street'],
+                        'city' => 'update city',
+                        'country_id' => 'US',
+                        'postcode' => '01001',
+                        'telephone' => '+7000000001',
+                    ],
+                    '_item1' => [
+                        'firstname' => 'default firstname',
+                        'lastname' => 'default lastname',
+                        'street' => ['default street'],
+                        'city' => 'default city',
+                        'country_id' => 'US',
+                        'postcode' => '01001',
+                        'telephone' => '+7000000001',
+                    ],
+                    '_template_' => [
+                        'firstname' => '',
+                        'lastname' => '',
+                        'street' => [],
+                        'city' => '',
+                        'country_id' => 'US',
+                        'postcode' => '',
+                        'telephone' => '',
+                    ],
+                ],
+            ],
+        ];
+        /**
+         * set customer data
+         */
+        Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->setCustomerData($customerData);
+        $this->getRequest()->setParam('id', 1);
+        $this->dispatch('backend/customer/index/edit');
+        $body = $this->getResponse()->getBody();
+
+        // verify
+        $this->assertContains('<h1 class="page-title">new firstname new lastname</h1>', $body);
+
+        // assert disclosure of sensitive fields from the database
+        $blacklistFields = [
+            '"password_hash":',
+            '"rp_token":',
+            '"confirmation":',
+        ];
+        foreach ($blacklistFields as $blacklistField) {
+            $this->assertNotContains($blacklistField, $body);
+        }
+
+        // assert valid data provider fields
+        $whitelistFields = [
+            '"customer_form_data_source":',
+            '"middlename":',
+            '"gender":',
+        ];
+        foreach ($whitelistFields as $whitelistField) {
+            $this->assertContains($whitelistField, $body);
+        }
+    }
+
+    /**
+     * @magentoDataFixture Magento/Customer/_files/customer_sample.php
+     */
+    public function testEditActionNoSessionData()
     {
         $this->getRequest()->setParam('id', 1);
         $this->dispatch('backend/customer/index/edit');
@@ -623,7 +612,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                     'street' => ['update street'],
                     'city' => 'update city',
                     'country_id' => 'US',
-                    'region_id' => 10,
                     'postcode' => '01001',
                     'telephone' => '+7000000001',
                 ],
@@ -700,13 +688,11 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $body = $this->getResponse()->getBody();
 
         $this->assertContains('{"error":true,"messages":', $body);
-        $this->assertContains('\"First Name\" is a required value', $body);
-        $this->assertContains('\"First Name\" length must be equal or greater than 1 characters', $body);
+        $this->assertContains('Please correct this email address: \"*\".', $body);
+        $this->assertContains('\"First Name\" is a required value.', $body);
         $this->assertContains('\"Last Name\" is a required value.', $body);
-        $this->assertContains('\"Last Name\" length must be equal or greater than 1 characters.', $body);
-        $this->assertContains('\"Country\" is a required value.', $body);
         $this->assertContains('\"Phone Number\" is a required value.', $body);
-        $this->assertContains('\"Phone Number\" length must be equal or greater than 1 characters.', $body);
+        $this->assertContains('\"Country\" is a required value.', $body);
     }
 
     /**
@@ -742,80 +728,5 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
         $this->assertRedirect($this->stringStartsWith($this->_baseControllerUrl . 'edit'));
-    }
-
-    /**
-     * Prepare email mock to test emails
-     *
-     * @param int $occurrenceNumber
-     * @param string $templateId
-     * @param string $sender
-     * @param int $customerId
-     * @param string|null $newEmail
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     * @magentoDataFixture Magento/Customer/_files/customer.php
-     */
-    protected function prepareEmailMock($occurrenceNumber, $templateId, $sender, $customerId, $newEmail = null)
-    {
-        $area = \Magento\Framework\App\Area::AREA_FRONTEND;
-        $customer = $this->customerRepository->getById($customerId);
-        $storeId = $customer->getStoreId();
-        $name = $this->customerViewHelper->getCustomerName($customer);
-
-        $transportMock = $this->getMockBuilder(\Magento\Framework\Mail\TransportInterface::class)
-            ->setMethods(['sendMessage'])
-            ->getMockForAbstractClass();
-        $transportMock->expects($this->exactly($occurrenceNumber))
-            ->method('sendMessage');
-        $transportBuilderMock = $this->getMockBuilder(\Magento\Framework\Mail\Template\TransportBuilder::class)
-            ->disableOriginalConstructor()
-            ->setMethods(
-                [
-                    'addTo',
-                    'setFrom',
-                    'setTemplateIdentifier',
-                    'setTemplateVars',
-                    'setTemplateOptions',
-                    'getTransport'
-                ]
-            )
-            ->getMock();
-        $transportBuilderMock->method('setTemplateIdentifier')
-            ->with($templateId)
-            ->willReturnSelf();
-        $transportBuilderMock->method('setTemplateOptions')
-            ->with(['area' => $area, 'store' => $storeId])
-            ->willReturnSelf();
-        $transportBuilderMock->method('setTemplateVars')
-            ->willReturnSelf();
-        $transportBuilderMock->method('setFrom')
-            ->with($sender)
-            ->willReturnSelf();
-        $transportBuilderMock->method('addTo')
-            ->with($this->logicalOr($customer->getEmail(), $newEmail), $name)
-            ->willReturnSelf();
-        $transportBuilderMock->expects($this->exactly($occurrenceNumber))
-            ->method('getTransport')
-            ->willReturn($transportMock);
-
-        return $transportBuilderMock;
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $transportBuilderMock
-     * @param string $className
-     */
-    protected function addEmailMockToClass(
-        \PHPUnit_Framework_MockObject_MockObject $transportBuilderMock,
-        $className
-    ) {
-        $mocked = $this->_objectManager->create(
-            $className,
-            ['transportBuilder' => $transportBuilderMock]
-        );
-        $this->_objectManager->addSharedInstance(
-            $mocked,
-            $className
-        );
     }
 }

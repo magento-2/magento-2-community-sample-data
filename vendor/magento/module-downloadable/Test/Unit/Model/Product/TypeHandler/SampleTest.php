@@ -1,29 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Test\Unit\Model\Product\TypeHandler;
 
-use Magento\Downloadable\Model\Product\TypeHandler\Sample;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
 /**
  * Test for \Magento\Downloadable\Model\Product\TypeHandler\Sample
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SampleTest extends \PHPUnit\Framework\TestCase
+class SampleTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataPoolMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataMock;
 
     /**
      * @var \Magento\Downloadable\Model\ResourceModel\Link|\PHPUnit_Framework_MockObject_MockObject
@@ -43,38 +31,28 @@ class SampleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->sampleFactory = $this->getMockBuilder(\Magento\Downloadable\Model\SampleFactory::class)
+        $this->sampleFactory = $this->getMockBuilder('\Magento\Downloadable\Model\SampleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->sampleResource = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\Sample::class)
+        $this->sampleResource = $this->getMockBuilder('\Magento\Downloadable\Model\ResourceModel\Sample')
             ->disableOriginalConstructor()
             ->setMethods(['deleteItems'])
             ->getMock();
-        $sampleResourceFactory = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\SampleFactory::class)
+        $sampleResourceFactory = $this->getMockBuilder('\Magento\Downloadable\Model\ResourceModel\SampleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $sampleResourceFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->sampleResource));
-        $this->metadataPoolMock = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
-        $this->metadataPoolMock->expects($this->any())->method('getMetadata')->willReturn($this->metadataMock);
         $this->target = $objectManagerHelper->getObject(
-            Sample::class,
+            'Magento\Downloadable\Model\Product\TypeHandler\Sample',
             [
                 'sampleFactory' => $this->sampleFactory,
                 'sampleResourceFactory' => $sampleResourceFactory,
-                'metadataPool' => $this->metadataPoolMock
             ]
         );
-        $refClass = new \ReflectionClass(Sample::class);
-        $refProperty = $refClass->getProperty('metadataPool');
-        $refProperty->setAccessible(true);
-        $refProperty->setValue($this->target, $this->metadataPoolMock);
     }
 
     /**
@@ -86,10 +64,9 @@ class SampleTest extends \PHPUnit\Framework\TestCase
     public function testSave($product, array $data, array $modelData)
     {
         $link = $this->createSampleModel($product, $modelData, true);
-        $this->metadataMock->expects($this->once())->method('getLinkField')->willReturn('id');
         $this->sampleFactory->expects($this->once())
             ->method('create')
-            ->willReturn($link);
+            ->will($this->returnValue($link));
         $this->target->save($product, $data);
     }
 
@@ -181,7 +158,7 @@ class SampleTest extends \PHPUnit\Framework\TestCase
      */
     private function createSampleModel($product, array $modelData)
     {
-        $sample = $this->getMockBuilder(\Magento\Downloadable\Model\Sample::class)
+        $sample = $this->getMockBuilder('\Magento\Downloadable\Model\Sample')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -208,8 +185,8 @@ class SampleTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnSelf());
         $sample->expects($this->once())
             ->method('setProductId')
-            ->with($product->getData('id'))
-            ->willReturnSelf();
+            ->with($product->getId())
+            ->will($this->returnSelf());
         $sample->expects($this->once())
             ->method('setStoreId')
             ->with($product->getStoreId())
@@ -228,20 +205,20 @@ class SampleTest extends \PHPUnit\Framework\TestCase
      */
     private function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData'])
+            ->setMethods(['getId', 'getStoreId', 'getStore', 'getWebsiteIds'])
             ->getMock();
         $product->expects($this->any())
             ->method('getId')
-            ->willReturn($id);
+            ->will($this->returnValue($id));
         $product->expects($this->any())
             ->method('getStoreId')
             ->will($this->returnValue($storeId));
         $product->expects($this->any())
             ->method('getWebsiteIds')
             ->will($this->returnValue($websiteIds));
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $store = $this->getMockBuilder('\Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods(['getWebsiteId'])
             ->getMock();
@@ -251,10 +228,6 @@ class SampleTest extends \PHPUnit\Framework\TestCase
         $product->expects($this->any())
             ->method('getStore')
             ->will($this->returnValue($store));
-        $product->expects($this->any())
-            ->method('getData')
-            ->with('id')
-            ->willReturn($id);
         return $product;
     }
 }

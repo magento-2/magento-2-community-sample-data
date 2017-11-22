@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use \Magento\Framework\View\Design\FileResolution\Fallback\Resolver\Alternative;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class AlternativeTest extends \PHPUnit\Framework\TestCase
+class AlternativeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem\Directory\Read|\PHPUnit_Framework_MockObject_MockObject
@@ -31,18 +31,24 @@ class AlternativeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->directory = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
-        $readFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
-        $readFactory->expects($this->any())
-            ->method('create')
+        $this->directory = $this->getMock('\Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
+        $this->directory->expects($this->any())
+            ->method('getRelativePath')
+            ->will($this->returnArgument(0));
+        $filesystem = $this->getMock('\Magento\Framework\Filesystem', [], [], '', false);
+        $filesystem->expects($this->once())
+            ->method('getDirectoryRead')
+            ->with(DirectoryList::ROOT)
             ->will($this->returnValue($this->directory));
-        $this->rule = $this->createMock(\Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class);
-        $rulePool = $this->createMock(\Magento\Framework\View\Design\Fallback\RulePool::class);
+        $this->rule = $this->getMock(
+            '\Magento\Framework\View\Design\Fallback\Rule\RuleInterface', [], [], '', false
+        );
+        $rulePool = $this->getMock('Magento\Framework\View\Design\Fallback\RulePool', [], [], '', false);
         $rulePool->expects($this->any())
             ->method('getRule')
             ->with('type')
             ->will($this->returnValue($this->rule));
-        $this->object = new Alternative($readFactory, $rulePool, ['css' => ['less']]);
+        $this->object = new Alternative($filesystem, $rulePool, ['css' => ['less']]);
     }
 
     /**
@@ -52,12 +58,12 @@ class AlternativeTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorException(array $alternativeExtensions)
     {
-        $this->expectException('\InvalidArgumentException', "\$alternativeExtensions must be an array with format:"
+        $this->setExpectedException('\InvalidArgumentException', "\$alternativeExtensions must be an array with format:"
             . " array('ext1' => array('ext1', 'ext2'), 'ext3' => array(...)]");
 
-        $readFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
-        $rulePool = $this->createMock(\Magento\Framework\View\Design\Fallback\RulePool::class);
-        new Alternative($readFactory, $rulePool, $alternativeExtensions);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $rulePool = $this->getMock('Magento\Framework\View\Design\Fallback\RulePool', [], [], '', false);
+        new Alternative($filesystem, $rulePool, $alternativeExtensions);
     }
 
     /**
@@ -76,7 +82,7 @@ class AlternativeTest extends \PHPUnit\Framework\TestCase
         $requestedFile = 'file.css';
         $expected = 'some/dir/file.less';
 
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
         $theme->expects($this->any())
             ->method('getFullPath')
             ->will($this->returnValue('magento_theme'));
@@ -85,8 +91,8 @@ class AlternativeTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(['some/dir']));
 
         $fileExistsMap = [
-            ['file.css', false],
-            ['file.less', true],
+            ['some/dir/file.css', false],
+            ['some/dir/file.less', true],
         ];
         $this->directory->expects($this->any())
             ->method('isExist')

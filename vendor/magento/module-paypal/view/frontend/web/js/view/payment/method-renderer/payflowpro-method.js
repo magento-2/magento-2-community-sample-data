@@ -1,137 +1,77 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+/*global define*/
+define(
+    [
+        'jquery',
+        'Magento_Payment/js/view/payment/iframe',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Magento_Checkout/js/action/set-payment-information',
+        'Magento_Checkout/js/model/full-screen-loader'
+    ],
+    function ($, Component, additionalValidators, setPaymentInformationAction, fullScreenLoader) {
+        'use strict';
 
-define([
-    'jquery',
-    'Magento_Payment/js/view/payment/iframe',
-    'Magento_Checkout/js/model/payment/additional-validators',
-    'Magento_Checkout/js/action/set-payment-information',
-    'Magento_Checkout/js/model/full-screen-loader',
-    'Magento_Vault/js/view/payment/vault-enabler'
-], function ($, Component, additionalValidators, setPaymentInformationAction, fullScreenLoader, VaultEnabler) {
-    'use strict';
+        return Component.extend({
+            defaults: {
+                template: 'Magento_Paypal/payment/payflowpro-form'
+            },
+            placeOrderHandler: null,
+            validateHandler: null,
 
-    return Component.extend({
-        defaults: {
-            template: 'Magento_Paypal/payment/payflowpro-form'
-        },
-        placeOrderHandler: null,
-        validateHandler: null,
+            setPlaceOrderHandler: function(handler) {
+                this.placeOrderHandler = handler;
+            },
 
-        /**
-         * @returns {exports.initialize}
-         */
-        initialize: function () {
-            this._super();
-            this.vaultEnabler = new VaultEnabler();
-            this.vaultEnabler.setPaymentCode(this.getVaultCode());
+            setValidateHandler: function(handler) {
+                this.validateHandler = handler;
+            },
 
-            return this;
-        },
+            context: function() {
+                return this;
+            },
 
-        /**
-         * @param {Function} handler
-         */
-        setPlaceOrderHandler: function (handler) {
-            this.placeOrderHandler = handler;
-        },
+            isShowLegend: function() {
+                return true;
+            },
 
-        /**
-         * @param {Function} handler
-         */
-        setValidateHandler: function (handler) {
-            this.validateHandler = handler;
-        },
+            getCode: function() {
+                return 'payflowpro';
+            },
 
-        /**
-         * @returns {Object}
-         */
-        context: function () {
-            return this;
-        },
+            isActive: function() {
+                return true;
+            },
 
-        /**
-         * @returns {Boolean}
-         */
-        isShowLegend: function () {
-            return true;
-        },
+            /**
+             * @override
+             */
+            placeOrder: function () {
+                var self = this;
 
-        /**
-         * @returns {String}
-         */
-        getCode: function () {
-            return 'payflowpro';
-        },
-
-        /**
-         * @returns {Boolean}
-         */
-        isActive: function () {
-            return true;
-        },
-
-        /**
-         * @override
-         */
-        placeOrder: function () {
-            var self = this;
-
-            if (this.validateHandler() && additionalValidators.validate()) {
-                this.isPlaceOrderActionAllowed(false);
-                fullScreenLoader.startLoader();
-                $.when(
-                    setPaymentInformationAction(this.messageContainer, self.getData())
-                ).done(
-                    function () {
-                        self.placeOrderHandler().fail(
-                            function () {
-                                fullScreenLoader.stopLoader();
-                            }
-                        );
-                    }
-                ).always(
-                    function () {
-                        self.isPlaceOrderActionAllowed(true);
-                        fullScreenLoader.stopLoader();
-                    }
-                );
-            }
-        },
-
-        /**
-         * @returns {Object}
-         */
-        getData: function () {
-            var data = {
-                'method': this.getCode(),
-                'additional_data': {
-                    'cc_type': this.creditCardType(),
-                    'cc_exp_year': this.creditCardExpYear(),
-                    'cc_exp_month': this.creditCardExpMonth(),
-                    'cc_last_4': this.creditCardNumber().substr(-4)
+                if (this.validateHandler() && additionalValidators.validate()) {
+                    this.isPlaceOrderActionAllowed(false);
+                    fullScreenLoader.startLoader();
+                    $.when(
+                        setPaymentInformationAction(this.messageContainer, {'method': self.getCode()})
+                    ).done(
+                        function () {
+                            self.placeOrderHandler().fail(
+                                function () {
+                                    fullScreenLoader.stopLoader();
+                                }
+                            );
+                        }
+                    ).always(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
+                            fullScreenLoader.stopLoader();
+                        }
+                    );
                 }
-            };
-
-            this.vaultEnabler.visitAdditionalData(data);
-
-            return data;
-        },
-
-        /**
-         * @returns {Bool}
-         */
-        isVaultEnabled: function () {
-            return this.vaultEnabler.isVaultEnabled();
-        },
-
-        /**
-         * @returns {String}
-         */
-        getVaultCode: function () {
-            return 'payflowpro_cc_vault';
-        }
-    });
-});
+            }
+        });
+    }
+);

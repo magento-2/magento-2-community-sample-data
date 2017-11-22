@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Wysiwyg;
@@ -13,9 +13,7 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg;
 abstract class Images extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Cms::media_gallery';
 
@@ -55,7 +53,7 @@ abstract class Images extends \Magento\Backend\App\Action
     public function getStorage()
     {
         if (!$this->_coreRegistry->registry('storage')) {
-            $storage = $this->_objectManager->create(\Magento\Cms\Model\Wysiwyg\Images\Storage::class);
+            $storage = $this->_objectManager->create('Magento\Cms\Model\Wysiwyg\Images\Storage');
             $this->_coreRegistry->register('storage', $storage);
         }
         return $this->_coreRegistry->registry('storage');

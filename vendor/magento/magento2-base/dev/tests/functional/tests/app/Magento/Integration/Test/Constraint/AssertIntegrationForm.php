@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -67,8 +67,6 @@ class AssertIntegrationForm extends AbstractAssertForm
         $integrationIndexPage->open();
         $integrationIndexPage->getIntegrationGrid()->searchAndOpen($filter);
         $formData = $integrationNewPage->getIntegrationForm()->getData();
-        unset($formData['current_password']);
-        unset($data['current_password']);
         $dataDiff = $this->verifyForm($formData, $data);
         \PHPUnit_Framework_Assert::assertEmpty(
             $dataDiff,

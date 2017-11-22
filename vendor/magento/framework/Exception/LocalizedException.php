@@ -2,7 +2,7 @@
 /**
  * Localized Exception
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Exception;
@@ -10,9 +10,6 @@ namespace Magento\Framework\Exception;
 use Magento\Framework\Phrase;
 use Magento\Framework\Phrase\Renderer\Placeholder;
 
-/**
- * @api
- */
 class LocalizedException extends \Exception
 {
     /**
@@ -26,14 +23,15 @@ class LocalizedException extends \Exception
     protected $logMessage;
 
     /**
+     * Constructor
+     *
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception $cause
-     * @param int $code
      */
-    public function __construct(Phrase $phrase, \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase, \Exception $cause = null)
     {
         $this->phrase = $phrase;
-        parent::__construct($phrase->render(), intval($code), $cause);
+        parent::__construct($phrase->render(), 0, $cause);
     }
 
     /**

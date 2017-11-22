@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableImportExport\Test\Unit\Model\Import\Product\Type;
 
-use Magento\ConfigurableImportExport;
+use \Magento\ConfigurableImportExport;
 
 /**
  * Class ConfigurableTest
@@ -73,24 +73,25 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
     protected $select;
 
     /**
-     * @var string
-     */
-    protected $productEntityLinkField = 'entity_id';
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->setCollectionFactory = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory::class,
-            ['create']
+        $this->setCollectionFactory = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->setCollection = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection::class,
-            ['setEntityTypeFilter']
+        $this->setCollection = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection',
+            ['setEntityTypeFilter'],
+            [],
+            '',
+            false
         );
 
         $this->setCollectionFactory->expects($this->any())->method('create')->will(
@@ -107,23 +108,31 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             ->method('setEntityTypeFilter')
             ->will($this->returnValue([$item]));
 
-        $this->attrCollectionFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory::class,
-            ['create']
+        $this->attrCollectionFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->attrCollection = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection::class,
-            ['setAttributeSetFilter']
+        $this->attrCollection = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection',
+            ['setAttributeSetFilter'],
+            [],
+            '',
+            false
         );
 
         $superAttributes = [];
         foreach ($this->_getSuperAttributes() as $superAttribute) {
-            $item = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-                ->setMethods(['isStatic'])
-                ->disableOriginalConstructor()
-                ->setConstructorArgs($superAttribute)
-                ->getMock();
+            $item = $this->getMock(
+                '\Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
+                ['isStatic'],
+                $superAttribute,
+                '',
+                false
+            );
             $item->setData($superAttribute);
             $item->method('isStatic')
                 ->will($this->returnValue(false));
@@ -138,7 +147,9 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             ->method('setAttributeSetFilter')
             ->will($this->returnValue($superAttributes));
 
-        $this->_entityModel = $this->createPartialMock(\Magento\CatalogImportExport\Model\Import\Product::class, [
+        $this->_entityModel = $this->getMock(
+            'Magento\CatalogImportExport\Model\Import\Product',
+            [
                 'getNewSku',
                 'getOldSku',
                 'getNextBunch',
@@ -147,7 +158,11 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
                 'getAttrSetIdToName',
                 'getErrorAggregator',
                 'getAttributeOptions'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->_entityModel->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
 
         $this->params = [
@@ -155,27 +170,39 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             1 => 'configurable'
         ];
 
-        $this->_connection = $this->createPartialMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class, [
+
+        $this->_connection = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            [
                 'select',
                 'fetchAll',
                 'fetchPairs',
                 'joinLeft',
                 'insertOnDuplicate',
-                'quoteIdentifier',
                 'delete',
                 'quoteInto'
-            ]);
-        $this->select = $this->createPartialMock(\Magento\Framework\DB\Select::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->select = $this->getMock(
+            'Magento\Framework\DB\Select',
+            [
                 'from',
                 'where',
                 'joinLeft',
                 'getConnection',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->select->expects($this->any())->method('from')->will($this->returnSelf());
         $this->select->expects($this->any())->method('where')->will($this->returnSelf());
         $this->select->expects($this->any())->method('joinLeft')->will($this->returnSelf());
         $this->_connection->expects($this->any())->method('select')->will($this->returnValue($this->select));
-        $connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $connectionMock = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
         $connectionMock->expects($this->any())->method('quoteInto')->will($this->returnValue('query'));
         $this->select->expects($this->any())->method('getConnection')->willReturn($connectionMock);
         $this->_connection->expects($this->any())->method('insertOnDuplicate')->willReturnSelf();
@@ -183,10 +210,16 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
         $this->_connection->expects($this->any())->method('quoteInto')->willReturn('');
         $this->_connection->expects($this->any())->method('fetchAll')->will($this->returnValue([]));
 
-        $this->resource = $this->createPartialMock(\Magento\Framework\App\ResourceConnection::class, [
+        $this->resource = $this->getMock(
+            '\Magento\Framework\App\ResourceConnection',
+            [
                 'getConnection',
                 'getTableName',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->resource->expects($this->any())->method('getConnection')->will(
             $this->returnValue($this->_connection)
         );
@@ -197,14 +230,20 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             $this->returnValue($this->_connection)
         );
 
-        $this->productCollectionFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
-            ['create']
+        $this->productCollectionFactory = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->productCollection = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
-            ['addFieldToFilter', 'addAttributeToSelect']
+        $this->productCollection = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
+            ['addFieldToFilter', 'addAttributeToSelect'],
+            [],
+            '',
+            false
         );
 
         $products = [];
@@ -214,7 +253,13 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             ['id' => 20, 'attribute_set_id' => 4, 'testattr2'=> 1, 'testattr3'=> 1],
         ];
         foreach ($testProducts as $product) {
-            $item = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getAttributeSetId']);
+            $item = $this->getMock(
+                '\Magento\Framework\DataObject',
+                ['getAttributeSetId'],
+                [],
+                '',
+                false
+            );
             $item->setData($product);
             $item->expects($this->any())->method('getAttributeSetId')->willReturn(4);
 
@@ -243,28 +288,14 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             'testattr3v3' => '6',
         ]));
 
-        $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
-        $entityMetadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
-        $metadataPoolMock->expects($this->any())
-            ->method('getMetadata')
-            ->with(\Magento\Catalog\Api\Data\ProductInterface::class)
-            ->willReturn($entityMetadataMock);
-        $entityMetadataMock->expects($this->any())
-            ->method('getLinkField')
-            ->willReturn($this->productEntityLinkField);
-        $entityMetadataMock->expects($this->any())
-            ->method('getIdentifierField')
-            ->willReturn($this->productEntityLinkField);
-
         $this->configurable = $this->objectManagerHelper->getObject(
-            \Magento\ConfigurableImportExport\Model\Import\Product\Type\Configurable::class,
+            'Magento\ConfigurableImportExport\Model\Import\Product\Type\Configurable',
             [
                 'attrSetColFac' => $this->setCollectionFactory,
                 'prodAttrColFac' => $this->attrCollectionFactory,
                 'params' => $this->params,
                 'resource' => $this->resource,
-                'productColFac' => $this->productCollectionFactory,
-                'metadataPool' => $metadataPoolMock,
+                'productColFac' => $this->productCollectionFactory
             ]
         );
     }
@@ -283,7 +314,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             'name' => 'Configurable Product 21',
             'product_websites' => 'website_1',
             'configurable_variation_labels' => 'testattr2=Select Color, testattr3=Select Size',
-            'configurable_variations' => 'sku=testconf2-attr2val1-testattr3v1,'
+            'configurable_variations' =>
+                'sku=testconf2-attr2val1-testattr3v1,'
                  . 'testattr2=attr2val1,'
                  . 'testattr3=testattr3v1,'
                  . 'display=1|sku=testconf2-attr2val1-testattr3v2,'
@@ -357,7 +389,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
                 'name' => 'Configurable Product 21',
                 'product_websites' => 'website_1',
                 'configurable_variation_labels' => 'testattr2=Select Color, testattr3=Select Size',
-                'configurable_variations' => 'sku=testconf2-attr2val1-testattr3v1,'
+                'configurable_variations' =>
+                    'sku=testconf2-attr2val1-testattr3v1,'
                      . 'testattr2=attr2val1,'
                      . 'testattr3=testattr3v1,'
                      . 'testattr3=testattr3v2,'
@@ -407,7 +440,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
                 'frontend_label' => 'testattr2',
                 'is_static' => false,
                 'backend_type' => 'select',
-                'apply_to' => [],
+                'apply_to' =>
+                    [],
                 'type' => 'select',
                 'default_value' => null,
                 'options' => [
@@ -432,7 +466,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
                 'apply_to' => [],
                 'type' => 'select',
                 'default_value' => null,
-                'options' => [
+                'options' =>
+                    [
                         'testattr3v1' => '9',
                         'testattr3v2' => '10',
                         'testattr3v3' => '11',
@@ -441,40 +476,30 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
         ];
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testSaveData()
     {
-        $newSkus = array_change_key_case([
+        $this->_entityModel->expects($this->any())->method('getNewSku')->will($this->returnValue([
             'configurableskuI22' =>
-                [$this->productEntityLinkField => 1, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
+                ['entity_id' => 1, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
             'testconf2-attr2val1-testattr3v1' =>
-                [$this->productEntityLinkField => 2, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
+                ['entity_id' => 2, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
             'testconf2-attr2val1-testattr30v1' =>
-                [$this->productEntityLinkField => 20, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
+                ['entity_id' => 20, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
             'testconf2-attr2val1-testattr3v2' =>
-                [$this->productEntityLinkField => 3, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
+                ['entity_id' => 3, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
             'testSimple' =>
-                [$this->productEntityLinkField => 4, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
+                ['entity_id' => 4, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
             'testSimpleToSkip' =>
-                [$this->productEntityLinkField => 5, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
+                ['entity_id' => 5, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
             'configurableskuI22withoutLabels' =>
-                [$this->productEntityLinkField => 6, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
+                ['entity_id' => 6, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
             'configurableskuI22withoutVariations' =>
-                [$this->productEntityLinkField => 7, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
+                ['entity_id' => 7, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
             'configurableskuI22Duplicated' =>
-                [$this->productEntityLinkField => 8, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
+                ['entity_id' => 8, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
             'configurableskuI22BadPrice' =>
-                [$this->productEntityLinkField => 9, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
-        ]);
-        $this->_entityModel->expects($this->any())
-            ->method('getNewSku')
-            ->will($this->returnValue($newSkus));
-
-        // at(0) is select() call, quoteIdentifier() is invoked at(1) and at(2)
-        $this->_connection->expects($this->at(1))->method('quoteIdentifier')->with('m.attribute_id')->willReturn('a');
-        $this->_connection->expects($this->at(2))->method('quoteIdentifier')->with('o.attribute_id')->willReturn('b');
+                ['entity_id' => 9, 'type_id' => 'configurable', 'attr_set_code' => 'Default'],
+        ]));
 
         $this->_connection->expects($this->any())->method('select')->will($this->returnValue($this->select));
         $this->_connection->expects($this->any())->method('fetchAll')->with($this->select)->will($this->returnValue([
@@ -511,11 +536,7 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
                         ->will($this->returnCallback([$this, 'isRowAllowedToImport']));
 
         $this->_entityModel->expects($this->any())->method('getOldSku')->will($this->returnValue([
-            'testsimpleold' => [
-                $this->productEntityLinkField => 10,
-                'type_id' => 'simple',
-                'attr_set_code' => 'Default'
-            ],
+            'testSimpleOld' => ['entity_id' => 10, 'type_id' => 'simple', 'attr_set_code' => 'Default'],
         ]));
 
         $this->_entityModel->expects($this->any())->method('getAttrSetIdToName')->willReturn([4 => 'Default']);
@@ -548,7 +569,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             'name' => 'Configurable Product 21 BadPrice',
             'product_websites' => 'website_1',
             'configurable_variation_labels' => 'testattr2=Select Color, testattr3=Select Size',
-            'configurable_variations' => 'sku=testconf2-attr2val1-testattr3v1,'
+            'configurable_variations' =>
+                'sku=testconf2-attr2val1-testattr3v1,'
                  . 'testattr2=attr2val1_DOESNT_EXIST,'
                  . 'testattr3=testattr3v1,'
                  . 'display=1|sku=testconf2-attr2val1-testattr3v2,'
@@ -567,8 +589,11 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
         ]);
 
         foreach ($bunch as $rowData) {
-            $result = $this->configurable->isRowValid($rowData, 0, !isset($this->_oldSku[$rowData['sku']]));
-            $this->assertNotNull($result);
+            $this->configurable->isRowValid(
+                $rowData,
+                0,
+                !isset($this->_oldSku[$rowData['sku']])
+            );
         }
     }
 

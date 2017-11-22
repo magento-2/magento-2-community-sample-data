@@ -1,19 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block;
 
-/**
- * @api
- * @since 100.0.2
- */
 class SectionConfig extends \Magento\Framework\View\Element\Template
 {
-    /**
-     * @var \Magento\Framework\Config\DataInterface
-     */
+    /** @var \Magento\Framework\Config\DataInterface */
     protected $sectionConfig;
 
     /**

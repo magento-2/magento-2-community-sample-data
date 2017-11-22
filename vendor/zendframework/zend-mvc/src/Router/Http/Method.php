@@ -39,7 +39,7 @@ class Method implements RouteInterface
      * @param  string $verb
      * @param  array  $defaults
      */
-    public function __construct($verb, array $defaults = [])
+    public function __construct($verb, array $defaults = array())
     {
         $this->verb     = $verb;
         $this->defaults = $defaults;
@@ -53,7 +53,7 @@ class Method implements RouteInterface
      * @return Method
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -66,7 +66,7 @@ class Method implements RouteInterface
         }
 
         if (!isset($options['defaults'])) {
-            $options['defaults'] = [];
+            $options['defaults'] = array();
         }
 
         return new static($options['verb'], $options['defaults']);
@@ -104,7 +104,7 @@ class Method implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         // The request method does not contribute to the path, thus nothing is returned.
         return '';
@@ -118,6 +118,6 @@ class Method implements RouteInterface
      */
     public function getAssembledParams()
     {
-        return [];
+        return array();
     }
 }

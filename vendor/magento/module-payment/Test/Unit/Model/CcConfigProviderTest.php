@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Model;
 
-class CcConfigProviderTest extends \PHPUnit\Framework\TestCase
+class CcConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\CcConfigProvider
@@ -24,8 +24,8 @@ class CcConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ccConfigMock = $this->createMock(\Magento\Payment\Model\CcConfig::class);
-        $this->assetSourceMock = $this->createMock(\Magento\Framework\View\Asset\Source::class);
+        $this->ccConfigMock = $this->getMock('\Magento\Payment\Model\CcConfig', [], [], '', false);
+        $this->assetSourceMock = $this->getMock('\Magento\Framework\View\Asset\Source', [], [], '', false);
         $this->model = new \Magento\Payment\Model\CcConfigProvider(
             $this->ccConfigMock,
             $this->assetSourceMock
@@ -66,7 +66,7 @@ class CcConfigProviderTest extends \PHPUnit\Framework\TestCase
                 'url' => 'http://cc.card/ae.png'
             ]
         ];
-        $assetMock = $this->createMock(\Magento\Framework\View\Asset\File::class);
+        $assetMock = $this->getMock('\Magento\Framework\View\Asset\File', [], [], '', false);
 
         $this->ccConfigMock->expects($this->once())->method('getCcAvailableTypes')->willReturn($ccAvailableTypesMock);
 
@@ -77,7 +77,7 @@ class CcConfigProviderTest extends \PHPUnit\Framework\TestCase
                 [$ccAvailableTypesMock['ae']['fileId']]
             )->willReturn($assetMock);
         $this->assetSourceMock->expects($this->atLeastOnce())
-            ->method('findSource')
+            ->method('findRelativeSourceFilePath')
             ->with($assetMock)
             ->willReturnOnConsecutiveCalls(
                 $ccAvailableTypesMock['vi']['path'],

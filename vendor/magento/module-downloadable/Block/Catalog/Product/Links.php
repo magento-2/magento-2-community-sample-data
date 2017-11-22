@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Block\Catalog\Product;
@@ -12,9 +12,6 @@ use Magento\Framework\Json\EncoderInterface;
 
 /**
  * Downloadable Product Links part block
- *
- * @api
- * @since 100.0.2
  */
 class Links extends \Magento\Catalog\Block\Product\AbstractProduct
 {

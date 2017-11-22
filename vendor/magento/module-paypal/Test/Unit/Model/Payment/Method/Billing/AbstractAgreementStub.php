@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Payment\Method\Billing;
@@ -22,6 +22,7 @@ class AbstractAgreementStub extends AbstractAgreement
     /**
      * @param object $quote
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _isAvailable($quote)
     {

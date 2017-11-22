@@ -1,46 +1,61 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Swatches\Helper;
 
-use Magento\Catalog\Api\Data\ProductInterface as Product;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Helper\Image;
-use Magento\Catalog\Model\Product as ModelProduct;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\App\Helper\Context;
+use Magento\Catalog\Api\Data\ProductInterface as Product;
+use Magento\Catalog\Model\Product as ModelProduct;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Unserialize\SecureUnserializer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Swatches\Model\ResourceModel\Swatch\CollectionFactory as SwatchCollectionFactory;
 use Magento\Swatches\Model\Swatch;
-use Magento\Swatches\Model\SwatchAttributesProvider;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Helper Data
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Data
+class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    /**
-     * When we init media gallery empty image types contain this value.
-     */
-    const EMPTY_IMAGE_VALUE = 'no_selection';
-
     /**
      * Default store ID
      */
     const DEFAULT_STORE_ID = 0;
 
     /**
-     * @var CollectionFactory
+     * Catalog\product area inside media folder
+     */
+    const  CATALOG_PRODUCT_MEDIA_PATH = 'catalog/product';
+
+    /**
+     * Current model
+     *
+     * @var \Magento\Swatches\Model\Query
+     */
+    protected $model;
+
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     protected $productCollectionFactory;
+
+    /**
+     * @deprecated
+     *
+     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
+     */
+    protected $configurable;
 
     /**
      * @var ProductRepositoryInterface
@@ -48,11 +63,15 @@ class Data
     protected $productRepository;
 
     /**
+     * Store manager
+     *
      * @var StoreManagerInterface
      */
     protected $storeManager;
 
     /**
+     * Swatch collection factory
+     *
      * @var SwatchCollectionFactory
      */
     protected $swatchCollectionFactory;
@@ -65,16 +84,9 @@ class Data
     protected $imageHelper;
 
     /**
-     * Product metadata pool
-     *
-     * @var \Magento\Framework\EntityManager\MetadataPool
+     * @var SecureUnserializer
      */
-    private $metadataPool;
-
-    /**
-     * @var SwatchAttributesProvider
-     */
-    private $swatchAttributesProvider;
+    private $secureUnserializer;
 
     /**
      * Data key which should populated to Attribute entity from "additional_data" field
@@ -88,50 +100,54 @@ class Data
     ];
 
     /**
-     * Serializer to/from JSON.
-     *
-     * @var Json
-     */
-    private $serializer;
-
-    /**
+     * @param Context $context
      * @param CollectionFactory $productCollectionFactory
+     * @param Configurable $configurable
      * @param ProductRepositoryInterface $productRepository
      * @param StoreManagerInterface $storeManager
      * @param SwatchCollectionFactory $swatchCollectionFactory
      * @param Image $imageHelper
-     * @param Json|null $serializer
-     * @param SwatchAttributesProvider $swatchAttributesProvider
+     * @param SecureUnserializer|null $secureUnserializer
      */
     public function __construct(
+        Context $context,
         CollectionFactory $productCollectionFactory,
+        Configurable $configurable,
         ProductRepositoryInterface $productRepository,
         StoreManagerInterface $storeManager,
         SwatchCollectionFactory $swatchCollectionFactory,
         Image $imageHelper,
-        Json $serializer = null,
-        SwatchAttributesProvider $swatchAttributesProvider = null
+        SecureUnserializer $secureUnserializer = null
     ) {
         $this->productCollectionFactory   = $productCollectionFactory;
         $this->productRepository = $productRepository;
+        $this->configurable = $configurable;
         $this->storeManager = $storeManager;
         $this->swatchCollectionFactory = $swatchCollectionFactory;
         $this->imageHelper = $imageHelper;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->create(Json::class);
-        $this->swatchAttributesProvider = $swatchAttributesProvider
-            ?: ObjectManager::getInstance()->get(SwatchAttributesProvider::class);
+        $this->secureUnserializer = $secureUnserializer
+            ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
+
+        parent::__construct($context);
     }
 
     /**
      * @param Attribute $attribute
      * @return $this
+     * @throws LocalizedException
      */
     public function assembleAdditionalDataEavAttribute(Attribute $attribute)
     {
         $initialAdditionalData = [];
         $additionalData = (string) $attribute->getData('additional_data');
         if (!empty($additionalData)) {
-            $additionalData = $this->serializer->unserialize($additionalData);
+            try {
+                $additionalData = $this->secureUnserializer->unserialize($additionalData);
+            } catch (\Exception $e) {
+                $this->_logger->critical("Additional data for EAV attribute cannot be assembled\n" . $e->getMessage());
+                throw new LocalizedException(__('Addtional data is wrong and cannot be assembled'));
+            }
+
             if (is_array($additionalData)) {
                 $initialAdditionalData = $additionalData;
             }
@@ -145,20 +161,27 @@ class Data
             }
         }
         $additionalData = array_merge($initialAdditionalData, $dataToAdd);
-        $attribute->setData('additional_data', $this->serializer->serialize($additionalData));
+        $attribute->setData('additional_data', serialize($additionalData));
         return $this;
     }
 
     /**
      * @param Attribute $attribute
      * @return $this
+     * @throws LocalizedException
      */
-    private function populateAdditionalDataEavAttribute(Attribute $attribute)
+    public function populateAdditionalDataEavAttribute(Attribute $attribute)
     {
-        $serializedAdditionalData = $attribute->getData('additional_data');
-        if ($serializedAdditionalData) {
-            $additionalData = $this->serializer->unserialize($serializedAdditionalData);
-            if (isset($additionalData) && is_array($additionalData)) {
+        $additionalData = (string) $attribute->getData('additional_data');
+        if (!empty($additionalData)) {
+            try {
+                $additionalData = $this->secureUnserializer->unserialize($additionalData);
+            } catch (\Exception $e) {
+                $this->_logger->critical("Additional data for EAV attribute cannot be populated\n" . $e->getMessage());
+                throw new LocalizedException(__('Addtional data is wrong and cannot be populated'));
+            }
+
+            if (is_array($additionalData)) {
                 foreach ($this->eavAttributeAdditionalDataKeys as $key) {
                     if (isset($additionalData[$key])) {
                         $attribute->setData($key, $additionalData[$key]);
@@ -166,30 +189,47 @@ class Data
                 }
             }
         }
+
         return $this;
     }
 
     /**
-     * @param string $attributeCode swatch_image|image
-     * @param ModelProduct $configurableProduct
-     * @param array $requiredAttributes
-     * @return bool|Product
+     * @deprecated
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     * @param string $attributeCode
+     * @param string|int $attributeValue
+     * @return \Magento\Catalog\Model\Product|null
+     * @throws InputException
      */
-    private function loadFirstVariation($attributeCode, ModelProduct $configurableProduct, array $requiredAttributes)
+    public function loadFirstVariationWithSwatchImage($product, $attributeCode, $attributeValue)
     {
-        if ($this->isProductHasSwatch($configurableProduct)) {
-            $usedProducts = $configurableProduct->getTypeInstance()->getUsedProducts($configurableProduct);
+        $product = $this->createSwatchProduct($product);
+        if (!$product) {
+            return null;
+        }
 
-            foreach ($usedProducts as $simpleProduct) {
-                if (!in_array($simpleProduct->getData($attributeCode), [null, self::EMPTY_IMAGE_VALUE], true)
-                    && !array_diff_assoc($requiredAttributes, $simpleProduct->getData())
-                ) {
-                    return $simpleProduct;
+        $products = $product->getTypeInstance()->getUsedProducts($product);
+        $variationProduct = null;
+        foreach ($products as $item) {
+            if ($item->getData($attributeCode) != $attributeValue) {
+                continue;
+            }
+            $media = $this->getProductMedia($item);
+            if (!empty($media) && isset($media['swatch_image'])) {
+                $variationProduct = $item;
+                break;
+            }
+            if ($variationProduct !== false) {
+                if (! empty($media) && isset($media['image'])) {
+                    $variationProduct = $item;
+                } else {
+                    $variationProduct = false;
                 }
             }
         }
 
-        return false;
+        return $variationProduct;
     }
 
     /**
@@ -197,49 +237,32 @@ class Data
      * @param array $requiredAttributes
      * @return bool|Product
      */
-    public function loadFirstVariationWithSwatchImage(Product $configurableProduct, array $requiredAttributes)
+    public function loadFirstVariationSwatchImage(Product $configurableProduct, array $requiredAttributes)
     {
         return $this->loadFirstVariation('swatch_image', $configurableProduct, $requiredAttributes);
     }
 
     /**
-     * @param Product $configurableProduct
-     * @param array $requiredAttributes
-     * @return bool|Product
-     */
-    public function loadFirstVariationWithImage(Product $configurableProduct, array $requiredAttributes)
-    {
-        return $this->loadFirstVariation('image', $configurableProduct, $requiredAttributes);
-    }
-
-    /**
      * Load Variation Product using fallback
      *
-     * @param Product $parentProduct
+     * @param Product|integer $parentProduct
      * @param array $attributes
      * @return bool|Product
      */
-    public function loadVariationByFallback(Product $parentProduct, array $attributes)
+    public function loadVariationByFallback($parentProduct, array $attributes)
     {
-        if (! $this->isProductHasSwatch($parentProduct)) {
+        $parentProduct = $this->createSwatchProduct($parentProduct);
+        if (!$parentProduct) {
             return false;
         }
 
         $productCollection = $this->productCollectionFactory->create();
-
-        $productLinkedFiled = $this->getMetadataPool()
-            ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
-            ->getLinkField();
-        $parentId = $parentProduct->getData($productLinkedFiled);
-
-        $this->addFilterByParent($productCollection, $parentId);
+        $this->addFilterByParent($productCollection, $parentProduct->getId());
 
         $configurableAttributes = $this->getAttributesFromConfigurable($parentProduct);
         $allAttributesArray = [];
         foreach ($configurableAttributes as $attribute) {
-            if (!empty($attribute['default_value'])) {
-                $allAttributesArray[$attribute['attribute_code']] = $attribute['default_value'];
-            }
+            $allAttributesArray[$attribute['attribute_code']] = $attribute['default_value'];
         }
 
         $resultAttributesToFilter = array_merge(
@@ -258,11 +281,73 @@ class Data
     }
 
     /**
+     * @deprecated
+     *
+     * @param Product|integer $product
+     * @param array $attributes
+     * @return Product|bool|null
+     */
+    public function loadFirstVariationWithImage($product, array $attributes)
+    {
+        $product = $this->createSwatchProduct($product);
+        if (! $product) {
+            return false;
+        }
+
+        $productCollection = $this->prepareVariationCollection($product, $attributes);
+
+        $variationProduct = false;
+        foreach ($productCollection as $item) {
+            $currentProduct = $this->productRepository->getById($item->getId());
+            $media = $this->getProductMedia($currentProduct);
+            if (!empty($media) && isset($media['image'])) {
+                $variationProduct = $currentProduct;
+                break;
+            }
+        }
+
+        return $variationProduct;
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $requiredAttributes
+     * @return bool|Product
+     */
+    public function loadFirstVariationImage(Product $configurableProduct, array $requiredAttributes)
+    {
+        return $this->loadFirstVariation('image', $configurableProduct, $requiredAttributes);
+    }
+
+    /**
+     * @deprecated
+     *
+     * @param Product $parentProduct
+     * @param array $attributes
+     * @return bool|ProductCollection
+     * @throws InputException
+     */
+    protected function prepareVariationCollection(Product $parentProduct, array $attributes)
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $this->addFilterByParent($productCollection, $parentProduct->getId());
+
+        $configurableAttributes = $this->getAttributesFromConfigurable($parentProduct);
+        foreach ($configurableAttributes as $attribute) {
+            $productCollection->addAttributeToSelect($attribute['attribute_code']);
+        }
+
+        $this->addFilterByAttributes($productCollection, $attributes);
+
+        return $productCollection;
+    }
+
+    /**
      * @param ProductCollection $productCollection
      * @param array $attributes
      * @return void
      */
-    private function addFilterByAttributes(ProductCollection $productCollection, array $attributes)
+    protected function addFilterByAttributes(ProductCollection $productCollection, array $attributes)
     {
         foreach ($attributes as $code => $option) {
             $productCollection->addAttributeToFilter($code, ['eq' => $option]);
@@ -274,7 +359,7 @@ class Data
      * @param integer $parentId
      * @return void
      */
-    private function addFilterByParent(ProductCollection $productCollection, $parentId)
+    protected function addFilterByParent(ProductCollection $productCollection, $parentId)
     {
         $tableProductRelation = $productCollection->getTable('catalog_product_relation');
         $productCollection
@@ -287,6 +372,24 @@ class Data
     }
 
     /**
+     * Get all media for product
+     *
+     * @deprecated
+     *
+     * @param Product $product
+     * @return array|bool
+     */
+    protected function getProductMedia(Product $product)
+    {
+        return array_filter(
+            $product->getMediaAttributeValues(),
+            function ($value) {
+                return $value != 'no_selection' && $value !== null;
+            }
+        );
+    }
+
+    /**
      * Method getting full media gallery for current Product
      * Array structure: [
      *  ['image'] => 'http://url/pub/media/catalog/product/2/0/blabla.jpg',
@@ -296,16 +399,16 @@ class Data
      *      ...,
      *      ]
      * ]
-     * @param ModelProduct $product
+     * @param Product $product
      * @return array
      */
-    public function getProductMediaGallery(ModelProduct $product)
+    public function getProductMediaGallery (Product $product)
     {
-        if (!in_array($product->getData('image'), [null, self::EMPTY_IMAGE_VALUE], true)) {
+        if (!in_array($product->getData('image'), [null, 'no_selection'], true)) {
             $baseImage = $product->getData('image');
         } else {
             $productMediaAttributes = array_filter($product->getMediaAttributeValues(), function ($value) {
-                return $value !== self::EMPTY_IMAGE_VALUE && $value !== null;
+                return $value !== 'no_selection' && $value !== null;
             });
             foreach ($productMediaAttributes as $attributeCode => $value) {
                 if ($attributeCode !== 'swatch_image') {
@@ -326,10 +429,10 @@ class Data
     }
 
     /**
-     * @param ModelProduct $product
+     * @param Product $product
      * @return array
      */
-    private function getGalleryImages(ModelProduct $product)
+    protected function getGalleryImages(Product $product)
     {
         //TODO: remove after fix MAGETWO-48040
         $product = $this->productRepository->getById($product->getId());
@@ -346,11 +449,11 @@ class Data
     }
 
     /**
-     * @param ModelProduct $product
+     * @param Product $product
      * @param string $imageFile
      * @return array
      */
-    private function getAllSizeImages(ModelProduct $product, $imageFile)
+    protected function getAllSizeImages(Product $product, $imageFile)
     {
         return [
             'large' => $this->imageHelper->init($product, 'product_page_image_large_no_frame')
@@ -371,10 +474,16 @@ class Data
      * @param Product $product
      * @return \Magento\Catalog\Model\ResourceModel\Eav\Attribute[]
      */
-    private function getSwatchAttributes(Product $product)
+    public function getSwatchAttributes(Product $product)
     {
-        $swatchAttributes = $this->swatchAttributesProvider->provide($product);
-        return $swatchAttributes;
+        $attributes = $this->getAttributesFromConfigurable($product);
+        $result = [];
+        foreach ($attributes as $attribute) {
+            if ($this->isSwatchAttribute($attribute)) {
+                $result[] = $attribute;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -422,11 +531,6 @@ class Data
     }
 
     /**
-     * @var array
-     */
-    private $swatchesCache = [];
-
-    /**
      * Get swatch options by option id's according to fallback logic
      *
      * @param array $optionIds
@@ -434,58 +538,27 @@ class Data
      */
     public function getSwatchesByOptionsId(array $optionIds)
     {
-        $swatches = $this->getCachedSwatches($optionIds);
+        /** @var \Magento\Swatches\Model\ResourceModel\Swatch\Collection $swatchCollection */
+        $swatchCollection = $this->swatchCollectionFactory->create();
+        $swatchCollection->addFilterByOptionsIds($optionIds);
 
-        if (count($swatches) !== count($optionIds)) {
-            $swatchOptionIds = array_diff($optionIds, array_keys($swatches));
-            /** @var \Magento\Swatches\Model\ResourceModel\Swatch\Collection $swatchCollection */
-            $swatchCollection = $this->swatchCollectionFactory->create();
-            $swatchCollection->addFilterByOptionsIds($swatchOptionIds);
-
-            $swatches = [];
-            $currentStoreId = $this->storeManager->getStore()->getId();
-            foreach ($swatchCollection as $item) {
-                if ($item['type'] != Swatch::SWATCH_TYPE_TEXTUAL) {
-                    $swatches[$item['option_id']] = $item->getData();
-                } elseif ($item['store_id'] == $currentStoreId && $item['value'] != '') {
-                    $fallbackValues[$item['option_id']][$currentStoreId] = $item->getData();
-                } elseif ($item['store_id'] == self::DEFAULT_STORE_ID) {
-                    $fallbackValues[$item['option_id']][self::DEFAULT_STORE_ID] = $item->getData();
-                }
+        $swatches = [];
+        $currentStoreId = $this->storeManager->getStore()->getId();
+        foreach ($swatchCollection as $item) {
+            if ($item['type'] != Swatch::SWATCH_TYPE_TEXTUAL) {
+                $swatches[$item['option_id']] = $item->getData();
+            } elseif ($item['store_id'] == $currentStoreId && $item['value']) {
+                $fallbackValues[$item['option_id']][$currentStoreId] = $item->getData();
+            } elseif ($item['store_id'] == self::DEFAULT_STORE_ID) {
+                $fallbackValues[$item['option_id']][self::DEFAULT_STORE_ID] = $item->getData();
             }
-
-            if (!empty($fallbackValues)) {
-                $swatches = $this->addFallbackOptions($fallbackValues, $swatches);
-            }
-            $this->setCachedSwatches($swatchOptionIds, $swatches);
         }
 
-        return array_filter($this->getCachedSwatches($optionIds));
-    }
-
-    /**
-     * Get cached swatches
-     *
-     * @param array $optionIds
-     * @return array
-     */
-    private function getCachedSwatches(array $optionIds)
-    {
-        return array_intersect_key($this->swatchesCache, array_combine($optionIds, $optionIds));
-    }
-
-    /**
-     * Cache swatch. If no swathes found for specific option id - set null for prevent double call
-     *
-     * @param array $optionIds
-     * @param array $swatches
-     * @return void
-     */
-    private function setCachedSwatches(array $optionIds, array $swatches)
-    {
-        foreach ($optionIds as $optionId) {
-            $this->swatchesCache[$optionId] = isset($swatches[$optionId]) ? $swatches[$optionId] : null;
+        if (!empty($fallbackValues)) {
+            $swatches = $this->addFallbackOptions($fallbackValues, $swatches);
         }
+
+        return $swatches;
     }
 
     /**
@@ -515,8 +588,7 @@ class Data
      */
     public function isProductHasSwatch(Product $product)
     {
-        $swatchAttributes = $this->getSwatchAttributes($product);
-        return count($swatchAttributes) > 0;
+        return sizeof($this->getSwatchAttributes($product));
     }
 
     /**
@@ -524,6 +596,7 @@ class Data
      *
      * @param Attribute $attribute
      * @return bool
+     * @throws LocalizedException
      */
     public function isSwatchAttribute(Attribute $attribute)
     {
@@ -536,6 +609,7 @@ class Data
      *
      * @param Attribute $attribute
      * @return bool
+     * @throws LocalizedException
      */
     public function isVisualSwatch(Attribute $attribute)
     {
@@ -550,6 +624,7 @@ class Data
      *
      * @param Attribute $attribute
      * @return bool
+     * @throws LocalizedException
      */
     public function isTextSwatch(Attribute $attribute)
     {
@@ -560,17 +635,49 @@ class Data
     }
 
     /**
-     * Get product metadata pool.
+     * Load Product instance if required and check for proper instance type.
      *
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     * @deprecared
+     * @deprecated
+     *
+     * @param int|Product $product
+     * @return Product
+     * @throws InputException
      */
-    protected function getMetadataPool()
+    protected function createSwatchProduct($product)
     {
-        if (!$this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+        if (gettype($product) == 'integer') {
+            $product = $this->productRepository->getById($product);
+        } elseif (! ($product instanceof Product)) {
+            throw new InputException(
+                __('Swatch Helper: not valid parameter for product instantiation')
+            );
         }
-        return $this->metadataPool;
+        if ($this->isProductHasSwatch($product)) {
+            return $product;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $attributeCode swatch_image|image
+     * @param ModelProduct $configurableProduct
+     * @param array $requiredAttributes
+     * @return bool|Product
+     */
+    private function loadFirstVariation($attributeCode, ModelProduct $configurableProduct, array $requiredAttributes)
+    {
+        if ($this->isProductHasSwatch($configurableProduct)) {
+            $usedProducts = $configurableProduct->getTypeInstance()->getUsedProducts($configurableProduct);
+
+            foreach ($usedProducts as $simpleProduct) {
+                if (!in_array($simpleProduct->getData($attributeCode), [null, 'no_selection'], true)
+                    && !array_diff_assoc($requiredAttributes, $simpleProduct->getData())
+                ) {
+                    return $simpleProduct;
+                }
+            }
+        }
+
+        return false;
     }
 }

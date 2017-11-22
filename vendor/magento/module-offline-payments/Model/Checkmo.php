@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\OfflinePayments\Model;
@@ -9,9 +9,6 @@ namespace Magento\OfflinePayments\Model;
  * Class Checkmo
  *
  * @method \Magento\Quote\Api\Data\PaymentMethodExtensionInterface getExtensionAttributes()
- *
- * @api
- * @since 100.0.2
  */
 class Checkmo extends \Magento\Payment\Model\Method\AbstractMethod
 {
@@ -27,12 +24,12 @@ class Checkmo extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\OfflinePayments\Block\Form\Checkmo::class;
+    protected $_formBlockType = 'Magento\OfflinePayments\Block\Form\Checkmo';
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\OfflinePayments\Block\Info\Checkmo::class;
+    protected $_infoBlockType = 'Magento\OfflinePayments\Block\Info\Checkmo';
 
     /**
      * Availability option

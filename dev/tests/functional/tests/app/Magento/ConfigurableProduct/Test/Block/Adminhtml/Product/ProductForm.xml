@@ -1,22 +1,22 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
-<sections>
+<tabs>
     <variations>
-        <class>\Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config</class>
-        <selector>[data-index="configurable"]</selector>
+        <class>\Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Tab\Variations\Config</class>
+        <selector>#product_info_tabs_product-details</selector>
         <strategy>css selector</strategy>
         <fields>
             <attributes_data>
-                <selector>[data-index="configurable"] fieldset</selector>
+                <selector>#super_config-wrapper</selector>
             </attributes_data>
             <matrix>
-                <selector>[data-index="configurable-matrix"]</selector>
+                <selector>#product-variations-matrix</selector>
             </matrix>
         </fields>
     </variations>
-</sections>
+</tabs>

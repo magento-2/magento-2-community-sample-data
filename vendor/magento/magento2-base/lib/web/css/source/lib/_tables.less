@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -18,11 +18,9 @@
     border-collapse: collapse;
     border-spacing: 0;
     max-width: 100%;
-
     th {
         text-align: left;
     }
-
     > tbody,
     > tfoot {
         > tr {
@@ -32,14 +30,12 @@
             }
         }
     }
-
     > thead > tr {
         > th,
         > td {
             vertical-align: bottom;
         }
     }
-
     > thead,
     > tbody,
     > tfoot {
@@ -80,7 +76,6 @@
                     @_font-style: @_table-td-font-style
                 );
             }
-
             > th {
                 .lib-typography(
                     @_font-size: @_table-th-font-size,
@@ -103,19 +98,15 @@
     @_table-body-th-background-color: @table-body-th__background-color
 ) {
     .lib-css(background, @_table-background-color);
-
     > thead {
         .lib-css(background, @_table-head-background-color);
     }
-
     > tfoot {
         .lib-css(background, @_table-foot-background-color);
     }
-
     > tbody > tr > td {
         .lib-css(background, @_table-td-background-color);
     }
-
     > tbody > tr >th {
         .lib-css(background, @_table-body-th-background-color);
     }
@@ -180,7 +171,6 @@
             }
         }
     }
-
     > caption + thead,
     > colgroup + thead,
     > thead:first-child {
@@ -191,7 +181,6 @@
             }
         }
     }
-
     > tbody + tbody {
         .lib-css(border-top, @_table_border-width @_table_border-style @_table_border-color);
     }
@@ -211,7 +200,6 @@
             }
         }
     }
-
     > tbody + tbody {
         .lib-css(border-top, @_table_border-width @_table_border-style @_table_border-color);
     }
@@ -245,7 +233,6 @@
     @_table_border-color: @table__border-color
 ) when (@_table_type = light){
     border: none;
-
     > thead,
     > tbody,
     > tfoot {
@@ -256,7 +243,6 @@
             }
         }
     }
-
     > thead {
         > tr {
             > th,
@@ -274,7 +260,6 @@
     @_table_border-color: @table__border-color
 ) when (@_table_type = clear){
     border: none;
-
     > thead,
     > tbody,
     > tfoot {
@@ -365,7 +350,6 @@
             .lib-css(background, @_table_cell-background-color-hover);
         }
     }
-
     > tbody > tr:nth-child(odd):hover {
         > td,
         > th {
@@ -394,7 +378,6 @@
         @_table-background-color-responsive: @_table-background-color-responsive,
         @_table-responsive-cell-padding: @_table-responsive-cell-padding
     );
-
     > tbody > tr > th {
         .lib-css(background-color, @_table-th-background-color-responsive);
     }
@@ -412,14 +395,12 @@
         @_table_cell-background-color-hover: @_table-background-color-responsive,
         @_table_cell-odd-background-color-hover: @_table-background-color-responsive
     );
-
     ._lib-responsive-table(
         @_table-background-color-responsive: @_table-background-color-responsive,
         @_table-responsive-cell-padding: @_table-responsive-cell-padding
     );
-
     > tbody > tr > th {
-        .lib-css(background-color, @_table-th-background-color-responsive ~'!important');
+        background-color: @_table-th-background-color-responsive !important;
     }
 }
 
@@ -431,12 +412,10 @@
     @_table-responsive-cell-padding: @table-responsive-cell__padding
 ) when (@_reset-table-striped = true) and (@_reset-table-hover = false){
     .lib-table-striped(@_stripped-background-color: @_table-background-color-responsive);
-
     ._lib-responsive-table(
         @_table-background-color-responsive: @_table-background-color-responsive,
         @_table-responsive-cell-padding: @_table-responsive-cell-padding
     );
-
     .lib-css(background-color, @_table-th-background-color-responsive);
 }
 
@@ -451,14 +430,12 @@
         @_table_cell-background-color-hover: @_table-background-color-responsive,
         @_table_cell-odd-background-color-hover: @_table-background-color-responsive
     );
-
     ._lib-responsive-table(
         @_table-background-color-responsive: @_table-background-color-responsive,
         @_table-responsive-cell-padding: @_table-responsive-cell-padding
     );
-
     > tbody > tr > th {
-        .lib-css(background-color, @_table-th-background-color-responsive ~'!important');
+        background-color: @_table-th-background-color-responsive !important;
     }
 }
 
@@ -513,28 +490,22 @@
     .lib-css(background, @_table-background-color-responsive);
     border: none;
     display: block;
-
     > thead > tr > th {
         display: none;
     }
-
     > tbody {
         display: block;
-
         > tr {
             display: block;
-
             td,
             th {
                 border-bottom: none;
                 display: block;
                 .lib-css(padding, @_table-responsive-cell-padding);
-
                 &:before {
                     .lib-css(padding-right, @table-cell__padding-horizontal);
                     content: attr(data-th)': ';
                     display: inline-block;
-
                     .lib-typography(
                         @_font-size: @table-th__font-size,
                         @_color: @table-th__color,
@@ -545,7 +516,6 @@
                     );
                 }
             }
-
             td {
                 .lib-css(background, @_table-background-color-responsive);
             }

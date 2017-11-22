@@ -1,9 +1,7 @@
 <?php
 
 require_once __DIR__.'/../includes/classes.php';
-require_once __DIR__.'/../includes/foo.php';
 
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -81,15 +79,6 @@ $container
     ->setConfigurator(array(new Reference('configurator_service'), 'configureStdClass'))
 ;
 $container
-    ->register('configurator_service_simple', 'ConfClass')
-    ->addArgument('bar')
-    ->setPublic(false)
-;
-$container
-    ->register('configured_service_simple', 'stdClass')
-    ->setConfigurator(array(new Reference('configurator_service_simple'), 'configureStdClass'))
-;
-$container
     ->register('decorated', 'stdClass')
 ;
 $container
@@ -121,23 +110,6 @@ $container
 $container
     ->register('service_from_static_method', 'Bar\FooClass')
     ->setFactory(array('Bar\FooClass', 'getInstance'))
-;
-$container
-    ->register('factory_simple', 'SimpleFactoryClass')
-    ->addArgument('foo')
-    ->setPublic(false)
-;
-$container
-    ->register('factory_service_simple', 'Bar')
-    ->setFactory(array(new Reference('factory_simple'), 'getInstance'))
-;
-$container
-    ->register('lazy_context', 'LazyContext')
-    ->setArguments(array(new IteratorArgument(array('k1' => new Reference('foo.baz'), 'k2' => new Reference('service_container'))), new IteratorArgument(array())))
-;
-$container
-    ->register('lazy_context_ignore_invalid_ref', 'LazyContext')
-    ->setArguments(array(new IteratorArgument(array(new Reference('foo.baz'), new Reference('invalid', ContainerInterface::IGNORE_ON_INVALID_REFERENCE))), new IteratorArgument(array())))
 ;
 
 return $container;

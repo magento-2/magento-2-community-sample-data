@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Quote\Test\Unit\Model\GuestCart;
 
-class GuestCartItemRepositoryTest extends \PHPUnit\Framework\TestCase
+class GuestCartItemRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\GuestCart\GuestCartItemRepository
@@ -68,7 +68,7 @@ class GuestCartItemRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('getMaskedId')
             ->willReturn($this->maskedCartId);
 
-        $this->quoteItemMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $this->quoteItemMock = $this->getMock('\Magento\Quote\Model\Quote\Item', [], [], '', false);
         $this->quoteItemMock->expects($this->any())
             ->method('getItemId')
             ->willReturn($this->maskedCartId);
@@ -79,10 +79,10 @@ class GuestCartItemRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('setQuoteId')
             ->with($this->cartId);
 
-        $this->cartItemRepositoryMock = $this->createMock(\Magento\Quote\Api\CartItemRepositoryInterface::class);
+        $this->cartItemRepositoryMock = $this->getMock('\Magento\Quote\Api\CartItemRepositoryInterface');
         $this->guestCartItemRepository =
             $objectManager->getObject(
-                \Magento\Quote\Model\GuestCart\GuestCartItemRepository::class,
+                'Magento\Quote\Model\GuestCart\GuestCartItemRepository',
                 [
                     'repository' => $this->cartItemRepositoryMock,
                     'quoteIdMaskFactory' => $this->quoteIdMaskFactoryMock,
@@ -107,7 +107,7 @@ class GuestCartItemRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetList()
     {
-        $itemMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $itemMock = $this->getMock('\Magento\Quote\Model\Quote\Item', [], [], '', false);
         $itemMock->expects($this->any())
             ->method('setQuoteId')
             ->with($this->maskedCartId);

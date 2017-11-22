@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App\Test\Unit\Cache;
 
-class FlushCacheByTagsTest extends \PHPUnit\Framework\TestCase
+class FlushCacheByTagsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Cache\StateInterface
@@ -19,11 +19,6 @@ class FlushCacheByTagsTest extends \PHPUnit\Framework\TestCase
     private $frontendPool;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Cache\Tag\Resolver
-     */
-    private $tagResolver;
-
-    /**
      * @var \Magento\Framework\App\Cache\FlushCacheByTags
      */
     private $plugin;
@@ -31,15 +26,13 @@ class FlushCacheByTagsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->cacheState = $this->getMockForAbstractClass(\Magento\Framework\App\Cache\StateInterface::class);
-        $this->frontendPool = $this->createMock(\Magento\Framework\App\Cache\Type\FrontendPool::class);
-        $this->tagResolver = $this->createMock(\Magento\Framework\App\Cache\Tag\Resolver::class);
-
+        $this->frontendPool = $this->getMock(\Magento\Framework\App\Cache\Type\FrontendPool::class, [], [], '', false);
         $this->plugin = new \Magento\Framework\App\Cache\FlushCacheByTags(
             $this->frontendPool,
             $this->cacheState,
-            ['test'],
-            $this->tagResolver
+            ['test']
         );
+
     }
 
     public function testAroundSave()

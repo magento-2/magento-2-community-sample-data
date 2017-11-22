@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\Invoice;
 
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param bool $canReviewPayment
@@ -20,7 +20,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     public function testIsPaymentReview($canReviewPayment, $canFetchUpdate, $expectedResult)
     {
         // Create order mock
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder('Magento\Sales\Model\Order')->disableOriginalConstructor()->getMock();
         $order->expects($this->any())->method('canReviewPayment')->will($this->returnValue($canReviewPayment));
         $order->expects(
             $this->any()
@@ -32,7 +32,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
         // Create invoice mock
         $invoice = $this->getMockBuilder(
-            \Magento\Sales\Model\Order\Invoice::class
+            'Magento\Sales\Model\Order\Invoice'
         )->disableOriginalConstructor()->setMethods(
             ['getOrder', '__wakeup']
         )->getMock();
@@ -40,15 +40,12 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
         // Prepare block to test protected method
         $block = $this->getMockBuilder(
-            \Magento\Sales\Block\Adminhtml\Order\Invoice\View::class
+            'Magento\Sales\Block\Adminhtml\Order\Invoice\View'
         )->disableOriginalConstructor()->setMethods(
             ['getInvoice']
         )->getMock();
         $block->expects($this->once())->method('getInvoice')->will($this->returnValue($invoice));
-        $testMethod = new \ReflectionMethod(
-            \Magento\Sales\Block\Adminhtml\Order\Invoice\View::class,
-            '_isPaymentReview'
-        );
+        $testMethod = new \ReflectionMethod('Magento\Sales\Block\Adminhtml\Order\Invoice\View', '_isPaymentReview');
         $testMethod->setAccessible(true);
 
         $this->assertEquals($expectedResult, $testMethod->invoke($block));

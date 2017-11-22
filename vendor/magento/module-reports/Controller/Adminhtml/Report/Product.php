@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,12 +11,13 @@
  */
 namespace Magento\Reports\Controller\Adminhtml\Report;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class Product extends AbstractReport
 {
+    /**
+     * {@inheritdoc}
+     */
+    const ADMIN_RESOURCE = 'Magento_Reports::report_products';
+
     /**
      * Add report/products breadcrumbs
      *

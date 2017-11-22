@@ -1,45 +1,43 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemPlugin;
+// @codingStandardsIgnoreFile
 
-use \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments;
+namespace Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemPlugin;
 
 class ValidPlugin
 {
     /**
-     * @param ItemWithArguments $subject
+     * @param \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject
      * @param string $result
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterGetItem(
-        ItemWithArguments $subject,
-        $result
+        \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject, $result
     ) {
         return $result . '!';
     }
 
     /**
-     * @param ItemWithArguments $subject
+     * @param \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject
      * @param $name
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeGetItem(
-        ItemWithArguments $subject,
-        $name
+        \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject, $name
     ) {
         return '|' . $name;
     }
 
     /**
-     * @param ItemWithArguments $subject
+     * @param \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject
      * @param Closure $proceed
      * @param string $name
      * @return string
@@ -47,7 +45,7 @@ class ValidPlugin
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundGetItem(
-        ItemWithArguments $subject,
+        \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\InterfaceValidator\ItemWithArguments $subject,
         \Closure $proceed,
         $name
     ) {

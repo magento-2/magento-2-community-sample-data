@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Pricing\Render;
 
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolverInterface;
 use Magento\Catalog\Pricing\Price\FinalPrice;
-use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
 use Magento\Catalog\Pricing\Price\RegularPrice;
 use Magento\ConfigurableProduct\Pricing\Price\ConfigurableOptionsProviderInterface;
 use Magento\ConfigurableProduct\Pricing\Price\LowestPriceOptionsProviderInterface;
@@ -32,8 +31,7 @@ class FinalPriceBox extends \Magento\Catalog\Pricing\Render\FinalPriceBox
      * @param ConfigurableOptionsProviderInterface $configurableOptionsProvider
      * @param array $data
      * @param LowestPriceOptionsProviderInterface $lowestPriceOptionsProvider
-     * @param SalableResolverInterface|null $salableResolver
-     * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
+     * @param SalableResolverInterface $salableResolver
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
@@ -44,18 +42,9 @@ class FinalPriceBox extends \Magento\Catalog\Pricing\Render\FinalPriceBox
         ConfigurableOptionsProviderInterface $configurableOptionsProvider,
         array $data = [],
         LowestPriceOptionsProviderInterface $lowestPriceOptionsProvider = null,
-        SalableResolverInterface $salableResolver = null,
-        MinimalPriceCalculatorInterface $minimalPriceCalculator = null
+        SalableResolverInterface $salableResolver = null
     ) {
-        parent::__construct(
-            $context,
-            $saleableItem,
-            $price,
-            $rendererPool,
-            $data,
-            $salableResolver,
-            $minimalPriceCalculator
-        );
+        parent::__construct($context, $saleableItem, $price, $rendererPool, $data, $salableResolver);
         $this->lowestPriceOptionsProvider = $lowestPriceOptionsProvider ?:
             ObjectManager::getInstance()->get(LowestPriceOptionsProviderInterface::class);
     }

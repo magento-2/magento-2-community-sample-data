@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 use Magento\Bundle\Model\Product\Price;
 
-class BundleRegularPriceTest extends \PHPUnit\Framework\TestCase
+class BundleRegularPriceTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Bundle\Pricing\Price\BundleRegularPrice */
     protected $regularPrice;
@@ -45,17 +45,15 @@ class BundleRegularPriceTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->saleableInterfaceMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->saleableInterfaceMock = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getPriceInfo', 'getPriceType', 'getPrice'])
             ->getMock();
-        $this->bundleCalculatorMock = $this->createMock(
-            \Magento\Bundle\Pricing\Adjustment\BundleCalculatorInterface::class
-        );
+        $this->bundleCalculatorMock = $this->getMock('Magento\Bundle\Pricing\Adjustment\BundleCalculatorInterface');
 
-        $this->priceInfoMock = $this->createMock(\Magento\Framework\Pricing\PriceInfo\Base::class);
+        $this->priceInfoMock = $this->getMock('Magento\Framework\Pricing\PriceInfo\Base', [], [], '', false);
 
-        $this->customOptionPriceMock = $this->getMockBuilder(\Magento\Catalog\Pricing\Price\CustomOptionPrice::class)
+        $this->customOptionPriceMock = $this->getMockBuilder('\Magento\Catalog\Pricing\Price\CustomOptionPrice')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -63,7 +61,7 @@ class BundleRegularPriceTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceInfo')
             ->will($this->returnValue($this->priceInfoMock));
 
-        $this->priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->regularPrice = new \Magento\Bundle\Pricing\Price\BundleRegularPrice(

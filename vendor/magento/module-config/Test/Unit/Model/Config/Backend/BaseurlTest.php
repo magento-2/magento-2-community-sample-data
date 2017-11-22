@@ -1,45 +1,37 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Model\Config\Backend;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 
-class BaseurlTest extends \PHPUnit\Framework\TestCase
+class BaseurlTest extends \PHPUnit_Framework_TestCase
 {
     public function testSaveMergedJsCssMustBeCleaned()
     {
-        $context = (new ObjectManager($this))->getObject(\Magento\Framework\Model\Context::class);
 
-        $resource = $this->createMock(\Magento\Config\Model\ResourceModel\Config\Data::class);
+        $context = (new ObjectManager($this))->getObject('Magento\Framework\Model\Context');
+
+        $resource = $this->getMock('Magento\Config\Model\ResourceModel\Config\Data', [], [], '', false);
         $resource->expects($this->any())->method('addCommitCallback')->will($this->returnValue($resource));
-        $resourceCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection\AbstractDb::class)
+        $resourceCollection = $this->getMockBuilder('Magento\Framework\Data\Collection\AbstractDb')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $mergeService = $this->createMock(\Magento\Framework\View\Asset\MergeService::class);
-        $coreRegistry = $this->createMock(\Magento\Framework\Registry::class);
-        $coreConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $cacheTypeListMock = $this->getMockBuilder(\Magento\Framework\App\Cache\TypeListInterface::class)
+        $mergeService = $this->getMock('Magento\Framework\View\Asset\MergeService', [], [], '', false);
+        $coreRegistry = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $coreConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $cacheTypeListMock = $this->getMockBuilder('Magento\Framework\App\Cache\TypeListInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $model = $this->getMockBuilder(\Magento\Config\Model\Config\Backend\Baseurl::class)
-            ->setMethods(['getOldValue'])
-            ->setConstructorArgs(
-                [
-                    $context,
-                    $coreRegistry,
-                    $coreConfig,
-                    $cacheTypeListMock,
-                    $mergeService,
-                    $resource,
-                    $resourceCollection
-                ]
-            )
-            ->getMock();
-
+        $model = $this->getMock(
+            'Magento\Config\Model\Config\Backend\Baseurl',
+            ['getOldValue'],
+            [$context, $coreRegistry, $coreConfig, $cacheTypeListMock, $mergeService, $resource, $resourceCollection]
+        );
         $cacheTypeListMock->expects($this->once())
             ->method('invalidate')
             ->with(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER)

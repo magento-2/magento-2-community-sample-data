@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Multishipping\Test\TestStep;
@@ -44,13 +44,6 @@ class FillCustomerAddressesStep implements TestStepInterface
     protected $products;
 
     /**
-     * Customer fixture instance.
-     *
-     * @var Customer
-     */
-    private $customer;
-
-    /**
      * @param MultishippingCheckoutAddresses $addresses
      * @param Customer $customer
      * @param ObjectManager $objectManager
@@ -65,9 +58,9 @@ class FillCustomerAddressesStep implements TestStepInterface
         $this->addresses = $addresses;
         $this->customer = $customer;
         $this->products = $products;
-        $this->objectManager = $objectManager;
-        $this->objectManager->configure(
-            [\Magento\Customer\Test\Block\Address\Renderer::class => ['shared' => false]]
+        $this->objectManeger = $objectManager;
+        $this->objectManeger->configure(
+            ['\Magento\Customer\Test\Block\Address\Renderer' => ['shared' => false]]
         );
     }
 
@@ -83,8 +76,8 @@ class FillCustomerAddressesStep implements TestStepInterface
 
         foreach ($this->products as $key => $product) {
             $productName = $product->getName();
-            $addressRender = $this->objectManager->create(
-                \Magento\Customer\Test\Block\Address\Renderer::class,
+            $addressRender = $this->objectManeger->create(
+                '\Magento\Customer\Test\Block\Address\Renderer',
                 ['address' => $addresses[$key], 'type' => 'oneline']
             );
             $bindings[$productName] = $addressRender->render();

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Test\Unit\Cron;
 
-class AggregateSalesReportCouponsDataTest extends \PHPUnit\Framework\TestCase
+class AggregateSalesReportCouponsDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Cron\AggregateSalesReportCouponsData|\PHPUnit_Framework_MockObject_MockObject
@@ -33,7 +33,7 @@ class AggregateSalesReportCouponsDataTest extends \PHPUnit\Framework\TestCase
         $this->initMocks();
 
         $this->model = $helper->getObject(
-            \Magento\SalesRule\Cron\AggregateSalesReportCouponsData::class,
+            'Magento\SalesRule\Cron\AggregateSalesReportCouponsData',
             [
                 'reportRule' => $this->reportRule,
                 'localeResolver' => $this->localeResolver,
@@ -44,9 +44,9 @@ class AggregateSalesReportCouponsDataTest extends \PHPUnit\Framework\TestCase
 
     protected function initMocks()
     {
-        $this->localeResolver = $this->createMock(\Magento\Framework\Locale\Resolver::class);
-        $this->localeDate = $this->createPartialMock(\Magento\Framework\Stdlib\DateTime\Timezone::class, ['date']);
-        $this->reportRule = $this->createMock(\Magento\SalesRule\Model\ResourceModel\Report\Rule::class);
+        $this->localeResolver = $this->getMock('Magento\Framework\Locale\Resolver', [], [], '', false);
+        $this->localeDate = $this->getMock('Magento\Framework\Stdlib\DateTime\Timezone', ['date'], [], '', false);
+        $this->reportRule = $this->getMock('Magento\SalesRule\Model\ResourceModel\Report\Rule', [], [], '', false);
     }
 
     public function testExecute()
@@ -64,7 +64,7 @@ class AggregateSalesReportCouponsDataTest extends \PHPUnit\Framework\TestCase
         $this->localeResolver->expects($this->once())
             ->method('revert');
 
-        $scheduleMock = $this->createMock(\Magento\Cron\Model\Schedule::class);
+        $scheduleMock = $this->getMock('Magento\Cron\Model\Schedule', [], [], '', false);
 
         $this->assertEquals($this->model, $this->model->execute($scheduleMock));
     }

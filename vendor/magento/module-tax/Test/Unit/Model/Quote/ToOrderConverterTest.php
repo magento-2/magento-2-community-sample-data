@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,11 +8,7 @@ namespace Magento\Tax\Test\Unit\Model\Quote;
 
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * Class ToOrderConverterTest
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
-class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
+class ToOrderConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Api\Data\OrderExtensionFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -39,25 +35,25 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
      */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->orderExtensionFactoryMock = $this->getMockBuilder(
-            \Magento\Sales\Api\Data\OrderExtensionFactory::class
+            '\Magento\Sales\Api\Data\OrderExtensionFactory'
         )->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->quoteAddressMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Address::class)
+        $this->quoteAddressMock = $this->getMockBuilder('\Magento\Quote\Model\Quote\Address')
             ->disableOriginalConstructor()
             ->setMethods(['getAppliedTaxes', 'getItemsAppliedTaxes'])
             ->getMock();
-        $this->subjectMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Address\ToOrder::class)
+        $this->subjectMock = $this->getMockBuilder('\Magento\Quote\Model\Quote\Address\ToOrder')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManager($this);
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\Tax\Model\Quote\ToOrderConverter::class,
+            '\Magento\Tax\Model\Quote\ToOrderConverter',
             [
                 'orderExtensionFactory' => $this->orderExtensionFactoryMock,
             ]
@@ -66,7 +62,7 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
     protected function setupOrderExtensionAttributeMock()
     {
-        $orderExtensionAttributeMock = $this->getMockBuilder(\Magento\Sales\Api\Data\OrderExtensionInterface::class)
+        $orderExtensionAttributeMock = $this->getMockBuilder('\Magento\Sales\Api\Data\OrderExtensionInterface')
             ->setMethods(
                 [
                     'setAppliedTaxes',
@@ -79,18 +75,10 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $appliedTaxes
-     * @param array $expectedAppliedTaxes
-     * @param array $itemsAppliedTaxes
-     * @param array $itemAppliedTaxesExpected
      * @dataProvider afterConvertDataProvider
      */
-    public function testAfterConvert(
-        $appliedTaxes,
-        $expectedAppliedTaxes,
-        $itemsAppliedTaxes,
-        $itemAppliedTaxesExpected
-    ) {
+    public function testAfterConvert($appliedTaxes, $itemsAppliedTaxes)
+    {
         $this->model->beforeConvert($this->subjectMock, $this->quoteAddressMock);
 
         $this->quoteAddressMock->expects($this->once())
@@ -100,7 +88,7 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getItemsAppliedTaxes')
             ->willReturn($itemsAppliedTaxes);
 
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('\Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -112,13 +100,13 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setAppliedTaxes')
-            ->with($expectedAppliedTaxes);
+            ->with($appliedTaxes);
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setConvertingFromQuote')
             ->with(true);
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setItemAppliedTaxes')
-            ->with($itemAppliedTaxesExpected);
+            ->with($itemsAppliedTaxes);
         $orderMock->expects($this->once())
             ->method('setExtensionAttributes')
             ->with($orderExtensionAttributeMock);
@@ -127,18 +115,10 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $appliedTaxes
-     * @param array $expectedAppliedTaxes
-     * @param array $itemsAppliedTaxes
-     * @param array $itemAppliedTaxesExpected
      * @dataProvider afterConvertDataProvider
      */
-    public function testAfterConvertNullExtensionAttribute(
-        $appliedTaxes,
-        $expectedAppliedTaxes,
-        $itemsAppliedTaxes,
-        $itemAppliedTaxesExpected
-    ) {
+    public function testAfterConvertNullExtensionAttribute($appliedTaxes, $itemsAppliedTaxes)
+    {
         $this->model->beforeConvert($this->subjectMock, $this->quoteAddressMock);
 
         $this->quoteAddressMock->expects($this->once())
@@ -150,7 +130,7 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
         $orderExtensionAttributeMock = $this->setupOrderExtensionAttributeMock();
         
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('\Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -164,13 +144,13 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setAppliedTaxes')
-            ->with($expectedAppliedTaxes);
+            ->with($appliedTaxes);
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setConvertingFromQuote')
             ->with(true);
         $orderExtensionAttributeMock->expects($this->once())
             ->method('setItemAppliedTaxes')
-            ->with($itemAppliedTaxesExpected);
+            ->with($itemsAppliedTaxes);
         $orderMock->expects($this->once())
             ->method('setExtensionAttributes')
             ->with($orderExtensionAttributeMock);
@@ -178,11 +158,6 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($orderMock, $this->model->afterConvert($this->subjectMock, $orderMock));
     }
 
-    /**
-     * Data provider for testAfterConvert and testAfterConvertNullExtensionAttribute
-     *
-     * @return array
-     */
     public function afterConvertDataProvider()
     {
         return [
@@ -197,100 +172,21 @@ class ToOrderConverterTest extends \PHPUnit\Framework\TestCase
                                 'code' => 'IL',
                                 'title' => 'IL',
                             ]
-                        ],
-                    ],
-                ],
-                'expected_applied_taxes' => [
-                    'IL' => [
-                        'amount' => 0.36,
-                        'percent' => 6,
-                        'extension_attributes' => [
-                            'rates' => [
-                                [
-                                    'percent' => 6,
-                                    'code' => 'IL',
-                                    'title' => 'IL',
-                                ]
-                            ],
-                        ],
-                    ],
+                        ]
+                    ]
                 ],
                 'item_applied_taxes' => [
                     'sequence-1' => [
                         [
                             'amount' => 0.06,
                             'item_id' => 146,
-                            'item_type' => 'product',
-                            'associated_item_id' => null,
-                            'rates' => [
-                                    [
-                                        'percent' => 6,
-                                        'code' => 'IL',
-                                        'title' => 'IL',
-                                    ],
-                                ],
                         ],
                     ],
                     'shipping' => [
                         [
                             'amount' => 0.30,
-                            'item_id' => 146,
                             'item_type' => 'shipping',
-                            'associated_item_id' => null,
-                            'rates' => [
-                                [
-                                    'percent' => 6,
-                                    'code' => 'IL',
-                                    'title' => 'IL',
-                                ],
-                            ],
                         ]
-                    ],
-                ],
-                'item_applied_taxes_expected' => [
-                    'sequence-1' => [
-                            'item_id' => 146,
-                            'type' => 'product',
-                            'associated_item_id' => null,
-                            'applied_taxes' => [
-                                [
-                                'amount' => 0.06,
-                                'item_id' => 146,
-                                'item_type' => 'product',
-                                'associated_item_id' => null,
-                                'extension_attributes' => [
-                                    'rates' => [
-                                        [
-                                            'percent' => 6,
-                                            'code' => 'IL',
-                                            'title' => 'IL',
-                                        ]
-                                    ],
-                                ],
-                                ]
-                            ],
-                    ],
-                    'shipping' => [
-                        'item_id' => 146,
-                        'type' => 'shipping',
-                        'associated_item_id' => null,
-                        'applied_taxes' => [
-                            [
-                                'amount' => 0.30,
-                                'item_id' => 146,
-                                'item_type' => 'shipping',
-                                'associated_item_id' => null,
-                                'extension_attributes' => [
-                                    'rates' => [
-                                        [
-                                            'percent' => 6,
-                                            'code' => 'IL',
-                                            'title' => 'IL',
-                                        ]
-                                    ],
-                                ],
-                            ]
-                        ],
                     ],
                 ],
             ],

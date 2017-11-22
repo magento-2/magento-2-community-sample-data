@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,6 +11,7 @@ namespace Magento\Catalog\Model\Layer\Filter;
 /**
  * Layer price filter
  *
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Price extends \Magento\Catalog\Model\Layer\Filter\AbstractFilter
@@ -58,9 +59,7 @@ class Price extends \Magento\Catalog\Model\Layer\Filter\AbstractFilter
      */
     private $algorithmFactory;
 
-    /**
-     * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Price
-     */
+    /** @var DataProvider\Price */
     private $dataProvider;
 
     /**

@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order\Creditmemo;
 
 /**
  * Class AddCommentTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AddCommentTest extends \PHPUnit\Framework\TestCase
+class AddCommentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Controller\Adminhtml\Order\Creditmemo\AddComment
@@ -82,20 +80,19 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
-        $titleMock = $this->getMockBuilder(\Magento\Framework\App\Action\Title::class)
+        $titleMock = $this->getMockBuilder('Magento\Framework\App\Action\Title')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->contextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
-            ->setMethods(['getRequest', 'getResponse', 'getObjectManager', 'getTitle'])
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->contextMock = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->contextMock->expects($this->any())
@@ -110,37 +107,37 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())
             ->method('getTitle')
             ->will($this->returnValue($titleMock));
-        $this->loaderMock = $this->getMockBuilder(\Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader::class)
+        $this->loaderMock = $this->getMockBuilder('Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->senderMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Email\Sender\CreditmemoSender::class)
+        $this->senderMock = $this->getMockBuilder('Magento\Sales\Model\Order\Email\Sender\CreditmemoSender')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $this->resultJsonFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\JsonFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultRawFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\RawFactory::class)
+        $this->resultJsonFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\Result\JsonFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Page::class)
+        $this->resultRawFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\Result\RawFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $this->resultPageMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultJsonMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Json::class)
+        $this->resultJsonMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Json')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultRawMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Raw::class)
+        $this->resultRawMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Raw')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->controller = $objectManager->getObject(
-            \Magento\Sales\Controller\Adminhtml\Order\Creditmemo\AddComment::class,
+            'Magento\Sales\Controller\Adminhtml\Order\Creditmemo\AddComment',
             [
                 'context' => $this->contextMock,
                 'creditmemoLoader' => $this->loaderMock,
@@ -175,7 +172,7 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Json::class,
+            'Magento\Framework\Controller\Result\Json',
             $this->controller->execute()
         );
     }
@@ -203,7 +200,7 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Json::class,
+            'Magento\Framework\Controller\Result\Json',
             $this->controller->execute()
         );
     }
@@ -232,7 +229,7 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Json::class,
+            'Magento\Framework\Controller\Result\Json',
             $this->controller->execute()
         );
     }
@@ -248,16 +245,16 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
         $data = ['comment' => $comment];
         $html = 'test output';
 
-        $creditmemoMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo::class)
+        $creditmemoMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo')
             ->disableOriginalConstructor()
             ->getMock();
-        $commentMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo\Comment::class)
+        $commentMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo\Comment')
             ->disableOriginalConstructor()
             ->getMock();
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
-        $blockMock = $this->getMockBuilder(\Magento\Sales\Block\Adminhtml\Order\Creditmemo\View\Comments::class)
+        $blockMock = $this->getMockBuilder('Magento\Sales\Block\Adminhtml\Order\Creditmemo\View\Comments')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -296,7 +293,7 @@ class AddCommentTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Raw::class,
+            'Magento\Framework\Controller\Result\Raw',
             $this->controller->execute()
         );
     }

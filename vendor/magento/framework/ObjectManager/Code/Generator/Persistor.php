@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\ObjectManager\Code\Generator;
 
@@ -58,7 +60,7 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
                     'tags' => [
                         [
                             'name' => 'var',
-                            'description' => '\\' . \Magento\Framework\App\ResourceConnection::class,
+                            'description' => '\Magento\Framework\App\ResourceConnection',
                         ],
                     ],
                 ]
@@ -71,7 +73,7 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
                     'tags' => [
                         [
                             'name' => 'var',
-                            'description' => '\\' . \Magento\Framework\DB\Adapter\AdapterInterface::class,
+                            'description' => '\Magento\Framework\DB\Adapter\AdapterInterface',
                         ],
                     ],
                 ]
@@ -180,7 +182,7 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
                 ],
                 [
                     'name' => 'resource',
-                    'type' => '\\' . \Magento\Framework\App\ResourceConnection::class
+                    'type' => '\Magento\Framework\App\ResourceConnection'
                 ],
             ],
             'body' => "\$this->"
@@ -280,11 +282,11 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
      */
     protected function _getRegisterDeletedMethod()
     {
-        $body = "\$hash = spl_object_hash(\$entity);\n"
-            . "array_push(\$this->stack, \$hash);\n"
-            . "\$this->entitiesPool[\$hash] = [\n"
-            . "    'entity' => \$entity,\n"
-            . "    'action' => 'removed'\n"
+        $body = "\$hash = spl_object_hash(\$entity);"
+            . "array_push(\$this->stack, \$hash);"
+            . "\$this->entitiesPool[\$hash] = ["
+            . "    'entity' => \$entity,"
+            . "    'action' => 'removed'"
             . "];";
         return [
             'name' => 'registerDeleted',
@@ -319,13 +321,12 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
             . "        \$hash = array_pop(\$this->stack);\n"
             . "        if (isset(\$this->entitiesPool[\$hash])) {\n"
             . "            \$data = \$this->entitiesPool[\$hash];\n"
-            . "            \$entity = \$data['entity'];\n"
             . "            if (\$data['action'] == 'created') {\n"
-            . "                \$this->{$this->_getSourceResourcePropertyName()}->save(\$entity);\n"
-            . "                \$ids[] = \$entity->getId();\n"
+            . "                \$this->{$this->_getSourceResourcePropertyName()}->save(\$data['entity']);\n"
+            . "                \$ids[] = \$data['entity']->getId();\n"
             . "            } else {\n"
-            . "                \$ids[] = \$entity->getId();\n"
-            . "                \$this->{$this->_getSourceResourcePropertyName()}->delete(\$entity);\n"
+            . "                \$ids[] = \$data['entity']->getId();\n"
+            . "                \$this->{$this->_getSourceResourcePropertyName()}->delete(\$data['removed']);\n"
             . "            }\n"
             . "        }\n"
             . "        unset(\$this->entitiesPool[\$hash]);\n"
@@ -371,16 +372,14 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
     protected function _getDoPersistEntityMethod()
     {
         $body = "\$hash = spl_object_hash(\$entity);\n"
-            . "\$action = 'created';\n"
             . "if (isset(\$this->entitiesPool[\$hash])) {\n"
-            . "     \$action = \$this->entitiesPool[\$hash]['action'];\n"
-            . "     \$tempStack = \$this->stack;\n"
-            . "     array_flip(\$tempStack);\n"
-            . "     unset(\$tempStack[\$hash]);\n"
-            . "     \$this->stack = array_flip(\$tempStack);\n"
-            . "     unset(\$this->entitiesPool[\$hash]);\n"
+            . "\$tempStack = \$this->stack;\n"
+            . "array_flip(\$tempStack);\n"
+            . "unset(\$tempStack[\$hash]);\n"
+            . "\$this->stack = array_flip(\$tempStack);\n"
+            . "unset(\$this->entitiesPool[\$hash]);\n"
             . "}\n"
-            . "\$action == 'created' ? \$this->registerNew(\$entity) : \$this->registerDeleted(\$entity);\n"
+            . "\$this->registerNew(\$entity);\n"
             . "return \$this->doPersist(1);";
         return [
             'name' => 'doPersistEntity',
@@ -402,7 +401,6 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
             ]
         ];
     }
-
     /**
      * Returns registerDelete() method
      *
@@ -447,8 +445,8 @@ class Persistor extends \Magento\Framework\Code\Generator\EntityAbstract
     {
         $body = "\$hash = spl_object_hash(\$entity);\n"
             . "\$data = [\n"
-            . "     'entity' => \$entity,\n"
-            . "     'action' => 'created'\n"
+            . "'entity' => \$entity,\n"
+            . "'action' => 'created'\n"
             . "];\n"
             . "array_push(\$this->stack, \$hash);\n"
             . "\$this->entitiesPool[\$hash] = \$data;";

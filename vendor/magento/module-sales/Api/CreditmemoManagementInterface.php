@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,6 @@ namespace Magento\Sales\Api;
  * to refund all or part of the amount paid for any returned or undelivered items. The memo restores funds to the
  * customer account so that the customer can make future purchases.
  * @api
- * @since 100.0.2
  */
 interface CreditmemoManagementInterface
 {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Plugin\Model\Indexer\Category\Product;
 
 use \Magento\Catalog\Plugin\Model\Indexer\Category\Product\Execute;
 
-class ExecuteTest extends \PHPUnit\Framework\TestCase
+class ExecuteTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Catalog\Plugin\Model\Indexer\Category\Product\Execute */
     protected $execute;
@@ -21,11 +21,11 @@ class ExecuteTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\PageCache\Model\Config::class)
+        $this->config = $this->getMockBuilder('Magento\PageCache\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['isEnabled'])
             ->getMock();
-        $this->typeList = $this->getMockBuilder(\Magento\Framework\App\Cache\TypeListInterface::class)
+        $this->typeList = $this->getMockBuilder('Magento\Framework\App\Cache\TypeListInterface')
             ->disableOriginalConstructor()
             ->setMethods(['invalidate'])
             ->getMockForAbstractClass();
@@ -35,11 +35,11 @@ class ExecuteTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterExecute()
     {
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Category\Product\AbstractAction::class)
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Category\Product\AbstractAction')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Category\Product\AbstractAction::class)
+        $result = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Category\Product\AbstractAction')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -57,11 +57,11 @@ class ExecuteTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterExecuteInvalidate()
     {
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Category\Product\AbstractAction::class)
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Category\Product\AbstractAction')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Category\Product\AbstractAction::class)
+        $result = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Category\Product\AbstractAction')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 

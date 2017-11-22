@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,12 +15,14 @@ use Magento\Mtf\Util\Protocol\CurlTransport;
 use Magento\Mtf\Util\Protocol\CurlTransport\BackendDecorator;
 
 /**
- * Create new downloadable product via curl.
+ * Class Curl
+ * Create new downloadable product via curl
  */
 class Curl extends ProductCurl implements DownloadableProductInterface
 {
     /**
-     * @constructor
+     * Constructor
+     *
      * @param DataInterface $configuration
      * @param EventManagerInterface $eventManager
      */
@@ -42,15 +44,16 @@ class Curl extends ProductCurl implements DownloadableProductInterface
     }
 
     /**
-     * Prepare POST data for creating product request.
+     * Prepare POST data for creating product request
      *
      * @param FixtureInterface $fixture
+     * @param string|null $prefix [optional]
      * @return array
      */
-    public function prepareData(FixtureInterface $fixture)
+    protected function prepareData(FixtureInterface $fixture, $prefix = null)
     {
         /** @var DownloadableProduct $fixture */
-        $fixtureData = parent::prepareData($fixture);
+        $fixtureData = parent::prepareData($fixture, $prefix);
         $downloadableData = [
             'downloadable_sample' => $fixture->getDownloadableSample(),
             'downloadable_links' => $fixture->getDownloadableLinks()
@@ -67,7 +70,7 @@ class Curl extends ProductCurl implements DownloadableProductInterface
             }
 
             $sampleTitle = $downloadableData['downloadable_sample']['title'];
-            $data['samples_title'] = ['product' => $sampleTitle];
+            $data['samples_title'] = $prefix ? [$prefix => $sampleTitle] : $sampleTitle;
 
             unset($data['downloadable_sample']);
         }
@@ -81,7 +84,6 @@ class Curl extends ProductCurl implements DownloadableProductInterface
                 $data['downloadable']['link'][$key]['price'] = $link['price'];
                 $data['downloadable']['link'][$key]['number_of_downloads'] = $link['number_of_downloads'];
                 $data['downloadable']['link'][$key]['is_shareable'] = $link['is_shareable'];
-                $data['downloadable']['link'][$key]['sort_order'] = $link['sort_order'];
                 $data['downloadable']['link'][$key]['sample']['type'] = 'url';
                 $data['downloadable']['link'][$key]['sample']['url'] = $link['sample']['sample_url'];
             }
@@ -90,7 +92,7 @@ class Curl extends ProductCurl implements DownloadableProductInterface
                 'links_title' => $downloadableData['downloadable_links']['title'],
                 'links_purchased_separately' => $downloadableData['downloadable_links']['links_purchased_separately']
             ];
-            $data = array_merge($data, ['product' => $links]);
+            $data = array_merge($data, $prefix ? [$prefix => $links] : $links);
 
             unset($downloadableData['downloadable_links']);
         }
@@ -100,7 +102,7 @@ class Curl extends ProductCurl implements DownloadableProductInterface
     }
 
     /**
-     * Create product via curl.
+     * Create product via curl
      *
      * @param array $data
      * @param array $config

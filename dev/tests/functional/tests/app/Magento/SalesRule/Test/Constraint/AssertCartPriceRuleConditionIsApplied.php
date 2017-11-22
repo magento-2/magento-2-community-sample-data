@@ -1,34 +1,34 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\SalesRule\Test\Constraint;
 
 /**
- * Assert that Cart Price Rule is applied in Shopping Cart.
+ * Check that shopping cart subtotal not equals with grand total(excluding shipping price if exist).
  */
 class AssertCartPriceRuleConditionIsApplied extends AssertCartPriceRuleApplying
 {
     /**
-     * Assert that Cart Price Rule is applied in Shopping Cart.
+     * Assert that shopping cart subtotal not equals with grand total.
      *
      * @return void
      */
     protected function assert()
     {
-        $this->checkoutCart->getTotalsBlock()->waitForShippingPriceBlock();
-        $this->checkoutCart->getTotalsBlock()->waitForUpdatedTotals();
-        $actualPrices['sub_total'] = $this->checkoutCart->getTotalsBlock()->getSubtotal();
-        $actualPrices['grand_total'] = $this->checkoutCart->getTotalsBlock()->getGrandTotal();
-        $actualPrices['discount'] = $this->checkoutCart->getTotalsBlock()->getDiscount();
-        $expectedPrices = $this->cartPrice;
+        $subTotal =  $this->checkoutCart->getTotalsBlock()->getSubtotal();
+        $grandTotal =  $this->checkoutCart->getTotalsBlock()->getGrandTotal();
 
-        \PHPUnit_Framework_Assert::assertEquals(
-            $expectedPrices,
-            $actualPrices,
-            'Wrong total cart prices are displayed.'
+        if ($this->checkoutCart->getTotalsBlock()->isVisibleShippingPriceBlock()) {
+            $shippingPrice = $this->checkoutCart->getTotalsBlock()->getShippingPrice();
+            $grandTotal = number_format(($grandTotal - $shippingPrice), 2);
+        }
+        \PHPUnit_Framework_Assert::assertNotEquals(
+            $subTotal,
+            $grandTotal,
+            'Shopping cart subtotal: \'' . $subTotal . '\' equals with grand total: \'' . $grandTotal . '\''
         );
     }
 

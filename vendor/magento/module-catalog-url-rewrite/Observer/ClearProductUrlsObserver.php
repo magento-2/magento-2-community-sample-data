@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Observer;
@@ -17,9 +17,7 @@ use Magento\Framework\Event\ObserverInterface;
  */
 class ClearProductUrlsObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlPersistInterface
-     */
+    /** @var UrlPersistInterface */
     protected $urlPersist;
 
     /**
@@ -43,11 +41,10 @@ class ClearProductUrlsObserver implements ObserverInterface
             $oldSku = $observer->getEvent()->getAdapter()->getOldSku();
             $idToDelete = [];
             foreach ($products as $product) {
-                $sku = strtolower($product[ImportProduct::COL_SKU]);
-                if (!isset($oldSku[$sku])) {
+                if (!isset($oldSku[$product[ImportProduct::COL_SKU]])) {
                     continue;
                 }
-                $productData = $oldSku[$sku];
+                $productData = $oldSku[$product[ImportProduct::COL_SKU]];
                 $idToDelete[] = $productData['entity_id'];
             }
             if (!empty($idToDelete)) {

@@ -2,7 +2,7 @@
 /**
  * Origin filesystem driver
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filesystem\Driver;
@@ -297,7 +297,7 @@ class File implements DriverInterface
         if (!$result) {
             throw new FileSystemException(
                 new \Magento\Framework\Phrase(
-                    'The path "%1" cannot be renamed into "%2" %3',
+                    'The "%1" path cannot be renamed into "%2" %3',
                     [$oldPath, $newPath, $this->getWarningMessage()]
                 )
             );
@@ -702,34 +702,16 @@ class File implements DriverInterface
      */
     public function fileWrite($resource, $data)
     {
-        $lenData = strlen($data);
-        for ($result = 0; $result < $lenData; $result += $fwrite) {
-            $fwrite = @fwrite($resource, substr($data, $result));
-            if (0 === $fwrite) {
-                $this->fileSystemException('Unable to write');
-            }
-            if (false === $fwrite) {
-                $this->fileSystemException(
+        $result = @fwrite($resource, $data);
+        if (false === $result) {
+            throw new FileSystemException(
+                new \Magento\Framework\Phrase(
                     'Error occurred during execution of fileWrite %1',
                     [$this->getWarningMessage()]
-                );
-            }
+                )
+            );
         }
-
         return $result;
-    }
-
-    /**
-     * Throw a FileSystemException with a Phrase of message and optional arguments
-     *
-     * @param string $message
-     * @param array $arguments
-     * @return void
-     * @throws FileSystemException
-     */
-    private function fileSystemException($message, $arguments = [])
-    {
-        throw new FileSystemException(new \Magento\Framework\Phrase($message, $arguments));
     }
 
     /**
@@ -843,13 +825,6 @@ class File implements DriverInterface
      */
     public function getAbsolutePath($basePath, $path, $scheme = null)
     {
-        // check if the path given is already an absolute path containing the
-        // basepath. so if the basepath starts at position 0 in the path, we
-        // must not concatinate them again because path is already absolute.
-        if (0 === strpos($path, $basePath)) {
-            return $this->getScheme($scheme) . $path;
-        }
-
         return $this->getScheme($scheme) . $basePath . ltrim($this->fixSeparator($path), '/');
     }
 

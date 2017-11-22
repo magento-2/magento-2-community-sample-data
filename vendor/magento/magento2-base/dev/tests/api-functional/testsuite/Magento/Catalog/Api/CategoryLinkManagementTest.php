@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Api;
@@ -25,7 +25,7 @@ class CategoryLinkManagementTest extends WebapiAbstract
         $expected = [
             [
                 'sku' => 'simple333',
-                'position' => '0',
+                'position' => '1',
                 'category_id' => '333',
             ],
         ];

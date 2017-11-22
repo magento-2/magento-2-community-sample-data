@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Element\UiComponent\Control;
@@ -12,7 +12,7 @@ use Magento\Framework\ObjectManagerInterface;
  */
 class ActionPoolFactory
 {
-    const INSTANCE = \Magento\Framework\View\Element\UiComponent\Control\ActionPoolInterface::class;
+    const INSTANCE = 'Magento\Framework\View\Element\UiComponent\Control\ActionPoolInterface';
 
     /**
      * @var ObjectManagerInterface

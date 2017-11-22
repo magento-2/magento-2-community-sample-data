@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Block\Info;
@@ -8,8 +8,7 @@ namespace Magento\Payment\Block\Info;
 /**
  * Payment information container block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractContainer extends \Magento\Framework\View\Element\Template
 {

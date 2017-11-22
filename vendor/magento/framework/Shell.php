@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework;
@@ -15,7 +15,7 @@ class Shell implements ShellInterface
     /**
      * Logger instance
      *
-     * @var \Psr\Log\LoggerInterface
+     * @var \Zend_Log
      */
     protected $logger;
 
@@ -26,11 +26,11 @@ class Shell implements ShellInterface
 
     /**
      * @param CommandRendererInterface $commandRenderer
-     * @param \Psr\Log\LoggerInterface $logger Logger instance to be used to log commands and their output
+     * @param \Zend_Log $logger Logger instance to be used to log commands and their output
      */
     public function __construct(
         CommandRendererInterface $commandRenderer,
-        \Psr\Log\LoggerInterface $logger = null
+        \Zend_Log $logger = null
     ) {
         $this->logger = $logger;
         $this->commandRenderer = $commandRenderer;
@@ -76,7 +76,7 @@ class Shell implements ShellInterface
     protected function log($message)
     {
         if ($this->logger) {
-            $this->logger->info($message);
+            $this->logger->log($message, \Zend_Log::INFO);
         }
     }
 }

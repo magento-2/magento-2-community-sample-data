@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Controller\Adminhtml\Paypal\Reports;
@@ -9,9 +9,7 @@ namespace Magento\Paypal\Controller\Adminhtml\Paypal\Reports;
 class Details extends \Magento\Paypal\Controller\Adminhtml\Paypal\Reports
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Paypal::paypal_settlement_reports_view';
 
@@ -33,7 +31,7 @@ class Details extends \Magento\Paypal\Controller\Adminhtml\Paypal\Reports
         $this->_view->getPage()->getConfig()->getTitle()->prepend(__('View Transaction'));
         $this->_addContent(
             $this->_view->getLayout()->createBlock(
-                \Magento\Paypal\Block\Adminhtml\Settlement\Details::class,
+                'Magento\Paypal\Block\Adminhtml\Settlement\Details',
                 'settlementDetails'
             )
         );

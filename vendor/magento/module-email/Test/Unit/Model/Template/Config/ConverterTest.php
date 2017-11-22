@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Test\Unit\Model\Template\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Email\Model\Template\Config\Converter
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_model = new \Magento\Email\Model\Template\Config\Converter();
     }

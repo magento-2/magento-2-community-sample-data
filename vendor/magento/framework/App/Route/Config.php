@@ -2,12 +2,10 @@
 /**
  * Routes configuration model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Route;
-
-use Magento\Framework\Serialize\SerializerInterface;
 
 class Config implements ConfigInterface
 {
@@ -40,11 +38,6 @@ class Config implements ConfigInterface
      * @var array
      */
     protected $_routes;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
     /**
      * @param Config\Reader $reader
@@ -80,19 +73,15 @@ class Config implements ConfigInterface
             return $this->_routes[$scope];
         }
         $cacheId = $scope . '::' . $this->_cacheId;
-        $cachedRoutes = $this->_cache->load($cacheId);
-        if ($cachedRoutes) {
-            $cachedRoutes = $this->getSerializer()->unserialize($cachedRoutes);
-            if (is_array($cachedRoutes)) {
-                $this->_routes[$scope] = $cachedRoutes;
-                return $cachedRoutes;
-            }
+        $cachedRoutes = unserialize($this->_cache->load($cacheId));
+        if (is_array($cachedRoutes)) {
+            $this->_routes[$scope] = $cachedRoutes;
+            return $cachedRoutes;
         }
 
         $routers = $this->_reader->read($scope);
         $routes = $routers[$this->_areaList->getDefaultRouter($scope)]['routes'];
-        $routesData = $this->getSerializer()->serialize($routes);
-        $this->_cache->save($routesData, $cacheId);
+        $this->_cache->save(serialize($routes), $cacheId);
         $this->_routes[$scope] = $routes;
         return $routes;
     }
@@ -143,20 +132,5 @@ class Config implements ConfigInterface
         }
 
         return array_unique($modules);
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return \Magento\Framework\Serialize\SerializerInterface
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if ($this->serializer === null) {
-            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(SerializerInterface::class);
-        }
-        return $this->serializer;
     }
 }

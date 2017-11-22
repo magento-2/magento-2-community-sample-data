@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Config\Backend\Grid;
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Unit test of backend model for global configuration value
  * 'dev/grid/async_indexing'.
  */
-class AsyncIndexingTest extends \PHPUnit\Framework\TestCase
+class AsyncIndexingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Config\Backend\Grid\AsyncIndexing
@@ -37,15 +37,15 @@ class AsyncIndexingTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->config = $this->createMock(\Magento\Framework\App\Config::class);
+        $this->config = $this->getMock('Magento\Framework\App\Config', [], [], '', false);
 
-        $this->eventManager = $this->createMock(\Magento\Framework\Event\Manager::class);
+        $this->eventManager = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
 
-        $this->context = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
+        $this->context = $this->getMock('Magento\Framework\Model\Context', ['getEventDispatcher'], [], '', false);
         $this->context->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventManager);
 
         $this->object = $objectManager->getObject(
-            \Magento\Sales\Model\Config\Backend\Grid\AsyncIndexing::class,
+            '\Magento\Sales\Model\Config\Backend\Grid\AsyncIndexing',
             [
                 'config' => $this->config,
                 'context' => $this->context
@@ -57,7 +57,7 @@ class AsyncIndexingTest extends \PHPUnit\Framework\TestCase
      * @param int $value
      * @param int $oldValue
      * @param string $eventName
-     * @dataProvider afterSaveDataProvider
+     * @dataProvider testAfterSaveDataProvider
      * @return void
      */
     public function testAfterSave($value, $oldValue, $eventName)
@@ -75,14 +75,13 @@ class AsyncIndexingTest extends \PHPUnit\Framework\TestCase
             $this->eventManager->expects($this->once())->method('dispatch')->with($eventName);
         }
 
-        $object = $this->object->afterSave();
-        $this->assertEquals($this->object, $object);
+        $this->object->afterSave();
     }
 
     /**
      * @return array
      */
-    public function afterSaveDataProvider()
+    public function testAfterSaveDataProvider()
     {
         return [
             [0, 0, null],

@@ -1,29 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\DownloadableSampleData\Model\Product;
-
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Filesystem;
 
 /**
  * Class Converter
  */
 class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
 {
-    /**
-     * @var \Magento\Downloadable\Api\Data\File\ContentInterfaceFactory
-     */
-    private $fileContentFactory;
-
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
-    private $filesystem;
-
     /**
      * Get downloadable data from array
      *
@@ -98,11 +84,7 @@ class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
         foreach ($linkItems as $csvRow) {
             $linkData[$csvRow] = isset($linkData[$csvRow]) ? $linkData[$csvRow] : '';
         }
-        $directory = $this->getFilesystem()->getDirectoryRead(DirectoryList::MEDIA);
-        $linkPath = $directory->getAbsolutePath('downloadable/files/links' . $linkData['link_item_file']);
-        $data = base64_encode(file_get_contents($linkPath));
-        $content = $this->getFileContent()->setFileData($data)
-            ->setName('luma_background_-_model_against_fence_4_sec_.mp4');
+
         $link = [
             'is_delete' => '',
             'link_id' => '0',
@@ -113,7 +95,6 @@ class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
             'type' => 'file',
             'file' => json_encode([['file' => $linkData['link_item_file'], 'status' => 'old']]),
             'sort_order' => '',
-            'link_file_content' => $content
         ];
 
         return $link;
@@ -125,13 +106,6 @@ class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
      */
     public function getSamplesInfo()
     {
-        $directory = $this->getFilesystem()->getDirectoryRead(DirectoryList::MEDIA);
-        $linkPath = $directory->getAbsolutePath(
-            'downloadable/files/samples/l/u/luma_background_-_model_against_fence_4_sec_.mp4'
-        );
-        $data = base64_encode(file_get_contents($linkPath));
-        $content = $this->getFileContent()->setFileData($data)
-            ->setName('luma_background_-_model_against_fence_4_sec_.mp4');
         $sample = [
             'is_delete' => '',
             'sample_id' => '0',
@@ -141,7 +115,6 @@ class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
             ]]),
             'type' => 'file',
             'sort_order' => '',
-            'sample_file_content' => $content
         ];
 
         $samples = [];
@@ -151,33 +124,5 @@ class Converter extends \Magento\CatalogSampleData\Model\Product\Converter
         }
 
         return $samples;
-    }
-
-    /**
-     * @return \Magento\Downloadable\Api\Data\File\ContentInterface
-     * @deprecated
-     */
-    private function getFileContent()
-    {
-        if (!$this->fileContentFactory) {
-            $this->fileContentFactory = ObjectManager::getInstance()->create(
-                \Magento\Downloadable\Api\Data\File\ContentInterfaceFactory::class
-            );
-        }
-        return $this->fileContentFactory->create();
-    }
-
-    /**
-     * @return Filesystem
-     * @deprecated
-     */
-    private function getFilesystem()
-    {
-        if (!$this->filesystem) {
-            $this->filesystem = ObjectManager::getInstance()->create(
-                Filesystem::class
-            );
-        }
-        return $this->filesystem;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,4 +13,4 @@
 $_item = $block->getItem();
 ?>
 
-<?= /* @escapeNotVerified */ $block->displayPrices($block->getBaseTotalAmount($_item), $block->getTotalAmount($_item)) ?>
+<?php /* @escapeNotVerified */ echo $block->displayPrices($block->getBaseTotalAmount($_item), $block->getTotalAmount($_item)) ?>

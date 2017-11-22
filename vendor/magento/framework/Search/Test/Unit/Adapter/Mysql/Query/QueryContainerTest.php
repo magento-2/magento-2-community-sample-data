@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Test\Unit\Adapter\Mysql\Query;
@@ -9,7 +9,7 @@ use Magento\Framework\Search\Adapter\Mysql\Query\MatchContainerFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Search\Request\Query\BoolExpression;
 
-class QueryContainerTest extends \PHPUnit\Framework\TestCase
+class QueryContainerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\DB\Select|\PHPUnit_Framework_MockObject_MockObject */
     private $select;
@@ -25,25 +25,28 @@ class QueryContainerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
+        if (version_compare('5.5.23', phpversion(), '=')) {
+            $this->markTestSkipped('This test fails with Segmentation fault on PHP 5.5.23');
+        }
         $helper = new ObjectManager($this);
 
-        $this->select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $this->select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->matchContainerFactory = $this->getMockBuilder(
-            \Magento\Framework\Search\Adapter\Mysql\Query\MatchContainerFactory::class
+            'Magento\Framework\Search\Adapter\Mysql\Query\MatchContainerFactory'
         )
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestQuery = $this->getMockBuilder(\Magento\Framework\Search\Request\QueryInterface::class)
+        $this->requestQuery = $this->getMockBuilder('Magento\Framework\Search\Request\QueryInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->queryContainer = $helper->getObject(
-            \Magento\Framework\Search\Adapter\Mysql\Query\QueryContainer::class,
+            'Magento\Framework\Search\Adapter\Mysql\Query\QueryContainer',
             [
                 'matchContainerFactory' => $this->matchContainerFactory,
             ]

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Msrp\Model;
@@ -21,7 +21,9 @@ class Config
     const XML_PATH_MSRP_EXPLANATION_MESSAGE_WHATS_THIS = 'sales/msrp/explanation_message_whats_this';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scopeConfig;
 
     /**

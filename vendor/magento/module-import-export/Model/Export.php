@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,8 @@ namespace Magento\ImportExport\Model;
 /**
  * Export model
  *
- * @api
- *
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Export extends \Magento\ImportExport\Model\AbstractModel
 {
@@ -114,7 +112,9 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
                 ) {
                     throw new \Magento\Framework\Exception\LocalizedException(
                         __(
-                            'The entity adapter object must be an instance of %1 or %2.', \Magento\ImportExport\Model\Export\Entity\AbstractEntity::class, \Magento\ImportExport\Model\Export\AbstractEntity::class
+                            'The entity adapter object must be an instance of %1 or %2.',
+                            'Magento\ImportExport\Model\Export\Entity\AbstractEntity',
+                            'Magento\ImportExport\Model\Export\AbstractEntity'
                         )
                     );
                 }
@@ -156,7 +156,8 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
                 if (!$this->_writer instanceof \Magento\ImportExport\Model\Export\Adapter\AbstractAdapter) {
                     throw new \Magento\Framework\Exception\LocalizedException(
                         __(
-                            'The adapter object must be an instance of %1.', \Magento\ImportExport\Model\Export\Adapter\AbstractAdapter::class
+                            'The adapter object must be an instance of %1.',
+                            'Magento\ImportExport\Model\Export\Adapter\AbstractAdapter'
                         )
                     );
                 }
@@ -238,13 +239,10 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
      */
     public static function getStaticAttributeFilterType(\Magento\Eav\Model\Entity\Attribute $attribute)
     {
-        if (in_array($attribute->getAttributeCode(), ['category_ids', 'media_gallery'])) {
+        if ($attribute->getAttributeCode() == 'category_ids') {
             return self::FILTER_TYPE_INPUT;
         }
         $columns = $attribute->getFlatColumns();
-        if (empty($columns)) {
-            return self::FILTER_TYPE_INPUT;
-        }
         switch ($columns[$attribute->getAttributeCode()]['type']) {
             case \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER:
             case \Magento\Framework\DB\Ddl\Table::TYPE_BIGINT:

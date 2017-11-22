@@ -1,34 +1,12 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class AddOnTest extends Setup
+class Braintree_AddOnTest extends PHPUnit_Framework_TestCase
 {
     public function testFactory()
     {
-        $addOn = Braintree\AddOn::factory([]);
+        $addOn = \Braintree_AddOn::factory(array());
 
-        $this->assertInstanceOf('Braintree\AddOn', $addOn);
-    }
-
-    public function testToString()
-    {
-        $addOnParams = [
-            "amount" => "100.00",
-            "description" => "some description",
-            "id" => "1",
-            "kind" => "add_on",
-            "name" => "php_add_on",
-            "neverExpires" => "false",
-            "numberOfBillingCycles" => "1"
-        ];
-
-        $addOn = Braintree\AddOn::factory($addOnParams);
-
-        $this->assertEquals("Braintree\AddOn[amount=100.00, description=some description, id=1, kind=add_on, name=php_add_on, neverExpires=false, numberOfBillingCycles=1]", (string) $addOn);
+        $this->assertInstanceOf('Braintree_AddOn', $addOn);
     }
 }

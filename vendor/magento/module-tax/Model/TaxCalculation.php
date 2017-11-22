@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -193,7 +193,7 @@ class TaxCalculation implements TaxCalculationInterface
         $this->dataObjectHelper->populateWithArray(
             $taxDetailsDataObject,
             $taxDetailsData,
-            \Magento\Tax\Api\Data\TaxDetailsInterface::class
+            '\Magento\Tax\Api\Data\TaxDetailsInterface'
         );
         $taxDetailsDataObject->setItems($processedItems);
         return $taxDetailsDataObject;

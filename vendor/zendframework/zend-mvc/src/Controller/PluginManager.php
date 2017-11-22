@@ -26,17 +26,17 @@ class PluginManager extends AbstractPluginManager
      *
      * @var array
      */
-    protected $factories = [
+    protected $factories = array(
         'forward'  => 'Zend\Mvc\Controller\Plugin\Service\ForwardFactory',
         'identity' => 'Zend\Mvc\Controller\Plugin\Service\IdentityFactory',
-    ];
+    );
 
     /**
      * Default set of plugins
      *
      * @var array
      */
-    protected $invokableClasses = [
+    protected $invokableClasses = array(
         'acceptableviewmodelselector' => 'Zend\Mvc\Controller\Plugin\AcceptableViewModelSelector',
         'filepostredirectget'         => 'Zend\Mvc\Controller\Plugin\FilePostRedirectGet',
         'flashmessenger'              => 'Zend\Mvc\Controller\Plugin\FlashMessenger',
@@ -47,17 +47,17 @@ class PluginManager extends AbstractPluginManager
         'url'                         => 'Zend\Mvc\Controller\Plugin\Url',
         'createhttpnotfoundmodel'     => 'Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel',
         'createconsolenotfoundmodel'  => 'Zend\Mvc\Controller\Plugin\CreateConsoleNotFoundModel',
-    ];
+    );
 
     /**
      * Default set of plugin aliases
      *
      * @var array
      */
-    protected $aliases = [
+    protected $aliases = array(
         'prg'     => 'postredirectget',
         'fileprg' => 'filepostredirectget',
-    ];
+    );
 
     /**
      * @var DispatchableInterface
@@ -79,7 +79,7 @@ class PluginManager extends AbstractPluginManager
      * @param  bool   $usePeeringServiceManagers
      * @return mixed
      */
-    public function get($name, $options = [], $usePeeringServiceManagers = true)
+    public function get($name, $options = array(), $usePeeringServiceManagers = true)
     {
         $plugin = parent::get($name, $options, $usePeeringServiceManagers);
         $this->injectController($plugin);

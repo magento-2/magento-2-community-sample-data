@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'underscore',
@@ -24,7 +20,6 @@ define([
             excludeMode: false,
             allSelected: false,
             indetermine: false,
-            preserveSelectionsOnFilter: false,
             disabled: [],
             selected: [],
             excluded: [],
@@ -51,7 +46,7 @@ define([
             },
 
             listens: {
-                '${ $.provider }:params.filters': 'onFilter',
+                '${ $.provider }:params.filters': 'deselectAll',
                 selected: 'onSelectedChange',
                 rows: 'onRowsChange'
             },
@@ -432,10 +427,10 @@ define([
                 allSelected     = totalRecords && totalSelected === totalRecords;
 
             if (this.excludeMode()) {
-                if (excluded === totalRecords && !this.preserveSelectionsOnFilter) {
+                if (excluded === totalRecords) {
                     this.deselectAll();
                 }
-            } else if (totalRecords && selected === totalRecords && !this.preserveSelectionsOnFilter) {
+            } else if (totalRecords && selected === totalRecords) {
                 this.selectAll();
             }
 
@@ -477,15 +472,6 @@ define([
                 newSelections = _.union(this.getIds(true), this.selected());
 
                 this.selected(newSelections);
-            }
-        },
-
-        /**
-         * Is invoked when filtration is applied or removed
-         */
-        onFilter: function () {
-            if (!this.preserveSelectionsOnFilter) {
-                this.deselectAll();
             }
         }
     });

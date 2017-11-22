@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -19,7 +19,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @var array
      */
-    protected $dataArray = [];
+    protected $dataArray = array();
 
     /**
      * @param array $dataArray
@@ -64,11 +64,11 @@ class ArrayDefinition implements DefinitionInterface
     public function getClassSupertypes($class)
     {
         if (!isset($this->dataArray[$class])) {
-            return [];
+            return array();
         }
 
         if (!isset($this->dataArray[$class]['supertypes'])) {
-            return [];
+            return array();
         }
 
         return $this->dataArray[$class]['supertypes'];
@@ -128,11 +128,11 @@ class ArrayDefinition implements DefinitionInterface
     public function getMethods($class)
     {
         if (!isset($this->dataArray[$class])) {
-            return [];
+            return array();
         }
 
         if (!isset($this->dataArray[$class]['methods'])) {
-            return [];
+            return array();
         }
 
         return $this->dataArray[$class]['methods'];
@@ -152,15 +152,15 @@ class ArrayDefinition implements DefinitionInterface
     public function getMethodParameters($class, $method)
     {
         if (!isset($this->dataArray[$class])) {
-            return [];
+            return array();
         }
 
         if (!isset($this->dataArray[$class]['parameters'])) {
-            return [];
+            return array();
         }
 
         if (!isset($this->dataArray[$class]['parameters'][$method])) {
-            return [];
+            return array();
         }
 
         return $this->dataArray[$class]['parameters'][$method];

@@ -1,9 +1,10 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /*eslint max-nested-callbacks: 0*/
+
 define([
     'Magento_Ui/js/form/element/abstract'
 ], function (Abstract) {
@@ -42,6 +43,17 @@ define([
                 expect(model.validation).toEqual({});
             });
         });
+        describe('initProperties method', function () {
+            it('check for chainable', function () {
+                expect(model.initProperties()).toEqual(model);
+            });
+            it('check for extend', function () {
+                model.initProperties();
+                expect(model.uid).toBeDefined();
+                expect(model.noticeId).toBeDefined();
+                expect(model.inputName).toBeDefined();
+            });
+        });
         describe('setInitialValue method', function () {
             it('check for chainable', function () {
                 expect(model.setInitialValue()).toEqual(model);
@@ -66,23 +78,15 @@ define([
                 expect(model.additionalClasses).toEqual(1);
             });
             it('check for empty additional class', function () {
-                var expectedResult = {
-                    _required: model.required,
-                    _warn: model.warn,
-                    _error: model.error,
-                    _disabled: model.disabled
-                };
-
                 model.additionalClasses = '';
 
                 expect(model._setClasses()).toEqual(model);
-                expect(model.additionalClasses).toEqual(expectedResult);
+                expect(model.additionalClasses).toEqual('');
             });
             it('check for one class in additional', function () {
                 var extendObject = {
                     simple: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -94,8 +98,7 @@ define([
             it('check for one class with spaces in additional', function () {
                 var extendObject = {
                     simple: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -108,8 +111,7 @@ define([
                 var extendObject = {
                     simple: true,
                     example: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -122,8 +124,7 @@ define([
                 var extendObject = {
                     simple: true,
                     example: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -138,8 +139,10 @@ define([
                 expect(model.getInitialValue()).toEqual('');
             });
             it('check with default value', function () {
-                model.default = 1;
-                expect(model.getInitialValue()).toEqual('');
+                var expected = 1;
+
+                model.default = expected;
+                expect(model.getInitialValue()).toEqual(expected);
             });
             it('check with value', function () {
                 var expected = 1;

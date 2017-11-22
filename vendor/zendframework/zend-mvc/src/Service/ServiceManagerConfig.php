@@ -25,37 +25,37 @@ class ServiceManagerConfig extends Config
      *
      * @var array
      */
-    protected $invokables = [
+    protected $invokables = array(
         'SharedEventManager' => 'Zend\EventManager\SharedEventManager',
-    ];
+    );
 
     /**
      * Service factories
      *
      * @var array
      */
-    protected $factories = [
+    protected $factories = array(
         'EventManager'  => 'Zend\Mvc\Service\EventManagerFactory',
         'ModuleManager' => 'Zend\Mvc\Service\ModuleManagerFactory',
-    ];
+    );
 
     /**
      * Abstract factories
      *
      * @var array
      */
-    protected $abstractFactories = [];
+    protected $abstractFactories = array();
 
     /**
      * Aliases
      *
      * @var array
      */
-    protected $aliases = [
+    protected $aliases = array(
         'Zend\EventManager\EventManagerInterface'     => 'EventManager',
         'Zend\ServiceManager\ServiceLocatorInterface' => 'ServiceManager',
         'Zend\ServiceManager\ServiceManager'          => 'ServiceManager',
-    ];
+    );
 
     /**
      * Shared services
@@ -65,23 +65,23 @@ class ServiceManagerConfig extends Config
      *
      * @var array
      */
-    protected $shared = [
+    protected $shared = array(
         'EventManager' => false,
-    ];
+    );
 
     /**
      * Delegators
      *
      * @var array
      */
-    protected $delegators = [];
+    protected $delegators = array();
 
     /**
      * Initializers
      *
      * @var array
      */
-    protected $initializers = [];
+    protected $initializers = array();
 
     /**
      * Constructor
@@ -90,9 +90,9 @@ class ServiceManagerConfig extends Config
      *
      * @param  array $configuration
      */
-    public function __construct(array $configuration = [])
+    public function __construct(array $configuration = array())
     {
-        $this->initializers = [
+        $this->initializers = array(
             'EventManagerAwareInitializer' => function ($instance, ServiceLocatorInterface $serviceLocator) {
                 if ($instance instanceof EventManagerAwareInterface) {
                     $eventManager = $instance->getEventManager();
@@ -114,14 +114,14 @@ class ServiceManagerConfig extends Config
                     $instance->setServiceLocator($serviceLocator);
                 }
             },
-        ];
+        );
 
         $this->factories['ServiceManager'] = function (ServiceLocatorInterface $serviceLocator) {
             return $serviceLocator;
         };
 
         parent::__construct(ArrayUtils::merge(
-            [
+            array(
                 'invokables'         => $this->invokables,
                 'factories'          => $this->factories,
                 'abstract_factories' => $this->abstractFactories,
@@ -129,7 +129,7 @@ class ServiceManagerConfig extends Config
                 'shared'             => $this->shared,
                 'delegators'         => $this->delegators,
                 'initializers'       => $this->initializers,
-            ],
+            ),
             $configuration
         ));
     }

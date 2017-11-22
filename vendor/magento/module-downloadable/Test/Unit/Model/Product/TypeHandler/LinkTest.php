@@ -1,27 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Test\Unit\Model\Product\TypeHandler;
 
-use Magento\Downloadable\Model\Product\TypeHandler\Link;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
 /**
  * Test for \Magento\Downloadable\Model\Product\TypeHandler\Link
  */
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataPoolMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataMock;
 
     /**
      * @var \Magento\Downloadable\Model\ResourceModel\Link|\PHPUnit_Framework_MockObject_MockObject
@@ -41,31 +31,21 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->linkFactory = $this->getMockBuilder(\Magento\Downloadable\Model\LinkFactory::class)
+        $this->linkFactory = $this->getMockBuilder('\Magento\Downloadable\Model\LinkFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->linkResource = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\Link::class)
+        $this->linkResource = $this->getMockBuilder('\Magento\Downloadable\Model\ResourceModel\Link')
             ->disableOriginalConstructor()
             ->setMethods(['deleteItems'])
             ->getMock();
-        $this->metadataPoolMock = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
-        $this->metadataMock->expects($this->any())->method('getLinkField')->willReturn('id');
-        $this->metadataPoolMock->expects($this->any())->method('getMetadata')->willReturn($this->metadataMock);
         $this->target = $objectManagerHelper->getObject(
-            Link::class,
+            'Magento\Downloadable\Model\Product\TypeHandler\Link',
             [
                 'linkFactory' => $this->linkFactory,
-                'linkResource' => $this->linkResource
+                'linkResource' => $this->linkResource,
             ]
         );
-        $refClass = new \ReflectionClass(Link::class);
-        $refProperty = $refClass->getProperty('metadataPool');
-        $refProperty->setAccessible(true);
-        $refProperty->setValue($this->target, $this->metadataPoolMock);
     }
 
     /**
@@ -217,7 +197,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
      */
     private function createLinkkModel($product, array $modelData, $isUnlimited)
     {
-        $link = $this->getMockBuilder(\Magento\Downloadable\Model\Link::class)
+        $link = $this->getMockBuilder('\Magento\Downloadable\Model\Link')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -248,7 +228,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnSelf());
         $link->expects($this->once())
             ->method('setProductId')
-            ->with($product->getData('id'))
+            ->with($product->getId())
             ->will($this->returnSelf());
         $link->expects($this->once())
             ->method('setStoreId')
@@ -280,7 +260,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
      */
     private function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -289,8 +269,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
                     'getStore',
                     'getWebsiteIds',
                     'getLinksPurchasedSeparately',
-                    'setIsCustomOptionChanged',
-                    'getData'
+                    'setIsCustomOptionChanged'
                 ]
             )
             ->getMock();
@@ -303,7 +282,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $product->expects($this->any())
             ->method('getWebsiteIds')
             ->will($this->returnValue($websiteIds));
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $store = $this->getMockBuilder('\Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods(['getWebsiteId'])
             ->getMock();
@@ -316,10 +295,6 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $product->expects($this->any())
             ->method('getLinksPurchasedSeparately')
             ->will($this->returnValue(true));
-        $product->expects($this->any())
-            ->method('getData')
-            ->with('id')
-            ->willReturn($id);
         return $product;
     }
 }

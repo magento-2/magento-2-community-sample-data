@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Controller\Adminhtml\Report\Sales;
@@ -19,7 +19,7 @@ class ExportCouponsExcel extends \Magento\Reports\Controller\Adminhtml\Report\Sa
     public function execute()
     {
         $fileName = 'coupons.xml';
-        $grid = $this->_view->getLayout()->createBlock(\Magento\Reports\Block\Adminhtml\Sales\Coupons\Grid::class);
+        $grid = $this->_view->getLayout()->createBlock('Magento\Reports\Block\Adminhtml\Sales\Coupons\Grid');
         $this->_initReportAction($grid);
         return $this->_fileFactory->create($fileName, $grid->getExcelFile($fileName), DirectoryList::VAR_DIR);
     }

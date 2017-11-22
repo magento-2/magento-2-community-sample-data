@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,6 @@ use Magento\Framework\Filesystem\Directory\ReadFactory;
 
 /**
  * A service for reading language package dictionaries
- *
- * @api
  */
 class Dictionary
 {
@@ -70,7 +68,6 @@ class Dictionary
      *
      * @param string $languageCode
      * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getDictionary($languageCode)
     {
@@ -80,17 +77,7 @@ class Dictionary
             $directoryRead = $this->directoryReadFactory->create($path);
             if ($directoryRead->isExist('language.xml')) {
                 $xmlSource = $directoryRead->readFile('language.xml');
-                try {
-                    $languageConfig = $this->configFactory->create(['source' => $xmlSource]);
-                } catch (\Magento\Framework\Config\Dom\ValidationException $e) {
-                    throw new \Magento\Framework\Exception\LocalizedException(
-                        new \Magento\Framework\Phrase(
-                            "Invalid XML in file %1:\n%2",
-                            [$path . '/language.xml', $e->getMessage()]
-                        ),
-                        $e
-                    );
-                }
+                $languageConfig = $this->configFactory->create(['source' => $xmlSource]);
                 $this->packList[$languageConfig->getVendor()][$languageConfig->getPackage()] = $languageConfig;
                 if ($languageConfig->getCode() === $languageCode) {
                     $languages[] = $languageConfig;

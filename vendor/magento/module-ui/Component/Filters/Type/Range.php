@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Filters\Type;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Range
  */
 class Range extends AbstractFilter
 {
@@ -54,7 +53,7 @@ class Range extends AbstractFilter
      */
     protected function applyFilterByType($type, $value)
     {
-        if (is_numeric($value)) {
+        if (!empty($value) && $value !== '0') {
             $filter = $this->filterBuilder->setConditionType($type)
                 ->setField($this->getName())
                 ->setValue($value)

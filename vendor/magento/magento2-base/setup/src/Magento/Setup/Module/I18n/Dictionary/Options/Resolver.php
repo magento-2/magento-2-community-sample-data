@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n\Dictionary\Options;
@@ -134,7 +134,9 @@ class Resolver implements ResolverInterface
     {
         $dirs = [];
         foreach ($this->componentRegistrar->getPaths($componentType) as $componentDir) {
-            $dirs[] = $componentDir . '/';
+            if (strstr($componentDir, $this->directory)) {
+                $dirs[] = $componentDir . '/';
+            }
         }
         return $dirs;
     }

@@ -1,29 +1,19 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-define([
-    'jquery',
-    'uiComponent',
-    'Magento_Checkout/js/model/totals',
-    'Magento_Checkout/js/model/shipping-service'
-], function ($, Component, totalsService, shippingService) {
-    'use strict';
+/*global define*/
+define(
+    [
+        'uiComponent',
+        'Magento_Checkout/js/model/totals'
+    ],
+    function (Component, totalsService) {
+        'use strict';
 
-    return Component.extend({
-        isLoading: totalsService.isLoading,
+        return Component.extend({
 
-        /**
-         * @override
-         */
-        initialize: function () {
-            this._super();
-            totalsService.totals.subscribe(function () {
-                $(window).trigger('resize');
-            });
-            shippingService.getShippingRates().subscribe(function () {
-                $(window).trigger('resize');
-            });
-        }
-    });
-});
+            isLoading: totalsService.isLoading
+        });
+    }
+);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -49,7 +49,7 @@ class LogoutCustomerOnFrontendStep implements TestStepInterface
     {
         $this->customerAccount->open();
         $this->cmsIndex->getCmsPageBlock()->waitPageInit();
-        if ($this->cmsIndex->getTitleBlock()->getTitle() === 'My Dashboard') {
+        if ($this->cmsIndex->getTitleBlock()->getTitle() != 'Customer Login') {
             $this->cmsIndex->getLinksBlock()->openLink('Sign Out');
             $this->cmsIndex->getCmsPageBlock()->waitUntilTextIsVisible('Home Page');
             $this->cmsIndex->getCmsPageBlock()->waitPageInit();

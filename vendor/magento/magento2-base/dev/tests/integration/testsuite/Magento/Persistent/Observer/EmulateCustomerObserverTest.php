@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Persistent\Observer;
@@ -9,7 +9,7 @@ namespace Magento\Persistent\Observer;
 /**
  * @magentoDataFixture Magento/Persistent/_files/persistent.php
  */
-class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
+class EmulateCustomerObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Api\CustomerRepositoryInterface
@@ -40,15 +40,15 @@ class EmulateCustomerObserverTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->_customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
 
         $this->customerRepository = $this->_objectManager->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
-        $this->_persistentSessionHelper = $this->_objectManager->create(\Magento\Persistent\Helper\Session::class);
+        $this->_persistentSessionHelper = $this->_objectManager->create('Magento\Persistent\Helper\Session');
 
         $this->_observer = $this->_objectManager->create(
-            \Magento\Persistent\Observer\EmulateCustomerObserver::class,
+            'Magento\Persistent\Observer\EmulateCustomerObserver',
             [
                 'customerRepository' => $this->customerRepository,
                 'persistentSession' => $this->_persistentSessionHelper

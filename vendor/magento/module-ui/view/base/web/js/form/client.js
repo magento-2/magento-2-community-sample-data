@@ -1,8 +1,7 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'jquery',
     'underscore',
@@ -11,23 +10,15 @@ define([
 ], function ($, _, utils, Class) {
     'use strict';
 
-    /**
-     * Before save validate request.
-     *
-     * @param {Object} data
-     * @param {String} url
-     * @param {String} selectorPrefix
-     * @param {String} messagesClass
-     * @returns {*}
-     */
-    function beforeSave(data, url, selectorPrefix, messagesClass) {
+    function beforeSave(data, url) {
         var save = $.Deferred();
 
-        data = utils.serialize(utils.filterFormData(data));
-        data['form_key'] = window.FORM_KEY;
+        data = utils.serialize(data);
 
-        if (!url || url === 'undefined') {
-            return save.resolve();
+        data.form_key = window.FORM_KEY;
+
+        if (!url) {
+            save.resolve();
         }
 
         $('body').trigger('processStart');
@@ -35,42 +26,23 @@ define([
         $.ajax({
             url: url,
             data: data,
-
-            /**
-             * Success callback.
-             * @param {Object} resp
-             * @returns {Boolean}
-             */
             success: function (resp) {
                 if (!resp.error) {
                     save.resolve();
-
                     return true;
                 }
 
                 $('body').notification('clear');
-                $.each(resp.messages || [resp.message] || [], function (key, message) {
+                $.each(resp.messages, function(key, message) {
                     $('body').notification('add', {
                         error: resp.error,
                         message: message,
-
-                        /**
-                         * Insert method.
-                         *
-                         * @param {String} msg
-                         */
-                        insertMethod: function (msg) {
-                            var $wrapper = $('<div/>').addClass(messagesClass).html(msg);
-
-                            $('.page-main-actions', selectorPrefix).after($wrapper);
+                        insertMethod: function(message) {
+                            $('.page-main-actions').after(message);
                         }
                     });
                 });
             },
-
-            /**
-             * Complete callback.
-             */
             complete: function () {
                 $('body').trigger('processStop');
             }
@@ -88,38 +60,18 @@ define([
             var url = this.urls.beforeSave,
                 save = this._save.bind(this, data, options);
 
-            beforeSave(data, url, this.selectorPrefix, this.messagesClass).then(save);
+            beforeSave(data, url).then(save);
 
             return this;
         },
 
-        /**
-         * Save data.
-         *
-         * @param {Object} data
-         * @param {Object} options
-         * @returns {Object}
-         * @private
-         */
         _save: function (data, options) {
             var url = this.urls.save;
 
-            $('body').trigger('processStart');
             options = options || {};
 
             if (!options.redirect) {
                 url += 'back/edit';
-            }
-
-            if (options.ajaxSave) {
-                utils.ajaxSubmit({
-                    url: url,
-                    data: data
-                }, options);
-
-                $('body').trigger('processStop');
-
-                return this;
             }
 
             utils.submit({

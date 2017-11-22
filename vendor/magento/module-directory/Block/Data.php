@@ -1,13 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Block;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Data extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -34,11 +31,6 @@ class Data extends \Magento\Framework\View\Element\Template
      * @var \Magento\Directory\Helper\Data
      */
     protected $directoryHelper;
-
-    /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
-     */
-    private $serializer;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -118,15 +110,15 @@ class Data extends \Magento\Framework\View\Element\Template
         $cacheKey = 'DIRECTORY_COUNTRY_SELECT_STORE_' . $this->_storeManager->getStore()->getCode();
         $cache = $this->_configCacheType->load($cacheKey);
         if ($cache) {
-            $options = $this->getSerializer()->unserialize($cache);
+            $options = unserialize($cache);
         } else {
             $options = $this->getCountryCollection()
                 ->setForegroundCountries($this->getTopDestinations())
                 ->toOptionArray();
-            $this->_configCacheType->save($this->getSerializer()->serialize($options), $cacheKey);
+            $this->_configCacheType->save(serialize($options), $cacheKey);
         }
         $html = $this->getLayout()->createBlock(
-            \Magento\Framework\View\Element\Html\Select::class
+            'Magento\Framework\View\Element\Html\Select'
         )->setName(
             $name
         )->setId(
@@ -168,13 +160,13 @@ class Data extends \Magento\Framework\View\Element\Template
         $cacheKey = 'DIRECTORY_REGION_SELECT_STORE' . $this->_storeManager->getStore()->getId();
         $cache = $this->_configCacheType->load($cacheKey);
         if ($cache) {
-            $options = $this->getSerializer()->unserialize($cache);
+            $options = unserialize($cache);
         } else {
             $options = $this->getRegionCollection()->toOptionArray();
-            $this->_configCacheType->save($this->getSerializer()->serialize($options), $cacheKey);
+            $this->_configCacheType->save(serialize($options), $cacheKey);
         }
         $html = $this->getLayout()->createBlock(
-            \Magento\Framework\View\Element\Html\Select::class
+            'Magento\Framework\View\Element\Html\Select'
         )->setName(
             'region'
         )->setTitle(
@@ -231,20 +223,5 @@ class Data extends \Magento\Framework\View\Element\Template
         }
         \Magento\Framework\Profiler::stop('TEST: ' . __METHOD__);
         return $regionsJs;
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return \Magento\Framework\Serialize\SerializerInterface
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if ($this->serializer === null) {
-            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Serialize\SerializerInterface::class);
-        }
-        return $this->serializer;
     }
 }

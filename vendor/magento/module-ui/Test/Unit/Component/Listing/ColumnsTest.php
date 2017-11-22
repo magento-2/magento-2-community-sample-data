@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Component\Listing;
@@ -14,7 +14,7 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterfac
 /**
  * Class ColumnsTest
  */
-class ColumnsTest extends \PHPUnit\Framework\TestCase
+class ColumnsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,12 +29,12 @@ class ColumnsTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
 
         $this->contextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class,
+            'Magento\Framework\View\Element\UiComponent\ContextInterface',
             [],
             '',
             false,
@@ -42,10 +42,10 @@ class ColumnsTest extends \PHPUnit\Framework\TestCase
             true,
             []
         );
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
     }
 
     /**
@@ -56,7 +56,7 @@ class ColumnsTest extends \PHPUnit\Framework\TestCase
     public function testGetComponentName()
     {
         $columns = $this->objectManager->getObject(
-            \Magento\Ui\Component\Listing\Columns::class,
+            'Magento\Ui\Component\Listing\Columns',
             [
                 'context' => $this->contextMock,
                 'data' => [
@@ -71,5 +71,92 @@ class ColumnsTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals($columns->getComponentName(), Columns::NAME);
+    }
+
+    /**
+     * Run test prepare method
+     *
+     * @return void
+     */
+    public function testPrepare()
+    {
+        /** @var Column|\PHPUnit_Framework_MockObject_MockObject $componentMock */
+        $columnMock = $this->getMock(
+            'Magento\Ui\Component\Listing\Columns\Column',
+            [],
+            [],
+            '',
+            false
+        );
+        /** @var DataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $dataProviderMock */
+        $dataProviderMock = $this->getMockForAbstractClass(
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface',
+            [],
+            '',
+            false
+        );
+
+        $data = [
+            'name' => 'test_name',
+            'js_config' => ['extends' => 'test_config_extends'],
+            'config' => ['dataType' => 'test_type', 'sortable' => true]
+        ];
+        $saveUrl = 'module/controller/save';
+
+        $this->contextMock->expects($this->once())
+            ->method('getDataProvider')
+            ->willReturn($dataProviderMock);
+        $this->contextMock->expects($this->once())
+            ->method('addComponentDefinition')
+            ->with('columns', ['extends' => 'test_config_extends']);
+
+        $dataProviderMock->expects($this->once())
+            ->method('getFieldMetaInfo')
+            ->with('test_name', 'test_column_name')
+            ->willReturn(['test_meta' => 'test_meta_value']);
+
+        $columnMock->expects($this->once())
+            ->method('getName')
+            ->willReturn('test_column_name');
+        $columnMock->expects($this->once())
+            ->method('getData')
+            ->with('config')
+            ->willReturn(['test_config_data' => 'test_config_value']);
+        $columnMock->expects($this->once())
+            ->method('setData')
+            ->with('config', ['test_config_data' => 'test_config_value', 'test_meta' => 'test_meta_value']);
+
+        /** @var Columns $columns */
+        $columns = $this->objectManager->getObject(
+            'Magento\Ui\Component\Listing\Columns',
+            [
+                'components' => [$columnMock],
+                'context' => $this->contextMock,
+                'data' => $data
+            ]
+        );
+        $columns->setData(
+            'config',
+            [
+                'test_config_data' => 'test_config_value',
+                'editorConfig' => [
+                    'clientConfig' => [
+                        'saveUrl' => $saveUrl,
+                    ]
+                ]
+            ]
+        );
+        $columns->prepare();
+        $this->assertEquals(
+            [
+                'test_config_data' => 'test_config_value',
+                'editorConfig' => [
+                    'clientConfig' => [
+                        'saveUrl' => $saveUrl,
+                    ]
+                ]
+            ],
+            $columns->getData('config')
+        );
     }
 }

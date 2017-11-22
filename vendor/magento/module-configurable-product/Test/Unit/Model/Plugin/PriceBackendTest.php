@@ -1,58 +1,40 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model\Plugin;
 
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Attribute\Backend\Price;
-use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Plugin\PriceBackend;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Class PriceBackendTest
- */
-class PriceBackendTest extends \PHPUnit\Framework\TestCase
+class PriceBackendTest extends \PHPUnit_Framework_TestCase
 {
     const CLOSURE_VALUE = 'CLOSURE';
-
-    /**
-     * @var PriceBackend
-     */
+    /** @var  PriceBackend */
     private $priceBackendPlugin;
-
-    /**
-     * @var Price|MockObject
-     */
-    private $priceAttribute;
-
-    /**
-     * @var \Closure
-     */
+    /** @var  \PHPUnit_Framework_MockObject_MockObject */
+    private $priceAttributeMock;
+    /** @var  \Closure */
     private $closure;
-
-    /**
-     * @var Product|MockObject
-     */
-    private $product;
+    /** @var  \PHPUnit_Framework_MockObject_MockObject */
+    private $productMock;
 
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->priceBackendPlugin = $objectManager->getObject(PriceBackend::class);
+        $this->priceBackendPlugin = $objectManager->getObject('Magento\ConfigurableProduct\Model\Plugin\PriceBackend');
 
         $this->closure = function () {
             return static::CLOSURE_VALUE;
         };
-        $this->priceAttribute = $this->getMockBuilder(Price::class)
+        $this->priceAttributeMock = $this->getMockBuilder('Magento\Catalog\Model\Product\Attribute\Backend\Price')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->product = $this->getMockBuilder(Product::class)
+        $this->productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getTypeId', 'getPriceType', '__wakeUp'])
             ->getMock();
@@ -66,13 +48,11 @@ class PriceBackendTest extends \PHPUnit\Framework\TestCase
      */
     public function testAroundValidate($typeId, $expectedResult)
     {
-        $this->product->expects(static::once())
-            ->method('getTypeId')
-            ->willReturn($typeId);
+        $this->productMock->expects($this->any())->method('getTypeId')->will($this->returnValue($typeId));
         $result = $this->priceBackendPlugin->aroundValidate(
-            $this->priceAttribute,
+            $this->priceAttributeMock,
             $this->closure,
-            $this->product
+            $this->productMock
         );
         $this->assertEquals($expectedResult, $result);
     }

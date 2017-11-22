@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -40,13 +40,11 @@
             @_icon-font-vertical-align
         );
     }
-
     &:hover {
         &:before {
             .lib-css(color, @_icon-font-color-hover);
         }
     }
-
     &:active {
         &:before {
             .lib-css(color, @_icon-font-color-active);
@@ -71,7 +69,6 @@
     ._lib-icon-text-hide(@_icon-font-text-hide);
     .lib-css(display, @_icon-font-display);
     text-decoration: none;
-
     &:after {
         ._lib-icon-font(
             @_icon-font-content,
@@ -83,13 +80,11 @@
             @_icon-font-vertical-align
         );
     }
-
     &:hover {
         &:after {
             .lib-css(color, @_icon-font-color-hover);
         }
     }
-
     &:active {
         &:after {
             .lib-css(color, @_icon-font-color-active);
@@ -152,7 +147,6 @@
 ) when (@_icon-image-position = before) {
     display: inline-block;
     ._lib-icon-text-hide(@_icon-image-text-hide);
-
     &:before {
         ._lib-icon-image(
             @_icon-image,
@@ -180,7 +174,6 @@
 ) when (@_icon-image-position = after) {
     display: inline-block;
     ._lib-icon-text-hide(@_icon-image-text-hide);
-
     &:after {
         ._lib-icon-image(
             @_icon-image,
@@ -294,28 +287,23 @@
     @_icon-image-position-x,
     @_icon-image-position-y
 ) {
-    .lib-url-check(@_icon-image);
-
-    .lib-css(background-image, @lib-url-check-output); // @lib-url-check-output is a returned variable of .lib-url-check() mixin
-    .lib-css(background-position-x, @_icon-image-position-x);
-    .lib-css(background-position-y, @_icon-image-position-y);
     .lib-css(line-height, @_icon-image-height);
     .lib-css(margin, @_icon-image-margin);
     .lib-css(vertical-align, @_icon-image-vertical-align);
-    ._lib-icon-image-size(
-        @_icon-image-width,
-        @_icon-image-height
-    );
-    background-repeat: no-repeat;
+    background: url(@_icon-image) no-repeat @_icon-image-position-x @_icon-image-position-y;
     content: '';
     display: inline-block;
+    ._lib-icon-image-size(
+    @_icon-image-width,
+    @_icon-image-height
+    );
 }
 
 ._lib-icon-image-position(
     @_icon-image-position-x,
     @_icon-image-position-y
 ) {
-    .lib-css(background-position, @_icon-image-position-x @_icon-image-position-y);
+    background-position: @_icon-image-position-x @_icon-image-position-y;
 }
 
 ._lib-icon-image-size(
@@ -331,7 +319,7 @@
     @_icon-sprite-position-y,
     @_icon-sprite-grid
 ) {
-    .lib-css(background-position, -(@_icon-sprite-position-x*@_icon-sprite-grid) -(@_icon-sprite-position-y*@_icon-sprite-grid));
+    background-position: -(@_icon-sprite-position-x*@_icon-sprite-grid) -(@_icon-sprite-position-y*@_icon-sprite-grid);
 }
 
 ._lib-icon-font(
@@ -344,7 +332,6 @@
     @_icon-font-vertical-align
 ) {
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     ._lib-icon-font-size(@_icon-font-size, @_icon-font-line-height);
     .lib-css(color, @_icon-font-color);
     .lib-css(content, @_icon-font-content);

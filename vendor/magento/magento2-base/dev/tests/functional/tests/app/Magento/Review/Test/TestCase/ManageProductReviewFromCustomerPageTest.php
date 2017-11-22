@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -34,7 +34,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 7. Click "Submit review".
  * 8. Perform all assertions.
  *
- * @group Reviews_and_Ratings
+ * @group Reviews_and_Ratings_(MX)
  * @ZephyrId MAGETWO-27625
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -43,7 +43,7 @@ class ManageProductReviewFromCustomerPageTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -191,7 +191,7 @@ class ManageProductReviewFromCustomerPageTest extends Injectable
     protected function login(Customer $customer)
     {
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
     }

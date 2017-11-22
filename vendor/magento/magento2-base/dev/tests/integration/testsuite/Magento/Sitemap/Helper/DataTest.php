@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sitemap\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sitemap\Helper\Data
@@ -15,7 +15,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Sitemap\Helper\Data::class
+            'Magento\Sitemap\Helper\Data'
         );
     }
 

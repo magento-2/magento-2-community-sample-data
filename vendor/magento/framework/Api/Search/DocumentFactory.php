@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Api\Search;
@@ -27,7 +27,7 @@ class DocumentFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Api\Search\Document::class
+        $instanceName = 'Magento\Framework\Api\Search\Document'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

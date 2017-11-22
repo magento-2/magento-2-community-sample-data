@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 return [
@@ -131,7 +131,7 @@ return [
             </page>',
         [
             "Element 'argument': Duplicate key-sequence ['string'] in key identity-constraint"
-                . " 'blockActionArgumentName'.\nLine: 6\n"
+                . " 'actionArgumentName'.\nLine: 6\n"
         ],
     ],
 ];

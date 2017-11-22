@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
@@ -12,6 +12,14 @@ use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
  */
 class Quantity extends AbstractImportValidator implements RowValidatorInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function init($context)
+    {
+        return parent::init($context);
+    }
+
     /**
      * {@inheritdoc}
      */

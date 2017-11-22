@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Pricing\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Pricing\Helper\Data
@@ -15,7 +15,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Pricing\Helper\Data::class
+            'Magento\Framework\Pricing\Helper\Data'
         );
     }
 

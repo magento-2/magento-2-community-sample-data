@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework;
+
 
 /**
  * Provides access to the application for the tests
@@ -32,7 +33,7 @@ class WebApiApplication extends Application
 
         /* Install application */
         if ($installOptions) {
-            $installCmd = 'php -f ' . BP . '/bin/magento setup:install -vvv';
+            $installCmd = 'php -f ' . BP . '/bin/magento setup:install';
             $installArgs = [];
             foreach ($installOptions as $optionName => $optionValue) {
                 if (is_bool($optionValue)) {

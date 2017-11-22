@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Block\Adminhtml\System\Design\Theme\Edit;
 
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -20,23 +20,23 @@ class FormTest extends \PHPUnit\Framework\TestCase
     public function testToHtml()
     {
         /** @var \Magento\Framework\Data\FormFactory|\PHPUnit_Framework_MockObject_MockObject $customerHelper */
-        $formFactoryMock = $this->getMockBuilder(\Magento\Framework\Data\FormFactory::class)
+        $formFactoryMock = $this->getMockBuilder('Magento\Framework\Data\FormFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\Framework\Data\Form|\PHPUnit_Framework_MockObject_MockObject $customerHelper */
-        $formMock = $this->getMockBuilder(\Magento\Framework\Data\Form::class)
+        $formMock = $this->getMockBuilder('Magento\Framework\Data\Form')
             ->setMethods(['setUseContainer', 'setParent', 'setBaseUrl'])
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject $customerHelper */
-        $urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->getMockForAbstractClass();
 
         /** @var \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form $block */
         $block = $this->_objectManagerHelper->getObject(
-            \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form::class,
+            'Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form',
             [
                 'formFactory' => $formFactoryMock,
                 'urlBuilder' => $urlBuilderMock,

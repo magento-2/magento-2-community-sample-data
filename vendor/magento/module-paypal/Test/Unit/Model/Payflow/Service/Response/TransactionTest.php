@@ -1,120 +1,144 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Payflow\Service\Response;
 
 use Magento\Framework\DataObject;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Payment\Model\Method\Logger;
+use Magento\Paypal\Model\Payflowpro;
 use Magento\Paypal\Model\Payflow\Service\Response\Transaction;
-use Magento\Paypal\Model\Payflow\Transparent;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Api\Data\CartInterface;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface;
 
 /**
- * @see Transaction
+ * Test class for \Magento\Paypal\Model\Payflow\Service\Response\Transaction
  */
-class TransactionTest extends \PHPUnit\Framework\TestCase
+class TransactionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Magento\Paypal\Model\Payflow\Service\Response\Transaction::getResponseObject
-     *
-     * @dataProvider gatewayResponseInvariants
-     *
-     * @param mixed $gatewayTransactionResponse
+     * @var Transaction
      */
-    public function testGetResponseObject($gatewayTransactionResponse)
+    protected $model;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Session\Generic
+     */
+    protected $sessionTransparent;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Quote\Api\CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Paypal\Model\Payflow\Transparent
+     */
+    protected $transparent;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Quote\Api\PaymentMethodManagementInterface
+     */
+    protected $paymentMethodManagementInterface;
+
+    /**
+     * @var HandlerInterface | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $errorHandlerMock;
+
+    /**
+     * @var \Magento\Payment\Model\Method\Logger | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $loggerMock;
+
+    protected function setUp()
     {
-        /** @var Transaction $transactionService */
-        $transactionService = (new ObjectManager($this))->getObject(
-            Transaction::class,
-            [
-                'transparent' => $this->getTransparentObject(),
-                'logger' => $this->getLoggerMock()
-            ]
+        $this->sessionTransparent = $this->getMock('Magento\Framework\Session\Generic', ['getQuoteId'], [], '', false);
+        $this->quoteRepository = $this->getMock('\Magento\Quote\Api\CartRepositoryInterface');
+        $this->transparent = $this->getMock('Magento\Paypal\Model\Payflow\Transparent', [], [], '', false);
+        $this->paymentMethodManagementInterface = $this->getMock(
+            'Magento\Quote\Api\PaymentMethodManagementInterface',
+            [],
+            [],
+            '',
+            false
         );
+        $this->errorHandlerMock = $this->getMockBuilder(
+            'Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface'
+        )->getMock();
 
-        $output = $transactionService->getResponseObject($gatewayTransactionResponse);
-
-        $this->assertGetResponseObject($output);
-    }
-
-    /**
-     * @covers \Magento\Paypal\Model\Payflow\Service\Response\Transaction::savePaymentInQuote
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSavePaymentInQuote()
-    {
-        /** @var Transaction $transactionService */
-        $transactionService = (new ObjectManager($this))->getObject(
-            Transaction::class,
-            [
-                'quoteRepository' => $this->getCartRepositoryMock()
-            ]
-        );
-
-        $transactionService->savePaymentInQuote(new DataObject);
-    }
-
-    /**
-     * @return array
-     */
-    public function gatewayResponseInvariants()
-    {
-        return [
-            "Input data is a string" => ['testInput'],
-            "Input data is an object" => [new \StdClass],
-            "Input data is an array" => [['test' => 'input']]
-        ];
-    }
-
-    /**
-     * @param mixed $output
-     */
-    private function assertGetResponseObject($output)
-    {
-        $this->assertInstanceOf(
-            DataObject::class,
-            $output,
-            "Method must return instance of \\Magento\\Framework\\DataObject."
-        );
-    }
-
-    /**
-     * @return Transparent|Object
-     */
-    private function getTransparentObject()
-    {
-        return (new ObjectManager($this))->getObject(Transparent::class);
-    }
-
-    /**
-     * @return Logger|MockObject
-     */
-    private function getLoggerMock()
-    {
-        return $this->getMockBuilder(Logger::class)
+        $this->loggerMock = $this->getMockBuilder('Magento\Payment\Model\Method\Logger')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->model = new Transaction(
+            $this->sessionTransparent,
+            $this->quoteRepository,
+            $this->transparent,
+            $this->paymentMethodManagementInterface,
+            $this->errorHandlerMock,
+            $this->loggerMock
+        );
     }
 
-    /**
-     * @return CartRepositoryInterface|MockObject
-     */
-    private function getCartRepositoryMock()
+    public function testGetResponseObject()
     {
-        $cartRepository = $this->getMockBuilder(CartRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $gatewayTransactionResponse = [];
+        $result = new \Magento\Framework\DataObject();
 
-        $cart = $this->getMockBuilder(CartInterface::class)
-            ->getMockForAbstractClass();
+        $this->transparent->expects($this->once())
+            ->method('getDebugReplacePrivateDataKeys')
+            ->willReturn(['key1', 'key2']);
+        $this->transparent->expects($this->once())
+            ->method('getDebugFlag')
+            ->willReturn(true);
 
-        $cartRepository->method('get')->willReturn($cart);
+        $this->transparent->expects($this->once())
+            ->method('mapGatewayResponse')
+            ->with($gatewayTransactionResponse, $result)
+            ->willReturn($result);
 
-        return $cartRepository;
+        $this->loggerMock->expects($this->once())
+            ->method('debug')
+            ->with($gatewayTransactionResponse, ['key1', 'key2'], true);
+
+
+        $this->assertEquals($result, $this->model->getResponseObject($gatewayTransactionResponse));
+    }
+
+    public function testSavePaymentInQuote()
+    {
+        $quoteId = 1;
+        $response = new DataObject();
+
+        $payment = $this->getMockBuilder('Magento\Quote\Model\Quote\Payment')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $payment->expects($this->once())
+            ->method('setAdditionalInformation')
+            ->with('pnref');
+        $this->errorHandlerMock->expects($this->once())
+            ->method('handle')
+            ->with($payment, $response);
+        $quote = $this->getMock('Magento\Quote\Api\Data\CartInterface', [], [], '', false);
+        $quote->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn($quoteId);
+
+        $this->sessionTransparent->expects($this->once())
+            ->method('getQuoteId')
+            ->willReturn($quoteId);
+
+        $this->quoteRepository->expects($this->once())
+            ->method('get')
+            ->willReturn($quote);
+
+        $this->paymentMethodManagementInterface->expects($this->once())
+            ->method('get')
+            ->willReturn($payment);
+        $this->paymentMethodManagementInterface->expects($this->once())
+            ->method('set');
+
+        $this->model->savePaymentInQuote($response);
     }
 }

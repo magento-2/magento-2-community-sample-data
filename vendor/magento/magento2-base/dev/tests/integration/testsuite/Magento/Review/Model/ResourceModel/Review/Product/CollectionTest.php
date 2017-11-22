@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Model\ResourceModel\Review\Product;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Review/_files/different_reviews.php
@@ -13,7 +13,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testGetResultingIds()
     {
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Review\Model\ResourceModel\Review\Product\Collection::class
+            'Magento\Review\Model\ResourceModel\Review\Product\Collection'
         );
         $collection->addStatusFilter(\Magento\Review\Model\Review::STATUS_APPROVED);
         $actual = $collection->getResultingIds();

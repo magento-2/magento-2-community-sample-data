@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Image\Adapter;
@@ -167,13 +167,6 @@ class ImageMagick extends \Magento\Framework\Image\Adapter\AbstractAdapter
                 $this->_options['sharpen']['deviation']
             );
         }
-
-        $newImage->compositeImage(
-            $this->_imageHandler,
-            \Imagick::COMPOSITE_COPYOPACITY,
-            $dims['dst']['x'],
-            $dims['dst']['y']
-        );
 
         $newImage->compositeImage(
             $this->_imageHandler,
@@ -434,8 +427,7 @@ class ImageMagick extends \Magento\Framework\Image\Adapter\AbstractAdapter
             }
         }
 
-        // Font size for ImageMagick is set in pixels, while the for GD2 it is in points. 3/4 is ratio between them
-        $draw->setFontSize($this->_fontSize * 4 / 3);
+        $draw->setFontSize($this->_fontSize);
         $draw->setFillColor($color);
         $draw->setStrokeAntialias(true);
         $draw->setTextAntialias(true);

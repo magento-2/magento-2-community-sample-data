@@ -1,31 +1,34 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\CatalogInventory\Model\Plugin;
 
-/**
- * @deprecated 100.2.0 Stock Item as a part of ExtensionAttributes is deprecated
- * @see StockItemInterface when you want to change the stock data
- * @see StockStatusInterface when you want to read the stock data for representation layer (storefront)
- * @see StockItemRepositoryInterface::save as extension point for customization of saving process
- */
 class AfterProductLoad
 {
     /**
      * @var \Magento\CatalogInventory\Api\StockRegistryInterface
      */
-    private $stockRegistry;
+    protected $stockRegistry;
+
+    /**
+     * @var \Magento\Catalog\Api\Data\ProductExtensionFactory
+     */
+    protected $productExtensionFactory;
 
     /**
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
+     * @param \Magento\Catalog\Api\Data\ProductExtensionFactory $productExtensionFactory
      */
     public function __construct(
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\Catalog\Api\Data\ProductExtensionFactory $productExtensionFactory
     ) {
         $this->stockRegistry = $stockRegistry;
+        $this->productExtensionFactory = $productExtensionFactory;
     }
 
     /**
@@ -37,6 +40,10 @@ class AfterProductLoad
     public function afterLoad(\Magento\Catalog\Model\Product $product)
     {
         $productExtension = $product->getExtensionAttributes();
+        if ($productExtension === null) {
+            $productExtension = $this->productExtensionFactory->create();
+        }
+        // stockItem := \Magento\CatalogInventory\Api\Data\StockItemInterface
         $productExtension->setStockItem($this->stockRegistry->getStockItem($product->getId()));
         $product->setExtensionAttributes($productExtension);
         return $product;

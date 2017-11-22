@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 
 /**
  * Grid column widget for rendering action grid cells
  *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
@@ -82,10 +82,8 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $actionCaption = '';
         $this->_transformActionData($action, $actionCaption, $row);
 
-        $htmlAttributes = [
-            'value' => $this->escapeHtmlAttr($this->_jsonEncoder->encode($action), false)
-        ];
-        $actionAttributes->setData($htmlAttributes);
+        $htmlAttibutes = ['value' => $this->escapeHtml($this->_jsonEncoder->encode($action))];
+        $actionAttributes->setData($htmlAttibutes);
         return '<option ' . $actionAttributes->serialize() . '>' . $actionCaption . '</option>';
     }
 
@@ -155,8 +153,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
                     break;
 
                 case 'popup':
-                    $action['onclick'] = 'popWin(this.href,\'_blank\',\'width=800,height=700,resizable=1,'
-                        . 'scrollbars=1\');return false;';
+                    $action['onclick'] = 'popWin(this.href,\'_blank\',\'width=800,height=700,resizable=1,scrollbars=1\');return false;';
                     break;
             }
         }

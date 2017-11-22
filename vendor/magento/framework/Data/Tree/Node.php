@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Tree;
@@ -11,7 +11,6 @@ use Magento\Framework\Data\Tree\Node\Collection;
 /**
  * Data tree node
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Node extends \Magento\Framework\DataObject

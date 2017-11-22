@@ -1,19 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Customer\Model\Customer $customer */
 $customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
+    'Magento\Customer\Model\Customer'
 )->load(
     1
 );
 
 /** @var \Magento\Sales\Model\Order $order */
 $order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order::class
+    'Magento\Sales\Model\Order'
 )->loadByIncrementId(
     '100000001'
 );

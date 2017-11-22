@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -86,8 +86,7 @@ class MaintenanceAllowIpsCommand extends AbstractSetupCommand
             $messages = $this->validate($addresses);
             if (!empty($messages)) {
                 $output->writeln('<error>' . implode('</error>' . PHP_EOL . '<error>', $messages));
-                // we must have an exit code higher than zero to indicate something was wrong
-                return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+                return;
             }
 
             if (!empty($addresses)) {

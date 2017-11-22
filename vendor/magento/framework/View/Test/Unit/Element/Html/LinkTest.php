@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Element\Html;
 
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -39,30 +39,30 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $escaperMock = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $escaperMock = $this->getMockBuilder('Magento\Framework\Escaper')
             ->setMethods(['escapeHtml'])->disableOriginalConstructor()->getMock();
 
         $escaperMock->expects($this->any())
             ->method('escapeHtml')
             ->will($this->returnArgument(0));
 
-        $urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->setMethods(['getUrl'])->disableOriginalConstructor()->getMockForAbstractClass();
 
         $urlBuilderMock->expects($this->any())
             ->method('getUrl')
             ->will($this->returnArgument('http://site.com/link.html'));
 
-        $validtorMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\File\Validator::class)
+        $validtorMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\File\Validator')
             ->setMethods(['isValid'])->disableOriginalConstructor()->getMock();
 
-        $scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config')
             ->setMethods(['isSetFlag'])->disableOriginalConstructor()->getMock();
 
-        $resolverMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\File\Resolver::class)
+        $resolverMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\File\Resolver')
             ->setMethods([])->disableOriginalConstructor()->getMock();
 
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->setMethods(['getEscaper', 'getUrlBuilder', 'getValidator', 'getResolver', 'getScopeConfig'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,12 +89,12 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\View\Element\Html\Link $linkWithAttributes */
         $linkWithAttributes = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\Html\Link::class,
+            'Magento\Framework\View\Element\Html\Link',
             ['context' => $contextMock]
         );
         /** @var \Magento\Framework\View\Element\Html\Link $linkWithoutAttributes */
         $linkWithoutAttributes = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\Html\Link::class,
+            'Magento\Framework\View\Element\Html\Link',
             ['context' => $contextMock]
         );
 

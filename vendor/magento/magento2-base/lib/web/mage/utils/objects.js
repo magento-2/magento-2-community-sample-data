@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 define([
@@ -245,21 +245,6 @@ define([
             }
 
             return result;
-        },
-
-        /**
-         * Performs a deep clone of a specified object.
-         * Doesn't save links to original object.
-         *
-         * @param {*} original - Object to clone
-         * @returns {*}
-         */
-        hardCopy: function (original) {
-            if (original === null || typeof original !== 'object') {
-                return original;
-            }
-
-            return JSON.parse(JSON.stringify(original));
         },
 
         /**

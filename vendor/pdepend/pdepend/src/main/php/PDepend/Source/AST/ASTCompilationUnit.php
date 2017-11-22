@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -48,7 +48,7 @@ use PDepend\Util\Cache\CacheDriver;
 /**
  * This class provides an interface to a single source file.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 class ASTCompilationUnit extends AbstractASTArtifact
@@ -80,7 +80,7 @@ class ASTCompilationUnit extends AbstractASTArtifact
      *
      * @var string
      */
-    protected $comment = null;
+    protected $docComment = null;
 
     /**
      * The files start line. This property must always have the value <em>1</em>.
@@ -128,9 +128,7 @@ class ASTCompilationUnit extends AbstractASTArtifact
      */
     public function __construct($fileName)
     {
-        if (strpos($fileName, 'php://') === 0) {
-            $this->fileName = $fileName;
-        } elseif ($fileName !== null) {
+        if ($fileName !== null) {
             $this->fileName = realpath($fileName);
         }
     }
@@ -228,6 +226,28 @@ class ASTCompilationUnit extends AbstractASTArtifact
     }
 
     /**
+     * Returns the doc comment for this item or <b>null</b>.
+     *
+     * @return string
+     */
+    public function getDocComment()
+    {
+        return $this->docComment;
+    }
+
+    /**
+     * Sets the doc comment for this item.
+     *
+     * @param string $docComment The doc comment block.
+     *
+     * @return void
+     */
+    public function setDocComment($docComment)
+    {
+        $this->docComment = $docComment;
+    }
+
+    /**
      * Adds a source item that was parsed from this source file.
      *
      * @param  \PDepend\Source\AST\AbstractASTArtifact $artifact
@@ -308,7 +328,7 @@ class ASTCompilationUnit extends AbstractASTArtifact
         return array(
             'cache',
             'childNodes',
-            'comment',
+            'docComment',
             'endLine',
             'fileName',
             'startLine',
@@ -352,7 +372,7 @@ class ASTCompilationUnit extends AbstractASTArtifact
      */
     protected function readSource()
     {
-        if ($this->source === null && (file_exists($this->fileName) || strpos($this->fileName, 'php://') === 0)) {
+        if ($this->source === null && file_exists($this->fileName)) {
             $source = file_get_contents($this->fileName);
 
             $this->source = str_replace(array("\r\n", "\r"), "\n", $source);

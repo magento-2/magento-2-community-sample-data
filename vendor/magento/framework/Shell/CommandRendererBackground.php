@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Shell;
@@ -32,9 +32,8 @@ class CommandRendererBackground extends CommandRenderer
     public function render($command, array $arguments = [])
     {
         $command = parent::render($command, $arguments);
-
         return $this->osInfo->isWindows() ?
             'start /B "magento background task" ' . $command
-            : str_replace('2>&1', '> /dev/null &', $command);
+            : $command . ' > /dev/null &';
     }
 }

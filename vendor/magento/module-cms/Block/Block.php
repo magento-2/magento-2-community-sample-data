@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Cms\Block;
+// @codingStandardsIgnoreFile
 
-use Magento\Framework\View\Element\AbstractBlock;
+namespace Magento\Cms\Block;
 
 /**
  * Cms block content block
  */
-class Block extends AbstractBlock implements \Magento\Framework\DataObject\IdentityInterface
+class Block extends \Magento\Framework\View\Element\AbstractBlock implements \Magento\Framework\DataObject\IdentityInterface
 {
     /**
      * @var \Magento\Cms\Model\Template\FilterProvider

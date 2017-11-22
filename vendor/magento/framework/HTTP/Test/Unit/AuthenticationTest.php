@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\HTTP\Test\Unit;
 
-class AuthenticationTest extends \PHPUnit\Framework\TestCase
+class AuthenticationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $server
@@ -15,9 +15,9 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCredentials($server, $expectedLogin, $expectedPass)
     {
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', [], [], '', false);
         $request->expects($this->once())->method('getServerValue')->will($this->returnValue($server));
-        $response = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $response = $this->getMock('\Magento\Framework\App\Response\Http', [], [], '', false);
         $authentication = new \Magento\Framework\HTTP\Authentication($request, $response);
         $this->assertSame([$expectedLogin, $expectedPass], $authentication->getCredentials());
     }
@@ -70,11 +70,11 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $request = $objectManager->getObject(\Magento\Framework\App\Request\Http::class);
-        $response = $objectManager->getObject(\Magento\Framework\App\Response\Http::class);
+        $request = $objectManager->getObject('Magento\Framework\App\Request\Http');
+        $response = $objectManager->getObject('Magento\Framework\App\Response\Http');
 
         $authentication = $objectManager->getObject(
-            \Magento\Framework\HTTP\Authentication::class,
+            'Magento\Framework\HTTP\Authentication',
             [
                 'httpRequest' => $request,
                 'httpResponse' => $response

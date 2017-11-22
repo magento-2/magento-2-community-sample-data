@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,10 +17,8 @@ class Developer extends AbstractEnvironment implements EnvironmentInterface
      * Mode name
      */
     const MODE = 'developer';
-    /**#@- */
-
-    /**#@- */
     protected $mode = self::MODE;
+    /**#@- */
 
     /**
      * @var ConfigInterface
@@ -30,7 +28,7 @@ class Developer extends AbstractEnvironment implements EnvironmentInterface
     /**
      * @var string
      */
-    protected $configPreference = \Magento\Framework\ObjectManager\Factory\Dynamic\Developer::class;
+    protected $configPreference = 'Magento\Framework\ObjectManager\Factory\Dynamic\Developer';
 
     /**
      * Returns initialized di config entity
@@ -66,26 +64,26 @@ class Developer extends AbstractEnvironment implements EnvironmentInterface
     {
         $originalSharedInstances = $sharedInstances;
         $objectManager = ObjectManager::getInstance();
-        $sharedInstances[\Magento\Framework\ObjectManager\ConfigLoaderInterface::class] = $objectManager
-            ->get(\Magento\Framework\App\ObjectManager\ConfigLoader::class);
+        $sharedInstances['Magento\Framework\ObjectManager\ConfigLoaderInterface'] = $objectManager
+            ->get('Magento\Framework\App\ObjectManager\ConfigLoader');
 
         $diConfig->setCache(
-            $objectManager->get(\Magento\Framework\App\ObjectManager\ConfigCache::class)
+            $objectManager->get('Magento\Framework\App\ObjectManager\ConfigCache')
         );
 
         $objectManager->configure(
             $objectManager
-                ->get(\Magento\Framework\App\ObjectManager\ConfigLoader::class)
+                ->get('Magento\Framework\App\ObjectManager\ConfigLoader')
                 ->load(Area::AREA_GLOBAL)
         );
-        $objectManager->get(\Magento\Framework\Config\ScopeInterface::class)
+        $objectManager->get('Magento\Framework\Config\ScopeInterface')
             ->setCurrentScope('global');
         $diConfig->setInterceptionConfig(
-            $objectManager->get(\Magento\Framework\Interception\Config\Config::class)
+            $objectManager->get('Magento\Framework\Interception\Config\Config')
         );
         /** Reset the shared instances once interception config is set so classes can be intercepted if necessary */
         $sharedInstances = $originalSharedInstances;
-        $sharedInstances[\Magento\Framework\ObjectManager\ConfigLoaderInterface::class] = $objectManager
-            ->get(\Magento\Framework\App\ObjectManager\ConfigLoader::class);
+        $sharedInstances['Magento\Framework\ObjectManager\ConfigLoaderInterface'] = $objectManager
+            ->get('Magento\Framework\App\ObjectManager\ConfigLoader');
     }
 }

@@ -1,18 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Helper;
 
-use Magento\Customer\Api\CustomerNameGenerationInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 
 /**
  * Customer helper for view.
  */
-class View extends \Magento\Framework\App\Helper\AbstractHelper implements CustomerNameGenerationInterface
+class View extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /**
      * @var CustomerMetadataInterface
@@ -34,7 +33,10 @@ class View extends \Magento\Framework\App\Helper\AbstractHelper implements Custo
     }
 
     /**
-     * {@inheritdoc}
+     * Concatenate all customer name parts into full customer name.
+     *
+     * @param CustomerInterface $customerData
+     * @return string
      */
     public function getCustomerName(CustomerInterface $customerData)
     {

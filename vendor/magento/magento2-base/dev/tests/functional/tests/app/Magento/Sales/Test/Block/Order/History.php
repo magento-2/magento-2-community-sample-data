@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Test\Block\Order;
 
 use Magento\Mtf\Block\Block;
-use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Locator;
+use Magento\Mtf\Client\Element\SimpleElement;
 
 /**
  * Order history block on My Order page.
@@ -42,13 +42,6 @@ class History extends Block
      * @var string
      */
     protected $viewButton = '.action.view';
-
-    /**
-     * 'Reorder' button css selector.
-     *
-     * @var string
-     */
-    protected $reorderButton = '.action.order';
 
     /**
      * Order history form selector.
@@ -105,18 +98,6 @@ class History extends Block
     {
         $this->waitFormToLoad();
         $this->searchOrderById($id)->find($this->viewButton)->click();
-    }
-
-    /**
-     * Check if 'Reorder' button is visible for customer on order page
-     *
-     * @param string $id
-     * @return boolean
-     */
-    public function isReorderButtonPresentByOrderId($id)
-    {
-        $this->waitFormToLoad();
-        return $this->searchOrderById($id)->find($this->reorderButton)->isVisible();
     }
 
     /**

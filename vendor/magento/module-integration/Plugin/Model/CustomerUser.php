@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Plugin\Model;
@@ -38,7 +38,8 @@ class CustomerUser
         \Magento\Framework\DataObject $object
     ) {
         $isActive = $object->getIsActive();
-        if (isset($isActive) && $isActive == 0) {
+        $isNew = $object->isObjectNew();
+        if (isset($isActive) && $isActive == 0 && !$isNew) {
             $this->customerTokenService->revokeCustomerAccessToken($object->getId());
         }
         return $subject;

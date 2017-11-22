@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Paypal\Helper\Checkout;
 use Magento\Sales\Model\Order;
 
-class CheckoutTest extends \PHPUnit\Framework\TestCase
+class CheckoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Session|\PHPUnit_Framework_MockObject_MockObject

@@ -1,16 +1,13 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
+/*jshint browser:true jquery:true*/
 define([
-    'jquery',
-    'jquery/ui',
-    'jquery/jstree/jquery.jstree'
-], function ($) {
+    "jquery",
+    "jquery/ui",
+    "jquery/jstree/jquery.jstree"
+], function($){
     'use strict';
 
     $.widget('mage.rolesTree', {
@@ -18,29 +15,16 @@ define([
             treeInitData: {},
             treeInitSelectedData: {}
         },
-
-        /** @inheritdoc */
-        _create: function () {
+        _create: function() {
             this.element.jstree({
-                plugins: ['themes', 'json_data', 'ui', 'crrm', 'types', 'vcheckbox', 'hotkeys'],
+                plugins: ["themes", "json_data", "ui", "crrm", "types", "vcheckbox", "hotkeys"],
                 vcheckbox: {
                     'two_state': true,
                     'real_checkboxes': true,
-
-                    /**
-                     * @param {*} n
-                     * @return {Array}
-                     */
-                    'real_checkboxes_names': function (n) {
-                        return ['resource[]', $(n).data('id')];
-                    }
+                    'real_checkboxes_names': function(n) {return ['resource[]', $(n).data('id')]}
                 },
-                'json_data': {
-                    data: this.options.treeInitData
-                },
-                ui: {
-                    'select_limit': 0
-                },
+                json_data: {data: this.options.treeInitData},
+                ui: {select_limit: 0},
                 hotkeys: {
                     space: this._changeState,
                     'return': this._changeState
@@ -56,27 +40,14 @@ define([
             });
             this._bind();
         },
-
-        /**
-         * @private
-         */
-        _destroy: function () {
+        _destroy: function() {
             this.element.jstree('destroy');
         },
-
-        /**
-         * @private
-         */
-        _bind: function () {
+        _bind: function() {
             this.element.on('loaded.jstree', $.proxy(this._checkNodes, this));
             this.element.on('click.jstree', 'a', $.proxy(this._checkNode, this));
         },
-
-        /**
-         * @param {jQuery.Event} event
-         * @private
-         */
-        _checkNode: function (event) {
+        _checkNode: function(event) {
             event.stopPropagation();
             this.element.jstree(
                 'change_state',
@@ -84,32 +55,19 @@ define([
                 this.element.jstree('is_checked', event.currentTarget)
             );
         },
-
-        /**
-         * @private
-         */
-        _checkNodes: function () {
+        _checkNodes: function() {
             var $items = $('[data-id="' + this.options.treeInitSelectedData.join('"],[data-id="') + '"]');
-
-            $items.removeClass('jstree-unchecked').addClass('jstree-checked');
-            $items.children(':checkbox').prop('checked', true);
+            $items.removeClass("jstree-unchecked").addClass("jstree-checked");
+            $items.children(":checkbox").prop("checked", true);
         },
-
-        /**
-         * @return {Boolean}
-         * @private
-         */
-        _changeState: function () {
-            var element;
-
+        _changeState: function() {
             if (this.data.ui.hovered) {
-                element = this.data.ui.hovered;
-                this['change_state'](element, this['is_checked'](element));
+                var element = this.data.ui.hovered;
+                this.change_state(element, this.is_checked(element));
             }
-
             return false;
         }
     });
-
+    
     return $.mage.rolesTree;
 });

@@ -1,40 +1,35 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Model\DateTime;
 
 use Magento\Setup\Model\DateTime\DateTimeProvider;
-use Magento\Setup\Model\DateTime\TimeZoneProvider;
+use Magento\Setup\Model\DateTime\TimezoneProvider;
 use Magento\Setup\Model\ObjectManagerProvider;
 
-class DateTimeProviderTest extends \PHPUnit\Framework\TestCase
+class DateTimeProviderTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
-        $dateTime = $this->createMock(\Magento\Framework\Stdlib\DateTime\DateTime::class);
-        /** @var TimeZoneProvider|\PHPUnit_Framework_MockObject_MockObject $timeZoneProvider */
-        $timeZoneProvider = $this->createMock(\Magento\Setup\Model\DateTime\TimeZoneProvider::class);
-        $timeZone = $this->createMock(\Magento\Framework\Stdlib\DateTime\Timezone::class);
+        $dateTime = $this->getMock('\Magento\Framework\Stdlib\DateTime\DateTime', [], [], '', false);
+        /** @var TimezoneProvider|\PHPUnit_Framework_MockObject_MockObject $timeZoneProvider */
+        $timeZoneProvider = $this->getMock('\Magento\Setup\Model\DateTime\TimezoneProvider', [], [], '', false);
+        $timeZone = $this->getMock('\Magento\Framework\Stdlib\DateTime\Timezone', [], [], '', false);
         $timeZoneProvider->expects($this->any())
             ->method('get')
             ->willReturn($timeZone);
-        $objectManager = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $objectManager = $this->getMockForAbstractClass('\Magento\Framework\ObjectManagerInterface', [], '', false);
         $objectManager->expects($this->once())
             ->method('create')
             ->with(
-                \Magento\Framework\Stdlib\DateTime\DateTime::class,
+                'Magento\Framework\Stdlib\DateTime\DateTime',
                 ['localeDate' => $timeZone]
             )
             ->willReturn($dateTime);
         /** @var ObjectManagerProvider|\PHPUnit_Framework_MockObject_MockObject $objectManagerProvider */
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $objectManagerProvider = $this->getMock('\Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
         $objectManagerProvider->expects($this->any())
             ->method('get')
             ->willReturn($objectManager);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,7 +29,7 @@ class CreditMemos extends Tab
     public function getGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\CreditMemos\Grid::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\CreditMemos\Grid',
             ['element' => $this->_rootElement->find($this->grid)]
         );
     }

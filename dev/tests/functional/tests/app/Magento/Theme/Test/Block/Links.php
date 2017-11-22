@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,13 +20,6 @@ class Links extends Block
      * @var string
      */
     protected $link = '//a[contains(text(), "%s")]';
-
-    /**
-     * Locator value for Authorization link.
-     *
-     * @var string
-     */
-    protected $authorizationLink = '.authorization-link a';
 
     /**
      * Locator value for welcome message.
@@ -57,16 +50,6 @@ class Links extends Block
     protected function expandCustomerMenu()
     {
         $this->_rootElement->find($this->toggleButton)->click();
-    }
-
-    /**
-     * Open customer registration
-     *
-     * @return void
-     */
-    public function openCustomerCreateLink()
-    {
-        $this->openLink('Create an Account');
     }
 
     /**
@@ -139,26 +122,5 @@ class Links extends Block
     public function waitWelcomeMessage()
     {
         $this->waitForElementVisible($this->welcomeMessage);
-    }
-
-    /**
-     * Get text of the welcome message.
-     *
-     * @return string
-     */
-    public function getWelcomeText()
-    {
-        $this->waitForElementVisible($this->welcomeMessage);
-        return $this->_rootElement->find($this->welcomeMessage)->getText();
-    }
-
-    /**
-     * Verify if authorization link is present or not.
-     *
-     * @return bool
-     */
-    public function isAuthorizationVisible()
-    {
-        return $this->_rootElement->find($this->authorizationLink)->isVisible();
     }
 }

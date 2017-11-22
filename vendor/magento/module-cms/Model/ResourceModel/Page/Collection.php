@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Model\ResourceModel\Page;
 
-use Magento\Cms\Api\Data\PageInterface;
 use \Magento\Cms\Model\ResourceModel\AbstractCollection;
 
 /**
@@ -32,7 +31,7 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Cms\Model\Page::class, \Magento\Cms\Model\ResourceModel\Page::class);
+        $this->_init('Magento\Cms\Model\Page', 'Magento\Cms\Model\ResourceModel\Page');
         $this->_map['fields']['page_id'] = 'main_table.page_id';
         $this->_map['fields']['store'] = 'store_table.store_id';
     }
@@ -99,8 +98,7 @@ class Collection extends AbstractCollection
      */
     protected function _afterLoad()
     {
-        $entityMetadata = $this->metadataPool->getMetadata(PageInterface::class);
-        $this->performAfterLoad('cms_page_store', $entityMetadata->getLinkField());
+        $this->performAfterLoad('cms_page_store', 'page_id');
         $this->_previewFlag = false;
 
         return parent::_afterLoad();
@@ -113,7 +111,6 @@ class Collection extends AbstractCollection
      */
     protected function _renderFiltersBefore()
     {
-        $entityMetadata = $this->metadataPool->getMetadata(PageInterface::class);
-        $this->joinStoreRelationTable('cms_page_store', $entityMetadata->getLinkField());
+        $this->joinStoreRelationTable('cms_page_store', 'page_id');
     }
 }

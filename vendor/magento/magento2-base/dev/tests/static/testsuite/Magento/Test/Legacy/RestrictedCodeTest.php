@@ -1,45 +1,32 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Test\Legacy;
-
-use Magento\Framework\Component\ComponentRegistrar;
 
 /**
  * Tests to find usage of restricted code
  */
-class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
+namespace Magento\Test\Legacy;
+
+class RestrictedCodeTest extends \PHPUnit_Framework_TestCase
 {
     /**@#+
      * Lists of restricted entities from fixtures
      *
      * @var array
      */
-    private static $_classes = [];
+    protected static $_classes = [];
     /**#@-*/
 
     /**
      * List of fixtures that contain restricted classes and should not be tested
-     *
      * @var array
      */
-    private static $_fixtureFiles = [];
-
-    /**
-     * @var ComponentRegistrar
-     */
-    private $componentRegistrar;
-
-    protected function setUp()
-    {
-        $this->componentRegistrar = new ComponentRegistrar();
-    }
+    protected static $_fixtureFiles = [];
 
     /**
      * Read fixtures into memory as arrays
-     *
      * @return void
      */
     public static function setUpBeforeClass()
@@ -60,7 +47,7 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
             $relativePath = str_replace(
                 '\\',
                 '/',
-                str_replace(BP, '', $file)
+                str_replace(\Magento\Framework\App\Utility\Files::init()->getPathToSource(), '', $file)
             );
             array_push(self::$_fixtureFiles, $relativePath);
             $data = array_merge_recursive($data, self::_readList($file));
@@ -80,16 +67,15 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test that restricted entities are not used in PHP files
-     *
      * @return void
      */
     public function testPhpFiles()
     {
         $invoker = new \Magento\Framework\App\Utility\AggregateInvoker($this);
-        $testFiles = \Magento\TestFramework\Utility\ChangedFiles::getPhpFiles(__DIR__ . '/../_files/changed_files*');
+        $testFiles = \Magento\TestFramework\Utility\ChangedFiles::getPhpFiles(__DIR__ . '/_files/changed_files*');
         foreach (self::$_fixtureFiles as $fixtureFile) {
-            if (array_key_exists(BP . $fixtureFile, $testFiles)) {
-                unset($testFiles[BP . $fixtureFile]);
+            if (array_key_exists($fixtureFile, $testFiles)) {
+                unset($testFiles[$fixtureFile]);
             }
         }
         $invoker(
@@ -110,18 +96,16 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
     {
         $content = file_get_contents($file);
         foreach (self::$_classes as $restrictedClass => $classRules) {
-            foreach ($classRules['exclude'] as $skippedPathInfo) {
-                if (strpos($file, $this->getExcludedFilePath($skippedPathInfo)) === 0) {
+            foreach ($classRules['exclude'] as $skippedPath) {
+                if ($this->_isFileInPath($skippedPath, $file)) {
                     continue 2;
                 }
             }
-
             $this->assertFalse(
                 \Magento\TestFramework\Utility\CodeCheck::isClassUsed($restrictedClass, $content),
                 sprintf(
-                    "Class '%s' is restricted in %s. Suggested replacement: %s",
+                    "Class '%s' is restricted. Suggested replacement: %s",
                     $restrictedClass,
-                    $file,
                     $classRules['replacement']
                 )
             );
@@ -129,16 +113,15 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get full path for excluded file
+     * Checks if the file path (relative to Magento folder) starts with the given path
      *
-     * @param array $pathInfo
-     * @return string
+     * @param string $subPath
+     * @param string $file
+     * @return bool
      */
-    private function getExcludedFilePath($pathInfo)
+    protected function _isFileInPath($subPath, $file)
     {
-        if ($pathInfo['type'] != 'setup') {
-            return $this->componentRegistrar->getPath($pathInfo['type'], $pathInfo['name']) . '/' . $pathInfo['path'];
-        }
-        return BP . '/setup/' . $pathInfo['path'];
+        $relativePath = str_replace(\Magento\Framework\App\Utility\Files::init()->getPathToSource(), '', $file);
+        return 0 === strpos($relativePath, $subPath);
     }
 }

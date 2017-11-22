@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\DefaultPath;
 
-class DefaultPathTest extends \PHPUnit\Framework\TestCase
+class DefaultPathTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $parts

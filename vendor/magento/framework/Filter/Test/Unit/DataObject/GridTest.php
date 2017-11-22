@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,15 +10,21 @@ use \Magento\Framework\Filter\DataObject\Grid;
 
 use Magento\Framework\DataObject;
 
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     public function testFilter()
     {
-        $entityFactoryMock = $this->createMock(\Magento\Framework\Data\Collection\EntityFactoryInterface::class);
+        $entityFactoryMock = $this->getMock(
+            'Magento\Framework\Data\Collection\EntityFactoryInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $entityFactoryMock
             ->expects($this->any())
             ->method('create')
-            ->with(\Magento\Framework\DataObject::class, [])
+            ->with('Magento\Framework\DataObject', [])
             ->will(
                 $this->returnCallback(
                     function () {
@@ -35,7 +41,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Zend_Filter_Interface $filterMock */
         /** This filter should be applied to all fields values */
-        $filterMock = $this->createMock(\Zend_Filter_Interface::class);
+        $filterMock = $this->getMock('Zend_Filter_Interface', [], [], '', false);
         $filterMock->expects($this->exactly(4))->method('filter')->will(
             $this->returnCallback(
                 function ($input) {
@@ -47,7 +53,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Zend_Filter_Interface $fieldFilterMock */
         /** This filter should be applied to 'field2' field value only */
-        $fieldFilterMock = $this->createMock(\Zend_Filter_Interface::class);
+        $fieldFilterMock = $this->getMock('Zend_Filter_Interface', [], [], '', false);
         $fieldFilterMock->expects($this->exactly(2))->method('filter')->will(
             $this->returnCallback(
                 function ($input) {

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Controller\Adminhtml\Report\Product;
@@ -11,9 +11,7 @@ use Magento\Reports\Model\Flag;
 class Viewed extends \Magento\Reports\Controller\Adminhtml\Report\Product
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Reports::viewed';
 
@@ -47,7 +45,7 @@ class Viewed extends \Magento\Reports\Controller\Adminhtml\Report\Product
             $this->messageManager->addError(
                 __('An error occurred while showing the product views report. Please review the log and try again.')
             );
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $this->_redirect('reports/*/viewed/');
             return;
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ require 'customer_two_addresses.php';
 
 /** @var \Magento\Customer\Model\Customer $customer */
 $customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
+    'Magento\Customer\Model\Customer'
 )->load(
     1
 );

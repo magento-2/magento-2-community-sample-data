@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,9 +17,7 @@ use Magento\Framework\Controller\ResultFactory;
 abstract class Rule extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Tax::manage_tax';
 
@@ -30,14 +28,10 @@ abstract class Rule extends \Magento\Backend\App\Action
      */
     protected $_coreRegistry = null;
 
-    /**
-     * @var \Magento\Tax\Api\TaxRuleRepositoryInterface
-     */
+    /** @var \Magento\Tax\Api\TaxRuleRepositoryInterface */
     protected $ruleService;
 
-    /**
-     * @var \Magento\Tax\Api\Data\TaxRuleInterfaceFactory
-     */
+    /** @var \Magento\Tax\Api\Data\TaxRuleInterfaceFactory */
     protected $taxRuleDataObjectFactory;
 
     /**

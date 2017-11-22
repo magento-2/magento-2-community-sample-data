@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -23,7 +23,7 @@ use Magento\Framework\View\Element\UiComponent\Config\Converter;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ManagerTest extends \PHPUnit\Framework\TestCase
+class ManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Manager
@@ -75,57 +75,34 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $aggregatedFileCollectorFactory;
 
-    /** @var \Magento\Framework\Serialize\SerializerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $serializer;
-
-    protected function setUp()
+    public function setUp()
     {
         $this->componentConfigProvider = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\Provider\Component\Definition::class
+            'Magento\Framework\View\Element\UiComponent\Config\Provider\Component\Definition'
         )->disableOriginalConstructor()->getMock();
-        $this->domMerger = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\DomMergerInterface::class
-        )->getMockForAbstractClass();
+        $this->domMerger = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Config\DomMergerInterface')
+            ->getMockForAbstractClass();
         $this->aggregatedFileCollector = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollector::class
+            'Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollector'
         )->disableOriginalConstructor()->getMock();
         $this->aggregatedFileCollectorFactory = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollectorFactory::class
+            'Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollectorFactory'
         )->disableOriginalConstructor()->getMock();
         $this->arrayObjectFactory = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\ArrayObjectFactory::class
+            'Magento\Framework\View\Element\UiComponent\ArrayObjectFactory'
         )->disableOriginalConstructor()->getMock();
         $this->arrayObjectFactory->expects($this->at(0))
             ->method('create')
             ->willReturn(new \ArrayObject([]));
-        $this->uiReader = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\UiReaderInterface::class
-        )->getMockForAbstractClass();
-        $this->readerFactory = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\Config\ReaderFactory::class
-        )->disableOriginalConstructor()->getMock();
-        $this->cacheConfig = $this->getMockBuilder(\Magento\Framework\Config\CacheInterface::class)
+        $this->uiReader = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Config\UiReaderInterface')
             ->getMockForAbstractClass();
-        $this->argumentInterpreter = $this->getMockBuilder(\Magento\Framework\Data\Argument\InterpreterInterface::class)
+        $this->readerFactory = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Config\ReaderFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->cacheConfig = $this->getMockBuilder('Magento\Framework\Config\CacheInterface')
             ->getMockForAbstractClass();
-        $this->serializer = $this->getMockBuilder(
-            \Magento\Framework\Serialize\SerializerInterface::class
-        )->getMockForAbstractClass();
-        $this->serializer->expects($this->any())
-            ->method('serialize')
-            ->willReturnCallback(
-                function ($value) {
-                    return json_encode($value);
-                }
-            );
-        $this->serializer->expects($this->any())
-            ->method('unserialize')
-            ->willReturnCallback(
-                function ($value) {
-                    return json_decode($value, true);
-                }
-            );
-
+        $this->argumentInterpreter = $this->getMockBuilder('Magento\Framework\Data\Argument\InterpreterInterface')
+            ->getMockForAbstractClass();
         $this->manager = new Manager(
             $this->componentConfigProvider,
             $this->domMerger,
@@ -133,8 +110,7 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
             $this->arrayObjectFactory,
             $this->aggregatedFileCollectorFactory,
             $this->cacheConfig,
-            $this->argumentInterpreter,
-            $this->serializer
+            $this->argumentInterpreter
         );
     }
 
@@ -150,11 +126,11 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->uiReader, $this->manager->getReader('some_name'));
     }
 
-    public function testPrepareDataWithoutName()
+    public function testPrepareDataWithException()
     {
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
-            __("Invalid UI Component element name: ''")
+        $this->setExpectedException(
+            'Magento\Framework\Exception\LocalizedException',
+            __('Initialization error component, check the spelling of the name or the correctness of the call.')
         );
         $this->manager->prepareData(null);
     }
@@ -214,7 +190,7 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
             [
                 'test_component1',
                 new \ArrayObject(),
-                json_encode($cachedData->getArrayCopy()),
+                $cachedData->serialize(),
                 [],
                 [
                     'test_component1' => [

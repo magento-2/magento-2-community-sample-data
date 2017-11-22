@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,6 @@ use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute;
 
 /**
  * Class ConfigurableAttributeData
- * @api
- * @since 100.0.2
  */
 class ConfigurableAttributeData
 {
@@ -35,9 +33,8 @@ class ConfigurableAttributeData
                 $attributes[$attributeId] = [
                     'id' => $attributeId,
                     'code' => $productAttribute->getAttributeCode(),
-                    'label' => $productAttribute->getStoreLabel($product->getStoreId()),
+                    'label' => $attribute->getLabel(),
                     'options' => $attributeOptionsData,
-                    'position' => $attribute->getPosition(),
                 ];
                 $defaultValues[$attributeId] = $this->getAttributeConfigValue($attributeId, $product);
             }

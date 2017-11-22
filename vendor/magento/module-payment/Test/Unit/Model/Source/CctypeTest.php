@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Model\Source;
 
 use \Magento\Payment\Model\Source\Cctype;
 
-class CctypeTest extends \PHPUnit\Framework\TestCase
+class CctypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Payment config model
@@ -43,10 +43,10 @@ class CctypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $_expectedToOptionsArray = [['value' => 'allowed_cc_type', 'label' => 'name']];
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_paymentConfig = $this->getMockBuilder(
-            \Magento\Payment\Model\Config::class
+            'Magento\Payment\Model\Config'
         )->disableOriginalConstructor()->setMethods([])->getMock();
 
         $this->_model = new Cctype($this->_paymentConfig);

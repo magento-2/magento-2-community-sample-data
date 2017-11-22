@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Config;
@@ -8,13 +8,13 @@ namespace Magento\Framework\App\Config;
 /**
  * Config data model
  *
+ * @method \Magento\Framework\Model\ResourceModel\Db\AbstractDb getResource()
  * @method string getScope()
  * @method \Magento\Framework\App\Config\ValueInterface setScope(string $value)
  * @method int getScopeId()
  * @method \Magento\Framework\App\Config\ValueInterface setScopeId(int $value)
  * @method string getPath()
  * @method \Magento\Framework\App\Config\ValueInterface setPath(string $value)
- * @method string getValue()
  * @method \Magento\Framework\App\Config\ValueInterface setValue(string $value)
  *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
@@ -71,6 +71,16 @@ class Value extends \Magento\Framework\Model\AbstractModel implements \Magento\F
     }
 
     /**
+     * Add availability call after load as public
+     *
+     * @return void
+     */
+    public function afterLoad()
+    {
+        $this->_afterLoad();
+    }
+
+    /**
      * Check if config data value was changed
      *
      * @return bool
@@ -120,19 +130,5 @@ class Value extends \Magento\Framework\Model\AbstractModel implements \Magento\F
         }
 
         return parent::afterSave();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * {@inheritdoc}. In addition, it sets status 'invalidate' for config caches
-     *
-     * @return $this
-     */
-    public function afterDelete()
-    {
-        $this->cacheTypeList->invalidate(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER);
-
-        return parent::afterDelete();
     }
 }

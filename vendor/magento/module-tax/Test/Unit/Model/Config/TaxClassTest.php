@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,14 +12,14 @@
 namespace Magento\Tax\Test\Unit\Model\Config;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-class TaxClassTest extends \PHPUnit\Framework\TestCase
+class TaxClassTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests the afterSave method indirectly
      */
     public function testAfterSave()
     {
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
+        $attributeMock = $this->getMockBuilder('\Magento\Eav\Model\Entity\Attribute')
             ->disableOriginalConstructor()
             ->setMethods(['loadByCode', 'getId', 'setData', 'save', '__wakeup'])
             ->getMock();
@@ -28,7 +28,7 @@ class TaxClassTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->will($this->returnValue(1));
 
-        $attributeFactoryMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\AttributeFactory::class)
+        $attributeFactoryMock = $this->getMockBuilder('\Magento\Eav\Model\Entity\AttributeFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create', '__wakeup'])
             ->getMock();
@@ -37,7 +37,7 @@ class TaxClassTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->will($this->returnValue($attributeMock));
 
-        $resourceMock = $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\AbstractDb::class)
+        $resourceMock = $this->getMockBuilder('\Magento\Framework\Model\ResourceModel\Db\AbstractDb')
             ->disableOriginalConstructor()
             ->setMethods(['beginTransaction', '_construct', 'getIdFieldName', 'addCommitCallback', 'commit',
                           'save', '__wakeup', ])
@@ -57,7 +57,7 @@ class TaxClassTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new ObjectManager($this);
         $taxClass = $objectManager->getObject(
-            \Magento\Tax\Model\Config\TaxClass::class,
+            'Magento\Tax\Model\Config\TaxClass',
             [
                 'resource' => $resourceMock,
                 'attributeFactory' => $attributeFactoryMock
@@ -68,7 +68,6 @@ class TaxClassTest extends \PHPUnit\Framework\TestCase
 
         // Save the tax config data which will call _aftersave() in tax and update the default product tax class
         // No assertion should be thrown
-        $result = $taxClass->save();
-        $this->assertNotNull($result);
+        $taxClass->save();
     }
 }

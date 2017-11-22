@@ -1,19 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rss\Model;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Rss\DataProviderInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 
 /**
- * Provides functionality to work with RSS feeds
+ * Auth session model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Rss
 {
@@ -28,22 +25,11 @@ class Rss
     protected $cache;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * Rss constructor
-     *
      * @param \Magento\Framework\App\CacheInterface $cache
-     * @param SerializerInterface|null $serializer
      */
-    public function __construct(
-        \Magento\Framework\App\CacheInterface $cache,
-        SerializerInterface $serializer = null
-    ) {
+    public function __construct(\Magento\Framework\App\CacheInterface $cache)
+    {
         $this->cache = $cache;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
     }
 
     /**
@@ -60,14 +46,14 @@ class Rss
         }
 
         if ($cache) {
-            return $this->serializer->unserialize($cache);
+            return unserialize($cache);
         }
 
         $data = $this->dataProvider->getRssData();
 
         if ($this->dataProvider->getCacheKey() && $this->dataProvider->getCacheLifetime()) {
             $this->cache->save(
-                $this->serializer->serialize($data),
+                serialize($data),
                 $this->dataProvider->getCacheKey(),
                 ['rss'],
                 $this->dataProvider->getCacheLifetime()

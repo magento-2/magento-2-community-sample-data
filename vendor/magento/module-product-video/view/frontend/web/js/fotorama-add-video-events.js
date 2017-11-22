@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -7,7 +7,7 @@ define([
     'jquery',
     'jquery/ui',
     'catalogGallery',
-    'loadPlayer'
+    'Magento_ProductVideo/js/load-player'
 ], function ($) {
     'use strict';
 
@@ -92,70 +92,26 @@ define([
     //create AddFotoramaVideoEvents widget
     $.widget('mage.AddFotoramaVideoEvents', {
         options: {
-            videoData: '',
-            videoSettings: '',
-            optionsVideoData: '',
-            dataMergeStrategy: 'replace',
-            vimeoJSFrameworkLoaded: false
+            VideoData: '',
+            VideoSettings: ''
         },
 
-        /**
-         * @private
-         */
-        onVimeoJSFramework: function () {},
-        defaultVideoData: [],
         PV: 'product-video', // [CONST]
-        VU: 'video-unplayed',
-        PVLOADED: 'fotorama__product-video--loaded', // [CONST]
-        PVLOADING: 'fotorama__product-video--loading', // [CONST]
         VID: 'video', // [CONST]
         VI: 'vimeo', // [CONST]
         FTVC: 'fotorama__video-close',
         FTAR: 'fotorama__arr',
-        fotoramaSpinner: 'fotorama__spinner',
-        fotoramaSpinnerShow: 'fotorama__spinner--show',
-        TI: 'video-thumb-icon',
-        isFullscreen: false,
-        FTCF: '[data-gallery-role="fotorama__fullscreen-icon"]',
+        isFullscreen: 0,
+        inFullscreen: false,
         Base: 0, //on check for video is base this setting become true if there is any video with base role
         MobileMaxWidth: 767,
         GP: 'gallery-placeholder', //gallery placeholder class is needed to find and erase <script> tag
-        videoData: null,
-        videoDataPlaceholder: [{
-            id: '',
-            isBase: true,
-            mediaType: 'image',
-            provider: ''
-        }],
-
-        /**
-         * Creates widget
-         * @private
-         */
-        _create: function () {
-            $(this.element).on('gallery:loaded',  $.proxy(function () {
-                this.fotoramaItem = $(this.element).find('.fotorama-item');
-                this._initialize();
-            }, this));
-        },
 
         /**
          *
          * @private
          */
-        _initialize: function () {
-            if (!this.defaultVideoData.length) {
-                this.defaultVideoData = this.options.videoData;
-            }
-
-            // If product does not have images, no video data generated,
-            // but for configurable product we still need a video data, in case of 'prepend' gallery strategy.
-            if (!this.defaultVideoData.length && !this.options.videoData.length) {
-                this.defaultVideoData = this.options.videoData = this.videoDataPlaceholder;
-            }
-
-            this.clearEvents();
-
+        _init: function () {
             if (this._checkForVideoExist()) {
                 this._checkFullscreen();
                 this._listenForFullscreen();
@@ -167,60 +123,11 @@ define([
         },
 
         /**
-         * Clear gallery events to prevent duplicated calls.
-         *
-         * @private
-         */
-        clearEvents: function () {
-            this.fotoramaItem.off(
-                'fotorama:show ' +
-                'fotorama:showend ' +
-                'fotorama:fullscreenenter ' +
-                'fotorama:fullscreenexit'
-            );
-        },
-
-        /**
-         *
-         * @param {Object} options
-         * @private
-         */
-        _setOptions: function (options) {
-            if (options.videoData && options.videoData.length) {
-                this.options.videoData = options.videoData;
-            }
-
-            this._loadVideoData(options);
-            this._initialize();
-        },
-
-        /**
-         * Set video data for configurable product.
-         *
-         * @param {Object} options
-         * @private
-         */
-        _loadVideoData: function (options) {
-            if (options.selectedOption) {
-                if (options.dataMergeStrategy === 'prepend') {
-                    this.options.videoData = [].concat(
-                        this.options.optionsVideoData[options.selectedOption],
-                        this.options.videoData
-                    );
-                } else {
-                    this.options.videoData = this.options.optionsVideoData[options.selectedOption];
-                }
-            } else {
-                this.options.videoData = this.defaultVideoData;
-            }
-        },
-
-        /**
          *
          * @private
          */
         _checkFullscreen: function () {
-            if (this.fotoramaItem.data('fotorama').fullScreen || false) {
+            if ($(this.element).find('.fotorama__fullscreen-icon')) {
                 this.isFullscreen = true;
             }
         },
@@ -230,13 +137,12 @@ define([
          * @private
          */
         _listenForFullscreen: function () {
-            this.fotoramaItem.on('fotorama:fullscreenenter', $.proxy(function () {
-                this.isFullscreen = true;
+            $(this.element).on('fotorama:fullscreenenter', $.proxy(function () {
+                this.inFullscreen = true;
             }, this));
-
-            this.fotoramaItem.on('fotorama:fullscreenexit', $.proxy(function () {
-                this.isFullscreen = false;
-                this._hideVideoArrows();
+            $(this.element).on('fotorama:fullscreenexit', $.proxy(function () {
+                this.inFullscreen = false;
+                $(this.element).find('.' + this.PV).parent().find('img:not(".fotorama__img--full")').show();
             }, this));
         },
 
@@ -275,15 +181,18 @@ define([
 
                 tmpVideoData.isBase = tmpInputData.isBase;
 
-                if (tmpInputData.videoUrl && tmpInputData.videoUrl !== null) {
+                if (tmpInputData.videoUrl != null) {
                     dataUrl = tmpInputData.videoUrl;
                     dataUrl = parseURL(dataUrl);
                     tmpVideoData.id = dataUrl.id;
                     tmpVideoData.provider = dataUrl.type;
-                    tmpVideoData.videoUrl = tmpInputData.videoUrl;
                 }
 
-                videoData.push(tmpVideoData);
+                if (tmpVideoData.isBase) {
+                    videoData.unshift(tmpVideoData);
+                } else {
+                    videoData.push(tmpVideoData);
+                }
             }
 
             return videoData;
@@ -298,15 +207,15 @@ define([
         _createCloseVideo: function (fotorama, isBase) {
             var closeVideo;
 
-            this.fotoramaItem.find('.' + this.FTVC).remove();
-            this.fotoramaItem.append('<div class="' + this.FTVC + '"></div>');
-            this.fotoramaItem.css('position', 'relative');
-            closeVideo = this.fotoramaItem.find('.' + this.FTVC);
+            $(this.element).find('.' + this.FTVC).remove();
+            $(this.element).append('<div class="' + this.FTVC + '"></div>');
+            $(this.element).css('position', 'relative');
+            closeVideo = $(this.element).find('.' + this.FTVC);
             this._closeVideoSetEvents(closeVideo, fotorama);
 
             if (
                 isBase &&
-                this.options.videoData[fotorama.activeIndex].isBase &&
+                this.options.VideoData[fotorama.activeIndex].isBase &&
                 $(window).width() > this.MobileMaxWidth) {
                 this._showCloseVideo();
             }
@@ -317,9 +226,12 @@ define([
          * @private
          */
         _hideCloseVideo: function () {
-            this.fotoramaItem
-                .find('.' + this.FTVC)
-                .removeClass('fotorama-show-control');
+            $(this.element).find('.' + this.FTVC).css({
+                opacity: 0,
+                transform: 'translate3d(95px, -95px, 0)',
+                display: 'none'
+            });
+            $('.' + this.FTAR).removeClass('hidden-video');
         },
 
         /**
@@ -327,9 +239,12 @@ define([
          * @private
          */
         _showCloseVideo: function () {
-            this.fotoramaItem
-                .find('.' + this.FTVC)
-                .addClass('fotorama-show-control');
+            $(this.element).find('.' + this.FTVC).css({
+                opacity: 1,
+                transform: 'translate3d(0px, 0px, 0)',
+                display: 'block'
+            });
+            $('.' + this.FTAR).addClass('hidden-video');
         },
 
         /**
@@ -353,17 +268,16 @@ define([
         _checkForVideoExist: function () {
             var key, result, checker, videoSettings;
 
-            if (!this.options.videoData) {
+            if (!this.options.VideoData) {
                 return false;
             }
 
-            if (!this.options.videoSettings) {
+            if (!this.options.VideoSettings) {
                 return false;
             }
-
-            result = this._createVideoData(this.options.videoData, false);
-            checker = false;
-            videoSettings = this.options.videoSettings[0];
+            result = this._createVideoData(this.options.VideoData, false),
+                checker = false;
+            videoSettings = this.options.VideoSettings[0];
             videoSettings.playIfBase = parseInt(videoSettings.playIfBase, 10);
             videoSettings.showRelated = parseInt(videoSettings.showRelated, 10);
             videoSettings.videoAutoRestart = parseInt(videoSettings.videoAutoRestart, 10);
@@ -375,7 +289,7 @@ define([
             }
 
             if (checker) {
-                this.options.videoData = result;
+                this.options.VideoData = result;
             }
 
             return checker;
@@ -386,18 +300,12 @@ define([
          * @private
          */
         _checkForVimeo: function () {
-            var allVideoData = this.options.videoData,
+            var allVideoData = this.options.VideoData,
                 videoItem;
-
-            if (window.Froogaloop) { // prevent duplicated initialization
-                return;
-            }
 
             for (videoItem in allVideoData) {
                 if (allVideoData[videoItem].provider === this.VI) {
                     this._loadVimeoJSFramework();
-
-                    return;
                 }
             }
         },
@@ -407,7 +315,7 @@ define([
          * @private
          */
         _isVideoBase: function () {
-            var allVideoData = this.options.videoData,
+            var allVideoData = this.options.VideoData,
                 videoItem,
                 allVideoDataKeys,
                 key,
@@ -421,7 +329,7 @@ define([
 
                 if (
                     videoItem.mediaType === this.VID && videoItem.isBase &&
-                    this.options.videoSettings[0].playIfBase && allowBase
+                    this.options.VideoSettings[0].playIfBase && allowBase
                 ) {
                     this.Base = true;
                     allowBase = false;
@@ -429,7 +337,7 @@ define([
             }
 
             if (!this.isFullscreen) {
-                this._createCloseVideo(this.fotoramaItem.data('fotorama'), this.Base);
+                this._createCloseVideo($(this.element).data('fotorama'), this.Base);
             }
         },
 
@@ -443,14 +351,6 @@ define([
 
             element.async = true;
             element.src = 'https://secure-a.vimeocdn.com/js/froogaloop2.min.js';
-
-            /**
-             * Vimeo js framework on load callback.
-             */
-            element.onload = function () {
-                this.onVimeoJSFramework();
-                this.vimeoJSFrameworkLoaded = true;
-            }.bind(this);
             scriptTag.parentNode.insertBefore(element, scriptTag);
         },
 
@@ -460,13 +360,16 @@ define([
          * @private
          */
         _initFotoramaVideo: function (e) {
-            var fotorama = this.fotoramaItem.data('fotorama'),
+            var fotorama = $(this.element).data('fotorama'),
                 thumbsParent,
                 thumbs,
-                t;
+                t,
+                tmpVideoData,
+                currentItem,
+                iconClass = 'video-thumb-icon';
 
             if (!fotorama.activeFrame.$navThumbFrame) {
-                this.fotoramaItem.on('fotorama:showend', $.proxy(function (evt, fotoramaData) {
+                $(this.element).on('fotorama:showend', $.proxy(function (evt, fotoramaData) {
                     $(fotoramaData.activeFrame.$stageFrame).removeAttr('href');
                 }, this));
 
@@ -475,49 +378,26 @@ define([
                 return null;
             }
 
-            fotorama.data.map($.proxy(this._setItemType, this));
             thumbsParent = fotorama.activeFrame.$navThumbFrame.parent();
             thumbs = thumbsParent.find('.fotorama__nav__frame:visible');
 
             for (t = 0; t < thumbs.length; t++) {
-                this._setThumbsIcon(thumbs.eq(t), t);
-                this._checkForVideo(e, fotorama, t + 1);
-            }
+                tmpVideoData = this.options.VideoData[t];
+                currentItem = thumbs.eq(t);
 
-            this.fotoramaItem.on('fotorama:showend', $.proxy(function (evt, fotoramaData) {
+                if (fotorama.options.nav === 'dots' && currentItem.hasClass(iconClass)) {
+                    currentItem.removeClass(iconClass);
+                }
+
+                if (tmpVideoData.mediaType === this.VID && fotorama.options.nav === 'thumbs') {
+                    currentItem.addClass(iconClass);
+                }
+            }
+            $(this.element).on('fotorama:showend', $.proxy(function (evt, fotoramaData) {
                 $(fotoramaData.activeFrame.$stageFrame).removeAttr('href');
             }, this));
-        },
 
-        /**
-         *
-         * @param {Object} elem
-         * @param {Number} i
-         * @private
-         */
-        _setThumbsIcon: function (elem, i) {
-            var fotorama = this.fotoramaItem.data('fotorama');
-
-            if (fotorama.options.nav === 'dots' && elem.hasClass(this.TI)) {
-                elem.removeClass(this.TI);
-            }
-
-            if (this.options.videoData[i].mediaType === this.VID &&
-                fotorama.data[i].type ===  this.VID &&
-                fotorama.options.nav === 'thumbs') {
-                elem.addClass(this.TI);
-            }
-        },
-
-        /**
-         * Temporary solution with adding types for configurable product items
-         *
-         * @param {Object} item
-         * @param {Number} i
-         * @private
-         */
-        _setItemType: function (item, i) {
-            !item.type && (item.type = this.options.videoData[i].mediaType);
+            this._startPrepareForPlayer(e, fotorama);
         },
 
         /**
@@ -526,16 +406,12 @@ define([
          * @private
          */
         _attachFotoramaEvents: function () {
-            this.fotoramaItem.on('fotorama:showend', $.proxy(function (e, fotorama) {
+            $(this.element).on('fotorama:showend', $.proxy(function (e, fotorama) {
                 this._startPrepareForPlayer(e, fotorama);
             }, this));
 
-            this.fotoramaItem.on('fotorama:show', $.proxy(function (e, fotorama) {
-                this._unloadVideoPlayer(fotorama.activeFrame.$stageFrame.parent(), fotorama, true);
-            }, this));
-
-            this.fotoramaItem.on('fotorama:fullscreenexit', $.proxy(function (e, fotorama) {
-                fotorama.activeFrame.$stageFrame.find('.' + this.PV).remove();
+            $(this.element).on('fotorama:fullscreenexit', $.proxy(function (e, fotorama) {
+                fotorama.activeFrame.$stageFrame.parent().find('.' + this.PV).remove();
                 this._startPrepareForPlayer(e, fotorama);
             }, this));
         },
@@ -549,9 +425,9 @@ define([
          */
         _startPrepareForPlayer: function (e, fotorama) {
             this._unloadVideoPlayer(fotorama.activeFrame.$stageFrame.parent(), fotorama, false);
-            this._checkForVideo(e, fotorama, fotorama.activeFrame.i);
-            this._checkForVideo(e, fotorama, fotorama.activeFrame.i - 1);
-            this._checkForVideo(e, fotorama, fotorama.activeFrame.i + 1);
+            this._checkForVideo(e, fotorama, -1);
+            this._checkForVideo(e, fotorama, 0);
+            this._checkForVideo(e, fotorama, 1);
         },
 
         /**
@@ -563,31 +439,18 @@ define([
          * @private
          */
         _checkForVideo: function (e, fotorama, number) {
-            var videoData = this.options.videoData[number - 1],
-                $image = fotorama.data[number - 1];
+            var frameNumber = parseInt(fotorama.activeFrame.i, 10),
+                videoData = this.options.VideoData[frameNumber - 1 + number],
+                $image = fotorama.data[frameNumber - 1 + number];
 
             if ($image) {
-                !$image.type && this._setItemType($image, number - 1);
-
-                if ($image.type === 'image') {
-                    $image.$navThumbFrame && $image.$navThumbFrame.removeClass(this.TI);
-                    this._hideCloseVideo();
-
-                    return;
-                } else if ($image.$navThumbFrame && $image.type === 'video') {
-                    !$image.$navThumbFrame.hasClass(this.TI) && $image.$navThumbFrame.addClass(this.TI);
-                }
-
                 $image = $image.$stageFrame;
             }
 
             if ($image && videoData && videoData.mediaType === this.VID) {
                 $(fotorama.activeFrame.$stageFrame).removeAttr('href');
                 this._prepareForVideoContainer($image, videoData, fotorama, number);
-            }
-
-            if (this.isFullscreen && this.fotoramaItem.data('fotorama').activeFrame.i === number) {
-                this.fotoramaItem.data('fotorama').activeFrame.$stageFrame[0].click();
+                $('.fotorama-video-container').addClass('video-unplayed');
             }
         },
 
@@ -601,7 +464,10 @@ define([
          * @private
          */
         _prepareForVideoContainer: function ($image, videoData, fotorama, number) {
-            $image.addClass('fotorama-video-container').addClass(this.VU);
+            if (!$image.hasClass('fotorama-video-container')) {
+                $image.addClass('fotorama-video-container').addClass('video-unplayed');
+            }
+
             this._createVideoContainer(videoData, $image);
             this._setVideoEvent($image, this.PV, fotorama, number);
         },
@@ -616,8 +482,11 @@ define([
         _createVideoContainer: function (videoData, $image) {
             var videoSettings;
 
-            videoSettings = this.options.videoSettings[0];
-            $image.find('.' + this.PV).remove();
+            if ($image.find('.' + this.PV).length !== 0) {
+                return;
+            }
+
+            videoSettings = this.options.VideoSettings[0];
             $image.append(
                 '<div class="' +
                 this.PV +
@@ -642,69 +511,32 @@ define([
          * @private
          */
         _setVideoEvent: function ($image, PV, fotorama, number) {
+            var self = this;
+
             $image.find('.magnify-lens').remove();
-            $image
-                .off('click tap', $.proxy(this._clickHandler, this))
-                .on('click tap', $.proxy(this._clickHandler, this));
-            this._handleBaseVideo(fotorama, number); //check for video is it base and handle it if it's base
-        },
+            $image.on('click tap', function () {
+                if ($(this).hasClass('video-unplayed') && $(this).find('iframe').length === 0) {
+                    $('.fotorama__arr--next').hide();
+                    $('.fotorama__arr--prev').hide();
 
-        /**
-         * Hides preview arrows above video player.
-         * @private
-         */
-        _hideVideoArrows: function () {
-            var arrows = $('.' + this.FTAR);
+                    $(this).removeClass('video-unplayed');
+                    $(this).find('.' + PV).productVideoLoader();
+                    $(this).find('img').hide();
 
-            arrows.removeClass('fotorama__arr--shown');
-            arrows.removeClass('fotorama__arr--hidden');
-        },
-
-        /**
-         * @private
-         */
-        _showLoader: function () {
-            var spinner = this.fotoramaItem.find('.' + this.fotoramaSpinner);
-
-            spinner.addClass(this.fotoramaSpinnerShow);
-            this.fotoramaItem.data('fotorama').activeFrame.$stageFrame.addClass(this.PVLOADING);
-        },
-
-        /**
-         * @private
-         */
-        _hideLoader: function () {
-            var spinner = this.fotoramaItem.find('.' + this.fotoramaSpinner);
-
-            spinner.removeClass(this.fotoramaSpinnerShow);
-            this.fotoramaItem.data('fotorama').activeFrame.$stageFrame.removeClass(this.PVLOADING);
-        },
-
-        /**
-         * @param {Event} event
-         * @private
-         */
-        _clickHandler: function (event) {
-            var type;
-
-            if ($(event.target).hasClass(this.VU) && $(event.target).find('iframe').length === 0) {
-                $(event.target).removeClass(this.VU);
-                type = $(event.target).find('.' + this.PV).data('type');
-
-                if (this.vimeoJSFrameworkLoaded && type === this.VI) {
-                    $(event.target).find('.' + this.PV).productVideoLoader();
-                } else if (type === this.VI) {
-                    this._showLoader();
-                    this.onVimeoJSFramework = function () {
-                        $(event.target).find('.' + this.PV).productVideoLoader();
-                        this._hideLoader();
-                    }.bind(this);
-                } else {
-                    $(event.target).find('.' + this.PV).productVideoLoader();
+                    if (!self.isFullscreen) {
+                        self._showCloseVideo();
+                    }
+                    $('.' + self.FTAR).addClass('hidden-video');
                 }
+            });
 
-                $('.' + this.FTAR).addClass(this.isFullscreen ? 'fotorama__arr--shown' : 'fotorama__arr--hidden');
+            if (this.inFullscreen) {
+                $(this.element).data('fotorama').activeFrame.$stageFrame[0].click();
             }
+            $(this.element).on('fotorama:fullscreenenter', $.proxy(function () {
+                $(this.element).data('fotorama').activeFrame.$stageFrame[0].click();
+            }, this));
+            this._handleBaseVideo(fotorama, number); //check for video is it base and handle it if it's base
         },
 
         /**
@@ -715,7 +547,7 @@ define([
          */
         _handleBaseVideo: function (fotorama, srcNumber) {
             var waitForFroogaloop,
-                videoData = this.options.videoData,
+                videoData = this.options.VideoData,
                 activeIndex = fotorama.activeIndex,
                 number = parseInt(srcNumber, 10),
                 activeIndexIsBase = videoData[activeIndex];
@@ -724,20 +556,30 @@ define([
                 return;
             }
 
-            if (activeIndexIsBase && number === 1 && $(window).width() > this.MobileMaxWidth) {
-                if (this.options.videoData[fotorama.activeIndex].provider === this.VI) {
+            if (activeIndexIsBase && number === 0 && $(window).width() > this.MobileMaxWidth) {
+                if (this.options.VideoData[fotorama.activeIndex].provider === this.VI) {
                     waitForFroogaloop = setInterval($.proxy(function () {
                         if (window.Froogaloop) {
                             clearInterval(waitForFroogaloop);
                             fotorama.requestFullScreen();
-                            this.fotoramaItem.data('fotorama').activeFrame.$stageFrame[0].click();
+                            $(this.element).data('fotorama').activeFrame.$stageFrame[0].click();
+                            $('.fotorama__fullscreen-icon').css({
+                                opacity: '1',
+                                visibility: 'visible',
+                                display: 'block'
+                            });
                             this.Base = false;
                         }
                     }, this), 50);
                 } else { //if not a vimeo - play it immediately with a little lag in case for fotorama fullscreen
                     setTimeout($.proxy(function () {
                         fotorama.requestFullScreen();
-                        this.fotoramaItem.data('fotorama').activeFrame.$stageFrame[0].click();
+                        $(this.element).data('fotorama').activeFrame.$stageFrame[0].click();
+                        $('.fotorama__fullscreen-icon').css({
+                            opacity: '1',
+                            visibility: 'visible',
+                            display: 'block'
+                        });
                         this.Base = false;
                     }, this), 50);
                 }
@@ -754,22 +596,20 @@ define([
         _unloadVideoPlayer: function ($wrapper, current, close) {
             var self = this;
 
-            if (!$wrapper) {
-                return;
-            }
-
-            $wrapper.find('.' + this.PVLOADED).removeClass(this.PVLOADED);
-            this._hideLoader();
-
             $wrapper.find('.' + this.PV).each(function () {
                 var $item = $(this).parent(),
                     cloneVideoDiv,
                     iframeElement = $(this).find('iframe'),
                     currentIndex,
-                    itemIndex;
+                    itemIndex,
+                    videoPreview = $item.find('img').not('.fotorama__img--full');
 
                 if (iframeElement.length === 0) {
                     return;
+                }
+
+                if (!videoPreview.is(':visible') && !self.inFullscreen) {
+                    videoPreview.show();
                 }
 
                 currentIndex = current.activeFrame.$stageFrame.index();
@@ -787,19 +627,23 @@ define([
                 cloneVideoDiv = $(this).clone();
                 $(this).remove();
                 $item.append(cloneVideoDiv);
-                $item.addClass(self.VU);
-
+                $item.addClass('video-unplayed');
+                $('.fotorama__arr--next').show();
+                $('.fotorama__arr--prev').show();
                 self._hideCloseVideo();
-                self._hideVideoArrows();
 
-                if (self.isFullscreen && !self.fotoramaItem.data('fotorama').options.fullscreen.arrows) {
-                    if ($('.' + self.FTAR + '--prev').is(':focus') || $('.' + self.FTAR + '--next').is(':focus')) {
-                        $(self.FTCF).focus();
-                    }
-                }
             });
+
+            $('.' + this.FTAR).removeClass('hidden-video');
         }
     });
 
-    return $.mage.AddFotoramaVideoEvents;
+    return function (config, element) {
+        $('.gallery-placeholder').on('fotorama:ready', function () {
+            $(element).find('.fotorama').AddFotoramaVideoEvents({
+                VideoData: config.fotoramaVideoData || [],
+                VideoSettings: config.fotoramaVideoSettings || {}
+            });
+        });
+    };
 });

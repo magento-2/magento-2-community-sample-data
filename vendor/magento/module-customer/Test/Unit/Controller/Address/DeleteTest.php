@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Address;
@@ -11,13 +11,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DeleteTest extends \PHPUnit\Framework\TestCase
+class DeleteTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Delete */
     protected $model;
-
-    /** @var \Magento\Framework\App\Action\Context */
-    protected $context;
 
     /** @var \Magento\Customer\Model\Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $sessionMock;
@@ -51,32 +48,8 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
         $this->validatorMock = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $formFactoryMock = $this->getMockBuilder(\Magento\Customer\Model\Metadata\FormFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->addressRepositoryMock = $this->getMockBuilder(\Magento\Customer\Api\AddressRepositoryInterface::class)
             ->getMockForAbstractClass();
-        $addressInterfaceFactoryMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $regionInterfaceFactoryMock = $this->getMockBuilder(\Magento\Customer\Api\Data\RegionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $dataObjectProcessorMock = $this->getMockBuilder(\Magento\Framework\Reflection\DataObjectProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dataObjectHelperMock = $this->getMockBuilder(\Magento\Framework\Api\DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $forwardFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $pageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
             ->getMockForAbstractClass();
         $this->address = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
@@ -85,34 +58,25 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
         $this->resultRedirectFactory =
             $this->getMockBuilder(\Magento\Framework\Controller\Result\RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+                ->disableOriginalConstructor()
+                ->getMock();
         $this->resultRedirect = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+            ->getMockForAbstractClass();
 
         $objectManager = new ObjectManagerHelper($this);
-        $this->context = $objectManager->getObject(
-            \Magento\Framework\App\Action\Context::class,
+        $this->model =  $objectManager->getObject(
+            Delete::class,
             [
                 'request' => $this->request,
-                'messageManager' => $this->messageManager,
                 'resultRedirectFactory' => $this->resultRedirectFactory,
+                'messageManager' => $this->messageManager,
+                'customerSession' => $this->sessionMock,
+                'formKeyValidator' => $this->validatorMock,
+                'addressRepository' => $this->addressRepositoryMock
             ]
-        );
-
-        $this->model = new Delete(
-            $this->context,
-            $this->sessionMock,
-            $this->validatorMock,
-            $formFactoryMock,
-            $this->addressRepositoryMock,
-            $addressInterfaceFactoryMock,
-            $regionInterfaceFactoryMock,
-            $dataObjectProcessorMock,
-            $dataObjectHelperMock,
-            $forwardFactoryMock,
-            $pageFactoryMock
         );
     }
 

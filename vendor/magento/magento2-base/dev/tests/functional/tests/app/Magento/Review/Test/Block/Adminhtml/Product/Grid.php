@@ -1,36 +1,37 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Review\Test\Block\Adminhtml\Product;
 
-use Magento\Backend\Test\Block\Widget\Grid as AbstractGrid;
+use Magento\Backend\Test\Block\Widget\Grid as ParentGrid;
 
 /**
- * Review catalog product grid.
+ * Class Grid
+ * Review catalog product grid
  */
-class Grid extends AbstractGrid
+class Grid extends ParentGrid
 {
-    /**
-     * First row selector
-     *
-     * @var string
-     */
-    protected $firstRowSelector = './/tbody/tr[1]';
-
     /**
      * Grid filter selectors
      *
      * @var array
      */
     protected $filters = [
-        'title' => [
-            'selector' => 'input[name="title"]',
+        'id' => [
+            'selector' => 'input[name="entity_id"]',
         ],
-        'sku' => [
-            'selector' => 'input[name="sku"]',
+        'name' => [
+            'selector' => 'input[name="name"]',
         ],
     ];
+
+    /**
+     * Locator value for link in action column
+     *
+     * @var string
+     */
+    protected $editLink = '.col-entity_id';
 }

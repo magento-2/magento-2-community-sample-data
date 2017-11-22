@@ -1,47 +1,42 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class MerchantAccountTest extends Setup
+class Braintree_MerchantAccountTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreateMerchantAccountWithAllParams()
+    function testCreateMerchantAccountWithAllParams()
     {
-        $params = [
+        $params = array(
             "id" => "sub_merchant_account",
             "status" => "active",
-            "masterMerchantAccount" => [
+            "masterMerchantAccount" => array(
                 "id" => "master_merchant_account",
                 "status" => "active"
-            ],
-            "individual" => [
+            ),
+            "individual" => array(
                 "firstName" => "John",
                 "lastName" => "Doe",
                 "email" => "john.doe@example.com",
                 "dateOfBirth" => "1970-01-01",
                 "phone" => "3125551234",
                 "ssnLast4" => "6789",
-                "address" => [
+                "address" => array(
                     "streetAddress" => "123 Fake St",
                     "locality" => "Chicago",
                     "region" => "IL",
                     "postalCode" => "60622",
-                ]
-            ],
-            "business" => [
+                )
+            ),
+            "business" => array(
                 "dbaName" => "James's Bloggs",
                 "taxId" => "123456789",
-            ],
-            "funding" => [
+            ),
+            "funding" => array(
                 "accountNumberLast4" => "8798",
                 "routingNumber" => "071000013",
                 "descriptor" => "Joes Bloggs MI",
-            ]
-        ];
-        $merchantAccount = Braintree\MerchantAccount::factory($params);
+            )
+        );
+        $merchantAccount = Braintree_MerchantAccount::factory($params);
 
 
         $this->assertEquals($merchantAccount->status, "active");

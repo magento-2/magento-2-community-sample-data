@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Ui\Component\Listing\Column;
@@ -9,9 +9,7 @@ use Magento\Framework\View\Element\UiComponentInterface;
 
 class InlineEditUpdater
 {
-    /**
-     * @var \Magento\Customer\Ui\Component\Listing\Column\ValidationRules
-     */
+    /** @var ValidationRules  */
     protected $validationRules;
 
     /**
@@ -36,7 +34,7 @@ class InlineEditUpdater
     }
 
     /**
-     * Add editor config to component configuration with correct editorType
+     * Add editor config
      *
      * @param UiComponentInterface $column
      * @param string $frontendInput
@@ -52,15 +50,12 @@ class InlineEditUpdater
     ) {
         if (in_array($frontendInput, $this->editableFields)) {
             $config = $column->getConfiguration();
-            if (!(isset($config['editor']) && isset($config['editor']['editorType']))) {
-                if (isset($config['editor']) && is_string($config['editor'])) {
-                    $editorType = $config['editor'];
-                } elseif (isset($config['dataType'])) {
-                    $editorType = $config['dataType'];
-                } else {
-                    $editorType = $frontendInput;
-                }
 
+            $editorType = $config['dataType'];
+            if (isset($config['editor']) && is_string($config['editor'])) {
+                $editorType = $config['editor'];
+            }
+            if (!(isset($config['editor']) && isset($config['editor']['editorType']))) {
                 $config['editor'] = [
                     'editorType' => $editorType
                 ];

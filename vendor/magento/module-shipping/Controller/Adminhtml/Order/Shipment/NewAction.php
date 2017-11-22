@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -11,9 +11,7 @@ use Magento\Backend\App\Action;
 class NewAction extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -47,7 +45,7 @@ class NewAction extends \Magento\Backend\App\Action
         $this->shipmentLoader->setTracking($this->getRequest()->getParam('tracking'));
         $shipment = $this->shipmentLoader->load();
         if ($shipment) {
-            $comment = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getCommentText(true);
+            $comment = $this->_objectManager->get('Magento\Backend\Model\Session')->getCommentText(true);
             if ($comment) {
                 $shipment->setCommentText($comment);
             }

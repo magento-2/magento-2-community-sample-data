@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Model\ResourceModel\Db\Collection;
 
-class AbstractTest extends \PHPUnit\Framework\TestCase
+class AbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
@@ -15,14 +15,14 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $resourceModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\App\ResourceConnection::class);
+            ->get('Magento\Framework\App\ResourceConnection');
         $context = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Model\ResourceModel\Db\Context::class,
+            '\Magento\Framework\Model\ResourceModel\Db\Context',
             ['resource' => $resourceModel]
         );
 
         $resource = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\Db\AbstractDb::class,
+            'Magento\Framework\Model\ResourceModel\Db\AbstractDb',
             [$context],
             '',
             true,
@@ -40,21 +40,19 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
         );
         $resource->expects($this->any())->method('getIdFieldName')->will($this->returnValue('website_id'));
 
-        $fetchStrategy = $this->getMockForAbstractClass(
-            \Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class
-        );
+        $fetchStrategy = $this->getMockForAbstractClass('Magento\Framework\Data\Collection\Db\FetchStrategyInterface');
 
         $eventManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Event\ManagerInterface::class
+            'Magento\Framework\Event\ManagerInterface'
         );
 
         $entityFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Data\Collection\EntityFactory::class
+            'Magento\Framework\Data\Collection\EntityFactory'
         );
-        $logger = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Psr\Log\LoggerInterface::class);
+        $logger = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Psr\Log\LoggerInterface');
 
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class,
+            'Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection',
             [$entityFactory, $logger, $fetchStrategy, $eventManager, null, $resource]
         );
     }

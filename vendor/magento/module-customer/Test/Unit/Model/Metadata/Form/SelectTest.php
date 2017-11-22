@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
@@ -94,7 +94,7 @@ class SelectTest extends AbstractFormTestCase
      */
     public function testOutputValue($value, $expected)
     {
-        $option1 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option1 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();
@@ -105,7 +105,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->will($this->returnValue('14'));
 
-        $option2 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option2 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();
@@ -116,7 +116,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->will($this->returnValue('some key'));
 
-        $option3 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option3 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Console\Command;
@@ -14,12 +14,8 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductColl
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Symfony\Component\Console\Tester\CommandTester;
-use \Magento\Framework\App\Area;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
+class ImagesResizeCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ImagesResizeCommand
@@ -58,11 +54,11 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->appState = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $this->appState = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productRepository = $this->getMockBuilder(\Magento\Catalog\Api\ProductRepositoryInterface::class)
+        $this->productRepository = $this->getMockBuilder('Magento\Catalog\Api\ProductRepositoryInterface')
             ->getMockForAbstractClass();
 
         $this->prepareProductCollection();
@@ -80,7 +76,7 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
     {
         $this->appState->expects($this->once())
             ->method('setAreaCode')
-            ->with(Area::AREA_GLOBAL)
+            ->with('catalog')
             ->willReturnSelf();
 
         $this->productCollection->expects($this->once())
@@ -102,14 +98,14 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
 
         $this->appState->expects($this->once())
             ->method('setAreaCode')
-            ->with(Area::AREA_GLOBAL)
+            ->with('catalog')
             ->willReturnSelf();
 
         $this->productCollection->expects($this->once())
             ->method('getAllIds')
             ->willReturn($productsIds);
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -143,14 +139,14 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
 
         $this->appState->expects($this->once())
             ->method('setAreaCode')
-            ->with(Area::AREA_GLOBAL)
+            ->with('catalog')
             ->willReturnSelf();
 
         $this->productCollection->expects($this->once())
             ->method('getAllIds')
             ->willReturn($productsIds);
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -176,14 +172,14 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
     protected function prepareProductCollection()
     {
         $this->productCollectionFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class
+            'Magento\Catalog\Model\ResourceModel\Product\CollectionFactory'
         )
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
         $this->productCollection = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
+            'Magento\Catalog\Model\ResourceModel\Product\Collection'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -195,12 +191,12 @@ class ImagesResizeCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareImageCache()
     {
-        $this->imageCacheFactory = $this->getMockBuilder(\Magento\Catalog\Model\Product\Image\CacheFactory::class)
+        $this->imageCacheFactory = $this->getMockBuilder('Magento\Catalog\Model\Product\Image\CacheFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->imageCache = $this->getMockBuilder(\Magento\Catalog\Model\Product\Image\Cache::class)
+        $this->imageCache = $this->getMockBuilder('Magento\Catalog\Model\Product\Image\Cache')
             ->disableOriginalConstructor()
             ->getMock();
 

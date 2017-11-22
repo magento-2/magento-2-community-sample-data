@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Test\Unit\Model\ResourceModel\Oauth;
@@ -8,7 +8,7 @@ namespace Magento\Integration\Test\Unit\Model\ResourceModel\Oauth;
 /**
  * Unit test for \Magento\Integration\Model\ResourceModel\Oauth\Nonce
  */
-class NonceTest extends \PHPUnit\Framework\TestCase
+class NonceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -25,14 +25,14 @@ class NonceTest extends \PHPUnit\Framework\TestCase
      */
     protected $nonceResource;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $this->connectionMock = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
 
-        $this->resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resourceMock = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->resourceMock->expects($this->any())->method('getConnection')->willReturn($this->connectionMock);
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('\Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->once())->method('getResources')->willReturn($this->resourceMock);
 
         $this->nonceResource = new \Magento\Integration\Model\ResourceModel\Oauth\Nonce($contextMock);
@@ -47,7 +47,7 @@ class NonceTest extends \PHPUnit\Framework\TestCase
 
     public function testSelectByCompositeKey()
     {
-        $selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $selectMock = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $selectMock->expects($this->once())->method('from')->will($this->returnValue($selectMock));
         $selectMock->expects($this->exactly(2))->method('where')->will($this->returnValue($selectMock));
         $this->connectionMock->expects($this->once())->method('select')->willReturn($selectMock);

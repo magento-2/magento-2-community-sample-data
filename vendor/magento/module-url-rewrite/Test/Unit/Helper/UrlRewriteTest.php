@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\UrlRewrite\Test\Unit\Helper;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class UrlRewriteTest extends \PHPUnit\Framework\TestCase
+class UrlRewriteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\UrlRewrite\Helper\UrlRewrite
@@ -16,9 +16,7 @@ class UrlRewriteTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_helper = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\UrlRewrite\Helper\UrlRewrite::class
-        );
+        $this->_helper = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject('Magento\UrlRewrite\Helper\UrlRewrite');
     }
 
     /**

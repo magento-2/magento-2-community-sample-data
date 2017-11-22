@@ -2,12 +2,12 @@
 /**
  * Test JSON Renderer for REST.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit\Rest\Response\Renderer;
 
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Webapi\Rest\Response\Renderer\Json */
     protected $_restJsonRenderer;
@@ -18,7 +18,7 @@ class JsonTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** Prepare mocks and objects for SUT constructor. */
-        $this->encoderMock = $this->getMockBuilder(\Magento\Framework\Json\Encoder::class)
+        $this->encoderMock = $this->getMockBuilder('Magento\Framework\Json\Encoder')
             ->disableOriginalConstructor()
             ->setMethods(['encode'])
             ->getMock();

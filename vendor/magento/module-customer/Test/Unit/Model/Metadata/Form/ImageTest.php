@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
@@ -8,38 +8,28 @@ namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Model\FileProcessor;
-use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
-use Magento\Framework\Api\Data\ImageContentInterfaceFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ImageTest extends AbstractFormTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Url\EncoderInterface
      */
-    private $urlEncode;
+    protected $urlEncode;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\MediaStorage\Model\File\Validator\NotProtectedExtension
      */
-    private $fileValidatorMock;
+    protected $fileValidatorMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Filesystem
      */
-    private $fileSystemMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Request\Http
-     */
-    private $requestMock;
+    protected $fileSystemMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\File\UploaderFactory
      */
-    private $uploaderFactoryMock;
+    protected $uploaderFactoryMock;
 
     /**
      * @var FileProcessor|\PHPUnit_Framework_MockObject_MockObject
@@ -51,44 +41,36 @@ class ImageTest extends AbstractFormTestCase
      */
     private $imageContentFactory;
 
-    /**
-     * @var \Magento\Customer\Model\FileProcessorFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $fileProcessorFactoryMock;
-
     protected function setUp()
     {
         parent::setUp();
 
-        $this->urlEncode = $this->getMockBuilder(\Magento\Framework\Url\EncoderInterface::class)
+        $this->urlEncode = $this->getMockBuilder('Magento\Framework\Url\EncoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileValidatorMock = $this->getMockBuilder(NotProtectedExtension::class)
+
+        $this->fileValidatorMock = $this->getMockBuilder(
+            'Magento\MediaStorage\Model\File\Validator\NotProtectedExtension'
+        )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileSystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+
+        $this->fileSystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+
+        $this->uploaderFactoryMock = $this->getMockBuilder('Magento\Framework\File\UploaderFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->uploaderFactoryMock = $this->getMockBuilder(\Magento\Framework\File\UploaderFactory::class)
+
+        $this->fileProcessorMock = $this->getMockBuilder('Magento\Customer\Model\FileProcessor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileProcessorMock = $this->getMockBuilder(\Magento\Customer\Model\FileProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->imageContentFactory = $this->getMockBuilder(ImageContentInterfaceFactory::class)
+
+        $this->imageContentFactory = $this->getMockBuilder('Magento\Framework\Api\Data\ImageContentInterfaceFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->fileProcessorFactoryMock = $this->getMockBuilder(\Magento\Customer\Model\FileProcessorFactory::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileProcessorFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->fileProcessorMock);
     }
 
     /**
@@ -97,7 +79,7 @@ class ImageTest extends AbstractFormTestCase
      */
     private function initialize(array $data)
     {
-        return new \Magento\Customer\Model\Metadata\Form\Image(
+        $model = new \Magento\Customer\Model\Metadata\Form\Image(
             $this->localeMock,
             $this->loggerMock,
             $this->attributeMetadataMock,
@@ -108,10 +90,20 @@ class ImageTest extends AbstractFormTestCase
             $this->urlEncode,
             $this->fileValidatorMock,
             $this->fileSystemMock,
-            $this->uploaderFactoryMock,
-            $this->fileProcessorFactoryMock,
-            $this->imageContentFactory
+            $this->uploaderFactoryMock
         );
+
+        $reflection = new \ReflectionClass(get_class($model));
+        $reflectionProperty = $reflection->getProperty('fileProcessor');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($model, $this->fileProcessorMock);
+
+        $reflection = new \ReflectionClass(get_class($model));
+        $reflectionProperty = $reflection->getProperty('imageContentFactory');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($model, $this->imageContentFactory);
+
+        return $model;
     }
 
     public function testValidateIsNotValidFile()
@@ -162,6 +154,43 @@ class ImageTest extends AbstractFormTestCase
         ]);
 
         $this->assertTrue($model->validateValue($value));
+    }
+
+    public function validateValueToUploadDataProvider()
+    {
+        $imagePath = __DIR__ . '/_files/logo.gif';
+        return [
+            [
+                ['"realFileName" is not a valid file.'],
+                ['tmp_name' => 'tmp_file', 'name' => 'realFileName'],
+                ['valid' => false],
+            ],
+            [true, ['tmp_name' => $imagePath, 'name' => 'logo.gif']]
+        ];
+    }
+
+    public function testCompactValueUiComponentCustomerNotExists()
+    {
+        $originValue = 'filename.ext1';
+
+        $value = [
+            'file' => 'filename.ext2',
+            'name' => 'filename.ext2',
+            'type' => 'image',
+        ];
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('isExist')
+            ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
+            ->willReturn(false);
+
+        $model = $this->initialize([
+            'value' => $originValue,
+            'isAjax' => false,
+            'entityTypeCode' => CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
+        ]);
+
+        $this->assertEquals($originValue, $model->compactValue($value));
     }
 
     public function testValidateMaxFileSize()
@@ -376,29 +405,5 @@ class ImageTest extends AbstractFormTestCase
         ]);
 
         $this->assertEquals($imageContentMock, $model->compactValue($value));
-    }
-
-    public function testCompactValueUiComponentCustomerNotExists()
-    {
-        $originValue = 'filename.ext1';
-
-        $value = [
-            'file' => 'filename.ext2',
-            'name' => 'filename.ext2',
-            'type' => 'image',
-        ];
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('isExist')
-            ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
-            ->willReturn(false);
-
-        $model = $this->initialize([
-            'value' => $originValue,
-            'isAjax' => false,
-            'entityTypeCode' => CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
-        ]);
-
-        $this->assertEquals($originValue, $model->compactValue($value));
     }
 }

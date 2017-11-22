@@ -125,6 +125,7 @@ class Zend_Service_LiveDocx
      * {/code}
      *
      * @param  array|Zend_Config $options
+     * @return void
      * @throws Zend_Service_LiveDocx_Exception
      * @since  LiveDocx 1.0
      */
@@ -220,6 +221,9 @@ class Zend_Service_LiveDocx
     /**
      * Log in to LiveDocx service
      *
+     * @param string $username
+     * @param string $password
+     *
      * @throws Zend_Service_LiveDocx_Exception
      * @return boolean
      * @since  LiveDocx 1.2
@@ -300,7 +304,6 @@ class Zend_Service_LiveDocx
     /**
      * Set username
      *
-     * @param string $username
      * @return Zend_Service_LiveDocx
      * @since  LiveDocx 1.0
      */
@@ -313,7 +316,6 @@ class Zend_Service_LiveDocx
     /**
      * Set password
      *
-     * @param string $password
      * @return Zend_Service_LiveDocx
      * @since  LiveDocx 1.0
      */
@@ -326,7 +328,6 @@ class Zend_Service_LiveDocx
     /**
      * Set WSDL of LiveDocx web service
      *
-     * @param string $wsdl
      * @return Zend_Service_LiveDocx
      * @since  LiveDocx 1.0
      */
@@ -369,7 +370,7 @@ class Zend_Service_LiveDocx
     /**
      * Return WSDL of LiveDocx web service
      *
-     * @return string
+     * @return Zend_Service_LiveDocx
      * @since  LiveDocx 1.0
      */
     public function getWsdl()

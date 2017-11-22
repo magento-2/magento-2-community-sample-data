@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CheckoutAgreements\Model\Checkout\Plugin;
@@ -32,6 +32,7 @@ class Validation
      * @param \Magento\Checkout\Api\AgreementsValidatorInterface $agreementsValidator
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration
      * @param \Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface $checkoutAgreementsRepository
+     * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Checkout\Api\AgreementsValidatorInterface $agreementsValidator,
@@ -47,7 +48,7 @@ class Validation
      * @param \Magento\Checkout\Api\PaymentInformationManagementInterface $subject
      * @param int $cartId
      * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
-     * @param \Magento\Quote\Api\Data\AddressInterface|null $billingAddress
+     * @param \Magento\Quote\Api\Data\AddressInterface $billingAddress
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -55,10 +56,10 @@ class Validation
         \Magento\Checkout\Api\PaymentInformationManagementInterface $subject,
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
-        \Magento\Quote\Api\Data\AddressInterface $billingAddress = null
+        \Magento\Quote\Api\Data\AddressInterface $billingAddress
     ) {
         if ($this->isAgreementEnabled()) {
-            $this->validateAgreements($paymentMethod);
+            $this->validateAgreements($paymentMethod->getExtensionAttributes()->getAgreementIds());
         }
     }
 
@@ -66,7 +67,7 @@ class Validation
      * @param \Magento\Checkout\Api\PaymentInformationManagementInterface $subject
      * @param int $cartId
      * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
-     * @param \Magento\Quote\Api\Data\AddressInterface|null $billingAddress
+     * @param \Magento\Quote\Api\Data\AddressInterface $billingAddress
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -74,24 +75,20 @@ class Validation
         \Magento\Checkout\Api\PaymentInformationManagementInterface $subject,
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
-        \Magento\Quote\Api\Data\AddressInterface $billingAddress = null
+        \Magento\Quote\Api\Data\AddressInterface $billingAddress
     ) {
         if ($this->isAgreementEnabled()) {
-            $this->validateAgreements($paymentMethod);
+            $this->validateAgreements($paymentMethod->getExtensionAttributes()->getAgreementIds());
         }
     }
 
     /**
-     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
+     * @param int[] $agreements
      * @throws \Magento\Framework\Exception\CouldNotSaveException
      * @return void
      */
-    protected function validateAgreements(\Magento\Quote\Api\Data\PaymentInterface $paymentMethod)
+    protected function validateAgreements($agreements)
     {
-        $agreements = $paymentMethod->getExtensionAttributes() === null
-            ? []
-            : $paymentMethod->getExtensionAttributes()->getAgreementIds();
-
         if (!$this->agreementsValidator->isValid($agreements)) {
             throw new \Magento\Framework\Exception\CouldNotSaveException(
                 __('Please agree to all the terms and conditions before placing the order.')

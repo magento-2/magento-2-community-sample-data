@@ -65,14 +65,6 @@ class RootAliasPackage extends AliasPackage implements RootPackageInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfig()
-    {
-        return $this->aliasOf->getConfig();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setRequires(array $require)
     {
         $this->requires = $this->replaceSelfVersionDependencies($require, 'requires');

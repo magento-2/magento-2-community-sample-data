@@ -1,16 +1,11 @@
 <?php
-namespace Test\Unit\Result;
+require_once realpath(dirname(__FILE__)) . '/../../TestHelper.php';
 
-require_once dirname(dirname(__DIR__)) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class ErrorTest extends Setup
+class Braintree_Result_ErrorTest extends PHPUnit_Framework_TestCase
 {
-    public function testCallingNonExsitingFieldReturnsNull()
+    function testCallingNonExsitingFieldReturnsNull()
     {
-        $result = new Braintree\Result\Error(['errors' => [], 'params' => [], 'message' => 'briefly describe']);
+        $result = new Braintree_Result_Error(array('errors' => array(), 'params' => array(), 'message' => 'briefly describe'));
         $this->assertNull($result->transaction);
     }
 }

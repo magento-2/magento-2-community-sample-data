@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,6 @@ use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Magento\Customer\Api\AccountManagementInterface as AccountManagement;
 use Magento\Customer\Api\AddressRepositoryInterface as CustomerAddressRepository;
 use Magento\Quote\Model\Quote as QuoteEntity;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Customer
@@ -33,37 +32,18 @@ class CustomerManagement
     protected $accountManagement;
 
     /**
-     * @var \Magento\Framework\Validator\Factory
-     */
-    private $validatorFactory;
-
-    /**
-     * @var \Magento\Customer\Model\AddressFactory
-     */
-    private $addressFactory;
-
-    /**
-     * CustomerManagement constructor.
      * @param CustomerRepository $customerRepository
      * @param CustomerAddressRepository $customerAddressRepository
      * @param AccountManagement $accountManagement
-     * @param \Magento\Framework\Validator\Factory|null $validatorFactory
-     * @param \Magento\Customer\Model\AddressFactory|null $addressFactory
      */
     public function __construct(
         CustomerRepository $customerRepository,
         CustomerAddressRepository $customerAddressRepository,
-        AccountManagement $accountManagement,
-        \Magento\Framework\Validator\Factory $validatorFactory = null,
-        \Magento\Customer\Model\AddressFactory $addressFactory = null
+        AccountManagement $accountManagement
     ) {
         $this->customerRepository = $customerRepository;
         $this->customerAddressRepository = $customerAddressRepository;
         $this->accountManagement = $accountManagement;
-        $this->validatorFactory = $validatorFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\Framework\Validator\Factory::class);
-        $this->addressFactory = $addressFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\Customer\Model\AddressFactory::class);
     }
 
     /**
@@ -82,6 +62,8 @@ class CustomerManagement
                 $quote->getPasswordHash()
             );
             $quote->setCustomer($customer);
+        } else {
+            $this->customerRepository->save($customer);
         }
         if (!$quote->getBillingAddress()->getId() && $customer->getDefaultBilling()) {
             $quote->getBillingAddress()->importCustomerAddressData(
@@ -97,42 +79,6 @@ class CustomerManagement
                 $this->customerAddressRepository->getById($customer->getDefaultShipping())
             );
             $quote->getShippingAddress()->setCustomerAddressId($customer->getDefaultShipping());
-        }
-    }
-
-    /**
-     * Validate Quote Addresses
-     *
-     * @param Quote $quote
-     * @throws \Magento\Framework\Validator\Exception
-     * @return void
-     */
-    public function validateAddresses(QuoteEntity $quote)
-    {
-        $addresses = [];
-        if ($quote->getBillingAddress()->getCustomerAddressId()) {
-            $addresses[] = $this->customerAddressRepository->getById(
-                $quote->getBillingAddress()->getCustomerAddressId()
-            );
-        }
-        if ($quote->getShippingAddress()->getCustomerAddressId()) {
-            $addresses[] = $this->customerAddressRepository->getById(
-                $quote->getShippingAddress()->getCustomerAddressId()
-            );
-        }
-        if (!empty($addresses)) {
-            foreach ($addresses as $address) {
-                $validator = $this->validatorFactory->createValidator('customer_address', 'save');
-                $addressModel = $this->addressFactory->create();
-                $addressModel->updateData($address);
-                if (!$validator->isValid($addressModel)) {
-                    throw new \Magento\Framework\Validator\Exception(
-                        null,
-                        null,
-                        $validator->getMessages()
-                    );
-                }
-            }
         }
     }
 }

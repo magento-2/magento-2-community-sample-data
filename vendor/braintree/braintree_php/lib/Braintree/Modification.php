@@ -1,11 +1,17 @@
 <?php
-namespace Braintree;
-
-class Modification extends Base
+class Braintree_Modification extends Braintree
 {
     protected function _initialize($attributes)
     {
         $this->_attributes = $attributes;
+
+        $addOnArray = array();
+        if (isset($attributes['addOns'])) {
+            foreach ($attributes['addOns'] AS $addOn) {
+                $addOnArray[] = Braintree_addOn::factory($addOn);
+            }
+        }
+        $this->_attributes['addOns'] = $addOnArray;
     }
 
     public static function factory($attributes)
@@ -14,9 +20,4 @@ class Modification extends Base
         $instance->_initialize($attributes);
         return $instance;
     }
-
-    public function __toString() {
-        return get_called_class() . '[' . Util::attributesToString($this->_attributes) . ']';
-    }
 }
-class_alias('Braintree\Modification', 'Braintree_Modification');

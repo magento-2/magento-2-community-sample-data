@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Ui\Component\Listing\Column;
@@ -13,9 +13,7 @@ use Magento\Customer\Api\Data\AttributeMetadataInterface as AttributeMetadata;
 
 class AttributeColumn extends Column
 {
-    /**
-     * @var \Magento\Customer\Ui\Component\Listing\AttributeRepository
-     */
+    /** @var AttributeRepository */
     protected $attributeRepository;
 
     /**

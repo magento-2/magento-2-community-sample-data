@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Model\Checks;
 
 use \Magento\Payment\Model\Checks\Composite;
 
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider paymentMethodDataProvider
@@ -16,15 +16,15 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsApplicable($expectation)
     {
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)->disableOriginalConstructor()->setMethods(
+        $quote = $this->getMockBuilder('Magento\Quote\Model\Quote')->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
         $paymentMethod = $this->getMockBuilder(
-            \Magento\Payment\Model\MethodInterface::class
+            '\Magento\Payment\Model\MethodInterface'
         )->disableOriginalConstructor()->setMethods([])->getMock();
 
         $specification = $this->getMockBuilder(
-            \Magento\Payment\Model\Checks\SpecificationInterface::class
+            'Magento\Payment\Model\Checks\SpecificationInterface'
         )->disableOriginalConstructor()->setMethods([])->getMock();
         $specification->expects($this->once())->method('isApplicable')->with($paymentMethod, $quote)->will(
             $this->returnValue($expectation)

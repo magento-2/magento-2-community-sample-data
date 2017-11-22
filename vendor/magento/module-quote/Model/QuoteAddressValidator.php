@@ -1,16 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model;
 
-use Magento\Framework\Exception\NoSuchEntityException;
-
-/**
- * Quote shipping/billing address validator service.
- *
- */
+/** Quote shipping/billing address validator service. */
 class QuoteAddressValidator
 {
     /**
@@ -69,22 +64,34 @@ class QuoteAddressValidator
             }
         }
 
-        if ($addressData->getCustomerAddressId()) {
+        // validate address id
+        if ($addressData->getId()) {
             try {
-                $this->addressRepository->getById($addressData->getCustomerAddressId());
-            } catch (NoSuchEntityException $e) {
+                $address = $this->addressRepository->getById($addressData->getId());
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
                 throw new \Magento\Framework\Exception\NoSuchEntityException(
                     __('Invalid address id %1', $addressData->getId())
                 );
             }
 
+            // check correspondence between customer id and address id
+            if ($addressData->getCustomerId()) {
+                if ($address->getCustomerId() != $addressData->getCustomerId()) {
+                    throw new \Magento\Framework\Exception\NoSuchEntityException(
+                        __('Invalid address id %1', $addressData->getId())
+                    );
+                }
+            }
+        }
+
+        if ($addressData->getCustomerAddressId()) {
             $applicableAddressIds = array_map(function ($address) {
                 /** @var \Magento\Customer\Api\Data\AddressInterface $address */
                 return $address->getId();
-            }, $this->customerRepository->getById($addressData->getCustomerId())->getAddresses());
+            }, $this->customerSession->getCustomerDataObject()->getAddresses());
             if (!in_array($addressData->getCustomerAddressId(), $applicableAddressIds)) {
                 throw new \Magento\Framework\Exception\NoSuchEntityException(
-                    __('Invalid customer address id %1', $addressData->getCustomerAddressId())
+                    __('Invalid address id %1', $addressData->getCustomerAddressId())
                 );
             }
         }

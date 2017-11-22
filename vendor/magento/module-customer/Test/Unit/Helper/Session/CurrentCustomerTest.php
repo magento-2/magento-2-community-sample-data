@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Customer\Test\Unit\Helper\Session;
 
-class CurrentCustomerTest extends \PHPUnit\Framework\TestCase
+class CurrentCustomerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Helper\Session\CurrentCustomer
@@ -51,7 +51,7 @@ class CurrentCustomerTest extends \PHPUnit\Framework\TestCase
     protected $moduleManagerMock;
 
     /**
-     * @var \Magento\Framework\App\ViewInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\ViewInterface
      */
     protected $viewMock;
 
@@ -68,16 +68,34 @@ class CurrentCustomerTest extends \PHPUnit\Framework\TestCase
     /**
      * Test setup
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
-        $this->layoutMock = $this->createMock(\Magento\Framework\View\Layout::class);
-        $this->customerInterfaceFactoryMock = $this->createPartialMock(\Magento\Customer\Api\Data\CustomerInterfaceFactory::class, ['create', 'setGroupId']);
-        $this->customerDataMock = $this->createMock(\Magento\Customer\Api\Data\CustomerInterface::class);
-        $this->customerRepositoryMock = $this->createMock(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->moduleManagerMock = $this->createMock(\Magento\Framework\Module\Manager::class);
-        $this->viewMock = $this->createMock(\Magento\Framework\App\View::class);
+        $this->customerSessionMock = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
+        $this->layoutMock = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
+        $this->customerInterfaceFactoryMock = $this->getMock(
+            'Magento\Customer\Api\Data\CustomerInterfaceFactory',
+            ['create', 'setGroupId'],
+            [],
+            '',
+            false
+        );
+        $this->customerDataMock = $this->getMock(
+            'Magento\Customer\Api\Data\CustomerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->customerRepositoryMock = $this->getMock(
+            'Magento\Customer\Api\CustomerRepositoryInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->moduleManagerMock = $this->getMock('Magento\Framework\Module\Manager', [], [], '', false);
+        $this->viewMock = $this->getMock('Magento\Framework\App\View', [], [], '', false);
 
         $this->currentCustomer = new \Magento\Customer\Helper\Session\CurrentCustomer(
             $this->customerSessionMock,

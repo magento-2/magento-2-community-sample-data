@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CurrencySymbol\Controller\Adminhtml\System\Currency;
@@ -76,7 +76,7 @@ class FetchRatesTest extends \Magento\TestFramework\TestCase\AbstractBackendCont
      */
     protected function runActionWithMockedImportService(array $messages = [])
     {
-        $importServiceMock = $this->getMockBuilder(\Magento\Directory\Model\Currency\Import\Webservicex::class)
+        $importServiceMock = $this->getMockBuilder('\Magento\Directory\Model\Currency\Import\Webservicex')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,34 +86,34 @@ class FetchRatesTest extends \Magento\TestFramework\TestCase\AbstractBackendCont
         $importServiceMock->method('getMessages')
             ->willReturn($messages);
 
-        $backendSessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
+        $backendSessionMock = $this->getMockBuilder('Magento\Backend\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $importServiceFactoryMock = $this->getMockBuilder(\Magento\Directory\Model\Currency\Import\Factory::class)
+        $importServiceFactoryMock = $this->getMockBuilder('\Magento\Directory\Model\Currency\Import\Factory')
             ->disableOriginalConstructor()
             ->getMock();
 
         $importServiceFactoryMock->method('create')
             ->willReturn($importServiceMock);
 
-        $objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerMap = [
-            [\Magento\Directory\Model\Currency\Import\Factory::class, $importServiceFactoryMock],
-            [\Magento\Backend\Model\Session::class, $backendSessionMock]
+            ['Magento\Directory\Model\Currency\Import\Factory', $importServiceFactoryMock],
+            ['Magento\Backend\Model\Session', $backendSessionMock]
         ];
 
         $objectManagerMock->method('get')
             ->will($this->returnValueMap($objectManagerMap));
 
         $context =  $this->_objectManager->create(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             ["objectManager" => $objectManagerMock]
         );
-        $registry =  $this->_objectManager->get(\Magento\Framework\Registry::class);
+        $registry =  $this->_objectManager->get('Magento\Framework\Registry');
 
         $this->getRequest()->setParam('rate_services', 'webservicex');
 

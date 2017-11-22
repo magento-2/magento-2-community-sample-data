@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Filters;
@@ -19,19 +19,13 @@ class FilterModifier
      */
     const FILTER_MODIFIER = 'filters_modifier';
 
-    /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
+    /** @var RequestInterface */
     protected $request;
 
-    /**
-     * @var \Magento\Framework\Api\FilterBuilder
-     */
+    /** @var FilterBuilder */
     protected $filterBuilder;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $allowedConditionTypes;
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model;
@@ -14,11 +14,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @see \Magento\Catalog\Model\ProductExternalTest
  * @see \Magento\Catalog\Model\ProductPriceTest
  * @magentoDataFixture Magento/Catalog/_files/categories.php
- * @magentoDbIsolation enabled
- * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductGettersTest extends \PHPUnit\Framework\TestCase
+class ProductGettersTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -28,21 +25,21 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
     }
 
     public function testGetResourceCollection()
     {
         $collection = $this->_model->getResourceCollection();
-        $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, $collection);
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Product\Collection', $collection);
         $this->assertEquals($this->_model->getStoreId(), $collection->getStoreId());
     }
 
     public function testGetUrlModel()
     {
         $model = $this->_model->getUrlModel();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Url::class, $model);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Url', $model);
         $this->assertSame($model, $this->_model->getUrlModel());
     }
 
@@ -79,19 +76,19 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     {
         // model getter
         $typeInstance = $this->_model->getTypeInstance();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Type\AbstractType::class, $typeInstance);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Type\AbstractType', $typeInstance);
         $this->assertSame($typeInstance, $this->_model->getTypeInstance());
 
         // singleton
         /** @var $otherProduct \Magento\Catalog\Model\Product */
         $otherProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertSame($typeInstance, $otherProduct->getTypeInstance());
 
         // model setter
         $simpleTypeInstance = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product\Type\Simple::class
+            'Magento\Catalog\Model\Product\Type\Simple'
         );
         $this->_model->setTypeInstance($simpleTypeInstance);
         $this->assertSame($simpleTypeInstance, $this->_model->getTypeInstance());
@@ -99,7 +96,7 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdBySku()
     {
-        $this->assertGreaterThan(0, (int)$this->_model->getIdBySku('simple')); // fixture
+        $this->assertEquals(1, $this->_model->getIdBySku('simple')); // fixture
     }
 
     public function testGetAttributes()
@@ -109,7 +106,7 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
         $attributes = $this->_model->getAttributes();
         $this->assertArrayHasKey('name', $attributes);
         $this->assertArrayHasKey('sku', $attributes);
-        $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, $attributes['sku']);
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Eav\Attribute', $attributes['sku']);
     }
 
     /**
@@ -148,7 +145,7 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     public function testGetMediaAttributes()
     {
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class,
+            'Magento\Catalog\Model\Product',
             ['data' => ['media_attributes' => 'test']]
         );
         $this->assertEquals('test', $model->getMediaAttributes());
@@ -157,22 +154,20 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('image', $attributes);
         $this->assertArrayHasKey('small_image', $attributes);
         $this->assertArrayHasKey('thumbnail', $attributes);
-        $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, $attributes['image']);
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Eav\Attribute', $attributes['image']);
     }
 
     public function testGetMediaGalleryImages()
     {
         /** @var $model \Magento\Catalog\Model\Product */
-        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
-        );
+        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
         $this->assertEmpty($model->getMediaGalleryImages());
 
         $this->_model->setMediaGallery(['images' => [['file' => 'magento_image.jpg']]]);
         $images = $this->_model->getMediaGalleryImages();
-        $this->assertInstanceOf(\Magento\Framework\Data\Collection::class, $images);
+        $this->assertInstanceOf('Magento\Framework\Data\Collection', $images);
         foreach ($images as $image) {
-            $this->assertInstanceOf(\Magento\Framework\DataObject::class, $image);
+            $this->assertInstanceOf('Magento\Framework\DataObject', $image);
             $image = $image->getData();
             $this->assertArrayHasKey('file', $image);
             $this->assertArrayHasKey('url', $image);
@@ -187,7 +182,7 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     public function testGetMediaConfig()
     {
         $model = $this->_model->getMediaConfig();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Media\Config::class, $model);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Media\Config', $model);
         $this->assertSame($model, $this->_model->getMediaConfig());
     }
 
@@ -225,8 +220,16 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     public function testGetOptionInstance()
     {
         $model = $this->_model->getOptionInstance();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Option::class, $model);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Option', $model);
         $this->assertSame($model, $this->_model->getOptionInstance());
+    }
+
+    public function testGetProductOptionsCollection()
+    {
+        $this->assertInstanceOf(
+            'Magento\Catalog\Model\ResourceModel\Product\Option\Collection',
+            $this->_model->getProductOptionsCollection()
+        );
     }
 
     public function testGetDefaultAttributeSetId()
@@ -238,7 +241,7 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPreconfiguredValues()
     {
-        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $this->_model->getPreconfiguredValues());
+        $this->assertInstanceOf('Magento\Framework\DataObject', $this->_model->getPreconfiguredValues());
         $this->_model->setPreconfiguredValues('test');
         $this->assertEquals('test', $this->_model->getPreconfiguredValues());
     }
@@ -247,11 +250,11 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $mediaDirectory = $objectManager->get(
-            \Magento\Framework\Filesystem::class
+            'Magento\Framework\Filesystem'
         )->getDirectoryWrite(
             DirectoryList::MEDIA
         );
-        $config = $objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+        $config = $objectManager->get('Magento\Catalog\Model\Product\Media\Config');
         $mediaDirectory->delete($config->getBaseMediaPath());
     }
 }

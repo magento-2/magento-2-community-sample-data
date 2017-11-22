@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -28,7 +28,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     ) {
         $this->_productFactory = $conditionFactory;
         parent::__construct($context, $data);
-        $this->setType(\Magento\CatalogRule\Model\Rule\Condition\Combine::class);
+        $this->setType('Magento\CatalogRule\Model\Rule\Condition\Combine');
     }
 
     /**
@@ -49,7 +49,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
             $conditions,
             [
                 [
-                    'value' => \Magento\CatalogRule\Model\Rule\Condition\Combine::class,
+                    'value' => 'Magento\CatalogRule\Model\Rule\Condition\Combine',
                     'label' => __('Conditions Combination'),
                 ],
                 ['label' => __('Product Attribute'), 'value' => $attributes]

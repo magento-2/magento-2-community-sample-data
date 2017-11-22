@@ -1,150 +1,166 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Contact\Test\Unit\Controller\Index;
 
-use Magento\Contact\Model\ConfigInterface;
-use Magento\Contact\Model\MailInterface;
-use Magento\Framework\Controller\Result\Redirect;
-
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PostTest extends \PHPUnit\Framework\TestCase
+class PostTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\Contact\Controller\Index\Index
+     * @var \Magento\Contact\Controller\Index\Index|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $controller;
+    protected $_controller;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $_scopeConfig;
 
     /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\ViewInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $redirectResultFactoryMock;
-
-    /**
-     * @var Redirect|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $redirectResultMock;
+    protected $_view;
 
     /**
      * @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $urlMock;
+    protected $_url;
 
     /**
-     * @var \Magento\Framework\App\Request\HttpRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $requestStub;
+    protected $_request;
+
+    /**
+     * @var \Magento\Framework\App\Response\RedirectInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $_redirect;
+
+    /**
+     * @var \Magento\Framework\Mail\Template\TransportBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $_transportBuilder;
+
+    /**
+     * @var \Magento\Framework\Translate\Inline\StateInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $_inlineTranslation;
 
     /**
      * @var \Magento\Framework\Message\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $messageManagerMock;
+    protected $_messageManager;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $storeManagerMock;
+    protected $_storeManager;
 
-    /**
-     * @var \Magento\Framework\App\Request\DataPersistorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $dataPersistorMock;
-
-    /**
-     * @var MailInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mailMock;
-
-    protected function setUp()
+    public function setUp()
     {
-        $this->mailMock = $this->getMockBuilder(MailInterface::class)->getMockForAbstractClass();
-        $this->configMock = $this->getMockBuilder(ConfigInterface::class)->getMockForAbstractClass();
-        $context = $this->createPartialMock(
-            \Magento\Framework\App\Action\Context::class,
-            ['getRequest', 'getResponse', 'getResultRedirectFactory', 'getUrl', 'getRedirect', 'getMessageManager']
+        $this->_scopeConfig = $this->getMockForAbstractClass(
+            '\Magento\Framework\App\Config\ScopeConfigInterface',
+            ['isSetFlag'],
+            '',
+            false
         );
-        $this->urlMock = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->messageManagerMock =
-            $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
-        $this->requestStub = $this->createPartialMock(
-            \Magento\Framework\App\Request\Http::class,
-            ['getPostValue', 'getParams', 'getParam']
+        $context = $this->getMock(
+            '\Magento\Framework\App\Action\Context',
+            ['getRequest', 'getResponse', 'getView', 'getUrl', 'getRedirect', 'getMessageManager'],
+            [],
+            '',
+            false
         );
-        $this->redirectResultMock = $this->createMock(\Magento\Framework\Controller\Result\Redirect::class);
-        $this->redirectResultMock->method('setPath')->willReturnSelf();
-        $this->redirectResultFactoryMock = $this->createPartialMock(
-            \Magento\Framework\Controller\Result\RedirectFactory::class,
-            ['create']
+        $this->_url = $this->getMock('\Magento\Framework\UrlInterface', [], [], '', false);
+        $this->_messageManager = $this->getMock('\Magento\Framework\Message\ManagerInterface', [], [], '', false);
+        $this->_request = $this->getMock('\Magento\Framework\App\Request\Http', ['getPostValue'], [], '', false);
+        $this->_redirect = $this->getMock('\Magento\Framework\App\Response\RedirectInterface', [], [], '', false);
+        $this->_view = $this->getMock('\Magento\Framework\App\ViewInterface', [], [], '', false);
+        $this->_storeManager = $this->getMock('\Magento\Store\Model\StoreManagerInterface', [], [], '', false);
+        $this->_transportBuilder = $this->getMock(
+            '\Magento\Framework\Mail\Template\TransportBuilder',
+            [],
+            [],
+            '',
+            false
         );
-        $this->redirectResultFactoryMock
-            ->method('create')
-            ->willReturn($this->redirectResultMock);
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->dataPersistorMock = $this->getMockBuilder(\Magento\Framework\App\Request\DataPersistorInterface::class)
-            ->getMockForAbstractClass();
+        $this->_inlineTranslation = $this->getMock(
+            '\Magento\Framework\Translate\Inline\StateInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $context->expects($this->any())
             ->method('getRequest')
-            ->willReturn($this->requestStub);
+            ->will($this->returnValue($this->_request));
 
         $context->expects($this->any())
             ->method('getResponse')
-            ->willReturn($this->createMock(\Magento\Framework\App\ResponseInterface::class));
+            ->will($this->returnValue(
+                $this->getMock('\Magento\Framework\App\ResponseInterface', [], [], '', false)
+            ));
 
         $context->expects($this->any())
             ->method('getMessageManager')
-            ->willReturn($this->messageManagerMock);
+            ->will($this->returnValue($this->_messageManager));
 
         $context->expects($this->any())
             ->method('getUrl')
-            ->willReturn($this->urlMock);
+            ->will($this->returnValue($this->_url));
+
+        $context->expects($this->any())
+            ->method('getRedirect')
+            ->will($this->returnValue($this->_redirect));
 
         $context->expects($this->once())
-            ->method('getResultRedirectFactory')
-            ->willReturn($this->redirectResultFactoryMock);
+            ->method('getView')
+            ->will($this->returnValue($this->_view));
 
-        $this->controller = new \Magento\Contact\Controller\Index\Post(
+        $this->_controller = new \Magento\Contact\Controller\Index\Post(
             $context,
-            $this->configMock,
-            $this->mailMock,
-            $this->dataPersistorMock
+            $this->_transportBuilder,
+            $this->_inlineTranslation,
+            $this->_scopeConfig,
+            $this->_storeManager
         );
     }
 
     public function testExecuteEmptyPost()
     {
-        $this->stubRequestPostData([]);
-        $this->assertSame($this->redirectResultMock, $this->controller->execute());
+        $this->_request->expects($this->once())->method('getPostValue')->will($this->returnValue([]));
+        $this->_redirect->expects($this->once())->method('redirect');
+        $this->_controller->execute();
     }
 
     /**
-     * @dataProvider postDataProvider
+     * @dataProvider testPostDataProvider
      */
     public function testExecutePostValidation($postData, $exceptionExpected)
     {
-        $this->stubRequestPostData($postData);
+        $this->_request->expects($this->any())
+            ->method('getPostValue')
+            ->will($this->returnValue($postData));
 
         if ($exceptionExpected) {
-            $this->messageManagerMock->expects($this->once())
-                ->method('addErrorMessage');
-            $this->dataPersistorMock->expects($this->once())
-                ->method('set')
-                ->with('contact_us', $postData);
+            $this->_messageManager->expects($this->once())
+                ->method('addError');
         }
+        $this->_inlineTranslation->expects($this->once())
+            ->method('resume');
 
-        $this->controller->execute();
+        $this->_inlineTranslation->expects($this->once())
+            ->method('suspend');
+
+        $this->_controller->execute();
     }
 
-    public function postDataProvider()
+    public function testPostDataProvider()
     {
         return [
             [['name' => null, 'comment' => null, 'email' => '', 'hideit' => 'no'], true],
@@ -160,26 +176,54 @@ class PostTest extends \PHPUnit\Framework\TestCase
     {
         $post = ['name' => 'Name', 'comment' => 'Comment', 'email' => 'valid@mail.com', 'hideit' => null];
 
-        $this->dataPersistorMock->expects($this->once())
-            ->method('clear')
-            ->with('contact_us');
+        $this->_request->expects($this->any())
+            ->method('getPostValue')
+            ->will($this->returnValue($post));
 
-        $this->stubRequestPostData($post);
+        $transport = $this->getMock('\Magento\Framework\Mail\TransportInterface', [], [], '', false);
 
-        $this->controller->execute();
-    }
+        $this->_transportBuilder->expects($this->once())
+            ->method('setTemplateIdentifier')
+            ->will($this->returnSelf());
 
-    /**
-     * @param array $post
-     */
-    private function stubRequestPostData($post)
-    {
-        $this->requestStub->method('getPostValue')->willReturn($post);
-        $this->requestStub->method('getParams')->willReturn($post);
-        $this->requestStub->method('getParam')->willReturnCallback(
-            function ($key) use ($post) {
-                return $post[$key];
-            }
-        );
+        $this->_transportBuilder->expects($this->once())
+            ->method('setTemplateOptions')
+            ->with([
+                'area' => \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE,
+                'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
+            ])
+            ->will($this->returnSelf());
+
+        $this->_transportBuilder->expects($this->once())
+            ->method('setTemplateVars')
+            ->will($this->returnSelf());
+
+        $this->_transportBuilder->expects($this->once())
+            ->method('setFrom')
+            ->will($this->returnSelf());
+
+        $this->_transportBuilder->expects($this->once())
+            ->method('addTo')
+            ->will($this->returnSelf());
+
+        $this->_transportBuilder->expects($this->once())
+            ->method('setReplyTo')
+            ->with($post['email'])
+            ->will($this->returnSelf());
+
+        $this->_transportBuilder->expects($this->once())
+            ->method('getTransport')
+            ->will($this->returnValue($transport));
+
+        $transport->expects($this->once())
+            ->method('sendMessage');
+
+        $this->_inlineTranslation->expects($this->once())
+            ->method('resume');
+
+        $this->_inlineTranslation->expects($this->once())
+            ->method('suspend');
+
+        $this->_controller->execute();
     }
 }

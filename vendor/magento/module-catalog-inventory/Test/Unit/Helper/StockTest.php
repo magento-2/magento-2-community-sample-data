@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Test\Unit\Helper;
@@ -9,10 +9,8 @@ use \Magento\CatalogInventory\Helper\Stock;
 
 /**
  * Class StockTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class StockTest extends \PHPUnit\Framework\TestCase
+class StockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Helper\Stock
@@ -39,44 +37,30 @@ class StockTest extends \PHPUnit\Framework\TestCase
      */
     protected $statusFactoryMock;
 
-    /**
-     * @var \Magento\CatalogInventory\Api\StockConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $stockConfiguration;
-
     protected function setUp()
     {
         $this->stockRegistryProviderMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface::class
+            'Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->statusFactoryMock =
-            $this->getMockBuilder(\Magento\CatalogInventory\Model\ResourceModel\Stock\StatusFactory::class)
+            $this->getMockBuilder('Magento\CatalogInventory\Model\ResourceModel\Stock\StatusFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->stockConfiguration = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\StockConfigurationInterface::class
-        )->getMock();
         $this->stock = new Stock(
             $this->storeManagerMock,
             $this->scopeConfigMock,
             $this->statusFactoryMock,
             $this->stockRegistryProviderMock
         );
-
-        // Todo: \Magento\Framework\TestFramework\Unit\Helper\ObjectManager to do this automatically (MAGETWO-49793)
-        $reflection = new \ReflectionClass(get_class($this->stock));
-        $reflectionProperty = $reflection->getProperty('stockConfiguration');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->stock, $this->stockConfiguration);
     }
 
     public function testAssignStatusToProduct()
@@ -84,7 +68,7 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $websiteId = 1;
         $status = 'test';
 
-        $stockStatusMock = $this->getMockBuilder(\Magento\CatalogInventory\Api\Data\StockStatusInterface::class)
+        $stockStatusMock = $this->getMockBuilder('Magento\CatalogInventory\Api\Data\StockStatusInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $stockStatusMock->expects($this->any())
@@ -93,12 +77,19 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $this->stockRegistryProviderMock->expects($this->any())
             ->method('getStockStatus')
             ->willReturn($stockStatusMock);
-        $this->stockConfiguration->expects($this->once())->method('getDefaultScopeId')->willReturn($websiteId);
-
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
-            ->setMethods(['setIsSalable', 'getId'])
             ->getMock();
+        $storeMock->expects($this->once())
+            ->method('getWebsiteId')
+            ->willReturn($websiteId);
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->disableOriginalConstructor()
+            ->setMethods(['setIsSalable', 'getStore', 'getId'])
+            ->getMock();
+        $productMock->expects($this->any())
+            ->method('getStore')
+            ->willReturn($storeMock);
         $productMock->expects($this->once())
             ->method('setIsSalable')
             ->with($status);
@@ -111,21 +102,21 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $productId = 2;
         $status = 'test';
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['setIsSalable', 'getId'])
             ->getMock();
         $productMock->expects($this->once())
             ->method('setIsSalable')
             ->with($status);
-        $stockStatusMock = $this->getMockBuilder(\Magento\CatalogInventory\Api\Data\StockStatusInterface::class)
+        $stockStatusMock = $this->getMockBuilder('Magento\CatalogInventory\Api\Data\StockStatusInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $stockStatusMock->expects($this->once())
             ->method('getStockStatus')
             ->willReturn($status);
         $productCollectionMock =
-            $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection::class)
+            $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection')
             ->disableOriginalConstructor()
             ->getMock();
         $productCollectionMock->expects($this->any())
@@ -143,6 +134,12 @@ class StockTest extends \PHPUnit\Framework\TestCase
         $productCollectionMock->expects($this->any())
             ->method('getIterator')
             ->willReturn($iteratorMock);
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeManagerMock->expects($this->once())
+            ->method('getStore')
+            ->willReturn($storeMock);
         $this->stockRegistryProviderMock->expects($this->once())
             ->method('getStockStatus')
             ->withAnyParameters()
@@ -156,9 +153,9 @@ class StockTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddInStockFilterToCollection($configMock)
     {
-        $collectionMock = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class
-        )->disableOriginalConstructor()->getMock();
+        $collectionMock = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $collectionMock->expects($this->any())
             ->method('joinField');
         $this->scopeConfigMock->expects($this->any())
@@ -169,7 +166,7 @@ class StockTest extends \PHPUnit\Framework\TestCase
 
     public function filterProvider()
     {
-        $configMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $configMock = $this->getMockBuilder('Magento\Framework\App\Config')
             ->disableOriginalConstructor()
             ->getMock();
         return [
@@ -180,10 +177,10 @@ class StockTest extends \PHPUnit\Framework\TestCase
 
     public function testAddIsInStockFilterToCollection()
     {
-        $collectionMock = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
+        $collectionMock = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Collection')
             ->disableOriginalConstructor()
             ->getMock();
-        $stockStatusMock = $this->getMockBuilder(\Magento\CatalogInventory\Model\ResourceModel\Stock\Status::class)
+        $stockStatusMock = $this->getMockBuilder('Magento\CatalogInventory\Model\ResourceModel\Stock\Status')
             ->disableOriginalConstructor()
             ->setMethods(['addStockDataToCollection'])
             ->getMock();

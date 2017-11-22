@@ -1,8 +1,7 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'underscore',
     'jquery',
@@ -72,15 +71,9 @@ define([
 
                     _.each(itemContainer.data, function (obj, key) {
                             if (obj.mixins) {
-                                require(obj.mixins, function () { //eslint-disable-line max-nested-callbacks
-                                    var i, len;
-
-                                    for (i = 0, len = arguments.length; i < len; i++) {
-                                        $.extend(
-                                            true,
-                                            itemContainer.data[key],
-                                            arguments[i](itemContainer.data[key], element)
-                                        );
+                                require(obj.mixins, function () {
+                                    for (var i = 0, len = arguments.length; i < len; i++) {
+                                        $.extend(true, itemContainer.data[key], arguments[i](itemContainer.data[key], element));
                                     }
 
                                     delete obj.mixins;

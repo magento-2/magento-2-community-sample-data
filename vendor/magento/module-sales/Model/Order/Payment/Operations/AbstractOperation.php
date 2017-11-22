@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Payment\Operations;
@@ -13,9 +13,6 @@ use Magento\Sales\Model\Order\Payment\State\CommandInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface;
 
-/**
- * Class AbstractOperation
- */
 abstract class AbstractOperation
 {
     /**

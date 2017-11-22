@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -31,7 +31,7 @@ class CouponManagementTest extends WebapiAbstract
     public function testGet()
     {
         /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $cartId = $quote->getId();
         $couponCode = $quote->getCouponCode();
@@ -57,7 +57,7 @@ class CouponManagementTest extends WebapiAbstract
     public function testDelete()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $cartId = $quote->getId();
         $serviceInfo = [
@@ -85,7 +85,7 @@ class CouponManagementTest extends WebapiAbstract
     public function testSetCouponThrowsExceptionIfCouponDoesNotExist()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $cartId = $quote->getId();
 
@@ -118,14 +118,12 @@ class CouponManagementTest extends WebapiAbstract
     public function testSetCouponSuccess()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test01', 'reserved_order_id');
         $cartId = $quote->getId();
         /** @var \Magento\SalesRule\Model\Rule $salesRule */
-        $salesRule = $this->objectManager->create(\Magento\SalesRule\Model\Rule::class);
-        $salesRuleId = $this->objectManager->get(\Magento\Framework\Registry::class)
-            ->registry('Magento/Checkout/_file/discount_10percent');
-        $salesRule->load($salesRuleId);
+        $salesRule = $this->objectManager->create('Magento\SalesRule\Model\Rule');
+        $salesRule->load('Test Coupon', 'name');
         $couponCode = $salesRule->getPrimaryCoupon()->getCode();
         $serviceInfo = [
             'rest' => [
@@ -146,7 +144,7 @@ class CouponManagementTest extends WebapiAbstract
 
         $this->assertTrue($this->_webApiCall($serviceInfo, $requestData));
 
-        $quoteWithCoupon = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quoteWithCoupon = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quoteWithCoupon->load('test01', 'reserved_order_id');
 
         $this->assertEquals($quoteWithCoupon->getCouponCode(), $couponCode);
@@ -162,12 +160,12 @@ class CouponManagementTest extends WebapiAbstract
         // get customer ID token
         /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
         $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
+            'Magento\Integration\Api\CustomerTokenServiceInterface'
         );
         $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
 
         /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $couponCode = $quote->getCouponCode();
         $serviceInfo = [
@@ -192,12 +190,12 @@ class CouponManagementTest extends WebapiAbstract
         // get customer ID token
         /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
         $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
+            'Magento\Integration\Api\CustomerTokenServiceInterface'
         );
         $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
 
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $serviceInfo = [
             'rest' => [
@@ -224,7 +222,7 @@ class CouponManagementTest extends WebapiAbstract
         // get customer ID token
         /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
         $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
+            'Magento\Integration\Api\CustomerTokenServiceInterface'
         );
         $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
 
@@ -257,24 +255,21 @@ class CouponManagementTest extends WebapiAbstract
         // get customer ID token
         /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
         $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
+            'Magento\Integration\Api\CustomerTokenServiceInterface'
         );
         $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
 
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test01', 'reserved_order_id');
         $cartId = $quote->getId();
-        /** @var \Magento\SalesRule\Model\Rule $salesRule */
-        $salesRule = $this->objectManager->create(\Magento\SalesRule\Model\Rule::class);
-        $salesRuleId = $this->objectManager->get(\Magento\Framework\Registry::class)
-            ->registry('Magento/Checkout/_file/discount_10percent_generalusers');
-        $salesRule->load($salesRuleId);
+        $salesRule = $this->objectManager->create('Magento\SalesRule\Model\Rule');
+        $salesRule->load('Test Coupon for General', 'name');
         $couponCode = $salesRule->getPrimaryCoupon()->getCode();
 
         /* Since this isn't a full quote fixture, need to assign it to the right customer */
         $cartManagementService = $this->objectManager->create(
-            \Magento\Quote\Api\CartManagementInterface::class
+            'Magento\Quote\Api\CartManagementInterface'
         );
         $cartManagementService->assignCustomer($cartId, 1, 1);
 
@@ -292,7 +287,7 @@ class CouponManagementTest extends WebapiAbstract
 
         $this->assertTrue($this->_webApiCall($serviceInfo, $requestData));
 
-        $quoteWithCoupon = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quoteWithCoupon = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quoteWithCoupon->load('test01', 'reserved_order_id');
 
         $this->assertEquals($quoteWithCoupon->getCouponCode(), $couponCode);

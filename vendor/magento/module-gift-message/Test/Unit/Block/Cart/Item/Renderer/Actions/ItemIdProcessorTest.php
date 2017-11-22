@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GiftMessage\Test\Unit\Block\Cart\Item\Renderer\Actions;
@@ -8,12 +8,12 @@ namespace Magento\GiftMessage\Test\Unit\Block\Cart\Item\Renderer\Actions;
 use Magento\GiftMessage\Block\Cart\Item\Renderer\Actions\ItemIdProcessor;
 use Magento\Quote\Model\Quote\Item;
 
-class ItemIdProcessorTest extends \PHPUnit\Framework\TestCase
+class ItemIdProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ItemIdProcessor */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->model = new ItemIdProcessor();
     }
@@ -29,7 +29,7 @@ class ItemIdProcessorTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->getMock();
         $itemMock->expects($this->any())

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Url\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class RouteParamsResolverFactoryTest extends \PHPUnit\Framework\TestCase
+class RouteParamsResolverFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Url\RouteParamsResolverFactory */
     protected $object;
@@ -17,21 +17,21 @@ class RouteParamsResolverFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $objectManager = new ObjectManager($this);
         $this->object = $objectManager->getObject(
-            \Magento\Framework\Url\RouteParamsResolverFactory::class,
+            'Magento\Framework\Url\RouteParamsResolverFactory',
             ['objectManager' => $this->objectManager]
         );
     }
 
     public function testCreate()
     {
-        $producedInstance = $this->createMock(\Magento\Framework\Url\RouteParamsResolverInterface::class);
+        $producedInstance = $this->getMock('Magento\Framework\Url\RouteParamsResolverInterface');
         $this->objectManager->expects($this->once())
             ->method('create')
-            ->with(\Magento\Framework\Url\RouteParamsResolverInterface::class)
+            ->with('Magento\Framework\Url\RouteParamsResolverInterface')
             ->will($this->returnValue($producedInstance));
 
         $this->assertSame($producedInstance, $this->object->create([]));

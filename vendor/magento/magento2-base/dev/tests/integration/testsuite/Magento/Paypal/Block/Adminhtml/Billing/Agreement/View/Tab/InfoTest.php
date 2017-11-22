@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Block\Adminhtml\Billing\Agreement\View\Tab;
@@ -15,26 +15,23 @@ class InfoTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     {
         /** @var \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection $billingAgreementCollection */
         $billingAgreementCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
         )->load();
         $agreementId = $billingAgreementCollection->getFirstItem()->getId();
         $this->dispatch('backend/paypal/billing_agreement/view/agreement/' . $agreementId);
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'a[name="billing_agreement_info"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//a[@name="billing_agreement_info"]',
-                $this->getResponse()->getBody()
-            ),
+            $this->getResponse()->getBody(),
             'Response for billing agreement info doesn\'t contain billing agreement info tab'
         );
 
-        $this->assertEquals(
+        $this->assertSelectRegExp(
+            'a',
+            '/customer\@example.com/',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//a[contains(text(), "customer@example.com")]',
-                $this->getResponse()->getBody()
-            ),
+            $this->getResponse()->getBody(),
             'Response for billing agreement info doesn\'t contain Customer info'
         );
     }

@@ -1,92 +1,85 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use DateTime;
-use Test;
-use Test\Setup;
-use Braintree;
-
-class SettlementBatchSummaryTest extends Setup
+class Braintree_SettlementBatchSummaryTest extends PHPUnit_Framework_TestCase
 {
-    public function isMasterCard($record)
+    function isMasterCard($record)
     {
-        return $record['cardType'] == Braintree\CreditCard::MASTER_CARD;
+        return $record['cardType'] == Braintree_CreditCard::MASTER_CARD;
     }
 
-    public function testGenerate_returnsAnEmptyCollectionWhenThereIsNoData()
+    function testGenerate_returnsAnEmptyCollectionWhenThereIsNoData()
     {
-        $result = Braintree\SettlementBatchSummary::generate('2000-01-01');
+        $result = Braintree_SettlementBatchSummary::generate('2000-01-01');
 
         $this->assertTrue($result->success);
         $this->assertEquals(0, count($result->settlementBatchSummary->records));
     }
 
-    public function testGatewayGenerate_returnsAnEmptyCollectionWhenThereIsNoData()
+    function testGatewayGenerate_returnsAnEmptyCollectionWhenThereIsNoData()
     {
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
+        ));
         $result = $gateway->settlementBatchSummary()->generate('2000-01-01');
 
         $this->assertTrue($result->success);
         $this->assertEquals(0, count($result->settlementBatchSummary->records));
     }
 
-    public function testGenerate_returnsAnErrorIfTheDateCanNotBeParsed()
+    function testGenerate_returnsAnErrorIfTheDateCanNotBeParsed()
     {
-        $result = Braintree\SettlementBatchSummary::generate('OMG NOT A DATE');
+        $result = Braintree_SettlementBatchSummary::generate('OMG NOT A DATE');
 
         $this->assertFalse($result->success);
         $errors = $result->errors->forKey('settlementBatchSummary')->onAttribute('settlementDate');
-        $this->assertEquals(Braintree\Error\Codes::SETTLEMENT_BATCH_SUMMARY_SETTLEMENT_DATE_IS_INVALID, $errors[0]->code);
+        $this->assertEquals(Braintree_Error_Codes::SETTLEMENT_BATCH_SUMMARY_SETTLEMENT_DATE_IS_INVALID, $errors[0]->code);
     }
 
-    public function testGenerate_returnsTransactionsSettledOnAGivenDay()
+    function testGenerate_returnsTransactionsSettledOnAGivenDay()
     {
-        $transaction = Braintree\Transaction::saleNoValidate([
+        $transaction = Braintree_Transaction::saleNoValidate(array(
             'amount' => '100.00',
-            'creditCard' => [
+            'creditCard' => array(
                 'number' => '5105105105105100',
                 'expirationDate' => '05/12'
-            ],
-            'options' => ['submitForSettlement' => true]
-        ]);
-        Braintree\Test\Transaction::settle($transaction->id);
+            ),
+            'options' => array('submitForSettlement' => true)
+        ));
+        Braintree_TestHelper::settle($transaction->id);
 
         $today = new Datetime;
-        $result = Braintree\SettlementBatchSummary::generate(Test\Helper::nowInEastern());
+        $result = Braintree_SettlementBatchSummary::generate(Braintree_TestHelper::nowInEastern());
 
         $this->assertTrue($result->success);
         $masterCardRecords = array_filter($result->settlementBatchSummary->records, 'self::isMasterCard');
         $masterCardKeys = array_keys($masterCardRecords);
         $masterCardIndex = $masterCardKeys[0];
         $this->assertTrue(count($masterCardRecords) > 0);
-        $this->assertEquals(Braintree\CreditCard::MASTER_CARD, $masterCardRecords[$masterCardIndex]['cardType']);
+        $this->assertEquals(Braintree_CreditCard::MASTER_CARD, $masterCardRecords[$masterCardIndex]['cardType']);
     }
 
-    public function testGenerate_canBeGroupedByACustomField()
+    function testGenerate_canBeGroupedByACustomField()
     {
-        $transaction = Braintree\Transaction::saleNoValidate([
+        $transaction = Braintree_Transaction::saleNoValidate(array(
             'amount' => '100.00',
-            'creditCard' => [
+            'creditCard' => array(
                 'number' => '5105105105105100',
                 'expirationDate' => '05/12'
-            ],
-            'customFields' => [
+            ),
+            'customFields' => array(
                 'store_me' => 'custom value'
-            ],
-            'options' => ['submitForSettlement' => true]
-        ]);
+            ),
+            'options' => array('submitForSettlement' => true)
+        ));
 
-        Braintree\Test\Transaction::settle($transaction->id);
+        Braintree_TestHelper::settle($transaction->id);
 
         $today = new Datetime;
-        $result = Braintree\SettlementBatchSummary::generate(Test\Helper::nowInEastern(), 'store_me');
+        $result = Braintree_SettlementBatchSummary::generate(Braintree_TestHelper::nowInEastern(), 'store_me');
 
         $this->assertTrue($result->success);
         $this->assertTrue(count($result->settlementBatchSummary->records) > 0);

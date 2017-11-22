@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SendFriend\Block;
@@ -10,9 +10,7 @@ use Magento\Customer\Model\Context;
 /**
  * Email to a Friend Block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Send extends \Magento\Framework\View\Element\Template
 {

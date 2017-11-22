@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Test\Unit\Controller\Index;
@@ -36,7 +36,7 @@ use Magento\Wishlist\Model\Wishlist;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SendTest extends \PHPUnit\Framework\TestCase
+class SendTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  Send |\PHPUnit_Framework_MockObject_MockObject */
     protected $model;
@@ -115,15 +115,15 @@ class SendTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->resultRedirect = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $this->resultRedirect = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resultLayout = $this->getMockBuilder(\Magento\Framework\View\Result\Layout::class)
+        $this->resultLayout = $this->getMockBuilder('Magento\Framework\View\Result\Layout')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resultFactory = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactory = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultFactory->expects($this->any())
@@ -133,23 +133,23 @@ class SendTest extends \PHPUnit\Framework\TestCase
                 [ResultFactory::TYPE_LAYOUT, [], $this->resultLayout],
             ]);
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->setMethods([
                 'getPost',
                 'getPostValue',
             ])
             ->getMockForAbstractClass();
 
-        $this->messageManager = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManager = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMockForAbstractClass();
 
-        $this->url = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->url = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->getMockForAbstractClass();
 
-        $this->eventManager = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManager = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->getMockForAbstractClass();
 
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->any())
@@ -168,55 +168,54 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->method('getEventManager')
             ->willReturn($this->eventManager);
 
-        $this->formKeyValidator = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
+        $this->formKeyValidator = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey\Validator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerSession = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSession = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->wishlistProvider = $this->getMockBuilder(\Magento\Wishlist\Controller\WishlistProviderInterface::class)
+        $this->wishlistProvider = $this->getMockBuilder('Magento\Wishlist\Controller\WishlistProviderInterface')
             ->getMockForAbstractClass();
 
-        $this->wishlistConfig = $this->getMockBuilder(\Magento\Wishlist\Model\Config::class)
+        $this->wishlistConfig = $this->getMockBuilder('Magento\Wishlist\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->transportBuilder = $this->getMockBuilder(\Magento\Framework\Mail\Template\TransportBuilder::class)
+        $this->transportBuilder = $this->getMockBuilder('Magento\Framework\Mail\Template\TransportBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->inlineTranslation = $this->getMockBuilder(\Magento\Framework\Translate\Inline\StateInterface::class)
+        $this->inlineTranslation = $this->getMockBuilder('Magento\Framework\Translate\Inline\StateInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerViewHelper = $this->getMockBuilder(\Magento\Customer\Helper\View::class)
+        $this->customerViewHelper = $this->getMockBuilder('Magento\Customer\Helper\View')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->wishlistSession = $this->getMockBuilder(\Magento\Framework\Session\Generic::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['setSharingForm'])
-            ->getMock();
-
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->wishlistSession = $this->getMockBuilder('Magento\Framework\Session\Generic')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->store = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods(['getStoreId'])
             ->getMock();
 
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
 
-        $this->wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
+        $this->wishlist = $this->getMockBuilder('Magento\Wishlist\Model\Wishlist')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getShared',
@@ -228,11 +227,11 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->customerData = $this->getMockBuilder(\Magento\Customer\Model\Data\Customer::class)
+        $this->customerData = $this->getMockBuilder('Magento\Customer\Model\Data\Customer')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->layout = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layout = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getBlock',
@@ -241,7 +240,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->transport = $this->getMockBuilder(\Magento\Framework\Mail\TransportInterface::class)
+        $this->transport = $this->getMockBuilder('Magento\Framework\Mail\TransportInterface')
             ->getMockForAbstractClass();
 
         $this->model = new Send(
@@ -662,6 +661,10 @@ class SendTest extends \PHPUnit\Framework\TestCase
                 'message' => $text . $text,
                 'store' => $this->store,
             ])
+            ->willReturnSelf();
+        $this->transportBuilder->expects($this->once())
+            ->method('setScopeId')
+            ->with($storeId)
             ->willReturnSelf();
         $this->transportBuilder->expects($this->once())
             ->method('setFrom')

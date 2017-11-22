@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Weee\Test\Unit\Observer;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
+class GetPriceConfigurationObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
@@ -28,33 +28,36 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
         $weeeObject1 = new \Magento\Framework\DataObject(
             [
                 'code' => 'fpt1',
-                'amount' => '15.0000',
+                'amount_excl_tax' => '15.0000',
             ]
         );
 
         $weeeObject2 = new \Magento\Framework\DataObject(
             [
                 'code' => 'fpt2',
-                'amount' => '16.0000',
+                'amount_excl_tax' => '16.0000',
             ]
         );
 
-        $weeeHelper=$this->createMock(\Magento\Weee\Helper\Data::class);
+        $weeeHelper=$this->getMock('Magento\Weee\Helper\Data', [], [], '', false);
         $weeeHelper->expects($this->any())
             ->method('isEnabled')
             ->will($this->returnValue(true));
 
-        $observerObject=$this->createMock(\Magento\Framework\Event\Observer::class);
+        $observerObject=$this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $observerObject->expects($this->any())
             ->method('getData')
             ->with('configObj')
             ->will($this->returnValue($configObj));
 
-        $productInstance=$this->createMock(\Magento\Catalog\Model\Product\Type\Simple::class);
+        $productInstance=$this->getMock('\Magento\Catalog\Model\Product\Type\Simple', [], [], '', false);
 
-        $product = $this->createPartialMock(
-            \Magento\Bundle\Model\Product\Type::class,
-            ['getTypeInstance', 'getTypeId', 'getStoreId']
+        $product=$this->getMock(
+            '\Magento\Bundle\Model\Product\Type',
+            ['getTypeInstance', 'getTypeId', 'getStoreId'],
+            [],
+            '',
+            false
         );
         $product->expects($this->any())
             ->method('getTypeInstance')
@@ -66,7 +69,7 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
             ->method('getStoreId')
             ->will($this->returnValue(null));
 
-        $registry=$this->createMock(\Magento\Framework\Registry::class);
+        $registry=$this->getMock('Magento\Framework\Registry', [], [], '', false);
         $registry->expects($this->any())
             ->method('registry')
             ->with('current_product')
@@ -91,7 +94,7 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
         $objectManager = new ObjectManager($this);
         /** @var \Magento\Weee\Observer\GetPriceConfigurationObserver $weeeObserverObject */
         $weeeObserverObject = $objectManager->getObject(
-            \Magento\Weee\Observer\GetPriceConfigurationObserver::class,
+            'Magento\Weee\Observer\GetPriceConfigurationObserver',
             [
                 'weeeData' => $weeeHelper,
                 'registry' => $registry,
@@ -115,14 +118,16 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                     [
                         [
                             'optionId' => 1,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'finalPrice' => ['amount' => 31.50],
                                     'basePrice' => ['amount' => 33.50],
                                 ],
                         ],
                         [
                             'optionId' => 2,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'finalPrice' =>['amount' => 331.50],
                                     'basePrice' => ['amount' => 333.50],
                                 ],
@@ -133,7 +138,8 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                     [
                         [
                             'optionId' => 1,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'finalPrice' => ['amount' => 31.50],
                                     'basePrice' => ['amount' => 33.50],
                                     'weeePrice' => ['amount' => 46.5],
@@ -142,7 +148,8 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                         ],
                         [
                             'optionId' => 2,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'finalPrice' =>['amount' => 331.50],
                                     'basePrice' => ['amount' => 333.50],
                                     'weeePrice' => ['amount' => 362.5],
@@ -159,15 +166,17 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                 'testArray' => [
                     [
                         [
-                            'prices' => [
-                                'finalPrice' => ['amount' => 31.50],
-                            ],
+                            'prices' =>
+                                [
+                                    'finalPrice' => ['amount' => 31.50],
+                                ],
                             'somekey' => 0,
                         ],
                         [
                             [
                                 [
-                                    'prices' => [
+                                    'prices' =>
+                                        [
                                             'finalPrice' =>['amount' => 321.50],
                                         ],
                                 ],
@@ -179,16 +188,18 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                 'expectedArray' => [
                     [
                         [
-                            'prices' => [
-                                'finalPrice' => ['amount' => 31.50],
-                                'weeePrice' => ['amount' => 31.50],
-                            ],
+                            'prices' =>
+                                [
+                                    'finalPrice' => ['amount' => 31.50],
+                                    'weeePrice' => ['amount' => 31.50],
+                                ],
                             'somekey' => 0,
                         ],
                         [
                             [
                                 [
-                                    'prices' => [
+                                    'prices' =>
+                                        [
                                             'finalPrice' =>['amount' => 321.50],
                                             'weeePrice' => ['amount' => 321.50],
                                         ],
@@ -206,7 +217,8 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                     [
                         [
                             'optionId' => 1,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'basePrice' => ['amount' => 10],
                                     'finalPrice' => ['amount' => 11],
                                 ],
@@ -217,7 +229,8 @@ class GetPriceConfigurationObserverTest extends \PHPUnit\Framework\TestCase
                     [
                         [
                             'optionId' => 1,
-                            'prices' => [
+                            'prices' =>
+                                [
                                     'basePrice' => ['amount' => 10],
                                     'finalPrice' => ['amount' => 11],
                                     'weeePrice' => ['amount' => 11],

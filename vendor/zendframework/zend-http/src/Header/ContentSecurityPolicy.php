@@ -21,7 +21,7 @@ class ContentSecurityPolicy implements HeaderInterface
      *
      * @var array
      */
-    protected $validDirectiveNames = [
+    protected $validDirectiveNames = array(
         // As per http://www.w3.org/TR/CSP/#directives
         'default-src',
         'script-src',
@@ -34,14 +34,14 @@ class ContentSecurityPolicy implements HeaderInterface
         'connect-src',
         'sandbox',
         'report-uri',
-    ];
+    );
 
     /**
      * The directives defined for this policy
      *
      * @var array
      */
-    protected $directives = [];
+    protected $directives = array();
 
     /**
      * Get the list of defined directives
@@ -73,17 +73,11 @@ class ContentSecurityPolicy implements HeaderInterface
             ));
         }
         if (empty($sources)) {
-            if ('report-uri' === $name) {
-                if (isset($this->directives[$name])) {
-                    unset($this->directives[$name]);
-                }
-                return $this;
-            }
             $this->directives[$name] = "'none'";
             return $this;
         }
 
-        array_walk($sources, [__NAMESPACE__ . '\HeaderValue', 'assertValid']);
+        array_walk($sources, array(__NAMESPACE__ . '\HeaderValue', 'assertValid'));
 
         $this->directives[$name] = implode(' ', $sources);
         return $this;
@@ -115,8 +109,8 @@ class ContentSecurityPolicy implements HeaderInterface
             $token = trim($token);
             if ($token) {
                 list($directiveName, $directiveValue) = explode(' ', $token, 2);
-                if (! isset($header->directives[$directiveName])) {
-                    $header->setDirective($directiveName, [$directiveValue]);
+                if (!isset($header->directives[$directiveName])) {
+                    $header->setDirective($directiveName, array($directiveValue));
                 }
             }
         }
@@ -140,7 +134,7 @@ class ContentSecurityPolicy implements HeaderInterface
      */
     public function getFieldValue()
     {
-        $directives = [];
+        $directives = array();
         foreach ($this->directives as $name => $value) {
             $directives[] = sprintf('%s %s;', $name, $value);
         }

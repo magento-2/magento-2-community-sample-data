@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -37,7 +37,7 @@ class ProductWebsiteLinkRepository implements \Magento\Catalog\Api\ProductWebsit
         $product = $this->productRepository->get($productWebsiteLink->getSku());
         $product->setWebsiteIds(array_merge($product->getWebsiteIds(), [$productWebsiteLink->getWebsiteId()]));
         try {
-            $this->productRepository->save($product);
+            $product->save();
         } catch (\Exception $e) {
             throw new CouldNotSaveException(
                 __(
@@ -68,7 +68,7 @@ class ProductWebsiteLinkRepository implements \Magento\Catalog\Api\ProductWebsit
         $product->setWebsiteIds(array_diff($product->getWebsiteIds(), [$websiteId]));
 
         try {
-            $this->productRepository->save($product);
+            $product->save();
         } catch (\Exception $e) {
             throw new CouldNotSaveException(
                 __(

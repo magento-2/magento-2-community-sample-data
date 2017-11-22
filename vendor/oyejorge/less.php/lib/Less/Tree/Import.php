@@ -182,11 +182,6 @@ class Less_Tree_Import extends Less_Tree{
 			return array( $contents );
 		}
 
-		// optional (need to be before "CSS" to support optional CSS imports. CSS should be checked only if empty($this->currentFileInfo))
-		if( isset($this->options['optional']) && $this->options['optional'] && !file_exists($full_path) && (!$evald->css || !empty($this->currentFileInfo))) {
-			return array();
-		}
-
 
 		// css ?
 		if( $evald->css ){
@@ -237,7 +232,6 @@ class Less_Tree_Import extends Less_Tree{
 						return array( $full_path, $uri );
 					}
 				}elseif( !empty($rootpath) ){
-
 					$path = rtrim($rootpath,'/\\').'/'.ltrim($evald_path,'/\\');
 
 					if( file_exists($path) ){
@@ -289,7 +283,7 @@ class Less_Tree_Import extends Less_Tree{
 	 */
 	private function Skip($path, $env){
 
-		$path = Less_Parser::AbsPath($path, true);
+		$path = Less_Parser::winPath(realpath($path));
 
 		if( $path && Less_Parser::FileParsed($path) ){
 
@@ -302,3 +296,4 @@ class Less_Tree_Import extends Less_Tree{
 
 	}
 }
+

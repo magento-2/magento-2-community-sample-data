@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Adminhtml\Widget\Grid\Column\Filter;
 
 use \Magento\Wishlist\Block\Adminhtml\Widget\Grid\Column\Filter\Text;
 
-class TextTest extends \PHPUnit\Framework\TestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Text | \PHPUnit_Framework_MockObject_MockObject */
     private $textFilterBlock;
@@ -16,7 +16,7 @@ class TextTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->textFilterBlock = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\Wishlist\Block\Adminhtml\Widget\Grid\Column\Filter\Text::class
+            'Magento\Wishlist\Block\Adminhtml\Widget\Grid\Column\Filter\Text'
         );
     }
 

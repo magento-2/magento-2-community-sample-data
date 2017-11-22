@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Arguments;
 
 use \Magento\Framework\App\Arguments\ArgumentInterpreter;
 
-class ArgumentInterpreterTest extends \PHPUnit\Framework\TestCase
+class ArgumentInterpreterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Arguments\ArgumentInterpreter
@@ -16,7 +16,13 @@ class ArgumentInterpreterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $const = $this->createPartialMock(\Magento\Framework\Data\Argument\Interpreter\Constant::class, ['evaluate']);
+        $const = $this->getMock(
+            '\Magento\Framework\Data\Argument\Interpreter\Constant',
+            ['evaluate'],
+            [],
+            '',
+            false
+        );
         $const->expects(
             $this->once()
         )->method(

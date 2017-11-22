@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -33,14 +33,14 @@ class ServiceLocator implements ServiceLocatorInterface
      *
      * @var array
      */
-    protected $map = [];
+    protected $map = array();
 
     /**
      * Registered services and cached values
      *
      * @var array
      */
-    protected $services = [];
+    protected $services = array();
 
     /**
      * {@inheritDoc}
@@ -50,23 +50,6 @@ class ServiceLocator implements ServiceLocatorInterface
         $this->services[$name] = $service;
 
         return $this;
-    }
-
-    /**
-     * Can the locator return the named instance?
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function has($name)
-    {
-        if (! isset($this->services[$name])
-            && ! isset($this->map[$name])
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -87,7 +70,7 @@ class ServiceLocator implements ServiceLocatorInterface
      * @param  array  $params
      * @return mixed
      */
-    public function get($name, array $params = [])
+    public function get($name, array $params = array())
     {
         if (!isset($this->services[$name])) {
             if (!isset($this->map[$name])) {

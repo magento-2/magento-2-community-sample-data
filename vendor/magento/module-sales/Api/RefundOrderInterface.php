@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Api;
 
 /**
  * Interface RefundOrderInterface
- *
- * @api
- * @since 100.1.3
  */
 interface RefundOrderInterface
 {
@@ -23,7 +20,6 @@ interface RefundOrderInterface
      * @param \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface|null $comment
      * @param \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface|null $arguments
      * @return int
-     * @since 100.1.3
      */
     public function execute(
         $orderId,

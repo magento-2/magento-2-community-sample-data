@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Element;
 
-class RendererListTest extends \PHPUnit\Framework\TestCase
+class RendererListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\RendererList
@@ -31,18 +31,18 @@ class RendererListTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\AbstractBlock::class)
+        $this->blockMock = $this->getMockBuilder('Magento\Framework\View\Element\AbstractBlock')
             ->setMethods(['setRenderedBlock', 'getTemplate', 'setTemplate'])->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->setMethods(['getBlock', 'getChildName'])->disableOriginalConstructor()->getMockForAbstractClass();
 
         $this->layoutMock->expects($this->any())
             ->method('getBlock')
             ->will($this->returnValue($this->blockMock));
 
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Context')
             ->setMethods(['getLayout'])->disableOriginalConstructor()->getMock();
 
         $this->contextMock->expects($this->any())
@@ -50,7 +50,7 @@ class RendererListTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->layoutMock));
 
         $this->renderList = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\RendererList::class,
+            'Magento\Framework\View\Element\RendererList',
             ['context' => $this->contextMock]
         );
     }
@@ -75,12 +75,12 @@ class RendererListTest extends \PHPUnit\Framework\TestCase
 
         /** During the first call cache will be generated */
         $this->assertInstanceOf(
-            \Magento\Framework\View\Element\BlockInterface::class,
+            '\Magento\Framework\View\Element\BlockInterface',
             $this->renderList->getRenderer('type', null, null)
         );
         /** Cached value should be returned during second call */
         $this->assertInstanceOf(
-            \Magento\Framework\View\Element\BlockInterface::class,
+            '\Magento\Framework\View\Element\BlockInterface',
             $this->renderList->getRenderer('type', null, 'renderer_template')
         );
     }
@@ -91,7 +91,7 @@ class RendererListTest extends \PHPUnit\Framework\TestCase
     public function testGetRendererWithException()
     {
         $this->assertInstanceOf(
-            \Magento\Framework\View\Element\BlockInterface::class,
+            '\Magento\Framework\View\Element\BlockInterface',
             $this->renderList->getRenderer(null)
         );
     }

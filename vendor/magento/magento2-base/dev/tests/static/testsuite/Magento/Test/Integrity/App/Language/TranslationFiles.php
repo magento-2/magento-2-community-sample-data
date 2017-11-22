@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Test\Integrity\App\Language;
@@ -8,7 +8,7 @@ namespace Magento\Test\Integrity\App\Language;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Filesystem\Driver\File;
 
-class TranslationFiles extends \PHPUnit\Framework\TestCase
+class TranslationFiles extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\File\Csv
@@ -25,7 +25,7 @@ class TranslationFiles extends \PHPUnit\Framework\TestCase
      */
     public function getLocalePlacePath()
     {
-        $pathToSource = BP;
+        $pathToSource = \Magento\Framework\App\Utility\Files::init()->getPathToSource();
         $places = [];
         $componentRegistrar = new ComponentRegistrar();
         foreach ($componentRegistrar->getPaths(ComponentRegistrar::MODULE) as $modulePath) {

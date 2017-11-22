@@ -1,15 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Model\ResourceModel\Country\Format;
 
 /**
- * Country formats collection
+ * \Directory country format resource model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -20,10 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Directory\Model\Country\Format::class,
-            \Magento\Directory\Model\ResourceModel\Country\Format::class
-        );
+        $this->_init('Magento\Directory\Model\Country\Format', 'Magento\Directory\Model\ResourceModel\Country\Format');
     }
 
     /**

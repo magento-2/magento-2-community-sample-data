@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Test\Unit\Model\Observer;
@@ -9,10 +9,8 @@ use Magento\NewRelicReporting\Model\Observer\ReportConcurrentUsers;
 
 /**
  * Class ReportConcurrentUsersTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
+class ReportConcurrentUsersTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReportConcurrentUsers
@@ -59,28 +57,28 @@ class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Config::class)
+        $this->config = $this->getMockBuilder('Magento\NewRelicReporting\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['isNewRelicEnabled'])
             ->getMock();
-        $this->customerSession = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSession = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods(['isLoggedIn', 'getCustomerId'])
             ->getMock();
-        $this->customerRepository = $this->getMockBuilder(\Magento\Customer\Api\CustomerRepositoryInterface::class)
+        $this->customerRepository = $this->getMockBuilder('Magento\Customer\Api\CustomerRepositoryInterface')
             ->getMock();
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->getMock();
-        $this->usersFactory = $this->getMockBuilder(\Magento\NewRelicReporting\Model\UsersFactory::class)
+        $this->usersFactory = $this->getMockBuilder('Magento\NewRelicReporting\Model\UsersFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->usersModel = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Users::class)
+        $this->usersModel = $this->getMockBuilder('Magento\NewRelicReporting\Model\Users')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->jsonEncoder = $this->getMockBuilder(\Magento\Framework\Json\EncoderInterface::class)
+        $this->jsonEncoder = $this->getMockBuilder('Magento\Framework\Json\EncoderInterface')
             ->getMock();
 
         $this->usersFactory->expects($this->any())
@@ -105,7 +103,7 @@ class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
     public function testReportConcurrentUsersModuleDisabledFromConfig()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -124,7 +122,7 @@ class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
     public function testReportConcurrentUsersUserIsNotLoggedIn()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -149,7 +147,7 @@ class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
         $testAction = 'JSON string';
 
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -162,17 +160,15 @@ class ReportConcurrentUsersTest extends \PHPUnit\Framework\TestCase
         $this->customerSession->expects($this->once())
             ->method('getCustomerId')
             ->willReturn($testCustomerId);
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)->getMock();
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')->getMock();
         $this->customerRepository->expects($this->once())
             ->method('getById')
             ->willReturn($customerMock);
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)->disableOriginalConstructor()->getMock();
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')->disableOriginalConstructor()->getMock();
         $this->storeManager->expects($this->once())
             ->method('getStore')
             ->willReturn($storeMock);
-        $websiteMock = $this->getMockBuilder(
-            \Magento\Store\Model\Website::class
-        )->disableOriginalConstructor()->getMock();
+        $websiteMock = $this->getMockBuilder('Magento\Store\Model\Website')->disableOriginalConstructor()->getMock();
         $this->storeManager->expects($this->once())
             ->method('getWebsite')
             ->willReturn($websiteMock);

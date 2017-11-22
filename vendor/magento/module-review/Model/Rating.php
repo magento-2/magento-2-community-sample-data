@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Model;
@@ -10,7 +10,8 @@ use Magento\Framework\DataObject\IdentityInterface;
 /**
  * Rating model
  *
- * @api
+ * @method \Magento\Review\Model\ResourceModel\Rating getResource()
+ * @method \Magento\Review\Model\ResourceModel\Rating _getResource()
  * @method array getRatingCodes()
  * @method \Magento\Review\Model\Rating setRatingCodes(array $value)
  * @method array getStores()
@@ -18,7 +19,6 @@ use Magento\Framework\DataObject\IdentityInterface;
  * @method string getRatingCode()
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Rating extends \Magento\Framework\Model\AbstractModel implements IdentityInterface
 {
@@ -71,7 +71,7 @@ class Rating extends \Magento\Framework\Model\AbstractModel implements IdentityI
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Review\Model\ResourceModel\Rating::class);
+        $this->_init('Magento\Review\Model\ResourceModel\Rating');
     }
 
     /**

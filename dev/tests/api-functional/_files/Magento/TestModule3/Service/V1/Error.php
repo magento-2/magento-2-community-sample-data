@@ -2,7 +2,7 @@
 /**
  * Implementation of a test service for error handling testing
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestModule3\Service\V1;
@@ -104,7 +104,7 @@ class Error implements \Magento\TestModule3\Service\V1\ErrorInterface
             foreach ($wrappedErrorParameters as $error) {
                 $exception->addError(
                     __(
-                        'Invalid value of "%value" provided for the %fieldName field.',
+                        InputException::INVALID_FIELD_VALUE,
                         ['fieldName' => $error->getFieldName(), 'value' => $error->getValue()]
                     )
                 );

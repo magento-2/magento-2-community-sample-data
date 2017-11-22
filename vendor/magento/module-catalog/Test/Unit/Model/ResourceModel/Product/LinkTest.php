@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product;
 
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Link
@@ -30,19 +30,19 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->connection =
-            $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+            $this->getMock('Magento\Framework\DB\Adapter\AdapterInterface', [], [], '', false);
 
         $this->model = $objectManager->getObject(
-            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
+            'Magento\Catalog\Model\ResourceModel\Product\Link',
             ['resource' => $this->resource]
         );
     }
 
     protected function prepareAdapter()
     {
-        $this->dbSelect = $this->createMock(\Magento\Framework\DB\Select::class);
+        $this->dbSelect = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
 
         // method flow
         $this->resource->expects(
@@ -52,6 +52,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue($this->connection)
         );
+        
 
         $this->connection->expects($this->once())->method('select')->will($this->returnValue($this->dbSelect));
     }

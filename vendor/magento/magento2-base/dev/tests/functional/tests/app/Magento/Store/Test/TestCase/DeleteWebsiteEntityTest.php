@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -31,15 +31,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Click "Delete Web Site"
  * 7. Perform all assertions
  *
- * @group Store_Management
+ * @group Store_Management_(PS)
  * @ZephyrId MAGETWO-27723
  */
 class DeleteWebsiteEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S3';
-    const STABLE = 'no';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

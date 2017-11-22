@@ -1,21 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mail\Test\Unit;
 
-class MessageTest extends \PHPUnit\Framework\TestCase
+class MessageTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit\Framework_MockObject
+     * @var \PHPUnit_Framework_MockObject
      */
     protected $_messageMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_messageMock = $this->createPartialMock(
-            \Magento\Framework\Mail\Message::class,
+        $this->_messageMock = $this->getMock(
+            '\Magento\Framework\Mail\Message',
             ['getBodyText', 'getBodyHtml', 'setBodyText', 'setBodyHtml']
         );
     }

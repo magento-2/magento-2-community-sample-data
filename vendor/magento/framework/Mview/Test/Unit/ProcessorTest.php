@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mview\Test\Unit;
 
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Mview\Processor|\PHPUnit_Framework_MockObject_MockObject
@@ -19,8 +19,13 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->viewsFactoryMock =
-            $this->createPartialMock(\Magento\Framework\Mview\View\CollectionFactory::class, ['create']);
+        $this->viewsFactoryMock = $this->getMock(
+            'Magento\Framework\Mview\View\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
         $this->model = new \Magento\Framework\Mview\Processor($this->viewsFactoryMock);
     }
 
@@ -32,7 +37,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getViews($method)
     {
-        $viewMock = $this->createMock(\Magento\Framework\Mview\ViewInterface::class);
+        $viewMock = $this->getMock('Magento\Framework\Mview\ViewInterface', [], [], '', false);
         $viewMock->expects($this->exactly(2))->method($method);
         return [$viewMock, $viewMock];
     }
@@ -44,7 +49,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getViewsMock()
     {
-        $viewsMock = $this->createMock(\Magento\Framework\Mview\View\Collection::class);
+        $viewsMock = $this->getMock('Magento\Framework\Mview\View\Collection', [], [], '', false);
         $this->viewsFactoryMock->expects($this->once())->method('create')->will($this->returnValue($viewsMock));
         return $viewsMock;
     }

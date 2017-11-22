@@ -1,24 +1,32 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Adminhtml\Category;
 
 /**
- * @api
- * @since 100.0.2
+ * Category container block
  */
-class Edit extends \Magento\Framework\View\Element\Template
+class Edit extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**
-     * Return URL for refresh input element 'path' in form
-     *
-     * @return string
-     * @since 101.0.0
+     * @var string
      */
-    public function getRefreshPathUrl()
+    protected $_template = 'catalog/category/edit.phtml';
+
+    /**
+     * @return void
+     */
+    protected function _construct()
     {
-        return $this->getUrl('catalog/*/refreshPath', ['_current' => true]);
+        $this->_objectId = 'entity_id';
+        $this->_blockGroup = 'Magento_Catalog';
+        $this->_controller = 'adminhtml_category';
+        $this->_mode = 'edit';
+        parent::_construct();
+        $this->buttonList->remove('back');
+        $this->buttonList->remove('reset');
+        $this->buttonList->remove('save');
     }
 }

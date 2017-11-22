@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Payment\Transaction;
 
 use Magento\Sales\Model\Order\Payment\Transaction;
 
-class BuilderTest extends \PHPUnit\Framework\TestCase
+class BuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Payment\Transaction\Repository | \PHPUnit_Framework_MockObject_MockObject
@@ -33,17 +33,35 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->repositoryMock = $this->createMock(\Magento\Sales\Model\Order\Payment\Transaction\Repository::class);
-        $this->paymentMock = $this->createPartialMock(\Magento\Sales\Model\Order\Payment::class, [
+        $this->repositoryMock = $this->getMock(
+            'Magento\Sales\Model\Order\Payment\Transaction\Repository',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->paymentMock = $this->getMock(
+            'Magento\Sales\Model\Order\Payment',
+            [
                 'hasIsTransactionClosed',
                 'getIsTransactionClosed',
                 'getId',
                 'getParentTransactionId',
                 'getShouldCloseParentTransaction'
-            ]);
-        $this->orderMock = $this->createMock(\Magento\Sales\Model\Order::class);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->orderMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [],
+            [],
+            '',
+            false
+        );
         $this->builder = $objectManager->getObject(
-            \Magento\Sales\Model\Order\Payment\Transaction\Builder::class,
+            'Magento\Sales\Model\Order\Payment\Transaction\Builder',
             ['transactionRepository' => $this->repositoryMock]
         );
     }
@@ -176,6 +194,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+
     /**
      * @param int $orderId
      * @param int $paymentId
@@ -183,7 +202,9 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function expectTransaction($orderId, $paymentId)
     {
-        $newTransaction = $this->createPartialMock(\Magento\Sales\Model\Order\Payment\Transaction::class, [
+        $newTransaction = $this->getMock(
+            'Magento\Sales\Model\Order\Payment\Transaction',
+            [
                 'getId',
                 'setOrderId',
                 'setPaymentId',
@@ -199,9 +220,12 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
                 'close',
                 'getIsClosed',
                 'setPayment',
-                'setOrder',
-                'setIsClosed'
-            ]);
+                'setOrder'
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->orderMock->expects($this->atLeastOnce())->method('getId')->willReturn($orderId);
         $this->paymentMock->expects($this->atLeastOnce())->method('getId')->willReturn($paymentId);
@@ -214,9 +238,15 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function expectDocument($transactionId)
     {
-        $document = $this->createPartialMock(\Magento\Sales\Model\Order::class, [
+        $document = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [
                 'setTransactionId'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $document->expects($this->once())->method('setTransactionId')->with($transactionId);
         return $document;

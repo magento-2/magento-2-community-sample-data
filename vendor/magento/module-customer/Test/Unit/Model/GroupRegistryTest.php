@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model;
@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Model;
 /**
  * Unit test for registry \Magento\Customer\Model\GroupRegistry
  */
-class GroupRegistryTest extends \PHPUnit\Framework\TestCase
+class GroupRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\GroupRegistry
@@ -20,9 +20,9 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
      */
     private $groupFactory;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->groupFactory = $this->getMockBuilder(\Magento\Customer\Model\GroupFactory::class)
+        $this->groupFactory = $this->getMockBuilder('\Magento\Customer\Model\GroupFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -37,7 +37,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     public function testRetrieve()
     {
         $groupId = 1;
-        $group = $this->getMockBuilder(\Magento\Customer\Model\Group::class)
+        $group = $this->getMockBuilder('Magento\Customer\Model\Group')
             ->setMethods(['load', 'getId', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,7 +66,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     public function testRetrieveException()
     {
         $groupId = 1;
-        $group = $this->getMockBuilder(\Magento\Customer\Model\Group::class)
+        $group = $this->getMockBuilder('Magento\Customer\Model\Group')
             ->setMethods(['load', 'getId', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,7 +91,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     public function testRemove()
     {
         $groupId = 1;
-        $group = $this->getMockBuilder(\Magento\Customer\Model\Group::class)
+        $group = $this->getMockBuilder('Magento\Customer\Model\Group')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'getId', '__wakeup'])
             ->getMock();

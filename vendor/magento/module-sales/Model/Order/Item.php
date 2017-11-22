@@ -1,18 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order;
 
 use Magento\Framework\Api\AttributeValueFactory;
-use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\AbstractModel;
+use Magento\Sales\Api\Data\OrderItemInterface;
 
 /**
  * Order Item Model
  *
- * @api
+ * @method \Magento\Sales\Model\ResourceModel\Order\Item _getResource()
+ * @method \Magento\Sales\Model\ResourceModel\Order\Item getResource()
  * @method int getGiftMessageId()
  * @method \Magento\Sales\Model\Order\Item setGiftMessageId(int $value)
  * @method int getGiftMessageAvailable()
@@ -20,7 +21,6 @@ use Magento\Sales\Model\AbstractModel;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Item extends AbstractModel implements OrderItemInterface
 {
@@ -53,7 +53,9 @@ class Item extends AbstractModel implements OrderItemInterface
 
     // When qty ordered = qty returned // not used at the moment
 
-    // When qty ordered = qty returned // not used at the moment
+    /**
+     * @var string
+     */
     protected $_eventPrefix = 'sales_order_item';
 
     /**
@@ -94,13 +96,6 @@ class Item extends AbstractModel implements OrderItemInterface
     protected $_storeManager;
 
     /**
-     * Serializer interface instance.
-     *
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * Initialize dependencies.
      *
      * @param \Magento\Framework\Model\Context $context
@@ -113,7 +108,6 @@ class Item extends AbstractModel implements OrderItemInterface
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -126,8 +120,7 @@ class Item extends AbstractModel implements OrderItemInterface
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -138,8 +131,6 @@ class Item extends AbstractModel implements OrderItemInterface
             $resourceCollection,
             $data
         );
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         $this->_orderFactory = $orderFactory;
         $this->_storeManager = $storeManager;
         $this->productRepository = $productRepository;
@@ -152,7 +143,7 @@ class Item extends AbstractModel implements OrderItemInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Item::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Item');
     }
 
     /**
@@ -475,10 +466,7 @@ class Item extends AbstractModel implements OrderItemInterface
     public function getProductOptions()
     {
         $data = $this->_getData('product_options');
-        if (is_string($data)) {
-            $data = $this->serializer->unserialize($data);
-        }
-        return $data;
+        return is_string($data) ? unserialize($data) : $data;
     }
 
     /**
@@ -701,7 +689,6 @@ class Item extends AbstractModel implements OrderItemInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Returns additional_data
      *
@@ -2390,17 +2377,5 @@ class Item extends AbstractModel implements OrderItemInterface
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
-
-    /**
-     * Check if it is possible to process item after cancellation
-     *
-     * @return bool
-     * @since 100.2.0
-     */
-    public function isProcessingAvailable()
-    {
-        return $this->getQtyToShip() > $this->getQtyToCancel();
-    }
 }

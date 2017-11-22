@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\User\Console\UnlockAdminAccountCommand;
 /**
  * Unit tests for StartConsumerCommand
  */
-class UnlockAdminAccountCommandTest extends \PHPUnit\Framework\TestCase
+class UnlockAdminAccountCommandTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
     private $objectManager;
@@ -38,7 +38,7 @@ class UnlockAdminAccountCommandTest extends \PHPUnit\Framework\TestCase
     public function testConfigure()
     {
         $this->command = $this->objectManager
-            ->getObject(\Magento\User\Console\UnlockAdminAccountCommand::class);
+            ->getObject('Magento\User\Console\UnlockAdminAccountCommand');
 
         $this->assertEquals(UnlockAdminAccountCommand::COMMAND_ADMIN_ACCOUNT_UNLOCK, $this->command->getName());
         $this->assertEquals(UnlockAdminAccountCommand::COMMAND_DESCRIPTION, $this->command->getDescription());

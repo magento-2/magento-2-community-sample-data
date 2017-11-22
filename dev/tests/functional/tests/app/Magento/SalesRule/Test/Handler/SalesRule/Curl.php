@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -41,26 +41,10 @@ class Curl extends Conditions implements SalesRuleInterface
             'type' => \Magento\SalesRule\Model\Rule\Condition\Address::class,
             'attribute' => 'base_subtotal',
         ],
-        'Total Items Quantity' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Address::class,
-            'attribute' => 'total_qty',
-        ],
         'Conditions combination' => [
             'type' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
             'aggregator' => 'all',
             'value' => '1',
-        ],
-        'Products subselection' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Subselect::class,
-            'attribute' => 'qty',
-            'operator' => '==',
-            'value' => '1',
-            'aggregator' => 'all',
-        ],
-        'Product attribute combination' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
-            'value' => '1',
-            'aggregator' => 'all',
         ],
         'Shipping Country' => [
             'type' => \Magento\SalesRule\Model\Rule\Condition\Address::class,
@@ -77,18 +61,6 @@ class Curl extends Conditions implements SalesRuleInterface
         'Category' => [
             'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
             'attribute' => 'category_ids',
-        ],
-        'Price in cart' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
-            'attribute' => 'quote_item_price',
-        ],
-        'Quantity in cart' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
-            'attribute' => 'quote_item_qty',
-        ],
-        'Row total in cart' => [
-            'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
-            'attribute' => 'quote_item_row_total',
         ]
     ];
 
@@ -106,8 +78,8 @@ class Curl extends Conditions implements SalesRuleInterface
      */
     protected $mappingData = [
         'is_active' => [
-            'Yes' => 1,
-            'No' => 0,
+            'Active' => 1,
+            'Inactive' => 0,
         ],
         'coupon_type' => [
             'No Coupon' => 1,

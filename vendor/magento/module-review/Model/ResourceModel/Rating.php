@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Model\ResourceModel;
@@ -8,10 +8,7 @@ namespace Magento\Review\Model\ResourceModel;
 /**
  * Rating resource model
  *
- * @api
- *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -190,7 +187,7 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->where('rating_id = :rating_id');
         $old = $connection->fetchPairs($select, [':rating_id' => $ratingId]);
         $new = array_filter(array_map('trim', $object->getRatingCodes()));
-        $this->deleteRatingData($ratingId, $table, array_keys(array_diff_assoc($old, $new)));
+        $this->deleteRatingData($ratingId, $table, array_diff_assoc($old, $new));
 
         $insert = [];
         foreach (array_diff_assoc($new, $old) as $storeId => $title) {
@@ -213,10 +210,10 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->where('rating_id = :rating_id');
         $old = $connection->fetchCol($select, [':rating_id' => $ratingId]);
         $new = $object->getStores();
-        $this->deleteRatingData($ratingId, $table, array_diff($old, $new));
+        $this->deleteRatingData($ratingId, $table, array_diff_assoc($old, $new));
 
         $insert = [];
-        foreach (array_diff($new, $old) as $storeId) {
+        foreach (array_keys(array_diff_assoc($new, $old)) as $storeId) {
             $insert[] = ['rating_id' => $ratingId, 'store_id' => (int)$storeId];
         }
         $this->insertRatingData($table, $insert);
@@ -226,18 +223,18 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * @param int $ratingId
      * @param string $table
-     * @param array $storeIds
+     * @param array $data
      * @return void
      */
-    protected function deleteRatingData($ratingId, $table, array $storeIds)
+    protected function deleteRatingData($ratingId, $table, array $data)
     {
-        if (empty($storeIds)) {
+        if (empty($data)) {
             return;
         }
         $connection = $this->getConnection();
         $connection->beginTransaction();
         try {
-            $where = ['rating_id = ?' => $ratingId, 'store_id IN(?)' => $storeIds];
+            $where = ['rating_id = ?' => $ratingId, 'store_id IN(?)' => array_keys($data)];
             $connection->delete($table, $where);
             $connection->commit();
         } catch (\Exception $e) {

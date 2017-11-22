@@ -2,15 +2,11 @@
 /**
  * Plugin method definitions. Provide the list of interception methods in specified plugin.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Interception;
 
-/**
- * Interface \Magento\Framework\Interception\DefinitionInterface
- *
- */
 interface DefinitionInterface
 {
     const LISTENER_BEFORE = 1;

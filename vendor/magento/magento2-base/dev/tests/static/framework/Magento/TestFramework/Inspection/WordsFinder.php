@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,7 +26,7 @@ class WordsFinder
      *
      * @var string
      */
-    protected $copyrightString = 'Copyright © Magento, Inc. All rights reserved.';
+    protected $copyrightString = 'Copyright © 2013-2017 Magento, Inc. All rights reserved.';
 
     /**
      * Copying string which must be present in every non-binary file right after copyright string
@@ -80,33 +80,17 @@ class WordsFinder
     protected $_baseDir;
 
     /**
-     * Component Registrar
-     *
-     * @var \Magento\Framework\Component\ComponentRegistrar
-     */
-    protected $componentRegistrar;
-
-    /**
-     * Map of phrase to exclude from the file content
-     *
-     * @var  array
-     */
-    private $exclude = [];
-
-    /**
      * @param string|array $configFiles
      * @param string $baseDir
-     * @param \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
      * @param bool $isCopyrightChecked
      * @throws \Magento\TestFramework\Inspection\Exception
      */
-    public function __construct($configFiles, $baseDir, $componentRegistrar, $isCopyrightChecked = false)
+    public function __construct($configFiles, $baseDir, $isCopyrightChecked = false)
     {
         if (!is_dir($baseDir)) {
             throw new \Magento\TestFramework\Inspection\Exception("Base directory {$baseDir} does not exist");
         }
         $this->_baseDir = str_replace('\\', '/', realpath($baseDir));
-        $this->componentRegistrar = $componentRegistrar;
 
         // Load config files
         if (!is_array($configFiles)) {
@@ -179,14 +163,11 @@ class WordsFinder
      * @param \SimpleXMLElement $configXml
      * @return \Magento\TestFramework\Inspection\WordsFinder
      * @throws \Magento\TestFramework\Inspection\Exception
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _extractWhitelist(\SimpleXMLElement $configXml)
     {
         // Load whitelist entries
         $whitelist = [];
-        $exclude = [];
         $nodes = $configXml->xpath('//config/whitelist/item');
         foreach ($nodes as $node) {
             $path = $node->xpath('path');
@@ -195,15 +176,7 @@ class WordsFinder
                     'A "path" must be defined for the whitelisted item'
                 );
             }
-            $component = $node->xpath('component');
-            if ($component) {
-                $componentType = $component[0]->xpath('@type')[0];
-                $componentName = $component[0]->xpath('@name')[0];
-                $path = $this->componentRegistrar->getPath((string)$componentType, (string)$componentName)
-                    . '/' . (string)$path[0];
-            } else {
-                $path = $this->_baseDir . '/' . (string)$path[0];
-            }
+            $path = $this->_baseDir . '/' . (string)$path[0];
 
             // Words
             $words = [];
@@ -213,21 +186,8 @@ class WordsFinder
                     $words[] = (string)$wordNode;
                 }
             }
+
             $whitelist[$path] = $words;
-
-            $excludeNodes = $node->xpath('exclude');
-            $excludes = [];
-            if ($excludeNodes) {
-                foreach ($excludeNodes as $extractNode) {
-                    $excludes[] = (string)$extractNode;
-                }
-            }
-
-            if (isset($exclude[$path])) {
-                $exclude[$path] = array_merge($excludes, $exclude[$path]);
-            } else {
-                $exclude[$path] = $excludes;
-            }
         }
 
         // Merge with already present whitelist
@@ -238,12 +198,6 @@ class WordsFinder
             $this->_whitelist[$newPath] = array_unique($newWords);
         }
 
-        foreach ($exclude as $newPath => $newWords) {
-            if (isset($this->exclude[$newPath])) {
-                $newWords = array_merge($this->exclude[$newPath], $newWords);
-            }
-            $this->exclude[$newPath] = array_unique($newWords);
-        }
         return $this;
     }
 
@@ -283,22 +237,17 @@ class WordsFinder
      * @param  string $file
      * @return array
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _findWords($file)
     {
         $checkContents = !$this->_isBinaryFile($file);
-        $path = $this->getSearchablePath($file);
+
+        $relPath = $this->_getRelPath($file);
         $contents = $checkContents ? file_get_contents($file) : '';
-        if (isset($this->exclude[$file]) && !empty($this->exclude[$file])) {
-            foreach ($this->exclude[$file] as $stringToEliminate) {
-                $contents = str_replace($stringToEliminate, "", $contents);
-            }
-        }
 
         $foundWords = [];
         foreach ($this->_words as $word) {
-            if (stripos($path, $word) !== false || stripos($contents, $word) !== false) {
+            if (stripos($relPath, $word) !== false || stripos($contents, $word) !== false) {
                 $foundWords[] = $word;
             }
         }
@@ -365,16 +314,13 @@ class WordsFinder
     }
 
     /**
-     * Return the path for words search
+     * Return file path relative to base dir
      *
      * @param string $file
      * @return string
      */
-    protected function getSearchablePath($file)
+    protected function _getRelPath($file)
     {
-        if (strpos($file, $this->_baseDir) === false) {
-            return $file;
-        }
         return substr($file, strlen($this->_baseDir) + 1);
     }
 }

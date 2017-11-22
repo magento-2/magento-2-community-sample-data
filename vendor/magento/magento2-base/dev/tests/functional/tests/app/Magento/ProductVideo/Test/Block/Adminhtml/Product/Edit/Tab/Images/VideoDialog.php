@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -50,13 +50,6 @@ class VideoDialog extends Form
     protected $screenshotPreview = '#new_video_screenshot_preview + img';
 
     /**
-     * Video Player CSS Selector
-     *
-     * @var string
-     */
-    private $videoPlayer = '#new-video div.video-player-container';
-
-    /**
      * Close button CSS selector.
      *
      * @var string
@@ -81,7 +74,6 @@ class VideoDialog extends Form
      */
     public function clickEditButton()
     {
-        $this->waitForElementNotDisabled($this->editButton);
         $this->_rootElement->find($this->editButton)->click();
         return $this;
     }
@@ -124,29 +116,11 @@ class VideoDialog extends Form
             $this->_fill($videoFill);
             $this->_rootElement->find($this->getVideoButton)->click();
             $this->waitForElementVisible($this->screenshotPreview);
-            $this->waitForElementVisible($this->videoPlayer);
         }
         $this->_fill($data);
         return $this;
     }
 
-    /**
-     * Wait for element is not disabled in the block
-     *
-     * @param string $selector
-     * @param string $strategy
-     * @return bool|null
-     */
-    public function waitForElementNotDisabled($selector, $strategy = Locator::SELECTOR_CSS)
-    {
-        $browser = $this->browser;
-        return $browser->waitUntil(
-            function () use ($browser, $selector, $strategy) {
-                $element = $browser->find($selector, $strategy);
-                return $element->isDisabled() == false ? true : null;
-            }
-        );
-    }
 
     /**
      * Gets video info

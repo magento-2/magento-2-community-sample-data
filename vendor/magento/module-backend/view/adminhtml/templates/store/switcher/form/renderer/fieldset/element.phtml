@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,21 +26,25 @@ $fieldAttributes = $fieldId . ' class="' . $fieldClass . '" '
 
 <?php if (!$element->getNoDisplay()): ?>
     <?php if ($element->getType() == 'hidden'): ?>
-        <?= $element->getElementHtml() ?>
+        <?php echo $element->getElementHtml() ?>
     <?php else: ?>
-    <div<?= /* @escapeNotVerified */ $fieldAttributes ?>>
+    <div<?php /* @escapeNotVerified */ echo $fieldAttributes ?>>
         <?php if ($elementBeforeLabel): ?>
-            <?= $element->getElementHtml() ?>
-            <?= $element->getLabelHtml('', $element->getScopeLabel()) ?>
-            <?= /* @escapeNotVerified */ $note ?>
+            <?php echo $element->getElementHtml() ?>
+            <?php echo $element->getLabelHtml() ?>
+            <?php /* @escapeNotVerified */ echo $note ?>
         <?php else: ?>
-            <?= $element->getLabelHtml('', $element->getScopeLabel()) ?>
+            <?php echo $element->getLabelHtml() ?>
             <div class="admin__field-control control">
-                <?= /* @escapeNotVerified */ ($addOn) ? '<div class="addon">' . $element->getElementHtml() . '</div>' : $element->getElementHtml() ?>
-                <?= $block->getHintHtml() ?>
-                <?= /* @escapeNotVerified */ $note ?>
+                <?php /* @escapeNotVerified */ echo($addOn) ? '<div class="addon">' . $element->getElementHtml() . '</div>' : $element->getElementHtml(); ?>
+                <?php echo $block->getHintHtml() ?>
+                <?php /* @escapeNotVerified */ echo $note ?>
             </div>
         <?php endif; ?>
+        <?php if ($element->getScopeLabel()): ?>
+            <div class="field-service" value-scope="<?php /* @escapeNotVerified */ echo $element->getScopeLabel()?>">
+            </div>
+        <?php endif;?>
     </div>
     <?php endif; ?>
 <?php endif; ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -62,6 +62,23 @@ class ConfigGenerator
     }
 
     /**
+     * Creates install segment config data
+     *
+     * @deprecated
+     *
+     * @return ConfigData
+     */
+    public function createInstallConfig()
+    {
+        $configData = new ConfigData(ConfigFilePool::APP_ENV);
+
+        if ($this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_INSTALL_DATE) === null) {
+            $configData->set(ConfigOptionsListConstants::CONFIG_PATH_INSTALL_DATE, date('r'));
+        }
+        return $configData;
+    }
+
+    /**
      * Creates encryption key config data
      * @param array $data
      * @return ConfigData
@@ -116,12 +133,19 @@ class ConfigGenerator
      *
      * @param array $data
      * @return ConfigData
-     * @deprecated 2.2.0
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function createDefinitionsConfig(array $data)
     {
-        return null;
+        $configData = new ConfigData(ConfigFilePool::APP_ENV);
+
+        if (!empty($data[ConfigOptionsListConstants::INPUT_KEY_DEFINITION_FORMAT])) {
+            $configData->set(
+                ObjectManagerFactory::CONFIG_PATH_DEFINITION_FORMAT,
+                $data[ConfigOptionsListConstants::INPUT_KEY_DEFINITION_FORMAT]
+            );
+        }
+
+        return $configData;
     }
 
     /**
@@ -216,6 +240,7 @@ class ConfigGenerator
         if ($this->deploymentConfig->get(State::PARAM_MODE) === null) {
             $configData->set(State::PARAM_MODE, State::MODE_DEFAULT);
         }
+
         return $configData;
     }
 

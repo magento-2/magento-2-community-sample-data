@@ -1,14 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Model\Config;
 
 /**
  * Converter of integration.xml content into array format.
- *
- * @deprecated 100.1.0
  */
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {

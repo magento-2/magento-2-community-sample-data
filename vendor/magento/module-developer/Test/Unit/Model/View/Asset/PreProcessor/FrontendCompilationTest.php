@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Developer\Test\Unit\Model\View\Asset\PreProcessor;
@@ -22,7 +22,7 @@ use Magento\Framework\View\Asset\PreProcessor\AlternativeSource\AssetBuilder;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
+class FrontendCompilationTest extends \PHPUnit_Framework_TestCase
 {
     const AREA = 'test-area';
 
@@ -112,6 +112,7 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
             ->method('build')
             ->willThrowException(new \Exception());
 
+
         $this->assetSourceMock->expects(self::never())
             ->method('getContent');
 
@@ -135,8 +136,6 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcess()
     {
-        $newContentType = 'less';
-
         $this->lockerProcessMock->expects(self::once())
             ->method('lockProcess')
             ->with(self::isType('string'));
@@ -171,7 +170,7 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
 
         $this->alternativeSourceMock->expects(self::once())
             ->method('getAlternativesExtensionsNames')
-            ->willReturn([$newContentType]);
+            ->willReturn(['less']);
 
         $this->assetSourceMock->expects(self::once())
             ->method('getContent')
@@ -186,7 +185,39 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
             'lock'
         );
 
-        $frontendCompilation->process($this->getChainMockExpects('', 1, 1, $newContentType));
+        $frontendCompilation->process($this->getChainMockExpects());
+    }
+
+    /**
+     * Run test for process method (content not empty)
+     */
+    public function testProcessContentNotEmpty()
+    {
+        $chainMock = $this->getChainMock();
+        $assetMock = $this->getAssetMock();
+
+        $chainMock->expects(self::once())
+            ->method('getContent')
+            ->willReturn('test-content');
+
+        $chainMock->expects(self::never())
+            ->method('getAsset')
+            ->willReturn($assetMock);
+
+        $this->lockerProcessMock->expects(self::never())
+            ->method('lockProcess');
+        $this->lockerProcessMock->expects(self::never())
+            ->method('unlockProcess');
+
+        $frontendCompilation = new FrontendCompilation(
+            $this->assetSourceMock,
+            $this->assetBuilderMock,
+            $this->alternativeSourceMock,
+            $this->lockerProcessMock,
+            'lock'
+        );
+
+        $frontendCompilation->process($chainMock);
     }
 
     /**
@@ -205,10 +236,9 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
      * @param string $content
      * @param int $contentExactly
      * @param int $pathExactly
-     * @param string $newContentType
      * @return Chain|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getChainMockExpects($content = '', $contentExactly = 1, $pathExactly = 1, $newContentType = '')
+    private function getChainMockExpects($content = '', $contentExactly = 1, $pathExactly = 1)
     {
         $chainMock = $this->getChainMock();
 
@@ -220,10 +250,7 @@ class FrontendCompilationTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->getAssetMockExpects($pathExactly));
         $chainMock->expects(self::exactly($contentExactly))
             ->method('setContent')
-            ->with(self::NEW_CONTENT);
-        $chainMock->expects(self::exactly($contentExactly))
-            ->method('setContentType')
-            ->with($newContentType);
+            ->willReturn(self::NEW_CONTENT);
 
         return $chainMock;
     }

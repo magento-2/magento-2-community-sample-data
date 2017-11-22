@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Adapter\Mysql;
@@ -14,8 +14,6 @@ use Magento\Framework\Search\RequestInterface;
 
 /**
  * MySQL Search Adapter
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Adapter implements AdapterInterface
 {
@@ -71,7 +69,6 @@ class Adapter implements AdapterInterface
 
     /**
      * {@inheritdoc}
-     * @throws \LogicException
      */
     public function query(RequestInterface $request)
     {
@@ -81,7 +78,7 @@ class Adapter implements AdapterInterface
 
         $documents = $this->getDocuments($table);
 
-        $aggregations = $this->aggregationBuilder->build($request, $table, $documents);
+        $aggregations = $this->aggregationBuilder->build($request, $table);
         $response = [
             'documents' => $documents,
             'aggregations' => $aggregations,

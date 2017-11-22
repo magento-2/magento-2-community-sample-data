@@ -1,12 +1,12 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GroupedProduct\Test\Unit\Model\Product\Type;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -25,8 +25,8 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->moduleManagerMock = $this->createMock(\Magento\Framework\Module\Manager::class);
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Model\Product\Type::class);
+        $this->moduleManagerMock = $this->getMock('\Magento\Framework\Module\Manager', [], [], '', false);
+        $this->subjectMock = $this->getMock('Magento\Catalog\Model\Product\Type', [], [], '', false);
         $this->object = new \Magento\GroupedProduct\Model\Product\Type\Plugin($this->moduleManagerMock);
     }
 

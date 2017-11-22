@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,13 +14,8 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @magentoDataFixture Magento/CatalogRule/_files/two_rules.php
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  */
-class BatchIndexTest extends \PHPUnit\Framework\TestCase
+class BatchIndexTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Catalog\Model\ProductRepository
-     */
-    protected $productRepository;
-
     /**
      * @var \Magento\Catalog\Model\Product
      */
@@ -33,39 +28,13 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resourceRule = Bootstrap::getObjectManager()->get(\Magento\CatalogRule\Model\ResourceModel\Rule::class);
-        $this->product = Bootstrap::getObjectManager()->get(\Magento\Catalog\Model\Product::class);
-        $this->productRepository = Bootstrap::getObjectManager()->get(\Magento\Catalog\Model\ProductRepository::class);
-    }
-
-    protected function tearDown()
-    {
-        /** @var \Magento\Framework\Registry $registry */
-        $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Registry::class);
-
-        $registry->unregister('isSecureArea');
-        $registry->register('isSecureArea', true);
-
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
-        $productCollection = Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
-        );
-        $productCollection->delete();
-
-        $registry->unregister('isSecureArea');
-        $registry->register('isSecureArea', false);
-
-        parent::tearDown();
+        $this->resourceRule = Bootstrap::getObjectManager()->get('Magento\CatalogRule\Model\ResourceModel\Rule');
+        $this->product = Bootstrap::getObjectManager()->get('Magento\Catalog\Model\Product');
     }
 
     /**
      * @magentoDbIsolation enabled
      * @dataProvider dataProvider
-     * @magentoAppIsolation enabled
-     * @magentoAppArea adminhtml
-     * @magentoDataFixtureBeforeTransaction Magento/CatalogRule/_files/two_rules.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      */
     public function testPriceForSmallBatch($batchCount, $price, $expectedPrice)
     {
@@ -75,7 +44,7 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
          * @var IndexBuilder $indexerBuilder
          */
         $indexerBuilder = Bootstrap::getObjectManager()->create(
-            \Magento\CatalogRule\Model\Indexer\IndexBuilder::class,
+            'Magento\CatalogRule\Model\Indexer\IndexBuilder',
             ['batchCount' => $batchCount]
         );
 
@@ -96,7 +65,7 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
      */
     protected function prepareProducts($price)
     {
-        $this->product = $this->productRepository->get('simple');
+        $this->product->load(1);
         $productSecond = clone $this->product;
         $productSecond->setId(null)
             ->setUrlKey(null)
@@ -114,8 +83,8 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
             ->save();
         $productThird->setPrice($price)->save();
         return [
-            $productSecond->getEntityId(),
-            $productThird->getEntityId(),
+            $productSecond->getId(),
+            $productThird->getId(),
         ];
     }
 

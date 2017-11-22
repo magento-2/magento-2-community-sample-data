@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Theme;
 
 use Magento\Theme\Model\Theme\FileProvider;
 
-class FileProviderTest extends \PHPUnit\Framework\TestCase
+class FileProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FileProvider
@@ -21,11 +21,11 @@ class FileProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $fileFactory = $this->getMockBuilder(\Magento\Theme\Model\ResourceModel\Theme\File\CollectionFactory::class)
+        $fileFactory = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\File\CollectionFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->file = $this->getMockBuilder(\Magento\Theme\Model\ResourceModel\Theme\File\Collection::class)
+        $this->file = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\File\Collection')
             ->disableOriginalConstructor()
             ->getMock();
         $fileFactory->expects($this->once())
@@ -43,7 +43,7 @@ class FileProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetItems()
     {
         $items = ['item'];
-        $theme = $this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)->getMock();
+        $theme = $this->getMockBuilder('Magento\Framework\View\Design\ThemeInterface')->getMock();
         $filters = ['name' => 'filter'];
         $this->file->expects($this->once())
             ->method('addThemeFilter')

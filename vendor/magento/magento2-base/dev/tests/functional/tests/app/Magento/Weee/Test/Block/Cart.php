@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -35,7 +35,7 @@ class Cart extends \Magento\Checkout\Test\Block\Cart
                 Locator::SELECTOR_XPATH
             );
             $cartItem = $this->blockFactory->create(
-                \Magento\Weee\Test\Block\Cart\CartItem::class,
+                'Magento\Weee\Test\Block\Cart\CartItem',
                 ['element' => $cartItemBlock]
             );
         }

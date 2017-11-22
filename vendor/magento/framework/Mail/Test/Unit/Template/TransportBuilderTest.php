@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mail\Test\Unit\Template;
@@ -8,12 +8,12 @@ namespace Magento\Framework\Mail\Test\Unit\Template;
 use Magento\Framework\App\TemplateTypesInterface;
 use Magento\Framework\Mail\MessageInterface;
 
-class TransportBuilderTest extends \PHPUnit\Framework\TestCase
+class TransportBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
      */
-    protected $builderClassName = \Magento\Framework\Mail\Template\TransportBuilder::class;
+    protected $builderClassName = '\Magento\Framework\Mail\Template\TransportBuilder';
 
     /**
      * @var \Magento\Framework\Mail\Template\TransportBuilder
@@ -48,16 +48,15 @@ class TransportBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->templateFactoryMock = $this->createMock(\Magento\Framework\Mail\Template\FactoryInterface::class);
-        $this->messageMock = $this->createMock(\Magento\Framework\Mail\Message::class);
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->senderResolverMock = $this->createMock(\Magento\Framework\Mail\Template\SenderResolverInterface::class);
-        $this->mailTransportFactoryMock = $this->getMockBuilder(
-            \Magento\Framework\Mail\TransportInterfaceFactory::class
-        )->disableOriginalConstructor()
+        $this->templateFactoryMock = $this->getMock('Magento\Framework\Mail\Template\FactoryInterface');
+        $this->messageMock = $this->getMock('Magento\Framework\Mail\Message');
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->senderResolverMock = $this->getMock('Magento\Framework\Mail\Template\SenderResolverInterface');
+        $this->mailTransportFactoryMock = $this->getMockBuilder('Magento\Framework\Mail\TransportInterfaceFactory')
+            ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->builder = $objectManagerHelper->getObject(
@@ -87,7 +86,7 @@ class TransportBuilderTest extends \PHPUnit\Framework\TestCase
         $vars = ['reason' => 'Reason', 'customer' => 'Customer'];
         $options = ['area' => 'frontend', 'store' => 1];
 
-        $template = $this->createMock(\Magento\Framework\Mail\TemplateInterface::class);
+        $template = $this->getMock('\Magento\Framework\Mail\TemplateInterface');
         $template->expects($this->once())->method('setVars')->with($this->equalTo($vars))->willReturnSelf();
         $template->expects($this->once())->method('setOptions')->with($this->equalTo($options))->willReturnSelf();
         $template->expects($this->once())->method('getSubject')->willReturn('Email Subject');
@@ -112,7 +111,7 @@ class TransportBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo($bodyText))
             ->willReturnSelf();
 
-        $transport = $this->createMock(\Magento\Framework\Mail\TransportInterface::class);
+        $transport = $this->getMock('\Magento\Framework\Mail\TransportInterface');
 
         $this->mailTransportFactoryMock->expects($this->at(0))
             ->method('create')
@@ -121,11 +120,11 @@ class TransportBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects($this->at(0))
             ->method('create')
-            ->with($this->equalTo(\Magento\Framework\Mail\Message::class))
+            ->with($this->equalTo('Magento\Framework\Mail\Message'))
             ->willReturn($transport);
 
         $this->builder->setTemplateIdentifier('identifier')->setTemplateVars($vars)->setTemplateOptions($options);
-        $this->assertInstanceOf(\Magento\Framework\Mail\TransportInterface::class, $this->builder->getTransport());
+        $this->assertInstanceOf('Magento\Framework\Mail\TransportInterface', $this->builder->getTransport());
     }
 
     /**

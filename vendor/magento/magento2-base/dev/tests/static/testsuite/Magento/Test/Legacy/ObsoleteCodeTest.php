@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,15 +10,14 @@
  */
 namespace Magento\Test\Legacy;
 
-use Magento\Framework\App\Utility\AggregateInvoker;
 use Magento\Framework\App\Utility\Files;
-use Magento\Framework\Component\ComponentRegistrar;
+use Magento\Framework\App\Utility\AggregateInvoker;
 use Magento\TestFramework\Utility\ChangedFiles;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
+class ObsoleteCodeTest extends \PHPUnit_Framework_TestCase
 {
     /**@#+
      * Lists of obsolete entities from fixtures
@@ -109,10 +108,10 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
     public function testPhpFiles()
     {
         $invoker = new AggregateInvoker($this);
-        $changedFiles = ChangedFiles::getPhpFiles(__DIR__ . '/../_files/changed_files*');
+        $changedFiles = ChangedFiles::getPhpFiles(__DIR__ . '/_files/changed_files*');
         $blacklistFiles = $this->getBlacklistFiles();
         foreach ($blacklistFiles as $blacklistFile) {
-            unset($changedFiles[BP . $blacklistFile]);
+            unset($changedFiles[$blacklistFile]);
         }
         $invoker(
             function ($file) {
@@ -196,11 +195,10 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
      */
     protected function _testObsoleteClasses($content)
     {
-        /* avoid collision between obsolete class name and valid namespace and package tag */
-        $content = preg_replace('/namespace[^;]+;/', '', $content);
-        $content = preg_replace('/\@package\s[a-zA-Z0-9\\\_]+/', '', $content);
         foreach (self::$_classes as $row) {
             list($class, , $replacement) = $row;
+            /* avoid collision between obsolete class name and valid namespace */
+            $content = preg_replace('/namespace[^;]+;/', '', $content);
             $this->_assertNotRegExp(
                 '/[^a-z\d_]' . preg_quote($class, '/') . '[^a-z\d_\\\\]/iS',
                 $content,
@@ -291,7 +289,7 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Assert that obsolete paths are not used in the content
+     * Assert that obsolete pathes are not used in the content
      *
      * This method will search the content for references to class
      * that start with obsolete namespace
@@ -302,7 +300,7 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
     {
         foreach (self::$_paths as $row) {
             list($obsoletePath, , $replacementPath) = $row;
-            $relativePath = str_replace(BP, '', $file);
+            $relativePath = str_replace(Files::init()->getPathToSource(), "", $file);
             $message = $this->_suggestReplacement(
                 "Path '{$obsoletePath}' is obsolete.",
                 $replacementPath
@@ -326,16 +324,13 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
      */
     protected function _testGetChildSpecialCase($content, $file)
     {
-        $componentRegistrar = new ComponentRegistrar();
-        foreach ($componentRegistrar->getPaths(ComponentRegistrar::MODULE) as $modulePath) {
-            if (0 === strpos($file, $modulePath)) {
-                $this->_assertNotRegexp(
-                    '/[^a-z\d_]getChild\s*\(/iS',
-                    $content,
-                    'Block method getChild() is obsolete. ' .
-                    'Replacement suggestion: \Magento\Framework\View\Element\AbstractBlock::getChildBlock()'
-                );
-            }
+        if (0 === strpos($file, Files::init()->getPathToSource() . '/app/')) {
+            $this->_assertNotRegexp(
+                '/[^a-z\d_]getChild\s*\(/iS',
+                $content,
+                'Block method getChild() is obsolete. ' .
+                'Replacement suggestion: \Magento\Framework\View\Element\AbstractBlock::getChildBlock()'
+            );
         }
     }
 
@@ -584,6 +579,7 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
                             break;
                         }
                     }
+
                 }
             } else {
                 $result = 1;
@@ -937,7 +933,7 @@ class ObsoleteCodeTest extends \PHPUnit\Framework\TestCase
     {
         $blackList = include __DIR__ . '/_files/blacklist/obsolete_mage.php';
         $ignored = [];
-        $appPath = BP;
+        $appPath = Files::init()->getPathToSource();
         foreach ($blackList as $file) {
             if ($absolutePath) {
                 $ignored = array_merge($ignored, glob($appPath . DIRECTORY_SEPARATOR . $file, GLOB_NOSORT));

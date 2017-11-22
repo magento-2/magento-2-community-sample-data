@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,8 @@ namespace Magento\Framework\App\Test\Unit;
 
 use \Magento\Framework\App\SetupInfo;
 
-class SetupInfoTest extends \PHPUnit\Framework\TestCase
+
+class SetupInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * A default fixture
@@ -24,7 +25,7 @@ class SetupInfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorExceptions($server, $expectedError)
     {
-        $this->expectException('\InvalidArgumentException', $expectedError);
+        $this->setExpectedException('\InvalidArgumentException', $expectedError);
         new SetupInfo($server);
     }
 
@@ -91,10 +92,7 @@ class SetupInfoTest extends \PHPUnit\Framework\TestCase
         return [
             [self::$fixture, ''],
             [self::$fixture + ['HTTP_HOST' => ''], ''],
-            [
-                ['DOCUMENT_ROOT' => '/foo/bar', 'SCRIPT_FILENAME' => '/other/baz.php', 'HTTP_HOST' => 'example.com'],
-                'http://example.com/'
-            ],
+            [['DOCUMENT_ROOT' => '/foo/bar', 'SCRIPT_FILENAME' => '/other/baz.php', 'HTTP_HOST' => 'example.com'], ''],
             [self::$fixture + ['HTTP_HOST' => 'example.com'], 'http://example.com/dir/'],
             [
                 ['DOCUMENT_ROOT' => '/foo/bar', 'SCRIPT_FILENAME' => '/foo/bar/baz.php', 'HTTP_HOST' => 'example.com'],

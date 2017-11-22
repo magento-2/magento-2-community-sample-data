@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Element\Message\Renderer;
@@ -9,7 +9,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\View\Element\Message\Renderer\EscapeRenderer;
 
-class EscapeRendererTest extends \PHPUnit\Framework\TestCase
+class EscapeRendererTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterpret()
     {
@@ -18,12 +18,12 @@ class EscapeRendererTest extends \PHPUnit\Framework\TestCase
 
         /** @var Escaper | \PHPUnit_Framework_MockObject_MockObject $escaper */
         $escaper = $this->getMockBuilder(
-            \Magento\Framework\Escaper::class
+            'Magento\Framework\Escaper'
         )
             ->disableOriginalConstructor()
             ->getMock();
         /** @var MessageInterface | \PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->createMock(\Magento\Framework\Message\MessageInterface::class);
+        $message = $this->getMock('Magento\Framework\Message\MessageInterface');
 
         $message->expects(static::once())
             ->method('getText')

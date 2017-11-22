@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel;
@@ -8,38 +8,40 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel;
 /**
  * Class AttributeTest
  */
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Attribute|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $attribute;
-
     /**
      * @var \Magento\Framework\App\ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $appResourceMock;
-
     /**
      * @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $eventManagerMock;
-
     /**
      * @var \Magento\Sales\Model\AbstractModel|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $modelMock;
-
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $connectionMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->appResourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->appResourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $this->eventManagerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false,
@@ -48,7 +50,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             []
         );
         $this->modelMock = $this->getMockForAbstractClass(
-            \Magento\Sales\Model\AbstractModel::class,
+            'Magento\Sales\Model\AbstractModel',
             [],
             '',
             false,
@@ -56,9 +58,12 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             true,
             ['__wakeup', 'getId', 'getEventPrefix', 'getEventObject']
         );
-        $this->connectionMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['describeTable', 'insert', 'lastInsertId', 'beginTransaction', 'rollback', 'commit']
+        $this->connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['describeTable', 'insert', 'lastInsertId', 'beginTransaction', 'rollback', 'commit'],
+            [],
+            '',
+            false
         );
         $this->connectionMock->expects($this->any())
             ->method('describeTable')

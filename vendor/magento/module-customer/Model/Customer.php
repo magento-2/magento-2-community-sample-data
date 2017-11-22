@@ -1,32 +1,32 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model;
 
 use Magento\Customer\Api\CustomerMetadataInterface;
-use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Model\Config\Share;
 use Magento\Customer\Model\ResourceModel\Address\CollectionFactory;
 use Magento\Customer\Model\ResourceModel\Customer as ResourceCustomer;
+use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Exception\AuthenticationException;
+use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Exception\EmailNotConfirmedException;
 use Magento\Framework\Exception\InvalidEmailOrPasswordException;
+use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Indexer\StateInterface;
-use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Store\Model\ScopeInterface;
 
 /**
  * Customer model
  *
- * @api
  * @method int getWebsiteId() getWebsiteId()
  * @method Customer setWebsiteId($value)
  * @method int getStoreId() getStoreId()
  * @method string getEmail() getEmail()
+ * @method ResourceCustomer _getResource()
  * @method mixed getDisableAutoGroupChange()
  * @method Customer setDisableAutoGroupChange($value)
  * @method Customer setGroupId($value)
@@ -39,7 +39,6 @@ use Magento\Store\Model\ScopeInterface;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Customer extends \Magento\Framework\Model\AbstractModel
 {
@@ -285,7 +284,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
      */
     public function _construct()
     {
-        $this->_init(\Magento\Customer\Model\ResourceModel\Customer::class);
+        $this->_init('Magento\Customer\Model\ResourceModel\Customer');
     }
 
     /**
@@ -305,7 +304,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
         $this->dataObjectHelper->populateWithArray(
             $customerDataObject,
             $customerData,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         $customerDataObject->setAddresses($addressesData)
             ->setId($this->getId());
@@ -335,7 +334,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
         $customAttributes = $customer->getCustomAttributes();
         if ($customAttributes !== null) {
             foreach ($customAttributes as $attribute) {
-                $this->setData($attribute->getAttributeCode(), $attribute->getValue());
+                $this->setDataUsingMethod($attribute->getAttributeCode(), $attribute->getValue());
             }
         }
 
@@ -776,13 +775,12 @@ class Customer extends \Magento\Framework\Model\AbstractModel
         if ($this->canSkipConfirmation()) {
             return false;
         }
-
-        $websiteId = $this->getWebsiteId() ? $this->getWebsiteId() : null;
+        $storeId = $this->getStoreId() ? $this->getStoreId() : null;
 
         return (bool)$this->_scopeConfig->getValue(
             self::XML_PATH_IS_CONFIRM,
-            ScopeInterface::SCOPE_WEBSITES,
-            $websiteId
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -831,6 +829,8 @@ class Customer extends \Magento\Framework\Model\AbstractModel
             ['area' => \Magento\Framework\App\Area::AREA_FRONTEND, 'store' => $storeId]
         )->setTemplateVars(
             $templateParams
+        )->setScopeId(
+            $storeId
         )->setFrom(
             $this->_scopeConfig->getValue($sender, ScopeInterface::SCOPE_STORE, $storeId)
         )->addTo(
@@ -967,13 +967,52 @@ class Customer extends \Magento\Framework\Model\AbstractModel
 
     /**
      * Validate customer attribute values.
+     * For existing customer password + confirmation will be validated only when password is set
+     * (i.e. its change is requested)
      *
-     * @deprecated 100.1.0
-     * @return bool
+     * @return bool|string[]
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function validate()
     {
-        return true;
+        $errors = [];
+        if (!\Zend_Validate::is(trim($this->getFirstname()), 'NotEmpty')) {
+            $errors[] = __('Please enter a first name.');
+        }
+
+        if (!\Zend_Validate::is(trim($this->getLastname()), 'NotEmpty')) {
+            $errors[] = __('Please enter a last name.');
+        }
+
+        if (!\Zend_Validate::is($this->getEmail(), 'EmailAddress')) {
+            $errors[] = __('Please correct this email address: "%1".', $this->getEmail());
+        }
+
+        $entityType = $this->_config->getEntityType('customer');
+        $attribute = $this->_config->getAttribute($entityType, 'dob');
+        if ($attribute->getIsRequired() && '' == trim($this->getDob())) {
+            $errors[] = __('Please enter a date of birth.');
+        }
+        $attribute = $this->_config->getAttribute($entityType, 'taxvat');
+        if ($attribute->getIsRequired() && '' == trim($this->getTaxvat())) {
+            $errors[] = __('Please enter a TAX/VAT number.');
+        }
+        $attribute = $this->_config->getAttribute($entityType, 'gender');
+        if ($attribute->getIsRequired() && '' == trim($this->getGender())) {
+            $errors[] = __('Please enter a gender.');
+        }
+
+        $transport = new \Magento\Framework\DataObject(
+            ['errors' => $errors]
+        );
+        $this->_eventManager->dispatch('customer_validate', ['customer' => $this, 'transport' => $transport]);
+        $errors = $transport->getErrors();
+
+        if (empty($errors)) {
+            return true;
+        }
+        return $errors;
     }
 
     /**
@@ -1312,44 +1351,5 @@ class Customer extends \Magento\Framework\Model\AbstractModel
             'confirmation' => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
         ];
         return $types;
-    }
-
-    /**
-     * Check if customer is locked
-     *
-     * @return boolean
-     * @since 100.1.0
-     */
-    public function isCustomerLocked()
-    {
-        if ($this->getLockExpires()) {
-            $lockExpires = new \DateTime($this->getLockExpires());
-            if ($lockExpires > new \DateTime()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Return Password Confirmation
-     *
-     * @return string
-     * @since 100.1.0
-     */
-    public function getPasswordConfirm()
-    {
-        return (string) $this->getData('password_confirm');
-    }
-
-    /**
-     * Return Password
-     *
-     * @return string
-     * @since 100.1.0
-     */
-    public function getPassword()
-    {
-        return (string) $this->getData('password');
     }
 }

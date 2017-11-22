@@ -9,7 +9,6 @@
 
 namespace JsonSchema\Uri\Retrievers;
 
-use JsonSchema\Exception\RuntimeException;
 use JsonSchema\Validator;
 
 /**
@@ -24,14 +23,12 @@ class Curl extends AbstractRetriever
     public function __construct()
     {
         if (!function_exists('curl_init')) {
-            // Cannot test this, because curl_init is present on all test platforms plus mock
-            throw new RuntimeException('cURL not installed'); // @codeCoverageIgnore
+            throw new \RuntimeException("cURL not installed");
         }
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * {@inheritDoc}
      * @see \JsonSchema\Uri\Retrievers\UriRetrieverInterface::retrieve()
      */
     public function retrieve($uri)
@@ -67,8 +64,7 @@ class Curl extends AbstractRetriever
 
     /**
      * @param string $response cURL HTTP response
-     *
-     * @return bool Whether the Content-Type header was found or not
+     * @return boolean Whether the Content-Type header was found or not
      */
     protected function fetchContentType($response)
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Test\Unit\Code\Generator;
@@ -12,17 +12,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Class ConverterTest
  * @package Magento\Framework\ObjectManager\Code\Generator
  */
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var string
-     */
-    private $sourceClassName;
-
-    /**
-     * @var string
-     */
-    private $resultClassName;
+    const SOURCE_CLASS_NAME = '\Magento\Framework\ObjectManager\Code\Generator\Sample';
+    const RESULT_CLASS_NAME = '\Magento\Framework\ObjectManager\Code\Generator\SampleConverter';
 
     /**
      * @var Io | \PHPUnit_Framework_MockObject_MockObject
@@ -46,21 +39,30 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->sourceClassName = '\\' . \Magento\Framework\ObjectManager\Code\Generator\Sample::class;
-        $this->resultClassName = '\\' . \Magento\Framework\ObjectManager\Code\Generator\SampleConverter::class;
+        $this->ioObjectMock = $this->getMock(
+            'Magento\Framework\Code\Generator\Io',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->classGenerator = $this->getMock(
+            'Magento\Framework\Code\Generator\ClassGenerator',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->ioObjectMock = $this->createMock(\Magento\Framework\Code\Generator\Io::class);
-        $this->classGenerator = $this->createMock(\Magento\Framework\Code\Generator\ClassGenerator::class);
-
-        $this->definedClassesMock = $this->getMockBuilder(\Magento\Framework\Code\Generator\DefinedClasses::class)
+        $this->definedClassesMock = $this->getMockBuilder('Magento\Framework\Code\Generator\DefinedClasses')
             ->disableOriginalConstructor()->getMock();
 
         $objectManager = new ObjectManager($this);
         $this->generator = $objectManager->getObject(
-            \Magento\Framework\ObjectManager\Code\Generator\Converter::class,
+            'Magento\Framework\ObjectManager\Code\Generator\Converter',
             [
-                'sourceClassName' => $this->sourceClassName,
-                'resultClassName' => $this->resultClassName,
+                'sourceClassName' => self::SOURCE_CLASS_NAME,
+                'resultClassName' => self::RESULT_CLASS_NAME,
                 'ioObject' => $this->ioObjectMock,
                 'classGenerator' => $this->classGenerator,
                 'definedClasses' => $this->definedClassesMock
@@ -80,13 +82,13 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->ioObjectMock->expects($this->once())
             ->method('makeResultFileDirectory')
-            ->with($this->resultClassName)
+            ->with(self::RESULT_CLASS_NAME)
             ->will($this->returnValue(true));
 
         //Mocking _generateCode call
         $this->classGenerator->expects($this->once())
             ->method('setName')
-            ->with($this->resultClassName)
+            ->with(self::RESULT_CLASS_NAME)
             ->willReturnSelf();
         $this->classGenerator->expects($this->once())
             ->method('addProperties')
@@ -104,7 +106,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
         //Mocking generation
         $this->ioObjectMock->expects($this->any())
             ->method('generateResultFileName')
-            ->with($this->resultClassName)
+            ->with(self::RESULT_CLASS_NAME)
             ->will($this->returnValue($resultFileName));
         $this->ioObjectMock->expects($this->once())
             ->method('writeResultFile')

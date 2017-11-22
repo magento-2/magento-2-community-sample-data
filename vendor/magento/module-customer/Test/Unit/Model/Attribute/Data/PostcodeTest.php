@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Customer\Test\Unit\Model\Attribute\Data;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 
-class PostcodeTest extends \PHPUnit\Framework\TestCase
+class PostcodeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DirectoryHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -38,16 +38,16 @@ class PostcodeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->localeMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->getMock();
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->getMock();
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
-        $this->directoryHelperMock = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
+        $this->directoryHelperMock = $this->getMockBuilder('Magento\Directory\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
+        $this->attributeMock = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\AbstractAttribute')
             ->disableOriginalConstructor()
             ->setMethods(['getStoreLabel'])
             ->getMock();
@@ -64,7 +64,7 @@ class PostcodeTest extends \PHPUnit\Framework\TestCase
     public function testValidateValue($value, $expected, $countryId, $isOptional)
     {
         $storeLabel = 'Zip/Postal Code';
-        $this->attributeMock->expects($this->any())
+        $this->attributeMock->expects($this->once())
             ->method('getStoreLabel')
             ->willReturn($storeLabel);
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -66,7 +66,7 @@ class ImageEntryConverter implements EntryConverterInterface
         $this->dataObjectHelper->populateWithArray(
             $entry,
             $image,
-            \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface::class
+            '\Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface'
         );
         if (isset($image['value_id'])) {
             $entry->setId($image['value_id']);

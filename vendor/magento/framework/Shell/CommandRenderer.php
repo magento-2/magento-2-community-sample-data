@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Shell;
@@ -18,9 +18,7 @@ class CommandRenderer implements CommandRendererInterface
     {
         $arguments = array_map('escapeshellarg', $arguments);
         $command = preg_replace('/\s?\||$/', ' 2>&1$0', $command);
-        if (empty($arguments)) {
-            return $command;
-        }
-        return vsprintf($command, $arguments);
+        $command = vsprintf($command, $arguments);
+        return $command;
     }
 }

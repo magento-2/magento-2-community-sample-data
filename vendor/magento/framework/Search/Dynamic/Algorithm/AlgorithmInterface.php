@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Dynamic\Algorithm;
@@ -9,10 +9,6 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Search\Dynamic\EntityStorage;
 use Magento\Framework\Search\Request\BucketInterface;
 
-/**
- * Interface \Magento\Framework\Search\Dynamic\Algorithm\AlgorithmInterface
- *
- */
 interface AlgorithmInterface
 {
     /**

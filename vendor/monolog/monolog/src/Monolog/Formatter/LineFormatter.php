@@ -11,6 +11,8 @@
 
 namespace Monolog\Formatter;
 
+use Exception;
+
 /**
  * Formats incoming records into a one-line string
  *
@@ -76,14 +78,6 @@ class LineFormatter extends NormalizerFormatter
             }
         }
 
-
-        foreach ($vars['context'] as $var => $val) {
-            if (false !== strpos($output, '%context.'.$var.'%')) {
-                $output = str_replace('%context.'.$var.'%', $this->stringify($val), $output);
-                unset($vars['context'][$var]);
-            }
-        }
-
         if ($this->ignoreEmptyContextAndExtra) {
             if (empty($vars['context'])) {
                 unset($vars['context']);
@@ -100,11 +94,6 @@ class LineFormatter extends NormalizerFormatter
             if (false !== strpos($output, '%'.$var.'%')) {
                 $output = str_replace('%'.$var.'%', $this->stringify($val), $output);
             }
-        }
-
-        // remove leftover %extra.xxx% and %context.xxx% if any
-        if (false !== strpos($output, '%')) {
-            $output = preg_replace('/%(?:extra|context)\..+?%/', '', $output);
         }
 
         return $output;
@@ -125,13 +114,8 @@ class LineFormatter extends NormalizerFormatter
         return $this->replaceNewlines($this->convertToString($value));
     }
 
-    protected function normalizeException($e)
+    protected function normalizeException(Exception $e)
     {
-        // TODO 2.0 only check for Throwable
-        if (!$e instanceof \Exception && !$e instanceof \Throwable) {
-            throw new \InvalidArgumentException('Exception/Throwable expected, got '.gettype($e).' / '.get_class($e));
-        }
-
         $previousText = '';
         if ($previous = $e->getPrevious()) {
             do {
@@ -141,7 +125,7 @@ class LineFormatter extends NormalizerFormatter
 
         $str = '[object] ('.get_class($e).'(code: '.$e->getCode().'): '.$e->getMessage().' at '.$e->getFile().':'.$e->getLine().$previousText.')';
         if ($this->includeStacktraces) {
-            $str .= "\n[stacktrace]\n".$e->getTraceAsString()."\n";
+            $str .= "\n[stacktrace]\n".$e->getTraceAsString();
         }
 
         return $str;
@@ -167,10 +151,6 @@ class LineFormatter extends NormalizerFormatter
     protected function replaceNewlines($str)
     {
         if ($this->allowInlineLineBreaks) {
-            if (0 === strpos($str, '{')) {
-                return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
-            }
-
             return $str;
         }
 

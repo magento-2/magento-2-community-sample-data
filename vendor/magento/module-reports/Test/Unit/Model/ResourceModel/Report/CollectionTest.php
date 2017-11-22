@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Reports\Test\Unit\Model\ResourceModel\Report;
 
 use Magento\Reports\Model\ResourceModel\Report\Collection;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Report\Collection
@@ -35,14 +35,13 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->entityFactoryMock = $this->getMockBuilder(\Magento\Framework\Data\Collection\EntityFactory::class)
+        $this->entityFactoryMock = $this->getMockBuilder('Magento\Framework\Data\Collection\EntityFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->timezoneMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->timezoneMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->getMock();
-        $this->factoryMock = $this->getMockBuilder(
-            \Magento\Reports\Model\ResourceModel\Report\Collection\Factory::class
-        )->disableOriginalConstructor()
+        $this->factoryMock = $this->getMockBuilder('Magento\Reports\Model\ResourceModel\Report\Collection\Factory')
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->timezoneMock
@@ -79,8 +78,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $period
-     * @param \DateTimeInterface $fromDate
-     * @param \DateTimeInterface $toDate
+     * @param \DateTime $fromDate
+     * @param \DateTime $toDate
      * @param int $size
      * @dataProvider intervalsDataProvider
      * @return void
@@ -105,8 +104,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $period
-     * @param \DateTimeInterface $fromDate
-     * @param \DateTimeInterface $toDate
+     * @param \DateTime $fromDate
+     * @param \DateTime $toDate
      * @param int $size
      * @dataProvider intervalsDataProvider
      * @return void
@@ -117,7 +116,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->collection->setInterval($fromDate, $toDate);
         $reports = $this->collection->getReports();
         foreach ($reports as $report) {
-            $this->assertInstanceOf(\Magento\Framework\DataObject::class, $report);
+            $this->assertInstanceOf('\Magento\Framework\DataObject', $report);
             $reportData = $report->getData();
             $this->assertTrue(empty($reportData['children']));
             $this->assertTrue($reportData['is_empty']);
@@ -131,7 +130,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testLoadData()
     {
         $this->assertInstanceOf(
-            \Magento\Reports\Model\ResourceModel\Report\Collection::class,
+            '\Magento\Reports\Model\ResourceModel\Report\Collection',
             $this->collection->loadData()
         );
     }

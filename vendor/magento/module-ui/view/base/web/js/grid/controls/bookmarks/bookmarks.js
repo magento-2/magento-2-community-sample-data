@@ -1,19 +1,14 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'underscore',
     'mageUtils',
     'mage/translate',
-    'rjsResolver',
     'uiLayout',
     'uiCollection'
-], function (_, utils, $t, resolver, layout, Collection) {
+], function (_, utils, $t, layout, Collection) {
     'use strict';
 
     /**
@@ -39,7 +34,7 @@ define([
             newViewLabel: $t('New View'),
             defaultIndex: 'default',
             activeIndex: 'default',
-            viewsArray: [],
+            hasChanges: false,
             storageConfig: {
                 provider: '${ $.storageConfig.name }',
                 name: '${ $.name }_storage',
@@ -51,14 +46,6 @@ define([
                     index: 'default',
                     editable: false
                 }
-            },
-            tracks: {
-                editing: true,
-                viewsArray: true,
-                activeView: true,
-                hasChanges: true,
-                customLabel: true,
-                customVisible: true
             },
             listens: {
                 activeIndex: 'onActiveIndexChange',
@@ -75,11 +62,33 @@ define([
         initialize: function () {
             utils.limit(this, 'checkState', 5);
             utils.limit(this, 'saveState', 2000);
+            utils.limit(this, '_defaultPolyfill', 3000);
 
             this._super()
                 .restore()
                 .initStorage()
                 .initViews();
+
+            return this;
+        },
+
+        /**
+         * Initializes observable properties.
+         *
+         * @returns {Bookmarks} Chainable.
+         */
+        initObservable: function () {
+            this._super()
+                .track([
+                    'hasChanges',
+                    'editing',
+                    'activeView',
+                    'customVisible',
+                    'customLabel'
+                ])
+                .track({
+                    viewsArray: []
+                });
 
             return this;
         },
@@ -91,25 +100,6 @@ define([
          */
         initStorage: function () {
             layout([this.storageConfig]);
-
-            return this;
-        },
-
-        /**
-         * Defines default data if it wasn't gathered previously.
-         *
-         * @private
-         * @returns {Bookmarks} Chainbale.
-         */
-        initDefaultView: function () {
-            var data = this.getViewData(this.defaultIndex);
-
-            if (!_.size(data)) {
-                this.setViewData(this.defaultIndex, this.current)
-                    .saveView(this.defaultIndex);
-            }
-
-            this.defaultDefined = true;
 
             return this;
         },
@@ -550,6 +540,27 @@ define([
         },
 
         /**
+         * Defines default data if it wasn't gathered previously.
+         * Assumes that if theres is no views available,
+         * then current data object is the default configuration.
+         *
+         * @private
+         * @returns {Bookmarks} Chainbale.
+         */
+        _defaultPolyfill: function () {
+            var data = this.getViewData(this.defaultIndex);
+
+            if (!_.size(data)) {
+                this.setViewData(this.defaultIndex, this.current)
+                    .saveView(this.defaultIndex);
+            }
+
+            this.defaultDefined = true;
+
+            return this;
+        },
+
+        /**
          * Listener of the activeIndex property.
          */
         onActiveIndexChange: function () {
@@ -566,7 +577,7 @@ define([
             this.saveState();
 
             if (!this.defaultDefined) {
-                resolver(this.initDefaultView, this);
+                this._defaultPolyfill();
             }
         }
     });

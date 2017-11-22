@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Block\Form;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Model\Method\AbstractMethod;
 
 /**
@@ -13,8 +12,7 @@ use Magento\Payment\Model\Method\AbstractMethod;
  *
  * @method \Magento\Quote\Model\Quote getQuote()
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Container extends \Magento\Framework\View\Element\Template
 {
@@ -23,44 +21,23 @@ class Container extends \Magento\Framework\View\Element\Template
      */
     protected $_paymentHelper;
 
-    /**
-     * @var \Magento\Payment\Model\Checks\SpecificationFactory
-     */
+    /** @var  \Magento\Payment\Model\Checks\SpecificationFactory */
     protected $methodSpecificationFactory;
-
-    /**
-     * @var \Magento\Payment\Api\PaymentMethodListInterface
-     */
-    private $paymentMethodList;
-
-    /**
-     * @var \Magento\Payment\Model\Method\InstanceFactory
-     */
-    private $paymentMethodInstanceFactory;
-
-    /**
-     * @var array
-     * @since 100.1.3
-     */
-    protected $additionalChecks;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Payment\Helper\Data $paymentHelper
      * @param \Magento\Payment\Model\Checks\SpecificationFactory $methodSpecificationFactory
      * @param array $data
-     * @param array $additionalChecks
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Helper\Data $paymentHelper,
         \Magento\Payment\Model\Checks\SpecificationFactory $methodSpecificationFactory,
-        array $data = [],
-        array $additionalChecks = []
+        array $data = []
     ) {
         $this->_paymentHelper = $paymentHelper;
         $this->methodSpecificationFactory = $methodSpecificationFactory;
-        $this->additionalChecks = $additionalChecks;
         parent::__construct($context, $data);
     }
 
@@ -92,17 +69,13 @@ class Container extends \Magento\Framework\View\Element\Template
      */
     protected function _canUseMethod($method)
     {
-        $checks = array_merge(
+        return $this->methodSpecificationFactory->create(
             [
                 AbstractMethod::CHECK_USE_FOR_COUNTRY,
                 AbstractMethod::CHECK_USE_FOR_CURRENCY,
                 AbstractMethod::CHECK_ORDER_TOTAL_MIN_MAX,
-                AbstractMethod::CHECK_ZERO_TOTAL
-            ],
-            $this->additionalChecks
-        );
-
-        return $this->methodSpecificationFactory->create($checks)->isApplicable(
+            ]
+        )->isApplicable(
             $method,
             $this->getQuote()
         );
@@ -151,11 +124,11 @@ class Container extends \Magento\Framework\View\Element\Template
             $quote = $this->getQuote();
             $store = $quote ? $quote->getStoreId() : null;
             $methods = [];
-            foreach ($this->getPaymentMethodList()->getActiveList($store) as $method) {
-                $methodInstance = $this->getPaymentMethodInstanceFactory()->create($method);
-                if ($methodInstance->isAvailable($quote) && $this->_canUseMethod($methodInstance)) {
-                    $this->_assignMethod($methodInstance);
-                    $methods[] = $methodInstance;
+            $specification = $this->methodSpecificationFactory->create([AbstractMethod::CHECK_ZERO_TOTAL]);
+            foreach ($this->_paymentHelper->getStoreMethods($store, $quote) as $method) {
+                if ($this->_canUseMethod($method) && $specification->isApplicable($method, $this->getQuote())) {
+                    $this->_assignMethod($method);
+                    $methods[] = $method;
                 }
             }
             $this->setData('methods', $methods);
@@ -176,37 +149,5 @@ class Container extends \Magento\Framework\View\Element\Template
             return current($methods)->getCode();
         }
         return false;
-    }
-
-    /**
-     * Get payment method list.
-     *
-     * @return \Magento\Payment\Api\PaymentMethodListInterface
-     * @deprecated 100.1.3
-     */
-    private function getPaymentMethodList()
-    {
-        if ($this->paymentMethodList === null) {
-            $this->paymentMethodList = ObjectManager::getInstance()->get(
-                \Magento\Payment\Api\PaymentMethodListInterface::class
-            );
-        }
-        return $this->paymentMethodList;
-    }
-
-    /**
-     * Get payment method instance factory.
-     *
-     * @return \Magento\Payment\Model\Method\InstanceFactory
-     * @deprecated 100.1.3
-     */
-    private function getPaymentMethodInstanceFactory()
-    {
-        if ($this->paymentMethodInstanceFactory === null) {
-            $this->paymentMethodInstanceFactory = ObjectManager::getInstance()->get(
-                \Magento\Payment\Model\Method\InstanceFactory::class
-            );
-        }
-        return $this->paymentMethodInstanceFactory;
     }
 }

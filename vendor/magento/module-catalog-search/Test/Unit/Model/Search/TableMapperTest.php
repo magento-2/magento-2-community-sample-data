@@ -1,343 +1,594 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search;
 
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
-use Magento\CatalogSearch\Model\Adapter\Mysql\Filter\AliasResolver;
 use Magento\Framework\Search\Request\FilterInterface;
 use Magento\Framework\Search\Request\QueryInterface;
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\CatalogSearch\Model\Search\FiltersExtractor;
-use Magento\CatalogSearch\Model\Search\FilterMapper\FilterStrategyInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Search\Request\Filter\Term;
 
 /**
  * Test for \Magento\CatalogSearch\Model\Search\TableMapper
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TableMapperTest extends \PHPUnit\Framework\TestCase
+class TableMapperTest extends \PHPUnit_Framework_TestCase
 {
+    const WEBSITE_ID = 4512;
+    const STORE_ID = 2514;
+
     /**
-     * @var AliasResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $aliasResolver;
+    private $attributeCollection;
+
+    /**
+     * @var \Magento\Store\Api\Data\WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $website;
+
+    /**
+     * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $connection;
+
+    /**
+     * @var \Magento\Framework\Search\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $request;
+
+    /**
+     * @var \Magento\Framework\DB\Select|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $select;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $storeManager;
+
+    /**
+     * @var \Magento\Framework\App\ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $resource;
+
+    /**
+     * @var \Magento\Store\Api\Data\StoreInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $store;
 
     /**
      * @var \Magento\CatalogSearch\Model\Search\TableMapper
      */
-    private $tableMapper;
-
-    /**
-     * @var FiltersExtractor|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $filterExtractorMock;
-
-    /**
-     * @var FilterStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $filterStrategy;
+    private $target;
 
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
 
-        $resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->connection = $this->getMockBuilder('\Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->connection->expects($this->any())
+            ->method('quoteInto')
+            ->willReturnCallback(
+                function ($query, $expression) {
+                    return str_replace('?', $expression, $query);
+                }
+            );
 
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->resource = $this->getMockBuilder('\Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->resource->method('getTableName')
+            ->willReturnCallback(
+                function ($table) {
+                    return 'prefix_' . $table;
+                }
+            );
+        $this->resource->expects($this->any())
+            ->method('getConnection')
+            ->willReturn($this->connection);
 
-        $attributeCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+        $this->website = $this->getMockBuilder('\Magento\Store\Api\Data\WebsiteInterface')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->website->expects($this->any())
+            ->method('getId')
+            ->willReturn(self::WEBSITE_ID);
+        $this->store = $this->getMockBuilder('\Magento\Store\Api\Data\StoreInterface')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->store->expects($this->any())
+            ->method('getId')
+            ->willReturn(self::STORE_ID);
+        $this->storeManager = $this->getMockBuilder('\Magento\Store\Model\StoreManagerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeManager->expects($this->any())
+            ->method('getWebsite')
+            ->willReturn($this->website);
+        $this->storeManager->expects($this->any())
+            ->method('getStore')
+            ->willReturn($this->store);
+        $this->attributeCollection = $this->getMockBuilder(
+            '\Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attributeCollectionFactory = $this->getMockBuilder(
+            '\Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory'
+        )
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-
-        $eavConfig = $this->getMockBuilder(\Magento\Eav\Model\Config::class)
-            ->setMethods(['getAttribute'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->aliasResolver = $this->getMockBuilder(AliasResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->filterExtractorMock = $this->getMockBuilder(FiltersExtractor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->filterStrategy = $this->getMockBuilder(FilterStrategyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->tableMapper = $objectManager->getObject(
-            \Magento\CatalogSearch\Model\Search\TableMapper::class,
+        $attributeCollectionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->attributeCollection);
+        $this->target = $objectManager->getObject(
+            '\Magento\CatalogSearch\Model\Search\TableMapper',
             [
-                'resource' => $resource,
-                'storeManager' => $storeManager,
-                'attributeCollectionFactory' => $attributeCollectionFactory,
-                'eavConfig' => $eavConfig,
-                'scopeConfig' => $scopeConfig,
-                'filterStrategy' => $this->filterStrategy,
-                'aliasResolver' => $this->aliasResolver,
-                'filtersExtractor' => $this->filterExtractorMock
+                'resource' => $this->resource,
+                'storeManager' => $this->storeManager,
+                'attributeCollectionFactory' => $attributeCollectionFactory
             ]
         );
-    }
 
-    public function testRequestHasNoFilters()
-    {
-        $select = $this->getSelectMock();
-        $request = $this->getRequestMock();
-        $query = $this->getQueryMock();
-
-        $request
-            ->method('getQuery')
-            ->willReturn($query);
-
-        $this->filterExtractorMock
-            ->method('extractFiltersFromQuery')
-            ->with($query)
-            ->willReturn([]);
-
-        $this->aliasResolver
-            ->expects($this->never())
-            ->method('getAlias');
-
-        $this->filterStrategy
-            ->expects($this->never())
-            ->method('apply');
-
-        $this->tableMapper->addTables($select, $request);
-    }
-
-    public function testRequestHasDifferentFilters()
-    {
-        $select = $this->getSelectMock();
-        $request = $this->getRequestMock();
-        $query = $this->getQueryMock();
-        $filters = $this->getDifferentFiltersMock();
-
-        $request
-            ->method('getQuery')
-            ->willReturn($query);
-
-        $this->filterExtractorMock
-            ->method('extractFiltersFromQuery')
-            ->with($query)
-            ->willReturn($filters);
-
-        $consecutiveFilters = array_map(
-            function ($filter) {
-                return [$filter];
-            },
-            $filters
-        );
-
-        $this->aliasResolver
-            ->expects($this->exactly(count($filters)))
-            ->method('getAlias')
-            ->withConsecutive(...$consecutiveFilters)
-            ->willReturnCallback(
-                function (FilterInterface $filter) {
-                    return $filter->getField() . '_alias';
-                }
-            );
-
-        $consecutiveFilters = array_map(
-            function ($filter) use ($select) {
-                return [$filter, $select];
-            },
-            $filters
-        );
-
-        $this->filterStrategy
-            ->expects($this->exactly(count($filters)))
-            ->method('apply')
-            ->withConsecutive(...$consecutiveFilters)
-            ->willReturn(true);
-
-        $this->tableMapper->addTables($select, $request);
-    }
-
-    public function testRequestHasSameFilters()
-    {
-        $select = $this->getSelectMock();
-        $request = $this->getRequestMock();
-        $query = $this->getQueryMock();
-        $filters = $this->getSameFiltersMock();
-        $uniqueFilters = [$filters[0], $filters[2]];
-
-        $request
-            ->method('getQuery')
-            ->willReturn($query);
-
-        $this->filterExtractorMock
-            ->method('extractFiltersFromQuery')
-            ->with($query)
-            ->willReturn($filters);
-
-        $consecutiveFilters = array_map(
-            function ($filter) {
-                return [$filter];
-            },
-            $filters
-        );
-
-        $this->aliasResolver
-            ->expects($this->exactly(count($filters)))
-            ->method('getAlias')
-            ->withConsecutive(...$consecutiveFilters)
-            ->willReturnCallback(
-                function (FilterInterface $filter) {
-                    return $filter->getField() . '_alias';
-                }
-            );
-
-        $consecutiveUniqueFilters = array_map(
-            function ($filter) use ($select) {
-                return [$filter, $select];
-            },
-            $uniqueFilters
-        );
-
-        $this->filterStrategy
-            ->expects($this->exactly(count($uniqueFilters)))
-            ->method('apply')
-            ->withConsecutive(...$consecutiveUniqueFilters)
-            ->willReturn(true);
-
-        $this->tableMapper->addTables($select, $request);
-    }
-
-    public function testRequestHasUnAppliedFilters()
-    {
-        $select = $this->getSelectMock();
-        $request = $this->getRequestMock();
-        $query = $this->getQueryMock();
-        $filters = $this->getSameFiltersMock();
-
-        $request
-            ->method('getQuery')
-            ->willReturn($query);
-
-        $this->filterExtractorMock
-            ->method('extractFiltersFromQuery')
-            ->with($query)
-            ->willReturn($filters);
-
-        $consecutiveFilters = array_map(
-            function ($filter) {
-                return [$filter];
-            },
-            $filters
-        );
-
-        $this->aliasResolver
-            ->expects($this->exactly(count($filters)))
-            ->method('getAlias')
-            ->withConsecutive(...$consecutiveFilters)
-            ->willReturnCallback(
-                function (FilterInterface $filter) {
-                    return $filter->getField() . '_alias';
-                }
-            );
-
-        $consecutiveFilters = array_map(
-            function ($filter) use ($select) {
-                return [$filter, $select];
-            },
-            $filters
-        );
-
-        $this->filterStrategy
-            ->expects($this->exactly(count($filters)))
-            ->method('apply')
-            ->withConsecutive(...$consecutiveFilters)
-            ->willReturnCallback(
-                function (FilterInterface $filter) {
-                    return !($filter->getName() === 'name1' || $filter->getName() === 'name3')
-                        ? true
-                        : false;
-                }
-            );
-
-        $this->tableMapper->addTables($select, $request);
-    }
-
-    private function getSelectMock()
-    {
-        return $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $this->select = $this->getMockBuilder('\Magento\Framework\DB\Select')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->request = $this->getMockBuilder('\Magento\Framework\Search\RequestInterface')
             ->disableOriginalConstructor()
             ->getMock();
     }
 
-    private function getRequestMock()
+    public function testAddPriceFilter()
     {
-        return $this->getMockBuilder(\Magento\Framework\Search\RequestInterface::class)
+        $priceFilter = $this->createRangeFilter('price');
+        $query = $this->createFilterQuery($priceFilter);
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->once())
+            ->method('joinLeft')
+            ->with(
+                ['price_index' => 'prefix_catalog_product_index_price'],
+                'search_index.entity_id = price_index.entity_id AND price_index.website_id = ' . self::WEBSITE_ID,
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddStaticAttributeFilter()
+    {
+        $priceFilter = $this->createRangeFilter('static');
+        $query = $this->createFilterQuery($priceFilter);
+        $this->createAttributeMock('static', 'static', 'backend_table', 0, 'select');
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->once())
+            ->method('joinLeft')
+            ->with(
+                ['static_filter' => 'backend_table'],
+                'search_index.entity_id = static_filter.entity_id',
+                null
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddCategoryIds()
+    {
+        $categoryIdsFilter = $this->createTermFilter('category_ids');
+        $query = $this->createFilterQuery($categoryIdsFilter);
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->once())
+            ->method('joinLeft')
+            ->with(
+                ['category_ids_index' => 'prefix_catalog_category_product_index'],
+                'search_index.entity_id = category_ids_index.product_id',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddTermFilter()
+    {
+        $this->createAttributeMock('color', null, null, 132, 'select', 0);
+        $categoryIdsFilter = $this->createTermFilter('color');
+        $query = $this->createFilterQuery($categoryIdsFilter);
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->once())
+            ->method('joinLeft')
+            ->with(
+                ['color_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = color_filter.entity_id'
+                . ' AND color_filter.attribute_id = 132'
+                . ' AND color_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddBoolQueryWithTermFiltersInside()
+    {
+        $this->createAttributeMock('must1', null, null, 101, 'select', 0);
+        $this->createAttributeMock('should1', null, null, 102, 'select', 1);
+        $this->createAttributeMock('mustNot1', null, null, 103, 'select', 2);
+
+        $query = $this->createBoolQuery(
+            [
+                $this->createFilterQuery($this->createTermFilter('must1')),
+            ],
+            [
+                $this->createFilterQuery($this->createTermFilter('should1')),
+            ],
+            [
+                $this->createFilterQuery($this->createTermFilter('mustNot1')),
+            ]
+        );
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->at(0))
+            ->method('joinLeft')
+            ->with(
+                ['must1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = must1_filter.entity_id'
+                . ' AND must1_filter.attribute_id = 101'
+                . ' AND must1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(1))
+            ->method('joinLeft')
+            ->with(
+                ['should1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = should1_filter.entity_id'
+                . ' AND should1_filter.attribute_id = 102'
+                . ' AND should1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(2))
+            ->method('joinLeft')
+            ->with(
+                ['mustNot1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = mustNot1_filter.entity_id'
+                . ' AND mustNot1_filter.attribute_id = 103'
+                . ' AND mustNot1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddBoolQueryWithTermAndPriceFiltersInside()
+    {
+        $this->createAttributeMock('must1', null, null, 101, 'select', 0);
+        $this->createAttributeMock('should1', null, null, 102, 'select', 1);
+        $this->createAttributeMock('mustNot1', null, null, 103, 'select', 2);
+        $query = $this->createBoolQuery(
+            [
+                $this->createFilterQuery($this->createTermFilter('must1')),
+                $this->createFilterQuery($this->createRangeFilter('price')),
+            ],
+            [
+                $this->createFilterQuery($this->createTermFilter('should1')),
+            ],
+            [
+                $this->createFilterQuery($this->createTermFilter('mustNot1')),
+            ]
+        );
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->at(0))
+            ->method('joinLeft')
+            ->with(
+                ['must1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = must1_filter.entity_id'
+                . ' AND must1_filter.attribute_id = 101'
+                . ' AND must1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(1))
+            ->method('joinLeft')
+            ->with(
+                ['price_index' => 'prefix_catalog_product_index_price'],
+                'search_index.entity_id = price_index.entity_id AND price_index.website_id = ' . self::WEBSITE_ID,
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(2))
+            ->method('joinLeft')
+            ->with(
+                ['should1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = should1_filter.entity_id'
+                . ' AND should1_filter.attribute_id = 102'
+                . ' AND should1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(3))
+            ->method('joinLeft')
+            ->with(
+                ['mustNot1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = mustNot1_filter.entity_id'
+                . ' AND mustNot1_filter.attribute_id = 103'
+                . ' AND mustNot1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddBoolFilterWithTermFiltersInside()
+    {
+        $this->createAttributeMock('must1', null, null, 101, 'select', 0);
+        $this->createAttributeMock('should1', null, null, 102, 'select', 1);
+        $this->createAttributeMock('mustNot1', null, null, 103, 'select', 2);
+        $query = $this->createFilterQuery(
+            $this->createBoolFilter(
+                [
+                    $this->createTermFilter('must1'),
+                ],
+                [
+                    $this->createTermFilter('should1'),
+                ],
+                [
+                    $this->createTermFilter('mustNot1'),
+                ]
+            )
+        );
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->at(0))
+            ->method('joinLeft')
+            ->with(
+                ['must1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = must1_filter.entity_id'
+                . ' AND must1_filter.attribute_id = 101'
+                . ' AND must1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(1))
+            ->method('joinLeft')
+            ->with(
+                ['should1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = should1_filter.entity_id'
+                . ' AND should1_filter.attribute_id = 102'
+                . ' AND should1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(2))
+            ->method('joinLeft')
+            ->with(
+                ['mustNot1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = mustNot1_filter.entity_id'
+                . ' AND mustNot1_filter.attribute_id = 103'
+                . ' AND mustNot1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    public function testAddBoolFilterWithBoolFiltersInside()
+    {
+        $this->createAttributeMock('must1', null, null, 101, 'select', 0);
+        $this->createAttributeMock('should1', null, null, 102, 'select', 1);
+        $this->createAttributeMock('mustNot1', null, null, 103, 'select', 2);
+        $query = $this->createFilterQuery(
+            $this->createBoolFilter(
+                [
+                    $this->createBoolFilter([$this->createTermFilter('must1')], [], []),
+                ],
+                [
+                    $this->createBoolFilter([$this->createTermFilter('should1')], [], []),
+                ],
+                [
+                    $this->createBoolFilter([$this->createTermFilter('mustNot1')], [], []),
+                ]
+            )
+        );
+        $this->request->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $this->select->expects($this->at(0))
+            ->method('joinLeft')
+            ->with(
+                ['must1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = must1_filter.entity_id'
+                . ' AND must1_filter.attribute_id = 101'
+                . ' AND must1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(1))
+            ->method('joinLeft')
+            ->with(
+                ['should1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = should1_filter.entity_id'
+                . ' AND should1_filter.attribute_id = 102'
+                . ' AND should1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $this->select->expects($this->at(2))
+            ->method('joinLeft')
+            ->with(
+                ['mustNot1_filter' => 'prefix_catalog_product_index_eav'],
+                'search_index.entity_id = mustNot1_filter.entity_id'
+                . ' AND mustNot1_filter.attribute_id = 103'
+                . ' AND mustNot1_filter.store_id = 2514',
+                []
+            )
+            ->willReturnSelf();
+        $select = $this->target->addTables($this->select, $this->request);
+        $this->assertEquals($this->select, $select, 'Returned results isn\'t equal to passed select');
+    }
+
+    /**
+     * @param $filter
+     * @return \Magento\Framework\Search\Request\Query\Filter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createFilterQuery($filter)
+    {
+        $query = $this->getMockBuilder('\Magento\Framework\Search\Request\Query\Filter')
             ->disableOriginalConstructor()
             ->getMock();
+        $query->method('getType')
+            ->willReturn(QueryInterface::TYPE_FILTER);
+        $query->method('getReference')
+            ->willReturn($filter);
+        return $query;
     }
 
-    private function getQueryMock()
+    /**
+     * @param array $must
+     * @param array $should
+     * @param array $mustNot
+     * @return \Magento\Framework\Search\Request\Query\BoolExpression|\PHPUnit_Framework_MockObject_MockObject
+     * @internal param $filter
+     */
+    private function createBoolQuery(array $must, array $should, array $mustNot)
     {
-        return $this->getMockBuilder(QueryInterface::class)
+        $query = $this->getMockBuilder('\Magento\Framework\Search\Request\Query\BoolExpression')
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
+        $query->method('getType')
+            ->willReturn(QueryInterface::TYPE_BOOL);
+        $query->method('getMust')
+            ->willReturn($must);
+        $query->method('getShould')
+            ->willReturn($should);
+        $query->method('getMustNot')
+            ->willReturn($mustNot);
+        return $query;
     }
 
-    private function getDifferentFiltersMock()
+    /**
+     * @param array $must
+     * @param array $should
+     * @param array $mustNot
+     * @return \Magento\Framework\Search\Request\Filter\BoolExpression|\PHPUnit_Framework_MockObject_MockObject
+     * @internal param $filter
+     */
+    private function createBoolFilter(array $must, array $should, array $mustNot)
     {
-        $visibilityFilter = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name1', 'value1', 'visibility'])
-            ->setMethods(null)
+        $query = $this->getMockBuilder('\Magento\Framework\Search\Request\Filter\BoolExpression')
+            ->disableOriginalConstructor()
             ->getMock();
-
-        $customFilter = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name2', 'value2', 'field1'])
-            ->setMethods(null)
-            ->getMock();
-
-        $nonCustomFilter = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name3', 'value3', 'field2'])
-            ->setMethods(null)
-            ->getMock();
-
-        return [$visibilityFilter, $customFilter, $nonCustomFilter];
+        $query->method('getType')
+            ->willReturn(FilterInterface::TYPE_BOOL);
+        $query->method('getMust')
+            ->willReturn($must);
+        $query->method('getShould')
+            ->willReturn($should);
+        $query->method('getMustNot')
+            ->willReturn($mustNot);
+        return $query;
     }
 
-    private function getSameFiltersMock()
+    /**
+     * @param string $field
+     * @return \Magento\Framework\Search\Request\Filter\Range|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createRangeFilter($field)
     {
-        $visibilityFilter1 = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name1', 'value1', 'visibility'])
-            ->setMethods(null)
-            ->getMock();
+        $filter = $this->createFilterMock(
+            '\Magento\Framework\Search\Request\Filter\Range',
+            FilterInterface::TYPE_RANGE,
+            $field
+        );
+        return $filter;
+    }
 
-        $visibilityFilter2 = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name2', 'value2', 'visibility'])
-            ->setMethods(null)
-            ->getMock();
+    /**
+     * @param string $field
+     * @return \Magento\Framework\Search\Request\Filter\Term|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createTermFilter($field)
+    {
+        $filter = $this->createFilterMock(
+            '\Magento\Framework\Search\Request\Filter\Term',
+            FilterInterface::TYPE_TERM,
+            $field
+        );
+        return $filter;
+    }
 
-        $customFilter1 = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name3', 'value3', 'field1'])
-            ->setMethods(null)
+    /**
+     * @param string $class
+     * @param string $type
+     * @param string $field
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createFilterMock($class, $type, $field)
+    {
+        $filter = $this->getMockBuilder($class)
+            ->disableOriginalConstructor()
             ->getMock();
+        $filter->method('getType')
+            ->willReturn($type);
+        $filter->method('getField')
+            ->willReturn($field);
+        return $filter;
+    }
 
-        $customFilter2 = $this->getMockBuilder(Term::class)
-            ->setConstructorArgs(['name4', 'value4', 'field1'])
-            ->setMethods(null)
+    /**
+     * @param string $code
+     * @param string $backendType
+     * @param string $backendTable
+     * @param int $attributeId
+     * @param string $frontendInput
+     * @param int $positionInCollection
+     */
+    private function createAttributeMock(
+        $code,
+        $backendType = null,
+        $backendTable = null,
+        $attributeId = 120,
+        $frontendInput = 'select',
+        $positionInCollection = 0
+    ) {
+        $attribute = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Eav\Attribute')
+            ->setMethods(['getBackendType', 'getBackendTable', 'getId', 'getFrontendInput'])
+            ->disableOriginalConstructor()
             ->getMock();
-
-        return [$visibilityFilter1, $visibilityFilter2, $customFilter1, $customFilter2];
+        $attribute->method('getId')
+            ->willReturn($attributeId);
+        $attribute->method('getBackendType')
+            ->willReturn($backendType);
+        $attribute->method('getBackendTable')
+            ->willReturn($backendTable);
+        $attribute->method('getFrontendInput')
+            ->willReturn($frontendInput);
+        $this->attributeCollection->expects($this->at($positionInCollection))
+            ->method('getItemByColumnValue')
+            ->with('attribute_code', $code)
+            ->willReturn($attribute);
     }
 }

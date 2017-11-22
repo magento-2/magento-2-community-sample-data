@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -52,8 +52,6 @@ abstract class Conditions extends Curl
             'is not' => '!=',
             'equal to' => '==',
             'matches' => '==',
-            'greater than' => '>',
-            'equals or greater than' => '>=',
         ],
         'value_type' => [
             'same_as' => 'the Same as Matched Product Categories',
@@ -62,15 +60,9 @@ abstract class Conditions extends Curl
             'California' => '12',
             'United States' => 'US',
             '[flatrate] Fixed' => 'flatrate_flatrate',
-            'FOUND' => '1',
-            'TRUE' => '1',
         ],
         'aggregator' => [
             'ALL' => 'all',
-            'ANY' => 'any',
-        ],
-        'attribute'=> [
-            'total quantity' => 'qty',
         ],
     ];
 
@@ -167,12 +159,7 @@ abstract class Conditions extends Curl
         $condition = $this->parseCondition($condition);
         extract($condition);
 
-        if (isset($param)) {
-            $typeParam = $this->getTypeParam($param);
-            $typeParam['attribute'] = $type;
-        } else {
-            $typeParam = $this->getTypeParam($type);
-        }
+        $typeParam = $this->getTypeParam($type);
         if (empty($typeParam)) {
             throw new \Exception("Can't find type param \"{$type}\".");
         }
@@ -194,7 +181,7 @@ abstract class Conditions extends Curl
             );
         }
 
-        return $ruleParam + $typeParam;
+        return $typeParam + $ruleParam;
     }
 
     /**
@@ -263,18 +250,10 @@ abstract class Conditions extends Curl
         foreach ($match[1] as $key => $value) {
             $match[1][$key] = rtrim($value, '|');
         }
-        $param = $match[1][0];
-        $type = array_shift($match[1]);
-        if (count($match[1]) == 3) {
-            $type = array_shift($match[1]);
-        } else {
-            $param = null;
-        }
 
         return [
-            'type' => $type,
+            'type' => array_shift($match[1]),
             'rules' => array_values($match[1]),
-            'param' => $param
         ];
     }
 }

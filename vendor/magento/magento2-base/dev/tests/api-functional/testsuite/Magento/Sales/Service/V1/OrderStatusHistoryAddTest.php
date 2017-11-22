@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -40,18 +40,18 @@ class OrderStatusHistoryAddTest extends WebapiAbstract
     public function testOrderCommentAdd()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId(self::ORDER_INCREMENT_ID);
 
         $commentData = [
             OrderStatusHistoryInterface::COMMENT => 'Hello',
             OrderStatusHistoryInterface::ENTITY_ID => null,
-            OrderStatusHistoryInterface::IS_CUSTOMER_NOTIFIED => 1,
+            OrderStatusHistoryInterface::IS_CUSTOMER_NOTIFIED => true,
             OrderStatusHistoryInterface::CREATED_AT => null,
             OrderStatusHistoryInterface::PARENT_ID => $order->getId(),
             OrderStatusHistoryInterface::ENTITY_NAME => null,
             OrderStatusHistoryInterface::STATUS => null,
-            OrderStatusHistoryInterface::IS_VISIBLE_ON_FRONT => 1,
+            OrderStatusHistoryInterface::IS_VISIBLE_ON_FRONT => true,
         ];
 
         $requestData = ['id' => $order->getId(), 'statusHistory' => $commentData];

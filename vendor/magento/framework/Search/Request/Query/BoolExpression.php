@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Request\Query;
@@ -9,7 +9,6 @@ use Magento\Framework\Search\Request\QueryInterface;
 
 /**
  * Bool Query
- * @api
  */
 class BoolExpression implements QueryInterface
 {

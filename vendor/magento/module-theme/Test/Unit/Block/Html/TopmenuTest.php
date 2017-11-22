@@ -1,27 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Theme\Test\Unit\Block\Html;
 
-use Magento\Framework\Data\Tree\NodeFactory;
-use Magento\Framework\Data\TreeFactory;
+use Magento\Theme\Block\Html\Topmenu;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
-use Magento\Theme\Block\Html\Topmenu;
+use Magento\Framework\Data\TreeFactory;
+use Magento\Framework\Data\Tree\NodeFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class TopmenuTest extends \PHPUnit\Framework\TestCase
+class TopmenuTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $urlBuilder;
-
     /**
      * @var Registry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -47,21 +39,6 @@ class TopmenuTest extends \PHPUnit\Framework\TestCase
      */
     protected $category;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $storeManager;
-
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $eventManagerMock;
-
-    /**
-     * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $requestMock;
-
     // @codingStandardsIgnoreStart
 
     /** @var string  */
@@ -76,160 +53,37 @@ HTML;
 
     // @codingStandardsIgnoreEnd
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->urlBuilder = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->nodeFactory = $this->getMockBuilder(\Magento\Framework\Data\Tree\NodeFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->treeFactory = $this->getMockBuilder(\Magento\Framework\Data\TreeFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $isCurrentItem = $this->getName() == 'testGetHtmlWithSelectedCategory' ? true : false;
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->context = $objectManager->getObject(
-            \Magento\Framework\View\Element\Template\Context::class,
-            [
-                'urlBuilder' => $this->urlBuilder,
-                'storeManager' => $this->storeManager,
-                'eventManager' => $this->eventManagerMock,
-                'request' => $this->requestMock,
-            ]
+
+        $this->context = $objectManager->getObject('Magento\Framework\View\Element\Template\Context');
+
+        $this->nodeFactory = $this->getMock('Magento\Framework\Data\Tree\NodeFactory', [], [], '', false);
+        $this->treeFactory = $this->getMock('Magento\Framework\Data\TreeFactory', [], [], '', false);
+
+        $tree = $this->getMock('Magento\Framework\Data\Tree', [], [], '', false);
+
+        $container = $this->getMock('Magento\Catalog\Model\ResourceModel\Category\Tree', [], [], '', false);
+
+        $children = $this->getMock(
+            'Magento\Framework\Data\Tree\Node\Collection',
+            ['count'],
+            ['container' => $container]
         );
-    }
-
-    protected function getTopmenu()
-    {
-        return new Topmenu($this->context, $this->nodeFactory, $this->treeFactory);
-    }
-
-    public function testGetHtmlWithoutSelectedCategory()
-    {
-        $topmenuBlock = $this->getTopmenu();
-
-        $treeNode = $this->buildTree(false);
-
-        $transportObject = new \Magento\Framework\DataObject(['html' => $this->htmlWithoutCategory]);
-
-        $this->eventManagerMock->expects($this->exactly(2))
-            ->method('dispatch')
-            ->willReturnMap([
-                [
-                    'page_block_html_topmenu_gethtml_before',
-                    [
-                        'menu' => $treeNode,
-                        'block' => $topmenuBlock,
-                        'request' => $this->requestMock,
-                    ],
-                    $this->eventManagerMock
-                ],
-                [
-                    'page_block_html_topmenu_gethtml_after',
-                    [
-                        'menu' => $treeNode,
-                        'transportObject' => $transportObject,
-                    ],
-                    $this->eventManagerMock
-                ],
-            ]);
-
-        $this->assertEquals($this->htmlWithoutCategory, $topmenuBlock->getHtml());
-    }
-
-    public function testGetHtmlWithSelectedCategory()
-    {
-        $topmenuBlock = $this->getTopmenu();
-
-        $treeNode = $this->buildTree(true);
-
-        $transportObject = new \Magento\Framework\DataObject(['html' => $this->htmlWithCategory]);
-
-        $this->eventManagerMock->expects($this->exactly(2))
-            ->method('dispatch')
-            ->willReturnMap([
-                [
-                    'page_block_html_topmenu_gethtml_before',
-                    [
-                        'menu' => $treeNode,
-                        'block' => $topmenuBlock,
-                        'request' => $this->requestMock,
-                    ],
-                    $this->eventManagerMock
-                ],
-                [
-                    'page_block_html_topmenu_gethtml_after',
-                    [
-                        'menu' => $treeNode,
-                        'transportObject' => $transportObject,
-                    ],
-                    $this->eventManagerMock
-                ],
-            ]);
-
-        $this->assertEquals($this->htmlWithCategory, $topmenuBlock->getHtml());
-    }
-
-    public function testGetCacheKeyInfo()
-    {
-        $nodeFactory = $this->createMock(\Magento\Framework\Data\Tree\NodeFactory::class);
-        $treeFactory = $this->createMock(\Magento\Framework\Data\TreeFactory::class);
-
-        $topmenu =  new Topmenu($this->context, $nodeFactory, $treeFactory);
-        $this->urlBuilder->expects($this->once())->method('getUrl')->with('*/*/*')->willReturn('123');
-        $this->urlBuilder->expects($this->once())->method('getBaseUrl')->willReturn('baseUrl');
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCode'])
-            ->getMock();
-        $store->expects($this->once())->method('getCode')->willReturn('321');
-        $this->storeManager->expects($this->once())->method('getStore')->willReturn($store);
-
-        $this->assertEquals(
-            ['BLOCK_TPL', '321', null, 'base_url' => 'baseUrl', 'template' => null, '123'],
-            $topmenu->getCacheKeyInfo()
-        );
-    }
-
-    /**
-     * Create Tree Node mock object
-     *
-     * Helper method, that provides unified logic of creation of Tree Node mock objects.
-     *
-     * @param bool $isCurrentItem
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function buildTree($isCurrentItem)
-    {
-        $treeMock = $this->getMockBuilder(\Magento\Framework\Data\Tree::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Tree::class);
-
-        $children = $this->getMockBuilder(\Magento\Framework\Data\Tree\Node\Collection::class)
-            ->setMethods(['count'])
-            ->setConstructorArgs(['container' => $container])
-            ->getMock();
 
         for ($i = 0; $i < 10; $i++) {
             $id = "category-node-$i";
-            $categoryNode = $this->createPartialMock(
-                \Magento\Framework\Data\Tree\Node::class,
-                ['getId', 'hasChildren']
-            );
-            $categoryNode->expects($this->once())->method('getId')->willReturn($id);
-            $categoryNode->expects($this->atLeastOnce())->method('hasChildren')->willReturn(false);
+            $categoryNode = $this->getMock('Magento\Framework\Data\Tree\Node', ['getId', 'hasChildren'], [], '', false);
+            $categoryNode
+                ->expects($this->once())
+                ->method('getId')
+                ->willReturn($id);
+            $categoryNode
+                ->expects($this->atLeastOnce())
+                ->method('hasChildren')
+                ->willReturn(false);
             $categoryNode->setData(
                 [
                     'name' => "Category $i",
@@ -243,68 +97,45 @@ HTML;
             $children->add($categoryNode);
         }
 
-        $children->expects($this->once())->method('count')->willReturn(10);
+        $children
+            ->expects($this->once())
+            ->method('count')
+            ->willReturn(10);
 
-        $nodeMock = $this->getMockBuilder(\Magento\Framework\Data\Tree\Node::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getChildren', '__call'])
-            ->getMock();
-        $nodeMock->expects($this->once())
+        $node = $this->getMock('Magento\Framework\Data\Tree\Node', ['getChildren'], [], '', false);
+        $node
+            ->expects($this->once())
             ->method('getChildren')
             ->willReturn($children);
-        $nodeMock->expects($this->at(0))
-            ->method('__call')
-            ->with('setOutermostClass')
-            ->willReturn(null);
-        $nodeMock->expects($this->at(3))
+        $node
+            ->expects($this->any())
             ->method('__call')
             ->with('getLevel', [])
             ->willReturn(null);
 
-        $nodeMockData = [
-            'data' => [],
-            'idField' => 'root',
-            'tree' => $treeMock,
-        ];
-
-        $this->nodeFactory->expects($this->any())
+        $this->nodeFactory
+            ->expects($this->once())
             ->method('create')
-            ->with($nodeMockData)
-            ->willReturn($nodeMock);
+            ->willReturn($node);
 
-        $this->treeFactory->expects($this->once())
+        $this->treeFactory
+            ->expects($this->once())
             ->method('create')
-            ->willReturn($treeMock);
-
-        return $nodeMock;
+            ->willReturn($tree);
     }
 
-    public function testGetMenu()
+    protected function getTopmenu()
     {
-        $treeMock = $this->getMockBuilder(\Magento\Framework\Data\Tree::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return new Topmenu($this->context, $this->nodeFactory, $this->treeFactory);
+    }
 
-        $nodeMockData = [
-            'data' => [],
-            'idField' => 'root',
-            'tree' => $treeMock,
-        ];
+    public function testGetHtmlWithoutSelectedCategory()
+    {
+        $this->assertEquals($this->htmlWithoutCategory, $this->getTopmenu()->getHtml());
+    }
 
-        $nodeMock = $this->getMockBuilder(\Magento\Framework\Data\Tree\Node::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->nodeFactory->expects($this->any())
-            ->method('create')
-            ->with($nodeMockData)
-            ->willReturn($nodeMock);
-
-        $this->treeFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($treeMock);
-
-        $topmenuBlock = $this->getTopmenu();
-        $this->assertEquals($nodeMock, $topmenuBlock->getMenu());
+    public function testGetHtmlWithSelectedCategory()
+    {
+        $this->assertEquals($this->htmlWithCategory, $this->getTopmenu()->getHtml());
     }
 }

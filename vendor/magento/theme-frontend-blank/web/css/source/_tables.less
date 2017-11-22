@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -23,7 +23,6 @@
                 @_table_type: light,
                 @_table_border-width: @table__border-width
                 );
-
                 tfoot {
                     > tr {
                         &:first-child {
@@ -34,7 +33,6 @@
                             }
                         }
                     }
-
                     .mark {
                         font-weight: @font-weight__regular;
                         text-align: right;
@@ -52,30 +50,25 @@
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
     .table-wrapper {
         .lib-table-overflow();
-        position: relative; // To hide unnecessary horizontal scrollbar in Safari
-
+        position: relative; // to hide unnecessary horizontal scrollbar in Safari
         .table {
             &:not(.cart) {
                 &:not(.totals) {
                     &:not(.table-comparison) {
                         .lib-table-responsive();
-
                         tbody > tr {
                             > td:first-child {
                                 padding-top: @indent__base;
                             }
-
                             > td:last-child {
                                 padding-bottom: @indent__base;
                             }
                         }
-
                         &.additional-attributes {
                             tbody {
                                 th {
                                     &:extend(.abs-no-display-s all);
                                 }
-
                                 td {
                                     &:last-child {
                                         border: none;
@@ -88,17 +81,14 @@
                 }
             }
         }
-
         .table {
-            &:not(.totals) {
+            &:not(.totals){
                 &:not(.table-comparison) {
                     tfoot {
                         display: block;
-
                         tr {
                             display: block;
                             &:extend(.abs-add-clearfix-mobile all);
-
                             &:first-child {
                                 th,
                                 td {
@@ -106,7 +96,6 @@
                                 }
                             }
                         }
-
                         th {
                             box-sizing: border-box;
                             float: left;
@@ -115,7 +104,6 @@
                             text-align: left;
                             width: 70%;
                         }
-
                         td {
                             box-sizing: border-box;
                             float: left;
@@ -126,24 +114,7 @@
                         }
                     }
                 }
-            }
-        }
-    }
-
-    .data-table-definition-list {
-        thead {
-            display: none;
-        }
-
-        tbody th {
-            padding-bottom: 0;
-        }
-
-        tbody th,
-        tbody td {
-            display: block;
-            padding-left: 0;
-            padding-right: 0;
+            }            
         }
     }
 }

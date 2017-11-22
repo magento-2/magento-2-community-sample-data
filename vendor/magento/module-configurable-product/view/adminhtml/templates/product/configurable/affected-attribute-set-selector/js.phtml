@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -48,16 +48,16 @@
 
         $form
             .modal({
-                title: '<?= /* @escapeNotVerified */ __('Choose Affected Attribute Set') ?>',
+                title: '<?php /* @escapeNotVerified */ echo __('Choose Affected Attribute Set'); ?>',
                 closed: function () {
                     resetValidation();
                 },
                 buttons: [{
-                    text: '<?= /* @escapeNotVerified */ __('Confirm') ?>',
+                    text: '<?php /* @escapeNotVerified */ echo __('Confirm'); ?>',
                     attr: {
                         'data-action': 'confirm'
                     },
-                    'class': 'action-primary',
+                    'class': 'action-secondary',
                     click: function() {
                         var affectedAttributeSetId = $form.find('input[name=affected-attribute-set]:checked').val();
                         if (affectedAttributeSetId == 'current') {
@@ -77,12 +77,12 @@
 
                         $.ajax({
                             type: 'POST',
-                            url: '<?= /* @escapeNotVerified */ $block->getAttributeSetCreationUrl() ?>',
+                            url: '<?php /* @escapeNotVerified */ echo $block->getAttributeSetCreationUrl()?>',
                             data: {
                                 gotoEdit: 1,
                                 attribute_set_name: $form.find('input[name=new-attribute-set-name]').val(),
                                 skeleton_set: $('#attribute_set_id').val(),
-                                form_key: '<?= /* @escapeNotVerified */ $block->getFormKey() ?>',
+                                form_key: '<?php /* @escapeNotVerified */ echo $block->getFormKey()?>',
                                 return_session_messages_only: 1
                             },
                             dataType: 'json',
@@ -101,8 +101,8 @@
                         return false;
                     }
                 },{
-                    text: '<?= /* @escapeNotVerified */ __('Cancel') ?>',
-                    id: '<?= /* @escapeNotVerified */ $block->getJsId('close-button') ?>',
+                    text: '<?php /* @escapeNotVerified */ echo __('Cancel'); ?>',
+                    id: '<?php /* @escapeNotVerified */ echo $block->getJsId('close-button') ?>',
                     'class': 'action-close',
                     click: function() {
                         $form.modal('closeModal');
@@ -164,10 +164,11 @@
                 $('[data-role=new-variations-attribute-set-id]').val($('#attribute_set_id').val());
                 return; // all selected configurable attributes belong to current attribute set
             }
-            if (!$('[data-role=product-variations-matrix] [data-column=entity_id]')
-                .closest('tr').has('input[name$="[name]"]').length
-            ) {
-                return; // no new simple products to save from matrix: uniting attribute set is not needed
+
+            var regex = /id\/(\d+)(?:\/)?/g;
+            var existingProductPage = regex.exec(BASE_URL);
+            if (existingProductPage != null) {
+                return; // it is not new product page
             }
 
             event.stopImmediatePropagation();

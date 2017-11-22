@@ -1,26 +1,26 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Backend\App\Action\Context;
 use Magento\Ui\Component\MassAction\Filter;
 
 /**
  * Class AbstractMassStatus
- * @deprecated 100.2.0
- * Never extend from this action. Implement mass-action logic in the "execute" method of your controller.
  */
 abstract class AbstractMassAction extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::actions_edit';
 
@@ -59,24 +59,26 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
     {
         try {
             $collection = $this->filter->getCollection($this->collectionFactory->create());
+
             return $this->massAction($collection);
         } catch (\Exception $e) {
             $this->messageManager->addError($e->getMessage());
             /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
             $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+
             return $resultRedirect->setPath($this->redirectUrl);
         }
     }
 
     /**
-     * Return component referrer url
-     * TODO: Technical dept referrer url should be implement as a part of Action configuration in in appropriate way
+     * Return component referer url
+     * TODO: Technical dept referer url should be implement as a part of Action configuration in in appropriate way
      *
      * @return null|string
      */
     protected function getComponentRefererUrl()
     {
-        return $this->filter->getComponentRefererUrl() ?: 'sales/*/';
+        return $this->filter->getComponentRefererUrl()?: 'sales/*/';
     }
 
     /**

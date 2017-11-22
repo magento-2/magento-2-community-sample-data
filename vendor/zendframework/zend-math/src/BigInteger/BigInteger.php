@@ -12,6 +12,13 @@ namespace Zend\Math\BigInteger;
 abstract class BigInteger
 {
     /**
+     * Plugin manager for loading adapters
+     *
+     * @var null|AdapterPluginManager
+     */
+    protected static $adapters = null;
+
+    /**
      * The default adapter.
      *
      * @var Adapter\AdapterInterface
@@ -21,27 +28,41 @@ abstract class BigInteger
     /**
      * Create a BigInteger adapter instance
      *
-     * @param  string|null $adapterName
+     * @param  string|Adapter\AdapterInterface|null $adapterName
      * @return Adapter\AdapterInterface
      */
     public static function factory($adapterName = null)
     {
         if (null === $adapterName) {
             return static::getAvailableAdapter();
+        } elseif ($adapterName instanceof Adapter\AdapterInterface) {
+            return $adapterName;
         }
 
-        $adapterName = sprintf('%s\\Adapter\\%s', __NAMESPACE__, ucfirst($adapterName));
-        if (! class_exists($adapterName)
-            || ! is_subclass_of($adapterName, Adapter\AdapterInterface::class)
-        ) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'The adapter %s either does not exist or does not implement %s',
-                $adapterName,
-                Adapter\AdapterInterface::class
-            ));
-        }
+        return static::getAdapterPluginManager()->get($adapterName);
+    }
 
-        return new $adapterName();
+    /**
+     * Set adapter plugin manager
+     *
+     * @param AdapterPluginManager $adapters
+     */
+    public static function setAdapterPluginManager(AdapterPluginManager $adapters)
+    {
+        static::$adapters = $adapters;
+    }
+
+    /**
+     * Get the adapter plugin manager
+     *
+     * @return AdapterPluginManager
+     */
+    public static function getAdapterPluginManager()
+    {
+        if (static::$adapters === null) {
+            static::$adapters = new AdapterPluginManager();
+        }
+        return static::$adapters;
     }
 
     /**
@@ -76,14 +97,13 @@ abstract class BigInteger
     public static function getAvailableAdapter()
     {
         if (extension_loaded('gmp')) {
-            return static::factory('Gmp');
+            $adapterName = 'Gmp';
+        } elseif (extension_loaded('bcmath')) {
+            $adapterName = 'Bcmath';
+        } else {
+            throw new Exception\RuntimeException('Big integer math support is not detected');
         }
-
-        if (extension_loaded('bcmath')) {
-            return static::factory('Bcmath');
-        }
-
-        throw new Exception\RuntimeException('Big integer math support is not detected');
+        return static::factory($adapterName);
     }
 
     /**
@@ -96,6 +116,6 @@ abstract class BigInteger
     public static function __callStatic($method, $args)
     {
         $adapter = static::getDefaultAdapter();
-        return call_user_func_array([$adapter, $method], $args);
+        return call_user_func_array(array($adapter, $method), $args);
     }
 }

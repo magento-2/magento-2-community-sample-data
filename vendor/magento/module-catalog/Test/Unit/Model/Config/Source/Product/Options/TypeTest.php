@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Config\Source\Product\Options;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\Product\Options\Type
@@ -21,14 +21,14 @@ class TypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productOptionConfig = $this->getMockBuilder(\Magento\Catalog\Model\ProductOptions\ConfigInterface::class)
+        $this->productOptionConfig = $this->getMockBuilder('Magento\Catalog\Model\ProductOptions\ConfigInterface')
             ->setMethods(['getAll'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Config\Source\Product\Options\Type::class,
+            'Magento\Catalog\Model\Config\Source\Product\Options\Type',
             ['productOptionConfig' => $this->productOptionConfig]
         );
     }

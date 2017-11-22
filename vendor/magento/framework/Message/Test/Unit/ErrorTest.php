@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Message\Test\Unit;
@@ -10,17 +10,17 @@ use Magento\Framework\Message\MessageInterface;
 /**
  * \Magento\Framework\Message\Error test case
  */
-class ErrorTest extends \PHPUnit\Framework\TestCase
+class ErrorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Message\Error
      */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\Framework\Message\Error::class);
+        $this->model = $objectManager->getObject('Magento\Framework\Message\Error');
     }
 
     public function testGetType()

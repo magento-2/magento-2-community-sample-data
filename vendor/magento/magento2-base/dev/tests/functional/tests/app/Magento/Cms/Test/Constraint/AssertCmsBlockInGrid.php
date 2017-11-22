@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,7 +29,6 @@ class AssertCmsBlockInGrid extends AbstractConstraint
     {
         $cmsBlockIndex->open();
         $data = $cmsBlock->getData();
-        $data['is_active'] = $data['is_active'] == 'Yes' ?  'Enabled' : 'Disabled';
         $filter = [
             'title' => $data['title'],
             'identifier' => $data['identifier'],

@@ -1,16 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
+ */
+
+/**
+ * Adminhtml customer grid block
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 namespace Magento\Catalog\Block\Adminhtml\Product;
 
 use Magento\Store\Model\Store;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
     /**
@@ -112,6 +114,8 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
      */
     protected function _prepareCollection()
     {
+        parent::_prepareCollection();
+
         $store = $this->_getStore();
         $collection = $this->_productFactory->create()->getCollection()->addAttributeToSelect(
             'sku'
@@ -180,9 +184,6 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->setCollection($collection);
 
         $this->getCollection()->addWebsiteNamesToResult();
-
-        parent::_prepareCollection();
-
         return $this;
     }
 

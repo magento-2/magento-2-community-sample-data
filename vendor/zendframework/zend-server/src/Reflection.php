@@ -78,7 +78,7 @@ class Reflection
         }
 
         if ($argv && !is_array($argv)) {
-            throw new Reflection\Exception\InvalidArgumentException('Invalid argv argument passed to reflectFunction');
+            throw new Reflection\Exception\InvalidArgumentException('Invalid argv argument passed to reflectClass');
         }
 
         return new ReflectionFunction(new \ReflectionFunction($function), $namespace, $argv);

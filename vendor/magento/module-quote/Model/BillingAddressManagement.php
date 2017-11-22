@@ -1,20 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model;
 
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Framework\Exception\InputException;
-use Magento\Quote\Model\Quote\Address\BillingAddressPersister;
 use Psr\Log\LoggerInterface as Logger;
 use Magento\Quote\Api\BillingAddressManagementInterface;
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * Quote billing address write service object.
- *
- */
+/** Quote billing address write service object. */
 class BillingAddressManagement implements BillingAddressManagementInterface
 {
     /**
@@ -44,11 +41,6 @@ class BillingAddressManagement implements BillingAddressManagementInterface
     protected $addressRepository;
 
     /**
-     * @var \Magento\Quote\Model\ShippingAddressAssignment
-     */
-    private $shippingAddressAssignment;
-
-    /**
      * Constructs a quote billing address service object.
      *
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository Quote repository.
@@ -74,17 +66,45 @@ class BillingAddressManagement implements BillingAddressManagementInterface
      */
     public function assign($cartId, \Magento\Quote\Api\Data\AddressInterface $address, $useForShipping = false)
     {
-        /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $this->quoteRepository->getActive($cartId);
-        $quote->removeAddress($quote->getBillingAddress()->getId());
+
+        $this->addressValidator->validate($address);
+        $customerAddressId = $address->getCustomerAddressId();
+        $shippingAddress = null;
+        $addressData = [];
+
+        if ($useForShipping) {
+            $shippingAddress = $address;
+        }
+        $saveInAddressBook = $address->getSaveInAddressBook() ? 1 : 0;
+        if ($customerAddressId) {
+            try {
+                $addressData = $this->addressRepository->getById($customerAddressId);
+            } catch (NoSuchEntityException $e) {
+                // do nothing if customer is not found by id
+            }
+            $address = $quote->getBillingAddress()->importCustomerAddressData($addressData);
+            if ($useForShipping) {
+                $shippingAddress = $quote->getShippingAddress()->importCustomerAddressData($addressData);
+                $shippingAddress->setSaveInAddressBook($saveInAddressBook);
+            }
+        } elseif ($quote->getCustomerId()) {
+            $address->setEmail($quote->getCustomerEmail());
+        }
+        $address->setSaveInAddressBook($saveInAddressBook);
         $quote->setBillingAddress($address);
+        if ($useForShipping) {
+            $shippingAddress->setSameAsBilling(1);
+            $shippingAddress->setCollectShippingRates(true);
+            $quote->setShippingAddress($shippingAddress);
+        }
+        $quote->setDataChanges(true);
+        $quote->collectTotals();
         try {
-            $this->getShippingAddressAssignment()->setAddress($quote, $address, $useForShipping);
-            $quote->setDataChanges(true);
             $this->quoteRepository->save($quote);
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            throw new InputException(__('Unable to save address. Please check input data.'));
+            throw new InputException(__('Unable to save address. Please, check input data.'));
         }
         return $quote->getBillingAddress()->getId();
     }
@@ -96,18 +116,5 @@ class BillingAddressManagement implements BillingAddressManagementInterface
     {
         $cart = $this->quoteRepository->getActive($cartId);
         return $cart->getBillingAddress();
-    }
-
-    /**
-     * @return \Magento\Quote\Model\ShippingAddressAssignment
-     * @deprecated 100.2.0
-     */
-    private function getShippingAddressAssignment()
-    {
-        if (!$this->shippingAddressAssignment) {
-            $this->shippingAddressAssignment = ObjectManager::getInstance()
-                ->get(\Magento\Quote\Model\ShippingAddressAssignment::class);
-        }
-        return $this->shippingAddressAssignment;
     }
 }

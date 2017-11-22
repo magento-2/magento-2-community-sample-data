@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Usps\Test\Unit\Model\Source;
 
-class GenericTest extends \PHPUnit\Framework\TestCase
+class GenericTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Usps\Model\Source\Generic
@@ -17,17 +17,17 @@ class GenericTest extends \PHPUnit\Framework\TestCase
      */
     protected $_uspsModel;
 
-    protected function setUp()
+    public function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_uspsModel = $this->getMockBuilder(
-            \Magento\Usps\Model\Carrier::class
+            'Magento\Usps\Model\Carrier'
         )->setMethods(
             ['getCode']
         )->disableOriginalConstructor()->getMock();
 
         $this->_generic = $helper->getObject(
-            \Magento\Usps\Model\Source\Generic::class,
+            '\Magento\Usps\Model\Source\Generic',
             ['shippingUsps' => $this->_uspsModel]
         );
     }

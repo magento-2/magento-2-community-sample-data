@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order;
 /**
  * Class AddressTest
  */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Address
@@ -45,18 +45,49 @@ class AddressTest extends \PHPUnit\Framework\TestCase
      */
     protected $entitySnapshotMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->addressMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Address::class,
-            ['__wakeup', 'getParentId', 'hasDataChanges', 'beforeSave', 'afterSave', 'validateBeforeSave', 'getOrder']
+        $this->addressMock = $this->getMock(
+            'Magento\Sales\Model\Order\Address',
+            ['__wakeup', 'getParentId', 'hasDataChanges', 'beforeSave', 'afterSave', 'validateBeforeSave', 'getOrder'],
+            [],
+            '',
+            false
         );
-        $this->orderMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['__wakeup', 'getId']);
-        $this->appResourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
-        $this->validatorMock = $this->createMock(\Magento\Sales\Model\Order\Address\Validator::class);
-        $this->entitySnapshotMock = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot::class
+        $this->orderMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            ['__wakeup', 'getId'],
+            [],
+            '',
+            false
+        );
+        $this->appResourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->validatorMock = $this->getMock(
+            'Magento\Sales\Model\Order\Address\Validator',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->entitySnapshotMock = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot',
+            [],
+            [],
+            '',
+            false
         );
         $this->appResourceMock->expects($this->any())
             ->method('getConnection')
@@ -70,7 +101,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         $this->connectionMock->expects($this->any())
             ->method('lastInsertId');
         $this->addressResource = $objectManager->getObject(
-            \Magento\Sales\Model\ResourceModel\Order\Address::class,
+            'Magento\Sales\Model\ResourceModel\Order\Address',
             [
                 'resource' => $this->appResourceMock,
                 'validator' => $this->validatorMock,

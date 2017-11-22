@@ -1,28 +1,26 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+/*global define*/
+define(
+    [
+        'jquery',
+        '../model/quote'
+    ],
+    function ($, quote) {
+        'use strict';
 
-/**
- * @api
- */
-define([
-    'jquery',
-    '../model/quote'
-], function ($, quote) {
-    'use strict';
+        return function (billingAddress) {
+            var address = null;
 
-    return function (billingAddress) {
-        var address = null;
-
-        if (quote.shippingAddress() && billingAddress.getCacheKey() == //eslint-disable-line eqeqeq
-            quote.shippingAddress().getCacheKey()
-        ) {
-            address = $.extend({}, billingAddress);
-            address.saveInAddressBook = null;
-        } else {
-            address = billingAddress;
-        }
-        quote.billingAddress(address);
-    };
-});
+            if (quote.shippingAddress() && billingAddress.getCacheKey() == quote.shippingAddress().getCacheKey()) {
+                address = $.extend({}, billingAddress);
+                address.saveInAddressBook = false;
+            } else {
+                address = billingAddress;
+            }
+            quote.billingAddress(address);
+        };
+    }
+);

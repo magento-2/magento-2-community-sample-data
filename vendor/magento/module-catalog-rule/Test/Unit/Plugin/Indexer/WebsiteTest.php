@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Indexer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Indexer processor mock
@@ -33,13 +33,17 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ruleProductProcessor = $this->createMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class
+        $this->ruleProductProcessor = $this->getMock(
+            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            [],
+            [],
+            '',
+            false
         );
-        $this->subject = $this->createMock(\Magento\Store\Model\Website::class);
+        $this->subject = $this->getMock('Magento\Store\Model\Website', [], [], '', false);
 
         $this->plugin = (new ObjectManager($this))->getObject(
-            \Magento\CatalogRule\Plugin\Indexer\Website::class,
+            'Magento\CatalogRule\Plugin\Indexer\Website',
             [
                 'ruleProductProcessor' => $this->ruleProductProcessor,
             ]

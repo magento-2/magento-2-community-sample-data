@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSampleData\Model;
@@ -166,7 +166,7 @@ class Product
     }
 
     /**
-     * @param \Magento\Catalog\Model\Product $product
+     * @param \Magento\Framework\Model\AbstractModel $product
      * @param array $data
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

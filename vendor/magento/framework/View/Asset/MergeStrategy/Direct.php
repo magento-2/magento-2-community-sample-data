@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Asset\MergeStrategy;
@@ -22,7 +22,9 @@ class Direct implements \Magento\Framework\View\Asset\MergeStrategyInterface
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Magento\Framework\Filesystem
+     */
     private $filesystem;
 
     /**

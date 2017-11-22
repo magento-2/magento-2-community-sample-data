@@ -11,8 +11,6 @@ namespace Zend\Form\Element;
 
 use Zend\Validator\DateStep as DateStepValidator;
 use Zend\Validator\Regex as RegexValidator;
-use Zend\Validator\GreaterThan as GreaterThanValidator;
-use Zend\Validator\LessThan as LessThanValidator;
 
 class Week extends DateTime
 {
@@ -21,9 +19,9 @@ class Week extends DateTime
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'week',
-    ];
+    );
 
     /**
      * Retrieves a Date Validator configured for a Week Input type
@@ -48,42 +46,10 @@ class Week extends DateTime
         $baseValue = (isset($this->attributes['min']))
                      ? $this->attributes['min'] : '1970-W01';
 
-        return new DateStepValidator([
+        return new DateStepValidator(array(
             'format'    => 'Y-\WW',
             'baseValue' => $baseValue,
             'step'      => new \DateInterval("P{$stepValue}W"),
-        ]);
-    }
-
-    /**
-     * @see https://bugs.php.net/bug.php?id=74511
-     * @return array
-     */
-    protected function getValidators()
-    {
-        if ($this->validators) {
-            return $this->validators;
-        }
-        $validators = [];
-        $validators[] = $this->getDateValidator();
-        if (isset($this->attributes['min'])) {
-            $validators[] = new GreaterThanValidator([
-                'min'       => $this->attributes['min'],
-                'inclusive' => true,
-            ]);
-        }
-        if (isset($this->attributes['max'])) {
-            $validators[] = new LessThanValidator([
-                'max'       => $this->attributes['max'],
-                'inclusive' => true,
-            ]);
-        }
-        if (! isset($this->attributes['step'])
-            || 'any' !== $this->attributes['step']
-        ) {
-            $validators[] = $this->getStepValidator();
-        }
-        $this->validators = $validators;
-        return $this->validators;
+        ));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductVideo\Test\Unit\Model\Product\Attribute\Media;
@@ -8,7 +8,7 @@ namespace Magento\ProductVideo\Test\Unit\Model\Product\Attribute\Media;
 /**
  * VideoEntry test
  */
-class VideoEntryTest extends \PHPUnit\Framework\TestCase
+class VideoEntryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry|\PHPUnit_Framework_MockObject_MockObject
@@ -18,12 +18,15 @@ class VideoEntryTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->modelObject =
-            $this->createPartialMock(
-                \Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry::class,
-                ['getData', 'setData']
+            $this->getMock(
+                '\Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry',
+                ['getData', 'setData'],
+                [],
+                '',
+                false
             );
     }
 

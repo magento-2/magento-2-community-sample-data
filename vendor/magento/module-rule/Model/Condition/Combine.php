@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rule\Model\Condition;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Combine extends AbstractCondition
 {
     /**
@@ -32,7 +28,7 @@ class Combine extends AbstractCondition
 
         parent::__construct($context, $data);
         $this->setType(
-            \Magento\Rule\Model\Condition\Combine::class
+            'Magento\Rule\Model\Condition\Combine'
         )->setAggregator(
             'all'
         )->setValue(
@@ -54,7 +50,6 @@ class Combine extends AbstractCondition
     }
 
     /* start aggregator methods */
-
     /**
      * @return $this
      */
@@ -102,11 +97,10 @@ class Combine extends AbstractCondition
                 'name' => $this->elementName . '[' . $this->getPrefix() . '][' . $this->getId() . '][aggregator]',
                 'values' => $this->getAggregatorSelectOptions(),
                 'value' => $this->getAggregator(),
-                'value_name' => $this->getAggregatorName(),
-                'data-form-part' => $this->getFormName()
+                'value_name' => $this->getAggregatorName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
+            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
         );
     }
 
@@ -274,11 +268,10 @@ class Combine extends AbstractCondition
             [
                 'name' => $this->elementName . '[' . $this->getPrefix() . '][' . $this->getId() . '][new_child]',
                 'values' => $this->getNewChildSelectOptions(),
-                'value_name' => $this->getNewChildName(),
-                'data-form-part' => $this->getFormName()
+                'value_name' => $this->getNewChildName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Newchild::class)
+            $this->_layout->getBlockSingleton('Magento\Rule\Block\Newchild')
         );
     }
 

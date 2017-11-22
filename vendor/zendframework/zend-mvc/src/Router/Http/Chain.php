@@ -34,7 +34,7 @@ class Chain extends TreeRouteStack implements RouteInterface
      *
      * @var array
      */
-    protected $assembledParams = [];
+    protected $assembledParams = array();
 
     /**
      * Create a new part route.
@@ -59,7 +59,7 @@ class Chain extends TreeRouteStack implements RouteInterface
      * @throws Exception\InvalidArgumentException
      * @return Part
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -99,7 +99,7 @@ class Chain extends TreeRouteStack implements RouteInterface
      * @param  array    $options
      * @return RouteMatch|null
      */
-    public function match(Request $request, $pathOffset = null, array $options = [])
+    public function match(Request $request, $pathOffset = null, array $options = array())
     {
         if (!method_exists($request, 'getUri')) {
             return;
@@ -117,7 +117,7 @@ class Chain extends TreeRouteStack implements RouteInterface
             $this->chainRoutes = null;
         }
 
-        $match      = new RouteMatch([]);
+        $match      = new RouteMatch(array());
         $uri        = $request->getUri();
         $pathLength = strlen($uri->getPath());
 
@@ -147,14 +147,14 @@ class Chain extends TreeRouteStack implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         if ($this->chainRoutes !== null) {
             $this->addRoutes($this->chainRoutes);
             $this->chainRoutes = null;
         }
 
-        $this->assembledParams = [];
+        $this->assembledParams = array();
 
         $routes = ArrayUtils::iteratorToArray($this->routes);
 

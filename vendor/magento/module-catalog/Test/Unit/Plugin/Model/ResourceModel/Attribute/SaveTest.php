@@ -1,56 +1,51 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Test\Unit\Plugin\Model\ResourceModel\Attribute;
 
-use Magento\Catalog\Plugin\Model\ResourceModel\Attribute\Save;
-use Magento\PageCache\Model\Config;
-use Magento\Framework\App\Cache\TypeListInterface;
-use Magento\Catalog\Model\ResourceModel\Attribute;
+use \Magento\Catalog\Plugin\Model\ResourceModel\Attribute\Save;
 
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Attribute|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $subjectMock;
-
-    /**
-     * @var Save
-     */
+    /** @var \Magento\Catalog\Plugin\Model\ResourceModel\Attribute\Save */
     protected $save;
 
-    /**
-     * @var Config|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var \Magento\PageCache\Model\Config|\PHPUnit_Framework_MockObject_MockObject */
     protected $config;
 
-    /**
-     * @var TypeListInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var \Magento\Framework\App\Cache\TypeListInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $typeList;
 
     protected function setUp()
     {
-        $this->config = $this->createPartialMock(Config::class, ['isEnabled']);
-        $this->typeList = $this->getMockForAbstractClass(
-            TypeListInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['invalidate']
-        );
-        $this->subjectMock = $this->createMock(Attribute::class);
+        $this->config = $this->getMockBuilder('Magento\PageCache\Model\Config')
+            ->disableOriginalConstructor()
+            ->setMethods(['isEnabled'])
+            ->getMock();
+        $this->typeList = $this->getMockBuilder('Magento\Framework\App\Cache\TypeListInterface')
+            ->disableOriginalConstructor()
+            ->setMethods(['invalidate'])
+            ->getMockForAbstractClass();
+
         $this->save = new Save($this->config, $this->typeList);
     }
 
-    public function testAfterSaveWithoutInvalidate()
+    public function testAroundSaveWithoutInvalidate()
     {
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Attribute')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attribute = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $self = $this;
+        $proceed = function ($object) use ($self, $attribute) {
+            $self->assertEquals($object, $attribute);
+        };
+
         $this->config->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
@@ -58,11 +53,23 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->typeList->expects($this->never())
             ->method('invalidate');
 
-        $this->assertSame($this->subjectMock, $this->save->afterSave($this->subjectMock, $this->subjectMock));
+        $this->save->aroundSave($subject, $proceed, $attribute);
     }
 
-    public function testAfterSave()
+    public function testAroundSave()
     {
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Attribute')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attribute = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $self = $this;
+        $proceed = function ($object) use ($self, $attribute) {
+            $self->assertEquals($object, $attribute);
+        };
+
         $this->config->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
@@ -71,6 +78,6 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('invalidate')
             ->with('full_page');
 
-        $this->assertSame($this->subjectMock, $this->save->afterSave($this->subjectMock, $this->subjectMock));
+        $this->save->aroundSave($subject, $proceed, $attribute);
     }
 }

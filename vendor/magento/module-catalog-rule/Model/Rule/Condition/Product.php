@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,31 +10,27 @@
 namespace Magento\CatalogRule\Model\Rule\Condition;
 
 /**
- * @method string getAttribute() Returns attribute code
+ * Class Product
  */
 class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 {
     /**
      * Validate product attribute value for condition
      *
-     * @param \Magento\Catalog\Model\Product|\Magento\Framework\Model\AbstractModel $model
+     * @param \Magento\Framework\Model\AbstractModel $model
      * @return bool
      */
     public function validate(\Magento\Framework\Model\AbstractModel $model)
     {
         $attrCode = $this->getAttribute();
         if ('category_ids' == $attrCode) {
-            return parent::validate($model);
+            return $this->validateAttribute($model->getAvailableInCategories());
         }
 
-        $oldAttrValue = $model->getData($attrCode);
-        if ($oldAttrValue === null) {
-            return false;
-        }
-
+        $oldAttrValue = $model->hasData($attrCode) ? $model->getData($attrCode) : null;
         $this->_setAttributeValue($model);
 
-        $result = $this->validateAttribute($model->getData($attrCode));
+        $result = $this->validateAttribute($model->getData($this->getAttribute()));
         $this->_restoreOldAttrValue($model, $oldAttrValue);
 
         return (bool)$result;
@@ -60,7 +56,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     /**
      * Set attribute value
      *
-     * @param \Magento\Catalog\Model\Product|\Magento\Framework\Model\AbstractModel $model
+     * @param \Magento\Framework\Model\AbstractModel $model
      * @return $this
      */
     protected function _setAttributeValue(\Magento\Framework\Model\AbstractModel $model)
@@ -92,7 +88,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * Prepare datetime attribute value
      *
      * @param mixed $value
-     * @param \Magento\Catalog\Model\Product|\Magento\Framework\Model\AbstractModel $model
+     * @param \Magento\Framework\Model\AbstractModel $model
      * @return mixed
      */
     protected function _prepareDatetimeValue($value, \Magento\Framework\Model\AbstractModel $model)
@@ -109,7 +105,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * Prepare multiselect attribute value
      *
      * @param mixed $value
-     * @param \Magento\Catalog\Model\Product|\Magento\Framework\Model\AbstractModel $model
+     * @param \Magento\Framework\Model\AbstractModel $model
      * @return mixed
      */
     protected function _prepareMultiselectValue($value, \Magento\Framework\Model\AbstractModel $model)

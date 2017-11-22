@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test for TaxRuleRegistry
  *
  */
-class TaxRuleRegistryTest extends \PHPUnit\Framework\TestCase
+class TaxRuleRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Model\Calculation\TaxRuleRegistry
@@ -32,18 +32,18 @@ class TaxRuleRegistryTest extends \PHPUnit\Framework\TestCase
 
     const TAX_RULE_ID = 1;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->taxRuleModelFactoryMock = $this->getMockBuilder(\Magento\Tax\Model\Calculation\RuleFactory::class)
+        $this->taxRuleModelFactoryMock = $this->getMockBuilder('Magento\Tax\Model\Calculation\RuleFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->taxRuleRegistry = $objectManager->getObject(
-            \Magento\Tax\Model\Calculation\TaxRuleRegistry::class,
+            'Magento\Tax\Model\Calculation\TaxRuleRegistry',
             ['taxRuleModelFactory' => $this->taxRuleModelFactoryMock]
         );
-        $this->taxRuleModelMock = $this->getMockBuilder(\Magento\Tax\Model\Calculation\Rule::class)
+        $this->taxRuleModelMock = $this->getMockBuilder('Magento\Tax\Model\Calculation\Rule')
             ->disableOriginalConstructor()
             ->getMock();
     }

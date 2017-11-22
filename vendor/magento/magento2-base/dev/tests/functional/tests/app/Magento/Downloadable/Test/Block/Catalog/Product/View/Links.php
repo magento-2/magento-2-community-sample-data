@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -111,7 +111,7 @@ class Links extends Block
         $linksData = [];
 
         $choiceLinks = $this->_rootElement->getElements($this->choiceLink, Locator::SELECTOR_XPATH);
-        foreach ($choiceLinks as $key => $choiceLink) {
+        foreach ($choiceLinks as $choiceLink) {
             $link = $choiceLink->find($this->linkForChoice);
             $sample = $choiceLink->find($this->sampleLinkForChoice);
             $price = $choiceLink->find($this->priceForChoice);
@@ -129,7 +129,7 @@ class Links extends Block
                     : null,
             ];
 
-            $linksData[$key + 1] = array_filter($linkData);
+            $linksData[] = array_filter($linkData);
         }
 
         return $linksData;

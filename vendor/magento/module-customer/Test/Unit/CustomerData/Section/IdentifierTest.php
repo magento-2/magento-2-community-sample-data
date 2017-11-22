@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\CustomerData\Section;
 
 use \Magento\Customer\CustomerData\Section\Identifier;
 
-class IdentifierTest extends \PHPUnit\Framework\TestCase
+class IdentifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\CustomerData\Section\Identifier
@@ -27,7 +27,7 @@ class IdentifierTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->cookieManMock = $this->createMock(\Magento\Framework\Stdlib\Cookie\PhpCookieManager::class);
+        $this->cookieManMock = $this->getMock('Magento\Framework\Stdlib\Cookie\PhpCookieManager', [], [], '', false);
         $this->cookieMarkId = '123456';
         $this->model = new Identifier(
             $this->cookieManMock

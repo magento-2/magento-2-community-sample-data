@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,45 +10,47 @@ use Magento\Customer\Test\Fixture\CustomerGroup;
 use Magento\Customer\Test\Page\Adminhtml\CustomerGroupIndex;
 use Magento\Customer\Test\Page\Adminhtml\CustomerGroupNew;
 use Magento\Mtf\TestCase\Injectable;
-use Magento\Customer\Test\Fixture\Customer;
 
 /**
- * Preconditions:
- *  1. Customer Group is created.
- *  2. Customer is created and assigned to this group.
- * Steps:
- *  1. Log in to backend as admin user.
- *  2. Navigate to Stores > Other Settings > Customer Groups.
- *  3. Click on Customer Group from grid.
- *  4. Click on Delete "Customer Group".
- *  5. Confirm in pop-up.
- *  6. Perform all assertions.
+ * Test Creation for DeleteCustomerGroupEntity
  *
- * @group Customer_Groups
+ * Test Flow:
+ * Preconditions:
+ *  1. Customer Group is created
+ * Steps:
+ *  1. Log in to backend as admin user
+ *  2. Navigate to Stores > Other Settings > Customer Groups
+ *  3. Click on Customer Group from grid
+ *  4. Click on Delete "Customer Group"
+ *  5. Confirm in pop-up
+ *  6. Perform all assertions
+ *
+ * @group Customer_Groups_(CS)
  * @ZephyrId MAGETWO-25243
  */
 class DeleteCustomerGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
-     * Page CustomerGroupIndex.
+     * Page CustomerGroupIndex
      *
      * @var CustomerGroupIndex
      */
     protected $customerGroupIndex;
 
     /**
-     * Page CustomerGroupNew.
+     * Page CustomerGroupNew
      *
      * @var CustomerGroupNew
      */
     protected $customerGroupNew;
 
     /**
-     * Injection data.
+     * Injection data
      *
      * @param CustomerGroupIndex $customerGroupIndex
      * @param CustomerGroupNew $customerGroupNew
@@ -63,21 +65,15 @@ class DeleteCustomerGroupEntityTest extends Injectable
     }
 
     /**
-     * Delete Customer Group.
+     * Delete Customer Group
      *
      * @param CustomerGroup $customerGroup
-     * @param Customer $customer [optional]
-     * @return array
+     * @return void
      */
-    public function test(CustomerGroup $customerGroup, Customer $customer = null)
+    public function test(CustomerGroup $customerGroup)
     {
         // Precondition
-        if ($customer !== null) {
-            $customer->persist();
-            $customerGroup = $customer->getDataFieldConfig('group_id')['source']->getCustomerGroup();
-        } else {
-            $customerGroup->persist();
-        }
+        $customerGroup->persist();
 
         // Steps
         $filter = ['code' => $customerGroup->getCustomerGroupCode()];
@@ -85,10 +81,5 @@ class DeleteCustomerGroupEntityTest extends Injectable
         $this->customerGroupIndex->getCustomerGroupGrid()->searchAndOpen($filter);
         $this->customerGroupNew->getPageMainActions()->delete();
         $this->customerGroupNew->getModalBlock()->acceptAlert();
-
-        return [
-            'customer' => $customer,
-            'customerGroup' => $customerGroup
-        ];
     }
 }

@@ -2,15 +2,11 @@
 /**
  * Filter to uppercase the first character of each word in a string
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GoogleAdwords\Model\Filter;
 
-/**
- * @api
- * @since 100.0.2
- */
 class UppercaseTitle implements \Zend_Filter_Interface
 {
     /**

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GroupedProduct\Test\Unit\Model\Product\Cart\Configuration\Plugin;
 
-class GroupedTest extends \PHPUnit\Framework\TestCase
+class GroupedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GroupedProduct\Model\Product\Cart\Configuration\Plugin\Grouped
@@ -29,8 +29,14 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Model\Product\CartConfiguration::class);
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
+        $this->subjectMock = $this->getMock(
+            'Magento\Catalog\Model\Product\CartConfiguration',
+            [],
+            [],
+            '',
+            false
+        );
         $this->closureMock = function () {
             return 'Expected';
         };

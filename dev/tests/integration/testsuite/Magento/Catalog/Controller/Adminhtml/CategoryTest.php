@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml;
@@ -23,7 +23,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
     public function testSaveAction($inputData, $defaultAttributes, $attributesSaved = [], $isSuccess = true)
     {
         /** @var $store \Magento\Store\Model\Store */
-        $store = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Store::class);
+        $store = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Store\Model\Store');
         $store->load('fixturestore', 'code');
         $storeId = $store->getId();
 
@@ -41,7 +41,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
 
         /** @var $category \Magento\Catalog\Model\Category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $category->setStoreId($storeId);
         $category->load(2);
@@ -59,7 +59,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
             if ($exists !== $category->getExistsStoreValueFlag($attribute)) {
                 if ($exists) {
                     $errors[] = "custom value for '{$attribute}' attribute is not found";
-                } elseif (!$exists && $category->getCustomAttribute($attribute) !== null) {
+                } else {
                     $errors[] = "custom value for '{$attribute}' attribute is found, but default one must be used";
                 }
             }
@@ -82,11 +82,11 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
 
         if (empty($postData['return_session_messages_only'])) {
             $this->assertRedirect(
-                $this->stringContains('http://localhost/index.php/backend/catalog/category/edit/')
+                $this->stringContains('http://localhost/index.php/backend/catalog/category/edit/id/')
             );
         } else {
             $result = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\Json\Helper\Data::class
+                'Magento\Framework\Json\Helper\Data'
             )->jsonDecode(
                 $body
             );
@@ -110,14 +110,13 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
     {
         /* Keep in sync with new-category-dialog.js */
         $postData = [
-            'name' => 'Category Created From Product Creation Page',
-            'is_active' => 1,
-            'include_in_menu' => 0,
-            'use_config' => [
-                'available_sort_by' => 1,
-                'default_sort_by' => 1
+            'general' => [
+                'name' => 'Category Created From Product Creation Page',
+                'is_active' => 1,
+                'include_in_menu' => 0,
             ],
             'parent' => 2,
+            'use_config' => ['available_sort_by', 'default_sort_by'],
         ];
 
         return [[$postData], [$postData + ['return_session_messages_only' => 1]]];
@@ -149,32 +148,33 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
         return [
             'default values' => [
                 [
-                    'id' => '2',
-                    'entity_id' => '2',
-                    'path' => '1/2',
-                    'url_key' => 'default-category',
-                    'is_anchor' => false,
+                    'general' => [
+                        'id' => '2',
+                        'path' => '1/2',
+                        'url_key' => 'default-category',
+                        'is_anchor' => '0',
+                    ],
                     'use_default' => [
-                        'name' => 1,
-                        'is_active' => 1,
-                        'thumbnail' => 1,
-                        'description' => 1,
-                        'image' => 1,
-                        'meta_title' => 1,
-                        'meta_keywords' => 1,
-                        'meta_description' => 1,
-                        'include_in_menu' => 1,
-                        'display_mode' => 1,
-                        'landing_page' => 1,
-                        'available_sort_by' => 1,
-                        'default_sort_by' => 1,
-                        'filter_price_range' => 1,
-                        'custom_apply_to_products' => 1,
-                        'custom_design' => 1,
-                        'custom_design_from' => 1,
-                        'custom_design_to' => 1,
-                        'page_layout' => 1,
-                        'custom_layout_update' => 1,
+                        0 => 'name',
+                        1 => 'is_active',
+                        2 => 'thumbnail',
+                        3 => 'description',
+                        4 => 'image',
+                        5 => 'meta_title',
+                        6 => 'meta_keywords',
+                        7 => 'meta_description',
+                        8 => 'include_in_menu',
+                        9 => 'display_mode',
+                        10 => 'landing_page',
+                        11 => 'available_sort_by',
+                        12 => 'default_sort_by',
+                        13 => 'filter_price_range',
+                        14 => 'custom_apply_to_products',
+                        15 => 'custom_design',
+                        16 => 'custom_design_from',
+                        17 => 'custom_design_to',
+                        18 => 'page_layout',
+                        19 => 'custom_layout_update',
                     ],
                 ],
                 [
@@ -201,35 +201,32 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
             ],
             'custom values' => [
                 [
-                    'id' => '2',
-                    'entity_id' => '2',
-                    'path' => '1/2',
-                    'name' => 'Custom Name',
-                    'is_active' => '0',
-                    'description' => 'Custom Description',
-                    'meta_title' => 'Custom Title',
-                    'meta_keywords' => 'Custom keywords',
-                    'meta_description' => 'Custom meta description',
-                    'include_in_menu' => '0',
-                    'url_key' => 'default-category',
-                    'display_mode' => 'PRODUCTS',
-                    'landing_page' => '1',
-                    'is_anchor' => true,
-                    'custom_apply_to_products' => '0',
-                    'custom_design' => 'Magento/blank',
-                    'custom_design_from' => '5/21/2015',
-                    'custom_design_to' => '5/29/2015',
-                    'page_layout' => '',
-                    'custom_layout_update' => '',
-                    'use_config' => [
-                        'available_sort_by' => 1,
-                        'default_sort_by' => 1,
-                        'filter_price_range' => 1,
+                    'general' => [
+                        'id' => '2',
+                        'path' => '1/2',
+                        'name' => 'Custom Name',
+                        'is_active' => '0',
+                        'description' => 'Custom Description',
+                        'meta_title' => 'Custom Title',
+                        'meta_keywords' => 'Custom keywords',
+                        'meta_description' => 'Custom meta description',
+                        'include_in_menu' => '0',
+                        'url_key' => 'default-category',
+                        'display_mode' => 'PRODUCTS',
+                        'landing_page' => '1',
+                        'is_anchor' => '1',
+                        'custom_apply_to_products' => '0',
+                        'custom_design' => 'Magento/blank',
+                        'custom_design_from' => '5/21/2015',
+                        'custom_design_to' => '5/29/2015',
+                        'page_layout' => '',
+                        'custom_layout_update' => '',
                     ],
+                    'use_config' => [0 => 'available_sort_by', 1 => 'default_sort_by', 2 => 'filter_price_range'],
                 ],
                 [
                     'name' => true,
-                    'default_sort_by' => false,
+                    'default_sort_by' => true,
                     'display_mode' => true,
                     'meta_title' => true,
                     'custom_design' => true,
@@ -238,14 +235,14 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
                     'include_in_menu' => true,
                     'landing_page' => true,
                     'custom_apply_to_products' => true,
-                    'available_sort_by' => false,
+                    'available_sort_by' => true,
                     'description' => true,
                     'meta_keywords' => true,
                     'meta_description' => true,
                     'custom_layout_update' => true,
                     'custom_design_from' => true,
                     'custom_design_to' => true,
-                    'filter_price_range' => false
+                    'filter_price_range' => true
                 ],
                 [
                     'name' => 'Custom Name',
@@ -270,31 +267,28 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
             ],
             'incorrect datefrom' => [
                 [
-                    'id' => '2',
-                    'entity_id' => '2',
-                    'path' => '1/2',
-                    'name' => 'Custom Name',
-                    'is_active' => '0',
-                    'description' => 'Custom Description',
-                    'meta_title' => 'Custom Title',
-                    'meta_keywords' => 'Custom keywords',
-                    'meta_description' => 'Custom meta description',
-                    'include_in_menu' => '0',
-                    'url_key' => 'default-category',
-                    'display_mode' => 'PRODUCTS',
-                    'landing_page' => '1',
-                    'is_anchor' => true,
-                    'custom_apply_to_products' => '0',
-                    'custom_design' => 'Magento/blank',
-                    'custom_design_from' => '5/29/2015',
-                    'custom_design_to' => '5/21/2015',
-                    'page_layout' => '',
-                    'custom_layout_update' => '',
-                    'use_config' => [
-                        'available_sort_by' => 1,
-                        'default_sort_by' => 1,
-                        'filter_price_range' => 1,
+                    'general' => [
+                        'id' => '2',
+                        'path' => '1/2',
+                        'name' => 'Custom Name',
+                        'is_active' => '0',
+                        'description' => 'Custom Description',
+                        'meta_title' => 'Custom Title',
+                        'meta_keywords' => 'Custom keywords',
+                        'meta_description' => 'Custom meta description',
+                        'include_in_menu' => '0',
+                        'url_key' => 'default-category',
+                        'display_mode' => 'PRODUCTS',
+                        'landing_page' => '1',
+                        'is_anchor' => '1',
+                        'custom_apply_to_products' => '0',
+                        'custom_design' => 'Magento/blank',
+                        'custom_design_from' => '5/29/2015',
+                        'custom_design_to' => '5/21/2015',
+                        'page_layout' => '',
+                        'custom_layout_update' => '',
                     ],
+                    'use_config' => [0 => 'available_sort_by', 1 => 'default_sort_by', 2 => 'filter_price_range'],
                 ],
                 [
                     'name' => false,
@@ -339,7 +333,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
         );
         $this->dispatch('backend/catalog/category/save');
         $this->assertSessionMessages(
-            $this->equalTo(['The value of attribute "name" must be set']),
+            $this->equalTo(['Something went wrong while saving the category.']),
             \Magento\Framework\Message\MessageInterface::TYPE_ERROR
         );
     }
@@ -364,7 +358,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
         foreach ($urlKeys as $categoryId => $urlKey) {
             /** @var $category \Magento\Catalog\Model\Category */
             $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                \Magento\Catalog\Model\Category::class
+                'Magento\Catalog\Model\Category'
             );
             if ($categoryId > 0) {
                 $category->load($categoryId)

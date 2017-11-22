@@ -1,19 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Sales\Model\Order;
 
 use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 /**
- * Encapsulates payment operation behind unified interface.
- * Can be used as extension point.
+ * Interface PaymentAdapterInterface
  *
  * @api
- * @since 100.1.2
  */
 interface PaymentAdapterInterface
 {
@@ -22,7 +21,6 @@ interface PaymentAdapterInterface
      * @param InvoiceInterface $invoice
      * @param bool $capture
      * @return OrderInterface
-     * @since 100.1.2
      */
     public function pay(OrderInterface $order, InvoiceInterface $invoice, $capture);
 }

@@ -2,7 +2,7 @@
 /**
  * Default application router
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Router;
@@ -10,7 +10,6 @@ namespace Magento\Framework\App\Router;
 use Magento\Framework\App\ActionFactory;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\RouterInterface;
-use Magento\Framework\App\ActionInterface;
 
 class DefaultRouter implements RouterInterface
 {
@@ -38,7 +37,7 @@ class DefaultRouter implements RouterInterface
      * Modify request and set to no-route action
      *
      * @param RequestInterface $request
-     * @return ActionInterface
+     * @return boolean
      */
     public function match(RequestInterface $request)
     {
@@ -48,6 +47,6 @@ class DefaultRouter implements RouterInterface
             }
         }
 
-        return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
+        return $this->actionFactory->create('Magento\Framework\App\Action\Forward');
     }
 }

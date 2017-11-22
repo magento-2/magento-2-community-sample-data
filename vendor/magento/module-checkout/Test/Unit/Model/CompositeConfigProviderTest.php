@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Test\Unit\Model;
 
-class CompositeConfigProviderTest extends \PHPUnit\Framework\TestCase
+class CompositeConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -21,9 +21,9 @@ class CompositeConfigProviderTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->configProviderMock = $this->createMock(\Magento\Checkout\Model\ConfigProviderInterface::class);
+        $this->configProviderMock = $this->getMock('\Magento\Checkout\Model\ConfigProviderInterface');
         $this->model = $objectManager->getObject(
-            \Magento\Checkout\Model\CompositeConfigProvider::class,
+            'Magento\Checkout\Model\CompositeConfigProvider',
             ['configProviders' => [$this->configProviderMock]]
         );
     }

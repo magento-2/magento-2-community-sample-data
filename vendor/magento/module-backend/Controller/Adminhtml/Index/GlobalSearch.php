@@ -1,15 +1,11 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Controller\Adminhtml\Index;
 
-/**
- * @api
- * @since 100.0.2
- */
 class GlobalSearch extends \Magento\Backend\Controller\Adminhtml\Index
 {
     /**

@@ -1,259 +1,142 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test;
-use Test\Setup;
-use Braintree;
-
-class CreditCardVerificationAdvancedSearchTest extends Setup
+class Braintree_CreditCardVerificationAdvancedSearchTest extends PHPUnit_Framework_TestCase
 {
-    public function test_searchOnTextFields()
+    function test_searchOnTextFields()
     {
-        $searchCriteria = [
+        $search_criteria = array(
             'creditCardCardholderName' => 'Tim Toole',
             'creditCardExpirationDate' => '05/2010',
-            'creditCardNumber' => Braintree\Test\CreditCardNumbers::$failsSandboxVerification['Visa'],
-            'billingAddressDetailsPostalCode' => '90210',
-        ];
-        $result = Braintree\Customer::create([
-            'creditCard' => [
-                'cardholderName' => $searchCriteria['creditCardCardholderName'],
-                'number' => $searchCriteria['creditCardNumber'],
-                'expirationDate' => $searchCriteria['creditCardExpirationDate'],
-                'billingAddress' => [
-                    'postalCode' => $searchCriteria['billingAddressDetailsPostalCode']
-                ],
-                'options' => ['verifyCard' => true],
-            ],
-        ]);
-        $verification = $result->creditCardVerification;
+            'creditCardNumber' => '4000111111111115',
+        );
 
-        $query = [Braintree\CreditCardVerificationSearch::id()->is($verification->id)];
-        foreach ($searchCriteria AS $criterion => $value) {
-            $query[] = Braintree\CreditCardVerificationSearch::$criterion()->is($value);
+        $result = Braintree_Customer::create(array(
+            'creditCard' => array(
+                'cardholderName' => $search_criteria['creditCardCardholderName'],
+                'number' => $search_criteria['creditCardNumber'],
+                'expirationDate' => $search_criteria['creditCardExpirationDate'],
+                'options' => array('verifyCard' => true),
+            ),
+        ));
+
+        $verification = $result->creditCardVerification;
+        $query = array(Braintree_CreditCardVerificationSearch::id()->is($verification->id));
+        foreach ($search_criteria AS $criterion => $value) {
+            $query[] = Braintree_CreditCardVerificationSearch::$criterion()->is($value);
         }
 
-        $collection = Braintree\CreditCardVerification::search($query);
+        $collection = Braintree_CreditCardVerification::search($query);
+
         $this->assertEquals(1, $collection->maximumCount());
+
         $this->assertEquals($result->creditCardVerification->id, $collection->firstItem()->id);
 
-        foreach ($searchCriteria AS $criterion => $value) {
-            $collection = Braintree\CreditCardVerification::search([
-                Braintree\CreditCardVerificationSearch::$criterion()->is($value),
-                Braintree\CreditCardVerificationSearch::id()->is($result->creditCardVerification->id)
-            ]);
+        foreach ($search_criteria AS $criterion => $value) {
+            $collection = Braintree_CreditCardVerification::search(array(
+                Braintree_CreditCardVerificationSearch::$criterion()->is($value),
+                Braintree_CreditCardVerificationSearch::id()->is($result->creditCardVerification->id)
+            ));
             $this->assertEquals(1, $collection->maximumCount());
             $this->assertEquals($result->creditCardVerification->id, $collection->firstItem()->id);
 
-            $collection = Braintree\CreditCardVerification::search([
-                Braintree\CreditCardVerificationSearch::$criterion()->is('invalid_attribute'),
-                Braintree\CreditCardVerificationSearch::id()->is($result->creditCardVerification->id)
-            ]);
+            $collection = Braintree_CreditCardVerification::search(array(
+                Braintree_CreditCardVerificationSearch::$criterion()->is('invalid_attribute'),
+                Braintree_CreditCardVerificationSearch::id()->is($result->creditCardVerification->id)
+            ));
             $this->assertEquals(0, $collection->maximumCount());
         }
     }
 
-    public function test_searchOnSuccessfulCustomerAndPaymentFields()
+    function testGateway_searchEmpty()
     {
-        $customerId = uniqid();
-        $searchCriteria = [
-            'customerId' => $customerId,
-            'customerEmail' => $customerId . 'sandworm@example.com',
-            'paymentMethodToken' => $customerId . 'token',
-        ];
-        $result = Braintree\Customer::create([
-            'id' => $customerId,
-            'email' => $searchCriteria['customerEmail'],
-            'creditCard' => [
-                'token' => $searchCriteria['paymentMethodToken'],
-                'number' => Braintree\Test\CreditCardNumbers::$visa,
-                'expirationDate' => '05/2017',
-                'options' => ['verifyCard' => true]
-            ]
-        ]);
-        $customer = $result->customer;
+        $query = array();
+        $query[] = Braintree_CreditCardVerificationSearch::creditCardCardholderName()->is('Not Found');
 
-        $query = [];
-        foreach ($searchCriteria AS $criterion => $value) {
-            $query[] = Braintree\CreditCardVerificationSearch::$criterion()->is($value);
-        }
-
-        $collection = Braintree\CreditCardVerification::search($query);
-        $this->assertEquals(1, $collection->maximumCount());
-
-        foreach ($searchCriteria AS $criterion => $value) {
-            $collection = Braintree\CreditCardVerification::search([
-                Braintree\CreditCardVerificationSearch::$criterion()->is($value),
-            ]);
-            $this->assertEquals(1, $collection->maximumCount());
-
-            $collection = Braintree\CreditCardVerification::search([
-                Braintree\CreditCardVerificationSearch::$criterion()->is('invalid_attribute'),
-            ]);
-            $this->assertEquals(0, $collection->maximumCount());
-        }
-    }
-
-    public function testGateway_searchEmpty()
-    {
-        $query = [];
-        $query[] = Braintree\CreditCardVerificationSearch::creditCardCardholderName()->is('Not Found');
-
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
+        ));
         $collection = $gateway->creditCardVerification()->search($query);
 
         $this->assertEquals(0, $collection->maximumCount());
     }
 
-    public function test_createdAt()
+    function test_createdAt()
     {
-        $result = Braintree\Customer::create([
-            'creditCard' => [
-                'cardholderName' => 'Joe Smith',
-                'number' => '4000111111111115',
-                'expirationDate' => '12/2016',
-                'options' => ['verifyCard' => true],
-            ],
-        ]);
+        $result = Braintree_Customer::create(array(
+            'creditCard' => array(
+                'cardholderName' => "Joe Smith",
+                'number' => "4000111111111115",
+                'expirationDate' => "12/2016",
+                'options' => array('verifyCard' => true),
+            ),
+        ));
 
         $verification = $result->creditCardVerification;
 
         $past = clone $verification->createdAt;
-        $past->modify('-1 hour');
+        $past->modify("-1 hour");
         $future = clone $verification->createdAt;
-        $future->modify('+1 hour');
+        $future->modify("+1 hour");
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($verification->id),
-            Braintree\CreditCardVerificationSearch::createdAt()->between($past, $future)
-        ]);
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($verification->id),
+            Braintree_CreditCardVerificationSearch::createdAt()->between($past, $future)
+        ));
         $this->assertEquals(1, $collection->maximumCount());
         $this->assertEquals($verification->id, $collection->firstItem()->id);
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($verification->id),
-            Braintree\CreditCardVerificationSearch::createdAt()->lessThanOrEqualTo($future)
-        ]);
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($verification->id),
+            Braintree_CreditCardVerificationSearch::createdAt()->lessThanOrEqualTo($future)
+        ));
         $this->assertEquals(1, $collection->maximumCount());
         $this->assertEquals($verification->id, $collection->firstItem()->id);
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($verification->id),
-            Braintree\CreditCardVerificationSearch::createdAt()->greaterThanOrEqualTo($past)
-        ]);
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($verification->id),
+            Braintree_CreditCardVerificationSearch::createdAt()->greaterThanOrEqualTo($past)
+        ));
         $this->assertEquals(1, $collection->maximumCount());
         $this->assertEquals($verification->id, $collection->firstItem()->id);
     }
 
-    public function test_multipleValueNode_ids()
+    function test_multipleValueNode_creditCardType()
     {
-        $result = Braintree\Customer::create([
-            'creditCard' => [
-                'cardholderName' => 'Joe Smith',
-                'number' => '4000111111111115',
-                'expirationDate' => '12/2016',
-                'options' => ['verifyCard' => true],
-            ],
-        ]);
+        $result = Braintree_Customer::create(array(
+            'creditCard' => array(
+                'cardholderName' => "Joe Smith",
+                'number' => "4000111111111115",
+                'expirationDate' => "12/2016",
+                'options' => array('verifyCard' => true),
+            ),
+        ));
 
         $creditCardVerification = $result->creditCardVerification;
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::ids()->is($creditCardVerification->id)
-        ]);
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($creditCardVerification->id),
+            Braintree_CreditCardVerificationSearch::creditCardCardType()->is($creditCardVerification->creditCard['cardType'])
+        ));
         $this->assertEquals(1, $collection->maximumCount());
         $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::ids()->in(
-                [$creditCardVerification->id,'1234']
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($creditCardVerification->id),
+            Braintree_CreditCardVerificationSearch::creditCardCardType()->in(
+                array($creditCardVerification->creditCard['cardType'], Braintree_CreditCard::CHINA_UNION_PAY)
             )
-        ]);
+        ));
         $this->assertEquals(1, $collection->maximumCount());
         $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
 
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::ids()->is('1234')
-        ]);
-        $this->assertEquals(0, $collection->maximumCount());
-    }
-
-    public function test_multipleValueNode_creditCardType()
-    {
-        $result = Braintree\Customer::create([
-            'creditCard' => [
-                'cardholderName' => 'Joe Smith',
-                'number' => '4000111111111115',
-                'expirationDate' => '12/2016',
-                'options' => ['verifyCard' => true],
-            ],
-        ]);
-
-        $creditCardVerification = $result->creditCardVerification;
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::creditCardCardType()->is($creditCardVerification->creditCard['cardType'])
-        ]);
-        $this->assertEquals(1, $collection->maximumCount());
-        $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::creditCardCardType()->in(
-                [$creditCardVerification->creditCard['cardType'], Braintree\CreditCard::CHINA_UNION_PAY]
-            )
-        ]);
-        $this->assertEquals(1, $collection->maximumCount());
-        $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::creditCardCardType()->is(Braintree\CreditCard::CHINA_UNION_PAY)
-        ]);
-        $this->assertEquals(0, $collection->maximumCount());
-    }
-
-    public function test_multipleValueNode_status()
-    {
-        $result = Braintree\Customer::create([
-            'creditCard' => [
-                'cardholderName' => 'Joe Smith',
-                'number' => '4000111111111115',
-                'expirationDate' => '12/2016',
-                'options' => ['verifyCard' => true],
-            ],
-        ]);
-
-        $creditCardVerification = $result->creditCardVerification;
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::status()->is($creditCardVerification->status)
-        ]);
-        $this->assertEquals(1, $collection->maximumCount());
-        $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::status()->in(
-                [$creditCardVerification->status, Braintree\Result\CreditCardVerification::VERIFIED]
-            )
-        ]);
-        $this->assertEquals(1, $collection->maximumCount());
-        $this->assertEquals($creditCardVerification->id, $collection->firstItem()->id);
-
-        $collection = Braintree\CreditCardVerification::search([
-            Braintree\CreditCardVerificationSearch::id()->is($creditCardVerification->id),
-            Braintree\CreditCardVerificationSearch::status()->is(Braintree\Result\CreditCardVerification::VERIFIED)
-        ]);
+        $collection = Braintree_CreditCardVerification::search(array(
+            Braintree_CreditCardVerificationSearch::id()->is($creditCardVerification->id),
+            Braintree_CreditCardVerificationSearch::creditCardCardType()->is(Braintree_CreditCard::CHINA_UNION_PAY)
+        ));
         $this->assertEquals(0, $collection->maximumCount());
     }
 }

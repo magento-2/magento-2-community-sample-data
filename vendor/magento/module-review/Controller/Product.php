@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Controller;
@@ -146,7 +146,7 @@ abstract class Product extends \Magento\Framework\App\Action\Action
      */
     public function dispatch(RequestInterface $request)
     {
-        $allowGuest = $this->_objectManager->get(\Magento\Review\Helper\Data::class)->getIsGuestAllowToWrite();
+        $allowGuest = $this->_objectManager->get('Magento\Review\Helper\Data')->getIsGuestAllowToWrite();
         if (!$request->isDispatched()) {
             return parent::dispatch($request);
         }
@@ -155,13 +155,13 @@ abstract class Product extends \Magento\Framework\App\Action\Action
             if (!$this->customerSession->isLoggedIn()) {
                 $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
                 $this->customerSession->setBeforeAuthUrl($this->_url->getUrl('*/*/*', ['_current' => true]));
-                $this->reviewSession->setFormData(
+                $this->_reviewSession->setFormData(
                     $request->getPostValue()
                 )->setRedirectUrl(
                     $this->_redirect->getRefererUrl()
                 );
                 $this->getResponse()->setRedirect(
-                    $this->_objectManager->get(\Magento\Customer\Model\Url::class)->getLoginUrl()
+                    $this->_objectManager->get('Magento\Customer\Model\Url')->getLoginUrl()
                 );
             }
         }

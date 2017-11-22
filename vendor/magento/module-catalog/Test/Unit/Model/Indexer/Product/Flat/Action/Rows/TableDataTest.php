@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Flat\Action\Rows;
 
 use Magento\Framework\App\ResourceConnection;
 
-class TableDataTest extends \PHPUnit\Framework\TestCase
+class TableDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,9 +32,15 @@ class TableDataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
-        $this->_resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->_productIndexerHelper = $this->createMock(\Magento\Catalog\Helper\Product\Flat\Indexer::class);
+        $this->_connectionMock = $this->getMock('Magento\Framework\DB\Adapter\AdapterInterface');
+        $this->_resourceMock = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
+        $this->_productIndexerHelper = $this->getMock(
+            'Magento\Catalog\Helper\Product\Flat\Indexer',
+            [],
+            [],
+            '',
+            false
+        );
     }
 
     public function testMoveWithNonExistentFlatTable()
@@ -71,7 +77,7 @@ class TableDataTest extends \PHPUnit\Framework\TestCase
         );
 
         $model = $this->_objectManager->getObject(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Action\Rows\TableData::class,
+            'Magento\Catalog\Model\Indexer\Product\Flat\Action\Rows\TableData',
             ['resource' => $this->_resourceMock, 'productIndexerHelper' => $this->_productIndexerHelper]
         );
 
@@ -96,7 +102,7 @@ class TableDataTest extends \PHPUnit\Framework\TestCase
             'column_3' => 'column_definition',
         ];
 
-        $selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $selectMock = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $selectMock->expects(
             $this->once()
         )->method(
@@ -166,7 +172,7 @@ class TableDataTest extends \PHPUnit\Framework\TestCase
         );
 
         $model = $this->_objectManager->getObject(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Action\Rows\TableData::class,
+            'Magento\Catalog\Model\Indexer\Product\Flat\Action\Rows\TableData',
             ['resource' => $this->_resourceMock, 'productIndexerHelper' => $this->_productIndexerHelper]
         );
 

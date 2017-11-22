@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Quote\Address\Total;
@@ -40,10 +40,11 @@ class Subtotal extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
         \Magento\Quote\Model\Quote\Address\Total $total
     ) {
         parent::collect($quote, $shippingAssignment, $total);
+        $total->setTotalQty(0);
+
         $baseVirtualAmount = $virtualAmount = 0;
 
         $address = $shippingAssignment->getShipping()->getAddress();
-        $address->setTotalQty(0);
         /**
          * Process address items
          */
@@ -70,8 +71,6 @@ class Subtotal extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
          */
         $this->quoteValidator->validateQuoteAmount($quote, $total->getSubtotal());
         $this->quoteValidator->validateQuoteAmount($quote, $total->getBaseSubtotal());
-        $address->setSubtotal($total->getSubtotal());
-        $address->setBaseSubtotal($total->getBaseSubtotal());
         return $this;
     }
 

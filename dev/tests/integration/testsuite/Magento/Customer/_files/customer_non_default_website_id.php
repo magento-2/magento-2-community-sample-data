@@ -1,8 +1,6 @@
 <?php
 /**
- * Create customer and attach it to custom website with code newwebsite
- *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,15 +9,12 @@
 /**
  * @var \Magento\Store\Model\Website $website
  */
-$website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Website::class);
+$website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Store\Model\Website');
 $website->setName('new Website')->setCode('newwebsite')->save();
 
 $websiteId = $website->getId();
-$storeManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\Store\Model\StoreManager::class);
-$storeManager->reinitStores();
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class);
+
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 /** @var Magento\Customer\Model\Customer $customer */
 $customer->setWebsiteId(
     $websiteId
@@ -51,8 +46,7 @@ $customer->setWebsiteId(
 $customer->isObjectNew(true);
 
 /** @var \Magento\Customer\Model\Address $addressOne  */
-$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class);
+$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressOneData = [
     'firstname' => 'Firstname',
     'lastname' => 'LastName',
@@ -67,8 +61,7 @@ $addressOne->setData($addressOneData);
 $customer->addAddress($addressOne);
 
 /** @var \Magento\Customer\Model\Address $addressTwo  */
-$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class);
+$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressTwoData = [
     'firstname' => 'test firstname',
     'lastname' => 'test lastname',
@@ -83,8 +76,7 @@ $addressTwo->setData($addressTwoData);
 $customer->addAddress($addressTwo);
 
 /** @var \Magento\Customer\Model\Address $addressThree  */
-$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class);
+$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressThreeData = [
     'firstname' => 'removed firstname',
     'lastname' => 'removed lastname',

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Backend\Test\Unit\Block\Widget\Grid;
 
-class ExtendedTest extends \PHPUnit\Framework\TestCase
+class ExtendedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -23,22 +23,22 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareLoadedCollection()
     {
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['has']);
+        $request = $this->getMock('Magento\Framework\App\Request\Http', ['has'], [], '', false);
         $request->expects($this->any())->method('has')->will($this->returnValue(null));
 
-        $columnSet = $this->createMock(\Magento\Backend\Block\Widget\Grid\ColumnSet::class);
-        $layout = $this->createMock(\Magento\Framework\View\Layout::class);
+        $columnSet = $this->getMock('\Magento\Backend\Block\Widget\Grid\ColumnSet', [], [], '', false);
+        $layout = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
         $layout->expects($this->any())->method('getChildName')->will($this->returnValue('grid.columnSet'));
         $layout->expects($this->any())->method('getBlock')->will($this->returnValue($columnSet));
 
-        $collection = $this->createMock(\Magento\Framework\Data\Collection::class);
+        $collection = $this->getMock('\Magento\Framework\Data\Collection', [], [], '', false);
         $collection->expects($this->atLeastOnce())->method('isLoaded')->will($this->returnValue(true));
         $collection->expects($this->atLeastOnce())->method('clear');
         $collection->expects($this->atLeastOnce())->method('load');
 
         /** @var \Magento\Backend\Block\Widget\Grid\Extended $block */
         $block = $this->_objectManager->getObject(
-            \Magento\Backend\Block\Widget\Grid\Extended::class,
+            'Magento\Backend\Block\Widget\Grid\Extended',
             ['request' => $request, 'layout' => $layout]
         );
 

@@ -1,17 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Section;
 
-use Magento\Customer\CustomerData\Section\Identifier;
 use Magento\Customer\CustomerData\SectionPoolInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Customer\CustomerData\Section\Identifier;
+use Magento\Framework\Escaper;
 
 /**
  * Customer section controller
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Load extends \Magento\Framework\App\Action\Action
 {
@@ -22,7 +25,6 @@ class Load extends \Magento\Framework\App\Action\Action
 
     /**
      * @var Identifier
-     * @deprecated 100.2.0
      */
     protected $sectionIdentifier;
 
@@ -41,24 +43,34 @@ class Load extends \Magento\Framework\App\Action\Action
      * @param JsonFactory $resultJsonFactory
      * @param Identifier $sectionIdentifier
      * @param SectionPoolInterface $sectionPool
-     * @param Escaper $escaper
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         Identifier $sectionIdentifier,
-        SectionPoolInterface $sectionPool,
-        \Magento\Framework\Escaper $escaper = null
+        SectionPoolInterface $sectionPool
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->sectionIdentifier = $sectionIdentifier;
         $this->sectionPool = $sectionPool;
-        $this->escaper = $escaper ?: $this->_objectManager->get(\Magento\Framework\Escaper::class);
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Json
+     * Get new Escaper dependency for application code.
+     * @return \Magento\Framework\Escaper
+     * @deprecated
+     */
+    private function getEscaper()
+    {
+        if ($this->escaper === null) {
+            $this->escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(Escaper::class);
+        }
+        return $this->escaper;
+    }
+
+    /**
+     * @return \Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
     {
@@ -69,7 +81,7 @@ class Load extends \Magento\Framework\App\Action\Action
             $sectionNames = $sectionNames ? array_unique(\explode(',', $sectionNames)) : null;
 
             $updateSectionId = $this->getRequest()->getParam('update_section_id');
-            if ('false' === $updateSectionId) {
+            if ('false' == $updateSectionId) {
                 $updateSectionId = false;
             }
             $response = $this->sectionPool->getSectionsData($sectionNames, (bool)$updateSectionId);
@@ -79,7 +91,7 @@ class Load extends \Magento\Framework\App\Action\Action
                 \Zend\Http\AbstractMessage::VERSION_11,
                 'Bad Request'
             );
-            $response = ['message' => $this->escaper->escapeHtml($e->getMessage())];
+            $response = ['message' => $this->getEscaper()->escapeHtml($e->getMessage())];
         }
 
         return $resultJson->setData($response);

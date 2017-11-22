@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Controller\Result;
@@ -74,19 +74,18 @@ class Index extends \Magento\Framework\App\Action\Action
         $query->setStoreId($this->_storeManager->getStore()->getId());
 
         if ($query->getQueryText() != '') {
-            if ($this->_objectManager->get(\Magento\CatalogSearch\Helper\Data::class)->isMinQueryLength()) {
+            if ($this->_objectManager->get('Magento\CatalogSearch\Helper\Data')->isMinQueryLength()) {
                 $query->setId(0)->setIsActive(1)->setIsProcessed(1);
             } else {
                 $query->saveIncrementalPopularity();
 
-                $redirect = $query->getRedirect();
-                if ($redirect && $this->_url->getCurrentUrl() !== $redirect) {
-                    $this->getResponse()->setRedirect($redirect);
+                if ($query->getRedirect()) {
+                    $this->getResponse()->setRedirect($query->getRedirect());
                     return;
                 }
             }
 
-            $this->_objectManager->get(\Magento\CatalogSearch\Helper\Data::class)->checkNotes();
+            $this->_objectManager->get('Magento\CatalogSearch\Helper\Data')->checkNotes();
 
             $this->_view->loadLayout();
             $this->_view->renderLayout();

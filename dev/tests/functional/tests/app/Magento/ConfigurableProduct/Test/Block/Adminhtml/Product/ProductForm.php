@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,6 +8,7 @@ namespace Magento\ConfigurableProduct\Test\Block\Adminhtml\Product;
 
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\Fixture\InjectableFixture;
+use Magento\Backend\Test\Block\Widget\FormTabs;
 use Magento\Mtf\Client\Element\SimpleElement;
 
 /**
@@ -21,33 +22,33 @@ class ProductForm extends \Magento\Catalog\Test\Block\Adminhtml\Product\ProductF
      * @param FixtureInterface $product
      * @param SimpleElement|null $element [optional]
      * @param FixtureInterface|null $category [optional]
-     * @return $this
+     * @return FormTabs
      */
     public function fill(FixtureInterface $product, SimpleElement $element = null, FixtureInterface $category = null)
     {
-        $sections = $this->getFixtureFieldsByContainers($product);
-        ksort($sections);
+        $tabs = $this->getFieldsByTabs($product);
+        ksort($tabs);
 
         if ($category) {
-            $sections['product-details']['category_ids']['value'] = $category->getName();
+            $tabs['product-details']['category_ids']['value'] = $category->getName();
         }
 
-        return $this->fillContainers($sections, $element);
+        $this->showAdvancedSettings();
+        $this->getTab('variations')->showContent();
+        return $this->fillTabs($tabs, $element);
     }
 
     /**
-     * Create data array for filling tabs.
-     * Skip Advanced Price tab
-     *
-     * @param InjectableFixture $fixture
-     * @return array
+     * @inheritdoc
      */
-    protected function getFixtureFieldsByContainers(InjectableFixture $fixture)
+    protected function getFieldsByTabs(FixtureInterface $fixture)
     {
-        $sections = parent::getFixtureFieldsByContainers($fixture);
-        if (isset($sections['advanced-pricing'])) {
-            unset($sections['advanced-pricing']);
+        /** @var array $tabs */
+        $tabs = parent::getFieldsByTabs($fixture);
+        if (isset($tabs['advanced-pricing'])) {
+            unset($tabs['advanced-pricing']);
         }
-        return $sections;
+        
+        return $tabs;
     }
 }

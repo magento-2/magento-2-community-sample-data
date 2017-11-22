@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 /**
  * Class FormKeyTest
  */
-class FormKeyTest extends \PHPUnit\Framework\TestCase
+class FormKeyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Version instance
@@ -44,15 +44,15 @@ class FormKeyTest extends \PHPUnit\Framework\TestCase
     /**
      * Create cookie mock and FormKey instance
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->cookieManagerMock = $this->createMock(\Magento\Framework\Stdlib\CookieManagerInterface::class);
+        $this->cookieManagerMock = $this->getMock('Magento\Framework\Stdlib\CookieManagerInterface');
         $this->cookieMetadataFactory = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+            'Magento\Framework\Stdlib\Cookie\CookieMetadataFactory'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionManager = $this->createMock(\Magento\Framework\Session\SessionManagerInterface::class);
+        $this->sessionManager = $this->getMock('Magento\Framework\Session\SessionManagerInterface');
         $this->formKey = new FormKey(
             $this->cookieManagerMock,
             $this->cookieMetadataFactory,
@@ -79,7 +79,7 @@ class FormKeyTest extends \PHPUnit\Framework\TestCase
         $formKeyValue = 'form_key';
         /** @var PublicCookieMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
         $metadata = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\PublicCookieMetadata::class
+            'Magento\Framework\Stdlib\Cookie\PublicCookieMetadata'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,7 +101,7 @@ class FormKeyTest extends \PHPUnit\Framework\TestCase
         $cookieDomain = 'example.com';
         /** @var PublicCookieMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
         $metadata = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\PublicCookieMetadata::class
+            'Magento\Framework\Stdlib\Cookie\PublicCookieMetadata'
         )
             ->disableOriginalConstructor()
             ->getMock();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -158,7 +158,7 @@ class Chooser extends \Magento\Backend\Block\Template
 
         $buttons = $config->getButtons();
         $chooseButton = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setType(
             'button'
         )->setId(
@@ -216,7 +216,11 @@ class Chooser extends \Magento\Backend\Block\Template
                         }
                     }
 
-                    jQuery(instantiateChooser);
+                    if (document.loaded) { //allow load over ajax
+                        instantiateChooser();
+                    } else {
+                        document.observe("dom:loaded", instantiateChooser);
+                    }
                 })();
             //]]>
             });

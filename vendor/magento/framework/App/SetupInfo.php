@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App;
 
-use Magento\Framework\Setup\BackendFrontnameGenerator;
+use \Magento\Framework\Setup\BackendFrontnameGenerator;
 
 /**
  * A model for determining information about setup application
@@ -109,10 +109,8 @@ class SetupInfo
     public function getProjectUrl()
     {
         $isProjectInDocRoot = false !== strpos($this->projectRoot . '/', $this->docRoot . '/');
-        if (empty($this->server['HTTP_HOST'])) {
+        if (!$isProjectInDocRoot || empty($this->server['HTTP_HOST'])) {
             return '';
-        } elseif (!$isProjectInDocRoot) {
-            return 'http://' . $this->server['HTTP_HOST'] . '/';
         }
         return 'http://' . $this->server['HTTP_HOST'] . substr($this->projectRoot . '/', strlen($this->docRoot));
     }

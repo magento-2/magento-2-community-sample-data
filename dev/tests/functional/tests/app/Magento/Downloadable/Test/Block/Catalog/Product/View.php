@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -38,7 +38,7 @@ class View extends \Magento\Catalog\Test\Block\Product\View
     public function getDownloadableLinksBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Downloadable\Test\Block\Catalog\Product\View\Links::class,
+            'Magento\Downloadable\Test\Block\Catalog\Product\View\Links',
             [
                 'element' => $this->_rootElement->find($this->blockDownloadableLinks, Locator::SELECTOR_XPATH)
             ]
@@ -53,7 +53,7 @@ class View extends \Magento\Catalog\Test\Block\Product\View
     public function getDownloadableSamplesBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Downloadable\Test\Block\Catalog\Product\View\Samples::class,
+            'Magento\Downloadable\Test\Block\Catalog\Product\View\Samples',
             [
                 'element' => $this->_rootElement->find($this->blockDownloadableSamples)
             ]

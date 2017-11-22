@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Stdlib\DateTime;
@@ -19,34 +19,13 @@ class DateTimeFormatter implements DateTimeFormatterInterface
     protected $useIntlFormatObject;
 
     /**
-     * @var \Magento\Framework\Locale\ResolverInterface
-     */
-    private $localeResolver;
-
-    /**
      * @param bool|null $useIntlFormatObject
      */
-    public function __construct(
-        $useIntlFormatObject = null
-    ) {
+    public function __construct($useIntlFormatObject = null)
+    {
         $this->useIntlFormatObject = (null === $useIntlFormatObject)
             ? !defined('HHVM_VERSION')
             : $useIntlFormatObject;
-    }
-
-    /**
-     * Get locale resolver
-     *
-     * @return \Magento\Framework\Locale\ResolverInterface|mixed
-     */
-    private function getLocaleResolver()
-    {
-        if ($this->localeResolver === null) {
-            $this->localeResolver = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Locale\ResolverInterface::class
-            );
-        }
-        return $this->localeResolver;
     }
 
     /**
@@ -54,7 +33,6 @@ class DateTimeFormatter implements DateTimeFormatterInterface
      */
     public function formatObject($object, $format = null, $locale = null)
     {
-        $locale = (null === $locale) ? $this->getLocaleResolver()->getLocale() : $locale;
         if ($this->useIntlFormatObject) {
             return \IntlDateFormatter::formatObject($object, $format, $locale);
         }
@@ -64,7 +42,7 @@ class DateTimeFormatter implements DateTimeFormatterInterface
     /**
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
-     * @param \IntlCalendar|\DateTimeInterface $object
+     * @param \IntlCalendar|\DateTime $object
      * @param string|int|array|null $format
      * @param string|null $locale
      * @return string

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Tests Magento\Framework\ComposerInformation
  */
-class ComposerInformationTest extends \PHPUnit\Framework\TestCase
+class ComposerInformationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -28,11 +28,6 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
      * @var ComposerJsonFinder
      */
     private $composerJsonFinder;
-
-    /**
-     * @var ComposerFactory
-     */
-    private $composerFactory;
 
     public function setUp()
     {
@@ -53,17 +48,16 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->directoryList = $this->objectManager->create(
-            \Magento\Framework\App\Filesystem\DirectoryList::class,
+            'Magento\Framework\App\Filesystem\DirectoryList',
             ['root' => __DIR__ . '/_files/' . $composerDir, 'config' => $directories]
         );
 
         $this->filesystem = $this->objectManager->create(
-            \Magento\Framework\Filesystem::class,
+            'Magento\Framework\Filesystem',
             ['directoryList' => $this->directoryList]
         );
 
         $this->composerJsonFinder = new ComposerJsonFinder($this->directoryList);
-        $this->composerFactory = new ComposerFactory($this->directoryList, $this->composerJsonFinder);
     }
 
     /**
@@ -77,8 +71,13 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
         );
 
         $this->assertEquals("~5.5.0|~5.6.0|~7.0.0", $composerInfo->getRequiredPhpVersion());
@@ -96,8 +95,13 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
         );
 
         $actualRequiredExtensions = $composerInfo->getRequiredExtensions();
@@ -115,8 +119,13 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
     {
         $this->setupDirectory($composerDir);
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
         );
         $actualSuggestedExtensions = $composerInfo->getSuggestedPackages();
         $this->assertArrayHasKey('psr/log', $actualSuggestedExtensions);
@@ -133,8 +142,13 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
         );
 
         $requiredPackagesAndTypes = $composerInfo->getRootRequiredPackageTypesByName();
@@ -157,61 +171,42 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Composer file not found
+     */
+    public function testNoLock()
+    {
+        $this->setupDirectory('notARealDirectory');
+        $this->objectManager->create(
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
+        );
+    }
+
     public function testIsPackageInComposerJson()
     {
         $this->setupDirectory('testSkeleton');
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
+            'Magento\Framework\Composer\ComposerInformation',
+            [
+                'applicationFactory' => new MagentoComposerApplicationFactory(
+                    $this->composerJsonFinder,
+                    $this->directoryList
+                )
+            ]
         );
 
         $packageName = 'magento/sample-module-minimal';
         $this->assertTrue($composerInfo->isPackageInComposerJson($packageName));
         $packageName = 'magento/wrong-module-name';
         $this->assertFalse($composerInfo->isPackageInComposerJson($packageName));
-    }
-
-    /**
-     * @param $composerDir string Directory under _files that contains composer files
-     *
-     * @dataProvider getRequiredPhpVersionDataProvider
-     */
-    public function testGetRootRepositories($composerDir)
-    {
-        $this->setupDirectory($composerDir);
-
-        /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
-        $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
-        );
-        if ($composerDir === 'testFromCreateProject') {
-            $this->assertEquals(['https://repo.magento.com/'], $composerInfo->getRootRepositories());
-        } else {
-            $this->assertEquals([], $composerInfo->getRootRepositories());
-        }
-    }
-
-    /**
-     * @param $composerDir string Directory under _files that contains composer files
-     *
-     * @dataProvider getRequiredPhpVersionDataProvider
-     */
-    public function testIsMagentoRoot($composerDir)
-    {
-        $this->setupDirectory($composerDir);
-
-        /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
-        $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
-            ['composerFactory' => $this->composerFactory]
-        );
-        if ($composerDir === 'testFromClone') {
-            $this->assertTrue($composerInfo->isMagentoRoot());
-        } else {
-            $this->assertFalse($composerInfo->isMagentoRoot());
-        }
     }
 }

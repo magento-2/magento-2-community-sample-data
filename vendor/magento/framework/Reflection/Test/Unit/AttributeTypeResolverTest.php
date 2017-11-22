@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\Reflection\Test\Unit;
 
 use \Magento\Framework\Reflection\AttributeTypeResolver;
 
-class AttributeTypeResolverTest extends \PHPUnit\Framework\TestCase
+class AttributeTypeResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AttributeTypeResolver
@@ -30,8 +30,8 @@ class AttributeTypeResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->typeProcessor = $this->createMock(\Magento\Framework\Reflection\TypeProcessor::class);
-        $this->configMock = $this->createMock(\Magento\Framework\Api\ExtensionAttribute\Config::class);
+        $this->typeProcessor = $this->getMock('Magento\Framework\Reflection\TypeProcessor', [], [], '', false);
+        $this->configMock = $this->getMock('Magento\Framework\Api\ExtensionAttribute\Config', [], [], '', false);
         $this->model = new AttributeTypeResolver($this->typeProcessor, $this->configMock);
     }
 
@@ -65,21 +65,18 @@ class AttributeTypeResolverTest extends \PHPUnit\Framework\TestCase
         $config = [
             'Some\Class' => [
                 'some_code' => [
-                    'type' => \Magento\Framework\DataObject::class,
+                    'type' => '\Magento\Framework\DataObject',
                 ],
             ]
         ];
 
         $this->typeProcessor->expects($this->once())
             ->method('getArrayItemType')
-            ->with(\Magento\Framework\DataObject::class)
-            ->willReturn(\Magento\Framework\DataObject::class);
+            ->with('\Magento\Framework\DataObject')
+            ->willReturn('\Magento\Framework\DataObject');
 
         $this->configMock->expects($this->once())->method('get')->willReturn($config);
-        $this->assertEquals(
-            \Magento\Framework\DataObject::class,
-            $this->model->resolveObjectType($code, $value, $context)
-        );
+        $this->assertEquals('\Magento\Framework\DataObject', $this->model->resolveObjectType($code, $value, $context));
     }
 
     /**

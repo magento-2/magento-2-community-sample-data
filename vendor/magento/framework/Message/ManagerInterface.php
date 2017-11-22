@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Message;
@@ -52,7 +52,6 @@ interface ManagerInterface
      * @param string $message
      * @param string|null $group
      * @return ManagerInterface
-     * @deprecated 100.1.0
      * @see \Magento\Framework\Message\ManagerInterface::addErrorMessage
      */
     public function addError($message, $group = null);
@@ -63,7 +62,6 @@ interface ManagerInterface
      * @param string $message
      * @param string|null $group
      * @return ManagerInterface
-     * @deprecated 100.1.0
      * @see \Magento\Framework\Message\ManagerInterface::addWarningMessage
      */
     public function addWarning($message, $group = null);
@@ -74,7 +72,6 @@ interface ManagerInterface
      * @param string $message
      * @param string|null $group
      * @return ManagerInterface
-     * @deprecated 100.1.0
      * @see \Magento\Framework\Message\ManagerInterface::addNoticeMessage
      */
     public function addNotice($message, $group = null);
@@ -85,7 +82,6 @@ interface ManagerInterface
      * @param string $message
      * @param string|null $group
      * @return ManagerInterface
-     * @deprecated 100.1.0
      * @see \Magento\Framework\Message\ManagerInterface::addSuccessMessage
      */
     public function addSuccess($message, $group = null);
@@ -179,23 +175,21 @@ interface ManagerInterface
      * Adds a message describing an exception. Does not contain Exception handling logic.
      *
      * @param \Exception $exception
-     * @param string|null $alternativeText
+     * @param string $alternativeText
      * @param string|null $group
      * @return ManagerInterface
-     * @deprecated 100.1.0
-     * @see \Magento\Framework\Message\ManagerInterface::addExceptionMessage
      */
-    public function addException(\Exception $exception, $alternativeText = null, $group = null);
+    public function addException(\Exception $exception, $alternativeText, $group = null);
 
     /**
      * Adds a message describing an exception. Does not contain Exception handling logic.
      *
      * @param \Exception $exception
-     * @param string|null $alternativeText
+     * @param string $alternativeText
      * @param string|null $group
      * @return ManagerInterface
      */
-    public function addExceptionMessage(\Exception $exception, $alternativeText = null, $group = null);
+    public function addExceptionMessage(\Exception $exception, $alternativeText, $group = null);
 
     /**
      * Creates identified message

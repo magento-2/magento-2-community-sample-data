@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Layout\Reader;
 
-class BlockTest extends \PHPUnit\Framework\TestCase
+class BlockTest extends \PHPUnit_Framework_TestCase
 {
     const IDX_TYPE = 0;
     const IDX_PARENT = 2;
@@ -33,10 +33,10 @@ class BlockTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Layout\Reader\Block::class
+            'Magento\Framework\View\Layout\Reader\Block'
         );
         $this->readerContext = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Layout\Reader\Context::class
+            'Magento\Framework\View\Layout\Reader\Context'
         );
     }
 
@@ -67,8 +67,7 @@ class BlockTest extends \PHPUnit\Framework\TestCase
                 Block::ATTRIBUTE_TEMPLATE => 'test.phtml',
                 Block::ATTRIBUTE_TTL => 3,
                 Block::ATTRIBUTE_DISPLAY => '',
-                Block::ATTRIBUTE_ACL => '',
-                'visibilityConditions' => [],
+                Block::ATTRIBUTE_ACL => ''
             ],
             $resultElementData['attributes']
         );

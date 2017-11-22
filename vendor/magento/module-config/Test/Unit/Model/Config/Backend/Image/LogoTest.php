@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Model\Config\Backend\Image;
 
-class LogoTest extends \PHPUnit\Framework\TestCase
+class LogoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Backend\Image\Logo
@@ -27,7 +27,7 @@ class LogoTest extends \PHPUnit\Framework\TestCase
      */
     private $requestDataMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->uploaderFactoryMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\UploaderFactory::class)

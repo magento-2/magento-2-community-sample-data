@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SendFriend\Test\Unit\Controller\Product;
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SendTest extends \PHPUnit\Framework\TestCase
+class SendTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\SendFriend\Controller\Product\Send */
     protected $model;
@@ -47,34 +47,34 @@ class SendTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->getMockForAbstractClass();
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->validatorMock = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
+        $this->validatorMock = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey\Validator')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sendFriendMock = $this->getMockBuilder(\Magento\SendFriend\Model\SendFriend::class)
+        $this->sendFriendMock = $this->getMockBuilder('Magento\SendFriend\Model\SendFriend')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productRepositoryMock = $this->getMockBuilder(\Magento\Catalog\Api\ProductRepositoryInterface::class)
+        $this->productRepositoryMock = $this->getMockBuilder('Magento\Catalog\Api\ProductRepositoryInterface')
             ->getMockForAbstractClass();
-        $this->catalogSessionMock = $this->getMockBuilder(\Magento\Catalog\Model\Session::class)
+        $this->catalogSessionMock = $this->getMockBuilder('Magento\Catalog\Model\Session')
             ->setMethods(['getSendfriendFormData', 'setSendfriendFormData'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\SendFriend\Controller\Product\Send::class,
+            'Magento\SendFriend\Controller\Product\Send',
             [
                 'request' => $this->requestMock,
                 'coreRegistry' => $this->registryMock,
@@ -103,7 +103,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productId);
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog'])
             ->getMockForAbstractClass();
 
@@ -131,7 +131,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->method('addNotice');
 
         /** @var \Magento\Framework\View\Result\Page|\PHPUnit_Framework_MockObject_MockObject $pageMock */
-        $pageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $pageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -152,7 +152,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->with(true);
 
         /** @var \Magento\Framework\View\Layout|\PHPUnit_Framework_MockObject_MockObject $layoutMock */
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -161,7 +161,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn($layoutMock);
 
         /** @var \Magento\SendFriend\Block\Send|\PHPUnit_Framework_MockObject_MockObject $blockMock */
-        $blockMock = $this->getMockBuilder(\Magento\SendFriend\Block\Send::class)
+        $blockMock = $this->getMockBuilder('Magento\SendFriend\Block\Send')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -192,7 +192,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productId);
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog'])
             ->getMockForAbstractClass();
 
@@ -220,7 +220,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->method('addNotice');
 
         /** @var \Magento\Framework\View\Result\Page|\PHPUnit_Framework_MockObject_MockObject $pageMock */
-        $pageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $pageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -241,7 +241,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->with(true);
 
         /** @var \Magento\Framework\View\Layout|\PHPUnit_Framework_MockObject_MockObject $layoutMock */
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -268,7 +268,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productId);
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog'])
             ->getMockForAbstractClass();
 
@@ -298,7 +298,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         /** @var \Magento\Framework\View\Result\Page|\PHPUnit_Framework_MockObject_MockObject $pageMock */
-        $pageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $pageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -331,7 +331,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
 
         /** @var \Magento\Framework\Controller\Result\Forward|\PHPUnit_Framework_MockObject_MockObject $forwardMock */
-        $forwardMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Forward::class)
+        $forwardMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -363,7 +363,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willThrowException(new \Magento\Framework\Exception\NoSuchEntityException(__('No Product Exception.')));
 
         /** @var \Magento\Framework\Controller\Result\Forward|\PHPUnit_Framework_MockObject_MockObject $forwardMock */
-        $forwardMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Forward::class)
+        $forwardMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -390,7 +390,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productId);
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog'])
             ->getMockForAbstractClass();
 
@@ -404,7 +404,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         /** @var \Magento\Framework\Controller\Result\Forward|\PHPUnit_Framework_MockObject_MockObject $forwardMock */
-        $forwardMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Forward::class)
+        $forwardMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
 

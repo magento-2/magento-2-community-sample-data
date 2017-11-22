@@ -1,69 +1,52 @@
 <?php
-namespace Braintree;
-
-class WebhookTesting
+class Braintree_WebhookTesting
 {
     public static function sampleNotification($kind, $id)
     {
         $payload = base64_encode(self::_sampleXml($kind, $id)) . "\n";
-        $signature = Configuration::publicKey() . "|" . Digest::hexDigestSha1(Configuration::privateKey(), $payload);
+        $signature = Braintree_Configuration::publicKey() . "|" . Braintree_Digest::hexDigestSha1(Braintree_Configuration::privateKey(), $payload);
 
-        return [
+        return array(
             'bt_signature' => $signature,
             'bt_payload' => $payload
-        ];
+        );
     }
 
     private static function _sampleXml($kind, $id)
     {
         switch ($kind) {
-            case WebhookNotification::SUB_MERCHANT_ACCOUNT_APPROVED:
+            case Braintree_WebhookNotification::SUB_MERCHANT_ACCOUNT_APPROVED:
                 $subjectXml = self::_merchantAccountApprovedSampleXml($id);
                 break;
-            case WebhookNotification::SUB_MERCHANT_ACCOUNT_DECLINED:
+            case Braintree_WebhookNotification::SUB_MERCHANT_ACCOUNT_DECLINED:
                 $subjectXml = self::_merchantAccountDeclinedSampleXml($id);
                 break;
-            case WebhookNotification::TRANSACTION_DISBURSED:
+            case Braintree_WebhookNotification::TRANSACTION_DISBURSED:
                 $subjectXml = self::_transactionDisbursedSampleXml($id);
                 break;
-            case WebhookNotification::TRANSACTION_SETTLED:
-                $subjectXml = self::_transactionSettledSampleXml($id);
-                break;
-            case WebhookNotification::TRANSACTION_SETTLEMENT_DECLINED:
-                $subjectXml = self::_transactionSettlementDeclinedSampleXml($id);
-                break;
-            case WebhookNotification::DISBURSEMENT_EXCEPTION:
+            case Braintree_WebhookNotification::DISBURSEMENT_EXCEPTION:
                 $subjectXml = self::_disbursementExceptionSampleXml($id);
                 break;
-            case WebhookNotification::DISBURSEMENT:
+            case Braintree_WebhookNotification::DISBURSEMENT:
                 $subjectXml = self::_disbursementSampleXml($id);
                 break;
-            case WebhookNotification::PARTNER_MERCHANT_CONNECTED:
+            case Braintree_WebhookNotification::PARTNER_MERCHANT_CONNECTED:
                 $subjectXml = self::_partnerMerchantConnectedSampleXml($id);
                 break;
-            case WebhookNotification::PARTNER_MERCHANT_DISCONNECTED:
+            case Braintree_WebhookNotification::PARTNER_MERCHANT_DISCONNECTED:
                 $subjectXml = self::_partnerMerchantDisconnectedSampleXml($id);
                 break;
-            case WebhookNotification::PARTNER_MERCHANT_DECLINED:
+            case Braintree_WebhookNotification::PARTNER_MERCHANT_DECLINED:
                 $subjectXml = self::_partnerMerchantDeclinedSampleXml($id);
                 break;
-            case WebhookNotification::DISPUTE_OPENED:
+            case Braintree_WebhookNotification::DISPUTE_OPENED:
                 $subjectXml = self::_disputeOpenedSampleXml($id);
                 break;
-            case WebhookNotification::DISPUTE_LOST:
+            case Braintree_WebhookNotification::DISPUTE_LOST:
                 $subjectXml = self::_disputeLostSampleXml($id);
                 break;
-            case WebhookNotification::DISPUTE_WON:
+            case Braintree_WebhookNotification::DISPUTE_WON:
                 $subjectXml = self::_disputeWonSampleXml($id);
-                break;
-            case WebhookNotification::SUBSCRIPTION_CHARGED_SUCCESSFULLY:
-                $subjectXml = self::_subscriptionChargedSuccessfullySampleXml($id);
-                break;
-            case WebhookNotification::CHECK:
-                $subjectXml = self::_checkSampleXml();
-                break;
-            case WebhookNotification::ACCOUNT_UPDATER_DAILY_REPORT:
-                $subjectXml = self::_accountUpdaterDailyReportSampleXml($id);
                 break;
             default:
                 $subjectXml = self::_subscriptionSampleXml($id);
@@ -135,48 +118,6 @@ class WebhookTesting
         ";
     }
 
-    private static function _transactionSettledSampleXml($id)
-    {
-        return "
-        <transaction>
-          <id>${id}</id>
-          <status>settled</status>
-          <type>sale</type>
-          <currency-iso-code>USD</currency-iso-code>
-          <amount>100.00</amount>
-          <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
-          <payment-instrument-type>us_bank_account</payment-instrument-type>
-          <us-bank-account>
-            <routing-number>123456789</routing-number>
-            <last-4>1234</last-4>
-            <account-type>checking</account-type>
-            <account-holder-name>Dan Schulman</account-holder-name>
-          </us-bank-account>
-        </transaction>
-        ";
-    }
-
-    private static function _transactionSettlementDeclinedSampleXml($id)
-    {
-        return "
-        <transaction>
-          <id>${id}</id>
-          <status>settlement_declined</status>
-          <type>sale</type>
-          <currency-iso-code>USD</currency-iso-code>
-          <amount>100.00</amount>
-          <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
-          <payment-instrument-type>us_bank_account</payment-instrument-type>
-          <us-bank-account>
-            <routing-number>123456789</routing-number>
-            <last-4>1234</last-4>
-            <account-type>checking</account-type>
-            <account-holder-name>Dan Schulman</account-holder-name>
-          </us-bank-account>
-        </transaction>
-        ";
-    }
-
     private static function _disbursementExceptionSampleXml($id)
     {
         return "
@@ -235,7 +176,6 @@ class WebhookTesting
           <currency-iso-code>USD</currency-iso-code>
           <received-date type=\"date\">2014-03-01</received-date>
           <reply-by-date type=\"date\">2014-03-21</reply-by-date>
-          <kind>chargeback</kind>
           <status>open</status>
           <reason>fraud</reason>
           <id>${id}</id>
@@ -243,7 +183,6 @@ class WebhookTesting
             <id>${id}</id>
             <amount>250.00</amount>
           </transaction>
-          <date-opened type=\"date\">2014-03-21</date-opened>
         </dispute>
         ";
     }
@@ -256,16 +195,13 @@ class WebhookTesting
           <currency-iso-code>USD</currency-iso-code>
           <received-date type=\"date\">2014-03-01</received-date>
           <reply-by-date type=\"date\">2014-03-21</reply-by-date>
-          <kind>chargeback</kind>
           <status>lost</status>
           <reason>fraud</reason>
           <id>${id}</id>
           <transaction>
             <id>${id}</id>
             <amount>250.00</amount>
-            <next_billing-date type=\"date\">2020-02-10</next_billing-date>
           </transaction>
-          <date-opened type=\"date\">2014-03-21</date-opened>
         </dispute>
         ";
     }
@@ -278,7 +214,6 @@ class WebhookTesting
           <currency-iso-code>USD</currency-iso-code>
           <received-date type=\"date\">2014-03-01</received-date>
           <reply-by-date type=\"date\">2014-03-21</reply-by-date>
-          <kind>chargeback</kind>
           <status>won</status>
           <reason>fraud</reason>
           <id>${id}</id>
@@ -286,8 +221,6 @@ class WebhookTesting
             <id>${id}</id>
             <amount>250.00</amount>
           </transaction>
-          <date-opened type=\"date\">2014-03-21</date-opened>
-          <date-won type=\"date\">2014-03-22</date-won>
         </dispute>
         ";
     }
@@ -304,34 +237,6 @@ class WebhookTesting
             <discounts type=\"array\">
             </discounts>
         </subscription>
-        ";
-    }
-
-    private static function _subscriptionChargedSuccessfullySampleXml($id)
-    {
-        return "
-        <subscription>
-            <id>{$id}</id>
-            <billing-period-start-date type=\"date\">2016-03-21</billing-period-start-date>
-            <billing-period-end-date type=\"date\">2017-03-31</billing-period-end-date>
-            <transactions type=\"array\">
-                <transaction>
-                    <status>submitted_for_settlement</status>
-                    <amount>49.99</amount>
-                </transaction>
-            </transactions>
-            <add_ons type=\"array\">
-            </add_ons>
-            <discounts type=\"array\">
-            </discounts>
-        </subscription>
-        ";
-    }
-
-    private static function _checkSampleXml()
-    {
-        return "
-            <check type=\"boolean\">true</check>
         ";
     }
 
@@ -366,16 +271,6 @@ class WebhookTesting
         ";
     }
 
-    private static function _accountUpdaterDailyReportSampleXml($id)
-    {
-        return "
-        <account-updater-daily-report>
-            <report-date type=\"date\">2016-01-14</report-date>
-            <report-url>link-to-csv-report</report-url>
-        </account-updater-daily-report>
-        ";
-    }
-
     private static function _timestamp()
     {
         $originalZone = date_default_timezone_get();
@@ -386,4 +281,3 @@ class WebhookTesting
         return $timestamp;
     }
 }
-class_alias('Braintree\WebhookTesting', 'Braintree_WebhookTesting');

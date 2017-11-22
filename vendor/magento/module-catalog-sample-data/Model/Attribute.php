@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSampleData\Model;
@@ -132,7 +132,7 @@ class Attribute
                 $data['backend_model'] = $this->productHelper->getAttributeBackendModelByInputType(
                     $data['frontend_input']
                 );
-                $data += ['is_filterable' => 0, 'is_filterable_in_search' => 0];
+                $data += ['is_filterable' => 0, 'is_filterable_in_search' => 0, 'apply_to' => []];
                 $data['backend_type'] = $attribute->getBackendTypeByInput($data['frontend_input']);
 
                 $attribute->addData($data);
@@ -149,8 +149,9 @@ class Attribute
                         $attributeSet = $this->processAttributeSet($setName);
                         $attributeGroupId = $attributeSet->getDefaultGroupId();
 
-                        $attribute = $this->attributeFactory->create()->load($attributeId);
+                        $attribute = $this->attributeFactory->create();
                         $attribute
+                            ->setId($attributeId)
                             ->setAttributeGroupId($attributeGroupId)
                             ->setAttributeSetId($attributeSet->getId())
                             ->setEntityTypeId($this->getEntityTypeId())

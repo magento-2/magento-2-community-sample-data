@@ -1,14 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Test\Unit\Pricing\Render;
 
 use Magento\Bundle\Pricing\Render\FinalPriceBox;
+use Magento\Bundle\Pricing\Price;
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 
-class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
+class FinalPriceBoxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FinalPriceBox
@@ -20,15 +21,14 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
      */
     protected $saleableItem;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->saleableItem = $this->createMock(\Magento\Framework\Pricing\SaleableInterface::class);
+        $this->saleableItem = $this->getMock('Magento\Framework\Pricing\SaleableInterface');
 
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectHelper->getObject(
-            \Magento\Bundle\Pricing\Render\FinalPriceBox::class,
-            ['saleableItem' => $this->saleableItem]
-        );
+        $this->model = $objectHelper->getObject('Magento\Bundle\Pricing\Render\FinalPriceBox', [
+            'saleableItem' => $this->saleableItem
+        ]);
     }
 
     /**
@@ -38,11 +38,11 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
     {
         $enableCustomOptionMocks = ($optMinValue == $optMaxValue);
 
-        $priceInfo = $this->createMock(\Magento\Framework\Pricing\PriceInfo\Base::class);
-        $bundlePrice = $this->getMockBuilder(\Magento\Bundle\Pricing\Price\FinalPrice::class)
+        $priceInfo = $this->getMock('Magento\Framework\Pricing\PriceInfo\Base', [], [], '', false);
+        $bundleOptionPrice = $this->getMockBuilder('Magento\Bundle\Pricing\Price\BundleOptionPrice')
             ->disableOriginalConstructor()
             ->getMock();
-        $customOptionPrice = $this->getMockBuilder(\Magento\Catalog\Pricing\Price\CustomOptionPrice::class)
+        $customOptionPrice = $this->getMockBuilder('Magento\Catalog\Pricing\Price\CustomOptionPrice')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,8 +52,8 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
 
         $priceInfo->expects($this->at(0))
             ->method('getPrice')
-            ->with(\Magento\Bundle\Pricing\Price\FinalPrice::PRICE_CODE)
-            ->will($this->returnValue($bundlePrice));
+            ->with(Price\BundleOptionPrice::PRICE_CODE)
+            ->will($this->returnValue($bundleOptionPrice));
         if ($enableCustomOptionMocks) {
             $priceInfo->expects($this->at(1))
                 ->method('getPrice')
@@ -61,11 +61,11 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
                 ->will($this->returnValue($customOptionPrice));
         }
 
-        $bundlePrice->expects($this->once())
-            ->method('getMinimalPrice')
+        $bundleOptionPrice->expects($this->once())
+            ->method('getValue')
             ->will($this->returnValue($optMinValue));
-        $bundlePrice->expects($this->once())
-            ->method('getMaximalPrice')
+        $bundleOptionPrice->expects($this->once())
+            ->method('getMaxValue')
             ->will($this->returnValue($optMaxValue));
 
         if ($enableCustomOptionMocks) {

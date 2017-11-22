@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -58,9 +58,9 @@ class FormStub extends \Magento\Config\Block\System\Config\Form
             $this->_configRoot = $this->_configRootStub;
         }
         $this->_fieldRenderer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Config\Block\System\Config\Form\Field::class
+            'Magento\Config\Block\System\Config\Form\Field'
         );
     }
 }

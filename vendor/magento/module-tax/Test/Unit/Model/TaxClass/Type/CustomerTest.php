@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Test\Unit\Model\TaxClass\Type;
 
-class CustomerTest extends \PHPUnit\Framework\TestCase
+class CustomerTest extends \PHPUnit_Framework_TestCase
 {
     public function testIsAssignedToObjects()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $searchResultsMock  = $this->getMockBuilder(\Magento\Framework\Api\SearchResults::class)
+        $searchResultsMock  = $this->getMockBuilder('Magento\Framework\Api\SearchResults')
             ->setMethods(['getItems'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -19,30 +19,24 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
             ->method('getItems')
             ->will($this->returnValue(['randomValue']));
 
-        $filterBuilder = $this->createPartialMock(
-            \Magento\Framework\Api\FilterBuilder::class,
-            ['setField', 'setValue', 'create']
+        /** @var \Magento\Framework\Api\FilterBuilder $filterBuilder */
+        $filterBuilder = $objectManagerHelper
+            ->getObject('Magento\Framework\Api\FilterBuilder');
+        /** @var \Magento\Framework\Api\Search\FilterGroupBuilder $filterGroupBuilder */
+        $filterGroupBuilder = $objectManagerHelper
+            ->getObject('Magento\Framework\Api\Search\FilterGroupBuilder');
+        /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder */
+        $searchCriteriaBuilder = $objectManagerHelper->getObject(
+            'Magento\Framework\Api\SearchCriteriaBuilder',
+            [
+                'filterGroupBuilder' => $filterGroupBuilder
+            ]
         );
+        $expectedSearchCriteria = $searchCriteriaBuilder
+            ->addFilters([$filterBuilder->setField('tax_class_id')->setValue(5)->create()])
+            ->create();
 
-        $filterBuilder->expects($this->once())->method('setField')->with(
-            \Magento\Customer\Api\Data\GroupInterface::TAX_CLASS_ID
-        )->willReturnself();
-        $filterBuilder->expects($this->once())->method('setValue')->willReturnself();
-        $filterBuilder->expects($this->once())->method('create')->willReturnself();
-
-        $filterGroupBuilder = $this->createMock(\Magento\Framework\Api\Search\FilterGroupBuilder::class);
-        $searchCriteriaBuilder = $this->getMockBuilder(\Magento\Framework\Api\SearchCriteriaBuilder::class)
-            ->setMethods(['addFilters', 'create'])
-            ->setConstructorArgs(['filterGroupBuilder' => $filterGroupBuilder])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $expectedSearchCriteria = $this->getMockBuilder(\Magento\Framework\Api\SearchCriteriaInterface::class)
-            ->getMockForAbstractClass();
-        $searchCriteriaBuilder->expects($this->once())->method('addFilters')->willReturnSelf();
-        $searchCriteriaBuilder->expects($this->once())->method('create')->willReturn($expectedSearchCriteria);
-
-        $customerGroupServiceMock = $this->getMockBuilder(\Magento\Customer\Api\GroupRepositoryInterface::class)
+        $customerGroupServiceMock = $this->getMockBuilder('Magento\Customer\Api\GroupRepositoryInterface')
             ->setMethods(['getList'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -53,7 +47,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
 
         /** @var $model \Magento\Tax\Model\TaxClass\Type\Customer */
         $model = $objectManagerHelper->getObject(
-            \Magento\Tax\Model\TaxClass\Type\Customer::class,
+            'Magento\Tax\Model\TaxClass\Type\Customer',
             [
                 'customerGroupRepository' => $customerGroupServiceMock,
                 'searchCriteriaBuilder' => $searchCriteriaBuilder,

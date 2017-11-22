@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 return [
     'TestIntegration1' => [
-        'resource' => [
+        'resources' => [
             'Magento_Customer::manage',
             'Magento_Customer::online',
             'Magento_Sales::capture',
             'Magento_SalesRule::quote',
         ],
     ],
-    'TestIntegration2' => ['resource' => ['Magento_Catalog::product_read']]
+    'TestIntegration2' => ['resources' => ['Magento_Catalog::product_read']]
 ];

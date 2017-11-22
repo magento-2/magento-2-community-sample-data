@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model;
@@ -28,8 +28,6 @@ namespace Magento\Bundle\Model;
  * @method \Magento\Bundle\Model\Selection setSelectionQty(float $value)
  * @method int getSelectionCanChangeQty()
  * @method \Magento\Bundle\Model\Selection setSelectionCanChangeQty(int $value)
- * @api
- * @since 100.0.2
  */
 class Selection extends \Magento\Framework\Model\AbstractModel
 {
@@ -67,7 +65,7 @@ class Selection extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Bundle\Model\ResourceModel\Selection::class);
+        $this->_init('Magento\Bundle\Model\ResourceModel\Selection');
         parent::_construct();
     }
 

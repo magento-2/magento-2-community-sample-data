@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,8 @@ namespace Magento\Catalog\Test\TestCase\Product;
 
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductEdit;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
-use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config;
-use Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Downloadable;
+use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Tab\Variations\Config;
+use Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable;
 use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestCase\Injectable;
 
@@ -30,13 +30,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Save
  * 7. Perform all assertions
  *
- * @group Products
+ * @group Products_(MX)
  * @ZephyrId MAGETWO-29633
  */
 class ProductTypeSwitchingOnUpdateTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -124,12 +125,12 @@ class ProductTypeSwitchingOnUpdateTest extends Injectable
      *
      * @return void
      */
-    protected function deleteVariations()
+    protected function deleteAttributes()
     {
-        $this->catalogProductEdit->getProductForm()->openSection('variations');
+        $this->catalogProductEdit->getProductForm()->openTab('variations');
         /** @var Config $variationsTab */
-        $variationsTab = $this->catalogProductEdit->getProductForm()->getSection('variations');
-        $variationsTab->deleteVariations();
+        $variationsTab = $this->catalogProductEdit->getProductForm()->getTab('variations');
+        $variationsTab->deleteAttributes();
     }
 
     /**
@@ -139,9 +140,25 @@ class ProductTypeSwitchingOnUpdateTest extends Injectable
      */
     protected function clearDownloadableData()
     {
-        $this->catalogProductEdit->getProductForm()->openSection('downloadable_information');
+        $this->catalogProductEdit->getProductForm()->openTab('downloadable_information');
         /** @var Downloadable $downloadableInfoTab */
-        $downloadableInfoTab = $this->catalogProductEdit->getProductForm()->getSection('downloadable_information');
-        $downloadableInfoTab->getDownloadableBlock('Links')->clearDownloadableData();
+        $downloadableInfoTab = $this->catalogProductEdit->getProductForm()->getTab('downloadable_information');
+        $downloadableInfoTab->clearDownloadableData('Links')->setIsDownloadable('No');
+    }
+
+    /**
+     * Set "Is this downloadable Product?" value.
+     *
+     * @param string $downloadable
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function setIsDownloadable($downloadable = 'Yes')
+    {
+        $this->catalogProductEdit->getProductForm()->openTab('downloadable_information');
+        /** @var Downloadable $downloadableInfoTab */
+        $downloadableInfoTab = $this->catalogProductEdit->getProductForm()->getTab('downloadable_information');
+        $downloadableInfoTab->setIsDownloadable($downloadable);
     }
 }

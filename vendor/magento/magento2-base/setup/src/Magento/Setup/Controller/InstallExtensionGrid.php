@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Setup\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-use Magento\Setup\Model\PackagesData;
+use Magento\Setup\Model\MarketplaceManager;
 
 /**
  * Controller for extensions grid tasks
@@ -17,17 +17,16 @@ use Magento\Setup\Model\PackagesData;
 class InstallExtensionGrid extends AbstractActionController
 {
     /**
-     * @var PackagesData
+     * @var MarketplaceManager
      */
-    private $packagesData;
+    private $marketplaceManager;
 
     /**
-     * @param PackagesData $packagesData
+     * @param MarketplaceManager $marketplaceManager
      */
-    public function __construct(
-        PackagesData $packagesData
-    ) {
-        $this->packagesData = $packagesData;
+    public function __construct(MarketplaceManager $marketplaceManager)
+    {
+        $this->marketplaceManager = $marketplaceManager;
     }
 
     /**
@@ -49,10 +48,8 @@ class InstallExtensionGrid extends AbstractActionController
      */
     public function extensionsAction()
     {
-        $extensions = $this->packagesData->getPackagesForInstall();
+        $extensions = $this->getMarketplaceManager()->getPackagesForInstall();
         $packages = isset($extensions['packages']) ? $extensions['packages'] : [];
-        $packages = $this->formatPackageList($packages);
-
         return new JsonModel(
             [
                 'success' => true,
@@ -63,17 +60,11 @@ class InstallExtensionGrid extends AbstractActionController
     }
 
     /**
-     * Format package list
-     *
-     * @param array $packages
-     * @return array
+     * @return MarketplaceManager
      */
-    private function formatPackageList(array $packages)
-    {
-        array_walk($packages, function (&$package) {
-            $package['vendor'] = ucfirst($package['vendor']);
-        });
 
-        return $packages;
+    public function getMarketplaceManager()
+    {
+        return $this->marketplaceManager;
     }
 }

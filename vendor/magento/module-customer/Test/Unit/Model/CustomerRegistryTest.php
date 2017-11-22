@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test for CustomerRegistry
  *
  */
-class CustomerRegistryTest extends \PHPUnit\Framework\TestCase
+class CustomerRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\CustomerRegistry
@@ -36,18 +36,18 @@ class CustomerRegistryTest extends \PHPUnit\Framework\TestCase
     const CUSTOMER_EMAIL = 'customer@example.com';
     const WEBSITE_ID = 1;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->customerFactory = $this->getMockBuilder(\Magento\Customer\Model\CustomerFactory::class)
+        $this->customerFactory = $this->getMockBuilder('Magento\Customer\Model\CustomerFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new ObjectManager($this);
         $this->customerRegistry = $objectManager->getObject(
-            \Magento\Customer\Model\CustomerRegistry::class,
+            'Magento\Customer\Model\CustomerRegistry',
             ['customerFactory' => $this->customerFactory]
         );
-        $this->customer = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)
+        $this->customer = $this->getMockBuilder('Magento\Customer\Model\Customer')
             ->disableOriginalConstructor()
             ->setMethods(
                 [

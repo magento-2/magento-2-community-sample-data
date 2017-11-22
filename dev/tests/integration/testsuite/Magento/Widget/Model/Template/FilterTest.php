@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Widget\Model\Template;
 
-class FilterTest extends \PHPUnit\Framework\TestCase
+class FilterTest extends \PHPUnit_Framework_TestCase
 {
     public function testMediaDirective()
     {
@@ -15,7 +15,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Widget\Model\Template\Filter $filter */
         $filter = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Template\Filter::class
+            'Magento\Widget\Model\Template\Filter'
         );
         $result = $filter->mediaDirective($construction);
         $this->assertEquals($baseUrl . $image, $result);

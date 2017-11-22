@@ -1,34 +1,29 @@
 <?php
-namespace Braintree\Result;
-
-use Braintree\Instance;
-use Braintree\Util;
-
 /**
  * Braintree Successful Result
  *
  * A Successful Result will be returned from gateway methods when
  * validations pass. It will provide access to the created resource.
  *
- * For example, when creating a customer, Successful will
+ * For example, when creating a customer, Braintree_Result_Successful will
  * respond to <b>customer</b> like so:
  *
  * <code>
- * $result = Customer::create(array('first_name' => "John"));
+ * $result = Braintree_Customer::create(array('first_name' => "John"));
  * if ($result->success) {
- *     // Successful
+ *     // Braintree_Result_Successful
  *     echo "Created customer {$result->customer->id}";
  * } else {
- *     // Error
+ *     // Braintree_Result_Error
  * }
  * </code>
  *
  *
  * @package    Braintree
  * @subpackage Result
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
-class Successful extends Instance
+class Braintree_Result_Successful extends Braintree_Instance
 {
     /**
      *
@@ -43,18 +38,17 @@ class Successful extends Instance
 
     /**
      * @ignore
-     * @param array|null $objsToReturn
-     * @param array|null $propertyNames
+     * @param string $classToReturn name of class to instantiate
      */
-    public function __construct($objsToReturn = [], $propertyNames = [])
+    public function __construct($objsToReturn = array(), $propertyNames = array())
     {
         // Sanitize arguments (preserves backwards compatibility)
-        if (!is_array($objsToReturn)) { $objsToReturn = [$objsToReturn]; }
-        if (!is_array($propertyNames)) { $propertyNames = [$propertyNames]; }
+        if (!is_array($objsToReturn)) { $objsToReturn = array($objsToReturn); }
+        if (!is_array($propertyNames)) { $propertyNames = array($propertyNames); }
 
         $objects = $this->_mapPropertyNamesToObjsToReturn($propertyNames, $objsToReturn);
-        $this->_attributes = [];
-        $this->_returnObjectNames = [];
+        $this->_attributes = array();
+        $this->_returnObjectNames = array();
 
         foreach ($objects as $propertyName => $objToReturn) {
 
@@ -73,7 +67,7 @@ class Successful extends Instance
     */
    public function __toString()
    {
-       $objects = [];
+       $objects = array();
        foreach ($this->_returnObjectNames as $returnObjectName) {
            array_push($objects, $this->$returnObjectName);
        }
@@ -82,12 +76,11 @@ class Successful extends Instance
 
    private function _mapPropertyNamesToObjsToReturn($propertyNames, $objsToReturn) {
        if(count($objsToReturn) != count($propertyNames)) {
-           $propertyNames = [];
+           $propertyNames = array();
            foreach ($objsToReturn as $obj) {
-               array_push($propertyNames, Util::cleanClassName(get_class($obj)));
+               array_push($propertyNames, Braintree_Util::cleanClassName(get_class($obj)));
            }
        }
        return array_combine($propertyNames, $objsToReturn);
    }
 }
-class_alias('Braintree\Result\Successful', 'Braintree_Result_Successful');

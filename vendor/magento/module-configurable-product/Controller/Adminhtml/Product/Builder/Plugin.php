@@ -1,16 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Builder;
 
 use Magento\Catalog\Model\ProductFactory;
 use Magento\ConfigurableProduct\Model\Product\Type;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Controller\Adminhtml\Product\Builder as CatalogProductBuilder;
-use Magento\Framework\App\RequestInterface;
 
 class Plugin
 {
@@ -35,22 +32,26 @@ class Plugin
     }
 
     /**
-     * Set type and data to configurable product
+     * @param \Magento\Catalog\Controller\Adminhtml\Product\Builder $subject
+     * @param callable $proceed
+     * @param \Magento\Framework\App\RequestInterface $request
      *
-     * @param CatalogProductBuilder $subject
-     * @param Product $product
-     * @param RequestInterface $request
-     * @return Product
+     * @return \Magento\Catalog\Model\Product
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function afterBuild(CatalogProductBuilder $subject, Product $product, RequestInterface $request)
-    {
+    public function aroundBuild(
+        \Magento\Catalog\Controller\Adminhtml\Product\Builder $subject,
+        \Closure $proceed,
+        \Magento\Framework\App\RequestInterface $request
+    ) {
+        $product = $proceed($request);
+
         if ($request->has('attributes')) {
             $attributes = $request->getParam('attributes');
             if (!empty($attributes)) {
                 $product->setTypeId(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
-                $this->configurableType->setUsedProductAttributes($product, $attributes);
+                $this->configurableType->setUsedProductAttributeIds($attributes, $product);
             } else {
                 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
             }
@@ -72,9 +73,7 @@ class Plugin
             && $request->getParam('id', false) === false
         ) {
             $configProduct = $this->productFactory->create();
-            $configProduct->setStoreId(0)
-                ->load($request->getParam('product'))
-                ->setTypeId($request->getParam('type'));
+            $configProduct->setStoreId(0)->load($request->getParam('product'))->setTypeId($request->getParam('type'));
 
             $data = [];
             foreach ($configProduct->getTypeInstance()->getSetAttributes($configProduct) as $attribute) {

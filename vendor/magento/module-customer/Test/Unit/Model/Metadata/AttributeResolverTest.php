@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata;
@@ -10,7 +10,7 @@ use Magento\Customer\Model\Attribute;
 use Magento\Customer\Model\AttributeMetadataDataProvider;
 use Magento\Customer\Model\Metadata\AttributeResolver;
 
-class AttributeResolverTest extends \PHPUnit\Framework\TestCase
+class AttributeResolverTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AttributeResolver */
     protected $model;
@@ -20,9 +20,9 @@ class AttributeResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->metadataDataProviderMock = $this->getMockBuilder(
-            \Magento\Customer\Model\AttributeMetadataDataProvider::class
-        )->disableOriginalConstructor()->getMock();
+        $this->metadataDataProviderMock = $this->getMockBuilder('Magento\Customer\Model\AttributeMetadataDataProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = new AttributeResolver(
             $this->metadataDataProviderMock
@@ -35,7 +35,7 @@ class AttributeResolverTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'code';
 
         /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $attributeMock->expects($this->once())
@@ -43,7 +43,7 @@ class AttributeResolverTest extends \PHPUnit\Framework\TestCase
             ->willReturn($attributeCode);
 
         /** @var Attribute|\PHPUnit_Framework_MockObject_MockObject $modelMock */
-        $modelMock = $this->getMockBuilder(\Magento\Customer\Model\Attribute::class)
+        $modelMock = $this->getMockBuilder('Magento\Customer\Model\Attribute')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -65,7 +65,7 @@ class AttributeResolverTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'code';
 
         /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $attributeMock->expects($this->exactly(2))

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Phrase\Test\Unit\Renderer;
 
-class TranslateTest extends \PHPUnit\Framework\TestCase
+class TranslateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Translate|\PHPUnit_Framework_MockObject_MockObject
@@ -24,13 +24,13 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_translator = $this->createMock(\Magento\Framework\TranslateInterface::class);
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->_translator = $this->getMock('Magento\Framework\TranslateInterface', [], [], '', false);
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_renderer = $objectManagerHelper->getObject(
-            \Magento\Framework\Phrase\Renderer\Translate::class,
+            'Magento\Framework\Phrase\Renderer\Translate',
             [
                 'translator' => $this->_translator,
                 'logger' => $this->loggerMock
@@ -38,48 +38,18 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testRenderTextWithoutTranslation()
+    public function testRender()
     {
         $text = 'text';
-        $this->_translator->expects($this->once())
+        $translatedText = 'translated text';
+        $translate = 'translate';
+
+        $this->_translator->expects($this->exactly(2))
             ->method('getData')
-            ->willReturn([]);
+            ->will($this->returnValue([$translatedText => $translate]));
+
+        $this->assertEquals($translate, $this->_renderer->render([$translatedText], []));
         $this->assertEquals($text, $this->_renderer->render([$text], []));
-    }
-
-    public function testRenderTextWithSingleQuotes()
-    {
-        $translatedTextInDictionary = "That's translated text";
-        $translatedTextInput = 'That\\\'s translated text';
-        $translate = 'translate';
-
-        $this->_translator->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([$translatedTextInDictionary => $translate]));
-
-        $this->assertEquals($translate, $this->_renderer->render([$translatedTextInput], []));
-    }
-
-    public function testRenderWithoutTranslation()
-    {
-        $translate = "Text with quote \'";
-        $this->_translator->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([]));
-        $this->assertEquals($translate, $this->_renderer->render([$translate], []));
-    }
-
-    public function testRenderTextWithDoubleQuotes()
-    {
-        $translatedTextInDictionary = "That\"s translated text";
-        $translatedTextInput = 'That\"s translated text';
-        $translate = 'translate';
-
-        $this->_translator->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([$translatedTextInDictionary => $translate]));
-
-        $this->assertEquals($translate, $this->_renderer->render([$translatedTextInput], []));
     }
 
     public function testRenderException()
@@ -91,7 +61,7 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willThrowException($exception);
 
-        $this->expectException('Exception', $message);
+        $this->setExpectedException('Exception', $message);
         $this->_renderer->render(['text'], []);
     }
 }

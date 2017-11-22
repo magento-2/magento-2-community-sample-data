@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Model\Product\CopyConstructor;
@@ -47,23 +47,27 @@ class Downloadable implements \Magento\Catalog\Model\Product\CopyConstructorInte
                 'sample' => [
                     'type' => $linkData['sample_type'],
                     'url' => $linkData['sample_url'],
-                    'file' => [
+                    'file' => $this->jsonHelper->jsonEncode(
                         [
-                            'file' => $linkData['sample_file'],
-                            'name' => $linkData['sample_file'],
+                            [
+                                'file' => $linkData['sample_file'],
+                                'name' => $linkData['sample_file'],
+                                'size' => 0,
+                                'status' => null,
+                            ],
+                        ]
+                    ),
+                ],
+                'file' => $this->jsonHelper->jsonEncode(
+                    [
+                        [
+                            'file' => $linkData['link_file'],
+                            'name' => $linkData['link_file'],
                             'size' => 0,
                             'status' => null,
                         ],
-                    ],
-                ],
-                'file' => [
-                    [
-                        'file' => $linkData['link_file'],
-                        'name' => $linkData['link_file'],
-                        'size' => 0,
-                        'status' => null,
-                    ],
-                ],
+                    ]
+                ),
                 'type' => $linkData['link_type'],
                 'link_url' => $linkData['link_url'],
                 'sort_order' => $linkData['sort_order'],
@@ -80,14 +84,16 @@ class Downloadable implements \Magento\Catalog\Model\Product\CopyConstructorInte
                 'sample_id' => null,
                 'title' => $sampleData['title'],
                 'type' => $sampleData['sample_type'],
-                'file' => [
+                'file' => $this->jsonHelper->jsonEncode(
                     [
-                        'file' => $sampleData['sample_file'],
-                        'name' => $sampleData['sample_file'],
-                        'size' => 0,
-                        'status' => null,
-                    ],
-                ],
+                        [
+                            'file' => $sampleData['sample_file'],
+                            'name' => $sampleData['sample_file'],
+                            'size' => 0,
+                            'status' => null,
+                        ],
+                    ]
+                ),
                 'sample_url' => $sampleData['sample_url'],
                 'sort_order' => $sampleData['sort_order'],
             ];

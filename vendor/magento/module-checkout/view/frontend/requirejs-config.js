@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,5 +14,8 @@ var config = {
             checkoutData:           'Magento_Checkout/js/checkout-data',
             proceedToCheckout:      'Magento_Checkout/js/proceed-to-checkout'
         }
-    }
+    },
+    deps: [
+        "Magento_Checkout/js/checkout-loader"
+    ]
 };

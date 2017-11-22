@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,24 +8,15 @@ namespace Magento\Weee\Model\Total\Creditmemo;
 
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Weee\Helper\Data as WeeeHelper;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\App\ObjectManager;
 
 class Weee extends \Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal
 {
     /**
      * Weee data
      *
-     * @var WeeeHelper
+     * @var \Magento\Weee\Helper\Data
      */
     protected $_weeeData = null;
-
-    /**
-     * Instance of serializer.
-     *
-     * @var Json
-     */
-    private $serializer;
 
     /**
      * Constructor
@@ -33,17 +24,12 @@ class Weee extends \Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal
      * By default is looking for first argument as array and assigns it as object
      * attributes This behavior may change in child classes
      *
-     * @param WeeeHelper $weeeData
-     * @param array $data
-     * @param Json|null $serializer
+     * @param \Magento\Weee\Helper\Data $weeeData
+     * @param array                     $data
      */
-    public function __construct(
-        WeeeHelper $weeeData,
-        array $data = [],
-        Json $serializer = null
-    ) {
+    public function __construct(\Magento\Weee\Helper\Data $weeeData, array $data = [])
+    {
         $this->_weeeData = $weeeData;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
         parent::__construct($data);
     }
 
@@ -127,10 +113,10 @@ class Weee extends \Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal
             if ($orderItemTaxAmount != 0) {
                 $taxRatio = [];
                 if ($item->getTaxRatio()) {
-                    $taxRatio = $this->serializer->unserialize($item->getTaxRatio());
+                    $taxRatio = unserialize($item->getTaxRatio());
                 }
                 $taxRatio[\Magento\Weee\Model\Total\Quote\Weee::ITEM_TYPE] = $itemTaxAmount / $orderItemTaxAmount;
-                $item->setTaxRatio($this->serializer->serialize($taxRatio));
+                $item->setTaxRatio(serialize($taxRatio));
             }
 
             $totalWeeeAmountInclTax += $weeeAmountInclTax;
@@ -140,11 +126,11 @@ class Weee extends \Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal
             $applied = $this->_weeeData->getApplied($orderItem);
             foreach ($applied as $one) {
                 $title = (string)$one['title'];
-                $one['base_row_amount'] = $creditmemo->roundPrice($one['base_row_amount'] * $ratio, $title . '_base');
+                $one['base_row_amount'] = $creditmemo->roundPrice($one['base_row_amount'] * $ratio, $title.'_base');
                 $one['row_amount'] = $creditmemo->roundPrice($one['row_amount'] * $ratio, $title);
                 $one['base_row_amount_incl_tax'] = $creditmemo->roundPrice(
                     $one['base_row_amount_incl_tax'] * $ratio,
-                    $title . '_base'
+                    $title.'_base'
                 );
                 $one['row_amount_incl_tax'] = $creditmemo->roundPrice($one['row_amount_incl_tax'] * $ratio, $title);
 

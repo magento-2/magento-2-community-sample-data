@@ -1,13 +1,15 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-define([
-    'jquery',
-    'Magento_Ui/js/modal/alert',
-    'jquery/ui',
-    'mage/translate'
-], function ($, alert) {
+/*jshint browser:true jquery:true*/
+require([
+        'jquery',
+        'Magento_Ui/js/modal/alert',
+        'jquery/ui',
+        'mage/translate'
+    ],
+    function ($, alert) {
         'use strict';
 
         var videoRegister = {
@@ -335,8 +337,6 @@ define([
 
             _FINISH_UPDATE_INFORMATION_TRIGGER: 'finish_update_information',
 
-            _VIDEO_URL_VALIDATE_TRIGGER: 'validate_video_url',
-
             _videoInformation: null,
 
             _currentVideoUrl: null,
@@ -352,23 +352,6 @@ define([
                         this._currentVideoUrl = null;
                     }, this
                 ));
-                this.element.on(this._VIDEO_URL_VALIDATE_TRIGGER, $.proxy(this._onUrlValidateHandler, this));
-            },
-
-            /**
-             * @private
-             */
-            _onUrlValidateHandler: function (event, callback, forceVideo) {
-                var url = this.element.val(),
-                    videoInfo;
-
-                videoInfo = this._validateURL(url, forceVideo);
-
-                if (videoInfo) {
-                    callback();
-                } else {
-                    this._onRequestError($.mage.__('Invalid video url'));
-                }
             },
 
             /**
@@ -446,7 +429,7 @@ define([
                             $.unique(errorsMessage).join(', ');
                     };
 
-                    if (data.error && [400, 402, 403].indexOf(data.error.code) !== -1) {
+                    if (data.error && data.error.code === 400) {
                         this._onRequestError(createErrorMessage());
 
                         return;
@@ -480,7 +463,7 @@ define([
                  * @private
                  */
                 function _onVimeoLoaded(data) {
-                    var tmp,
+                    var tmp = data[0],
                         respData;
 
                     if (data.length < 1) {

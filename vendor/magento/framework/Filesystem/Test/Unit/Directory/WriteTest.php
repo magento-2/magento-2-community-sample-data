@@ -2,7 +2,7 @@
 /**
  * Unit Test for \Magento\Framework\Filesystem\Directory\Write
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filesystem\Test\Unit\Directory;
@@ -10,7 +10,7 @@ namespace Magento\Framework\Filesystem\Test\Unit\Directory;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\DriverInterface;
 
-class WriteTest extends \PHPUnit\Framework\TestCase
+class WriteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * \Magento\Framework\Filesystem\Driver
@@ -41,8 +41,14 @@ class WriteTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->driver = $this->createMock(\Magento\Framework\Filesystem\Driver\File::class);
-        $this->fileFactory = $this->createMock(\Magento\Framework\Filesystem\File\WriteFactory::class);
+        $this->driver = $this->getMock(\Magento\Framework\Filesystem\Driver\File::class, [], [], '', false);
+        $this->fileFactory = $this->getMock(
+            \Magento\Framework\Filesystem\File\WriteFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->path = 'PATH/';
         $this->write = new \Magento\Framework\Filesystem\Directory\Write(
             $this->fileFactory,
@@ -87,7 +93,8 @@ class WriteTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSymlinkTargetDirectoryExists()
     {
-        $targetDir = $this->getMockBuilder(WriteInterface::class)->getMock();
+        $targetDir = $this->getMockBuilder(WriteInterface::class)
+            ->getMock();
         $targetDir->driver = $this->driver;
         $sourcePath = 'source/path/file';
         $destinationDirectory = 'destination/path';
@@ -166,7 +173,9 @@ class WriteTest extends \PHPUnit\Framework\TestCase
     {
         if ($targetDir !== null) {
             $targetDir->driver = $this->getMockBuilder(DriverInterface::class)->getMockForAbstractClass();
+
             $targetDirPath = 'TARGET_PATH/';
+
             $targetDir->expects($this->once())
                 ->method('getAbsolutePath')
                 ->with($targetPath)
@@ -196,6 +205,7 @@ class WriteTest extends \PHPUnit\Framework\TestCase
             ->method('getParentDirectory')
             ->with($targetPath)
             ->willReturn(dirname($targetPath));
+
         $this->write->renameFile($sourcePath, $targetPath, $targetDir);
     }
 
@@ -213,9 +223,7 @@ class WriteTest extends \PHPUnit\Framework\TestCase
             [
                 'path/to/source.file',
                 'path/to/target.file',
-                $this->getMockBuilder(WriteInterface::class)
-                    ->setMethods(['isExists', 'getAbsolutePath', 'create'])
-                    ->getMockForAbstractClass(),
+                $this->getMockBuilder(WriteInterface::class)->getMockForAbstractClass(),
             ],
         ];
     }

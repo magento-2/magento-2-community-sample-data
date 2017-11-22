@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -20,20 +20,6 @@
                 &:extend(.abs-field-tooltip all);
             }
         }
-
-        &.choice {
-            .field-tooltip {
-                display: inline-block;
-                margin-left: @indent__s;
-                position: relative;
-                top: -3px;
-            }
-
-            .field-tooltip-action {
-                .lib-css(line-height, @checkout-tooltip-icon__font-size);
-            }
-        }
-
         &._error {
             .control {
                 input,
@@ -44,7 +30,6 @@
             }
         }
     }
-
     .opc-wrapper {
         .fieldset {
             > .field {
@@ -65,13 +50,10 @@
     .opc-wrapper {
         .fieldset {
             > .field {
-                &.required,
-                &._required {
+                &.required {
                     position: relative;
-
                     > label {
                         padding-right: 25px;
-
                         &:after {
                             margin-left: @indent__s;
                             position: absolute;

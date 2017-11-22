@@ -11,7 +11,7 @@ namespace Zend\Form;
 
 use Countable;
 use IteratorAggregate;
-use Zend\Hydrator\HydratorInterface;
+use Zend\Stdlib\Hydrator\HydratorInterface;
 
 interface FieldsetInterface extends
     Countable,
@@ -26,14 +26,13 @@ interface FieldsetInterface extends
      * $flags could contain metadata such as the alias under which to register
      * the element or fieldset, order in which to prioritize it, etc.
      *
-     * @param  array|\Traversable|ElementInterface $elementOrFieldset Typically, only allow objects implementing
-     *                                                                ElementInterface; however, keeping it flexible
-     *                                                                to allow a factory-based form
+     * @param  array|\Traversable|ElementInterface $elementOrFieldset Typically, only allow objects implementing ElementInterface;
+     *                                                                however, keeping it flexible to allow a factory-based form
      *                                                                implementation as well
      * @param  array $flags
      * @return FieldsetInterface
      */
-    public function add($elementOrFieldset, array $flags = []);
+    public function add($elementOrFieldset, array $flags = array());
 
     /**
      * Does the fieldset have an element/fieldset by the given name?
@@ -138,7 +137,7 @@ interface FieldsetInterface extends
      * @param  array $values
      * @return mixed
      */
-    public function bindValues(array $values = []);
+    public function bindValues(array $values = array());
 
     /**
      * Checks if this fieldset can bind data

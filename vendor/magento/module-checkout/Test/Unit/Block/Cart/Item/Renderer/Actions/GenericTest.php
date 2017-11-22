@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Test\Unit\Block\Cart\Item\Renderer\Actions;
@@ -9,7 +9,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Checkout\Block\Cart\Item\Renderer\Actions\Generic;
 use Magento\Quote\Model\Quote\Item;
 
-class GenericTest extends \PHPUnit\Framework\TestCase
+class GenericTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Generic
@@ -21,7 +21,7 @@ class GenericTest extends \PHPUnit\Framework\TestCase
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Generic::class,
+            'Magento\Checkout\Block\Cart\Item\Renderer\Actions\Generic',
             []
         );
     }
@@ -31,7 +31,7 @@ class GenericTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,14 +44,14 @@ class GenericTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->getMock();
 
         /**
          * @var Product|\PHPUnit_Framework_MockObject_MockObject $productMock
          */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -72,7 +72,7 @@ class GenericTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->setMethods(['getIsVirtual'])
             ->getMock();

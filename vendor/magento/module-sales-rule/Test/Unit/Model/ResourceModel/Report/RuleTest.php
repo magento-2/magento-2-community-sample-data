@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Test\Unit\Model\ResourceModel\Report;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test table name
@@ -25,7 +25,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUniqRulesNamesList()
     {
-        $dbAdapterMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $dbAdapterMock = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->setMethods(['_connect', 'quote'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -38,13 +38,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $selectRenderer = $this->getMockBuilder(\Magento\Framework\DB\Select\SelectRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
-            ->setMethods(['from'])
-            ->setConstructorArgs([$dbAdapterMock, $selectRenderer])
-            ->getMock();
+        $select = $this->getMock('Magento\Framework\DB\Select', ['from'], [$dbAdapterMock]);
         $select->expects(
             $this->once()
         )->method(
@@ -56,9 +50,12 @@ class RuleTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($select)
         );
 
-        $connectionMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'fetchAll']
+        $connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['select', 'fetchAll'],
+            [],
+            '',
+            false
         );
         $connectionMock->expects($this->once())->method('select')->will($this->returnValue($select));
         $connectionMock->expects(
@@ -71,23 +68,35 @@ class RuleTest extends \PHPUnit\Framework\TestCase
             $this->returnCallback([$this, 'fetchAllCallback'])
         );
 
-        $resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $resourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $resourceMock->expects($this->any())->method('getConnection')->will($this->returnValue($connectionMock));
         $resourceMock->expects($this->once())->method('getTableName')->will($this->returnValue(self::TABLE_NAME));
 
-        $flagFactory = $this->createMock(\Magento\Reports\Model\FlagFactory::class);
-        $createdatFactoryMock = $this->createPartialMock(
-            \Magento\SalesRule\Model\ResourceModel\Report\Rule\CreatedatFactory::class,
-            ['create']
+        $flagFactory = $this->getMock('Magento\Reports\Model\FlagFactory', [], [], '', false);
+        $createdatFactoryMock = $this->getMock(
+            'Magento\SalesRule\Model\ResourceModel\Report\Rule\CreatedatFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $updatedatFactoryMock = $this->createPartialMock(
-            \Magento\SalesRule\Model\ResourceModel\Report\Rule\UpdatedatFactory::class,
-            ['create']
+        $updatedatFactoryMock = $this->getMock(
+            'Magento\SalesRule\Model\ResourceModel\Report\Rule\UpdatedatFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $model = $objectHelper->getObject(
-            \Magento\SalesRule\Model\ResourceModel\Report\Rule::class,
+            'Magento\SalesRule\Model\ResourceModel\Report\Rule',
             [
                 'resource' => $resourceMock,
                 'reportsFlagFactory' => $flagFactory,

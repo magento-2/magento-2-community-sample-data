@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model\Menu\Item;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Validator
 {
     /**
@@ -86,7 +82,8 @@ class Validator
         }
 
         foreach ($data as $param => $value) {
-            if ($data[$param] !== null
+            if (
+                $data[$param] !== null
             && isset(
                 $this->_validators[$param]
             ) && !$this->_validators[$param]->isValid(

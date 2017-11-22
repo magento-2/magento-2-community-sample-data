@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -38,7 +38,7 @@ class Mapper
      */
     public function toFlatArray(CustomerInterface $customer)
     {
-        $flatArray = $this->extensibleDataObjectConverter->toNestedArray($customer, [], \Magento\Customer\Api\Data\CustomerInterface::class);
+        $flatArray = $this->extensibleDataObjectConverter->toNestedArray($customer, [], '\Magento\Customer\Api\Data\CustomerInterface');
         unset($flatArray["addresses"]);
         return ConvertArray::toFlatArray($flatArray);
     }

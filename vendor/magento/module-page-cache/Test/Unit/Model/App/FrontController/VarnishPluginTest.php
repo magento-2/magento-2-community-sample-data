@@ -1,171 +1,150 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\PageCache\Test\Unit\Model\App\FrontController;
 
 use Magento\PageCache\Model\App\FrontController\VarnishPlugin;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\PageCache\Model\Config;
-use Magento\Framework\App\PageCache\Version;
-use Magento\Framework\App\State as AppState;
-use Magento\Framework\App\FrontControllerInterface;
-use Magento\Framework\App\Response\Http as ResponseHttp;
-use Magento\Framework\Controller\ResultInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class VarnishPluginTest extends \PHPUnit\Framework\TestCase
+class VarnishPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var VarnishPlugin
      */
-    private $plugin;
+    protected $plugin;
 
     /**
-     * @var ObjectManagerHelper
+     * @var \Magento\PageCache\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManagerHelper;
+    protected $configMock;
 
     /**
-     * @var Config|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\PageCache\Version|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $versionMock;
 
     /**
-     * @var Version|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\State|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $versionMock;
+    protected $stateMock;
 
     /**
-     * @var AppState|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\Response\Http|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stateMock;
+    protected $responseMock;
 
     /**
-     * @var FrontControllerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\FrontControllerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $frontControllerMock;
+    protected $frontControllerMock;
 
     /**
-     * @var ResponseHttp|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Closure
      */
-    private $responseMock;
+    protected $closure;
 
     /**
-     * @var ResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resultMock;
+    protected $requestMock;
 
-    protected function setUp()
+    /**
+     * SetUp
+     */
+    public function setUp()
     {
-        $this->configMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->versionMock = $this->getMockBuilder(Version::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stateMock = $this->getMockBuilder(AppState::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->frontControllerMock = $this->getMockBuilder(FrontControllerInterface::class)
-            ->getMockForAbstractClass();
-        $this->responseMock = $this->getMockBuilder(ResponseHttp::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultMock = $this->getMockBuilder(ResultInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->plugin = $this->objectManagerHelper->getObject(
-            VarnishPlugin::class,
-            [
-                'config' => $this->configMock,
-                'version' => $this->versionMock,
-                'state' => $this->stateMock
-            ]
+        $this->configMock = $this->getMock('Magento\PageCache\Model\Config', [], [], '', false);
+        $this->versionMock = $this->getMock('Magento\Framework\App\PageCache\Version', [], [], '', false);
+        $this->stateMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
+        $this->frontControllerMock = $this->getMock(
+            'Magento\Framework\App\FrontControllerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->requestMock = $this->getMock('Magento\Framework\App\RequestInterface', [], [], '', false);
+        $this->responseMock = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $response = $this->responseMock;
+        $this->closure = function () use ($response) {
+            return $response;
+        };
+        $this->plugin = new \Magento\PageCache\Model\App\FrontController\VarnishPlugin(
+            $this->configMock,
+            $this->versionMock,
+            $this->stateMock
         );
     }
 
     /**
-     * @param string $state
-     * @param int $countHeader
-     *
-     * @dataProvider afterDispatchDataProvider
+     * @dataProvider dataProvider
      */
-    public function testAfterDispatchReturnsCache($state, $countHeader)
+    public function testAroundDispatchReturnsCache($state, $countHeader, $countProcess, $countGetMode, $response)
     {
-        $this->configMock->expects(static::once())
+        $this->configMock
+            ->expects($this->once())
             ->method('isEnabled')
-            ->willReturn(true);
-        $this->configMock->expects(static::once())
+            ->will($this->returnValue(true));
+        $this->configMock
+            ->expects($this->once())
             ->method('getType')
-            ->willReturn(Config::VARNISH);
-        $this->versionMock->expects(static::once())
+            ->will($this->returnValue(\Magento\PageCache\Model\Config::VARNISH));
+        $this->versionMock
+            ->expects($countProcess)
             ->method('process');
-        $this->stateMock->expects(static::once())
+        $this->stateMock->expects($countGetMode)
             ->method('getMode')
-            ->willReturn($state);
-        $this->responseMock->expects(static::exactly($countHeader))
+            ->will($this->returnValue($state));
+        $response->expects($countHeader)
             ->method('setHeader')
             ->with('X-Magento-Debug');
 
-        $this->assertSame(
-            $this->responseMock,
-            $this->plugin->afterDispatch($this->frontControllerMock, $this->responseMock)
-        );
-    }
+        $this->closure = function () use ($response) {
+            return $response;
+        };
 
-    public function testAfterDispatchNotResponse()
-    {
-        $this->configMock->expects(static::once())
-            ->method('isEnabled')
-            ->willReturn(true);
-        $this->configMock->expects(static::once())
-            ->method('getType')
-            ->willReturn(Config::VARNISH);
-        $this->versionMock->expects(static::never())
-            ->method('process');
-        $this->stateMock->expects(static::never())
-            ->method('getMode');
-        $this->resultMock->expects(static::never())
-            ->method('setHeader');
-
-        $this->assertSame(
-            $this->resultMock,
-            $this->plugin->afterDispatch($this->frontControllerMock, $this->resultMock)
-        );
-    }
-
-    public function testAfterDispatchDisabled()
-    {
-        $this->configMock->expects(static::any())
-            ->method('getType')
-            ->willReturn(null);
-        $this->versionMock->expects(static::never())
-            ->method('process');
-        $this->stateMock->expects(static::any())
-            ->method('getMode')
-            ->willReturn(AppState::MODE_DEVELOPER);
-        $this->responseMock->expects(static::never())
-            ->method('setHeader');
-
-        $this->assertSame(
-            $this->responseMock,
-            $this->plugin->afterDispatch($this->frontControllerMock, $this->responseMock)
-        );
+        $this->plugin->aroundDispatch($this->frontControllerMock, $this->closure, $this->requestMock);
     }
 
     /**
-     * @return array
+     * @dataProvider dataProvider
      */
-    public function afterDispatchDataProvider()
+    public function testAroundDispatchDisabled($state)
+    {
+        $this->configMock
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue(null));
+        $this->versionMock
+            ->expects($this->never())
+            ->method('process');
+        $this->stateMock->expects($this->any())
+            ->method('getMode')
+            ->will($this->returnValue($state));
+        $this->responseMock->expects($this->never())
+            ->method('setHeader');
+        $this->plugin->aroundDispatch($this->frontControllerMock, $this->closure, $this->requestMock);
+    }
+
+    public function dataProvider()
     {
         return [
-            'developer_mode' => [AppState::MODE_DEVELOPER, 1],
-            'production' => [AppState::MODE_PRODUCTION, 0]
+            'developer_mode' => [
+                \Magento\Framework\App\State::MODE_DEVELOPER,
+                $this->once(),
+                $this->once(),
+                $this->once(),
+                $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false),
+            ],
+            'production' => [
+                \Magento\Framework\App\State::MODE_PRODUCTION,
+                $this->never(),
+                $this->never(),
+                $this->never(),
+                $this->getMock('Magento\Framework\Controller\ResultInterface', [], [], '', false),
+            ],
         ];
     }
 }

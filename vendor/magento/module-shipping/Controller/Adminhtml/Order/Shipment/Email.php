@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -17,9 +17,7 @@ use Magento\Framework\Controller\ResultFactory;
 class Email extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -54,7 +52,7 @@ class Email extends \Magento\Backend\App\Action
             $this->shipmentLoader->setTracking($this->getRequest()->getParam('tracking'));
             $shipment = $this->shipmentLoader->load();
             if ($shipment) {
-                $this->_objectManager->create(\Magento\Shipping\Model\ShipmentNotifier::class)
+                $this->_objectManager->create('Magento\Shipping\Model\ShipmentNotifier')
                     ->notify($shipment);
                 $shipment->save();
                 $this->messageManager->addSuccess(__('You sent the shipment.'));

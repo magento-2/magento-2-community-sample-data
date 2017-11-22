@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\ResourceModel\Quote\Payment;
@@ -46,10 +46,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Quote\Model\Quote\Payment::class,
-            \Magento\Quote\Model\ResourceModel\Quote\Payment::class
-        );
+        $this->_init('Magento\Quote\Model\Quote\Payment', 'Magento\Quote\Model\ResourceModel\Quote\Payment');
     }
 
     /**

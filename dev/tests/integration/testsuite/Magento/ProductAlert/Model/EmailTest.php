@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\ProductAlert\Model;
 /**
  * @magentoAppIsolation enabled
  */
-class EmailTest extends \PHPUnit\Framework\TestCase
+class EmailTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ProductAlert\Model\Email
@@ -35,9 +35,9 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->customerAccountManagement = $this->_objectManager->create(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
-        $this->_customerViewHelper = $this->_objectManager->create(\Magento\Customer\Helper\View::class);
+        $this->_customerViewHelper = $this->_objectManager->create('Magento\Customer\Helper\View');
     }
 
     /**
@@ -52,15 +52,15 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
 
-        $this->_emailModel = $this->_objectManager->create(\Magento\ProductAlert\Model\Email::class);
+        $this->_emailModel = $this->_objectManager->create('Magento\ProductAlert\Model\Email');
 
         /** @var \Magento\Store\Model\Website $website */
-        $website = $this->_objectManager->create(\Magento\Store\Model\Website::class);
+        $website = $this->_objectManager->create('Magento\Store\Model\Website');
         $website->load(1);
         $this->_emailModel->setWebsite($website);
 
         /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
-        $customerRepository = $this->_objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $this->_objectManager->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $customer = $customerRepository->getById(1);
 
         if ($isCustomerIdUsed) {
@@ -70,16 +70,15 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         }
 
         /** @var \Magento\Catalog\Model\Product $product */
-        $product = $this->_objectManager->create(\Magento\Catalog\Model\Product::class);
+        $product = $this->_objectManager->create('Magento\Catalog\Model\Product');
         $product->load(1);
 
         $this->_emailModel->addPriceProduct($product);
+
         $this->_emailModel->send();
 
         /** @var \Magento\TestFramework\Mail\Template\TransportBuilderMock $transportBuilder */
-        $transportBuilder = $this->_objectManager->get(
-            \Magento\TestFramework\Mail\Template\TransportBuilderMock::class
-        );
+        $transportBuilder = $this->_objectManager->get('Magento\TestFramework\Mail\Template\TransportBuilderMock');
         $this->assertContains(
             'John Smith,',
             $transportBuilder->getSentMessage()->getBodyHtml()->getRawContent()

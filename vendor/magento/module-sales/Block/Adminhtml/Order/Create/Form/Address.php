@@ -1,12 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Form;
 
-use Magento\Backend\Model\Session\Quote;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 
@@ -76,16 +74,6 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
      * @var \Magento\Customer\Model\Address\Mapper
      */
     protected $addressMapper;
-
-    /**
-     * @var \Magento\Directory\Model\ResourceModel\Country\Collection
-     */
-    private $countriesCollection;
-
-    /**
-     * @var \Magento\Backend\Model\Session\Quote
-     */
-    private $backendQuoteSession;
 
     /**
      * Constructor
@@ -275,13 +263,13 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
                 $this->directoryHelper->getDefaultCountry($this->getStore())
             );
         }
-        $this->processCountryOptions($this->_form->getElement('country_id'));
+
         // Set custom renderer for VAT field if needed
         $vatIdElement = $this->_form->getElement('vat_id');
         if ($vatIdElement && $this->getDisplayVatValidationButton() !== false) {
             $vatIdElement->setRenderer(
                 $this->getLayout()->createBlock(
-                    \Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat::class
+                    'Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat'
                 )->setJsVariablePrefix(
                     $this->getJsVariablePrefix()
                 )
@@ -289,49 +277,6 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
         }
 
         return $this;
-    }
-
-    /**
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $countryElement
-     * @return void
-     */
-    private function processCountryOptions(\Magento\Framework\Data\Form\Element\AbstractElement $countryElement)
-    {
-        $storeId = $this->getBackendQuoteSession()->getStoreId();
-        $options = $this->getCountriesCollection()
-            ->loadByStore($storeId)
-            ->toOptionArray();
-
-        $countryElement->setValues($options);
-    }
-
-    /**
-     * Retrieve Directiry Countries collection
-     * @deprecated 100.1.3
-     * @return \Magento\Directory\Model\ResourceModel\Country\Collection
-     */
-    private function getCountriesCollection()
-    {
-        if (!$this->countriesCollection) {
-            $this->countriesCollection = ObjectManager::getInstance()
-                ->get(\Magento\Directory\Model\ResourceModel\Country\Collection::class);
-        }
-
-        return $this->countriesCollection;
-    }
-
-    /**
-     * Retrieve Backend Quote Session
-     * @deprecated 100.1.3
-     * @return Quote
-     */
-    private function getBackendQuoteSession()
-    {
-        if (!$this->backendQuoteSession) {
-            $this->backendQuoteSession = ObjectManager::getInstance()->get(Quote::class);
-        }
-
-        return $this->backendQuoteSession;
     }
 
     /**

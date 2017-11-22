@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Column;
 
-class MultistoreTest extends \PHPUnit\Framework\TestCase
+class MultistoreTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Widget\Grid\Column\Multistore
@@ -19,16 +19,16 @@ class MultistoreTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
+        $this->_storeManagerMock = $this->getMock('Magento\Store\Model\StoreManager', [], [], '', false);
 
         $arguments = [
             'storeManager' => $this->_storeManagerMock,
-            'urlBuilder' => $this->createMock(\Magento\Backend\Model\Url::class),
+            'urlBuilder' => $this->getMock('Magento\Backend\Model\Url', [], [], '', false),
         ];
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_model = $objectManagerHelper->getObject(
-            \Magento\Backend\Block\Widget\Grid\Column\Multistore::class,
+            'Magento\Backend\Block\Widget\Grid\Column\Multistore',
             $arguments
         );
     }

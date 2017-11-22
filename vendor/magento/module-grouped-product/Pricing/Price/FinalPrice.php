@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -31,10 +31,7 @@ class FinalPrice extends \Magento\Catalog\Pricing\Price\FinalPrice implements Fi
      */
     public function getValue()
     {
-        $minProduct = $this->getMinProduct();
-        return $minProduct ?
-            $minProduct->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getValue() :
-            0.00;
+        return $this->getMinProduct()->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getValue();
     }
 
     /**

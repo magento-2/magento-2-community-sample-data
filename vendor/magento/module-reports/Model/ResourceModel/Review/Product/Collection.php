@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Review\Product;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
     /**
@@ -51,7 +47,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             'e.entity_id = r.entity_pk_value',
             [
                 'review_cnt' => new \Zend_Db_Expr(sprintf('(%s)', $subSelect)),
-                'created_at' => 'MAX(r.created_at)'
+                'last_created' => 'MAX(r.created_at)'
             ]
         )->group(
             'e.entity_id'
@@ -87,7 +83,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
-        if (in_array($attribute, ['review_cnt', 'created_at', 'avg_rating', 'avg_rating_approved'])) {
+        if (in_array($attribute, ['review_cnt', 'last_created', 'avg_rating', 'avg_rating_approved'])) {
             $this->getSelect()->order($attribute . ' ' . $dir);
             return $this;
         }

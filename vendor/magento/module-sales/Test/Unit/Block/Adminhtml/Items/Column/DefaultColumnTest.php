@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Items\Column;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class DefaultColumnTest extends \PHPUnit\Framework\TestCase
+class DefaultColumnTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
@@ -26,9 +26,9 @@ class DefaultColumnTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->defaultColumn = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn::class
+            'Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn'
         );
-        $this->itemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
+        $this->itemMock = $this->getMockBuilder('\Magento\Sales\Model\Order\Item')
             ->disableOriginalConstructor()
             ->setMethods(['getRowTotal', 'getDiscountAmount', 'getBaseRowTotal', 'getBaseDiscountAmount', '__wakeup'])
             ->getMock();

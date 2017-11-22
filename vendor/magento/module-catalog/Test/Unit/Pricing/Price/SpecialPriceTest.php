@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Test\Unit\Pricing\Price;
 
-class SpecialPriceTest extends \PHPUnit\Framework\TestCase
+class SpecialPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -18,9 +18,9 @@ class SpecialPriceTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceCurrencyMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface');
 
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
     }
@@ -36,7 +36,7 @@ class SpecialPriceTest extends \PHPUnit\Framework\TestCase
     {
         $expected = 56.34;
         $specialPriceModel = $this->objectManager->getObject(
-            \Magento\Catalog\Pricing\Price\SpecialPrice::class,
+            'Magento\Catalog\Pricing\Price\SpecialPrice',
             [
                 'saleableItem' => $this->prepareSaleableItem($specialPrice),
                 'localeDate'  => $this->prepareLocaleDate($isValidInterval),
@@ -62,9 +62,12 @@ class SpecialPriceTest extends \PHPUnit\Framework\TestCase
      */
     protected function prepareSaleableItem($specialPrice)
     {
-        $saleableItemMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getSpecialPrice', 'getPriceInfo', 'getStore', '__wakeup']
+        $saleableItemMock = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getSpecialPrice', 'getPriceInfo', 'getStore', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $saleableItemMock->expects($this->any())
@@ -72,7 +75,7 @@ class SpecialPriceTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($specialPrice));
 
         $priceInfo = $this->getMockBuilder(
-            \Magento\Framework\Pricing\PriceInfoInterface::class
+            'Magento\Framework\Pricing\PriceInfoInterface'
         )->disableOriginalConstructor()->getMockForAbstractClass();
 
         $priceInfo->expects($this->any())
@@ -93,7 +96,7 @@ class SpecialPriceTest extends \PHPUnit\Framework\TestCase
     protected function prepareLocaleDate($isValidInterval)
     {
         $localeDate = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\DateTime\TimezoneInterface::class
+            'Magento\Framework\Stdlib\DateTime\TimezoneInterface'
         )->disableOriginalConstructor()->getMockForAbstractClass();
 
         $localeDate->expects($this->any())

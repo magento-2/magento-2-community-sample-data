@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\Dependency\Report;
 
 use Magento\Setup\Module\Dependency\ServiceLocator;
 
-class DependencyTest extends \PHPUnit\Framework\TestCase
+class DependencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

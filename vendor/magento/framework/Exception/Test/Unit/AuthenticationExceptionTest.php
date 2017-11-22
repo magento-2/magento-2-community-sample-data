@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,10 @@ use Magento\Framework\Phrase;
 
 /**
  * Class AuthenticationExceptionTest
+ *
+ * @package Magento\Framework\Exception
  */
-class AuthenticationExceptionTest extends \PHPUnit\Framework\TestCase
+class AuthenticationExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return void
@@ -21,7 +23,7 @@ class AuthenticationExceptionTest extends \PHPUnit\Framework\TestCase
     {
         $authenticationException = new AuthenticationException(
             new Phrase(
-                'An authentication error occurred.',
+                AuthenticationException::AUTHENTICATION_ERROR,
                 ['consumer_id' => 1, 'resources' => 'record2']
             )
         );

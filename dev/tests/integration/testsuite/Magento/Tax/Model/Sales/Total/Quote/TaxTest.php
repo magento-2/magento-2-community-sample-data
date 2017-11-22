@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Model\Sales\Total\Quote;
@@ -13,9 +13,8 @@ require_once __DIR__ . '/../../../../_files/tax_calculation_data_aggregated.php'
 
 /**
  * Class TaxTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TaxTest extends \PHPUnit\Framework\TestCase
+class TaxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Utility object for setting up tax rates, tax classes and tax rules
@@ -43,40 +42,41 @@ class TaxTest extends \PHPUnit\Framework\TestCase
         /** Preconditions */
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Tax\Model\ClassModel $customerTaxClass */
-        $customerTaxClass = $objectManager->create(\Magento\Tax\Model\ClassModel::class);
+        $customerTaxClass = $objectManager->create('Magento\Tax\Model\ClassModel');
         $fixtureCustomerTaxClass = 'CustomerTaxClass2';
         $customerTaxClass->load($fixtureCustomerTaxClass, 'class_name');
         $fixtureCustomerId = 1;
         /** @var \Magento\Customer\Model\Customer $customer */
-        $customer = $objectManager->create(\Magento\Customer\Model\Customer::class)->load($fixtureCustomerId);
+        $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($fixtureCustomerId);
         /** @var \Magento\Customer\Model\Group $customerGroup */
-        $customerGroup = $objectManager->create(\Magento\Customer\Model\Group::class)
+        $customerGroup = $objectManager->create('Magento\Customer\Model\Group')
             ->load('custom_group', 'customer_group_code');
         $customerGroup->setTaxClassId($customerTaxClass->getId())->save();
         $customer->setGroupId($customerGroup->getId())->save();
 
         /** @var \Magento\Tax\Model\ClassModel $productTaxClass */
-        $productTaxClass = $objectManager->create(\Magento\Tax\Model\ClassModel::class);
+        $productTaxClass = $objectManager->create('Magento\Tax\Model\ClassModel');
         $fixtureProductTaxClass = 'ProductTaxClass1';
         $productTaxClass->load($fixtureProductTaxClass, 'class_name');
+        $fixtureProductId = 1;
         /** @var \Magento\Catalog\Model\Product $product */
-        $product = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class)->get('simple');
+        $product = $objectManager->create('Magento\Catalog\Model\Product')->load($fixtureProductId);
         $product->setTaxClassId($productTaxClass->getId())->save();
 
         $fixtureCustomerAddressId = 1;
-        $customerAddress = $objectManager->create(\Magento\Customer\Model\Address::class)->load($fixtureCustomerId);
+        $customerAddress = $objectManager->create('Magento\Customer\Model\Address')->load($fixtureCustomerId);
         /** Set data which corresponds tax class fixture */
         $customerAddress->setCountryId('US')->setRegionId(12)->save();
         /** @var \Magento\Quote\Model\Quote\Address $quoteShippingAddress */
-        $quoteShippingAddress = $objectManager->create(\Magento\Quote\Model\Quote\Address::class);
+        $quoteShippingAddress = $objectManager->create('Magento\Quote\Model\Quote\Address');
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
-        $addressRepository = $objectManager->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+        $addressRepository = $objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
         $quoteShippingAddress->importCustomerAddressData($addressRepository->getById($fixtureCustomerAddressId));
 
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-        $customerRepository = $objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $objectManager->create('Magento\Customer\Api\CustomerRepositoryInterface');
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $objectManager->create('Magento\Quote\Model\Quote');
         $quote->setStoreId(1)
             ->setIsActive(true)
             ->setIsMultiShipping(false)
@@ -237,7 +237,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
         /** @var  \Magento\Framework\ObjectManagerInterface $objectManager */
         $objectManager = Bootstrap::getObjectManager();
         /** @var  \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector */
-        $totalsCollector = $objectManager->create(\Magento\Quote\Model\Quote\TotalsCollector::class);
+        $totalsCollector = $objectManager->create('Magento\Quote\Model\Quote\TotalsCollector');
 
         //Setup tax configurations
         $this->setupUtil = new SetupUtil($objectManager);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,13 +20,14 @@ use Magento\Customer\Test\Fixture\Customer;
  * 4. Click "Remove item".
  * 5. Perform all assertions.
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-28874
  */
 class DeleteProductsFromWishlistOnFrontendTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,7 +14,7 @@ use Magento\User\Model\User as UserModel;
 /**
  * Test class for \Magento\Integration\Model\AdminTokenService.
  */
-class AdminTokenServiceTest extends \PHPUnit\Framework\TestCase
+class AdminTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Api\AdminTokenServiceInterface
@@ -36,9 +36,9 @@ class AdminTokenServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->tokenService = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\AdminTokenService::class);
-        $this->tokenModel = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\Oauth\Token::class);
-        $this->userModel = Bootstrap::getObjectManager()->get(\Magento\User\Model\User::class);
+        $this->tokenService = Bootstrap::getObjectManager()->get('Magento\Integration\Model\AdminTokenService');
+        $this->tokenModel = Bootstrap::getObjectManager()->get('Magento\Integration\Model\Oauth\Token');
+        $this->userModel = Bootstrap::getObjectManager()->get('Magento\User\Model\User');
     }
 
     /**
@@ -102,7 +102,7 @@ class AdminTokenServiceTest extends \PHPUnit\Framework\TestCase
      */
     private function assertInputExceptionMessages($e)
     {
-        $this->assertEquals('One or more input exceptions have occurred.', $e->getMessage());
+        $this->assertEquals(InputException::DEFAULT_MESSAGE, $e->getMessage());
         $errors = $e->getErrors();
         $this->assertCount(2, $errors);
         $this->assertEquals('username is a required field.', $errors[0]->getLogMessage());

@@ -1,31 +1,31 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
-$product->loadByAttribute('sku', 'simple');
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->load(1);
 if ($product->getId()) {
     $product->delete();
 }
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
-$product->loadByAttribute('sku', '12345');
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->load(2);
 if ($product->getId()) {
     $product->delete();
 }
 
 /** @var $category \Magento\Catalog\Model\Category */
-$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->load(9);
 if ($category->getId()) {
     $category->delete();

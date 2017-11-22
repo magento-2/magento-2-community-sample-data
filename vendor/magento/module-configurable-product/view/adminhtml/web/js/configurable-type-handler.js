@@ -1,15 +1,17 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 define([
     'jquery',
     'Magento_Catalog/catalog/type-events',
+    'Magento_ConfigurableProduct/js/advanced-pricing-handler',
+    'Magento_ConfigurableProduct/js/options/price-type-handler',
     'collapsible',
     'Magento_Ui/js/modal/modal',
     'mage/translate',
     'domReady!'
-], function ($, productType) {
+], function ($, productType, advancedPricingHandler, priceTypeHandler) {
     'use strict';
 
     return {
@@ -69,10 +71,7 @@ define([
          */
         bindAll: function () {
             $(document).on('changeConfigurableTypeProduct', function (event, isConfigurable) {
-                $(document).trigger('setTypeProduct', isConfigurable ?
-                    'configurable' :
-                    productType.type.init === 'configurable' ? 'simple' : productType.type.init
-                );
+                $(document).trigger('setTypeProduct', isConfigurable ? 'configurable' : null);
             });
             $(document).on('changeTypeProduct', this._initType.bind(this));
         },
@@ -82,31 +81,26 @@ define([
          * @private
          */
         _initType: function () {
-
-            /*var suggestContainer = $('#product-template-suggest-container .action-dropdown > .action-toggle');
-
+            var suggestContainer = $('#product-template-suggest-container .action-dropdown > .action-toggle');
 
             if (productType.type.current === 'configurable') {
-                this._setElementDisabled(suggestContainer.addClass('disabled'), true);
-                this._setElementDisabled($('#inventory_qty'), true);
-                this._setElementDisabled($('#inventory_stock_availability'), false);
+                suggestContainer.addClass('disabled').prop('disabled', true);
+                $('#inventory_qty').prop('disabled', true);
+                $('#inventory_stock_availability').removeProp('disabled');
                 this._setElementDisabled($('#qty'), true, true);
                 this._setElementDisabled($('#quantity_and_stock_status'), false, false);
             } else {
-                this._setElementDisabled(suggestContainer.removeClass('disabled'), false);
-                this._setElementDisabled($('#inventory_qty'), false);
-                this._setElementDisabled($('#inventory_stock_availability'), true);
+                suggestContainer.removeClass('disabled').removeProp('disabled');
+                $('#inventory_qty').removeProp('disabled');
+                $('#inventory_stock_availability').prop('disabled', true);
                 this._setElementDisabled($('#qty'), false, true);
             }
-            */
 
-            /*if (['simple', 'virtual', 'configurable'].indexOf(productType.type.current) < 0) {
+            if (['simple', 'virtual', 'configurable'].indexOf(productType.type.current) < 0) {
                 this.hide();
             } else {
                 this.show();
-            }*/
-
-            this.show();
+            }
         },
 
         /**
@@ -117,13 +111,8 @@ define([
             this.$block = $(data.blockId + ' input[name="attributes[]"]');
             this.hasVariations = data.hasVariations;
 
-            //advancedPricingHandler.init();
-            //priceTypeHandler.init();
-
-            /*if (productType.type.init === 'configurable' && !this.hasVariations) {
-                $(document).trigger('setTypeProduct', 'simple');
-            }*/
-            $(document).trigger('setTypeProduct', 'simple');
+            advancedPricingHandler.init();
+            priceTypeHandler.init();
 
             this.bindAll();
             this._initType();

@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\Api;
 
-use Magento\Payment\Helper\Formatter;
 use Magento\Payment\Model\Method\Logger;
 
 /**
@@ -13,8 +12,6 @@ use Magento\Payment\Model\Method\Logger;
  */
 abstract class AbstractApi extends \Magento\Framework\DataObject
 {
-    use Formatter;
-
     /**
      * Config instance
      *
@@ -52,9 +49,7 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
     /**
      * @var array
      */
-    protected $_lineItemExportItemsFilters = [
-        'name' => 'strval'
-    ];
+    protected $_lineItemExportItemsFilters = [];
 
     /**
      * @var array
@@ -427,7 +422,7 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
                 if (isset($this->_lineItemTotalExportMap[$key])) {
                     // !empty($total)
                     $privateKey = $this->_lineItemTotalExportMap[$key];
-                    $request[$privateKey] = $this->formatPrice($total);
+                    $request[$privateKey] = $this->_filterAmount($total);
                 }
             }
         }
@@ -442,7 +437,14 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
             foreach ($this->_lineItemExportItemsFormat as $publicKey => $privateFormat) {
                 $result = true;
                 $value = $item->getDataUsingMethod($publicKey);
-                $request[sprintf($privateFormat, $i)] = $this->formatValue($value, $publicKey);
+                if (isset($this->_lineItemExportItemsFilters[$publicKey])) {
+                    $callback = $this->_lineItemExportItemsFilters[$publicKey];
+                    $value = call_user_func([$this, $callback], $value);
+                }
+                if (is_float($value)) {
+                    $value = $this->_filterAmount($value);
+                }
+                $request[sprintf($privateFormat, $i)] = $value;
             }
             $i++;
         }
@@ -467,7 +469,7 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
             foreach ($this->_shippingOptionsExportItemsFormat as $publicKey => $privateFormat) {
                 $value = $option->getDataUsingMethod($publicKey);
                 if (is_float($value)) {
-                    $value = $this->formatPrice($value);
+                    $value = $this->_filterAmount($value);
                 }
                 if (is_bool($value)) {
                     $value = $this->_filterBool($value);
@@ -477,6 +479,17 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
             $i++;
         }
         return true;
+    }
+
+    /**
+     * Filter amounts in API calls
+     *
+     * @param float|string $value
+     * @return string
+     */
+    protected function _filterAmount($value)
+    {
+        return sprintf('%.2F', $value);
     }
 
     /**
@@ -629,26 +642,5 @@ abstract class AbstractApi extends \Magento\Framework\DataObject
     public function getDebugReplacePrivateDataKeys()
     {
         return $this->_debugReplacePrivateDataKeys;
-    }
-
-    /**
-     * Formats value according to configured filters or converts to 0.00 format if value is float.
-     *
-     * @param string|int|float|\Magento\Framework\Phrase $value
-     * @param string $publicKey
-     * @return string
-     */
-    private function formatValue($value, $publicKey)
-    {
-        if (!empty($this->_lineItemExportItemsFilters[$publicKey])) {
-            $callback = $this->_lineItemExportItemsFilters[$publicKey];
-            $value = method_exists($this, $callback) ? $this->{$callback}($value) : $callback($value);
-        }
-
-        if (is_float($value)) {
-            $value = $this->formatPrice($value);
-        }
-
-        return $value;
     }
 }

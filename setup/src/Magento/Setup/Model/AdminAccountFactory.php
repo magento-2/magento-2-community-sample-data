@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,6 @@ namespace Magento\Setup\Model;
 
 use Magento\Setup\Module\Setup;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 
 class AdminAccountFactory
 {
@@ -27,15 +25,15 @@ class AdminAccountFactory
     }
 
     /**
-     * @param AdapterInterface $connection
+     * @param Setup $setup
      * @param array $data
      * @return AdminAccount
      */
-    public function create(AdapterInterface $connection, $data)
+    public function create(Setup $setup, $data)
     {
         return new AdminAccount(
-            $connection,
-            $this->serviceLocator->get(\Magento\Framework\Encryption\Encryptor::class),
+            $setup,
+            $this->serviceLocator->get('Magento\Framework\Encryption\Encryptor'),
             $data
         );
     }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableProduct\Test\Constraint;
 
-use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config as VariationsTab;
-use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config\Attribute as AttributeBlock;
+use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Tab\Variations\Config as VariationsTab;
+use Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Tab\Variations\Config\Attribute as AttributeBlock;
 use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductNew;
@@ -44,7 +44,8 @@ class AssertProductAttributeAbsenceInVariationsSearch extends AbstractConstraint
 
         /** @var VariationsTab $variationsTab */
         $newProductPage->getProductForm()->fill($assertProduct);
-        $variationsTab = $newProductPage->getProductForm()->getSection(self::TAB_VARIATIONS);
+        $variationsTab = $newProductPage->getProductForm()->getTab(self::TAB_VARIATIONS);
+        $variationsTab->showContent();
         $variationsTab->createConfigurations();
         $attributesGrid = $variationsTab->getAttributeBlock()->getAttributesGrid();
         \PHPUnit_Framework_Assert::assertFalse(

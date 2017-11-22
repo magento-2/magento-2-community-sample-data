@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -9,9 +9,7 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
 class Cancel extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::cancel';
 
@@ -36,7 +34,7 @@ class Cancel extends \Magento\Sales\Controller\Adminhtml\Order
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addError(__('You have not canceled the item.'));
-                $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             }
             return $resultRedirect->setPath('sales/order/view', ['order_id' => $order->getId()]);
         }

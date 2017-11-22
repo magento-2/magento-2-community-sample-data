@@ -1,18 +1,13 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class DiscountTest extends Setup
+class Braintree_DiscountTest extends PHPUnit_Framework_TestCase
 {
-    public function testAll_returnsAllDiscounts()
+    function testAll_returnsAllDiscounts()
     {
         $newId = strval(rand());
 
-        $discountParams = [
+        $discountParams = array (
             "amount" => "100.00",
             "description" => "some description",
             "id" => $newId,
@@ -20,13 +15,13 @@ class DiscountTest extends Setup
             "name" => "php_discount",
             "neverExpires" => "false",
             "numberOfBillingCycles" => "1"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
-        $http->post($path, ["modification" => $discountParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $discountParams));
 
-        $discounts = Braintree\Discount::all();
+        $discounts = Braintree_Discount::all();
 
         foreach ($discounts as $discount)
         {
@@ -46,11 +41,11 @@ class DiscountTest extends Setup
         $this->assertEquals($discountParams["numberOfBillingCycles"], $actualDiscount->numberOfBillingCycles);
     }
 
-    public function testGatewayAll_returnsAllDiscounts()
+    function testGatewayAll_returnsAllDiscounts()
     {
         $newId = strval(rand());
 
-        $discountParams = [
+        $discountParams = array (
             "amount" => "100.00",
             "description" => "some description",
             "id" => $newId,
@@ -58,18 +53,18 @@ class DiscountTest extends Setup
             "name" => "php_discount",
             "neverExpires" => "false",
             "numberOfBillingCycles" => "1"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
-        $http->post($path, ["modification" => $discountParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $discountParams));
 
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
+        ));
         $discounts = $gateway->discount()->all();
 
         foreach ($discounts as $discount)

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\Setup\Test\Unit;
 
 use Magento\Framework\Setup\Lists;
 
-class ListsTest extends \PHPUnit\Framework\TestCase
+class ListsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Lists
@@ -50,9 +50,9 @@ class ListsTest extends \PHPUnit\Framework\TestCase
         'de_DE',
     ];
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->mockConfig = $this->getMockBuilder(\Magento\Framework\Locale\ConfigInterface::class)
+        $this->mockConfig = $this->getMockBuilder('\Magento\Framework\Locale\ConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockConfig->expects($this->any())

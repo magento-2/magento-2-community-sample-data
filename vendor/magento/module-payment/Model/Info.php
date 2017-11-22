@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Model;
@@ -9,9 +9,6 @@ use Magento\Framework\Model\AbstractExtensibleModel;
 
 /**
  * Payment information model
- *
- * @api
- * @since 100.0.2
  */
 class Info extends AbstractExtensibleModel implements InfoInterface
 {
@@ -191,12 +188,9 @@ class Info extends AbstractExtensibleModel implements InfoInterface
         if ($key && isset($this->_additionalInformation[$key])) {
             unset($this->_additionalInformation[$key]);
             return $this->setData('additional_information', $this->_additionalInformation);
-        } elseif (null === $key) {
-            $this->_additionalInformation = [];
-            return $this->unsetData('additional_information');
         }
-
-        return $this;
+        $this->_additionalInformation = [];
+        return $this->unsetData('additional_information');
     }
 
     /**

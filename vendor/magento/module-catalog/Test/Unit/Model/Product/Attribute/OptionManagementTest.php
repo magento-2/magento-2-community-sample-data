@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute;
 
-class OptionManagementTest extends \PHPUnit\Framework\TestCase
+class OptionManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\OptionManagement
@@ -19,7 +19,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->eavOptionManagementMock = $this->createMock(\Magento\Eav\Api\AttributeOptionManagementInterface::class);
+        $this->eavOptionManagementMock = $this->getMock('\Magento\Eav\Api\AttributeOptionManagementInterface');
         $this->model = new \Magento\Catalog\Model\Product\Attribute\OptionManagement(
             $this->eavOptionManagementMock
         );
@@ -38,7 +38,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
     public function testAdd()
     {
         $attributeCode = 42;
-        $optionMock = $this->createMock(\Magento\Eav\Api\Data\AttributeOptionInterface::class);
+        $optionMock = $this->getMock('\Magento\Eav\Api\Data\AttributeOptionInterface');
         $this->eavOptionManagementMock->expects($this->once())->method('add')->with(
             \Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE,
             $attributeCode,

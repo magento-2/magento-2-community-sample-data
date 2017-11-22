@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Module\Test\Unit;
 
 use \Magento\Framework\Module\DependencyChecker;
 
-class DependencyCheckerTest extends \PHPUnit\Framework\TestCase
+class DependencyCheckerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Module\DependencyChecker|\PHPUnit_Framework_MockObject_MockObject
@@ -34,9 +34,9 @@ class DependencyCheckerTest extends \PHPUnit\Framework\TestCase
      */
     private $loaderMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->packageInfoMock = $this->createMock(\Magento\Framework\Module\PackageInfo::class);
+        $this->packageInfoMock = $this->getMock('Magento\Framework\Module\PackageInfo', [], [], '', false);
         $requireMap = [
             ['A', ['B']],
             ['B', ['D', 'E']],
@@ -49,13 +49,19 @@ class DependencyCheckerTest extends \PHPUnit\Framework\TestCase
             ->method('getRequire')
             ->will($this->returnValueMap($requireMap));
 
-        $this->packageInfoFactoryMock = $this->createMock(\Magento\Framework\Module\PackageInfoFactory::class);
+        $this->packageInfoFactoryMock = $this->getMock(
+            'Magento\Framework\Module\PackageInfoFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->packageInfoFactoryMock->expects($this->once())
             ->method('create')
             ->will($this->returnValue($this->packageInfoMock));
 
-        $this->listMock = $this->createMock(\Magento\Framework\Module\ModuleList::class);
-        $this->loaderMock = $this->createMock(\Magento\Framework\Module\ModuleList\Loader::class);
+        $this->listMock = $this->getMock('Magento\Framework\Module\ModuleList', [], [], '', false);
+        $this->loaderMock = $this->getMock('Magento\Framework\Module\ModuleList\Loader', [], [], '', false);
         $this->loaderMock
             ->expects($this->any())
             ->method('load')

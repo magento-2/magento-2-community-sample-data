@@ -2,7 +2,7 @@
 /**
  * @category    Magento
  * @package     Magento_Indexer
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,9 +15,7 @@ abstract class AbstractProcessor
      */
     const INDEXER_ID = '';
 
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**
@@ -43,12 +41,11 @@ abstract class AbstractProcessor
      * Run Row reindex
      *
      * @param int $id
-     * @param bool $forceReindex
      * @return void
      */
-    public function reindexRow($id, $forceReindex = false)
+    public function reindexRow($id)
     {
-        if (!$forceReindex && $this->isIndexerScheduled()) {
+        if ($this->getIndexer()->isScheduled()) {
             return;
         }
         $this->getIndexer()->reindexRow($id);
@@ -58,12 +55,11 @@ abstract class AbstractProcessor
      * Run List reindex
      *
      * @param int[] $ids
-     * @param bool $forceReindex
      * @return void
      */
-    public function reindexList($ids, $forceReindex = false)
+    public function reindexList($ids)
     {
-        if (!$forceReindex && $this->isIndexerScheduled()) {
+        if ($this->getIndexer()->isScheduled()) {
             return;
         }
         $this->getIndexer()->reindexList($ids);

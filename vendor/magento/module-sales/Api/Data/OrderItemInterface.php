@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Api\Data;
@@ -12,7 +12,6 @@ namespace Magento\Sales\Api\Data;
  * items, billing and shipping addresses, and shipping and payment methods. A corresponding external document, known as
  * a purchase order, is emailed to the customer.
  * @api
- * @since 100.0.2
  */
 interface OrderItemInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -397,6 +396,7 @@ interface OrderItemInterface extends \Magento\Framework\Api\ExtensibleDataInterf
      * Product Option
      */
     const KEY_PRODUCT_OPTION = 'product_option';
+
 
     /**
      * Gets the additional data for the order item.

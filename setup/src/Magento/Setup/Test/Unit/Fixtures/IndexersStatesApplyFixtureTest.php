@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Fixtures;
 
 use \Magento\Setup\Fixtures\IndexersStatesApplyFixture;
 
-class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
+class IndexersStatesApplyFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel
@@ -22,16 +22,16 @@ class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock('\Magento\Setup\Fixtures\FixtureModel', [], [], '', false);
 
         $this->model = new IndexersStatesApplyFixture($this->fixtureModelMock);
     }
 
     public function testExecute()
     {
-        $cacheInterfaceMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
+        $cacheInterfaceMock = $this->getMock('Magento\Framework\App\CacheInterface', [], [], '', false);
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManager\ObjectManager', [], [], '', false);
         $objectManagerMock->expects($this->once())
             ->method('get')
             ->willReturn($cacheInterfaceMock);
@@ -52,10 +52,10 @@ class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function testNoFixtureConfigValue()
     {
-        $cacheInterfaceMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
+        $cacheInterfaceMock = $this->getMock('Magento\Framework\App\CacheInterface', [], [], '', false);
         $cacheInterfaceMock->expects($this->never())->method('clean');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManager\ObjectManager', [], [], '', false);
         $objectManagerMock->expects($this->never())
             ->method('get')
             ->willReturn($cacheInterfaceMock);

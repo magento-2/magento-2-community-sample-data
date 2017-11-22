@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesInventory\Model\Plugin\Order\Validation;
@@ -14,7 +14,7 @@ use Magento\SalesInventory\Model\Order\ReturnValidator;
 use Magento\Sales\Model\ValidatorResultInterface;
 
 /**
- * Class CreditmemoCreationArguments
+ * Class InvoiceRefundCreationArguments
  */
 class InvoiceRefundCreationArguments
 {
@@ -35,7 +35,7 @@ class InvoiceRefundCreationArguments
 
     /**
      * @param RefundInvoiceInterface $refundInvoiceValidator
-     * @param ValidatorResultInterface $validationResults
+     * @param \Closure $proceed
      * @param InvoiceInterface $invoice
      * @param OrderInterface $order
      * @param CreditmemoInterface $creditmemo
@@ -49,9 +49,9 @@ class InvoiceRefundCreationArguments
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
-    public function afterValidate(
+    public function aroundValidate(
         RefundInvoiceInterface $refundInvoiceValidator,
-        ValidatorResultInterface $validationResults,
+        \Closure $proceed,
         InvoiceInterface $invoice,
         OrderInterface $order,
         CreditmemoInterface $creditmemo,
@@ -62,6 +62,17 @@ class InvoiceRefundCreationArguments
         \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface $comment = null,
         \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface $arguments = null
     ) {
+        $validationResults = $proceed(
+            $invoice,
+            $order,
+            $creditmemo,
+            $items,
+            $isOnline,
+            $notify,
+            $appendComment,
+            $comment,
+            $arguments
+        );
         if ($this->isReturnToStockItems($arguments)) {
             return $validationResults;
         }

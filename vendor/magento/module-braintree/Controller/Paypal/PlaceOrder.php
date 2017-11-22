@@ -1,79 +1,88 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Braintree\Controller\Paypal;
+namespace Magento\Braintree\Controller\PayPal;
 
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Model\Paypal\Helper;
-use Magento\Checkout\Model\Session;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Exception\LocalizedException;
-use Psr\Log\LoggerInterface;
 
-/**
- * Class PlaceOrder
- */
-class PlaceOrder extends AbstractAction
+class PlaceOrder extends \Magento\Braintree\Controller\PayPal
 {
     /**
-     * @var Helper\OrderPlace
+     * @var \Magento\Checkout\Api\AgreementsValidatorInterface
      */
-    private $orderPlace;
+    protected $agreementsValidator;
 
     /**
-     * Logger for exception details
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Constructor
-     *
-     * @param Context $context
-     * @param Config $config
-     * @param Session $checkoutSession
-     * @param Helper\OrderPlace $orderPlace
-     * @param LoggerInterface|null $logger
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Braintree\Model\Config\PayPal $braintreePayPalConfig
+     * @param \Magento\Paypal\Model\Config $paypalConfig
+     * @param \Magento\Braintree\Model\CheckoutFactory $checkoutFactory
+     * @param \Magento\Checkout\Api\AgreementsValidatorInterface $agreementsValidator
      */
     public function __construct(
-        Context $context,
-        Config $config,
-        Session $checkoutSession,
-        Helper\OrderPlace $orderPlace,
-        LoggerInterface $logger = null
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Braintree\Model\Config\PayPal $braintreePayPalConfig,
+        \Magento\Paypal\Model\Config $paypalConfig,
+        \Magento\Braintree\Model\CheckoutFactory $checkoutFactory,
+        \Magento\Checkout\Api\AgreementsValidatorInterface $agreementsValidator
     ) {
-        parent::__construct($context, $config, $checkoutSession);
-        $this->orderPlace = $orderPlace;
-        $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
+        $this->agreementsValidator = $agreementsValidator;
+        parent::__construct(
+            $context,
+            $customerSession,
+            $checkoutSession,
+            $braintreePayPalConfig,
+            $paypalConfig,
+            $checkoutFactory
+        );
     }
 
     /**
-     * @inheritdoc
-     * @throws LocalizedException
+     * Submit the order
+     *
+     * @return \Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
     {
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $agreement = array_keys($this->getRequest()->getPostValue('agreement', []));
-        $quote = $this->checkoutSession->getQuote();
-
         try {
-            $this->validateQuote($quote);
+            if (!$this->agreementsValidator->isValid(array_keys($this->getRequest()->getPost('agreement', [])))) {
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    __('Please agree to all the terms and conditions before placing the order.')
+                );
+            }
+            $this->initCheckout();
+            $this->getCheckout()->place(null);
 
-            $this->orderPlace->execute($quote, $agreement);
+            // prepare session to success or cancellation page
+            $this->checkoutSession->clearHelperData();
+
+            // "last successful quote"
+            $quoteId = $this->getQuote()->getId();
+            $this->checkoutSession->setLastQuoteId($quoteId)->setLastSuccessQuoteId($quoteId);
+
+            // an order may be created
+            $order = $this->getCheckout()->getOrder();
+            if ($order) {
+                $this->checkoutSession->setLastOrderId($order->getId())
+                    ->setLastRealOrderId($order->getIncrementId());
+            }
 
             /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
-            return $resultRedirect->setPath('checkout/onepage/success', ['_secure' => true]);
-        } catch (\Exception $e) {
-            $this->logger->critical($e);
+            $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+            return $resultRedirect->setPath('checkout/onepage/success');
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
+        } catch (\Exception $e) {
+            $this->messageManager->addExceptionMessage($e, __('We can\'t place the order.'));
         }
-
-        return $resultRedirect->setPath('checkout/cart', ['_secure' => true]);
+        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        return $resultRedirect->setPath('checkout/cart');
     }
 }

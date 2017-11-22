@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\ResourceModel;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Sales\Model\ResourceModel\AbstractGrid;
 use Magento\Framework\Model\ResourceModel\Db\Context;
-use Magento\Sales\Model\ResourceModel\Provider\NotSyncedDataProviderInterface;
 
 /**
  * Class Grid
@@ -41,11 +40,6 @@ class Grid extends AbstractGrid
     protected $columns;
 
     /**
-     * @var NotSyncedDataProviderInterface
-     */
-    private $notSyncedDataProvider;
-
-    /**
      * @param Context $context
      * @param string $mainTableName
      * @param string $gridTableName
@@ -53,7 +47,6 @@ class Grid extends AbstractGrid
      * @param array $joins
      * @param array $columns
      * @param string $connectionName
-     * @param NotSyncedDataProviderInterface $notSyncedDataProvider
      */
     public function __construct(
         Context $context,
@@ -62,16 +55,13 @@ class Grid extends AbstractGrid
         $orderIdField,
         array $joins = [],
         array $columns = [],
-        $connectionName = null,
-        NotSyncedDataProviderInterface $notSyncedDataProvider = null
+        $connectionName = null
     ) {
         $this->mainTableName = $mainTableName;
         $this->gridTableName = $gridTableName;
         $this->orderIdField = $orderIdField;
         $this->joins = $joins;
         $this->columns = $columns;
-        $this->notSyncedDataProvider =
-            $notSyncedDataProvider ?: ObjectManager::getInstance()->get(NotSyncedDataProviderInterface::class);
         parent::__construct($context, $connectionName);
     }
 
@@ -109,10 +99,7 @@ class Grid extends AbstractGrid
     public function refreshBySchedule()
     {
         $select = $this->getGridOriginSelect()
-            ->where(
-                $this->mainTableName . '.entity_id IN (?)',
-                $this->notSyncedDataProvider->getIds($this->mainTableName, $this->gridTableName)
-            );
+            ->where($this->mainTableName . '.updated_at >= ?', $this->getLastUpdatedAtValue());
 
         return $this->getConnection()->query(
             $this->getConnection()

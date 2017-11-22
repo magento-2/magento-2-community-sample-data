@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,10 +8,7 @@
 
 namespace Magento\Payment\Test\Unit\Block\Info;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SubstitutionTest extends \PHPUnit\Framework\TestCase
+class SubstitutionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -28,27 +25,24 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManager;
 
-    /**
-     * @inheritdoc
-     */
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->layout = $this->getMockBuilder(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
 
         $eventManager = $this->getMockBuilder(
-            \Magento\Framework\Event\ManagerInterface::class
+            'Magento\Framework\Event\ManagerInterface'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
 
         $scopeConfig = $this->getMockBuilder(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+            'Magento\Framework\App\Config\ScopeConfigInterface'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
@@ -68,7 +62,7 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
         );
 
         $context = $this->getMockBuilder(
-            \Magento\Framework\View\Element\Template\Context::class
+            'Magento\Framework\View\Element\Template\Context'
         )->disableOriginalConstructor()->setMethods(
             ['getLayout', 'getEventManager', 'getScopeConfig']
         )->getMock();
@@ -101,7 +95,7 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->block = $this->objectManager->getObject(
-            \Magento\Payment\Block\Info\Substitution::class,
+            'Magento\Payment\Block\Info\Substitution',
             [
                 'context' => $context,
                 'data' => [
@@ -114,7 +108,7 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
     public function testBeforeToHtml()
     {
         $abstractBlock = $this->getMockBuilder(
-            \Magento\Framework\View\Element\AbstractBlock::class
+            'Magento\Framework\View\Element\AbstractBlock'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
@@ -126,12 +120,12 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
         $this->layout->expects($this->any())->method('getBlock')->will($this->returnValue($abstractBlock));
 
         $infoMock = $this->getMockBuilder(
-            \Magento\Payment\Model\Info::class
+            'Magento\Payment\Model\Info'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
         $methodMock = $this->getMockBuilder(
-            \Magento\Payment\Model\MethodInterface::class
+            'Magento\Payment\Model\MethodInterface'
         )->getMockForAbstractClass();
         $infoMock->expects($this->once())->method('getMethodInstance')->will($this->returnValue($methodMock));
         $this->block->setInfo($infoMock);
@@ -142,7 +136,7 @@ class SubstitutionTest extends \PHPUnit\Framework\TestCase
         )->method(
             'createBlock'
         )->with(
-            \Magento\Framework\View\Element\Template::class,
+            'Magento\Framework\View\Element\Template',
             '',
             ['data' => ['method' => $methodMock, 'template' => 'Magento_Payment::info/substitution.phtml']]
         )->will(

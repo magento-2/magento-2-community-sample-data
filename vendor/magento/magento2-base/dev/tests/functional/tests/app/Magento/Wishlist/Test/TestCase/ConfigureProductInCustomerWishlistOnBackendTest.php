@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,13 +26,14 @@ use Magento\Customer\Test\Page\Adminhtml\CustomerIndexEdit;
  * 7. Click Ok
  * 8. Perform assertions
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-29257
  */
 class ConfigureProductInCustomerWishlistOnBackendTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

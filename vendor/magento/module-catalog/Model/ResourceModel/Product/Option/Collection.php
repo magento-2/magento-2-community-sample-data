@@ -1,36 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Option;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
-use Magento\Framework\EntityManager\MetadataPool;
-
 /**
  * Catalog product options collection
  *
- * @api
  * @SuppressWarnings(PHPMD.LongVariable)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
-    /**
-     * @var JoinProcessorInterface
-     * @since 101.0.0
-     */
-    protected $joinProcessor;
-
-    /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     * @since 101.0.0
-     */
-    protected $metadataPool;
-
     /**
      * Store manager
      *
@@ -54,8 +35,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\DB\Adapter\AdapterInterface $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
-     * @param MetadataPool $metadataPool
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -65,13 +44,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         \Magento\Catalog\Model\ResourceModel\Product\Option\Value\CollectionFactory $optionValueCollectionFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        MetadataPool $metadataPool = null
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
         $this->_optionValueCollectionFactory = $optionValueCollectionFactory;
         $this->_storeManager = $storeManager;
-        $this->metadataPool = $metadataPool ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\EntityManager\MetadataPool::class);
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
     }
 
@@ -82,10 +58,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Catalog\Model\Product\Option::class,
-            \Magento\Catalog\Model\ResourceModel\Product\Option::class
-        );
+        $this->_init('Magento\Catalog\Model\Product\Option', 'Magento\Catalog\Model\ResourceModel\Product\Option');
     }
 
     /**
@@ -247,55 +220,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
-     * @return void
-     * @throws \Exception
-     * @since 101.0.0
-     */
-    protected function _initSelect()
-    {
-        parent::_initSelect();
-        $this->getSelect()->join(
-            ['cpe' => $this->getTable('catalog_product_entity')],
-            sprintf(
-                'cpe.%s = main_table.product_id',
-                $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField()
-            ),
-            []
-        );
-    }
-
-    /**
-     * @param int $productId
-     * @param int $storeId
-     * @param bool $requiredOnly
-     * @return \Magento\Catalog\Api\Data\ProductCustomOptionInterface[]
-     * @since 101.0.0
-     */
-    public function getProductOptions($productId, $storeId, $requiredOnly = false)
-    {
-        $collection = $this->addFieldToFilter(
-            'cpe.entity_id',
-            $productId
-        )->addTitleToResult(
-            $storeId
-        )->addPriceToResult(
-            $storeId
-        )->setOrder(
-            'sort_order',
-            'asc'
-        )->setOrder(
-            'title',
-            'asc'
-        );
-        if ($requiredOnly) {
-            $collection->addRequiredFilter();
-        }
-        $collection->addValuesToResult($storeId);
-        $this->getJoinProcessor()->process($collection);
-        return $collection->getItems();
-    }
-
-    /**
      * Add is_required filter to select
      *
      * @param bool $required
@@ -303,7 +227,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function addRequiredFilter($required = true)
     {
-        $this->addFieldToFilter('main_table.is_require', (int)$required);
+        $this->addFieldToFilter('main_table.is_require', (string)$required);
         return $this;
     }
 
@@ -327,17 +251,5 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function reset()
     {
         return $this->_reset();
-    }
-
-    /**
-     * @return JoinProcessorInterface
-     */
-    private function getJoinProcessor()
-    {
-        if (null === $this->joinProcessor) {
-            $this->joinProcessor = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class);
-        }
-        return $this->joinProcessor;
     }
 }

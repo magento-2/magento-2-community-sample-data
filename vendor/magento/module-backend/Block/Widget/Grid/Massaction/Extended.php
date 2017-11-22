@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget\Grid\Massaction;
@@ -8,13 +8,10 @@ namespace Magento\Backend\Block\Widget\Grid\Massaction;
 /**
  * Grid widget massaction block
  *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
  * @method \Magento\Quote\Model\Quote setHideFormElement(boolean $value) Hide Form element to prevent IE errors
  * @method boolean getHideFormElement()
  * @author      Magento Core Team <core@magentocommerce.com>
  * @TODO MAGETWO-31510: Remove deprecated class
- * @since 100.0.2
  */
 class Extended extends \Magento\Backend\Block\Widget
 {
@@ -69,7 +66,7 @@ class Extended extends \Magento\Backend\Block\Widget
     public function _construct()
     {
         parent::_construct();
-        $this->setErrorText($this->escapeHtml(__('Please select items.')));
+        $this->setErrorText($this->escapeJsQuote(__('Please select items.')));
     }
 
     /**
@@ -91,7 +88,7 @@ class Extended extends \Magento\Backend\Block\Widget
     public function addItem($itemId, array $item)
     {
         $this->_items[$itemId] = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Grid\Massaction\Item::class
+            'Magento\Backend\Block\Widget\Grid\Massaction\Item'
         )->setData(
             $item
         )->setMassaction(
@@ -275,14 +272,7 @@ class Extended extends \Magento\Backend\Block\Widget
 
         /** @var \Magento\Framework\Data\Collection $allIdsCollection */
         $allIdsCollection = clone $this->getParentBlock()->getCollection();
-        
-        if ($this->getMassactionIdField()) {
-            $massActionIdField = $this->getMassactionIdField();
-        } else {
-            $massActionIdField = $this->getParentBlock()->getMassactionIdField();
-        }
-        
-        $gridIds = $allIdsCollection->setPageSize(0)->getColumnValues($massActionIdField);
+        $gridIds = $allIdsCollection->clear()->setPageSize(0)->getAllIds();
 
         if (!empty($gridIds)) {
             return join(",", $gridIds);

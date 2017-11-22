@@ -1,59 +1,64 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Test\Unit\Model\Config\Processor;
 
-/**
- * Class PlaceholderTest
- */
-class PlaceholderTest extends \PHPUnit\Framework\TestCase
+use Magento\Store\Model\Store;
+
+class PlaceholderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\Config\Processor\Placeholder
      */
-    private $model;
+    protected $_model;
 
     /**
-     * @var \Magento\Store\Model\Config\Placeholder|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $configPlaceholderMock;
+    protected $_requestMock;
 
     protected function setUp()
     {
-        $this->configPlaceholderMock = $this->createMock(\Magento\Store\Model\Config\Placeholder::class);
-
-        $this->configPlaceholderMock->expects(
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->_requestMock->expects(
             $this->any()
         )->method(
-            'process'
-        )->withConsecutive(
-            [['key1' => 'value1']],
-            [['key2' => 'value2']]
-        )->willReturnOnConsecutiveCalls(
-            ['key1' => 'value1-processed'],
-            ['key2' => 'value2-processed']
+            'getDistroBaseUrl'
+        )->will(
+            $this->returnValue('http://localhost/')
         );
-
-        $this->model = new \Magento\Store\Model\Config\Processor\Placeholder($this->configPlaceholderMock);
+        $this->_model = new \Magento\Store\Model\Config\Processor\Placeholder(
+            $this->_requestMock,
+            [
+                'unsecureBaseUrl' => Store::XML_PATH_UNSECURE_BASE_URL,
+                'secureBaseUrl' => Store::XML_PATH_SECURE_BASE_URL
+            ],
+            \Magento\Store\Model\Store::BASE_URL_PLACEHOLDER
+        );
     }
 
     public function testProcess()
     {
         $data = [
-            'default' => ['key1' => 'value1'],
-            'websites' => [
-                'code' => ['key2' => 'value2']
-            ]
+            'web' => [
+                'unsecure' => [
+                    'base_url' => 'http://localhost/',
+                    'base_link_url' => '{{unsecure_base_url}}website/de',
+                ],
+                'secure' => [
+                    'base_url' => 'https://localhost/',
+                    'base_link_url' => '{{secure_base_url}}website/de',
+                ],
+            ],
+            'path' => 'value',
+            'some_url' => '{{base_url}}some',
         ];
-        $expected = [
-            'default' => ['key1' => 'value1-processed'],
-            'websites' => [
-                'code' => ['key2' => 'value2-processed']
-            ]
-        ];
-
-        $this->assertEquals($expected, $this->model->process($data));
+        $expectedResult = $data;
+        $expectedResult['web']['unsecure']['base_link_url'] = 'http://localhost/website/de';
+        $expectedResult['web']['secure']['base_link_url'] = 'https://localhost/website/de';
+        $expectedResult['some_url'] = 'http://localhost/some';
+        $this->assertEquals($expectedResult, $this->_model->process($data));
     }
 }

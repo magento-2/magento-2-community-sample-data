@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter;
@@ -8,8 +8,7 @@ namespace Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter;
 /**
  * Adminhtml newsletter queue grid block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
@@ -137,9 +136,9 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header' => __('Status'),
                 'align' => 'center',
-                'filter' => \Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Filter\Status::class,
+                'filter' => 'Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Filter\Status',
                 'index' => 'queue_status',
-                'renderer' => \Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Renderer\Status::class
+                'renderer' => 'Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Renderer\Status'
             ]
         );
 
@@ -150,7 +149,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'align' => 'center',
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => \Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Renderer\Action::class
+                'renderer' => 'Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid\Renderer\Action'
             ]
         );
 

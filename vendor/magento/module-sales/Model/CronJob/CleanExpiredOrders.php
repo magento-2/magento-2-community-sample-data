@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\CronJob;
@@ -21,14 +21,22 @@ class CleanExpiredOrders
     protected $orderCollectionFactory;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param StoresConfig $storesConfig
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $collectionFactory
      */
     public function __construct(
         StoresConfig $storesConfig,
+        \Psr\Log\LoggerInterface $logger,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $collectionFactory
     ) {
         $this->storesConfig = $storesConfig;
+        $this->logger = $logger;
         $this->orderCollectionFactory = $collectionFactory;
     }
 
@@ -48,8 +56,13 @@ class CleanExpiredOrders
             $orders->getSelect()->where(
                 new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) >= ' . $lifetime * 60)
             );
-            $orders->walk('cancel');
-            $orders->walk('save');
+
+            try {
+                $orders->walk('cancel');
+                $orders->walk('save');
+            } catch (\Exception $e) {
+                $this->logger->error('Error cancelling deprecated orders: ' . $e->getMessage());
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Entity;
@@ -8,7 +8,8 @@ namespace Magento\Eav\Model\Entity;
 /**
  * Entity type model
  *
- * @api
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Type _getResource()
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Type getResource()
  * @method \Magento\Eav\Model\Entity\Type setEntityTypeCode(string $value)
  * @method string getEntityModel()
  * @method \Magento\Eav\Model\Entity\Type setEntityModel(string $value)
@@ -33,8 +34,7 @@ namespace Magento\Eav\Model\Entity;
  * @method \Magento\Eav\Model\Entity\Type setAdditionalAttributeTable(string $value)
  * @method \Magento\Eav\Model\Entity\Type setEntityAttributeCollection(string $value)
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Type extends \Magento\Framework\Model\AbstractModel
 {
@@ -117,7 +117,7 @@ class Type extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Eav\Model\ResourceModel\Entity\Type::class);
+        $this->_init('Magento\Eav\Model\ResourceModel\Entity\Type');
     }
 
     /**
@@ -278,11 +278,7 @@ class Type extends \Magento\Framework\Model\AbstractModel
      */
     public function getEntityTable()
     {
-        if (isset($this->_data['entity_table'])) {
-            return $this->getResource()->getTable($this->_data['entity_table']);
-        }
-
-        return null;
+        return isset($this->_data['entity_table']) ? $this->_data['entity_table'] : null;
     }
 
     /**
@@ -381,6 +377,6 @@ class Type extends \Magento\Framework\Model\AbstractModel
         if ($collection) {
             return $collection;
         }
-        return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection::class;
+        return 'Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection';
     }
 }

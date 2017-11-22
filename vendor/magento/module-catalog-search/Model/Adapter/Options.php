@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Model\Adapter;
@@ -9,10 +9,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Search\Adapter\OptionsInterface;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Options implements OptionsInterface
 {
     const XML_PATH_INTERVAL_DIVISION_LIMIT = 'catalog/layered_navigation/interval_division_limit';

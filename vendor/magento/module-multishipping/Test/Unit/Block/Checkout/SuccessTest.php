@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Multishipping\Test\Unit\Block\Checkout;
 
 use Magento\Multishipping\Block\Checkout\Success;
 
-class SuccessTest extends \PHPUnit\Framework\TestCase
+class SuccessTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Success
@@ -34,21 +34,26 @@ class SuccessTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->sessionMock = $this->createPartialMock(\Magento\Framework\Session\SessionManagerInterface::class, [
+        $this->sessionMock = $this->getMock(
+            'Magento\Framework\Session\SessionManagerInterface',
+            [
                 'getOrderIds', 'start', 'writeClose', 'isSessionExists', 'getSessionId', 'getName', 'setName',
                 'destroy', 'clearStorage', 'getCookieDomain', 'getCookiePath', 'getCookieLifetime', 'setSessionId',
                 'regenerateId', 'expireSessionCookie', 'getSessionIdForHost', 'isValidForHost', 'isValidForPath',
                 '__wakeup'
-            ]);
-        $this->contextMock = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->contextMock = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
+        $this->storeManagerMock = $this->getMock('Magento\Store\Model\StoreManagerInterface', [], [], '', false);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->contextMock->expects($this->once())->method('getSession')->will($this->returnValue($this->sessionMock));
         $this->contextMock->expects($this->once())
             ->method('getStoreManager')->will($this->returnValue($this->storeManagerMock));
-        $this->model = $objectManager->getObject(
-            \Magento\Multishipping\Block\Checkout\Success::class,
+        $this->model = $objectManager->getObject('Magento\Multishipping\Block\Checkout\Success',
             [
                 'context' => $this->contextMock
             ]);
@@ -78,7 +83,7 @@ class SuccessTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContinueUrl()
     {
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $this->storeManagerMock->expects($this->once())->method('getStore')->will($this->returnValue($storeMock));
         $storeMock->expects($this->once())->method('getBaseUrl')->will($this->returnValue('Expected Result'));
 

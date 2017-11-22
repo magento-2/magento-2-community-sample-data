@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -81,6 +81,7 @@ class Product extends Form
      *
      * @return string|null
      */
+
     public function getItemSubInclTax()
     {
         $price = $this->_rootElement->find($this->itemSubInclTax, Locator::SELECTOR_XPATH);

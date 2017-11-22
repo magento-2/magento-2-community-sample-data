@@ -1,36 +1,34 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Model\Cron;
 
 use Magento\Setup\Model\Cron\JobModule;
 
-class JobModuleTest extends \PHPUnit\Framework\TestCase
+class JobModuleTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecuteModuleDisable()
     {
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager =
-            $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class, [], '', false);
-        $cleanupFiles = $this->createMock(\Magento\Framework\App\State\CleanupFiles::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface', [], '', false);
+        $cleanupFiles = $this->getMock('Magento\Framework\App\State\CleanupFiles', [], [], '', false);
         $cleanupFiles->expects($this->once())->method('clearCodeGeneratedFiles');
-        $cache = $this->createMock(\Magento\Framework\App\Cache::class);
+        $cache = $this->getMock('Magento\Framework\App\Cache', [], [], '', false);
         $cache->expects($this->once())->method('clean');
         $valueMap = [
-            [\Magento\Framework\Module\PackageInfoFactory::class],
-            [\Magento\Framework\App\State\CleanupFiles::class, $cleanupFiles],
-            [\Magento\Framework\App\Cache::class, $cache],
+            ['Magento\Framework\Module\PackageInfoFactory'],
+            ['Magento\Framework\App\State\CleanupFiles', $cleanupFiles],
+            ['Magento\Framework\App\Cache', $cache],
         ];
         $objectManager->expects($this->atLeastOnce())->method('get')->will($this->returnValueMap($valueMap));
         $objectManagerProvider->expects($this->once())->method('get')->willReturn($objectManager);
-        $command = $this->createMock(\Magento\Setup\Console\Command\ModuleDisableCommand::class);
+        $command = $this->getMock('Magento\Setup\Console\Command\ModuleDisableCommand', [], [], '', false);
         $command->expects($this->once())->method('run');
-        $status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
+        $status = $this->getMock('Magento\Setup\Model\Cron\Status', [], [], '', false);
         $status->expects($this->atLeastOnce())->method('add');
-        $output =
-            $this->getMockForAbstractClass(\Symfony\Component\Console\Output\OutputInterface::class, [], '', false);
+        $output = $this->getMockForAbstractClass('Symfony\Component\Console\Output\OutputInterface', [], '', false);
         $params['components'][] = ['name' => 'vendor/module'];
         $jobModuleDisable = new JobModule(
             $command,
@@ -45,26 +43,24 @@ class JobModuleTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteModuleEnable()
     {
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager =
-            $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class, [], '', false);
-        $cleanupFiles = $this->createMock(\Magento\Framework\App\State\CleanupFiles::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface', [], '', false);
+        $cleanupFiles = $this->getMock('Magento\Framework\App\State\CleanupFiles', [], [], '', false);
         $cleanupFiles->expects($this->once())->method('clearCodeGeneratedFiles');
-        $cache = $this->createMock(\Magento\Framework\App\Cache::class);
+        $cache = $this->getMock('Magento\Framework\App\Cache', [], [], '', false);
         $cache->expects($this->once())->method('clean');
         $valueMap = [
-            [\Magento\Framework\Module\PackageInfoFactory::class],
-            [\Magento\Framework\App\State\CleanupFiles::class, $cleanupFiles],
-            [\Magento\Framework\App\Cache::class, $cache],
+            ['Magento\Framework\Module\PackageInfoFactory'],
+            ['Magento\Framework\App\State\CleanupFiles', $cleanupFiles],
+            ['Magento\Framework\App\Cache', $cache],
         ];
         $objectManager->expects($this->atLeastOnce())->method('get')->will($this->returnValueMap($valueMap));
         $objectManagerProvider->expects($this->once())->method('get')->willReturn($objectManager);
-        $command = $this->createMock(\Magento\Setup\Console\Command\ModuleEnableCommand::class);
+        $command = $this->getMock('Magento\Setup\Console\Command\ModuleEnableCommand', [], [], '', false);
         $command->expects($this->once())->method('run');
-        $status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
+        $status = $this->getMock('Magento\Setup\Model\Cron\Status', [], [], '', false);
         $status->expects($this->atLeastOnce())->method('add');
-        $output =
-            $this->getMockForAbstractClass(\Symfony\Component\Console\Output\OutputInterface::class, [], '', false);
+        $output = $this->getMockForAbstractClass('Symfony\Component\Console\Output\OutputInterface', [], '', false);
         $params['components'][] = ['name' => 'vendor/module'];
         $jobModuleEnable = new JobModule(
             $command,

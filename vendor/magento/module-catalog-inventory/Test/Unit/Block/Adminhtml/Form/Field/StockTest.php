@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Test\Unit\Block\Adminhtml\Form\Field;
@@ -8,7 +8,7 @@ namespace Magento\CatalogInventory\Test\Unit\Block\Adminhtml\Form\Field;
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class StockTest extends \PHPUnit\Framework\TestCase
+class StockTest extends \PHPUnit_Framework_TestCase
 {
     const ATTRIBUTE_NAME = 'quantity_and_stock_status';
 
@@ -39,19 +39,38 @@ class StockTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_factoryElementMock = $this->createMock(\Magento\Framework\Data\Form\Element\Factory::class);
-        $this->_collectionFactoryMock = $this->createMock(
-            \Magento\Framework\Data\Form\Element\CollectionFactory::class
+        $this->_factoryElementMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\Factory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->_qtyMock = $this->createPartialMock(
-            \Magento\Framework\Data\Form\Element\Text::class,
-            ['setForm', 'setValue', 'setName']
+        $this->_collectionFactoryMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\CollectionFactory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->_factoryTextMock = $this->createMock(\Magento\Framework\Data\Form\Element\TextFactory::class);
+        $this->_qtyMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\Text',
+            ['setForm', 'setValue', 'setName'],
+            [],
+            '',
+            false
+        );
+        $this->_factoryTextMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\TextFactory',
+            [],
+            [],
+            '',
+            false
+        );
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_block = $objectManagerHelper->getObject(
-            \Magento\CatalogInventory\Block\Adminhtml\Form\Field\Stock::class,
+            'Magento\CatalogInventory\Block\Adminhtml\Form\Field\Stock',
             [
                 'factoryElement' => $this->_factoryElementMock,
                 'factoryCollection' => $this->_collectionFactoryMock,
@@ -68,13 +87,13 @@ class StockTest extends \PHPUnit\Framework\TestCase
         )->method(
             'setForm'
         )->with(
-            $this->isInstanceOf(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+            $this->isInstanceOf('Magento\Framework\Data\Form\Element\AbstractElement')
         );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_block->setForm(
             $objectManager->getObject(
-                \Magento\Framework\Data\Form\Element\Text::class,
+                'Magento\Framework\Data\Form\Element\Text',
                 [
                     'factoryElement' => $this->_factoryElementMock,
                     'factoryCollection' => $this->_collectionFactoryMock

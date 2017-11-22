@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Save new Attribute Set.
  * 7. Verify created Attribute Set.
  *
- * @group Product_Attributes
+ * @group Product_Attributes_(MX)
  * @ZephyrId MAGETWO-25104
  */
 class CreateAttributeSetEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

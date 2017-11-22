@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Config;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class FileResolverTest extends \PHPUnit\Framework\TestCase
+class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Files resolver
@@ -37,16 +37,27 @@ class FileResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->iteratorFactory = $this->getMockBuilder(\Magento\Framework\Config\FileIteratorFactory::class)
-            ->disableOriginalConstructor()
-            ->setConstructorArgs(['getPath'])
-            ->getMock();
-        $this->filesystem = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryRead']);
-        $this->moduleReader = $this->getMockBuilder(\Magento\Framework\Module\Dir\Reader::class)
-            ->disableOriginalConstructor()
-            ->setConstructorArgs(['getConfigurationFiles'])
-            ->getMock();
-
+        $this->iteratorFactory = $this->getMock(
+            'Magento\Framework\Config\FileIteratorFactory',
+            [],
+            ['getPath'],
+            '',
+            false
+        );
+        $this->filesystem = $this->getMock(
+            'Magento\Framework\Filesystem',
+            ['getDirectoryRead'],
+            [],
+            '',
+            false
+        );
+        $this->moduleReader = $this->getMock(
+            'Magento\Framework\Module\Dir\Reader',
+            [],
+            ['getConfigurationFiles'],
+            '',
+            false
+        );
         $this->model = new \Magento\Framework\App\Config\FileResolver(
             $this->moduleReader,
             $this->filesystem,
@@ -65,7 +76,7 @@ class FileResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetPrimary($filename, $fileList)
     {
         $scope = 'primary';
-        $directory = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
+        $directory = $this->getMock('Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
         $directory->expects(
             $this->once()
         )->method(

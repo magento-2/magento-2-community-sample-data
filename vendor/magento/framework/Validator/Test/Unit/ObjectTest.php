@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Validator\Test\Unit;
 
-class ObjectTest extends \PHPUnit\Framework\TestCase
+class ObjectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Validator\DataObject

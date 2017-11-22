@@ -2,7 +2,7 @@
 /**
  * Scan source code for references to classes and see if they indeed exist
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Test\Integrity;
@@ -11,7 +11,7 @@ use Magento\Framework\App\Utility\Classes;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\App\Utility\Files;
 
-class ClassesTest extends \PHPUnit\Framework\TestCase
+class ClassesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of already found classes to avoid checking them over and over again
@@ -169,7 +169,6 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
         $badClasses = [];
         $badUsages = [];
         foreach ($classes as $class) {
-            $class = trim($class, '\\');
             try {
                 if (strrchr($class, '\\') === false and !Classes::isVirtual($class)) {
                     $badUsages[] = $class;
@@ -188,8 +187,8 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                     );
                 }
                 self::$_existingClasses[$class] = 1;
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
-                $badClasses[] = '\\' . $class;
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
+                $badClasses[] = $class;
             }
         }
         if ($badClasses) {
@@ -210,7 +209,11 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
              * @param array $file
              */
             function ($file) {
-                $relativePath = str_replace(BP . "/", "", $file);
+                $relativePath = str_replace(
+                    Files::init()->getPathToSource() . "/",
+                    "",
+                    $file
+                );
                 // exceptions made for fixture files from tests
                 if (strpos($relativePath, '/_files/') !== false) {
                     return;
@@ -288,12 +291,13 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
              * @param string $file
              */
             function ($file) {
-                $relativePath = str_replace(BP, "", $file);
+                $relativePath = str_replace(
+                    Files::init()->getPathToSource(),
+                    "",
+                    $file
+                );
                 // Due to the examples given with the regex patterns, we skip this test file itself
-                if (preg_match(
-                    '/\/dev\/tests\/static\/testsuite\/Magento\/Test\/Integrity\/ClassesTest.php$/',
-                    $relativePath
-                )) {
+                if ($relativePath == "/dev/tests/static/testsuite/Magento/Test/Integrity/ClassesTest.php") {
                     return;
                 }
                 $contents = file_get_contents($file);
@@ -560,28 +564,45 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
     {
         // Remove usage of classes that do NOT using fully-qualified class names (possibly under same namespace)
         $directories = [
-            BP . '/dev/tools/',
-            BP . '/dev/tests/api-functional/framework/',
-            BP . '/dev/tests/functional/',
-            BP . '/dev/tests/integration/framework/',
-            BP . '/dev/tests/integration/framework/tests/unit/testsuite/',
-            BP . '/dev/tests/integration/testsuite/',
-            BP . '/dev/tests/integration/testsuite/Magento/Test/Integrity/',
-            BP . '/dev/tests/static/framework/',
-            BP . '/dev/tests/static/testsuite/',
-            BP . '/setup/src/',
+            '/dev/tools/',
+            '/dev/tests/api-functional/framework/',
+            '/dev/tests/functional/',
+            '/dev/tests/integration/framework/',
+            '/dev/tests/integration/framework/tests/unit/testsuite/',
+            '/dev/tests/integration/testsuite/',
+            '/dev/tests/integration/testsuite/Magento/Test/Integrity/',
+            '/dev/tests/static/framework/',
+            '/dev/tests/static/testsuite/',
+            '/setup/src/',
         ];
-        $libraryPaths = $componentRegistrar->getPaths(ComponentRegistrar::LIBRARY);
+        $pathToSource = Files::init()->getPathToSource();
+        $libraryPaths = $this->getLibraryPaths($componentRegistrar, $pathToSource);
         $directories = array_merge($directories, $libraryPaths);
         // Full list of directories where there may be namespace classes
         foreach ($directories as $directory) {
-            $fullPath = $directory . $namespacePath . '/' . str_replace('\\', '/', $badClass) . '.php';
+            $fullPath = $pathToSource . $directory . $namespacePath . '/' . str_replace('\\', '/', $badClass) . '.php';
             if (file_exists($fullPath)) {
                 unset($badClasses[array_search($badClass, $badClasses)]);
                 return true;
             }
         }
-        return false;
+    }
+
+    /**
+     * @param ComponentRegistrar $componentRegistrar
+     * @param string $pathToSource
+     * @return array
+     */
+    private function getLibraryPaths($componentRegistrar, $pathToSource)
+    {
+        $libraryPaths = $componentRegistrar->getPaths(ComponentRegistrar::LIBRARY);
+        foreach ($libraryPaths as $key => $libraryPath) {
+            $libraryPath = str_replace($pathToSource, '', $libraryPath);
+            $partsOfLibraryPath = explode('/', $libraryPath);
+            $libraryPaths[$key] = implode('/', array_slice($partsOfLibraryPath, 0, sizeof($partsOfLibraryPath)-2));
+            $libraryPaths[$key] .=  '/';
+        }
+        return $libraryPaths;
     }
 
     /**
@@ -602,13 +623,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
     {
         $files = Files::init();
         $errors = [];
-        $filesToTest = $files->getPhpFiles(Files::INCLUDE_TESTS);
-
-        if (($key = array_search(str_replace('\\', '/', __FILE__), $filesToTest)) !== false) {
-            unset($filesToTest[$key]);
-        }
-
-        foreach ($filesToTest as $file) {
+        foreach ($files->getFiles([BP . '/dev/tests/{integration,unit}'], '*') as $file) {
             $code = file_get_contents($file);
             if (preg_match('/@covers(DefaultClass)?\s+([\w\\\\]+)(::([\w\\\\]+))?/', $code, $matches)) {
                 if ($this->isNonexistentEntityCovered($matches)) {

@@ -34,7 +34,7 @@ class Token implements ProcessorInterface
      *
      * @var array
      */
-    protected $tokens = [];
+    protected $tokens = array();
 
     /**
      * Replacement map
@@ -51,9 +51,10 @@ class Token implements ProcessorInterface
      *                                             to replace it with
      * @param    string $prefix
      * @param    string $suffix
+     * @internal param array $options
      * @return   Token
      */
-    public function __construct($tokens = [], $prefix = '', $suffix = '')
+    public function __construct($tokens = array(), $prefix = '', $suffix = '')
     {
         $this->setTokens($tokens);
         $this->setPrefix($prefix);
@@ -116,7 +117,7 @@ class Token implements ProcessorInterface
         } elseif ($tokens instanceof Config) {
             $this->tokens = $tokens->toArray();
         } elseif ($tokens instanceof Traversable) {
-            $this->tokens = [];
+            $this->tokens = array();
             foreach ($tokens as $key => $val) {
                 $this->tokens[$key] = $val;
             }
@@ -184,7 +185,7 @@ class Token implements ProcessorInterface
             if (!$this->suffix && !$this->prefix) {
                 $this->map = $this->tokens;
             } else {
-                $this->map = [];
+                $this->map = array();
 
                 foreach ($this->tokens as $token => $value) {
                     $this->map[$this->prefix . $token . $this->suffix] = $value;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,6 @@ namespace Magento\Backend\Block\Widget\Grid\Column\Filter;
 class Store extends \Magento\Backend\Block\Widget\Grid\Column\Filter\AbstractFilter
 {
     const ALL_STORE_VIEWS = '0';
-
     /**
      * @var \Magento\Store\Model\System\Store
      */

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Test\Unit\Model\Calculation;
 
-class RateTest extends \PHPUnit\Framework\TestCase
+class RateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -20,18 +20,16 @@ class RateTest extends \PHPUnit\Framework\TestCase
     /**
      *  Init data
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->resourceMock = $this->createPartialMock(
-            \Magento\Framework\Model\ResourceModel\AbstractResource::class,
-            [
-                '_construct',
-                'getConnection',
-                'getIdFieldName',
-                'beginTransaction',
-                'rollBack'
-            ]
+        $this->resourceMock = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\AbstractResource',
+            ['_construct', 'getConnection', 'getIdFieldName', 'beginTransaction',
+                'rollBack'],
+            [],
+            '',
+            false
         );
         $this->resourceMock->expects($this->any())->method('beginTransaction')->will($this->returnSelf());
     }
@@ -46,9 +44,9 @@ class RateTest extends \PHPUnit\Framework\TestCase
      */
     public function testExceptionOfValidation($exceptionMessage, $data)
     {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class, $exceptionMessage);
+        $this->setExpectedException('\Magento\Framework\Exception\LocalizedException', $exceptionMessage);
         $rate = $this->objectHelper->getObject(
-            \Magento\Tax\Model\Calculation\Rate::class,
+            'Magento\Tax\Model\Calculation\Rate',
             ['resource' => $this->resourceMock]
         );
         foreach ($data as $key => $value) {

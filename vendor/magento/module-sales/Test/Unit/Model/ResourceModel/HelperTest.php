@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel;
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class HelperTest
  */
-class HelperTest extends \PHPUnit\Framework\TestCase
+class HelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -38,14 +38,32 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManagerHelper($this);
-        $this->appResource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->appResource = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->resourceHelper = $this->createMock(\Magento\Reports\Model\ResourceModel\Helper::class);
+        $this->resourceHelper = $this->getMock(
+            'Magento\Reports\Model\ResourceModel\Helper',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $this->connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->helper = $objectManager->getObject(
-            \Magento\Sales\Model\ResourceModel\Helper::class,
+            'Magento\Sales\Model\ResourceModel\Helper',
             [
                 'resource' => $this->appResource,
                 'reportsResourceHelper' => $this->resourceHelper

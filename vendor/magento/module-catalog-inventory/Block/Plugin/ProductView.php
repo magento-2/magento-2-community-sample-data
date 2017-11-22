@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Block\Plugin;
@@ -38,7 +38,7 @@ class ProductView
         );
 
         $params = [];
-        $params['minAllowed']  = (float)$stockItem->getMinSaleQty();
+        $params['minAllowed']  = max((float)$stockItem->getQtyMinAllowed(), 1);
         if ($stockItem->getQtyMaxAllowed()) {
             $params['maxAllowed'] = $stockItem->getQtyMaxAllowed();
         }

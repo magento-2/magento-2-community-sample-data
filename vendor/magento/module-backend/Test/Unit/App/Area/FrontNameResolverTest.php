@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\App\Area;
@@ -11,7 +11,7 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 
-class FrontNameResolverTest extends \PHPUnit\Framework\TestCase
+class FrontNameResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\App\Area\FrontNameResolver
@@ -36,13 +36,13 @@ class FrontNameResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DeploymentConfig $deploymentConfigMock */
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfigMock = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfigMock->expects($this->once())
             ->method('get')
             ->with(ConfigOptionsList::CONFIG_PATH_BACKEND_FRONTNAME)
             ->will($this->returnValue($this->_defaultFrontName));
-        $this->configMock = $this->createMock(\Magento\Backend\App\Config::class);
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->configMock = $this->getMock('Magento\Backend\App\Config', [], [], '', false);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
         $this->model = new FrontNameResolver($this->configMock, $deploymentConfigMock, $this->scopeConfigMock);
     }
 

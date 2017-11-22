@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\GiftMessage\Test\Unit\Model\Plugin;
 
 use Magento\GiftMessage\Model\Plugin\OrderSave;
 
-class OrderSaveTest extends \PHPUnit\Framework\TestCase
+class OrderSaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderSave
@@ -57,30 +57,36 @@ class OrderSaveTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->giftMessageOrderRepositoryMock = $this->createMock(
+        $this->giftMessageOrderRepositoryMock = $this->getMock(
             \Magento\GiftMessage\Api\OrderRepositoryInterface::class
         );
-        $this->giftMessageOrderItemRepositoryMock = $this->createMock(
+        $this->giftMessageOrderItemRepositoryMock = $this->getMock(
             \Magento\GiftMessage\Api\OrderItemRepositoryInterface::class
         );
-        $this->orderMock = $this->createMock(
+        $this->orderMock = $this->getMock(
             \Magento\Sales\Api\Data\OrderInterface::class
         );
-        $this->orderExtensionMock = $this->createPartialMock(
+        $this->orderExtensionMock = $this->getMock(
             \Magento\Sales\Api\Data\OrderExtension::class,
-            ['getGiftMessage', 'setGiftMessage']
+            ['getGiftMessage', 'setGiftMessage'],
+            [],
+            '',
+            false
         );
-        $this->giftMessageMock = $this->createMock(
+        $this->giftMessageMock = $this->getMock(
             \Magento\GiftMessage\Api\Data\MessageInterface::class
         );
-        $this->orderItemMock = $this->createMock(
+        $this->orderItemMock = $this->getMock(
             \Magento\Sales\Api\Data\OrderItemInterface::class
         );
-        $this->orderItemExtensionMock = $this->createPartialMock(
+        $this->orderItemExtensionMock = $this->getMock(
             \Magento\Sales\Api\Data\OrderItemExtension::class,
-            ['setGiftMessage', 'getGiftMessage']
+            ['setGiftMessage', 'getGiftMessage'],
+            [],
+            '',
+            false
         );
-        $this->orderRepositoryMock = $this->createMock(
+        $this->orderRepositoryMock = $this->getMock(
             \Magento\Sales\Api\OrderRepositoryInterface::class
         );
 

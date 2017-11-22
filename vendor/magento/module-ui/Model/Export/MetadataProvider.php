@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Model\Export;
@@ -14,9 +14,6 @@ use Magento\Ui\Component\MassAction\Filter;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class MetadataProvider
 {
     /**
@@ -98,9 +95,7 @@ class MetadataProvider
         if (!isset($this->columns[$component->getName()])) {
             $columns = $this->getColumnsComponent($component);
             foreach ($columns->getChildComponents() as $column) {
-                if ($column->getData('config/label') && $column->getData('config/dataType') !== 'actions') {
-                    $this->columns[$component->getName()][$column->getName()] = $column;
-                }
+                $this->columns[$component->getName()][$column->getName()] = $column;
             }
         }
         return $this->columns[$component->getName()];
@@ -116,7 +111,9 @@ class MetadataProvider
     {
         $row = [];
         foreach ($this->getColumns($component) as $column) {
-            $row[] = $column->getData('config/label');
+            if ($column->getData('config/label')) {
+                $row[] = $column->getData('config/label');
+            }
         }
         return $row;
     }
@@ -131,7 +128,9 @@ class MetadataProvider
     {
         $row = [];
         foreach ($this->getColumns($component) as $column) {
-            $row[] = $column->getName();
+            if ($column->getData('config/label')) {
+                $row[] = $column->getName();
+            }
         }
         return $row;
     }

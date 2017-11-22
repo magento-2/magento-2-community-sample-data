@@ -1,15 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Address;
 
+use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Directory\Model\CountryFactory;
-use Magento\Eav\Model\Config as EavConfig;
-use Magento\Framework\App\ObjectManager;
-use Magento\Sales\Model\Order\Address;
 
 /**
  * Class Validator
@@ -26,6 +24,7 @@ class Validator
         'street' => 'Street',
         'city' => 'City',
         'email' => 'Email',
+        'telephone' => 'Phone Number',
         'country_id' => 'Country',
         'firstname' => 'First Name',
         'address_type' => 'Address Type',
@@ -42,36 +41,15 @@ class Validator
     protected $countryFactory;
 
     /**
-     * @var EavConfig
-     */
-    protected $eavConfig;
-
-    /**
      * @param DirectoryHelper $directoryHelper
-     * @param CountryFactory  $countryFactory
-     * @param EavConfig       $eavConfig
+     * @param CountryFactory $countryFactory
      */
     public function __construct(
         DirectoryHelper $directoryHelper,
-        CountryFactory $countryFactory,
-        EavConfig $eavConfig = null
+        CountryFactory $countryFactory
     ) {
         $this->directoryHelper = $directoryHelper;
         $this->countryFactory = $countryFactory;
-        $this->eavConfig = $eavConfig ?: ObjectManager::getInstance()
-            ->get(EavConfig::class);
-
-        if ($this->isTelephoneRequired()) {
-            $this->required['telephone'] = 'Phone Number';
-        }
-
-        if ($this->isCompanyRequired()) {
-            $this->required['company'] = 'Company';
-        }
-
-        if ($this->isFaxRequired()) {
-            $this->required['fax'] = 'Fax';
-        }
     }
 
     /**
@@ -125,23 +103,8 @@ class Validator
         if ($this->isEmpty($address->getCity())) {
             $errors[] = __('Please enter the city.');
         }
-
-        if ($this->isTelephoneRequired()) {
-            if ($this->isEmpty($address->getTelephone())) {
-                $errors[] = __('Please enter the phone number.');
-            }
-        }
-
-        if ($this->isCompanyRequired()) {
-            if ($this->isEmpty($address->getCompany())) {
-                $errors[] = __('Please enter the company.');
-            }
-        }
-
-        if ($this->isFaxRequired()) {
-            if ($this->isEmpty($address->getFax())) {
-                $errors[] = __('Please enter the fax number.');
-            }
+        if ($this->isEmpty($address->getTelephone())) {
+            $errors[] = __('Please enter the phone number.');
         }
 
         $countryId = $address->getCountryId();
@@ -191,29 +154,5 @@ class Validator
     {
         $country = $this->countryFactory->create()->load($countryId);
         return $this->directoryHelper->isRegionRequired($countryId) && $country->getRegionCollection()->getSize();
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isTelephoneRequired()
-    {
-        return ($this->eavConfig->getAttribute('customer_address', 'telephone')->getIsRequired());
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isCompanyRequired()
-    {
-        return ($this->eavConfig->getAttribute('customer_address', 'company')->getIsRequired());
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isFaxRequired()
-    {
-        return ($this->eavConfig->getAttribute('customer_address', 'fax')->getIsRequired());
     }
 }

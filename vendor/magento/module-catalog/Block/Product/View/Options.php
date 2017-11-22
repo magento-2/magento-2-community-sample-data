@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,7 @@ namespace Magento\Catalog\Block\Product\View;
 use Magento\Catalog\Model\Product;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Options extends \Magento\Framework\View\Element\Template
 {
@@ -210,10 +208,12 @@ class Options extends \Magento\Framework\View\Element\Template
         $config = [];
         foreach ($this->getOptions() as $option) {
             /* @var $option \Magento\Catalog\Model\Product\Option */
-            if ($option->hasValues()) {
+            if ($option->getGroupByType() == \Magento\Catalog\Model\Product\Option::OPTION_GROUP_SELECT) {
                 $tmpPriceValues = [];
-                foreach ($option->getValues() as $valueId => $value) {
-                    $tmpPriceValues[$valueId] = $this->_getPriceConfiguration($value);
+                foreach ($option->getValues() as $value) {
+                    /* @var $value \Magento\Catalog\Model\Product\Option\Value */
+                    $id = $value->getId();
+                    $tmpPriceValues[$id] = $this->_getPriceConfiguration($value);
                 }
                 $priceValue = $tmpPriceValues;
             } else {

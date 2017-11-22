@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\I18n\Dictionary;
 
 use \Magento\Setup\Module\I18n\Dictionary\Phrase;
 
-class PhraseTest extends \PHPUnit\Framework\TestCase
+class PhraseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $constructArguments
@@ -17,7 +17,8 @@ class PhraseTest extends \PHPUnit\Framework\TestCase
      */
     public function testPhraseCreation($constructArguments, $getter, $result)
     {
-        $phrase = new Phrase(...array_values($constructArguments));
+        $reflectionClass = new \ReflectionClass('Magento\Setup\Module\I18n\Dictionary\Phrase');
+        $phrase = $reflectionClass->newInstanceArgs($constructArguments);
         $this->assertEquals($result, $phrase->{$getter}());
     }
 
@@ -55,9 +56,10 @@ class PhraseTest extends \PHPUnit\Framework\TestCase
      */
     public function testWrongParametersWhilePhraseCreation($constructArguments, $message)
     {
-        $this->expectException('DomainException', $message);
+        $this->setExpectedException('DomainException', $message);
 
-        new Phrase(...array_values($constructArguments));
+        $reflectionClass = new \ReflectionClass('Magento\Setup\Module\I18n\Dictionary\Phrase');
+        $reflectionClass->newInstanceArgs($constructArguments);
     }
 
     /**

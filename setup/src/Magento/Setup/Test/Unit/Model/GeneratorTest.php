@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\Generator;
 
-class GeneratorTest extends \PHPUnit\Framework\TestCase
+class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test

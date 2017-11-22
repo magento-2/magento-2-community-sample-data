@@ -1,15 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Asset\PreProcessor;
 
-/**
- * Interface ChainFactoryInterface
- *
- * @api
- */
 interface ChainFactoryInterface
 {
     /**

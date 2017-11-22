@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Product\Option\Type\File;
@@ -38,7 +38,7 @@ abstract class Validator
         \Magento\Framework\File\Size $fileSize
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->rootDirectory = $filesystem->getDirectoryRead(DirectoryList::MEDIA);
+        $this->rootDirectory = $filesystem->getDirectoryRead(DirectoryList::ROOT);
         $this->fileSize = $fileSize;
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Totals;
@@ -17,7 +17,11 @@ class Discount extends \Magento\Sales\Block\Adminhtml\Order\Create\Totals\Defaul
 {
     //protected $_template = 'tax/checkout/subtotal.phtml';
 
-    //protected $_template = 'tax/checkout/subtotal.phtml';
+    /**
+     * Tax config
+     *
+     * @var \Magento\Tax\Model\Config
+     */
     protected $_taxConfig;
 
     /**

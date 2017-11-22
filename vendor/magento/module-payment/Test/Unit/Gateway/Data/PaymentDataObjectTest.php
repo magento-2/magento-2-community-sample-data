@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Gateway\Data;
@@ -12,7 +12,7 @@ use Magento\Payment\Model\InfoInterface;
 /**
  * Class PaymentDataObjectTest
  */
-class PaymentDataObjectTest extends \PHPUnit\Framework\TestCase
+class PaymentDataObjectTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PaymentDataObject */
     protected $model;
@@ -29,10 +29,10 @@ class PaymentDataObjectTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->orderMock = $this->getMockBuilder(\Magento\Payment\Gateway\Data\OrderAdapterInterface::class)
+        $this->orderMock = $this->getMockBuilder('Magento\Payment\Gateway\Data\OrderAdapterInterface')
             ->getMockForAbstractClass();
 
-        $this->paymentMock = $this->getMockBuilder(\Magento\Payment\Model\InfoInterface::class)
+        $this->paymentMock = $this->getMockBuilder('Magento\Payment\Model\InfoInterface')
             ->getMockForAbstractClass();
 
         $this->model = new PaymentDataObject($this->orderMock, $this->paymentMock);

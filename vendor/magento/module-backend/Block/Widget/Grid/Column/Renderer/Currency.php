@@ -1,16 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 
 /**
  * Backend grid item renderer currency
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {

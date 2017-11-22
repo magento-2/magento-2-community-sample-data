@@ -1,35 +1,22 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'jquery',
     'underscore',
     'mageUtils',
-    'rjsResolver',
-    'uiLayout',
+    'uiElement',
     'Magento_Ui/js/modal/alert',
-    'mage/translate',
-    'uiElement'
-], function ($, _, utils, resolver, layout, alert, $t, Element) {
+    'mage/translate'
+], function ($, _, utils, Element, alert, $t) {
     'use strict';
 
     return Element.extend({
         defaults: {
-            firstLoad: true,
-            storageConfig: {
-                component: 'Magento_Ui/js/grid/data-storage',
-                provider: '${ $.storageConfig.name }',
-                name: '${ $.name }_storage',
-                updateUrl: '${ $.update_url }'
-            },
             listens: {
-                params: 'onParamsChange',
-                requestConfig: 'updateRequestConfig'
+                params: 'reload'
             }
         },
 
@@ -39,37 +26,20 @@ define([
          * @returns {Provider} Chainable.
          */
         initialize: function () {
-            utils.limit(this, 'onParamsChange', 5);
+            utils.limit(this, 'reload', 300);
             _.bindAll(this, 'onReload');
 
-            this._super()
-                .initStorage()
-                .clearData();
-
-            // Load data when there will
-            // be no more pending assets.
-            resolver(this.reload, this);
-
-            return this;
+            return this._super();
         },
 
         /**
-         * Initializes storage component.
+         * Initializes provider config.
          *
          * @returns {Provider} Chainable.
          */
-        initStorage: function () {
-            layout([this.storageConfig]);
+        initConfig: function () {
+            this._super();
 
-            return this;
-        },
-
-        /**
-         * Clears provider's data properties.
-         *
-         * @returns {Provider} Chainable.
-         */
-        clearData: function () {
             this.setData({
                 items: [],
                 totalRecords: 0
@@ -79,9 +49,8 @@ define([
         },
 
         /**
-         * Overrides current data with a provided one.
          *
-         * @param {Object} data - New data object.
+         * @param {Object} data
          * @returns {Provider} Chainable.
          */
         setData: function (data) {
@@ -90,6 +59,28 @@ define([
             this.set('data', data);
 
             return this;
+        },
+
+        /**
+         * Reloads data with current parameters.
+         */
+        reload: function () {
+            this.trigger('reload');
+
+            if (this.request && this.request.readyState !== 4) {
+                this.request.abort();
+            }
+
+            this.request = $.ajax({
+                url: this['update_url'],
+                method: 'GET',
+                data: this.get('params'),
+                dataType: 'json'
+            });
+
+            this.request
+                .done(this.onReload)
+                .error(this.onError);
         },
 
         /**
@@ -106,34 +97,6 @@ define([
             });
 
             return data;
-        },
-
-        /**
-         * Reloads data with current parameters.
-         *
-         * @returns {Promise} Reload promise object.
-         */
-        reload: function (options) {
-            var request = this.storage().getData(this.params, options);
-
-            this.trigger('reload');
-
-            request
-                .done(this.onReload)
-                .fail(this.onError);
-
-            return request;
-        },
-
-        /**
-         * Handles changes of 'params' object.
-         */
-        onParamsChange: function () {
-            // It's necessary to make a reload only
-            // after the initial loading has been made.
-            if (!this.firstLoad) {
-                this.reload();
-            }
         },
 
         /**
@@ -155,21 +118,8 @@ define([
          * @param {Object} data - Retrieved data object.
          */
         onReload: function (data) {
-            this.firstLoad = false;
-
             this.setData(data)
                 .trigger('reloaded');
-        },
-
-        /**
-         * Updates storage's request configuration
-         *
-         * @param {Object} requestConfig
-         */
-        updateRequestConfig: function (requestConfig) {
-            if (this.storage()) {
-                _.extend(this.storage().requestConfig, requestConfig);
-            }
         }
     });
 });

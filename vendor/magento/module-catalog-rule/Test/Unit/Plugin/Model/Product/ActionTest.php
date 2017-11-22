@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Model\Product;
 
 use \Magento\CatalogRule\Plugin\Model\Product\Action;
 
-class ActionTest extends \PHPUnit\Framework\TestCase
+class ActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\CatalogRule\Plugin\Model\Product\Action */
     protected $action;
@@ -19,7 +19,7 @@ class ActionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->productRuleProcessor = $this->getMockBuilder(
-            \Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor::class
+            'Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor'
         )->disableOriginalConstructor()
         ->setMethods(['reindexList'])
         ->getMock();
@@ -29,12 +29,12 @@ class ActionTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterUpdateAttributes()
     {
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\Product\Action')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
+        $result = $this->getMockBuilder('Magento\Catalog\Model\Product\Action')
             ->disableOriginalConstructor()
             ->setMethods(['getAttributesData', 'getProductIds'])
             ->getMock();
@@ -55,12 +55,12 @@ class ActionTest extends \PHPUnit\Framework\TestCase
     public function testAfterUpdateAttributesWithPrice()
     {
         $productIds = [1, 2, 3];
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
+        $subject = $this->getMockBuilder('Magento\Catalog\Model\Product\Action')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
+        $result = $this->getMockBuilder('Magento\Catalog\Model\Product\Action')
             ->disableOriginalConstructor()
             ->setMethods(['getAttributesData', 'getProductIds'])
             ->getMock();

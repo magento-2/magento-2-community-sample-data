@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -33,11 +33,11 @@ class ConfigTest extends \Magento\Framework\TestFramework\Unit\BaseTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMockForAbstractClass();
-        $this->appStateMock = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $this->appStateMock = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = new Config($this->scopeConfigMock, $this->appStateMock);

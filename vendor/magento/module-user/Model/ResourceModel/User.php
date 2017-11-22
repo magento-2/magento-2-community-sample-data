@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,20 +9,19 @@ namespace Magento\User\Model\ResourceModel;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use Magento\Authorization\Model\Acl\Role\User as RoleUser;
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Framework\Acl\Data\CacheInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\User\Model\Backend\Config\ObserverConfig;
 use Magento\User\Model\User as ModelUser;
 
 /**
  * ACL user resource
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     * @var \Magento\Framework\Acl\CacheInterface
+     */
+    protected $_aclCache;
+
     /**
      * Role model
      *
@@ -36,38 +35,33 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $dateTime;
 
     /**
-     * @var CacheInterface
+     * Users table
+     *
+     * @var string
      */
-    private $aclDataCache;
-
-    /**
-     * @var ObserverConfig|null
-     */
-    private $observerConfig;
+    protected $_usersTable;
 
     /**
      * Construct
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Framework\Acl\CacheInterface $aclCache
      * @param \Magento\Authorization\Model\RoleFactory $roleFactory
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param string $connectionName
-     * @param CacheInterface $aclDataCache
-     * @param ObserverConfig|null $observerConfig
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\Acl\CacheInterface $aclCache,
         \Magento\Authorization\Model\RoleFactory $roleFactory,
         \Magento\Framework\Stdlib\DateTime $dateTime,
-        $connectionName = null,
-        CacheInterface $aclDataCache = null,
-        ObserverConfig $observerConfig = null
+        $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
+        $this->_aclCache = $aclCache;
         $this->_roleFactory = $roleFactory;
         $this->dateTime = $dateTime;
-        $this->aclDataCache = $aclDataCache ?: ObjectManager::getInstance()->get(CacheInterface::class);
-        $this->observerConfig = $observerConfig ?: ObjectManager::getInstance()->get(ObserverConfig::class);
+        $this->_usersTable = $this->getTable('admin_user');
     }
 
     /**
@@ -155,12 +149,9 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $select = $connection->select();
             $select->from($this->getTable('authorization_role'))
                 ->where('parent_id > :parent_id')
-                ->where('user_id = :user_id')
-                ->where('user_type = :user_type');
+                ->where('user_id = :user_id');
 
-            $binds = ['parent_id' => 0, 'user_id' => $userId,
-                      'user_type' => UserContextInterface::USER_TYPE_ADMIN
-            ];
+            $binds = ['parent_id' => 0, 'user_id' => $userId];
 
             return $connection->fetchAll($select, $binds);
         } else {
@@ -176,7 +167,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $user)
     {
-        $user->setExtra($this->getSerializer()->unserialize($user->getExtra()));
+        $user->setExtra(unserialize($user->getExtra()));
         if ($user->hasRoleId()) {
             $this->_clearUserRoles($user);
             $this->_createUserRole($user->getRoleId(), $user);
@@ -192,7 +183,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _clearUserRoles(ModelUser $user)
     {
-        $conditions = ['user_id = ?' => (int)$user->getId(), 'user_type = ?' => UserContextInterface::USER_TYPE_ADMIN];
+        $conditions = ['user_id = ?' => (int)$user->getId()];
         $this->getConnection()->delete($this->getTable('authorization_role'), $conditions);
     }
 
@@ -228,7 +219,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             $insertData = $this->_prepareDataForTable($data, $this->getTable('authorization_role'));
             $this->getConnection()->insert($this->getTable('authorization_role'), $insertData);
-            $this->aclDataCache->clean();
+            $this->_aclCache->clean();
         }
     }
 
@@ -241,7 +232,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $user)
     {
         if (is_string($user->getExtra())) {
-            $user->setExtra($this->getSerializer()->unserialize($user->getExtra()));
+            $user->setExtra(unserialize($user->getExtra()));
         }
         return parent::_afterLoad($user);
     }
@@ -261,13 +252,13 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $uid = $user->getId();
         $connection->beginTransaction();
         try {
-            $connection->delete($this->getMainTable(), ['user_id = ?' => $uid]);
-            $connection->delete(
-                $this->getTable('authorization_role'),
-                ['user_id = ?' => $uid, 'user_type = ?' => UserContextInterface::USER_TYPE_ADMIN]
-            );
+            $conditions = ['user_id = ?' => $uid];
+
+            $connection->delete($this->getMainTable(), $conditions);
+            $connection->delete($this->getTable('authorization_role'), $conditions);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             throw $e;
+            return false;
         } catch (\Exception $e) {
             $connection->rollBack();
             return false;
@@ -301,13 +292,9 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ['role_id']
         )->where(
             "{$table}.user_id = :user_id"
-        )->where(
-            "{$table}.user_type = :user_type"
         );
 
-        $binds = ['user_id' => (int)$user->getId(),
-                  'user_type' => UserContextInterface::USER_TYPE_ADMIN
-        ];
+        $binds = ['user_id' => (int)$user->getId()];
 
         $roles = $connection->fetchCol($select, $binds);
 
@@ -335,11 +322,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $dbh = $this->getConnection();
 
-        $condition = [
-            'user_id = ?' => (int)$user->getId(),
-            'parent_id = ?' => (int)$user->getRoleId(),
-            'user_type = ?' => UserContextInterface::USER_TYPE_ADMIN
-        ];
+        $condition = ['user_id = ?' => (int)$user->getId(), 'parent_id = ?' => (int)$user->getRoleId()];
 
         $dbh->delete($this->getTable('authorization_role'), $condition);
         return $this;
@@ -358,16 +341,9 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             $dbh = $this->getConnection();
 
-            $binds = [
-                'parent_id' => $user->getRoleId(),
-                'user_id' => $user->getUserId(),
-                'user_type' => UserContextInterface::USER_TYPE_ADMIN
-            ];
+            $binds = ['parent_id' => $user->getRoleId(), 'user_id' => $user->getUserId()];
 
-            $select = $dbh->select()->from($roleTable)
-                ->where('parent_id = :parent_id')
-                ->where('user_type = :user_type')
-                ->where('user_id = :user_id');
+            $select = $dbh->select()->from($roleTable)->where('parent_id = :parent_id')->where('user_id = :user_id');
 
             return $dbh->fetchCol($select, $binds);
         } else {
@@ -479,7 +455,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         if (sizeof($users) > 0) {
             $bind = ['reload_acl_flag' => 1];
             $where = ['user_id IN(?)' => $users];
-            $rowsCount = $connection->update($this->getTable('admin_user'), $bind, $where);
+            $rowsCount = $connection->update($this->_usersTable, $bind, $where);
         }
 
         return $rowsCount > 0;
@@ -569,14 +545,12 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 ->select()
                 ->from($table, 'password_id')
                 ->where('user_id = :user_id')
+                ->order('expires ' . \Magento\Framework\DB\Select::SQL_DESC)
                 ->order('password_id ' . \Magento\Framework\DB\Select::SQL_DESC)
                 ->limit($retainLimit),
             [':user_id' => $userId]
         );
-        $where = [
-            'user_id = ?' => $userId,
-            'last_updated <= ?' => time() - $this->observerConfig->getAdminPasswordLifetime()
-        ];
+        $where = ['user_id = ?' => $userId, 'expires <= ?' => time()];
         if ($retainPasswordIds) {
             $where['password_id NOT IN (?)'] = $retainPasswordIds;
         }
@@ -597,21 +571,19 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param ModelUser $user
      * @param string $passwordHash
-     * @param int $lifetime deprecated, password expiration date doesn't save anymore,
-     *        it is calculated in runtime based on password created date and lifetime config value
+     * @param int $lifetime
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @see \Magento\User\Model\Backend\Config\ObserverConfig::_isLatestPasswordExpired()
      */
-    public function trackPassword($user, $passwordHash, $lifetime = 0)
+    public function trackPassword($user, $passwordHash, $lifetime)
     {
+        $now = time();
         $this->getConnection()->insert(
             $this->getTable('admin_passwords'),
             [
                 'user_id' => $user->getId(),
                 'password_hash' => $passwordHash,
-                'last_updated' => time()
+                'expires' => $now + $lifetime,
+                'last_updated' => $now
             ]
         );
     }

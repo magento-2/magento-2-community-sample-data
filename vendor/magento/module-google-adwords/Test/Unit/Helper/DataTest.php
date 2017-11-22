@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GoogleAdwords\Test\Unit\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -24,7 +24,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $className = \Magento\GoogleAdwords\Helper\Data::class;
+        $className = 'Magento\GoogleAdwords\Helper\Data';
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = $objectManager->getConstructArguments($className);
         $this->_helper = $objectManager->getObject($className, $arguments);

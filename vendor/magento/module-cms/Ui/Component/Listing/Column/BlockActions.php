@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Ui\Component\Listing\Column;
@@ -30,6 +30,8 @@ class BlockActions extends Column
     protected $urlBuilder;
 
     /**
+     * Escaper.
+     *
      * @var Escaper
      */
     private $escaper;
@@ -55,7 +57,7 @@ class BlockActions extends Column
     }
 
     /**
-     * Prepare Data Source
+     * Prepare Data Source.
      *
      * @param array $dataSource
      * @return array
@@ -86,9 +88,9 @@ class BlockActions extends Column
                             'label' => __('Delete'),
                             'confirm' => [
                                 'title' => __('Delete %1', $title),
-                                'message' => __('Are you sure you want to delete a %1 record?', $title)
-                            ]
-                        ]
+                                'message' => __('Are you sure you wan\'t to delete a %1 record?', $title),
+                            ],
+                        ],
                     ];
                 }
             }
@@ -98,15 +100,17 @@ class BlockActions extends Column
     }
 
     /**
-     * Get instance of escaper
+     * Get instance of escaper.
+     *
      * @return Escaper
-     * @deprecated 101.0.7
+     * @deprecated
      */
     private function getEscaper()
     {
         if (!$this->escaper) {
             $this->escaper = ObjectManager::getInstance()->get(Escaper::class);
         }
+
         return $this->escaper;
     }
 }

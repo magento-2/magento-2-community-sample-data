@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 use Magento\Customer\Model\CustomerRegistry;
 
 /** @var \Magento\Customer\Model\Customer $customer */
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Customer\Model\Customer::class);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Customer::class);
 /** @var CustomerRegistry $customerRegistry */
 $customerRegistry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(CustomerRegistry::class);
 
@@ -26,15 +26,12 @@ $customer->setData($customerData);
 $customer->setId(1);
 
 /** @var \Magento\Customer\Model\Address $addressOne  */
-$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
 $addressOneData = [
     'firstname' => 'test firstname',
     'lastname' => 'test lastname',
     'street' => ['test street'],
     'city' => 'test city',
-    'region_id' => 10,
     'country_id' => 'US',
     'postcode' => '01001',
     'telephone' => '+7000000001',
@@ -44,15 +41,12 @@ $addressOne->setData($addressOneData);
 $customer->addAddress($addressOne);
 
 /** @var \Magento\Customer\Model\Address $addressTwo  */
-$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
 $addressTwoData = [
     'firstname' => 'test firstname',
     'lastname' => 'test lastname',
     'street' => ['test street'],
     'city' => 'test city',
-    'region_id' => 10,
     'country_id' => 'US',
     'postcode' => '01001',
     'telephone' => '+7000000001',
@@ -62,15 +56,12 @@ $addressTwo->setData($addressTwoData);
 $customer->addAddress($addressTwo);
 
 /** @var \Magento\Customer\Model\Address $addressThree  */
-$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
 $addressThreeData = [
     'firstname' => 'removed firstname',
     'lastname' => 'removed lastname',
     'street' => ['removed street'],
     'city' => 'removed city',
-    'region_id' => 10,
     'country_id' => 'US',
     'postcode' => '01001',
     'telephone' => '+7000000001',

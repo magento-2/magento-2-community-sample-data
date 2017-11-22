@@ -1,21 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
+/**
+ * Currency model
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
+ */
 namespace Magento\Directory\Model;
 
 use Magento\Framework\Exception\InputException;
 use Magento\Directory\Model\Currency\Filter;
 
 /**
- * Currency model
- *
- * @api
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Currency extends \Magento\Framework\Model\AbstractModel
 {
@@ -109,7 +109,7 @@ class Currency extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Directory\Model\ResourceModel\Currency::class);
+        $this->_init('Magento\Directory\Model\ResourceModel\Currency');
     }
 
     /**
@@ -172,12 +172,19 @@ class Currency extends \Magento\Framework\Model\AbstractModel
     /**
      * Get currency rate (only base => allowed)
      *
-     * @param mixed $toCurrency
+     * @param string $toCurrency
      * @return float
+     * @throws \Magento\Framework\Exception\InputException
      */
     public function getRate($toCurrency)
     {
-        $code = $this->getCurrencyCodeFromToCurrency($toCurrency);
+        if (is_string($toCurrency)) {
+            $code = $toCurrency;
+        } elseif ($toCurrency instanceof \Magento\Directory\Model\Currency) {
+            $code = $toCurrency->getCurrencyCode();
+        } else {
+            throw new InputException(__('Please correct the target currency.'));
+        }
         $rates = $this->getRates();
         if (!isset($rates[$code])) {
             $rates[$code] = $this->_getResource()->getRate($this->getCode(), $toCurrency);
@@ -189,12 +196,19 @@ class Currency extends \Magento\Framework\Model\AbstractModel
     /**
      * Get currency rate (base=>allowed or allowed=>base)
      *
-     * @param mixed $toCurrency
+     * @param string $toCurrency
      * @return float
+     * @throws \Magento\Framework\Exception\InputException
      */
     public function getAnyRate($toCurrency)
     {
-        $code = $this->getCurrencyCodeFromToCurrency($toCurrency);
+        if (is_string($toCurrency)) {
+            $code = $toCurrency;
+        } elseif ($toCurrency instanceof \Magento\Directory\Model\Currency) {
+            $code = $toCurrency->getCurrencyCode();
+        } else {
+            throw new InputException(__('Please correct the target currency.'));
+        }
         $rates = $this->getRates();
         if (!isset($rates[$code])) {
             $rates[$code] = $this->_getResource()->getAnyRate($this->getCode(), $toCurrency);
@@ -207,7 +221,7 @@ class Currency extends \Magento\Framework\Model\AbstractModel
      * Convert price to currency format
      *
      * @param   float $price
-     * @param   mixed $toCurrency
+     * @param   string $toCurrency
      * @return  float
      * @throws \Exception
      */
@@ -219,28 +233,7 @@ class Currency extends \Magento\Framework\Model\AbstractModel
             return $price * $rate;
         }
 
-        throw new \Exception(__(
-            'Undefined rate from "%1-%2".',
-            $this->getCode(),
-            $this->getCurrencyCodeFromToCurrency($toCurrency)
-        ));
-    }
-
-    /**
-     * @param mixed $toCurrency
-     * @return string
-     * @throws \Magento\Framework\Exception\InputException
-     */
-    private function getCurrencyCodeFromToCurrency($toCurrency)
-    {
-        if (is_string($toCurrency)) {
-            $code = $toCurrency;
-        } elseif ($toCurrency instanceof \Magento\Directory\Model\Currency) {
-            $code = $toCurrency->getCurrencyCode();
-        } else {
-            throw new InputException(__('Please correct the target currency.'));
-        }
-        return $code;
+        throw new \Exception(__('Undefined rate from "%1-%2".', $this->getCode(), $toCurrency->getCode()));
     }
 
     /**
@@ -337,7 +330,7 @@ class Currency extends \Magento\Framework\Model\AbstractModel
     {
         $formatted = $this->formatTxt(0);
         $number = $this->formatTxt(0, ['display' => \Magento\Framework\Currency::NO_SYMBOL]);
-        return str_replace($this->trimUnicodeDirectionMark($number), '%s', $formatted);
+        return str_replace($number, '%s', $formatted);
     }
 
     /**
@@ -408,19 +401,5 @@ class Currency extends \Magento\Framework\Model\AbstractModel
     {
         $this->_getResource()->saveRates($rates);
         return $this;
-    }
-
-    /**
-     * This method removes LRM and RLM marks from string
-     *
-     * @param string $string
-     * @return $this
-     */
-    private function trimUnicodeDirectionMark($string)
-    {
-        if (preg_match('/^(\x{200E}|\x{200F})/u', $string, $match)) {
-            $string = preg_replace('/^'.$match[1].'/u', '', $string);
-        }
-        return $string;
     }
 }

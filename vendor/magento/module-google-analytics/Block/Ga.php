@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,13 +8,8 @@
 
 namespace Magento\GoogleAnalytics\Block;
 
-use Magento\Framework\App\ObjectManager;
-
 /**
  * GoogleAnalytics Page Block
- *
- * @api
- * @since 100.0.2
  */
 class Ga extends \Magento\Framework\View\Element\Template
 {
@@ -31,27 +26,19 @@ class Ga extends \Magento\Framework\View\Element\Template
     protected $_salesOrderCollection;
 
     /**
-     * @var \Magento\Cookie\Helper\Cookie
-     */
-    private $cookieHelper;
-
-    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $salesOrderCollection
      * @param \Magento\GoogleAnalytics\Helper\Data $googleAnalyticsData
      * @param array $data
-     * @param \Magento\Cookie\Helper\Cookie|null $cookieHelper
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $salesOrderCollection,
         \Magento\GoogleAnalytics\Helper\Data $googleAnalyticsData,
-        array $data = [],
-        \Magento\Cookie\Helper\Cookie $cookieHelper = null
+        array $data = []
     ) {
         $this->_googleAnalyticsData = $googleAnalyticsData;
         $this->_salesOrderCollection = $salesOrderCollection;
-        $this->cookieHelper = $cookieHelper ?: ObjectManager::getInstance()->get(\Magento\Cookie\Helper\Cookie::class);
         parent::__construct($context, $data);
     }
 
@@ -84,17 +71,18 @@ class Ga extends \Magento\Framework\View\Element\Template
      * @return string
      * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference#set
      * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference#gaObjectMethods
-     * @deprecated 100.2.0 please use getPageTrackingData method
      */
     public function getPageTrackingCode($accountId)
     {
-        $anonymizeIp = "";
-        if ($this->_googleAnalyticsData->isAnonymizedIpActive()) {
-            $anonymizeIp = "\nga('set', 'anonymizeIp', true);";
+        $pageName = trim($this->getPageName());
+        $optPageURL = '';
+        if ($pageName && substr($pageName, 0, 1) == '/' && strlen($pageName) > 1) {
+            $optPageURL = ", '{$this->escapeJsQuote($pageName)}'";
         }
 
-        return "\nga('create', '" . $this->escapeHtmlAttr($accountId, false)
-           . "', 'auto');{$anonymizeIp}\nga('send', 'pageview'{$this->getOptPageUrl()});\n";
+        return "\nga('create', '{$this->escapeJsQuote(
+            $accountId
+        )}', 'auto');\nga('send', 'pageview'{$optPageURL});\n";
     }
 
     /**
@@ -105,7 +93,6 @@ class Ga extends \Magento\Framework\View\Element\Template
      * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce#transaction
      *
      * @return string|void
-     * @deprecated 100.2.0 please use getOrdersTrackingData method
      */
     public function getOrdersTrackingCode()
     {
@@ -119,8 +106,13 @@ class Ga extends \Magento\Framework\View\Element\Template
         $result = [];
 
         $result[] = "ga('require', 'ec', 'ec.js');";
-
         foreach ($collection as $order) {
+            if ($order->getIsVirtual()) {
+                $address = $order->getBillingAddress();
+            } else {
+                $address = $order->getShippingAddress();
+            }
+
             foreach ($order->getAllVisibleItems() as $item) {
                 $result[] = sprintf(
                     "ga('ec:addProduct', {
@@ -129,8 +121,8 @@ class Ga extends \Magento\Framework\View\Element\Template
                         'price': '%s',
                         'quantity': %s
                     });",
-                    $this->escapeJs($item->getSku()),
-                    $this->escapeJs($item->getName()),
+                    $this->escapeJsQuote($item->getSku()),
+                    $this->escapeJsQuote($item->getName()),
                     $item->getBasePrice(),
                     $item->getQtyOrdered()
                 );
@@ -145,7 +137,7 @@ class Ga extends \Magento\Framework\View\Element\Template
                     'shipping': '%s'
                 });",
                 $order->getIncrementId(),
-                $this->escapeJs($this->_storeManager->getStore()->getFrontendName()),
+                $this->escapeJsQuote($this->_storeManager->getStore()->getFrontendName()),
                 $order->getBaseGrandTotal(),
                 $order->getBaseTaxAmount(),
                 $order->getBaseShippingAmount()
@@ -168,102 +160,5 @@ class Ga extends \Magento\Framework\View\Element\Template
         }
 
         return parent::_toHtml();
-    }
-
-    /**
-     * Return cookie restriction mode value.
-     *
-     * @return bool
-     * @since 100.2.0
-     */
-    public function isCookieRestrictionModeEnabled()
-    {
-        return $this->cookieHelper->isCookieRestrictionModeEnabled();
-    }
-
-    /**
-     * Return current website id.
-     *
-     * @return int
-     * @since 100.2.0
-     */
-    public function getCurrentWebsiteId()
-    {
-        return $this->_storeManager->getWebsite()->getId();
-    }
-
-    /**
-     * Return information about page for GA tracking
-     *
-     * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference#set
-     * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference#gaObjectMethods
-     *
-     * @param string $accountId
-     * @return array
-     * @since 100.2.0
-     */
-    public function getPageTrackingData($accountId)
-    {
-        return [
-            'optPageUrl' => $this->getOptPageUrl(),
-            'isAnonymizedIpActive' => $this->_googleAnalyticsData->isAnonymizedIpActive(),
-            'accountId' => $this->escapeHtmlAttr($accountId, false)
-        ];
-    }
-
-    /**
-     * Return information about order and items for GA tracking.
-     *
-     * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce#checkout-options
-     * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce#measuring-transactions
-     * @link https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce#transaction
-     *
-     * @return array
-     * @since 100.2.0
-     */
-    public function getOrdersTrackingData()
-    {
-        $result = [];
-        $orderIds = $this->getOrderIds();
-        if (empty($orderIds) || !is_array($orderIds)) {
-            return $result;
-        }
-
-        $collection = $this->_salesOrderCollection->create();
-        $collection->addFieldToFilter('entity_id', ['in' => $orderIds]);
-
-        foreach ($collection as $order) {
-            foreach ($order->getAllVisibleItems() as $item) {
-                $result['products'][] = [
-                    'id' => $this->escapeJs($item->getSku()),
-                    'name' =>  $this->escapeJs($item->getName()),
-                    'price' => $item->getBasePrice(),
-                    'quantity' => $item->getQtyOrdered(),
-                ];
-            }
-            $result['orders'][] = [
-                'id' =>  $order->getIncrementId(),
-                'affiliation' => $this->escapeJs($this->_storeManager->getStore()->getFrontendName()),
-                'revenue' => $order->getBaseGrandTotal(),
-                'tax' => $order->getBaseTaxAmount(),
-                'shipping' => $order->getBaseShippingAmount(),
-            ];
-        }
-        return $result;
-    }
-
-    /**
-     * Return page url for tracking.
-     *
-     * @return string
-     */
-    private function getOptPageUrl()
-    {
-        $optPageURL = '';
-        $pageName = trim($this->getPageName());
-        if ($pageName && substr($pageName, 0, 1) == '/' && strlen($pageName) > 1) {
-            $optPageURL = ", '" . $this->escapeHtmlAttr($pageName, false) . "'";
-        }
-        return $optPageURL;
     }
 }

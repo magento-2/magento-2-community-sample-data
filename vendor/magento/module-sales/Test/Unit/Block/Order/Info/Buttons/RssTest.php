@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Block\Order\Info\Buttons;
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class RssTest
  * @package Magento\Sales\Block\Order\Info\Buttons
  */
-class RssTest extends \PHPUnit\Framework\TestCase
+class RssTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Order\Info\Buttons\Rss
@@ -45,15 +45,15 @@ class RssTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
-        $this->orderFactory = $this->createPartialMock(\Magento\Sales\Model\OrderFactory::class, ['create']);
-        $this->urlBuilderInterface = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
+        $this->orderFactory = $this->getMock('Magento\Sales\Model\OrderFactory', ['create'], [], '', false);
+        $this->urlBuilderInterface = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $request = $this->getMock('Magento\Framework\App\RequestInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->rss = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Block\Order\Info\Buttons\Rss::class,
+            'Magento\Sales\Block\Order\Info\Buttons\Rss',
             [
                 'request' => $request,
                 'orderFactory' => $this->orderFactory,
@@ -65,7 +65,7 @@ class RssTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLink()
     {
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->setMethods(['getId', 'getCustomerId', 'getIncrementId', 'load', '__wakeup', '__sleep'])
             ->disableOriginalConstructor()
             ->getMock();

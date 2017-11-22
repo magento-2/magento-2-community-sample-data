@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Block\Product\View\Type;
@@ -11,7 +11,7 @@ namespace Magento\ConfigurableProduct\Block\Product\View\Type;
  * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable
@@ -26,13 +26,13 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_product->load(1);
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable::class
+            'Magento\ConfigurableProduct\Block\Product\View\Type\Configurable'
         );
         $this->_block->setProduct($this->_product);
     }
@@ -44,7 +44,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
     {
         $attributes = $this->_block->getAllowAttributes();
         $this->assertInstanceOf(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection::class,
+            'Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection',
             $attributes
         );
         $this->assertGreaterThanOrEqual(1, $attributes->getSize());
@@ -66,7 +66,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
         $products = $this->_block->getAllowProducts();
         $this->assertGreaterThanOrEqual(2, count($products));
         foreach ($products as $product) {
-            $this->assertInstanceOf(\Magento\Catalog\Model\Product::class, $product);
+            $this->assertInstanceOf('Magento\Catalog\Model\Product', $product);
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 // @codingStandardsIgnoreFile
@@ -9,7 +9,9 @@ namespace Magento\Theme\Model\ResourceModel;
 use Magento\Framework\Stdlib\DateTime;
 
 /**
- * Design Change Resource Model
+ * Core Design Resource Model
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Design extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

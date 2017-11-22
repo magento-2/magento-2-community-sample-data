@@ -1,19 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableProduct\Test\Unit\Controller\Adminhtml\Product;
 
-use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class AddAttributeTest extends \PHPUnit\Framework\TestCase
+class AddAttributeTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Magento\Framework\Controller\ResultFactory|\PHPUnit_Framework_MockObject_MockObject */
-    private $resultFactory;
-
     /** @var \Magento\ConfigurableProduct\Controller\Adminhtml\Product\AddAttribute */
     protected $controller;
 
@@ -49,23 +45,22 @@ class AddAttributeTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('\Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->resultFactory = $this->createMock(\Magento\Framework\Controller\ResultFactory::class);
-        $this->response = $this->createPartialMock(
-            \Magento\Framework\App\ResponseInterface::class,
+        $this->request = $this->getMock('Magento\Framework\App\RequestInterface');
+        $this->response = $this->getMock(
+            '\Magento\Framework\App\ResponseInterface',
             [
                 'sendResponse',
                 'setBody'
             ]
         );
-        $this->productBuilder = $this->getMockBuilder(\Magento\Catalog\Controller\Adminhtml\Product\Builder::class)
+        $this->productBuilder = $this->getMockBuilder('\Magento\Catalog\Controller\Adminhtml\Product\Builder')
             ->disableOriginalConstructor()
             ->setMethods(['build'])
             ->getMock();
-        $this->view = $this->createMock(\Magento\Framework\App\ViewInterface::class);
+        $this->view = $this->getMock('\Magento\Framework\App\ViewInterface');
 
         $this->context->expects($this->any())
             ->method('getRequest')
@@ -74,14 +69,11 @@ class AddAttributeTest extends \PHPUnit\Framework\TestCase
             ->method('getResponse')
             ->will($this->returnValue($this->response));
         $this->context->expects($this->any())
-            ->method('getResultFactory')
-            ->will($this->returnValue($this->resultFactory));
-        $this->context->expects($this->any())
             ->method('getView')
             ->will($this->returnValue($this->view));
 
         $this->controller = $this->objectManagerHelper->getObject(
-            \Magento\ConfigurableProduct\Controller\Adminhtml\Product\AddAttribute::class,
+            '\Magento\ConfigurableProduct\Controller\Adminhtml\Product\AddAttribute',
             [
                 'context' => $this->context,
                 'productBuilder' => $this->productBuilder
@@ -91,16 +83,25 @@ class AddAttributeTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute()
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['_wakeup', 'getId'])
             ->getMock();
+        $layout = $this->getMock('\Magento\Framework\View\LayoutInterface');
+        $block = $this->getMockBuilder(
+            'Magento\ConfigurableProduct\Block\Adminhtml\Product\Attribute\NewAttribute\Product\Created'
+        )
+            ->disableOriginalConstructor()
+            ->setMethods(['setIndex', 'toHtml'])
+            ->getMock();
 
+        $this->view->expects($this->once())->method('loadLayout')->with('popup')->willReturnSelf();
         $this->productBuilder->expects($this->once())->method('build')->with($this->request)->willReturn($product);
-        $resultLayout = $this->createMock(\Magento\Framework\View\Result\Layout::class);
-        $this->resultFactory->expects($this->once())->method('create')->with(ResultFactory::TYPE_LAYOUT)
-            ->willReturn($resultLayout);
+        $this->view->expects($this->any())->method('getLayout')->willReturn($layout);
+        $layout->expects($this->once())->method('createBlock')->willReturn($block);
+        $layout->expects($this->once())->method('setChild')->willReturnSelf();
+        $this->view->expects($this->any())->method('renderLayout')->willReturnSelf();
 
-        $this->assertInstanceOf(\Magento\Framework\View\Result\Layout::class, $this->controller->execute());
+        $this->controller->execute();
     }
 }

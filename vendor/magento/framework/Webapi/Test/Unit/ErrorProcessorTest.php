@@ -2,7 +2,7 @@
 /**
  * Test Webapi Error Processor.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit;
@@ -14,7 +14,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Exception as WebapiException;
 use Magento\Framework\Phrase;
 
-class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
+class ErrorProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ErrorProcessor */
     protected $_errorProcessor;
@@ -31,18 +31,18 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** Set up mocks for SUT. */
-        $this->encoderMock = $this->getMockBuilder(\Magento\Framework\Json\Encoder::class)
+        $this->encoderMock = $this->getMockBuilder('Magento\Framework\Json\Encoder')
             ->disableOriginalConstructor()
             ->setMethods(['encode'])
             ->getMock();
 
-        $this->_appStateMock = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $this->_appStateMock = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->_loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
+        $this->_loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
-        $filesystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $filesystemMock = $this->getMockBuilder('\Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -194,7 +194,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
         $logicalException = new \LogicException($errorMessage);
         /** Assert that Logic exception is converted to WebapiException without message obfuscation. */
         $maskedException = $this->_errorProcessor->maskException($logicalException);
-        $this->assertInstanceOf(\Magento\Framework\Webapi\Exception::class, $maskedException);
+        $this->assertInstanceOf('Magento\Framework\Webapi\Exception', $maskedException);
         $this->assertEquals(
             $errorMessage,
             $maskedException->getMessage(),
@@ -226,25 +226,6 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test logged exception is the same as the thrown one in production mode
-     */
-    public function testCriticalExceptionStackTrace()
-    {
-        $thrownException = new \Exception('', 0);
-
-        $this->_loggerMock->expects($this->once())
-            ->method('critical')
-            ->will(
-                $this->returnCallback(
-                    function (\Exception $loggedException) use ($thrownException) {
-                        $this->assertSame($thrownException, $loggedException->getPrevious());
-                    }
-                )
-            );
-        $this->_errorProcessor->maskException($thrownException);
-    }
-
-    /**
      * @return array
      */
     public function dataProviderForSendResponseExceptions()
@@ -253,7 +234,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
             'NoSuchEntityException' => [
                 new NoSuchEntityException(
                     new Phrase(
-                        'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value',
+                        NoSuchEntityException::MESSAGE_DOUBLE_FIELDS,
                         [
                             'fieldName' => 'detail1',
                             'fieldValue' => 'value1',
@@ -263,7 +244,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
                 \Magento\Framework\Webapi\Exception::HTTP_NOT_FOUND,
-                'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value',
+                NoSuchEntityException::MESSAGE_DOUBLE_FIELDS,
                 [
                     'fieldName' => 'detail1',
                     'fieldValue' => 'value1',
@@ -280,12 +261,12 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
             'AuthorizationException' => [
                 new AuthorizationException(
                     new Phrase(
-                        'Consumer %consumer_id is not authorized to access %resources',
+                        AuthorizationException::NOT_AUTHORIZED,
                         ['consumer_id' => '3', 'resources' => '4']
                     )
                 ),
                 WebapiException::HTTP_UNAUTHORIZED,
-                'Consumer %consumer_id is not authorized to access %resources',
+                AuthorizationException::NOT_AUTHORIZED,
                 ['consumer_id' => '3', 'resources' => '4'],
             ],
             'Exception' => [
@@ -313,7 +294,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
         $expectedDetails
     ) {
         /** All masked exceptions must be WebapiException */
-        $expectedType = \Magento\Framework\Webapi\Exception::class;
+        $expectedType = 'Magento\Framework\Webapi\Exception';
         $this->assertInstanceOf(
             $expectedType,
             $maskedException,

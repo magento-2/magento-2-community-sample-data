@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\Message;
 
@@ -61,9 +63,7 @@ class Factory
 
         $message = $this->objectManager->create($className, $text === null ? [] : ['text' => $text]);
         if (!$message instanceof MessageInterface) {
-            throw new \InvalidArgumentException(
-                $className . ' doesn\'t implement \Magento\Framework\Message\MessageInterface'
-            );
+            throw new \InvalidArgumentException($className . ' doesn\'t implement \Magento\Framework\Message\MessageInterface');
         }
 
         return $message;

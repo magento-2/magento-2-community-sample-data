@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'underscore',
@@ -15,7 +11,7 @@ define([
     return Collection.extend({
         defaults: {
             template: 'ui/grid/filters/chips',
-            componentType: 'filtersChips'
+            stickyTmpl: 'ui/grid/sticky/chips'
         },
 
         /**

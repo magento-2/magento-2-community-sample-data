@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Translate\Test\Unit;
 
-class AdapterTest extends \PHPUnit\Framework\TestCase
+class AdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Check that translate calls are passed to given translator

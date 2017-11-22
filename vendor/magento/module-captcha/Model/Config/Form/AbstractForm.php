@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 /**
  * Data source to fill "Forms" field
@@ -11,9 +13,7 @@
  */
 namespace Magento\Captcha\Model\Config\Form;
 
-use Magento\Framework\App\Config\Value;
-
-abstract class AbstractForm extends Value implements \Magento\Framework\Option\ArrayInterface
+abstract class AbstractForm extends \Magento\Framework\App\Config\Value implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * @var string

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,6 +13,13 @@ use Magento\Catalog\Test\Constraint\AssertProductForm;
  */
 class AssertBundleProductForm extends AssertProductForm
 {
+    /**
+     * Skipped fields for verify data.
+     *
+     * @var array
+     */
+    protected $skippedFields = ['frontend_type'];
+
     /**
      * Formatting options for array values.
      *
@@ -52,7 +59,6 @@ class AssertBundleProductForm extends AssertProductForm
     protected function prepareBundleOptions(array $bundleSelections)
     {
         foreach ($bundleSelections as &$item) {
-            unset($item['frontend_type']);
             foreach ($item['assigned_products'] as &$selection) {
                 $selection['data']['getProductName'] = $selection['search_data']['name'];
                 $selection = $selection['data'];

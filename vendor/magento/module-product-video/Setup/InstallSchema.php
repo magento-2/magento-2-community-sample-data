@@ -1,17 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\ProductVideo\Setup;
 
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Gallery;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Media;
 
 /**
- * Class InstallSchema adds new table `catalog_product_entity_media_gallery_value_video`
+ * Class InstallSchema adds new table `eav_attribute_option_swatch`
  */
 class InstallSchema implements InstallSchemaInterface
 {
@@ -94,11 +95,11 @@ class InstallSchema implements InstallSchemaInterface
                 $setup->getFkName(
                     self::GALLERY_VALUE_VIDEO_TABLE,
                     'value_id',
-                    Gallery::GALLERY_TABLE,
+                    Media::GALLERY_TABLE,
                     'value_id'
                 ),
                 'value_id',
-                $setup->getTable(Gallery::GALLERY_TABLE),
+                $setup->getTable(Media::GALLERY_TABLE),
                 'value_id',
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
             )

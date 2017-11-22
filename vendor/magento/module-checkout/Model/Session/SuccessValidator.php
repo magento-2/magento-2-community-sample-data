@@ -1,14 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model\Session;
 
 /**
- * Test if checkout session valid for success action
- *
- * @api
+ * Test is checkout session valid for success action
  */
 class SuccessValidator
 {

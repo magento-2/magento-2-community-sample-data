@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Invoice\AbstractInvoice;
@@ -14,9 +14,7 @@ namespace Magento\Sales\Controller\Adminhtml\Invoice\AbstractInvoice;
 abstract class Email extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::sales_invoice';
 
@@ -48,14 +46,12 @@ abstract class Email extends \Magento\Backend\App\Action
         if (!$invoiceId) {
             return $this->resultForwardFactory->create()->forward('noroute');
         }
-        $invoice = $this->_objectManager->create(\Magento\Sales\Api\InvoiceRepositoryInterface::class)->get($invoiceId);
+        $invoice = $this->_objectManager->create('Magento\Sales\Api\InvoiceRepositoryInterface')->get($invoiceId);
         if (!$invoice) {
             return $this->resultForwardFactory->create()->forward('noroute');
         }
 
-        $this->_objectManager->create(
-            \Magento\Sales\Api\InvoiceManagementInterface::class
-        )->notify($invoice->getEntityId());
+        $this->_objectManager->create('Magento\Sales\Api\InvoiceManagementInterface')->notify($invoice->getEntityId());
 
         $this->messageManager->addSuccess(__('You sent the message.'));
         return $this->resultRedirectFactory->create()->setPath(

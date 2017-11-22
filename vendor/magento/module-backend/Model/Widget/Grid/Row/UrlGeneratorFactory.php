@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model\Widget\Grid\Row;
@@ -8,8 +8,7 @@ namespace Magento\Backend\Model\Widget\Grid\Row;
 /**
  * Grid row url generator factory
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class UrlGeneratorFactory
 {

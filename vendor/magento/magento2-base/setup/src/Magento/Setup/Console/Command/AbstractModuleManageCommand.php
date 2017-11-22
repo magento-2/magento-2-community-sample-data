@@ -1,12 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
 
-use Magento\Framework\Code\GeneratedFiles;
-use Magento\Setup\Model\ObjectManagerProvider;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,11 +18,6 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
      */
     const INPUT_KEY_ALL = 'all';
     const INPUT_KEY_FORCE = 'force';
-
-    /**
-     * @var GeneratedFiles
-     */
-    protected $generatedFiles;
 
     /**
      * @var DeploymentConfig
@@ -68,7 +61,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
         $isEnable = $this->isEnable();
         if ($input->getOption(self::INPUT_KEY_ALL)) {
             /** @var \Magento\Framework\Module\FullModuleList $fullModulesList */
-            $fullModulesList = $this->objectManager->get(\Magento\Framework\Module\FullModuleList::class);
+            $fullModulesList = $this->objectManager->get('Magento\Framework\Module\FullModuleList');
             $modules = $fullModulesList->getNames();
         } else {
             $modules = $input->getArgument(self::INPUT_KEY_MODULES);
@@ -76,15 +69,13 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
         $messages = $this->validate($modules);
         if (!empty($messages)) {
             $output->writeln(implode(PHP_EOL, $messages));
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         try {
             $modulesToChange = $this->getStatus()->getModulesToChange($isEnable, $modules);
         } catch (\LogicException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         if (!empty($modulesToChange)) {
             $force = $input->getOption(self::INPUT_KEY_FORCE);
@@ -95,13 +86,11 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
                         "<error>Unable to change status of modules because of the following constraints:</error>"
                     );
                     $output->writeln('<error>' . implode("</error>\n<error>", $constraints) . '</error>');
-                    // we must have an exit code higher than zero to indicate something was wrong
-                    return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+                    return;
                 }
             }
             $this->setIsEnabled($isEnable, $modulesToChange, $output);
             $this->cleanup($input, $output);
-            $this->getGeneratedFiles()->requestRegeneration();
             if ($force) {
                 $output->writeln(
                     '<error>Alert: You used the --force option.'
@@ -176,9 +165,9 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
 
     /**
      * Get deployment config
-     *
+     * 
      * @return DeploymentConfig
-     * @deprecated 2.0.6
+     * @deprecated
      */
     private function getDeploymentConfig()
     {
@@ -186,19 +175,5 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
             return $this->objectManager->get(DeploymentConfig::class);
         }
         return $this->deploymentConfig;
-    }
-
-    /**
-     * Get deployment config
-     *
-     * @return GeneratedFiles
-     * @deprecated 2.1.0
-     */
-    private function getGeneratedFiles()
-    {
-        if (!($this->generatedFiles instanceof GeneratedFiles)) {
-            return $this->objectManager->get(GeneratedFiles::class);
-        }
-        return $this->generatedFiles;
     }
 }

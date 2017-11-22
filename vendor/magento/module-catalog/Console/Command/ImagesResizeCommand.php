@@ -1,43 +1,55 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Console\Command;
 
-class ImagesResizeCommand extends \Symfony\Component\Console\Command\Command
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Image\Cache as ImageCache;
+use Magento\Catalog\Model\Product\Image\CacheFactory as ImageCacheFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\Framework\App\State as AppState;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class ImagesResizeCommand extends Command
 {
     /**
-     * @var \Magento\Framework\App\State
+     * @var AppState
      */
     protected $appState;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     * @var ProductCollectionFactory
      */
     protected $productCollectionFactory;
 
     /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
+     * @var ProductRepositoryInterface
      */
     protected $productRepository;
 
     /**
-     * @var \Magento\Catalog\Model\Product\Image\CacheFactory
+     * @var ImageCacheFactory
      */
     protected $imageCacheFactory;
 
     /**
-     * @param \Magento\Framework\App\State $appState
-     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
-     * @param \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
-     * @param \Magento\Catalog\Model\Product\Image\CacheFactory $imageCacheFactory
+     * @param AppState $appState
+     * @param ProductCollectionFactory $productCollectionFactory
+     * @param ProductRepositoryInterface $productRepository
+     * @param ImageCacheFactory $imageCacheFactory
      */
     public function __construct(
-        \Magento\Framework\App\State $appState,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Magento\Catalog\Model\Product\Image\CacheFactory $imageCacheFactory
+        AppState $appState,
+        ProductCollectionFactory $productCollectionFactory,
+        ProductRepositoryInterface $productRepository,
+        ImageCacheFactory $imageCacheFactory
     ) {
         $this->appState = $appState;
         $this->productCollectionFactory = $productCollectionFactory;
@@ -58,31 +70,28 @@ class ImagesResizeCommand extends \Symfony\Component\Console\Command\Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
-        $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->appState->setAreaCode('catalog');
 
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
+        /** @var ProductCollection $productCollection */
         $productCollection = $this->productCollectionFactory->create();
         $productIds = $productCollection->getAllIds();
         if (!count($productIds)) {
             $output->writeln("<info>No product images to resize</info>");
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+            return;
         }
 
         try {
             foreach ($productIds as $productId) {
                 try {
-                    /** @var \Magento\Catalog\Model\Product $product */
+                    /** @var Product $product */
                     $product = $this->productRepository->getById($productId);
-                } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+                } catch (NoSuchEntityException $e) {
                     continue;
                 }
 
-                /** @var \Magento\Catalog\Model\Product\Image\Cache $imageCache */
+                /** @var ImageCache $imageCache */
                 $imageCache = $this->imageCacheFactory->create();
                 $imageCache->generate($product);
 
@@ -90,8 +99,7 @@ class ImagesResizeCommand extends \Symfony\Component\Console\Command\Command
             }
         } catch (\Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
 
         $output->write("\n");

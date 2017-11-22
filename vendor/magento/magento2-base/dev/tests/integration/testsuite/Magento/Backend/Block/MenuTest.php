@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block;
@@ -10,10 +10,8 @@ use Magento\Framework\Component\ComponentRegistrar;
 
 /**
  * Test class for \Magento\Backend\Block\Menu
- * @magentoAppArea adminhtml
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MenuTest extends \PHPUnit\Framework\TestCase
+class MenuTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Menu $blockMenu
@@ -28,30 +26,22 @@ class MenuTest extends \PHPUnit\Framework\TestCase
      */
     protected $backupRegistrar;
 
-    /**
-     * @var \Magento\Backend\Model\Menu\Config
-     */
-    private $menuConfig;
-
     protected function setUp()
     {
         $this->configCacheType = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Cache\Type\Config::class
+            'Magento\Framework\App\Cache\Type\Config'
         );
         $this->configCacheType->save('', \Magento\Backend\Model\Menu\Config::CACHE_MENU_OBJECT);
 
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $this->blockMenu = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Backend\Block\Menu'
+        );
+
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $this->backupRegistrar = $paths->getValue();
         $paths->setAccessible(false);
-
-        $this->menuConfig = $this->prepareMenuConfig();
-
-        $this->blockMenu = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Block\Menu::class,
-            ['menuConfig' => $this->menuConfig]
-        );
     }
 
     /**
@@ -59,7 +49,8 @@ class MenuTest extends \PHPUnit\Framework\TestCase
      */
     public function testRenderNavigation()
     {
-        $menuHtml = $this->blockMenu->renderNavigation($this->menuConfig->getMenu());
+        $menuConfig = $this->prepareMenuConfig();
+        $menuHtml = $this->blockMenu->renderNavigation($menuConfig->getMenu());
         $menu = new \SimpleXMLElement($menuHtml);
 
         $item = $menu->xpath('/ul/li/a/span')[0];
@@ -89,24 +80,13 @@ class MenuTest extends \PHPUnit\Framework\TestCase
     {
         $this->loginAdminUser();
 
-        $componentRegistrar = new \Magento\Framework\Component\ComponentRegistrar();
-        $libraryPath = $componentRegistrar->getPath(ComponentRegistrar::LIBRARY, 'magento/framework');
-
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
-
         $paths->setValue(
-            [
-                ComponentRegistrar::MODULE => [],
-                ComponentRegistrar::THEME => [],
-                ComponentRegistrar::LANGUAGE => [],
-                ComponentRegistrar::LIBRARY => []
-            ]
+            [ComponentRegistrar::MODULE => [], ComponentRegistrar::THEME => [], ComponentRegistrar::LANGUAGE => []]
         );
         $paths->setAccessible(false);
-
-        ComponentRegistrar::register(ComponentRegistrar::LIBRARY, 'magento/framework', $libraryPath);
 
         ComponentRegistrar::register(
             ComponentRegistrar::MODULE,
@@ -116,18 +96,18 @@ class MenuTest extends \PHPUnit\Framework\TestCase
 
         /* @var $validationState \Magento\Framework\App\Arguments\ValidationState */
         $validationState = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Arguments\ValidationState::class,
+            'Magento\Framework\App\Arguments\ValidationState',
             ['appMode' => State::MODE_DEFAULT]
         );
 
         /* @var $configReader \Magento\Backend\Model\Menu\Config\Reader */
         $configReader = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Model\Menu\Config\Reader::class,
+            'Magento\Backend\Model\Menu\Config\Reader',
             ['validationState' => $validationState]
         );
 
         return \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Model\Menu\Config::class,
+            'Magento\Backend\Model\Menu\Config',
             [
                 'configReader' => $configReader,
                 'configCacheType' => $this->configCacheType
@@ -141,10 +121,10 @@ class MenuTest extends \PHPUnit\Framework\TestCase
     protected function loginAdminUser()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Backend\Model\UrlInterface::class)
+            ->get('Magento\Backend\Model\UrlInterface')
             ->turnOffSecretKey();
 
-        $auth = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Auth::class);
+        $auth = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Backend\Model\Auth');
         $auth->login(\Magento\TestFramework\Bootstrap::ADMIN_NAME, \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD);
     }
 
@@ -154,7 +134,7 @@ class MenuTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         $this->configCacheType->save('', \Magento\Backend\Model\Menu\Config::CACHE_MENU_OBJECT);
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $paths->setValue($this->backupRegistrar);

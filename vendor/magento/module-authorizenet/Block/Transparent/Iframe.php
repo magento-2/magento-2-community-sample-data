@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Block\Transparent;
@@ -8,8 +8,7 @@ namespace Magento\Authorizenet\Block\Transparent;
 use Magento\Payment\Block\Transparent\Iframe as TransparentIframe;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Iframe
  */
 class Iframe extends TransparentIframe
 {

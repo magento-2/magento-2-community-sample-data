@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,10 +12,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Customer\Block\Widget\Dob;
 use Magento\Framework\Locale\Resolver;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DobTest extends \PHPUnit\Framework\TestCase
+class DobTest extends \PHPUnit_Framework_TestCase
 {
     /** Constants used in the unit tests */
     const MIN_DATE = '01/01/2010';
@@ -46,50 +43,45 @@ class DobTest extends \PHPUnit\Framework\TestCase
         '<div><label for="year"><span>yy</span></label><input type="text" id="year" name="Year" value="14"></div>';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Customer\Api\Data\AttributeMetadataInterface */
-    protected $attribute;
+    private $attribute;
 
     /** @var Dob */
-    protected $_block;
+    private $_block;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Customer\Api\CustomerMetadataInterface */
-    protected $customerMetadata;
+    private $customerMetadata;
 
-    /**
-     * @var \Magento\Framework\Data\Form\FilterFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $filterFactory;
-
-    protected function setUp()
+    public function setUp()
     {
         $zendCacheCore = new \Zend_Cache_Core();
         $zendCacheCore->setBackend(new \Zend_Cache_Backend_BlackHole());
 
         $frontendCache = $this->getMockForAbstractClass(
-            \Magento\Framework\Cache\FrontendInterface::class,
+            'Magento\Framework\Cache\FrontendInterface',
             [],
             '',
             false
         );
         $frontendCache->expects($this->any())->method('getLowLevelFrontend')->will($this->returnValue($zendCacheCore));
-        $cache = $this->createMock(\Magento\Framework\App\CacheInterface::class);
+        $cache = $this->getMock('Magento\Framework\App\CacheInterface');
         $cache->expects($this->any())->method('getFrontend')->will($this->returnValue($frontendCache));
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $localeResolver = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
+        $localeResolver = $this->getMock('\Magento\Framework\Locale\ResolverInterface');
         $localeResolver->expects($this->any())
             ->method('getLocale')
             ->willReturn(Resolver::DEFAULT_LOCALE);
         $timezone = $objectManager->getObject(
-            \Magento\Framework\Stdlib\DateTime\Timezone::class,
+            'Magento\Framework\Stdlib\DateTime\Timezone',
             ['localeResolver' => $localeResolver]
         );
 
-        $context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
         $context->expects($this->any())->method('getLocaleDate')->will($this->returnValue($timezone));
 
-        $this->attribute = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $this->attribute = $this->getMockBuilder('\Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->getMockForAbstractClass();
-        $this->customerMetadata = $this->getMockBuilder(\Magento\Customer\Api\CustomerMetadataInterface::class)
+        $this->customerMetadata = $this->getMockBuilder('\Magento\Customer\Api\CustomerMetadataInterface')
             ->getMockForAbstractClass();
         $this->customerMetadata->expects($this->any())
             ->method('getAttributeMetadata')
@@ -97,16 +89,11 @@ class DobTest extends \PHPUnit\Framework\TestCase
 
         date_default_timezone_set('America/Los_Angeles');
 
-        $this->filterFactory = $this->getMockBuilder(\Magento\Framework\Data\Form\FilterFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->_block = new \Magento\Customer\Block\Widget\Dob(
             $context,
-            $this->createMock(\Magento\Customer\Helper\Address::class),
+            $this->getMock('Magento\Customer\Helper\Address', [], [], '', false),
             $this->customerMetadata,
-            $this->createMock(\Magento\Framework\View\Element\Html\Date::class),
-            $this->filterFactory
+            $this->getMock('Magento\Framework\View\Element\Html\Date', [], [], '', false)
         );
     }
 
@@ -137,7 +124,7 @@ class DobTest extends \PHPUnit\Framework\TestCase
             ->will(
                 $this->throwException(new NoSuchEntityException(
                     __(
-                        'No such entity with %fieldName = %fieldValue',
+                        NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                         ['fieldName' => 'field', 'fieldValue' => 'value']
                     )
                 ))
@@ -164,7 +151,7 @@ class DobTest extends \PHPUnit\Framework\TestCase
             ->will(
                 $this->throwException(new NoSuchEntityException(
                     __(
-                        'No such entity with %fieldName = %fieldValue',
+                        NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                         ['fieldName' => 'field', 'fieldValue' => 'value']
                     )
                 ))
@@ -191,7 +178,7 @@ class DobTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame($this->_block, $this->_block->setDate($date));
         $this->assertEquals($expectedTime, $this->_block->getTime());
-        $this->assertEquals($expectedDate, $this->_block->getValue());
+        $this->assertEquals($expectedDate, $this->_block->getData('date'));
     }
 
     /**
@@ -200,31 +187,6 @@ class DobTest extends \PHPUnit\Framework\TestCase
     public function setDateDataProvider()
     {
         return [[self::DATE, strtotime(self::DATE), self::DATE], [false, false, false]];
-    }
-
-    public function testSetDateWithFilter()
-    {
-        $date = '2014-01-01';
-        $filterCode = 'date';
-
-        $this->attribute->expects($this->once())
-            ->method('getInputFilter')
-            ->willReturn($filterCode);
-
-        $filterMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Filter\Date::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $filterMock->expects($this->once())
-            ->method('outputFilter')
-            ->with($date)
-            ->willReturn(self::DATE);
-
-        $this->filterFactory->expects($this->once())
-            ->method('create')
-            ->with($filterCode, ['format' => self::DATE_FORMAT])
-            ->willReturn($filterMock);
-
-        $this->_block->setDate($date);
     }
 
     /**
@@ -349,12 +311,12 @@ class DobTest extends \PHPUnit\Framework\TestCase
      */
     public function getMinDateRangeDataProvider()
     {
-        $emptyValidationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $emptyValidationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getName', 'getValue'])
             ->getMockForAbstractClass();
 
-        $validationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $validationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getName', 'getValue'])
             ->getMockForAbstractClass();
@@ -388,7 +350,7 @@ class DobTest extends \PHPUnit\Framework\TestCase
             ->will(
                 $this->throwException(new NoSuchEntityException(
                     __(
-                        'No such entity with %fieldName = %fieldValue',
+                        NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                         ['fieldName' => 'field', 'fieldValue' => 'value']
                     )
                 ))
@@ -419,12 +381,12 @@ class DobTest extends \PHPUnit\Framework\TestCase
      */
     public function getMaxDateRangeDataProvider()
     {
-        $emptyValidationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $emptyValidationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getName', 'getValue'])
             ->getMockForAbstractClass();
 
-        $validationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $validationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getName', 'getValue'])
             ->getMockForAbstractClass();
@@ -457,30 +419,11 @@ class DobTest extends \PHPUnit\Framework\TestCase
             ->will(
                 $this->throwException(new NoSuchEntityException(
                     __(
-                        'No such entity with %fieldName = %fieldValue',
+                        NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                         ['fieldName' => 'field', 'fieldValue' => 'value']
                     )
                 ))
             );
         $this->assertNull($this->_block->getMaxDateRange());
-    }
-    
-    public function testGetHtmlExtraParamsWithoutRequiredOption() {
-        $this->attribute->expects($this->once())
-            ->method("isRequired")
-            ->willReturn(false);
-
-        $this->assertEquals($this->_block->getHtmlExtraParams(), 'data-validate="{\'validate-date-au\':true}"');
-    }
-
-    public function testGetHtmlExtraParamsWithRequiredOption() {
-        $this->attribute->expects($this->once())
-            ->method("isRequired")
-            ->willReturn(true);
-
-        $this->assertEquals(
-            $this->_block->getHtmlExtraParams(),
-            'data-validate="{\'validate-date-au\':true, required:true}"'
-        );
     }
 }

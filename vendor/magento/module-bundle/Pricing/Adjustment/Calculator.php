@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Bundle\Pricing\Adjustment;
 
 use Magento\Bundle\Model\Product\Price;
+use Magento\Bundle\Pricing\Price\BundleOptionPrice;
 use Magento\Bundle\Pricing\Price\BundleSelectionFactory;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Pricing\Adjustment\Calculator as CalculatorBase;
@@ -51,37 +52,24 @@ class Calculator implements BundleCalculatorInterface
     protected $priceCurrency;
 
     /**
-     * @var \Magento\Framework\Pricing\Amount\AmountInterface[]
-     */
-    private $optionAmount = [];
-
-    /**
-     * @var SelectionPriceListProviderInterface
-     */
-    private $selectionPriceListProvider;
-
-    /**
      * @param CalculatorBase $calculator
      * @param AmountFactory $amountFactory
      * @param BundleSelectionFactory $bundleSelectionFactory
      * @param TaxHelper $taxHelper
      * @param PriceCurrencyInterface $priceCurrency
-     * @param SelectionPriceListProviderInterface|null $selectionPriceListProvider
      */
     public function __construct(
         CalculatorBase $calculator,
         AmountFactory $amountFactory,
         BundleSelectionFactory $bundleSelectionFactory,
         TaxHelper $taxHelper,
-        PriceCurrencyInterface $priceCurrency,
-        SelectionPriceListProviderInterface $selectionPriceListProvider = null
+        PriceCurrencyInterface $priceCurrency
     ) {
         $this->calculator = $calculator;
         $this->amountFactory = $amountFactory;
         $this->selectionFactory = $bundleSelectionFactory;
         $this->taxHelper = $taxHelper;
         $this->priceCurrency = $priceCurrency;
-        $this->selectionPriceListProvider = $selectionPriceListProvider;
     }
 
     /**
@@ -155,17 +143,12 @@ class Calculator implements BundleCalculatorInterface
         $baseAmount = 0.,
         $useRegularPrice = false
     ) {
-        $cacheKey = implode('-', [$saleableItem->getId(), $exclude, $searchMin, $baseAmount, $useRegularPrice]);
-        if (!isset($this->optionAmount[$cacheKey])) {
-            $this->optionAmount[$cacheKey] = $this->calculateBundleAmount(
-                $baseAmount,
-                $saleableItem,
-                $this->getSelectionAmounts($saleableItem, $searchMin, $useRegularPrice),
-                $exclude
-            );
-        }
-
-        return $this->optionAmount[$cacheKey];
+        return $this->calculateBundleAmount(
+            $baseAmount,
+            $saleableItem,
+            $this->getSelectionAmounts($saleableItem, $searchMin, $useRegularPrice),
+            $exclude
+        );
     }
 
     /**
@@ -191,24 +174,42 @@ class Calculator implements BundleCalculatorInterface
      * @param bool $searchMin
      * @param bool $useRegularPrice
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function getSelectionAmounts(Product $bundleProduct, $searchMin, $useRegularPrice = false)
     {
-        return $this->getSelectionPriceListProvider()->getPriceList($bundleProduct, $searchMin, $useRegularPrice);
-    }
-
-    /**
-     * @return SelectionPriceListProviderInterface
-     * @deprecated 100.2.0
-     */
-    private function getSelectionPriceListProvider()
-    {
-        if (null === $this->selectionPriceListProvider) {
-            $this->selectionPriceListProvider = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(SelectionPriceListProviderInterface::class);
+        // Flag shows - is it necessary to find minimal option amount in case if all options are not required
+        $shouldFindMinOption = false;
+        if ($searchMin
+            && $bundleProduct->getPriceType() == Price::PRICE_TYPE_DYNAMIC
+            && !$this->hasRequiredOption($bundleProduct)
+        ) {
+            $shouldFindMinOption = true;
         }
+        $canSkipRequiredOptions = $searchMin && !$shouldFindMinOption;
 
-        return $this->selectionPriceListProvider;
+        $currentPrice = false;
+        $priceList = [];
+        foreach ($this->getBundleOptions($bundleProduct) as $option) {
+            if ($this->canSkipOption($option, $canSkipRequiredOptions)) {
+                continue;
+            }
+            $selectionPriceList = $this->createSelectionPriceList($option, $bundleProduct, $useRegularPrice);
+            $selectionPriceList = $this->processOptions($option, $selectionPriceList, $searchMin);
+
+            $lastSelectionPrice = end($selectionPriceList);
+            $lastValue = $lastSelectionPrice->getAmount()->getValue() * $lastSelectionPrice->getQuantity();
+            if ($shouldFindMinOption
+                && (!$currentPrice ||
+                    $lastValue < ($currentPrice->getAmount()->getValue() * $currentPrice->getQuantity()))
+            ) {
+                $currentPrice = end($selectionPriceList);
+            } elseif (!$shouldFindMinOption) {
+                $priceList = array_merge($priceList, $selectionPriceList);
+            }
+        }
+        return $shouldFindMinOption ? [$currentPrice] : $priceList;
     }
 
     /**
@@ -217,7 +218,6 @@ class Calculator implements BundleCalculatorInterface
      * @param \Magento\Bundle\Model\Option $option
      * @param bool $canSkipRequiredOption
      * @return bool
-     * @deprecated 100.2.0
      */
     protected function canSkipOption($option, $canSkipRequiredOption)
     {
@@ -229,7 +229,6 @@ class Calculator implements BundleCalculatorInterface
      *
      * @param Product $bundleProduct
      * @return bool
-     * @deprecated 100.2.0
      */
     protected function hasRequiredOption($bundleProduct)
     {
@@ -247,14 +246,11 @@ class Calculator implements BundleCalculatorInterface
      *
      * @param Product $saleableItem
      * @return \Magento\Bundle\Model\ResourceModel\Option\Collection
-     * @deprecated 100.2.0
      */
     protected function getBundleOptions(Product $saleableItem)
     {
-        /** @var \Magento\Bundle\Pricing\Price\BundleOptionPrice $bundlePrice */
-        $bundlePrice = $saleableItem->getPriceInfo()->getPrice(
-            \Magento\Bundle\Pricing\Price\BundleOptionPrice::PRICE_CODE
-        );
+        /** @var BundleOptionPrice $bundlePrice */
+        $bundlePrice = $saleableItem->getPriceInfo()->getPrice(BundleOptionPrice::PRICE_CODE);
         return $bundlePrice->getOptions();
     }
 
@@ -316,11 +312,9 @@ class Calculator implements BundleCalculatorInterface
 
         foreach ($selectionPriceList as $selectionPrice) {
             ++$i;
-            if ($selectionPrice) {
-                $amountList[$i]['amount'] = $selectionPrice->getAmount();
-                // always honor the quantity given
-                $amountList[$i]['quantity'] = $selectionPrice->getQuantity();
-            }
+            $amountList[$i]['amount'] = $selectionPrice->getAmount();
+            // always honor the quantity given
+            $amountList[$i]['quantity'] = $selectionPrice->getQuantity();
         }
 
         /** @var  Store $store */

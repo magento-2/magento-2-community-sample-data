@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Test\Unit\Model\Cron;
@@ -10,7 +10,7 @@ use Magento\NewRelicReporting\Model\Cron\ReportModulesInfo;
 /**
  * Class ReportModulesInfoTest
  */
-class ReportModulesInfoTest extends \PHPUnit\Framework\TestCase
+class ReportModulesInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReportModulesInfo
@@ -47,24 +47,24 @@ class ReportModulesInfoTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Config::class)
+        $this->config = $this->getMockBuilder('Magento\NewRelicReporting\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['isNewRelicEnabled'])
             ->getMock();
-        $this->collectMock = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Module\Collect::class)
+        $this->collectMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\Module\Collect')
             ->disableOriginalConstructor()
             ->setMethods(['getModuleData'])
             ->getMock();
-        $this->systemFactoryMock = $this->getMockBuilder(\Magento\NewRelicReporting\Model\SystemFactory::class)
+        $this->systemFactoryMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\SystemFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->systemModelMock = $this->getMockBuilder(\Magento\NewRelicReporting\Model\System::class)
+        $this->systemModelMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\System')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->jsonEncoderMock = $this->getMockBuilder(\Magento\Framework\Json\EncoderInterface::class)
+        $this->jsonEncoderMock = $this->getMockBuilder('Magento\Framework\Json\EncoderInterface')
             ->getMock();
 
         $this->systemFactoryMock->expects($this->any())

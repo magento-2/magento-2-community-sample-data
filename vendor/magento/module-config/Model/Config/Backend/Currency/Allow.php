@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,10 +10,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Currency;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Allow extends AbstractCurrency
 {
     /**
@@ -55,8 +51,7 @@ class Allow extends AbstractCurrency
     public function afterSave()
     {
         $exceptions = [];
-        $allowedCurrencies = $this->_getAllowedCurrencies();
-        foreach ($allowedCurrencies as $currencyCode) {
+        foreach ($this->_getAllowedCurrencies() as $currencyCode) {
             if (!in_array($currencyCode, $this->_getInstalledCurrencies())) {
                 $exceptions[] = __(
                     'Selected allowed currency "%1" is not available in installed currencies.',
@@ -65,7 +60,7 @@ class Allow extends AbstractCurrency
             }
         }
 
-        if (!in_array($this->_getCurrencyDefault(), $allowedCurrencies)) {
+        if (!in_array($this->_getCurrencyDefault(), $this->_getAllowedCurrencies())) {
             $exceptions[] = __(
                 'Default display currency "%1" is not available in allowed currencies.',
                 $this->_localeCurrency->getCurrency($this->_getCurrencyDefault())->getName()
@@ -77,24 +72,5 @@ class Allow extends AbstractCurrency
         }
 
         return parent::afterSave();
-    }
-
-    /**
-     * @inheritdoc
-     * @since 100.2.0
-     */
-    protected function _getAllowedCurrencies()
-    {
-        $value = $this->getValue();
-        $isFormData = $this->getData('groups/options/fields') !== null;
-        if ($isFormData && $this->getData('groups/options/fields/allow/inherit')) {
-            $value = (string)$this->_config->getValue(
-                \Magento\Directory\Model\Currency::XML_PATH_CURRENCY_ALLOW,
-                $this->getScope(),
-                $this->getScopeId()
-            );
-        }
-
-        return explode(',', $value);
     }
 }

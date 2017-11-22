@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,15 +10,13 @@ use Magento\Catalog\Model\Product;
 
 /**
  * Bundle selection price factory
- * @api
- * @since 100.0.2
  */
 class BundleSelectionFactory
 {
     /**
      * Default selection class
      */
-    const SELECTION_CLASS_DEFAULT = \Magento\Bundle\Pricing\Price\BundleSelectionPrice::class;
+    const SELECTION_CLASS_DEFAULT = 'Magento\Bundle\Pricing\Price\BundleSelectionPrice';
 
     /**
      * Object Manager
@@ -44,6 +42,7 @@ class BundleSelectionFactory
      * @param Product $selection
      * @param float $quantity
      * @param array $arguments
+     * @throws \InvalidArgumentException
      * @return BundleSelectionPrice
      */
     public function create(
@@ -55,7 +54,12 @@ class BundleSelectionFactory
         $arguments['bundleProduct'] = $bundleProduct;
         $arguments['saleableItem'] = $selection;
         $arguments['quantity'] = $quantity ? floatval($quantity) : 1.;
-
-        return $this->objectManager->create(self::SELECTION_CLASS_DEFAULT, $arguments);
+        $selectionPrice = $this->objectManager->create(self::SELECTION_CLASS_DEFAULT, $arguments);
+        if (!$selectionPrice instanceof BundleSelectionPrice) {
+            throw new \InvalidArgumentException(
+                get_class($selectionPrice) . ' doesn\'t extend BundleSelectionPrice'
+            );
+        }
+        return $selectionPrice;
     }
 }

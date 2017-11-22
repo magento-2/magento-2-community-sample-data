@@ -1,30 +1,33 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Msrp\Test\Unit\Model\Product\Attribute\Source\Type;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Msrp\Model\Product\Attribute\Source\Type\Price
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->_model = $objectManager->getObject(\Magento\Msrp\Model\Product\Attribute\Source\Type\Price::class);
+        $this->_model = $objectManager->getObject('Magento\Msrp\Model\Product\Attribute\Source\Type\Price');
     }
 
     public function testGetFlatColumns()
     {
-        $abstractAttributeMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
-            ['getAttributeCode', '__wakeup']
+        $abstractAttributeMock = $this->getMock(
+            '\Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
+            ['getAttributeCode', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $abstractAttributeMock->expects($this->any())->method('getAttributeCode')->will($this->returnValue('code'));

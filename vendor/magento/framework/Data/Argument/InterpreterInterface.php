@@ -1,14 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Argument;
 
 /**
  * Interface that encapsulates complexity of expression computation
- *
- * @api
  */
 interface InterpreterInterface
 {

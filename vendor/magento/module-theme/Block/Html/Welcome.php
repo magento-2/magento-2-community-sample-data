@@ -1,19 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Block\Html;
 
-use Magento\Framework\View\Element\Template;
-
 /**
  * Html page welcome block
- *
- * @api
- * @since 100.0.2
  */
-class Welcome extends Template
+class Welcome extends \Magento\Framework\View\Element\Template
 {
     /**
      * Get block message

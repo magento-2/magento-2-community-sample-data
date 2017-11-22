@@ -1,19 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Import\Product;
 
-use Magento\CatalogImportExport\Model\Import\Product;
-use Magento\Framework\Validator\AbstractValidator;
+use \Magento\CatalogImportExport\Model\Import\Product;
+use \Magento\Framework\Validator\AbstractValidator;
 
-/**
- * Class Validator
- *
- * @api
- * @since 100.0.2
- */
 class Validator extends AbstractValidator implements RowValidatorInterface
 {
     /**
@@ -40,12 +34,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
      * @var array
      */
     protected $_rowData;
-
-    /**
-     * @var string|null
-     * @since 100.1.0
-     */
-    protected $invalidAttribute;
 
     /**
      * @param \Magento\Framework\Stdlib\StringUtils $string
@@ -202,7 +190,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
                 $valid = $this->validateOption($attrCode, $attrParams['options'], $rowData[$attrCode]);
                 break;
             case 'multiselect':
-                $values = $this->context->parseMultiselectValues($rowData[$attrCode]);
+                $values = $this->parseMultiSelectValues($this->context->getParameters(), $rowData[$attrCode]);
                 foreach ($values as $value) {
                     $valid = $this->validateOption($attrCode, $attrParams['options'], $value);
                     if (!$valid) {
@@ -230,31 +218,8 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             }
             $this->_uniqueAttributes[$attrCode][$rowData[$attrCode]] = $rowData[Product::COL_SKU];
         }
-
-        if (!$valid) {
-            $this->setInvalidAttribute($attrCode);
-        }
-
         return (bool)$valid;
-    }
 
-    /**
-     * @param string|null $attribute
-     * @return void
-     * @since 100.1.0
-     */
-    protected function setInvalidAttribute($attribute)
-    {
-        $this->invalidAttribute = $attribute;
-    }
-
-    /**
-     * @return string
-     * @since 100.1.0
-     */
-    public function getInvalidAttribute()
-    {
-        return $this->invalidAttribute;
     }
 
     /**
@@ -264,7 +229,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     protected function isValidAttributes()
     {
         $this->_clearMessages();
-        $this->setInvalidAttribute(null);
         if (!isset($this->_rowData['product_type'])) {
             return false;
         }
@@ -324,5 +288,25 @@ class Validator extends AbstractValidator implements RowValidatorInterface
         foreach ($this->validators as $validator) {
             $validator->init($context);
         }
+    }
+
+    /**
+     * Parse values of multiselect attributes depends on "Fields Enclosure" parameter
+     *
+     * @param array $parameters
+     * @param string $values
+     * @return array
+     */
+    private function parseMultiSelectValues(array $parameters, $values)
+    {
+        if (empty($parameters[\Magento\ImportExport\Model\Import::FIELDS_ENCLOSURE])) {
+            return explode(\Magento\CatalogImportExport\Model\Import\Product::PSEUDO_MULTI_LINE_SEPARATOR, $values);
+        }
+        if (preg_match_all('~"((?:[^"]|"")*)"~', $values, $matches)) {
+            return $values = array_map(function ($value) {
+                return str_replace('""', '"', $value);
+            }, $matches[1]);
+        }
+        return [$values];
     }
 }

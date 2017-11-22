@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml;
@@ -27,9 +27,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndNew()
     {
         $this->getRequest()->setPostValue(['back' => 'new']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple');
-        $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
+        $this->dispatch('backend/catalog/product/save/id/1');
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/new/'));
         $this->assertSessionMessages(
             $this->contains('You saved the product.'),
@@ -43,16 +41,10 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndDuplicate()
     {
         $this->getRequest()->setPostValue(['back' => 'duplicate']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple');
-        $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
+        $this->dispatch('backend/catalog/product/save/id/1');
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/'));
         $this->assertRedirect(
-            $this->logicalNot(
-                $this->stringStartsWith(
-                    'http://localhost/index.php/backend/catalog/product/edit/id/' . $product->getEntityId() . '/'
-                )
-            )
+            $this->logicalNot($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/id/1/'))
         );
         $this->assertSessionMessages(
             $this->contains('You saved the product.'),
@@ -69,36 +61,28 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
         $this->dispatch('backend/catalog/product');
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]',
-                $body
-            ),
+            $body,
             '"Add Product" button container should be present on Manage Products page, if the limit is not  reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button"]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be present on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button.disabled',
             0,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button" and contains(@class,"disabled")]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be enabled on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product .action-toggle',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]/*[contains(@class,"action-toggle")]',
-                $body
-            ),
+            $body,
             '"Add Product" button split should be present on Manage Products page, if the limit is not reached'
         );
     }
@@ -108,36 +92,91 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
      */
     public function testEditAction()
     {
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple');
-        $this->dispatch('backend/catalog/product/edit/id/' . $product->getEntityId());
+        $this->dispatch('backend/catalog/product/edit/id/1');
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount('#save-split-button', 1, $body, '"Save" button isn\'t present on Edit Product page');
+        $this->assertSelectCount(
+            '#save-split-button-new-button',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save-button"]',
-                $body
-            ),
-            '"Save" button isn\'t present on Edit Product page'
-        );
-
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_new"]',
-                $body
-            ),
+            $body,
             '"Save & New" button isn\'t present on Edit Product page'
         );
-
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#save-split-button-duplicate-button',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_duplicate"]',
-                $body
-            ),
+            $body,
             '"Save & Duplicate" button isn\'t present on Edit Product page'
         );
+    }
+
+    /**
+     * @dataProvider saveWithInvalidCustomOptionDataProvider
+     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
+     */
+    public function testSaveWithInvalidCustomOption($postData)
+    {
+        $this->getRequest()->setPostValue($postData);
+        $this->dispatch('backend/catalog/product/save/id/1');
+
+        $this->assertSessionMessages(
+            $this->contains('You saved the product.'),
+            \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
+        );
+    }
+
+    /**
+     * Data Provider for save
+     *
+     * @return array
+     */
+    public function saveWithInvalidCustomOptionDataProvider()
+    {
+        return [
+            [
+                [
+                    'product' => [
+                        'options' => [
+                            [
+                                'title' => 'drop_down option',
+                                'type' => 'drop_down',
+                                'is_require' => true,
+                                'sort_order' => 0,
+                                'values' => [
+                                    [
+                                        'title' => 'drop_down option 1',
+                                        'price' => 10,
+                                        'price_type' => 'fixed',
+                                        'sku' => 'drop_down option 1 sku',
+                                        'option_type_id' => '-1',
+                                        'is_delete' => '',
+                                        'sort_order' => 0,
+                                    ],
+                                    [
+                                        'title' => 'drop_down option 2',
+                                        'price' => 20,
+                                        'price_type' => 'fixed',
+                                        'sku' => 'drop_down option 2 sku',
+                                        'option_type_id' => '-1',
+                                        'is_delete' => '',
+                                        'sort_order' => 1,
+                                    ],
+                                    [
+                                        'title' => '',
+                                        'price' => '',
+                                        'price_type' => 'fixed',
+                                        'sku' => '',
+                                        'option_type_id' => '-1',
+                                        'is_delete' => '1',
+                                        'sort_order' => 2,
+                                    ]
+                                ],
+                            ]
+                        ],
+                    ],
+                    'affect_product_custom_options' => 1,
+                ]
+            ],
+        ];
     }
 }

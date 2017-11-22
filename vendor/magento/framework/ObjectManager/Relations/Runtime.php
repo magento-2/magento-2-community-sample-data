@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Relations;
@@ -8,7 +8,7 @@ namespace Magento\Framework\ObjectManager\Relations;
 class Runtime implements \Magento\Framework\ObjectManager\RelationsInterface
 {
     /**
-     * @var \Magento\Framework\Code\Reader\ClassReaderInterface
+     * @var \Magento\Framework\Code\Reader\ClassReader
      */
     protected $_classReader;
 
@@ -20,9 +20,9 @@ class Runtime implements \Magento\Framework\ObjectManager\RelationsInterface
     protected $_default = [];
 
     /**
-     * @param \Magento\Framework\Code\Reader\ClassReaderInterface $classReader
+     * @param \Magento\Framework\Code\Reader\ClassReader $classReader
      */
-    public function __construct(\Magento\Framework\Code\Reader\ClassReaderInterface $classReader = null)
+    public function __construct(\Magento\Framework\Code\Reader\ClassReader $classReader = null)
     {
         $this->_classReader = $classReader ?: new \Magento\Framework\Code\Reader\ClassReader();
     }

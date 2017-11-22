@@ -1,17 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Locale;
 
-/**
- * @api
- */
 interface FormatInterface
 {
     /**
-     * Returns the first found number from a string
+     * Returns the first found number from an string
      * Parsing depends on given locale (grouping and decimal)
      *
      * Examples for input:
@@ -30,7 +27,7 @@ interface FormatInterface
     public function getNumber($value);
 
     /**
-     * Returns an array with price formatting info for js function
+     * Functions returns array with price formatting info for js function
      * formatCurrency in js/varien/js.js
      *
      * @return array

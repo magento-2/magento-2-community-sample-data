@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Indexer\Attribute;
@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Model\Indexer\Attribute;
 use Magento\Customer\Model\Indexer\Attribute\Filter;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 
-class FilterTest extends \PHPUnit\Framework\TestCase
+class FilterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\ResourceConnection|\PHPUnit_Framework_MockObject_MockObject */
     protected $resource;
@@ -31,29 +31,25 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     /** @var Filter */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->connection = $this->getMockForAbstractClass(
-            \Magento\Framework\DB\Adapter\AdapterInterface::class,
+            'Magento\Framework\DB\Adapter\AdapterInterface',
             [],
             '',
             false
         );
-        $this->flatScopeResolver = $this->createMock(\Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver::class);
-        $this->indexerRegistry = $this->createMock(\Magento\Framework\Indexer\IndexerRegistry::class);
-        $this->indexer = $this->getMockForAbstractClass(
-            \Magento\Framework\Indexer\IndexerInterface::class,
+        $this->flatScopeResolver = $this->getMock(
+            'Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver',
+            [],
             [],
             '',
             false
         );
-        $this->indexerState = $this->getMockForAbstractClass(
-            \Magento\Framework\Indexer\StateInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->indexerRegistry = $this->getMock('Magento\Framework\Indexer\IndexerRegistry', [], [], '', false);
+        $this->indexer = $this->getMockForAbstractClass('Magento\Framework\Indexer\IndexerInterface', [], '', false);
+        $this->indexerState = $this->getMockForAbstractClass('Magento\Framework\Indexer\StateInterface', [], '', false);
 
         $this->model = new Filter(
             $this->resource,

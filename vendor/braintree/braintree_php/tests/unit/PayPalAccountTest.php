@@ -1,44 +1,39 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class PayPalAccountTest extends Setup
+class Braintree_PayPalAccountTest extends PHPUnit_Framework_TestCase
 {
-    public function testGet_givesErrorIfInvalidProperty()
+    function testGet_givesErrorIfInvalidProperty()
     {
-        $this->setExpectedException('PHPUnit_Framework_Error', 'Undefined property on Braintree\PayPalAccount: foo');
-        $paypalAccount = Braintree\PayPalAccount::factory([]);
+        $this->setExpectedException('PHPUnit_Framework_Error', 'Undefined property on Braintree_PayPalAccount: foo');
+        $paypalAccount = Braintree_PayPalAccount::factory(array());
         $paypalAccount->foo;
     }
 
-    public function testIsDefault()
+    function testIsDefault()
     {
-        $paypalAccount = Braintree\PayPalAccount::factory(['default' => true]);
+        $paypalAccount = Braintree_PayPalAccount::factory(array('default' => true));
         $this->assertTrue($paypalAccount->isDefault());
 
-        $paypalAccount = Braintree\PayPalAccount::factory(['default' => false]);
+        $paypalAccount = Braintree_PayPalAccount::factory(array('default' => false));
         $this->assertFalse($paypalAccount->isDefault());
     }
 
-    public function testErrorsOnFindWithBlankArgument()
+    function testErrorsOnFindWithBlankArgument()
     {
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\PayPalAccount::find('');
+        Braintree_PayPalAccount::find('');
     }
 
-    public function testErrorsOnFindWithWhitespaceArgument()
+    function testErrorsOnFindWithWhitespaceArgument()
     {
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\PayPalAccount::find('  ');
+        Braintree_PayPalAccount::find('  ');
     }
 
-    public function testErrorsOnFindWithWhitespaceCharacterArgument()
+    function testErrorsOnFindWithWhitespaceCharacterArgument()
     {
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\PayPalAccount::find('\t');
+        Braintree_PayPalAccount::find('\t');
     }
 }

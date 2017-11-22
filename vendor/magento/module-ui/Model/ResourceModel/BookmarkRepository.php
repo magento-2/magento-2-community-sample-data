@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Model\ResourceModel;
 
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
 use Magento\Ui\Api\BookmarkRepositoryInterface;
@@ -39,27 +38,19 @@ class BookmarkRepository implements BookmarkRepositoryInterface
     protected $searchResultsFactory;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
      * @param \Magento\Ui\Api\Data\BookmarkInterfaceFactory $bookmarkFactory
      * @param Bookmark $bookmarkResourceModel
      * @param \Magento\Ui\Api\Data\BookmarkSearchResultsInterfaceFactory $searchResultsFactory
-     * @param CollectionProcessorInterface | null $collectionProcessor
      */
     public function __construct(
         \Magento\Ui\Api\Data\BookmarkInterfaceFactory $bookmarkFactory,
         \Magento\Ui\Model\ResourceModel\Bookmark $bookmarkResourceModel,
-        \Magento\Ui\Api\Data\BookmarkSearchResultsInterfaceFactory $searchResultsFactory,
-        CollectionProcessorInterface $collectionProcessor = null
+        \Magento\Ui\Api\Data\BookmarkSearchResultsInterfaceFactory $searchResultsFactory
     ) {
 
         $this->bookmarkResourceModel = $bookmarkResourceModel;
         $this->bookmarkFactory = $bookmarkFactory;
         $this->searchResultsFactory = $searchResultsFactory;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -110,8 +101,24 @@ class BookmarkRepository implements BookmarkRepositoryInterface
 
         /** @var \Magento\Ui\Model\ResourceModel\Bookmark\Collection $collection */
         $collection = $this->bookmarkFactory->create()->getCollection();
-        $this->collectionProcessor->process($searchCriteria, $collection);
+        // Add filters from root filter group to the collection
+        foreach ($searchCriteria->getFilterGroups() as $group) {
+            $this->addFilterGroupToCollection($group, $collection);
+        }
         $searchResults->setTotalCount($collection->getSize());
+        $sortOrders = $searchCriteria->getSortOrders();
+        if ($sortOrders) {
+            /** @var SortOrder $sortOrder */
+            foreach ($sortOrders as $sortOrder) {
+                $field = $sortOrder->getField();
+                $collection->addOrder(
+                    $field,
+                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                );
+            }
+        }
+        $collection->setCurPage($searchCriteria->getCurrentPage());
+        $collection->setPageSize($searchCriteria->getPageSize());
 
         $bookmarks = [];
         /** @var BookmarkInterface $bookmark */
@@ -159,7 +166,6 @@ class BookmarkRepository implements BookmarkRepositoryInterface
      * @param FilterGroup $filterGroup
      * @param Collection $collection
      * @return void
-     * @deprecated 100.2.0
      * @throws \Magento\Framework\Exception\InputException
      */
     protected function addFilterGroupToCollection(FilterGroup $filterGroup, Collection $collection)
@@ -168,21 +174,5 @@ class BookmarkRepository implements BookmarkRepositoryInterface
             $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
             $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
         }
-    }
-
-    /**
-     * Retrieve collection processor
-     *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
-     */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                CollectionProcessorInterface::class
-            );
-        }
-        return $this->collectionProcessor;
     }
 }

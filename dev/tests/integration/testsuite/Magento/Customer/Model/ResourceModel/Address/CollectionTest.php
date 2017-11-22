@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,17 +9,17 @@
  */
 namespace Magento\Customer\Model\ResourceModel\Address;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetCustomerFilter()
     {
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\ResourceModel\Address\Collection::class
+            'Magento\Customer\Model\ResourceModel\Address\Collection'
         );
         $select = $collection->getSelect();
         $this->assertSame($collection, $collection->setCustomerFilter([1, 2]));
         $customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Customer::class
+            'Magento\Customer\Model\Customer'
         );
         $collection->setCustomerFilter($customer);
         $customer->setId(3);

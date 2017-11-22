@@ -2,15 +2,13 @@
 /**
  * Fixture for Customer List method.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 require 'customer.php';
 
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
-);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 $customer->setWebsiteId(1)
     ->setEntityId(2)
     ->setEntityTypeId(1)

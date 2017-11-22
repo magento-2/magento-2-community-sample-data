@@ -1,6 +1,6 @@
 <?php
 /***
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Developer\Test\Unit\Model\View\Page\Config\ClientSideLessCompi
 
 use Magento\Developer\Model\View\Page\Config\ClientSideLessCompilation\Renderer;
 
-class RendererTest extends \PHPUnit\Framework\TestCase
+class RendererTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject | Renderer */
     private $model;
@@ -19,19 +19,19 @@ class RendererTest extends \PHPUnit\Framework\TestCase
     /** @var  \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\View\Asset\Repository */
     private $assetRepo;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->assetCollectionMock = $this->getMockBuilder(\Magento\Framework\View\Asset\GroupedCollection::class)
+        $this->assetCollectionMock = $this->getMockBuilder('Magento\Framework\View\Asset\GroupedCollection')
             ->disableOriginalConstructor()
             ->getMock();
         $pageConfigMock->expects($this->once())
             ->method('getAssetCollection')
             ->willReturn($this->assetCollectionMock);
-        $this->assetRepo = $this->getMockBuilder(\Magento\Framework\View\Asset\Repository::class)
+        $this->assetRepo = $this->getMockBuilder('Magento\Framework\View\Asset\Repository')
             ->disableOriginalConstructor()
             ->getMock();
         $overriddenMocks = [
@@ -40,15 +40,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         ];
 
         $mocks = $objectManager->getConstructArguments(
-            \Magento\Developer\Model\View\Page\Config\ClientSideLessCompilation\Renderer::class,
+            'Magento\Developer\Model\View\Page\Config\ClientSideLessCompilation\Renderer',
             $overriddenMocks
         );
-        $this->model = $this->getMockBuilder(
-            \Magento\Developer\Model\View\Page\Config\ClientSideLessCompilation\Renderer::class
-        )
-            ->setMethods(['renderAssetGroup'])
-            ->setConstructorArgs($mocks)
-            ->getMock();
+        $this->model = $this->getMock(
+            'Magento\Developer\Model\View\Page\Config\ClientSideLessCompilation\Renderer',
+            ['renderAssetGroup'],
+            $mocks
+        );
     }
 
     /**
@@ -58,17 +57,17 @@ class RendererTest extends \PHPUnit\Framework\TestCase
     {
         // Stubs for renderAssets
         $propertyGroups = [
-            $this->getMockBuilder(\Magento\Framework\View\Asset\PropertyGroup::class)
+            $this->getMockBuilder('Magento\Framework\View\Asset\PropertyGroup')
                 ->disableOriginalConstructor()
                 ->getMock()
         ];
         $this->assetCollectionMock->expects($this->once())->method('getGroups')->willReturn($propertyGroups);
 
         // Stubs for renderLessJsScripts code
-        $lessConfigFile = $this->getMockBuilder(\Magento\Framework\View\Asset\File::class)
+        $lessConfigFile = $this->getMockBuilder('Magento\Framework\View\Asset\File')
             ->disableOriginalConstructor()
             ->getMock();
-        $lessMinFile = $this->getMockBuilder(\Magento\Framework\View\Asset\File::class)
+        $lessMinFile = $this->getMockBuilder('Magento\Framework\View\Asset\File')
             ->disableOriginalConstructor()
             ->getMock();
         $lessConfigUrl = 'less/config/url.css';

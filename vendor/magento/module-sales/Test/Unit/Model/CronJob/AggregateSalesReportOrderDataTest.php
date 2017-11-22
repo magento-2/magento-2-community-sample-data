@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\CronJob;
@@ -10,7 +10,7 @@ use \Magento\Sales\Model\CronJob\AggregateSalesReportOrderData;
 /**
  * Tests Magento\Sales\Model\CronJob\AggregateSalesReportOrderDataTest
  */
-class AggregateSalesReportOrderDataTest extends \PHPUnit\Framework\TestCase
+class AggregateSalesReportOrderDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Locale\ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,15 +34,15 @@ class AggregateSalesReportOrderDataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderFactoryMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Report\OrderFactory::class)
+        $this->orderFactoryMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\OrderFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,7 +56,7 @@ class AggregateSalesReportOrderDataTest extends \PHPUnit\Framework\TestCase
     public function testExecute()
     {
         $date = $this->setupAggregate();
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Report\Order::class)
+        $orderMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\Order')
             ->disableOriginalConstructor()
             ->getMock();
         $orderMock->expects($this->once())

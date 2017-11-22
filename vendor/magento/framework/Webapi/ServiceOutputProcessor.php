@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi;
@@ -12,9 +12,7 @@ use Magento\Framework\Reflection\MethodsMap;
 use Magento\Framework\Webapi\ServicePayloadConverterInterface;
 
 /**
- * Data object converter
- *
- * @api
+ * Data object converter for REST
  */
 class ServiceOutputProcessor implements ServicePayloadConverterInterface
 {

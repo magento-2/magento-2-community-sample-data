@@ -1,18 +1,15 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\AdminNotification\Controller\Adminhtml\Notification;
 
 class MassMarkAsRead extends \Magento\AdminNotification\Controller\Adminhtml\Notification
 {
-
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_AdminNotification::mark_as_read';
 
@@ -27,7 +24,7 @@ class MassMarkAsRead extends \Magento\AdminNotification\Controller\Adminhtml\Not
         } else {
             try {
                 foreach ($ids as $id) {
-                    $model = $this->_objectManager->create(\Magento\AdminNotification\Model\Inbox::class)->load($id);
+                    $model = $this->_objectManager->create('Magento\AdminNotification\Model\Inbox')->load($id);
                     if ($model->getId()) {
                         $model->setIsRead(1)->save();
                     }

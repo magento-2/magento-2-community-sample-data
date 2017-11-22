@@ -1,14 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Test\Unit\Observer;
 
-use Magento\Tax\Api\TaxAddressManagerInterface;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
-
-class CustomerLoggedInObserverTest extends \PHPUnit\Framework\TestCase
+class CustomerLoggedInObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Event\Observer
@@ -45,69 +42,56 @@ class CustomerLoggedInObserverTest extends \PHPUnit\Framework\TestCase
     protected $taxHelperMock;
 
     /**
-     * @var TaxAddressManagerInterface|MockObject
-     */
-    private $addressManagerMock;
-
-    /**
      * @var \Magento\Tax\Observer\CustomerLoggedInObserver
      */
     protected $session;
 
+
     protected function setUp()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->observerMock = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->observerMock = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getCustomerAddress', 'getData'
             ])
             ->getMock();
 
-        $this->groupRepositoryMock = $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\GroupRepository::class)
+        $this->groupRepositoryMock = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\GroupRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerSessionMock = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSessionMock = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([
                 'setCustomerTaxClassId', 'setDefaultTaxBillingAddress', 'setDefaultTaxShippingAddress', 'setWebsiteId'
             ])
             ->getMock();
 
-        $this->moduleManagerMock = $this->getMockBuilder(\Magento\Framework\Module\Manager::class)
+        $this->moduleManagerMock = $this->getMockBuilder('Magento\Framework\Module\Manager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->cacheConfigMock = $this->getMockBuilder(\Magento\PageCache\Model\Config::class)
+        $this->cacheConfigMock = $this->getMockBuilder('Magento\PageCache\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->taxHelperMock = $this->getMockBuilder(\Magento\Tax\Helper\Data::class)
+        $this->taxHelperMock = $this->getMockBuilder('Magento\Tax\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressManagerMock = $this->getMockBuilder(TaxAddressManagerInterface::class)
-            ->setMethods(['setDefaultAddressAfterSave', 'setDefaultAddressAfterLogIn'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->session = $objectManager->getObject(
-            \Magento\Tax\Observer\CustomerLoggedInObserver::class,
+        $this->session = $this->objectManager->getObject(
+            'Magento\Tax\Observer\CustomerLoggedInObserver',
             [
                 'groupRepository' => $this->groupRepositoryMock,
                 'customerSession' => $this->customerSessionMock,
                 'taxHelper' => $this->taxHelperMock,
                 'moduleManager' => $this->moduleManagerMock,
-                'cacheConfig' => $this->cacheConfigMock,
-                'addressManager' => $this->addressManagerMock,
+                'cacheConfig' => $this->cacheConfigMock
             ]
         );
     }
 
-    /**
-     * @test
-     */
     public function testExecute()
     {
         $this->moduleManagerMock->expects($this->once())
@@ -123,7 +107,7 @@ class CustomerLoggedInObserverTest extends \PHPUnit\Framework\TestCase
             ->method('isCatalogPriceDisplayAffectedByTax')
             ->willReturn(true);
 
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Model\Data\Customer::class)
+        $customerMock = $this->getMockBuilder('Magento\Customer\Model\Data\Customer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -136,16 +120,7 @@ class CustomerLoggedInObserverTest extends \PHPUnit\Framework\TestCase
             ->method('getGroupId')
             ->willReturn(1);
 
-        /* @var \Magento\Customer\Api\Data\AddressInterface|\PHPUnit_Framework_MockObject_MockObject $address */
-        $address = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $customerMock->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-
-        $customerGroupMock = $this->getMockBuilder(\Magento\Customer\Model\Data\Group::class)
+        $customerGroupMock = $this->getMockBuilder('Magento\Customer\Model\Data\Group')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -162,9 +137,23 @@ class CustomerLoggedInObserverTest extends \PHPUnit\Framework\TestCase
             ->method('setCustomerTaxClassId')
             ->with(1);
 
-        $this->addressManagerMock->expects($this->once())
-            ->method('setDefaultAddressAfterLogIn')
-            ->with([$address]);
+        $address = $this->objectManager->getObject('Magento\Customer\Model\Data\Address');
+        $address->setIsDefaultShipping(true);
+        $address->setIsDefaultBilling(true);
+        $address->setCountryId(1);
+        $address->setPostCode(11111);
+
+        $addresses = [$address];
+        $customerMock->expects($this->once())
+            ->method('getAddresses')
+            ->willReturn($addresses);
+
+        $this->customerSessionMock->expects($this->once())
+            ->method('setDefaultTaxBillingAddress')
+            ->with(['country_id' => 1, 'region_id' => null, 'postcode' => 11111]);
+        $this->customerSessionMock->expects($this->once())
+            ->method('setDefaultTaxShippingAddress')
+            ->with(['country_id' => 1, 'region_id' => null, 'postcode' => 11111]);
 
         $this->session->execute($this->observerMock);
     }

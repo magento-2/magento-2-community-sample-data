@@ -1,9 +1,4 @@
 <?php
-namespace Braintree\Result;
-
-use Braintree\RiskData;
-use Braintree\Util;
-
 /**
  * Braintree Credit Card Verification Result
  *
@@ -13,7 +8,7 @@ use Braintree\Util;
  *
  * @package    Braintree
  * @subpackage Result
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $avsErrorResponseCode
  * @property-read string $avsPostalCodeResponseCode
@@ -22,7 +17,7 @@ use Braintree\Util;
  * @property-read string $status
  *
  */
-class CreditCardVerification
+class Braintree_Result_CreditCardVerification
 {
     // Status
     const FAILED                   = 'failed';
@@ -51,13 +46,13 @@ class CreditCardVerification
      * @ignore
      * @access protected
      * @param <type> $aAttribs array of properties to set - single level
-     * @return void
+     * @return none
      */
     private function _initializeFromArray($attributes)
     {
         if(isset($attributes['riskData']))
         {
-            $attributes['riskData'] = RiskData::factory($attributes['riskData']);
+            $attributes['riskData'] = Braintree_RiskData::factory($attributes['riskData']);
         }
 
         $this->_attributes = $attributes;
@@ -68,6 +63,7 @@ class CreditCardVerification
     }
 
     /**
+     *
      * @ignore
      */
     public function  __get($name)
@@ -83,17 +79,6 @@ class CreditCardVerification
     public function  __toString()
     {
         return __CLASS__ . '[' .
-                Util::attributesToString($this->_attributes) . ']';
-    }
-
-    public static function allStatuses()
-    {
-        return [
-            CreditCardVerification::FAILED,
-            CreditCardVerification::GATEWAY_REJECTED,
-            CreditCardVerification::PROCESSOR_DECLINED,
-            CreditCardVerification::VERIFIED
-        ];
+                Braintree_Util::attributesToString($this->_attributes) .']';
     }
 }
-class_alias('Braintree\Result\CreditCardVerification', 'Braintree_Result_CreditCardVerification');

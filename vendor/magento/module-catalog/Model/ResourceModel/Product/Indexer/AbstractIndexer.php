@@ -1,19 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Indexer;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-
 /**
  * Catalog Product Indexer Abstract Resource Model
  *
- * @api
- *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\AbstractResource
 {
@@ -23,12 +18,6 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
      * @var \Magento\Eav\Model\Config
      */
     protected $_eavConfig;
-
-    /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     * @since 101.0.0
-     */
-    protected $metadataPool;
 
     /**
      * Class constructor
@@ -79,13 +68,12 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
         $attributeTable = $attribute->getBackend()->getTable();
         $connection = $this->getConnection();
         $joinType = $condition !== null || $required ? 'join' : 'joinLeft';
-        $productIdField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
 
         if ($attribute->isScopeGlobal()) {
             $alias = 'ta_' . $attrCode;
             $select->{$joinType}(
                 [$alias => $attributeTable],
-                "{$alias}.{$productIdField} = {$entity} AND {$alias}.attribute_id = {$attributeId}" .
+                "{$alias}.entity_id = {$entity} AND {$alias}.attribute_id = {$attributeId}" .
                 " AND {$alias}.store_id = 0",
                 []
             );
@@ -96,13 +84,13 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
 
             $select->{$joinType}(
                 [$dAlias => $attributeTable],
-                "{$dAlias}.{$productIdField} = {$entity} AND {$dAlias}.attribute_id = {$attributeId}" .
+                "{$dAlias}.entity_id = {$entity} AND {$dAlias}.attribute_id = {$attributeId}" .
                 " AND {$dAlias}.store_id = 0",
                 []
             );
             $select->joinLeft(
                 [$sAlias => $attributeTable],
-                "{$sAlias}.{$productIdField} = {$entity} AND {$sAlias}.attribute_id = {$attributeId}" .
+                "{$sAlias}.entity_id = {$entity} AND {$sAlias}.attribute_id = {$attributeId}" .
                 " AND {$sAlias}.store_id = {$store}",
                 []
             );
@@ -185,20 +173,15 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
     public function getRelationsByChild($childIds)
     {
         $connection = $this->getConnection();
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         $select = $connection->select()->from(
-            ['relation' => $this->getTable('catalog_product_relation')],
-            []
-        )->join(
-            ['e' => $this->getTable('catalog_product_entity')],
-            'e.' . $linkField . ' = relation.parent_id',
-            ['e.entity_id']
+            $this->getTable('catalog_product_relation'),
+            'parent_id'
         )->where(
-            'relation.child_id IN(?)',
+            'child_id IN(?)',
             $childIds
         );
 
-        return array_map('intval', (array) $connection->fetchCol($select));
+        return $connection->fetchCol($select);
     }
 
     /**
@@ -216,33 +199,16 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
         $result = [];
         if (!empty($parentIds)) {
             $connection = $this->getConnection();
-            $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
             $select = $connection->select()->from(
-                ['cpr' => $this->getTable('catalog_product_relation')],
+                $this->getTable('catalog_product_relation'),
                 'child_id'
-            )->join(
-                ['e' => $this->getTable('catalog_product_entity')],
-                'e.' . $linkField . ' = cpr.parent_id'
             )->where(
-                'e.entity_id IN(?)',
+                'parent_id IN(?)',
                 $parentIds
             );
             $result = $connection->fetchCol($select);
         }
 
-        return array_map('intval', $result);
-    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     * @since 101.0.0
-     */
-    protected function getMetadataPool()
-    {
-        if (null === $this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        }
-        return $this->metadataPool;
+        return $result;
     }
 }

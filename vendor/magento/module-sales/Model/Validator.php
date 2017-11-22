@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model;
 
-use Magento\Framework\Exception\ConfigurationMismatchException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Validator
@@ -29,14 +30,16 @@ class Validator
      * Validator constructor.
      *
      * @param ObjectManagerInterface $objectManager
-     * @param ValidatorResultInterfaceFactory $validatorResult
+     * @param ValidatorResultInterfaceFactory|null $validatorResult
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ValidatorResultInterfaceFactory $validatorResult
+        ValidatorResultInterfaceFactory $validatorResult = null
     ) {
         $this->objectManager = $objectManager;
-        $this->validatorResultFactory = $validatorResult;
+        $this->validatorResultFactory = $validatorResult ?: ObjectManager::getInstance()->get(
+            ValidatorResultInterfaceFactory::class
+        );
     }
 
     /**
@@ -44,7 +47,7 @@ class Validator
      * @param ValidatorInterface[] $validators
      * @param object|null $context
      * @return ValidatorResultInterface
-     * @throws ConfigurationMismatchException
+     * @throws LocalizedException
      */
     public function validate($entity, array $validators, $context = null)
     {
@@ -57,7 +60,7 @@ class Validator
         foreach ($validators as $validatorName) {
             $validator = $this->objectManager->create($validatorName, $validatorArguments);
             if (!$validator instanceof ValidatorInterface) {
-                throw new ConfigurationMismatchException(
+                throw new LocalizedException(
                     __(
                         sprintf('Validator %s is not instance of general validator interface', $validatorName)
                     )

@@ -1,88 +1,104 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Contact\Test\Unit\Controller\Index;
 
-use Magento\Contact\Model\ConfigInterface;
-use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\ResultInterface;
-
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Controller
+     *
      * @var \Magento\Contact\Controller\Index\Index
      */
-    private $controller;
+    protected $_controller;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * Scope config mock
+     *
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $_scopeConfig;
 
     /**
-     * @var ResultFactory|\PHPUnit_Framework_MockObject_MockObject
+     * View mock
+     *
+     * @var \Magento\Framework\App\ViewInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $resultFactory;
+    protected $_view;
 
     /**
+     * Url mock
+     *
      * @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $url;
+    protected $_url;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->configMock = $this->getMockBuilder(ConfigInterface::class)->getMockForAbstractClass();
+        $this->_scopeConfig = $this->getMockForAbstractClass(
+            '\Magento\Framework\App\Config\ScopeConfigInterface',
+            ['isSetFlag'],
+            '',
+            false
+        );
+        $context = $this->getMock(
+            '\Magento\Framework\App\Action\Context',
+            ['getRequest', 'getResponse', 'getView', 'getUrl'],
+            [],
+            '',
+            false
+        );
 
-        $context = $this->getMockBuilder(
-            \Magento\Framework\App\Action\Context::class
-        )->setMethods(
-            ['getRequest', 'getResponse', 'getResultFactory', 'getUrl']
-        )->disableOriginalConstructor(
-        )->getMock();
-
-        $this->url = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)->getMockForAbstractClass();
+        $this->_url = $this->getMockForAbstractClass('\Magento\Framework\UrlInterface', [], '', false);
 
         $context->expects($this->any())
             ->method('getUrl')
-            ->will($this->returnValue($this->url));
+            ->will($this->returnValue($this->_url));
 
         $context->expects($this->any())
             ->method('getRequest')
             ->will($this->returnValue(
-                $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)->getMockForAbstractClass()
+                $this->getMockForAbstractClass('\Magento\Framework\App\RequestInterface', [], '', false)
             ));
 
         $context->expects($this->any())
             ->method('getResponse')
             ->will($this->returnValue(
-                $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)->getMockForAbstractClass()
+                $this->getMockForAbstractClass('\Magento\Framework\App\ResponseInterface', [], '', false)
             ));
 
-        $this->resultFactory = $this->getMockBuilder(
-            ResultFactory::class
-        )->disableOriginalConstructor(
-        )->getMock();
+        $this->_view = $this->getMock(
+            '\Magento\Framework\App\ViewInterface',
+            [],
+            [],
+            '',
+            false
+        );
 
         $context->expects($this->once())
-            ->method('getResultFactory')
-            ->will($this->returnValue($this->resultFactory));
+            ->method('getView')
+            ->will($this->returnValue($this->_view));
 
-        $this->controller = new \Magento\Contact\Controller\Index\Index(
+        $this->_controller = new \Magento\Contact\Controller\Index\Index(
             $context,
-            $this->configMock
+            $this->getMock('\Magento\Framework\Mail\Template\TransportBuilder', [], [], '', false),
+            $this->getMockForAbstractClass('\Magento\Framework\Translate\Inline\StateInterface', [], '', false),
+            $this->_scopeConfig,
+            $this->getMockForAbstractClass('\Magento\Store\Model\StoreManagerInterface', [], '', false)
         );
     }
 
     public function testExecute()
     {
-        $resultStub = $this->getMockForAbstractClass(ResultInterface::class);
-        $this->resultFactory->expects($this->once())
-            ->method('create')
-            ->with(ResultFactory::TYPE_PAGE)
-            ->willReturn($resultStub);
+        $this->_view->expects($this->once())
+            ->method('loadLayout');
 
-        $this->assertSame($resultStub, $this->controller->execute());
+        $this->_view->expects($this->once())
+            ->method('renderLayout');
+
+        $this->_controller->execute();
     }
 }

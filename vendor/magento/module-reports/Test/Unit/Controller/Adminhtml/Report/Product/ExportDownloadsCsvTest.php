@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,13 +27,13 @@ class ExportDownloadsCsvTest extends \Magento\Reports\Test\Unit\Controller\Admin
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->exportDownloadsCsv = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\ExportDownloadsCsv::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\ExportDownloadsCsv',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,
@@ -62,7 +62,7 @@ class ExportDownloadsCsvTest extends \Magento\Reports\Test\Unit\Controller\Admin
         $this->layoutMock
             ->expects($this->once())
             ->method('createBlock')
-            ->with(\Magento\Reports\Block\Adminhtml\Product\Downloads\Grid::class)
+            ->with('Magento\Reports\Block\Adminhtml\Product\Downloads\Grid')
             ->willReturn($this->abstractBlockMock);
 
         $this->fileFactoryMock

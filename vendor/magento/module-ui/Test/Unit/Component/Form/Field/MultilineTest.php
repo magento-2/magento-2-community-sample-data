@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Component\Form\Field;
@@ -16,7 +16,7 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
  *
  * Test for class \Magento\Ui\Component\Form\Element\Multiline
  */
-class MultilineTest extends \PHPUnit\Framework\TestCase
+class MultilineTest extends \PHPUnit_Framework_TestCase
 {
     const NAME = 'test-name';
 
@@ -42,11 +42,16 @@ class MultilineTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->uiComponentFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentFactory::class)
+        $this->uiComponentFactoryMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+
         $this->multiline = new Multiline(
             $this->contextMock,
             $this->uiComponentFactoryMock
@@ -63,10 +68,6 @@ class MultilineTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepare(array $data)
     {
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         $this->uiComponentFactoryMock->expects($this->exactly($data['config']['size']))
             ->method('create')
             ->with($this->stringContains(self::NAME . '_'), Field::NAME, $this->logicalNot($this->isEmpty()))
@@ -86,7 +87,7 @@ class MultilineTest extends \PHPUnit\Framework\TestCase
      */
     protected function getComponentMock($exactly)
     {
-        $componentMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentInterface::class)
+        $componentMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->getMockForAbstractClass();
 
         $componentMock->expects($this->exactly($exactly))

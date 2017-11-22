@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Persistent\Test\Unit\Observer;
 
-class MakePersistentQuoteGuestObserverTest extends \PHPUnit\Framework\TestCase
+class MakePersistentQuoteGuestObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\MakePersistentQuoteGuestObserver
@@ -51,14 +51,14 @@ class MakePersistentQuoteGuestObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->actionMock = $this->createMock(\Magento\Persistent\Controller\Index::class);
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
-        $this->helperMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
-        $this->quoteManagerMock = $this->createMock(\Magento\Persistent\Model\QuoteManager::class);
+        $this->actionMock = $this->getMock('Magento\Persistent\Controller\Index', [], [], '', false);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
+        $this->sessionHelperMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
+        $this->helperMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
+        $this->customerSessionMock = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
+        $this->quoteManagerMock = $this->getMock('Magento\Persistent\Model\QuoteManager', [], [], '', false);
         $this->eventManagerMock =
-            $this->createPartialMock(\Magento\Framework\Event::class, ['getControllerAction', '__wakeUp']);
+            $this->getMock('Magento\Framework\Event', ['getControllerAction', '__wakeUp'], [], '', false);
         $this->observerMock
             ->expects($this->once())
             ->method('getEvent')

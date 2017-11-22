@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Test\Unit\Model\File\Validator;
 
 use Magento\Framework\Phrase;
 
-class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
+class NotProtectedExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension
@@ -26,7 +26,7 @@ class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->_scopeConfig = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
         $this->_scopeConfig->expects(
             $this->atLeastOnce()
         )->method(
@@ -51,7 +51,7 @@ class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
     public function testInitialization()
     {
         $property = new \ReflectionProperty(
-            \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension::class,
+            '\Magento\MediaStorage\Model\File\Validator\NotProtectedExtension',
             '_messageTemplates'
         );
         $property->setAccessible(true);
@@ -61,7 +61,7 @@ class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($defaultMess, $property->getValue($this->_model));
 
         $property = new \ReflectionProperty(
-            \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension::class,
+            '\Magento\MediaStorage\Model\File\Validator\NotProtectedExtension',
             '_protectedFileExtensions'
         );
         $property->setAccessible(true);

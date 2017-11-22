@@ -13,6 +13,7 @@ namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CheckDefinitionValidityPass;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class CheckDefinitionValidityPassTest extends TestCase
@@ -30,11 +31,47 @@ class CheckDefinitionValidityPassTest extends TestCase
 
     /**
      * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
+     * @group legacy
+     */
+    public function testProcessDetectsSyntheticPrototypeDefinitions()
+    {
+        $container = new ContainerBuilder();
+        $container->register('a')->setSynthetic(true)->setScope(ContainerInterface::SCOPE_PROTOTYPE);
+
+        $this->process($container);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
+     * @group legacy
+     */
+    public function testProcessDetectsSharedPrototypeDefinitions()
+    {
+        $container = new ContainerBuilder();
+        $container->register('a')->setShared(true)->setScope(ContainerInterface::SCOPE_PROTOTYPE);
+
+        $this->process($container);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
      */
     public function testProcessDetectsNonSyntheticNonAbstractDefinitionWithoutClass()
     {
         $container = new ContainerBuilder();
         $container->register('a')->setSynthetic(false)->setAbstract(false);
+
+        $this->process($container);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
+     * @group legacy
+     */
+    public function testLegacyProcessDetectsBothFactorySyntaxesUsed()
+    {
+        $container = new ContainerBuilder();
+        $container->register('a')->setFactory(array('a', 'b'))->setFactoryClass('a');
 
         $this->process($container);
     }

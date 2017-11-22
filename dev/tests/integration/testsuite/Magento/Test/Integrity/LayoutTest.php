@@ -2,7 +2,7 @@
 /**
  * Layout nodes integrity tests
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,10 +10,7 @@
 
 namespace Magento\Test\Integrity;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Cached lists of files
@@ -25,7 +22,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->configure(
-            ['preferences' => [\Magento\Theme\Model\Theme::class => \Magento\Theme\Model\Theme\Data::class]]
+            ['preferences' => ['Magento\Theme\Model\Theme' => 'Magento\Theme\Model\Theme\Data']]
         );
     }
 
@@ -44,7 +41,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\View\Layout\ProcessorInterface $layoutUpdate */
         $layoutUpdate = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Layout\ProcessorInterface::class,
+            'Magento\Framework\View\Layout\ProcessorInterface',
             ['theme' => $theme]
         );
         return $layoutUpdate->getFileLayoutUpdatesXml();
@@ -88,7 +85,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     {
         $result = [];
         $themeCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         )->getCollection();
         /** @var $theme \Magento\Framework\View\Design\ThemeInterface */
         foreach ($themeCollection as $theme) {
@@ -158,16 +155,16 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $themeUpdates \Magento\Framework\View\File\Collector\ThemeModular */
         $themeUpdates = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\View\File\Collector\ThemeModular::class, ['subDir' => 'layout']);
+            ->create('Magento\Framework\View\File\Collector\ThemeModular', ['subDir' => 'layout']);
         /** @var $themeUpdatesOverride \Magento\Framework\View\File\Collector\Override\ThemeModular */
         $themeUpdatesOverride = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->create(
-                \Magento\Framework\View\File\Collector\Override\ThemeModular::class,
+                'Magento\Framework\View\File\Collector\Override\ThemeModular',
                 ['subDir' => 'layout/override/theme']
             );
         /** @var $themeCollection \Magento\Theme\Model\Theme\Collection */
         $themeCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Theme\Model\Theme\Collection::class
+            'Magento\Theme\Model\Theme\Collection'
         );
         /** @var $themeLayouts \Magento\Framework\View\File[] */
         $themeLayouts = [];
@@ -195,7 +192,8 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
              */
             function ($themeFile, $theme) {
                 $baseFiles = self::_getCachedFiles(
-                    $theme->getArea(), \Magento\Framework\View\File\Collector\Base::class,
+                    $theme->getArea(),
+                    'Magento\Framework\View\File\Collector\Base',
                     $theme
                 );
                 $fileKey = $themeFile->getModule() . '/' . $themeFile->getName();
@@ -239,7 +237,8 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
                 );
 
                 // Search for the overridden file in the ancestor theme
-                $ancestorFiles = self::_getCachedFiles($ancestorTheme->getFullPath(), \Magento\Framework\View\File\Collector\ThemeModular::class, $ancestorTheme);
+                $ancestorFiles = self::_getCachedFiles($ancestorTheme->getFullPath(),
+                    'Magento\Framework\View\File\Collector\ThemeModular', $ancestorTheme);
                 $fileKey = $themeFile->getModule() . '/' . $themeFile->getName();
                 $this->assertArrayHasKey(
                     $fileKey,
@@ -289,7 +288,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
         return $this->_retrieveFilesForEveryTheme(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
                 ->create(
-                    \Magento\Framework\View\File\Collector\Override\Base::class,
+                    'Magento\Framework\View\File\Collector\Override\Base',
                     ['subDir' => 'layout/override/base']
                 )
         );
@@ -303,7 +302,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
         return $this->_retrieveFilesForEveryTheme(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
                 ->create(
-                    \Magento\Framework\View\File\Collector\Override\ThemeModular::class,
+                    'Magento\Framework\View\File\Collector\Override\ThemeModular',
                     ['subDir' => 'layout/override/theme']
                 )
         );
@@ -321,7 +320,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
         $result = [];
         /** @var $themeCollection \Magento\Theme\Model\Theme\Collection */
         $themeCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Theme\Model\Theme\Collection::class
+            'Magento\Theme\Model\Theme\Collection'
         );
         /** @var $theme \Magento\Framework\View\Design\ThemeInterface */
         foreach ($themeCollection as $theme) {

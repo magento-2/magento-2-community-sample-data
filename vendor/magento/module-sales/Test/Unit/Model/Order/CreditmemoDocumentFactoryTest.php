@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\CreditmemoDocumentFactory;
 use Magento\Sales\Api\Data\CreditmemoCommentInterface;
@@ -15,16 +14,14 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Api\Data\CreditmemoInterface;
 use Magento\Sales\Api\Data\CreditmemoItemCreationInterface;
 use Magento\Sales\Api\Data\CreditmemoCommentCreationInterface;
-use Magento\Framework\EntityManager\HydratorPool;
 use Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface;
 use Magento\Sales\Model\Order\CreditmemoFactory;
-use Magento\Framework\EntityManager\HydratorInterface;
 
 /**
  * Class CreditmemoDocumentFactoryTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
+class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -42,19 +39,9 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
     private $creditmemoFactoryMock;
 
     /**
-     * @var CreditmemoCommentInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $commentFactoryMock;
-
-    /**
-     * @var HydratorPool|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $hydratorPoolMock;
-
-    /**
-     * @var HydratorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $hydratorMock;
 
     /**
      * @var \Magento\Sales\Model\Order|\PHPUnit_Framework_MockObject_MockObject
@@ -103,12 +90,10 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->commentFactoryMock =
-            $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
+            $this->getMockBuilder('Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory')
+                ->setMethods(['create'])
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -122,9 +107,6 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->commentCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
@@ -151,7 +133,6 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
             [
                 'creditmemoFactory' => $this->creditmemoFactoryMock,
                 'commentFactory' => $this->commentFactoryMock,
-                'hydratorPool' => $this->hydratorPoolMock,
                 'orderRepository' => $this->orderRepositoryMock
             ]
         );
@@ -165,26 +146,19 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
         $this->creditmemoItemCreationMock->expects($this->once())
             ->method('getQty')
             ->willReturn(3);
-        $this->hydratorPoolMock->expects($this->exactly(2))
-            ->method('getHydrator')
-            ->willReturnMap(
-                [
-                    [CreditmemoCreationArgumentsInterface::class, $this->hydratorMock],
-                    [CreditmemoCommentCreationInterface::class, $this->hydratorMock],
-                ]
-            );
-        $this->hydratorMock->expects($this->exactly(2))
-            ->method('extract')
-            ->willReturnMap([
-                [$this->commentCreationArgumentsMock, ['shipping_amount' => '20.00']],
-                [$this->commentCreationMock, ['comment' => 'text']]
-            ]);
+        $this->commentCreationArgumentsMock->expects($this->once())
+            ->method('getShippingAmount')
+            ->willReturn('20.00');
+        $this->commentCreationMock->expects($this->once())
+            ->method('getComment')
+            ->willReturn('text');
         $this->commentFactoryMock->expects($this->once())
             ->method('create')
             ->with(
                 [
                     'data' => [
-                        'comment' => 'text'
+                        'comment' => 'text',
+                        'is_visible_on_front' => null
                     ]
                 ]
             )
@@ -222,7 +196,9 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
                 $this->orderMock,
                 [
                     'shipping_amount' => '20.00',
-                    'qtys' => [7 => 3]
+                    'qtys' => [7 => 3],
+                    'adjustment_positive' => null,
+                    'adjustment_negative' => null
                 ]
             )
             ->willReturn($this->creditmemoMock);
@@ -244,7 +220,9 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
                 $this->invoiceMock,
                 [
                     'shipping_amount' => '20.00',
-                    'qtys' => [7 => 3]
+                    'qtys' => [7 => 3],
+                    'adjustment_positive' => null,
+                    'adjustment_negative' => null
                 ]
             )
             ->willReturn($this->creditmemoMock);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,9 +8,7 @@
 
 namespace Magento\Fedex\Model;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Module\Dir;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Xml\Security;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
@@ -141,11 +139,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
     private static $trackingErrors = ['FAILURE', 'ERROR'];
 
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
      * @param \Psr\Log\LoggerInterface $logger
@@ -165,7 +158,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      * @param \Magento\Framework\Module\Dir\Reader $configReader
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      * @param array $data
-     * @param Json|null $serializer
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -188,8 +180,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Module\Dir\Reader $configReader,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        array $data = [],
-        Json $serializer = null
+        array $data = []
     ) {
         $this->_storeManager = $storeManager;
         $this->_productCollectionFactory = $productCollectionFactory;
@@ -215,7 +206,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         $this->_shipServiceWsdl = $wsdlBasePath . 'ShipService_v10.wsdl';
         $this->_rateServiceWsdl = $wsdlBasePath . 'RateService_v10.wsdl';
         $this->_trackServiceWsdl = $wsdlBasePath . 'TrackService_v' . self::$trackServiceVersion . '.wsdl';
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
     /**
@@ -492,22 +482,21 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
     protected function _doRatesRequest($purpose)
     {
         $ratesRequest = $this->_formRateRequest($purpose);
-        $ratesRequestNoShipTimestamp = $ratesRequest;
-        unset($ratesRequestNoShipTimestamp['RequestedShipment']['ShipTimestamp']);
-        $requestString = $this->serializer->serialize($ratesRequestNoShipTimestamp);
+        $requestString = serialize($ratesRequest);
         $response = $this->_getCachedQuotes($requestString);
         $debugData = ['request' => $this->filterDebugData($ratesRequest)];
         if ($response === null) {
             try {
                 $client = $this->_createRateSoapClient();
                 $response = $client->getRates($ratesRequest);
-                $this->_setCachedQuotes($requestString, $response);
+                $this->_setCachedQuotes($requestString, serialize($response));
                 $debugData['result'] = $response;
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
                 $this->_logger->critical($e);
             }
         } else {
+            $response = unserialize($response);
             $debugData['result'] = $response;
         }
         $this->_debug($debugData);
@@ -796,6 +785,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             $error = $this->_rateErrorFactory->create();
             $error->setCarrier('fedex');
             $error->setCarrierTitle($this->getConfigData('title'));
+            $error->setErrorMessage($errorTitle);
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
         } else {
@@ -1071,20 +1061,21 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             ],
             'ProcessingOptions' => 'INCLUDE_DETAILED_SCANS'
         ];
-        $requestString = $this->serializer->serialize($trackRequest);
+        $requestString = serialize($trackRequest);
         $response = $this->_getCachedQuotes($requestString);
         $debugData = ['request' => $trackRequest];
         if ($response === null) {
             try {
                 $client = $this->_createTrackSoapClient();
                 $response = $client->track($trackRequest);
-                $this->_setCachedQuotes($requestString, $response);
+                $this->_setCachedQuotes($requestString, serialize($response));
                 $debugData['result'] = $response;
             } catch (\Exception $e) {
                 $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
                 $this->_logger->critical($e);
             }
         } else {
+            $response = unserialize($response);
             $debugData['result'] = $response;
         }
         $this->_debug($debugData);
@@ -1104,10 +1095,10 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         if (!is_object($response) || empty($response->HighestSeverity)) {
             $this->appendTrackingError($trackingValue, __('Invalid response from carrier'));
             return;
-        } elseif (in_array($response->HighestSeverity, self::$trackingErrors)) {
+        } else if (in_array($response->HighestSeverity, self::$trackingErrors)) {
             $this->appendTrackingError($trackingValue, (string) $response->Notifications->Message);
             return;
-        } elseif (empty($response->CompletedTrackDetails) || empty($response->CompletedTrackDetails->TrackDetails)) {
+        } else if (empty($response->CompletedTrackDetails) || empty($response->CompletedTrackDetails->TrackDetails)) {
             $this->appendTrackingError($trackingValue, __('No available tracking items'));
             return;
         }
@@ -1580,9 +1571,10 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             'progressdetail' => [],
         ];
 
-        $datetime = $this->parseDate(!empty($trackInfo->ShipTimestamp) ? $trackInfo->ShipTimestamp : null);
-        if ($datetime) {
-            $result['shippeddate'] = gmdate('Y-m-d', $datetime->getTimestamp());
+        if (!empty($trackInfo->ShipTimestamp) &&
+            ($datetime = \DateTime::createFromFormat(\DateTime::ISO8601, $trackInfo->ShipTimestamp)) !== false
+        ) {
+            $result['shippeddate'] = $datetime->format('Y-m-d');
         }
 
         $result['signedby'] = !empty($trackInfo->DeliverySignatureName) ?
@@ -1598,8 +1590,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
 
         $datetime = $this->getDeliveryDateTime($trackInfo);
         if ($datetime) {
-            $result['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
-            $result['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
+            $result['deliverydate'] = $datetime->format('Y-m-d');
+            $result['deliverytime'] = $datetime->format('H:i:s');
         }
 
         $address = null;
@@ -1646,7 +1638,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             $timestamp = $trackInfo->ActualDeliveryTimestamp;
         }
 
-        return $timestamp ? $this->parseDate($timestamp) : null;
+        return $timestamp ? \DateTime::createFromFormat(\DateTime::ISO8601, $timestamp) : null;
     }
 
     /**
@@ -1695,10 +1687,10 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                 'deliverylocation' => null
             ];
 
-            $datetime = $this->parseDate(!empty($event->Timestamp) ? $event->Timestamp : null);
-            if ($datetime) {
-                $item['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
-                $item['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
+            if (!empty($event->Timestamp)) {
+                $datetime = \DateTime::createFromFormat(\DateTime::ISO8601, $event->Timestamp);
+                $item['deliverydate'] = $datetime->format('Y-m-d');
+                $item['deliverytime'] = $datetime->format('H:i:s');
             }
 
             if (!empty($event->Address)) {
@@ -1725,31 +1717,5 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         $error->setErrorMessage($errorMessage);
         $result = $this->getResult();
         $result->append($error);
-    }
-
-    /**
-     * Parses datetime string from FedEx response.
-     * According to FedEx API, datetime string should be in \DateTime::ATOM format, but
-     * sometimes FedEx returns datetime without timezone and in that case timezone will be set as UTC.
-     *
-     * @param string $timestamp
-     * @return bool|\DateTime
-     */
-    private function parseDate($timestamp)
-    {
-        if ($timestamp === null) {
-            return false;
-        }
-        $formats = [\DateTime::ATOM, 'Y-m-d\TH:i:s'];
-        foreach ($formats as $format) {
-            // set UTC timezone for a case if timestamp does not contain any timezone
-            $utcTimezone = new \DateTimeZone('UTC');
-            $dateTime = \DateTime::createFromFormat($format, $timestamp, $utcTimezone);
-            if ($dateTime !== false) {
-                return $dateTime;
-            }
-        }
-
-        return false;
     }
 }

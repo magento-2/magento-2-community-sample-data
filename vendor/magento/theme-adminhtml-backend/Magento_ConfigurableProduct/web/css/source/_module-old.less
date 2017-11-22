@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -93,7 +93,7 @@
     }
 
     .col-name {
-        background-clip: padding-box; // Firefox missing border fix
+        position: relative;
     }
 
     .action-choose {
@@ -135,13 +135,11 @@
                     top: 4px;
                 }
             }
-
             input {
                 border-width: 1px 1px 1px 0;
                 direction: ltr;
                 margin-left: 16px;
                 width: 100px;
-
                 &[disabled] {
                     + .addafter {
                         background: #e8e8e8;

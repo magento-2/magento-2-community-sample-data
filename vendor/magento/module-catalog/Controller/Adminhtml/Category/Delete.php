@@ -1,16 +1,14 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Category;
 
 class Delete extends \Magento\Catalog\Controller\Adminhtml\Category
 {
-    /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
-     */
+    /** @var \Magento\Catalog\Api\CategoryRepositoryInterface */
     protected $categoryRepository;
 
     /**

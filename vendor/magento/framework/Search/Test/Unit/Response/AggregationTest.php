@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Test\Unit\Response;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class AggregationTest extends \PHPUnit\Framework\TestCase
+class AggregationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Search\Response\Aggregation |\PHPUnit_Framework_MockObject_MockObject
@@ -19,7 +19,7 @@ class AggregationTest extends \PHPUnit\Framework\TestCase
         $helper = new ObjectManager($this);
 
         $buckets = [];
-        $bucket = $this->getMockBuilder(\Magento\Framework\Search\Response\Bucket::class)
+        $bucket = $this->getMockBuilder('Magento\Framework\Search\Response\Bucket')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -28,7 +28,7 @@ class AggregationTest extends \PHPUnit\Framework\TestCase
         $buckets[1] = $bucket;
 
         $this->aggregation = $helper->getObject(
-            \Magento\Framework\Search\Response\Aggregation::class,
+            'Magento\Framework\Search\Response\Aggregation',
             [
                 'buckets' => $buckets,
             ]

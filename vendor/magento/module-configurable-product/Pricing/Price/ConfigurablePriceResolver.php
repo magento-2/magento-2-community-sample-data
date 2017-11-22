@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,20 +12,18 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 class ConfigurablePriceResolver implements PriceResolverInterface
 {
-    /**
-     * @var \Magento\ConfigurableProduct\Pricing\Price\PriceResolverInterface
-     */
+    /** @var PriceResolverInterface */
     protected $priceResolver;
 
     /**
      * @var PriceCurrencyInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     protected $priceCurrency;
 
     /**
      * @var Configurable
-     * @deprecated 100.1.1
+     * @deprecated
      */
     protected $configurable;
 

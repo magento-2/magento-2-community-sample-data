@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Pricing\Test\Unit\Amount;
@@ -11,7 +11,7 @@ use Magento\Framework\Pricing\Amount\Base;
  * Class BaseTest
  *
  */
-class BaseTest extends \PHPUnit\Framework\TestCase
+class BaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test getValue() without exclude argument

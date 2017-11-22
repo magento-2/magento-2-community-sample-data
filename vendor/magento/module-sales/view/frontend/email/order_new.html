@@ -1,10 +1,10 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
-<!--@subject {{trans "Your %store_name order confirmation" store_name=$store.getFrontendName()}} @-->
+<!--@subject Your {{var store.getFrontendName()}} order confirmation @-->
 <!--@vars {
 "var formattedBillingAddress|raw":"Billing Address",
 "var order.getEmailCustomerNote()":"Email Order Note",
@@ -12,8 +12,7 @@
 "layout handle=\"sales_email_order_items\" order=$order area=\"frontend\"":"Order Items Grid",
 "var payment_html|raw":"Payment Details",
 "var formattedShippingAddress|raw":"Shipping Address",
-"var order.getShippingDescription()":"Shipping Description",
-"var shipping_msg":"Shipping message"
+"var order.getShippingDescription()":"Shipping Description"
 } @-->
 
 {{template config_path="design/email/header_template"}}
@@ -74,9 +73,6 @@
                     <td class="method-info">
                         <h3>{{trans "Shipping Method"}}</h3>
                         <p>{{var order.getShippingDescription()}}</p>
-                        {{if shipping_msg}}
-                        <p>{{var shipping_msg}}</p>
-                        {{/if}}
                     </td>
                     {{/depend}}
                 </tr>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,17 +27,16 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
         parent::assert404NotFound();
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->assertNull($objectManager->get(\Magento\Framework\Registry::class)->registry('current_product'));
+        $this->assertNull($objectManager->get('Magento\Framework\Registry')->registry('current_product'));
     }
 
     protected function _getProductImageFile()
     {
-        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /**
-         * @var $repository \Magento\Catalog\Model\ProductRepository
-         */
-        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple_product_1');
+        /** @var $product \Magento\Catalog\Model\Product */
+        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Catalog\Model\Product'
+        );
+        $product->load(1);
         $images = $product->getMediaGalleryImages()->getItems();
         $image = reset($images);
         return $image['file'];
@@ -45,28 +44,22 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
 
     /**
      * @magentoDataFixture Magento/Catalog/controllers/_files/products.php
-     * @magentoAppArea frontend
      */
     public function testViewAction()
     {
+        $this->dispatch('catalog/product/view/id/1');
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /**
-         * @var $repository \Magento\Catalog\Model\ProductRepository
-         */
-        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple_product_1');
-        $this->dispatch(sprintf('catalog/product/view/id/%s', $product->getEntityId()));
 
         /** @var $currentProduct \Magento\Catalog\Model\Product */
-        $currentProduct = $objectManager->get(\Magento\Framework\Registry::class)->registry('current_product');
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product::class, $currentProduct);
-        $this->assertEquals($product->getEntityId(), $currentProduct->getEntityId());
+        $currentProduct = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+        $this->assertInstanceOf('Magento\Catalog\Model\Product', $currentProduct);
+        $this->assertEquals(1, $currentProduct->getId());
 
         $lastViewedProductId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Session::class
+            'Magento\Catalog\Model\Session'
         )->getLastViewedProductId();
-        $this->assertEquals($product->getEntityId(), $lastViewedProductId);
+        $this->assertEquals(1, $lastViewedProductId);
 
         $responseBody = $this->getResponse()->getBody();
         /* Product info */
@@ -79,19 +72,11 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->assertContains('Add to Cart', $responseBody);
         /* Meta info */
         $this->assertContains('<title>Simple Product 1 Meta Title</title>', $responseBody);
-        $this->assertEquals(
+        $this->assertSelectCount('meta[name="keywords"][content="Simple Product 1 Meta Keyword"]', 1, $responseBody);
+        $this->assertSelectCount(
+            'meta[name="description"][content="Simple Product 1 Meta Description"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//meta[@name="keywords" and @content="Simple Product 1 Meta Keyword"]',
-                $responseBody
-            )
-        );
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//meta[@name="description" and @content="Simple Product 1 Meta Description"]',
-                $responseBody
-            )
+            $responseBody
         );
     }
 
@@ -100,22 +85,9 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testViewActionConfigurable()
     {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
-        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /**
-         * @var $repository \Magento\Catalog\Model\ProductRepository
-         */
-        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple');
-        $this->dispatch(sprintf('catalog/product/view/id/%s', $product->getEntityId()));
+        $this->dispatch('catalog/product/view/id/1');
         $html = $this->getResponse()->getBody();
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="product-options-wrapper"]',
-                $html
-            )
-        );
+        $this->assertSelectCount('#product-options-wrapper', 1, $html);
     }
 
     public function testViewActionNoProductId()
@@ -136,14 +108,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testGalleryAction()
     {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
-        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /**
-         * @var $repository \Magento\Catalog\Model\ProductRepository
-         */
-        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
-        $product = $repository->get('simple_product_1');
-        $this->dispatch(sprintf('catalog/product/gallery/id/%s', $product->getEntityId()));
+        $this->dispatch('catalog/product/gallery/id/1');
 
         $this->assertContains('http://localhost/pub/media/catalog/product/', $this->getResponse()->getBody());
         $this->assertContains($this->_getProductImageFile(), $this->getResponse()->getBody());

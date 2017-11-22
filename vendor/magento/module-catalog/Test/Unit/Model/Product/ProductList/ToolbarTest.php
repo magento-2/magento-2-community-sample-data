@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use \Magento\Catalog\Model\Product\ProductList\Toolbar;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ToolbarTest extends \PHPUnit\Framework\TestCase
+class ToolbarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Toolbar
@@ -25,13 +25,13 @@ class ToolbarTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
         $this->toolbarModel = (new ObjectManager($this))->getObject(
-            \Magento\Catalog\Model\Product\ProductList\Toolbar::class,
+            'Magento\Catalog\Model\Product\ProductList\Toolbar',
             [
                 'request' => $this->requestMock,
             ]

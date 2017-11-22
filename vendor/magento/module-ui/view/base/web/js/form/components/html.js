@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'jquery',
@@ -18,9 +14,7 @@ define([
             content:        '',
             showSpinner:    false,
             loading:        false,
-            visible:        true,
-            template:       'ui/content/content',
-            additionalClasses: {}
+            template:       'ui/content/content'
         },
 
         /**
@@ -31,7 +25,6 @@ define([
             _.bindAll(this, 'onContainerToggle', 'onDataLoaded');
 
             this._super()
-                ._setClasses()
                 .initAjaxConfig();
 
             return this;
@@ -45,37 +38,11 @@ define([
          */
         initObservable: function () {
             this._super()
-                .observe('content loading visible');
+                .observe('content loading');
 
             return this;
         },
 
-        /**
-         * Extends 'additionalClasses' object.
-         *
-         * @returns {Group} Chainable.
-         */
-        _setClasses: function () {
-            var additional = this.additionalClasses,
-                classes;
-
-            if (_.isString(additional)) {
-                additional = this.additionalClasses.split(' ');
-                classes = this.additionalClasses = {};
-
-                additional.forEach(function (name) {
-                    classes[name] = true;
-                }, this);
-            }
-
-            _.extend(this.additionalClasses, {
-                'admin__scope-old': !!additional
-            });
-
-            return this;
-        },
-
-        /** @inheritdoc */
         initContainer: function (parent) {
             this._super();
 

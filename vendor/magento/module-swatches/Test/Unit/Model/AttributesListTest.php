@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Swatches\Test\Unit\Model;
 
-class AttributesListTest extends \PHPUnit\Framework\TestCase
+class AttributesListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Swatches\Model\AttributesList
@@ -28,23 +28,33 @@ class AttributesListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->swatchHelper = $this->createMock(\Magento\Swatches\Helper\Data::class);
+        $this->swatchHelper = $this->getMock('\Magento\Swatches\Helper\Data', [], [], '', false);
 
-        $this->collectionMock = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection::class
+        $this->collectionMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection',
+            [],
+            [],
+            '',
+            false
         );
 
         /** @var  \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactoryMock */
-        $collectionFactoryMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory::class,
-            ['create']
+        $collectionFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $collectionFactoryMock->expects($this->once())->method('create')->willReturn($this->collectionMock);
 
         $methods = ['getId', 'getFrontendLabel', 'getAttributeCode', 'getSource'];
-        $this->attributeMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            $methods
+        $this->attributeMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            $methods,
+            [],
+            '',
+            false
         );
         $this->collectionMock
             ->expects($this->once())
@@ -79,7 +89,7 @@ class AttributesListTest extends \PHPUnit\Framework\TestCase
         $this->attributeMock->expects($this->once())->method('getFrontendLabel')->will($this->returnValue('label'));
         $this->attributeMock->expects($this->once())->method('getAttributeCode')->will($this->returnValue('code'));
 
-        $source = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class);
+        $source = $this->getMock('Magento\Eav\Model\Entity\Attribute\Source\AbstractSource', [], [], '', false);
         $source->expects($this->once())->method('getAllOptions')->with(false)->will($this->returnValue(['options']));
         $this->attributeMock->expects($this->once())->method('getSource')->will($this->returnValue($source));
 

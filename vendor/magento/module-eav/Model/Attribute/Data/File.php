@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Attribute\Data;
@@ -11,8 +11,7 @@ use Magento\Framework\App\RequestInterface;
 /**
  * EAV Entity Attribute File Data Model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
 {
@@ -177,6 +176,7 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
 
         $errors = [];
         $attribute = $this->getAttribute();
+        $label = $attribute->getStoreLabel();
 
         $toDelete = !empty($value['delete']) ? true : false;
         $toUpload = !empty($value['tmp_name']) ? true : false;
@@ -190,7 +190,6 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
         }
 
         if ($attribute->getIsRequired() && !$toUpload) {
-            $label = __($attribute->getStoreLabel());
             $errors[] = __('"%1" is a required value.', $label);
         }
 
@@ -230,7 +229,7 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
             }
         }
 
-        $destinationFolder = $attribute->getEntityType()->getEntityTypeCode();
+        $destinationFolder = $attribute->getEntity()->getEntityTypeCode();
 
         // unlink entity file
         if ($toDelete) {

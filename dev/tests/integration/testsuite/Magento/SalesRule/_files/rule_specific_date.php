@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 $tomorrow = new \DateTime();
 $tomorrow->add(\DateInterval::createFromDateString('+1 day'));
 
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#1'
 )->setIsActive(
@@ -25,8 +25,6 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
 )->setFromDate(
     date('Y-m-d')
 )->setToDate(

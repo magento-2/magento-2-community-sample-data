@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\QuoteRepository\Plugin;
@@ -72,7 +72,7 @@ class Authorization
     protected function isAllowed(\Magento\Quote\Model\Quote $quote)
     {
         return $this->userContext->getUserType() == UserContextInterface::USER_TYPE_CUSTOMER
-            ? $quote->getCustomerId() === null || $quote->getCustomerId() == $this->userContext->getUserId()
+            ? $quote->getCustomerId() == $this->userContext->getUserId()
             : true;
     }
 }

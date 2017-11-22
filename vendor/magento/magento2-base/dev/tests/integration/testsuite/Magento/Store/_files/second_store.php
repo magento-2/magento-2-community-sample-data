@@ -1,18 +1,16 @@
 <?php
 /**
- * Create fixture store
- *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-$store = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Store::class);
+$store = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Store\Model\Store');
 if (!$store->load('fixture_second_store', 'code')->getId()) {
     $websiteId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
+        'Magento\Store\Model\StoreManagerInterface'
     )->getWebsite()->getId();
     $groupId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
+        'Magento\Store\Model\StoreManagerInterface'
     )->getWebsite()->getDefaultGroupId();
     $store->setCode(
         'fixture_second_store'
@@ -28,9 +26,9 @@ if (!$store->load('fixture_second_store', 'code')->getId()) {
         1
     );
     $store->save();
-}
 
-/* Refresh stores memory cache */
-\Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-    \Magento\Store\Model\StoreManagerInterface::class
-)->reinitStores();
+    /* Refresh stores memory cache */
+    \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+        'Magento\Store\Model\StoreManagerInterface'
+    )->reinitStores();
+}

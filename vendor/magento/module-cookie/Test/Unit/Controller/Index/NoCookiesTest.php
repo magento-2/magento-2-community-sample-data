@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cookie\Test\Unit\Controller\Index;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class NoCookiesTest extends \PHPUnit\Framework\TestCase
+class NoCookiesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cookie\Controller\Index\NoCookies
@@ -46,19 +46,19 @@ class NoCookiesTest extends \PHPUnit\Framework\TestCase
     public function setup()
     {
         $objectManager = new ObjectManager($this);
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->eventManagerMock = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')->getMock();
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->redirectResponseMock = $this->getMockBuilder(\Magento\Framework\App\Response\RedirectInterface::class)
+        $this->redirectResponseMock = $this->getMockBuilder('Magento\Framework\App\Response\RedirectInterface')
             ->getMock();
-        $this->viewMock = $this->createMock(\Magento\Framework\App\ViewInterface::class);
+        $this->viewMock = $this->getMock('Magento\Framework\App\ViewInterface');
 
         $this->controller = $objectManager->getObject(
-            \Magento\Cookie\Controller\Index\NoCookies::class,
+            'Magento\Cookie\Controller\Index\NoCookies',
             [
                 'eventManager' => $this->eventManagerMock,
                 'request' => $this->requestMock,
@@ -79,7 +79,7 @@ class NoCookiesTest extends \PHPUnit\Framework\TestCase
                 $this->callback(
                     function ($dataArray) {
                         $redirect = $dataArray['redirect'];
-                        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $redirect);
+                        $this->assertInstanceOf('Magento\Framework\DataObject', $redirect);
                         $redirect->setRedirectUrl(self::REDIRECT_URL);
                         return true;
                     }
@@ -108,7 +108,7 @@ class NoCookiesTest extends \PHPUnit\Framework\TestCase
                 $this->callback(
                     function ($dataArray) {
                         $redirect = $dataArray['redirect'];
-                        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $redirect);
+                        $this->assertInstanceOf('Magento\Framework\DataObject', $redirect);
                         $redirect->setArguments(self::REDIRECT_ARGUMENTS);
                         $redirect->setPath(self::REDIRECT_PATH);
                         $redirect->setRedirect(self::REDIRECT_URL);

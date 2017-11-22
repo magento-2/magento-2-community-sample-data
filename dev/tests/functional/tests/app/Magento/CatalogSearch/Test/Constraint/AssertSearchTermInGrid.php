@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,6 +22,7 @@ class AssertSearchTermInGrid extends AbstractConstraint
      *  - correct Store
      *  - correct Results
      *  - correct Uses
+     *  - correct Synonym
      *  - correct Redirect URL
      *  - correct Suggested Terms
      *
@@ -37,6 +38,7 @@ class AssertSearchTermInGrid extends AbstractConstraint
             'store_id' => $searchTerm->getStoreId(),
             'results_from' => $searchTerm->getNumResults(),
             'popularity_from' => $searchTerm->getPopularity(),
+            'synonym_for' => $searchTerm->getSynonymFor(),
             'redirect' => $searchTerm->getRedirect(),
             'display_in_terms' => strtolower($searchTerm->getDisplayInTerms()),
         ];

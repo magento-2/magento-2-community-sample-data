@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,14 +8,10 @@ namespace Magento\Framework\App\DeploymentConfig;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Config\File\ConfigFilePool;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\DriverPool;
 
 /**
- * Deployment configuration reader.
- * Loads the merged configuration from config files.
- *
- * @see FileReader The reader for specific configuration file
+ * Deployment configuration reader
  */
 class Reader
 {
@@ -80,15 +76,11 @@ class Reader
     }
 
     /**
-     * Method loads merged configuration within all configuration files.
-     * To retrieve specific file configuration, use FileReader.
-     * $fileKey option is deprecated since version 2.2.0.
+     * Loads the configuration file
      *
-     * @param string $fileKey The file key (deprecated)
+     * @param string $fileKey
      * @return array
-     * @throws FileSystemException If file can not be read
-     * @throws \Exception If file key is not correct
-     * @see FileReader
+     * @throws \Exception
      */
     public function load($fileKey = null)
     {
@@ -112,8 +104,16 @@ class Reader
                     continue;
                 }
                 $allFilesData[$configFile] = $fileData;
-                if (is_array($fileData) && count($fileData) > 0) {
-                    $result = array_replace_recursive($result, $fileData);
+                if (!empty($fileData)) {
+                    $intersection = array_intersect_key($result, $fileData);
+                    if (!empty($intersection)) {
+                        $displayMessage = $this->findFilesWithKeys(array_keys($intersection), $allFilesData);
+                        throw new \Exception(
+                            "Key collision! The following keys occur in multiple config files:"
+                            . PHP_EOL . $displayMessage
+                        );
+                    }
+                    $result = array_merge($result, $fileData);
                 }
             }
         }
@@ -121,17 +121,24 @@ class Reader
     }
 
     /**
-     * Loads the configuration file.
+     * Finds list of files that has the key
      *
-     * @param string $fileKey The file key
-     * @param string $pathConfig The path config
-     * @param bool $ignoreInitialConfigFiles Whether ignore custom pools
-     * @return array
-     * @deprecated 100.2.0 Magento does not support custom config file pools since 2.2.0 version
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param array $keys
+     * @param array $allFilesData
+     * @return string
      */
-    public function loadConfigFile($fileKey, $pathConfig, $ignoreInitialConfigFiles = false)
+    private function findFilesWithKeys(array $keys, array $allFilesData)
     {
-        return $this->load($fileKey);
+        $displayMessage = '';
+        foreach ($keys as $key) {
+            $foundConfigFiles = [];
+            foreach ($allFilesData as $fileName => $fileValues) {
+                if (isset($fileValues[$key])) {
+                    $foundConfigFiles[] = $fileName;
+                }
+            }
+            $displayMessage .= 'Key "' . $key . '" found in ' . implode(', ', $foundConfigFiles) . PHP_EOL;
+        }
+        return $displayMessage;
     }
 }

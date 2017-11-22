@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Backup\Filesystem\Rollback;
@@ -8,7 +8,7 @@ namespace Magento\Framework\Backup\Filesystem\Rollback;
 /**
  * Filesystem rollback workers abstract class
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractRollback
 {

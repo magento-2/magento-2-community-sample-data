@@ -1,8 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*global define*/
 define([
     'jquery',
     'ko',
@@ -12,7 +12,6 @@ define([
     'Magento_Checkout/js/model/quote'
 ], function ($, ko, utils, Component, layout, quote) {
     'use strict';
-
     var defaultRendererTemplate = {
         parent: '${ $.$data.parentName }',
         name: '${ $.$data.name }',
@@ -25,30 +24,24 @@ define([
             rendererTemplates: {}
         },
 
-        /** @inheritdoc */
         initialize: function () {
-            var self = this;
-
             this._super()
                 .initChildren();
 
-            quote.shippingAddress.subscribe(function (address) {
+            var self = this;
+            quote.shippingAddress.subscribe(function(address) {
                 self.createRendererComponent(address);
             });
-
             return this;
         },
 
-        /** @inheritdoc */
         initConfig: function () {
             this._super();
             // the list of child components that are responsible for address rendering
             this.rendererComponents = {};
-
             return this;
         },
 
-        /** @inheritdoc */
         initChildren: function () {
             return this;
         },
@@ -56,12 +49,11 @@ define([
         /**
          * Create new component that will render given address in the address list
          *
-         * @param {Object} address
+         * @param address
          */
         createRendererComponent: function (address) {
-            var rendererTemplate, templateData, rendererComponent;
 
-            $.each(this.rendererComponents, function (index, component) {
+            $.each(this.rendererComponents, function(index, component) {
                 component.visible(false);
             });
 
@@ -70,21 +62,19 @@ define([
                 this.rendererComponents[address.getType()].visible(true);
             } else {
                 // rendererTemplates are provided via layout
-                rendererTemplate = address.getType() != undefined && this.rendererTemplates[address.getType()] != undefined ? //eslint-disable-line
-                    utils.extend({}, defaultRendererTemplate, this.rendererTemplates[address.getType()]) :
-                    defaultRendererTemplate;
-                templateData = {
+                var rendererTemplate =
+                    (address.getType() != undefined && this.rendererTemplates[address.getType()] != undefined)
+                    ? utils.extend({}, defaultRendererTemplate, this.rendererTemplates[address.getType()])
+                    : defaultRendererTemplate;
+                var templateData = {
                     parentName: this.name,
                     name: address.getType()
                 };
 
-                rendererComponent = utils.template(rendererTemplate, templateData);
+                var rendererComponent = utils.template(rendererTemplate, templateData);
                 utils.extend(
                     rendererComponent,
-                    {
-                        address: ko.observable(address),
-                        visible: ko.observable(true)
-                    }
+                    {address: ko.observable(address), visible: ko.observable(true)}
                 );
                 layout([rendererComponent]);
                 this.rendererComponents[address.getType()] = rendererComponent;

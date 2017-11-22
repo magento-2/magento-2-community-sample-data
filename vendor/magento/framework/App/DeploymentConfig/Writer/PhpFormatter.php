@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,30 +12,10 @@ namespace Magento\Framework\App\DeploymentConfig\Writer;
 class PhpFormatter implements FormatterInterface
 {
     /**
-     * Format deployment configuration.
-     * If $comments is present, each item will be added
-     * as comment to the corresponding section
-     *
      * {@inheritdoc}
      */
-    public function format($data, array $comments = [])
+    public function format($data)
     {
-        if (!empty($comments) && is_array($data)) {
-            $elements = [];
-            foreach ($data as $key => $value) {
-                $comment = '  ';
-                if (!empty($comments[$key])) {
-                    $section = " * For the section: " . $key . "\n";
-                    $exportedComment = is_string($comments[$key])
-                        ? $comments[$key]
-                        : var_export($comments[$key], true);
-                    $comment = "  /**\n" . $section . " * " . str_replace("\n", "\n * ", $exportedComment) . "\n */\n";
-                }
-                $space = is_array($value) ? " \n" : ' ';
-                $elements[] = $comment . var_export($key, true) . ' =>' . $space . var_export($value, true);
-            }
-            return "<?php\nreturn array (\n" . implode(",\n", str_replace("\n", "\n  ", $elements)) . "\n);\n";
-        }
         return "<?php\nreturn " . var_export($data, true) . ";\n";
     }
 }

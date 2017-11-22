@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order\Invoice;
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Class SaveTest
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -48,32 +48,32 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
 
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->formKeyValidatorMock = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
+        $this->formKeyValidatorMock = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey\Validator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $contextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $contextMock->expects($this->any())
@@ -93,7 +93,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->messageManagerMock));
 
         $this->controller = $objectManager->getObject(
-            \Magento\Sales\Controller\Adminhtml\Order\Invoice\Save::class,
+            'Magento\Sales\Controller\Adminhtml\Order\Invoice\Save',
             [
                 'context' => $contextMock,
             ]
@@ -107,7 +107,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteNotValidPost()
     {
-        $redirectMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultPageFactoryMock->expects($this->once())

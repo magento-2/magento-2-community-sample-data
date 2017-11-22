@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config\Test\Unit;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $xsdFile
@@ -38,6 +38,6 @@ class XsdTest extends \PHPUnit\Framework\TestCase
      */
     public function invalidXmlFileDataProvider()
     {
-        return [['view.xsd', 'view_invalid.xml', 8], ['theme.xsd', 'theme_invalid.xml', 1]];
+        return [['view.xsd', 'view_invalid.xml', 1], ['theme.xsd', 'theme_invalid.xml', 1]];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -41,9 +41,6 @@ class AssertConfigurableProductPage extends AssertProductPage
     protected function verifyPrice()
     {
         $priceBlock = $this->productView->getPriceBlock();
-        if (!$priceBlock->isVisible()) {
-            return "Price block for '{$this->product->getName()}' product' is not visible.";
-        }
         $formPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
         $fixturePrice = $this->getLowestConfigurablePrice();
 
@@ -55,7 +52,7 @@ class AssertConfigurableProductPage extends AssertProductPage
     }
 
     /**
-     * Verify displayed product attributes on product page(front-end) equals passed from fixture
+     * Verify displayed product attributes on product page(front-end) equals passed from fixture.
      *
      * @return string|null
      */
@@ -88,6 +85,14 @@ class AssertConfigurableProductPage extends AssertProductPage
         foreach ($configurableOptions as $key => $configurableOption) {
             $configurableOptions[$key] = $this->sortDataByPath($configurableOption, 'options::title');
         }
+        $formOptions = $this->sortDataByPath($formOptions, '::title');
+        foreach ($formOptions as $key => $formOption) {
+            $formOptions[$key] = $this->sortDataByPath($formOption, 'options::title');
+
+            foreach($formOptions[$key]['options'] as $optKey => $optData){
+                $formOptions[$key]['options'][$optKey]['price'] = 0;
+            }
+        }
         $configurableFormOptions = $formOptions['configurable_options'];
         $configurableFormOptions = $this->sortDataByPath($configurableFormOptions, '::title');
         foreach ($configurableFormOptions as $key => $formOption) {
@@ -95,7 +100,7 @@ class AssertConfigurableProductPage extends AssertProductPage
         }
 
         $errors = array_merge(
-            //Verify Attribute and options
+        //Verify Attribute and options
             $this->verifyData($configurableOptions, $configurableFormOptions, true, false),
             //Verify Attribute options prices
             $this->verifyAttributesMatrix($formOptions['matrix'], $attributesData['matrix'])
@@ -105,8 +110,10 @@ class AssertConfigurableProductPage extends AssertProductPage
     }
 
     /**
-     * Verify displayed product attributes prices on product page(front-end) equals passed from fixture
+     * Verify displayed product attributes prices on product page(front-end) equals passed from fixture.
      *
+     * @param array $variationsMatrix
+     * @param array $generatedMatrix
      * @return string|null
      */
     protected function verifyAttributesMatrix($variationsMatrix, $generatedMatrix)
@@ -114,6 +121,7 @@ class AssertConfigurableProductPage extends AssertProductPage
         foreach ($generatedMatrix as $key => $value) {
             $generatedMatrix[$key] = array_intersect_key($value, ['price' => 0]);
         }
+        
         return $this->verifyData($generatedMatrix, $variationsMatrix, true, false);
     }
 
@@ -125,23 +133,18 @@ class AssertConfigurableProductPage extends AssertProductPage
     protected function getLowestConfigurablePrice()
     {
         $price = null;
-        $priceDataConfig = $this->product->getDataFieldConfig('price');
-        if (isset($priceDataConfig['source'])) {
-            $priceData = $priceDataConfig['source']->getPriceData();
-            if (isset($priceData['price_from'])) {
-                $price = $priceData['price_from'];
+        $configurableOptions = $this->product->getConfigurableAttributesData();
+
+        foreach ($configurableOptions['matrix'] as $option) {
+            $price = $price === null ? $option['price'] : $price;
+            if ($price > $option['price']) {
+                $price = $option['price'];
+            }
+            if (isset($option['special_price']) && $price > $option['special_price']) {
+                $price = $option['special_price'];
             }
         }
 
-        if (null === $price) {
-            $configurableOptions = $this->product->getConfigurableAttributesData();
-            foreach ($configurableOptions['matrix'] as $option) {
-                $price = $price === null ? $option['price'] : $price;
-                if ($price > $option['price']) {
-                    $price = $option['price'];
-                }
-            }
-        }
         return $price;
     }
 }

@@ -1,21 +1,25 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config\Test\Unit;
 
-class DomTest extends \PHPUnit\Framework\TestCase
+class DomTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\Framework\Config\ValidationStateInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\Config\ValidationStateInterface
      */
     protected $validationStateMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->validationStateMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Config\ValidationStateInterface::class
+        $this->validationStateMock = $this->getMock(
+            '\Magento\Framework\Config\ValidationStateInterface',
+            [],
+            [],
+            '',
+            false
         );
         $this->validationStateMock->method('isValidationRequired')
             ->willReturn(true);
@@ -51,7 +55,7 @@ class DomTest extends \PHPUnit\Framework\TestCase
                 [
                     '/root/node/subnode' => 'id',
                     '/root/other_node' => 'id',
-                    '/root/other_node/child' => 'identifier',
+                    '/root/other_node/child' => 'identifier'
                 ],
                 null,
                 'ids_merged.xml',
@@ -67,29 +71,29 @@ class DomTest extends \PHPUnit\Framework\TestCase
                 'recursive_new.xml',
                 ['/root/(node|another_node)(/param)?' => 'name', '/root/node/param(/complex/item)+' => 'key'],
                 null,
-                'recursive_merged.xml',
+                'recursive_merged.xml'
             ],
             [
                 'recursive_deep.xml',
                 'recursive_deep_new.xml',
                 ['/root(/node)+' => 'name'],
                 null,
-                'recursive_deep_merged.xml',
+                'recursive_deep_merged.xml'
             ],
             [
                 'types.xml',
                 'types_new.xml',
                 ['/root/item' => 'id', '/root/item/subitem' => 'id'],
                 'xsi:type',
-                'types_merged.xml',
+                'types_merged.xml'
             ],
             [
                 'attributes.xml',
                 'attributes_new.xml',
                 ['/root/item' => 'id', '/root/item/subitem' => 'id'],
                 'xsi:type',
-                'attributes_merged.xml',
-            ],
+                'attributes_merged.xml'
+            ]
         ];
     }
 
@@ -131,7 +135,7 @@ class DomTest extends \PHPUnit\Framework\TestCase
             'invalid' => [
                 '<root><node id="id1"/><unknown_node/></root>',
                 ["Element 'unknown_node': This element is not expected. Expected is ( node ).\nLine: 1\n"],
-            ],
+            ]
         ];
     }
 
@@ -168,33 +172,11 @@ class DomTest extends \PHPUnit\Framework\TestCase
         $xml = '<root><node id="id1"/><node id="id2"/></root>';
         $schemaFile = __DIR__ . '/_files/sample.xsd';
         $dom = new \Magento\Framework\Config\Dom($xml, $this->validationStateMock);
-        $domMock = $this->createPartialMock(\DOMDocument::class, ['schemaValidate']);
+        $domMock = $this->getMock('DOMDocument', ['schemaValidate'], []);
         $domMock->expects($this->once())
             ->method('schemaValidate')
             ->with($schemaFile)
-            ->willReturn(false);
-        $this->assertEquals(
-            ["Element 'unknown_node': This element is not expected. Expected is ( node ).\nLine: 1\n"],
-            $dom->validateDomDocument($domMock, $schemaFile)
-        );
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Config\Dom\ValidationSchemaException
-     */
-    public function testValidateDomDocumentThrowsException()
-    {
-        if (!function_exists('libxml_set_external_entity_loader')) {
-            $this->markTestSkipped('Skipped on HHVM. Will be fixed in MAGETWO-45033');
-        }
-        $xml = '<root><node id="id1"/><node id="id2"/></root>';
-        $schemaFile = __DIR__ . '/_files/sample.xsd';
-        $dom = new \Magento\Framework\Config\Dom($xml, $this->validationStateMock);
-        $domMock = $this->createPartialMock(\DOMDocument::class, ['schemaValidate']);
-        $domMock->expects($this->once())
-            ->method('schemaValidate')
-            ->with($schemaFile)
-            ->willThrowException(new \Exception());
-        $dom->validateDomDocument($domMock, $schemaFile);
+            ->will($this->returnValue(false));
+        $this->assertEquals(['Unknown validation error'], $dom->validateDomDocument($domMock, $schemaFile));
     }
 }

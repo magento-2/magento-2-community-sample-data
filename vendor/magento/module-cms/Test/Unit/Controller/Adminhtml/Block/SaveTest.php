@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Test\Unit\Controller\Adminhtml\Block;
@@ -8,7 +8,7 @@ namespace Magento\Cms\Test\Unit\Controller\Adminhtml\Block;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -16,9 +16,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     protected $requestMock;
 
     /**
-     * @var \Magento\Framework\App\Request\DataPersistorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Cms\Controller\Adminhtml\Block\PostDataProcessor|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $dataPersistorMock;
+    protected $dataProcessorMock;
 
     /**
      * @var \Magento\Backend\Model\View\Result\RedirectFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -39,6 +39,11 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\Framework\ObjectManager\ObjectManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $objectManagerMock;
+
+    /**
+     * @var \Magento\Backend\Model\Session|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $sessionMock;
 
     /**
      * @var \Magento\Cms\Model\Block|\PHPUnit_Framework_MockObject_MockObject $blockMock
@@ -74,24 +79,37 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->contextMock = $this->createMock(\Magento\Backend\App\Action\Context::class);
+        $this->contextMock = $this->getMock('Magento\Backend\App\Action\Context', [], [], '', false);
 
-        $this->resultRedirectFactory = $this->getMockBuilder(\Magento\Backend\Model\View\Result\RedirectFactory::class)
+        $this->resultRedirectFactory = $this->getMockBuilder('Magento\Backend\Model\View\Result\RedirectFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultRedirect = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $this->resultRedirect = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultRedirectFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($this->resultRedirect);
 
-        $this->dataPersistorMock = $this->getMockBuilder(\Magento\Framework\App\Request\DataPersistorInterface::class)
-            ->getMock();
+        $this->dataProcessorMock = $this->getMock(
+            'Magento\Cms\Controller\Adminhtml\Block\PostDataProcessor',
+            ['filter'],
+            [],
+            '',
+            false
+        );
+
+        $this->sessionMock = $this->getMock(
+            'Magento\Backend\Model\Session',
+            ['setFormData'],
+            [],
+            '',
+            false
+        );
 
         $this->requestMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            'Magento\Framework\App\RequestInterface',
             [],
             '',
             false,
@@ -100,14 +118,12 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ['getParam', 'getPostValue']
         );
 
-        $this->blockMock = $this->getMockBuilder(
-            \Magento\Cms\Model\Block::class
-        )->disableOriginalConstructor()->getMock();
+        $this->blockMock = $this->getMockBuilder('Magento\Cms\Model\Block')->disableOriginalConstructor()->getMock();
 
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManagerMock = $this->getMock('Magento\Framework\Message\ManagerInterface', [], [], '', false);
 
         $this->eventManagerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false,
@@ -116,7 +132,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ['dispatch']
         );
 
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\ObjectManager::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManager\ObjectManager')
             ->disableOriginalConstructor()
             ->setMethods(['get', 'create'])
             ->getMock();
@@ -130,10 +146,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->resultRedirectFactory);
 
         $this->saveController = $this->objectManager->getObject(
-            \Magento\Cms\Controller\Adminhtml\Block\Save::class,
+            'Magento\Cms\Controller\Adminhtml\Block\Save',
             [
                 'context' => $this->contextMock,
-                'dataPersistor' => $this->dataPersistorMock,
+                'dataProcessor' => $this->dataProcessorMock,
             ]
         );
     }
@@ -144,9 +160,22 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         'title' => '"><img src=y onerror=prompt(document.domain)>;',
         'identifier' => 'unique_title_123',
         'stores' => ['0'],
-        'is_active' => true,
+        'is_active' => '1',
         'content' => '"><script>alert("cookie: "+document.cookie)</script>'
         ];
+
+        $filteredPostData = [
+            'title' => '&quot;&gt;&lt;img src=y onerror=prompt(document.domain)&gt;;',
+            'identifier' => 'unique_title_123',
+            'stores' => ['0'],
+            'is_active' => '1',
+            'content' => '&quot;&gt;&lt;script&gt;alert(&quot;cookie: &quot;+document.cookie)&lt;/script&gt;'
+        ];
+
+        $this->dataProcessorMock->expects($this->any())
+            ->method('filter')
+            ->with($postData)
+            ->willReturn($filteredPostData);
 
         $this->requestMock->expects($this->any())->method('getPostValue')->willReturn($postData);
         $this->requestMock->expects($this->atLeastOnce())
@@ -160,8 +189,15 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
-            ->with($this->equalTo(\Magento\Cms\Model\Block::class))
+            ->with($this->equalTo('Magento\Cms\Model\Block'))
             ->willReturn($this->blockMock);
+        $this->objectManagerMock->expects($this->atLeastOnce())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    ['Magento\Backend\Model\Session', $this->sessionMock],
+                ]
+            );
 
         $this->blockMock->expects($this->any())
             ->method('load')
@@ -172,13 +208,11 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->blockMock->expects($this->once())->method('setData');
         $this->blockMock->expects($this->once())->method('save');
 
-        $this->dataPersistorMock->expects($this->any())
-            ->method('clear')
-            ->with('cms_block');
-
         $this->messageManagerMock->expects($this->once())
             ->method('addSuccess')
             ->with(__('You saved the block.'));
+
+        $this->sessionMock->expects($this->atLeastOnce())->method('setFormData')->with(false);
 
         $this->resultRedirect->expects($this->atLeastOnce())->method('setPath')->with('*/*/') ->willReturnSelf();
 
@@ -194,7 +228,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveActionNoId()
     {
-        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(['block_id' => 1]);
+        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(true);
         $this->requestMock->expects($this->atLeastOnce())
             ->method('getParam')
             ->willReturnMap(
@@ -206,7 +240,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
-            ->with($this->equalTo(\Magento\Cms\Model\Block::class))
+            ->with($this->equalTo('Magento\Cms\Model\Block'))
             ->willReturn($this->blockMock);
 
         $this->blockMock->expects($this->any())
@@ -227,7 +261,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveAndContinue()
     {
-        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(['block_id' => 1]);
+        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(true);
         $this->requestMock->expects($this->atLeastOnce())
             ->method('getParam')
             ->willReturnMap(
@@ -239,8 +273,15 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
-            ->with($this->equalTo(\Magento\Cms\Model\Block::class))
+            ->with($this->equalTo('Magento\Cms\Model\Block'))
             ->willReturn($this->blockMock);
+        $this->objectManagerMock->expects($this->atLeastOnce())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    ['Magento\Backend\Model\Session', $this->sessionMock],
+                ]
+            );
 
         $this->blockMock->expects($this->any())
             ->method('load')
@@ -255,9 +296,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('addSuccess')
             ->with(__('You saved the block.'));
 
-        $this->dataPersistorMock->expects($this->any())
-            ->method('clear')
-            ->with('cms_block');
+        $this->sessionMock->expects($this->atLeastOnce())->method('setFormData')->with(false);
 
         $this->resultRedirect->expects($this->atLeastOnce())
             ->method('setPath')
@@ -269,7 +308,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveActionThrowsException()
     {
-        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(['block_id' => 1]);
+        $this->requestMock->expects($this->any())->method('getPostValue')->willReturn(true);
         $this->requestMock->expects($this->atLeastOnce())
             ->method('getParam')
             ->willReturnMap(
@@ -281,8 +320,15 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
-            ->with($this->equalTo(\Magento\Cms\Model\Block::class))
+            ->with($this->equalTo('Magento\Cms\Model\Block'))
             ->willReturn($this->blockMock);
+        $this->objectManagerMock->expects($this->atLeastOnce())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    ['Magento\Backend\Model\Session', $this->sessionMock],
+                ]
+            );
 
         $this->blockMock->expects($this->any())
             ->method('load')
@@ -293,14 +339,13 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->blockMock->expects($this->once())->method('setData');
         $this->blockMock->expects($this->once())->method('save')->willThrowException(new \Exception('Error message.'));
 
-        $this->messageManagerMock->expects($this->never())
-            ->method('addSuccess');
+        $this->messageManagerMock->expects($this->any())
+            ->method('addSuccess')
+            ->with(__('You saved the block.'));
         $this->messageManagerMock->expects($this->once())
-            ->method('addException');
+            ->method('addError');
 
-        $this->dataPersistorMock->expects($this->any())
-            ->method('set')
-            ->with('cms_block', ['block_id' => 1]);
+        $this->sessionMock->expects($this->atLeastOnce())->method('setFormData')->with(true);
 
         $this->resultRedirect->expects($this->atLeastOnce())
             ->method('setPath')

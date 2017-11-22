@@ -1,14 +1,14 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Multishipping\Test\Unit\Controller\Checkout;
 
 use Magento\Multishipping\Controller\Checkout\Plugin;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -27,10 +27,13 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->cartMock = $this->createMock(\Magento\Checkout\Model\Cart::class);
-        $this->quoteMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote::class,
-            ['__wakeUp', 'setIsMultiShipping']
+        $this->cartMock = $this->getMock('Magento\Checkout\Model\Cart', [], [], '', false);
+        $this->quoteMock = $this->getMock(
+            'Magento\Quote\Model\Quote',
+            ['__wakeUp', 'setIsMultiShipping'],
+            [],
+            '',
+            false
         );
         $this->cartMock->expects($this->once())->method('getQuote')->will($this->returnValue($this->quoteMock));
         $this->object = new \Magento\Multishipping\Controller\Checkout\Plugin($this->cartMock);
@@ -38,7 +41,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteTurnsOffMultishippingModeOnQuote()
     {
-        $subject = $this->createMock(\Magento\Checkout\Controller\Index\Index::class);
+        $subject = $this->getMock('Magento\Checkout\Controller\Index\Index', [], [], '', false);
         $this->quoteMock->expects($this->once())->method('setIsMultiShipping')->with(0);
         $this->object->beforeExecute($subject);
     }

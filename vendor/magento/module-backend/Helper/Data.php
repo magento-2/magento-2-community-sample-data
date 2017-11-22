@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Helper;
@@ -8,10 +8,7 @@ namespace Magento\Backend\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 
 /**
- * @api
- * @deprecated 100.2.0
  * @SuppressWarnings(PHPMD.LongVariable)
- * @since 100.0.2
  */
 class Data extends AbstractHelper
 {

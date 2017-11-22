@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Bundle\Test\Unit\Controller\Adminhtml\Bundle\Selection;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class SearchTest extends \PHPUnit\Framework\TestCase
+class SearchTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Bundle\Controller\Adminhtml\Bundle\Selection\Search */
     protected $controller;
@@ -40,18 +40,18 @@ class SearchTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('\Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->response = $this->createPartialMock(
-            \Magento\Framework\App\ResponseInterface::class,
+        $this->request = $this->getMock('Magento\Framework\App\RequestInterface');
+        $this->response = $this->getMock(
+            '\Magento\Framework\App\ResponseInterface',
             [
                 'sendResponse',
                 'setBody'
             ]
         );
-        $this->view = $this->createMock(\Magento\Framework\App\ViewInterface::class);
+        $this->view = $this->getMock('\Magento\Framework\App\ViewInterface');
 
         $this->context->expects($this->any())
             ->method('getRequest')
@@ -64,7 +64,7 @@ class SearchTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->view));
 
         $this->controller = $this->objectManagerHelper->getObject(
-            \Magento\Bundle\Controller\Adminhtml\Bundle\Selection\Search::class,
+            '\Magento\Bundle\Controller\Adminhtml\Bundle\Selection\Search',
             [
                 'context' => $this->context
             ]
@@ -73,10 +73,9 @@ class SearchTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute()
     {
-        $layout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $block = $this->getMockBuilder(
-            \Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search::class
-        )->disableOriginalConstructor()
+        $layout = $this->getMock('\Magento\Framework\View\LayoutInterface');
+        $block = $this->getMockBuilder('Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search')
+            ->disableOriginalConstructor()
             ->setMethods(['setIndex', 'setFirstShow', 'toHtml'])
             ->getMock();
 

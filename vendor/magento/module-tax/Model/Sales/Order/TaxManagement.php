@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -66,27 +66,18 @@ class TaxManagement implements \Magento\Tax\Api\OrderTaxManagementInterface
      *
      * @param TaxDetailsDataObjectFactory $appliedTaxDataObjectFactory
      * @param array $itemAppliedTax
-     * @param AppliedTax $existingAppliedTax
      * @return AppliedTax
      */
     protected function convertToAppliedTaxDataObject(
         TaxDetailsDataObjectFactory $appliedTaxDataObjectFactory,
-        $itemAppliedTax,
-        AppliedTax $existingAppliedTax = null
+        $itemAppliedTax
     ) {
-        // if there is an existingAppliedTax, include its amount and baseAmount
-        $amount = $baseAmount = 0;
-        if ($existingAppliedTax !== null) {
-            $amount = $existingAppliedTax->getAmount();
-            $baseAmount = $existingAppliedTax->getBaseAmount();
-        }
-
         return $appliedTaxDataObjectFactory->create()
             ->setCode($itemAppliedTax['code'])
             ->setTitle($itemAppliedTax['title'])
             ->setPercent($itemAppliedTax['tax_percent'])
-            ->setAmount($itemAppliedTax['real_amount'] + $amount)
-            ->setBaseAmount($itemAppliedTax['real_base_amount'] + $baseAmount);
+            ->setAmount($itemAppliedTax['real_amount'])
+            ->setBaseAmount($itemAppliedTax['real_base_amount']);
     }
 
     /**
@@ -138,8 +129,11 @@ class TaxManagement implements \Magento\Tax\Api\OrderTaxManagementInterface
         if (!$order) {
             throw new NoSuchEntityException(
                 __(
-                    'No such entity with %fieldName = %fieldValue',
-                    ['fieldName' => 'orderId', 'fieldValue' => $orderId]
+                    NoSuchEntityException::MESSAGE_DOUBLE_FIELDS,
+                    [
+                        'fieldName' => 'orderId',
+                        'fieldValue' => $orderId,
+                    ]
                 )
             );
         }
@@ -147,39 +141,46 @@ class TaxManagement implements \Magento\Tax\Api\OrderTaxManagementInterface
         $orderItemAppliedTaxes = $this->orderItemTaxFactory->create()->getTaxItemsByOrderId($orderId);
         $itemsData = [];
         foreach ($orderItemAppliedTaxes as $itemAppliedTax) {
-            $key = $itemId = $associatedItemId = null;
-
             //group applied taxes by item
             if (isset($itemAppliedTax['item_id'])) {
                 //The taxable is a product
-                //Note: the associatedItemId is null
                 $itemId = $itemAppliedTax['item_id'];
-                $key = $itemId;
+                if (!isset($itemsData[$itemId])) {
+                    $itemsData[$itemId] = [
+                        Item::KEY_ITEM_ID => $itemAppliedTax['item_id'],
+                        Item::KEY_TYPE => $itemAppliedTax['taxable_item_type'],
+                        Item::KEY_ASSOCIATED_ITEM_ID => null,
+                    ];
+                }
+                $itemsData[$itemId]['applied_taxes'][$itemAppliedTax['code']] =
+                    $this->convertToAppliedTaxDataObject($this->appliedTaxDataObjectFactory, $itemAppliedTax);
             } elseif (isset($itemAppliedTax['associated_item_id'])) {
-                //The taxable is associated with a product, e.g., weee, gift wrapping, etc.
-                //Note: the itemId is null
-                $associatedItemId = $itemAppliedTax['associated_item_id'];
-                $key = $itemAppliedTax['taxable_item_type'] . $associatedItemId;
+                //The taxable is associated with a product, e.g., weee, gift wrapping etc.
+                $itemId = $itemAppliedTax['associated_item_id'];
+                $key = $itemAppliedTax['taxable_item_type'] . $itemId;
+                if (!isset($itemsData[$key])) {
+                    $itemsData[$key] = [
+                        Item::KEY_ITEM_ID => null,
+                        Item::KEY_TYPE => $itemAppliedTax['taxable_item_type'],
+                        Item::KEY_ASSOCIATED_ITEM_ID => $itemId,
+                    ];
+                }
+                $itemsData[$key]['applied_taxes'][$itemAppliedTax['code']] =
+                    $this->convertToAppliedTaxDataObject($this->appliedTaxDataObjectFactory, $itemAppliedTax);
             } else {
                 //The taxable is not associated with a product, e.g., shipping
-                //Use item type as key.  Both the itemId and associatedItemId are null
+                //Use item type as key
                 $key = $itemAppliedTax['taxable_item_type'];
+                if (!isset($itemsData[$key])) {
+                    $itemsData[$key] = [
+                        Item::KEY_TYPE => $itemAppliedTax['taxable_item_type'],
+                        Item::KEY_ITEM_ID => null,
+                        Item::KEY_ASSOCIATED_ITEM_ID => null,
+                    ];
+                }
+                $itemsData[$key][Item::KEY_APPLIED_TAXES][$itemAppliedTax['code']] =
+                    $this->convertToAppliedTaxDataObject($this->appliedTaxDataObjectFactory, $itemAppliedTax);
             }
-
-            // create the itemsData entry
-            if (!isset($itemsData[$key])) {
-                $itemsData[$key] = [
-                    Item::KEY_TYPE => $itemAppliedTax['taxable_item_type'],
-                    Item::KEY_ITEM_ID => $itemId,                       // might be null
-                    Item::KEY_ASSOCIATED_ITEM_ID => $associatedItemId,  // might be null
-                ];
-            }
-            $current = null;
-            if (isset($itemsData[$key][Item::KEY_APPLIED_TAXES][$itemAppliedTax['code']])) {
-                $current = $itemsData[$key][Item::KEY_APPLIED_TAXES][$itemAppliedTax['code']];
-            }
-            $itemsData[$key][Item::KEY_APPLIED_TAXES][$itemAppliedTax['code']] =
-                $this->convertToAppliedTaxDataObject($this->appliedTaxDataObjectFactory, $itemAppliedTax, $current);
         }
 
         $items = [];

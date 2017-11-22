@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,9 +8,9 @@ namespace Magento\Catalog\Test\Block\Product;
 
 use Magento\Catalog\Test\Block\AbstractConfigureBlock;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
-use Magento\Checkout\Test\Block\Cart\Sidebar;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
+use Magento\Checkout\Test\Block\Cart\Sidebar;
 
 /**
  * Product view block on the product page.
@@ -64,13 +64,6 @@ class View extends AbstractConfigureBlock
     protected $paypalCheckout = '[data-action=checkout-form-submit]';
 
     /**
-     * 'Check out with PayPal' button.
-     *
-     * @var string
-     */
-    protected $inContextPaypalCheckout = 'ul.checkout-methods-items a[data-action="paypal-in-context-checkout"]';
-
-    /**
      * Product name element.
      *
      * @var string
@@ -89,14 +82,14 @@ class View extends AbstractConfigureBlock
      *
      * @var string
      */
-    protected $productDescription = '.product.attribute.description';
+    protected $productDescription = '.product.attibute.description';
 
     /**
      * Product short-description element.
      *
      * @var string
      */
-    protected $productShortDescription = '.product.attribute.overview';
+    protected $productShortDescription = '.product.attibute.overview';
 
     /**
      * Stock Availability control.
@@ -176,69 +169,11 @@ class View extends AbstractConfigureBlock
     protected $ajaxLoading = 'body.ajax-loading';
 
     /**
-     * Full image selector
-     *
-     * @var string
-     */
-    protected $fullImage = '[data-gallery-role="gallery"] img.fotorama__img--full';
-
-    /**
-     * Full image close selector
-     *
-     * @var string
-     */
-    protected $fullImageClose = '[data-gallery-role="fotorama__fullscreen-icon"]';
-
-    /**
-     * Base image selector
-     *
-     * @var string
-     */
-    protected $baseImage = '[data-gallery-role="gallery"] img.fotorama__img.fotorama__img';
-
-    /**
-     * @var string
-     */
-    protected $galleryLoader = '.fotorama__spinner--show';
-
-    /**
      * Video Container selector
      *
      * @var string
      */
     private $videoContainer = 'div.fotorama-video-container';
-
-    /**
-     * @var string
-     */
-    private $productVideo = '.product-video';
-
-    /**
-     * Threshold message selector.
-     *
-     * @var string
-     */
-    private $thresholdMessage = '.availability.only';
-
-    /**
-     * Checks if threshold message is displayed.
-     *
-     * @return bool
-     */
-    public function isThresholdMessageDisplayed()
-    {
-        return $this->_rootElement->find($this->thresholdMessage)->isVisible();
-    }
-
-    /**
-     * Gets threshold message.
-     *
-     * @return string
-     */
-    public function getThresholdMessage()
-    {
-        return $this->_rootElement->find($this->thresholdMessage)->getText();
-    }
 
     /**
      * Get block price.
@@ -248,7 +183,7 @@ class View extends AbstractConfigureBlock
     public function getPriceBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Product\Price::class,
+            'Magento\Catalog\Test\Block\Product\Price',
             ['element' => $this->_rootElement->find($this->priceBlock, Locator::SELECTOR_XPATH)]
         );
     }
@@ -354,30 +289,6 @@ class View extends AbstractConfigureBlock
     {
         $this->_rootElement->find($this->paypalCheckout, Locator::SELECTOR_CSS)->click();
         $this->waitForElementNotVisible($this->paypalCheckout);
-    }
-
-    /**
-     * Press 'Check out with PayPal' button.
-     *
-     * @return void
-     */
-    public function inContextPaypalCheckout()
-    {
-        $this->_rootElement->find($this->inContextPaypalCheckout, Locator::SELECTOR_CSS)->click();
-        $this->waitForElementNotVisible($this->inContextPaypalCheckout);
-    }
-
-    /**
-     * Press 'Check out with Braintree PayPal' button.
-     *
-     * @return string
-     */
-    public function braintreePaypalCheckout()
-    {
-        $currentWindow = $this->browser->getCurrentWindow();
-        $this->getMiniCartBlock()->openMiniCart();
-        $this->getMiniCartBlock()->clickBraintreePaypalButton();
-        return $currentWindow;
     }
 
     /**
@@ -498,7 +409,7 @@ class View extends AbstractConfigureBlock
     {
         /** @var \Magento\Backend\Test\Block\Messages $messageBlock */
         $messageBlock = $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Messages::class,
+            'Magento\Backend\Test\Block\Messages',
             ['element' => $this->browser->find($this->messageBlock)]
         );
         $this->_rootElement->find($this->clickAddToCompare, Locator::SELECTOR_CSS)->click();
@@ -550,97 +461,27 @@ class View extends AbstractConfigureBlock
      */
     public function waitLoader()
     {
-        try {
-            $this->waitForElementNotVisible($this->ajaxLoading);
-        } catch (\Exception $e) {
-        }
+        $this->waitForElementNotVisible($this->ajaxLoading);
     }
 
     /**
-     * Check if media gallery is visible for the product.
+     * Check id media gallery is visible for the product.
      *
      * @return bool
      */
     public function isGalleryVisible()
     {
-        $this->waitForElementNotVisible($this->galleryLoader);
-        $this->waitForElementVisible($this->mediaGallery);
-
-        return true;
+        return $this->getGalleryElement()->isVisible();
     }
 
     /**
-     * Check is full image into gallery is visible for the product.
+     * Get gallery element on product page.
      *
-     * @return bool
+     * @return \Magento\Mtf\Client\ElementInterface
      */
-    public function isFullImageVisible()
+    public function getGalleryElement()
     {
-        $this->waitForElementNotVisible($this->galleryLoader);
-        return $this->browser->find($this->fullImage)->isVisible();
-    }
-
-    /**
-     * Get full image source from media gallery into product
-     *
-     * @return string
-     */
-    public function getFullImageSource()
-    {
-        return $this->browser->find($this->fullImage)->getAttribute('src');
-    }
-
-    /**
-     * Check is base image into gallery is visible for the product.
-     *
-     * @return bool
-     */
-    public function isBaseImageVisible()
-    {
-        return $this->_rootElement->find($this->baseImage)->isVisible();
-    }
-
-    /**
-     * Get full image source from media gallery into product
-     *
-     * @return string
-     */
-    public function getBaseImageSource()
-    {
-        return $this->_rootElement->find($this->baseImage)->getAttribute('src');
-    }
-
-    /**
-     * Click link.
-     *
-     * @return void
-     */
-    public function clickBaseImage()
-    {
-        $this->_rootElement->find($this->baseImage, Locator::SELECTOR_CSS)->click();
-        $this->waitForElementVisible($this->fullImage);
-    }
-
-    /**
-     * Click link.
-     *
-     * @return void
-     */
-    public function closeFullImage()
-    {
-        $this->_rootElement->waitUntil(
-            function () {
-                $this->browser->find($this->fullImage)->hover();
-
-                if ($this->browser->find($this->fullImageClose)->isVisible()) {
-                    $this->browser->find($this->fullImageClose)->click();
-
-                    return true;
-                }
-
-                return null;
-            }
-        );
+        return $this->_rootElement->find($this->mediaGallery);
     }
 
     /**
@@ -651,17 +492,5 @@ class View extends AbstractConfigureBlock
     public function isVideoVisible()
     {
         return $this->_rootElement->find($this->videoContainer)->isVisible();
-    }
-
-    /**
-     * Check definite video data is presented on product page
-     *
-     * @param string $videoData
-     * @return bool
-     */
-    public function checkVideoDataPresence($videoData)
-    {
-        $dataVideoSelector = $this->productVideo . '[data-code="' . $videoData. '"]';
-        return $this->_rootElement->find($dataVideoSelector)->isPresent();
     }
 }

@@ -1,15 +1,13 @@
 <?php
-namespace Braintree;
-
 /**
  * Braintree OAuthCredentials module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  */
-class OAuthCredentials extends Base
+class Braintree_OAuthCredentials extends Braintree
 {
     protected function _initialize($attribs)
     {
@@ -27,10 +25,9 @@ class OAuthCredentials extends Base
      * returns a string representation of the access token
      * @return string
      */
-    public function __toString()
+    public function  __toString()
     {
         return __CLASS__ . '[' .
-                Util::attributesToString($this->_attributes) .']';
+                Braintree_Util::attributesToString($this->_attributes) .']';
     }
 }
-class_alias('Braintree\OAuthCredentials', 'Braintree_OAuthCredentials');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,18 +17,8 @@
                         "registration": {
                             "component": "Magento_Checkout/js/view/registration",
                             "config": {
-                                "registrationUrl": "<?= /* @escapeNotVerified */ $block->getCreateAccountUrl() ?>",
-                                "email": "<?= /* @escapeNotVerified */ $block->getEmailAddress() ?>"
-                            },
-                            "children": {
-                                "errors": {
-                                    "component": "Magento_Ui/js/view/messages",
-                                    "sortOrder": 0,
-                                    "displayArea": "messages",
-                                    "config": {
-                                        "autoHideTimeOut": -1
-                                     }
-                                }
+                                "registrationUrl": "<?php /* @escapeNotVerified */ echo $block->getCreateAccountUrl(); ?>",
+                                "email": "<?php /* @escapeNotVerified */ echo $block->getEmailAddress(); ?>"
                             }
                         }
                     }

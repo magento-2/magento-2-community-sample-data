@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Console\Command;
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Console\Command;
 use Magento\Setup\Console\Command\RollbackCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RollbackCommandTest extends \PHPUnit\Framework\TestCase
+class RollbackCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -52,24 +52,36 @@ class RollbackCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
         $this->objectManager = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManagerInterface::class,
+            'Magento\Framework\ObjectManagerInterface',
             [],
             '',
             false
         );
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
         $objectManagerProvider->expects($this->any())->method('get')->willReturn($this->objectManager);
-        $this->backupRollback = $this->createMock(\Magento\Framework\Setup\BackupRollback::class);
-        $this->backupRollbackFactory = $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class);
+        $this->backupRollback = $this->getMock('Magento\Framework\Setup\BackupRollback', [], [], '', false);
+        $this->backupRollbackFactory = $this->getMock(
+            'Magento\Framework\Setup\BackupRollbackFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->backupRollbackFactory->expects($this->any())
             ->method('create')
             ->willReturn($this->backupRollback);
-        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $appState = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
         $configLoader = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManager\ConfigLoaderInterface::class,
+            'Magento\Framework\ObjectManager\ConfigLoaderInterface',
             [],
             '',
             false
@@ -78,12 +90,12 @@ class RollbackCommandTest extends \PHPUnit\Framework\TestCase
         $this->objectManager->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap([
-                [\Magento\Framework\Setup\BackupRollbackFactory::class, $this->backupRollbackFactory],
-                [\Magento\Framework\App\State::class, $appState],
-                [\Magento\Framework\ObjectManager\ConfigLoaderInterface::class, $configLoader],
+                ['Magento\Framework\Setup\BackupRollbackFactory', $this->backupRollbackFactory],
+                ['Magento\Framework\App\State', $appState],
+                ['Magento\Framework\ObjectManager\ConfigLoaderInterface', $configLoader],
             ]));
-        $this->helperSet = $this->createMock(\Symfony\Component\Console\Helper\HelperSet::class);
-        $this->question = $this->createMock(\Symfony\Component\Console\Helper\QuestionHelper::class);
+        $this->helperSet = $this->getMock('Symfony\Component\Console\Helper\HelperSet', [], [], '', false);
+        $this->question = $this->getMock('Symfony\Component\Console\Helper\QuestionHelper', [], [], '', false);
         $this->question
             ->expects($this->any())
             ->method('ask')

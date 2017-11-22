@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Console\Command;
@@ -9,10 +9,7 @@ use Magento\Setup\Console\Command\ModuleDisableCommand;
 use Magento\Setup\Console\Command\ModuleEnableCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ModuleEnableDisableCommandTest extends \PHPUnit\Framework\TestCase
+class ModuleEnableDisableCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\ObjectManagerProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -44,31 +41,31 @@ class ModuleEnableDisableCommandTest extends \PHPUnit\Framework\TestCase
      */
     private $deploymentConfigMock;
 
-    /**
-     * @var \Magento\Framework\Code\GeneratedFiles|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $generatedFiles;
-
     protected function setUp()
     {
-        $this->objectManagerProviderMock = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager = $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerProviderMock = $this->getMock(
+            'Magento\Setup\Model\ObjectManagerProvider',
+            [],
+            [],
+            '',
+            false
+        );
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface');
         $this->objectManagerProviderMock->expects($this->any())
             ->method('get')
             ->will($this->returnValue($objectManager));
-        $this->statusMock = $this->createMock(\Magento\Framework\Module\Status::class);
-        $this->cacheMock = $this->createMock(\Magento\Framework\App\Cache::class);
-        $this->cleanupFilesMock = $this->createMock(\Magento\Framework\App\State\CleanupFiles::class);
-        $this->fullModuleListMock = $this->createMock(\Magento\Framework\Module\FullModuleList::class);
-        $this->deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $this->generatedFiles = $this->createMock(\Magento\Framework\Code\GeneratedFiles::class);
+        $this->statusMock = $this->getMock('Magento\Framework\Module\Status', [], [], '', false);
+        $this->cacheMock = $this->getMock('Magento\Framework\App\Cache', [], [], '', false);
+        $this->cleanupFilesMock = $this->getMock('Magento\Framework\App\State\CleanupFiles', [], [], '', false);
+        $this->fullModuleListMock = $this->getMock('Magento\Framework\Module\FullModuleList', [], [], '', false);
+        $this->deploymentConfigMock = $this->getMock(\Magento\Framework\App\DeploymentConfig::class, [], [], '', false);
         $objectManager->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap([
-                [\Magento\Framework\Module\Status::class, $this->statusMock],
-                [\Magento\Framework\App\Cache::class, $this->cacheMock],
-                [\Magento\Framework\App\State\CleanupFiles::class, $this->cleanupFilesMock],
-                [\Magento\Framework\Module\FullModuleList::class, $this->fullModuleListMock],
+                ['Magento\Framework\Module\Status', $this->statusMock],
+                ['Magento\Framework\App\Cache', $this->cacheMock],
+                ['Magento\Framework\App\State\CleanupFiles', $this->cleanupFilesMock],
+                ['Magento\Framework\Module\FullModuleList', $this->fullModuleListMock],
             ]));
     }
 
@@ -167,6 +164,7 @@ class ModuleEnableDisableCommandTest extends \PHPUnit\Framework\TestCase
     /**
      * @param bool $isEnable
      * @param string $expectedMessage
+     * @param bool $isInstalled
      *
      * @dataProvider executeAllDataProvider
      */
@@ -320,9 +318,6 @@ class ModuleEnableDisableCommandTest extends \PHPUnit\Framework\TestCase
         $deploymentConfigProperty = new \ReflectionProperty($class, 'deploymentConfig');
         $deploymentConfigProperty->setAccessible(true);
         $deploymentConfigProperty->setValue($command, $this->deploymentConfigMock);
-        $deploymentConfigProperty = new \ReflectionProperty($class, 'generatedFiles');
-        $deploymentConfigProperty->setAccessible(true);
-        $deploymentConfigProperty->setValue($command, $this->generatedFiles);
         return new CommandTester($command);
     }
 }

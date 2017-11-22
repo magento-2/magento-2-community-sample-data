@@ -2,7 +2,7 @@
 /**
  * This file is part of PHP Mess Detector.
  *
- * Copyright (c) 2008-2017, Manuel Pichler <mapi@phpmd.org>.
+ * Copyright (c) 2008-2012, Manuel Pichler <mapi@phpmd.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @author Manuel Pichler <mapi@phpmd.org>
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @author    Manuel Pichler <mapi@phpmd.org>
+ * @copyright 2008-2014 Manuel Pichler. All rights reserved.
+ * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 namespace PHPMD\TextUI;
@@ -48,9 +48,9 @@ use PHPMD\Writer\StreamWriter;
 /**
  * This class provides a command line interface for PHPMD
  *
- * @author Manuel Pichler <mapi@phpmd.org>
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @author    Manuel Pichler <mapi@phpmd.org>
+ * @copyright 2008-2014 Manuel Pichler. All rights reserved.
+ * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 class Command
 {
@@ -69,9 +69,6 @@ class Command
      * equal to <b>EXIT_SUCCESS</b> means that no violations or errors were
      * found in the analyzed code. Otherwise this method will return a value
      * equal to <b>EXIT_VIOLATION</b>.
-     *
-     * The use of flag <b>--ignore-violations-on-exit</b> will result to a
-     * <b>EXIT_SUCCESS</b> even if any violation is found.
      *
      * @param \PHPMD\TextUI\CommandLineOptions $opts
      * @param \PHPMD\RuleSetFactory $ruleSetFactory
@@ -132,7 +129,7 @@ class Command
             $ruleSetFactory
         );
 
-        if ($phpmd->hasViolations() && !$opts->ignoreViolationsOnExit()) {
+        if ($phpmd->hasViolations()) {
             return self::EXIT_VIOLATION;
         }
         return self::EXIT_SUCCESS;
@@ -172,7 +169,9 @@ class Command
 
             $exitCode = $command->run($options, $ruleSetFactory);
         } catch (\Exception $e) {
-            fwrite(STDERR, $e->getMessage() . PHP_EOL);
+            fwrite(STDERR, $e->getMessage());
+            fwrite(STDERR, PHP_EOL);
+            
             $exitCode = self::EXIT_EXCEPTION;
         }
         return $exitCode;

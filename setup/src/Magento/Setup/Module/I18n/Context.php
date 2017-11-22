@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n;
@@ -30,7 +30,9 @@ class Context
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var ComponentRegistrar
+     */
     private $componentRegistrar;
 
     /**
@@ -91,25 +93,26 @@ class Context
      *
      * @param string $type
      * @param array $value
-     * @return string|null
+     * @return string
      * @throws \InvalidArgumentException
      */
     public function buildPathToLocaleDirectoryByContext($type, $value)
     {
         switch ($type) {
             case self::CONTEXT_TYPE_MODULE:
-                $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, $value);
+                $absolutePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, $value);
+                $path = str_replace(BP . '/', '', $absolutePath);
                 break;
             case self::CONTEXT_TYPE_THEME:
-                $path = $this->componentRegistrar->getPath(ComponentRegistrar::THEME, $value);
+                $absolutePath = $this->componentRegistrar->getPath(ComponentRegistrar::THEME, $value);
+                $path = str_replace(BP . '/', '', $absolutePath);
                 break;
             case self::CONTEXT_TYPE_LIB:
-                $path = BP . '/lib/web';
+                $path = 'lib/web';
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid context given: "%s".', $type));
         }
-
-        return (null === $path) ? null : $path . '/' . self::LOCALE_DIRECTORY . '/';
+        return $path . '/' . self::LOCALE_DIRECTORY . '/';
     }
 }

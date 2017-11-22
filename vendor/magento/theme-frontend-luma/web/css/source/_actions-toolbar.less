@@ -1,65 +1,57 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
 //
-//  Common
-//  _____________________________________________
+//    Common
+//--------------------------------------
 
 & when (@media-common = true) {
 
-    .actions-toolbar {
-        > .primary,
-        > .secondary {
+.actions-toolbar {
+    > .primary,
+    > .secondary {
+        text-align: center;
+        .action {
+            &:extend(.abs-button-responsive all);
             margin-bottom: @indent__s;
-            text-align: center;
-
-            .action {
-                &:extend(.abs-button-responsive all);
-                margin-bottom: @indent__s;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-
-                &.primary {
-                    //  &:extend(.abs-button-l all);
-                }
-            }
-
             &:last-child {
                 margin-bottom: 0;
             }
-        }
-
-        > .secondary {
-            .action.back {
-                display: none;
+            &.primary {
+                //&:extend(.abs-button-l all);
             }
+        }
+        margin-bottom: @indent__s;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    > .secondary {
+        .action.back {
+            display: none;
         }
     }
 }
 
-//
-//  Desktop
-//  _____________________________________________
+}
 
+//
+//    Desktop
+//--------------------------------------
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     .actions-toolbar {
         .lib-actions-toolbar();
-
         > .primary,
         > .secondary {
             margin-bottom: 0;
-
             .action {
-                margin-bottom: 0;
                 width: auto;
+                margin-bottom: 0;
             }
         }
     }
-
     form {
         .actions-toolbar {
             .column:not(.sidebar-main) &,

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,19 +15,19 @@ class Symlink implements StrategyInterface
     /**
      * Publish file
      *
-     * @param WriteInterface $sourceDir
+     * @param WriteInterface $rootDir
      * @param WriteInterface $targetDir
      * @param string $sourcePath
      * @param string $destinationPath
      * @return bool
      */
     public function publishFile(
-        WriteInterface $sourceDir,
+        WriteInterface $rootDir,
         WriteInterface $targetDir,
         $sourcePath,
         $destinationPath
     ) {
-        return $sourceDir->createSymlink($sourcePath, $destinationPath, $targetDir);
+        return $rootDir->createSymlink($sourcePath, $destinationPath, $targetDir);
     }
 
     /**

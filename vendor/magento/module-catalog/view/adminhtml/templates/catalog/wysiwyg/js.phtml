@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -28,7 +28,7 @@ var catalogWysiwygEditor = {
                 url: editorUrl,
                 data: {
                     element_id: elementId + '_editor',
-                    store_id: '<?= /* @escapeNotVerified */ $block->getStoreId() ?>'
+                    store_id: '<?php /* @escapeNotVerified */ echo $block->getStoreId() ?>'
                 },
                 showLoader: true,
                 dataType: 'html',
@@ -45,7 +45,7 @@ var catalogWysiwygEditor = {
             this.modal.html(jQuery(data).html());
         } else {
             this.modal = jQuery(data).modal({
-                title: '<?= /* @escapeNotVerified */ __('WYSIWYG Editor') ?>',
+                title: '<?php /* @escapeNotVerified */ echo __('WYSIWYG Editor'); ?>',
                 modalClass: 'magento',
                 type: 'slide',
                 firedElementId: elementId,
@@ -65,28 +65,22 @@ var catalogWysiwygEditor = {
                 }
             });
         }
+        this.modal.modal("option", "firedElementId", elementId);
         this.modal.modal('openModal');
         $(elementId + '_editor').value = $(elementId).value;
     },
     okDialogWindow : function(dialogWindow) {
-        var $firedElement = jQuery('#' + dialogWindow.options.firedElementId),
-            $editorElement = jQuery('#' + dialogWindow.options.firedElementId + '_editor'),
-            firedElementId = $firedElement.attr('id'),
-            wysiwygObj = window['wysiwyg' + firedElementId + '_editor'];
-
-        if ($firedElement.length) {
+        if (dialogWindow.options.firedElementId) {
+            wysiwygObj = eval('wysiwyg'+dialogWindow.options.firedElementId+'_editor');
             wysiwygObj.turnOff();
             if (tinyMCE.get(wysiwygObj.id)) {
-                $firedElement.val(tinyMCE.get(wysiwygObj.id).getContent()).change();
+                $(dialogWindow.options.firedElementId).value = tinyMCE.get(wysiwygObj.id).getContent();
             } else {
-                $firedElement.val($editorElement.val()).change();
+                if ($(dialogWindow.options.firedElementId+'_editor')) {
+                    $(dialogWindow.options.firedElementId).value = $(dialogWindow.options.firedElementId+'_editor').value;
+                }
             }
-            if (tinyMCE.get(firedElementId)) {
-                tinyMCE.get(firedElementId).load();
-            }
-            if (typeof varienGlobalEvents != undefined) {
-                varienGlobalEvents.fireEvent('tinymceChange');
-            }
+            tinyMCE.editors[dialogWindow.options.firedElementId].load();
         }
         this.closeDialogWindow(dialogWindow);
     },

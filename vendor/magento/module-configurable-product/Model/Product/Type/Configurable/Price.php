@@ -2,7 +2,7 @@
 /**
  * Product type price model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -39,15 +39,10 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      */
     public function getPrice($product)
     {
-        if (!empty($product)) {
-            $simpleProductOption = $product->getCustomOption('simple_product');
-            if (!empty($simpleProductOption)) {
-                $simpleProduct = $simpleProductOption->getProduct();
-                if (!empty($simpleProduct)) {
-                    return $simpleProduct->getPrice();
-                }
-            }
+        if ($product->getCustomOption('simple_product')) {
+            return $product->getCustomOption('simple_product')->getProduct()->getPrice();
+        } else {
+            return 0;
         }
-        return 0;
     }
 }

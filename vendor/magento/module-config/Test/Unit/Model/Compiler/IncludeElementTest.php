@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Test\Unit\Model\Compiler;
@@ -8,7 +8,7 @@ namespace Magento\Config\Test\Unit\Model\Compiler;
 /**
  * Class IncludeElementTest
  */
-class IncludeElementTest extends \PHPUnit\Framework\TestCase
+class IncludeElementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Compiler\IncludeElement
@@ -32,10 +32,10 @@ class IncludeElementTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->moduleReaderMock = $this->getMockBuilder(\Magento\Framework\Module\Dir\Reader::class)
+        $this->moduleReaderMock = $this->getMockBuilder('Magento\Framework\Module\Dir\Reader')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->readFactoryMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\ReadFactory::class)
+        $this->readFactoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\ReadFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -55,9 +55,9 @@ class IncludeElementTest extends \PHPUnit\Framework\TestCase
         $document = new \DOMDocument();
         $document->loadXML($xmlContent);
 
-        $compilerMock = $this->getMockBuilder(\Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface::class)
+        $compilerMock = $this->getMockBuilder('Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface')
             ->getMockForAbstractClass();
-        $processedObjectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $processedObjectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -91,9 +91,9 @@ class IncludeElementTest extends \PHPUnit\Framework\TestCase
         $document = new \DOMDocument();
         $document->loadXML($xmlContent);
 
-        $compilerMock = $this->getMockBuilder(\Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface::class)
+        $compilerMock = $this->getMockBuilder('Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface')
             ->getMockForAbstractClass();
-        $processedObjectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $processedObjectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -119,7 +119,7 @@ class IncludeElementTest extends \PHPUnit\Framework\TestCase
         $resultPath = 'adminhtml/path/to/file.xml';
         $includeXmlContent = '<config><item id="1"><test/></item><item id="2"></item></config>';
 
-        $modulesDirectoryMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\ReadInterface::class)
+        $modulesDirectoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\ReadInterface')
             ->getMockForAbstractClass();
 
         $this->readFactoryMock->expects($this->once())

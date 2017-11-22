@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Model\Oauth;
@@ -14,6 +14,8 @@ namespace Magento\Integration\Model\Oauth;
  * @method \Magento\Integration\Model\Oauth\Nonce setConsumerId() setConsumerId(int $consumerId)
  * @method string getTimestamp()
  * @method \Magento\Integration\Model\Oauth\Nonce setTimestamp() setTimestamp(string $timestamp)
+ * @method \Magento\Integration\Model\ResourceModel\Oauth\Nonce getResource()
+ * @method \Magento\Integration\Model\ResourceModel\Oauth\Nonce _getResource()
  */
 class Nonce extends \Magento\Framework\Model\AbstractModel
 {
@@ -51,7 +53,7 @@ class Nonce extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Integration\Model\ResourceModel\Oauth\Nonce::class);
+        $this->_init('Magento\Integration\Model\ResourceModel\Oauth\Nonce');
     }
 
     /**

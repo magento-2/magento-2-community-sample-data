@@ -1,51 +1,48 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Model\Category\Plugin;
 
+use Magento\CatalogUrlRewrite\Model\Category\ProductFactory;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\UrlRewrite\Model\StorageInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
-use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product;
 
 class Storage
 {
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
-     */
-    private $urlFinder;
+    /** @var UrlFinderInterface */
+    protected $urlFinder;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product
-     */
-    private $productResource;
+    /** @var ProductFactory */
+    protected $productFactory;
 
     /**
      * @param UrlFinderInterface $urlFinder
-     * @param Product $productResource
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         UrlFinderInterface $urlFinder,
-        Product $productResource
+        ProductFactory $productFactory
     ) {
         $this->urlFinder = $urlFinder;
-        $this->productResource = $productResource;
+        $this->productFactory = $productFactory;
     }
 
     /**
      * @param \Magento\UrlRewrite\Model\StorageInterface $object
-     * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $result
-     * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $urls
-     * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
+     * @param callable $proceed
+     * @param array $urls
+     * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterReplace(StorageInterface $object, array $result, array $urls)
+    public function aroundReplace(StorageInterface $object, \Closure $proceed, array $urls)
     {
+        $proceed($urls);
         $toSave = [];
-        foreach ($this->filterUrls($result) as $record) {
+        foreach ($this->filterUrls($urls) as $record) {
             $metadata = $record->getMetadata();
             $toSave[] = [
                 'url_rewrite_id' => $record->getUrlRewriteId(),
@@ -54,9 +51,8 @@ class Storage
             ];
         }
         if ($toSave) {
-            $this->productResource->saveMultiple($toSave);
+            $this->productFactory->create()->getResource()->saveMultiple($toSave);
         }
-        return $result;
     }
 
     /**
@@ -67,7 +63,14 @@ class Storage
      */
     public function beforeDeleteByData(StorageInterface $object, array $data)
     {
-        $this->productResource->removeMultipleByProductCategory($data);
+        $toRemove = [];
+        $records = $this->urlFinder->findAllByData($data);
+        foreach ($records as $record) {
+            $toRemove[] = $record->getUrlRewriteId();
+        }
+        if ($toRemove) {
+            $this->productFactory->create()->getResource()->removeMultiple($toRemove);
+        }
     }
 
     /**

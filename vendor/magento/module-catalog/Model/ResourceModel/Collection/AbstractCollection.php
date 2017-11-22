@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Collection;
@@ -9,10 +9,8 @@ namespace Magento\Catalog\Model\ResourceModel\Collection;
  * Catalog EAV collection resource abstract model
  * Implement using different stores for retrieve attribute values
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class AbstractCollection extends \Magento\Eav\Model\Entity\Collection\AbstractCollection
 {
@@ -74,18 +72,6 @@ class AbstractCollection extends \Magento\Eav\Model\Entity\Collection\AbstractCo
     }
 
     /**
-     * Retrieve Entity Primary Key
-     *
-     * @param \Magento\Eav\Model\Entity\AbstractEntity $entity
-     * @return string
-     * @since 101.0.0
-     */
-    protected function getEntityPkName(\Magento\Eav\Model\Entity\AbstractEntity $entity)
-    {
-        return $entity->getLinkField();
-    }
-
-    /**
      * Set store scope
      *
      * @param int|string|\Magento\Store\Model\Store $store
@@ -100,12 +86,12 @@ class AbstractCollection extends \Magento\Eav\Model\Entity\Collection\AbstractCo
     /**
      * Set store scope
      *
-     * @param int|string|\Magento\Store\Api\Data\StoreInterface $storeId
+     * @param int|string|\Magento\Store\Model\Store $storeId
      * @return $this
      */
     public function setStoreId($storeId)
     {
-        if ($storeId instanceof \Magento\Store\Api\Data\StoreInterface) {
+        if ($storeId instanceof \Magento\Store\Model\Store) {
             $storeId = $storeId->getId();
         }
         $this->_storeId = (int)$storeId;
@@ -149,27 +135,20 @@ class AbstractCollection extends \Magento\Eav\Model\Entity\Collection\AbstractCo
         }
         $storeId = $this->getStoreId();
         $connection = $this->getConnection();
-
-        $entityTable = $this->getEntity()->getEntityTable();
-        $indexList = $connection->getIndexList($entityTable);
-        $entityIdField = $indexList[$connection->getPrimaryKeyName($entityTable)]['COLUMNS_LIST'][0];
+        $entityIdField = $this->getEntity()->getEntityIdField();
 
         if ($storeId) {
             $joinCondition = [
                 't_s.attribute_id = t_d.attribute_id',
-                "t_s.{$entityIdField} = t_d.{$entityIdField}",
+                't_s.entity_id = t_d.entity_id',
                 $connection->quoteInto('t_s.store_id = ?', $storeId),
             ];
 
             $select = $connection->select()->from(
                 ['t_d' => $table],
-                ['attribute_id']
-            )->join(
-                ['e' => $entityTable],
-                "e.{$entityIdField} = t_d.{$entityIdField}",
-                ['e.entity_id']
+                [$entityIdField, 'attribute_id']
             )->where(
-                "e.entity_id IN (?)",
+                "t_d.{$entityIdField} IN (?)",
                 array_keys($this->_itemsById)
             )->where(
                 't_d.attribute_id IN (?)',
@@ -184,14 +163,10 @@ class AbstractCollection extends \Magento\Eav\Model\Entity\Collection\AbstractCo
             );
         } else {
             $select = $connection->select()->from(
-                ['t_d' => $table],
-                ['attribute_id']
-            )->join(
-                ['e' => $entityTable],
-                "e.{$entityIdField} = t_d.{$entityIdField}",
-                ['e.entity_id']
+                $table,
+                [$entityIdField, 'attribute_id']
             )->where(
-                "e.entity_id IN (?)",
+                "{$entityIdField} IN (?)",
                 array_keys($this->_itemsById)
             )->where(
                 'attribute_id IN (?)',

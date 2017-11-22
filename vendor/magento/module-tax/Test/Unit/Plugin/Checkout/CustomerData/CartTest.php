@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Test\Unit\Plugin\Checkout\CustomerData;
 
-class CartTest extends \PHPUnit\Framework\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -41,11 +41,11 @@ class CartTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->checkoutSession = $this->createMock(\Magento\Checkout\Model\Session::class);
-        $this->checkoutHelper = $this->createMock(\Magento\Checkout\Helper\Data::class);
-        $this->itemPriceRenderer = $this->createMock(\Magento\Tax\Block\Item\Price\Renderer::class);
-        $this->checkoutCart = $this->createMock(\Magento\Checkout\CustomerData\Cart::class);
-        $this->quote = $this->createMock(\Magento\Quote\Model\Quote::class);
+        $this->checkoutSession = $this->getMock('Magento\Checkout\Model\Session', [], [], '', false);
+        $this->checkoutHelper = $this->getMock('Magento\Checkout\Helper\Data', [], [], '', false);
+        $this->itemPriceRenderer = $this->getMock('Magento\Tax\Block\Item\Price\Renderer', [], [], '', false);
+        $this->checkoutCart = $this->getMock('Magento\Checkout\CustomerData\Cart', [], [], '', false);
+        $this->quote = $this->getMock('Magento\Quote\Model\Quote', [], [], '', false);
 
         $this->checkoutSession->expects(
             $this->any()
@@ -54,7 +54,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         )->willReturn($this->quote);
 
         $this->cart = $helper->getObject(
-            \Magento\Tax\Plugin\Checkout\CustomerData\Cart::class,
+            'Magento\Tax\Plugin\Checkout\CustomerData\Cart',
             [
                 'checkoutSession' => $this->checkoutSession,
                 'checkoutHelper' => $this->checkoutHelper,
@@ -65,7 +65,8 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterGetSectionData()
     {
-        $input = ['items' => [
+        $input = ['items' =>
+            [
                 [
                     'item_id' => 1,
                     'product_price' => ''
@@ -83,8 +84,8 @@ class CartTest extends \PHPUnit\Framework\TestCase
             'formatPrice'
         )->willReturn('formatted');
 
-        $item1 = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
-        $item2 = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $item1 = $this->getMock('Magento\Quote\Model\Quote\Item', [], [], '', false);
+        $item2 = $this->getMock('Magento\Quote\Model\Quote\Item', [], [], '', false);
 
         $item1->expects(
             $this->atLeastOnce()
@@ -121,5 +122,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, count($result['items']));
         $this->assertEquals(1, count($result['items'][0]['product_price']));
         $this->assertEquals(1, count($result['items'][1]['product_price']));
+
     }
 }

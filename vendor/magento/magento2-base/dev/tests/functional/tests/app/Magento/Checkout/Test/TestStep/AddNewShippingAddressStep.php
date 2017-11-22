@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Customer\Test\Fixture\Address;
 use Magento\Mtf\TestStep\TestStepInterface;
 
 /**
- * Add new shipping address on checkout step.
+ * Create customer custom attribute step.
  */
 class AddNewShippingAddressStep implements TestStepInterface
 {
@@ -30,43 +30,30 @@ class AddNewShippingAddressStep implements TestStepInterface
     private $address;
 
     /**
-     * Save Shipping Address.
-     *
-     * @var boolean
-     */
-    private $save;
-
-    /**
      * @constructor
      * @param CheckoutOnepage $checkoutOnepage
-     * @param Address|null $shippingAddress [optional]
-     * @param boolean $save [optional]
+     * @param Address|null $address [optional]
      */
-    public function __construct(CheckoutOnepage $checkoutOnepage, Address $shippingAddress = null, $save = true)
+    public function __construct(CheckoutOnepage $checkoutOnepage, Address $address = null)
     {
         $this->checkoutOnepage = $checkoutOnepage;
-        $this->address = $shippingAddress;
-        $this->save = $save;
+        $this->address = $address;
     }
 
     /**
-     * Add new shipping address.
+     * Create customer account.
      *
-     * @return array
+     * @return void
      */
     public function run()
     {
         $shippingBlock = $this->checkoutOnepage->getShippingBlock();
         $shippingBlock->clickOnNewAddressButton();
+
         if ($this->address) {
             $shippingBlock->getAddressModalBlock()->fill($this->address);
         }
-        if ($this->save) {
-            $shippingBlock->getAddressModalBlock()->save();
-        } else {
-            $shippingBlock->getAddressModalBlock()->cancel();
-        }
 
-        return ['shippingAddress' => $this->address];
+        $shippingBlock->getAddressModalBlock()->save();
     }
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Arguments\FileResolver;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class PrimaryTest extends \PHPUnit\Framework\TestCase
+class PrimaryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $fileList
@@ -17,9 +17,15 @@ class PrimaryTest extends \PHPUnit\Framework\TestCase
      */
     public function testGet(array $fileList, $scope, $filename)
     {
-        $directory = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $iteratorFactory = $this->createPartialMock(\Magento\Framework\Config\FileIteratorFactory::class, ['create']);
+        $directory = $this->getMock('Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $iteratorFactory = $this->getMock(
+            'Magento\Framework\Config\FileIteratorFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
 
         $filesystem->expects(
             $this->once()

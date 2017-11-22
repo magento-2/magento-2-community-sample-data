@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Filters\Type;
@@ -12,8 +12,7 @@ use Magento\Ui\Component\Form\Element\Select as ElementSelect;
 use Magento\Ui\Component\Filters\FilterModifier;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Select
  */
 class Select extends AbstractFilter
 {
@@ -97,14 +96,9 @@ class Select extends AbstractFilter
     {
         if (isset($this->filterData[$this->getName()])) {
             $value = $this->filterData[$this->getName()];
+            $conditionType = is_array($value) ? 'in' : 'eq';
 
             if (!empty($value) || is_numeric($value)) {
-                if (is_array($value)) {
-                    $conditionType = 'in';
-                } else {
-                    $dataType = $this->getData('config/dataType');
-                    $conditionType = $dataType == 'multiselect' ? 'finset' : 'eq';
-                }
                 $filter = $this->filterBuilder->setConditionType($conditionType)
                     ->setField($this->getName())
                     ->setValue($value)

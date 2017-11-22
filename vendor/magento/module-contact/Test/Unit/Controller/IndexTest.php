@@ -1,47 +1,48 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Contact\Test\Unit\Controller;
 
-use Magento\Contact\Model\ConfigInterface;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
-
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Controller instance
      *
      * @var \Magento\Contact\Controller\Index
      */
-    private $controller;
+    protected $_controller;
 
     /**
-     * Module config instance
+     * Scope config instance
      *
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $_scopeConfig;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->configMock = $this->getMockBuilder(ConfigInterface::class)->getMockForAbstractClass();
-
-        $context = $this->getMockBuilder(
-            \Magento\Framework\App\Action\Context::class
-        )->setMethods(
-            ['getRequest', 'getResponse']
-        )->disableOriginalConstructor(
-        )->getMock();
+        $this->_scopeConfig = $this->getMockForAbstractClass(
+            '\Magento\Framework\App\Config\ScopeConfigInterface',
+            ['isSetFlag'],
+            '',
+            false
+        );
+        $context = $this->getMock(
+            '\Magento\Framework\App\Action\Context',
+            ['getRequest', 'getResponse'],
+            [],
+            '',
+            false
+        );
 
         $context->expects($this->any())
             ->method('getRequest')
             ->will(
                 $this->returnValue(
-                    $this->getMockBuilder(RequestInterface::class)->getMockForAbstractClass()
+                    $this->getMockForAbstractClass('\Magento\Framework\App\RequestInterface', [], '', false)
                 )
             );
 
@@ -49,13 +50,16 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ->method('getResponse')
             ->will(
                 $this->returnValue(
-                    $this->getMockBuilder(ResponseInterface::class)->getMockForAbstractClass()
+                    $this->getMockForAbstractClass('\Magento\Framework\App\ResponseInterface', [], '', false)
                 )
             );
 
-        $this->controller = new \Magento\Contact\Test\Unit\Controller\Stub\IndexStub(
+        $this->_controller = new \Magento\Contact\Test\Unit\Controller\Stub\IndexStub(
             $context,
-            $this->configMock
+            $this->getMock('\Magento\Framework\Mail\Template\TransportBuilder', [], [], '', false),
+            $this->getMockForAbstractClass('\Magento\Framework\Translate\Inline\StateInterface', [], '', false),
+            $this->_scopeConfig,
+            $this->getMockForAbstractClass('\Magento\Store\Model\StoreManagerInterface', [], '', false)
         );
     }
 
@@ -66,10 +70,16 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function testDispatch()
     {
-        $this->configMock->method('isEnabled')->willReturn(false);
+        $this->_scopeConfig->expects($this->once())
+            ->method('isSetFlag')
+            ->with(
+                \Magento\Contact\Controller\Index::XML_PATH_ENABLED,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            )
+            ->will($this->returnValue(false));
 
-        $this->controller->dispatch(
-            $this->getMockBuilder(RequestInterface::class)->getMockForAbstractClass()
+        $this->_controller->dispatch(
+            $this->getMockForAbstractClass('\Magento\Framework\App\RequestInterface', [], '', false)
         );
     }
 }

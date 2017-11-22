@@ -1,27 +1,21 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Test\Helper;
-use Braintree;
-
-class PlanTest extends Setup
+class Braintree_PlanTest extends PHPUnit_Framework_TestCase
 {
-    public function testAll_withNoPlans_returnsEmptyArray()
+    function testAll_withNoPlans_returnsEmptyArray()
     {
-        Helper::testMerchantConfig();
-        $plans = Braintree\Plan::all();
-        $this->assertEquals($plans, []);
-        self::integrationMerchantConfig();
+        testMerchantConfig();
+        $plans = Braintree_Plan::all();
+        $this->assertEquals($plans, array());
+        integrationMerchantConfig();
 
     }
 
-    public function testAll_returnsAllPlans()
+    function testAll_returnsAllPlans()
     {
         $newId = strval(rand());
-        $params = [
+        $params = array (
             "id" => $newId,
             "billingDayOfMonth" => "1",
             "billingFrequency" => "1",
@@ -31,35 +25,35 @@ class PlanTest extends Setup
             "numberOfBillingCycles" => "1",
             "price" => "1.00",
             "trialPeriod" => "false"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . '/plans/create_plan_for_tests';
-        $http->post($path, ["plan" => $params]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/plans/create_plan_for_tests";
+        $http->post($path, array("plan" => $params));
 
-        $addOnParams = [
+        $addOnParams = array (
             "kind" => "add_on",
             "plan_id" => $newId,
             "amount" => "1.00",
             "name" => "add_on_name"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . '/modifications/create_modification_for_tests';
-        $http->post($path, ['modification' => $addOnParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $addOnParams));
 
-        $discountParams = [
+        $discountParams = array (
             "kind" => "discount",
             "plan_id" => $newId,
             "amount" => "1.00",
             "name" => "discount_name"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . '/modifications/create_modification_for_tests';
-        $http->post($path, ["modification" => $discountParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $discountParams));
 
-        $plans = Braintree\Plan::all();
+        $plans = Braintree_Plan::all();
 
         foreach ($plans as $plan)
         {
@@ -85,10 +79,10 @@ class PlanTest extends Setup
         $this->assertEquals($discountParams["name"], $discount->name);
     }
 
-    public function testGatewayAll_returnsAllPlans()
+    function testGatewayAll_returnsAllPlans()
     {
         $newId = strval(rand());
-        $params = [
+        $params = array (
             "id" => $newId,
             "billingDayOfMonth" => "1",
             "billingFrequency" => "1",
@@ -98,18 +92,18 @@ class PlanTest extends Setup
             "numberOfBillingCycles" => "1",
             "price" => "1.00",
             "trialPeriod" => "false"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . '/plans/create_plan_for_tests';
-        $http->post($path, ["plan" => $params]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/plans/create_plan_for_tests";
+        $http->post($path, array("plan" => $params));
 
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
+        ));
         $plans = $gateway->plan()->all();
 
         foreach ($plans as $plan)

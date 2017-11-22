@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Model\ResourceModel;
-
-use Magento\Store\Model\Store;
 
 /**
  * Abstract collection of CMS pages and blocks
@@ -20,17 +18,11 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
     protected $storeManager;
 
     /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    protected $metadataPool;
-
-    /**
      * @param \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null $resource
      */
@@ -40,53 +32,45 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
-        $this->storeManager = $storeManager;
-        $this->metadataPool = $metadataPool;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
+        $this->storeManager = $storeManager;
     }
 
     /**
      * Perform operations after collection load
      *
      * @param string $tableName
-     * @param string|null $linkField
+     * @param string $columnName
      * @return void
      */
-    protected function performAfterLoad($tableName, $linkField)
+    protected function performAfterLoad($tableName, $columnName)
     {
-        $linkedIds = $this->getColumnValues($linkField);
-        if (count($linkedIds)) {
+        $items = $this->getColumnValues($columnName);
+        if (count($items)) {
             $connection = $this->getConnection();
             $select = $connection->select()->from(['cms_entity_store' => $this->getTable($tableName)])
-                ->where('cms_entity_store.' . $linkField . ' IN (?)', $linkedIds);
-            $result = $connection->fetchAll($select);
+                ->where('cms_entity_store.' . $columnName . ' IN (?)', $items);
+            $result = $connection->fetchPairs($select);
             if ($result) {
-                $storesData = [];
-                foreach ($result as $storeData) {
-                    $storesData[$storeData[$linkField]][] = $storeData['store_id'];
-                }
-
                 foreach ($this as $item) {
-                    $linkedId = $item->getData($linkField);
-                    if (!isset($storesData[$linkedId])) {
+                    $entityId = $item->getData($columnName);
+                    if (!isset($result[$entityId])) {
                         continue;
                     }
-                    $storeIdKey = array_search(Store::DEFAULT_STORE_ID, $storesData[$linkedId], true);
-                    if ($storeIdKey !== false) {
+                    if ($result[$entityId] == 0) {
                         $stores = $this->storeManager->getStores(false, true);
                         $storeId = current($stores)->getId();
                         $storeCode = key($stores);
                     } else {
-                        $storeId = current($storesData[$linkedId]);
+                        $storeId = $result[$item->getData($columnName)];
                         $storeCode = $this->storeManager->getStore($storeId)->getCode();
                     }
                     $item->setData('_first_store_id', $storeId);
                     $item->setData('store_code', $storeCode);
-                    $item->setData('store_id', $storesData[$linkedId]);
+                    $item->setData('store_id', [$result[$entityId]]);
                 }
             }
         }
@@ -111,7 +95,7 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
     /**
      * Add filter by store
      *
-     * @param int|array|Store $store
+     * @param int|array|\Magento\Store\Model\Store $store
      * @param bool $withAdmin
      * @return $this
      */
@@ -120,13 +104,13 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
     /**
      * Perform adding filter by store
      *
-     * @param int|array|Store $store
+     * @param int|array|\Magento\Store\Model\Store $store
      * @param bool $withAdmin
      * @return void
      */
     protected function performAddStoreFilter($store, $withAdmin = true)
     {
-        if ($store instanceof Store) {
+        if ($store instanceof \Magento\Store\Model\Store) {
             $store = [$store->getId()];
         }
 
@@ -135,7 +119,7 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
         }
 
         if ($withAdmin) {
-            $store[] = Store::DEFAULT_STORE_ID;
+            $store[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         }
 
         $this->addFilter('store', ['in' => $store], 'public');
@@ -145,18 +129,18 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
      * Join store relation table if there is store filter
      *
      * @param string $tableName
-     * @param string|null $linkField
+     * @param string $columnName
      * @return void
      */
-    protected function joinStoreRelationTable($tableName, $linkField)
+    protected function joinStoreRelationTable($tableName, $columnName)
     {
         if ($this->getFilter('store')) {
             $this->getSelect()->join(
                 ['store_table' => $this->getTable($tableName)],
-                'main_table.' . $linkField . ' = store_table.' . $linkField,
+                'main_table.' . $columnName . ' = store_table.' . $columnName,
                 []
             )->group(
-                'main_table.' . $linkField
+                'main_table.' . $columnName
             );
         }
         parent::_renderFiltersBefore();

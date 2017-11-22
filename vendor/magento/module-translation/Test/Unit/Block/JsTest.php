@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Translation\Test\Unit\Block;
 
 use Magento\Translation\Block\Js;
 
-class JsTest extends \PHPUnit\Framework\TestCase
+class JsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Js
@@ -27,14 +27,14 @@ class JsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->configMock = $this->getMockBuilder(\Magento\Translation\Model\Js\Config::class)
+        $this->configMock = $this->getMockBuilder('Magento\Translation\Model\Js\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileManagerMock = $this->getMockBuilder(\Magento\Translation\Model\FileManager::class)
+        $this->fileManagerMock = $this->getMockBuilder('\Magento\Translation\Model\FileManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = $objectManager->getObject(
-            \Magento\Translation\Block\Js::class,
+            'Magento\Translation\Block\Js',
             [
                 'config' => $this->configMock,
                 'fileManager' => $this->fileManagerMock

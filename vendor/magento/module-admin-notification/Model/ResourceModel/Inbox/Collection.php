@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\AdminNotification\Model\ResourceModel\Inbox;
@@ -8,10 +8,7 @@ namespace Magento\AdminNotification\Model\ResourceModel\Inbox;
 /**
  * AdminNotification Inbox model
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -22,10 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\AdminNotification\Model\Inbox::class,
-            \Magento\AdminNotification\Model\ResourceModel\Inbox::class
-        );
+        $this->_init('Magento\AdminNotification\Model\Inbox', 'Magento\AdminNotification\Model\ResourceModel\Inbox');
     }
 
     /**

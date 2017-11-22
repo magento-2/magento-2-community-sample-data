@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Test\Unit\Controller\Adminhtml\Page;
@@ -28,15 +28,24 @@ class MassDisableTest extends AbstractMassActionTest
     {
         parent::setUp();
 
-        $this->collectionFactoryMock = $this->createPartialMock(
-            \Magento\Cms\Model\ResourceModel\Page\CollectionFactory::class,
-            ['create']
+        $this->collectionFactoryMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->pageCollectionMock = $this->createMock(\Magento\Cms\Model\ResourceModel\Page\Collection::class);
+        $this->pageCollectionMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\Collection',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->massDisableController = $this->objectManager->getObject(
-            \Magento\Cms\Controller\Adminhtml\Page\MassDisable::class,
+            'Magento\Cms\Controller\Adminhtml\Page\MassDisable',
             [
                 'context' => $this->contextMock,
                 'filter' => $this->filterMock,
@@ -86,9 +95,12 @@ class MassDisableTest extends AbstractMassActionTest
      */
     protected function getPageMock()
     {
-        $pageMock = $this->createPartialMock(
-            \Magento\Cms\Model\ResourceModel\Page\Collection::class,
-            ['setIsActive', 'save']
+        $pageMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\Collection',
+            ['setIsActive', 'save'],
+            [],
+            '',
+            false
         );
         $pageMock->expects($this->once())->method('setIsActive')->with(false)->willReturn(true);
         $pageMock->expects($this->once())->method('save')->willReturn(true);

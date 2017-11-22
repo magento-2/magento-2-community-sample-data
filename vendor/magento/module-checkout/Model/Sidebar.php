@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -12,9 +12,6 @@ use Magento\Framework\Locale\ResolverInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Address\Total;
 
-/**
- * @deprecated 100.1.0
- */
 class Sidebar
 {
     /**

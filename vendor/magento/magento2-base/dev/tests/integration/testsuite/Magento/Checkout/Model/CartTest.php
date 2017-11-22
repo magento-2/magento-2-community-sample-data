@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -8,7 +8,7 @@ namespace Magento\Checkout\Model;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CartTest extends \PHPUnit\Framework\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Cart
@@ -27,14 +27,13 @@ class CartTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Checkout/_files/simple_product.php
      * @magentoDataFixture Magento/Checkout/_files/set_product_min_in_cart.php
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      */
     public function testAddProductWithLowerQty()
     {
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             'The fewest you may purchase is 3'
         );
@@ -43,7 +42,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Checkout/_files/simple_product.php
      * @magentoDataFixture Magento/Checkout/_files/set_product_min_in_cart.php
      * @magentoDbIsolation enabled
      */

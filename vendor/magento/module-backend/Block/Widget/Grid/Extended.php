@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget\Grid;
@@ -8,14 +8,10 @@ namespace Magento\Backend\Block\Widget\Grid;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Backend\Block\Widget\Grid\ExportInterface
 {
@@ -89,7 +85,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
      *
      * @var string
      */
-    protected $_massactionBlockName = \Magento\Backend\Block\Widget\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName = 'Magento\Backend\Block\Widget\Grid\Massaction\Extended';
 
     /**
      * Columns view order
@@ -196,7 +192,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
     {
         $this->setChild(
             'export_button',
-            $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class)->setData(
+            $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')->setData(
                 [
                     'label' => __('Export'),
                     'onclick' => $this->getJsObjectName() . '.doExport()',
@@ -206,7 +202,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
         );
         $this->setChild(
             'reset_filter_button',
-            $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class)->setData(
+            $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')->setData(
                 [
                     'label' => __('Reset Filter'),
                     'onclick' => $this->getJsObjectName() . '.resetFilter()',
@@ -220,7 +216,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
         );
         $this->setChild(
             'search_button',
-            $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class)->setData(
+            $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')->setData(
                 [
                     'label' => __('Search'),
                     'onclick' => $this->getJsObjectName() . '.doFilter()',
@@ -245,7 +241,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
         if (!$this->getChildBlock('grid.columnSet')) {
             $this->setChild(
                 'grid.columnSet',
-                $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Grid\ColumnSet::class)
+                $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Grid\ColumnSet')
             );
         }
         return parent::getColumnSet();
@@ -290,7 +286,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
             $this->getColumnSet()->setChild(
                 $columnId,
                 $this->getLayout()
-                    ->createBlock(\Magento\Backend\Block\Widget\Grid\Column\Extended::class)
+                    ->createBlock('Magento\Backend\Block\Widget\Grid\Column\Extended')
                     ->setData($column)
                     ->setId($columnId)
                     ->setGrid($this)
@@ -434,7 +430,7 @@ class Extended extends \Magento\Backend\Block\Widget\Grid implements \Magento\Ba
     {
         $columnId = 'massaction';
         $massactionColumn = $this->getLayout()
-            ->createBlock(\Magento\Backend\Block\Widget\Grid\Column::class)
+            ->createBlock('Magento\Backend\Block\Widget\Grid\Column')
             ->setData(
                 [
                     'index' => $this->getMassactionIdField(),

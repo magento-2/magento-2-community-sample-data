@@ -2,27 +2,46 @@
 /**
  * Grouped Products Price Indexer Resource model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price;
 
-use Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice;
-use Magento\Catalog\Api\Data\ProductInterface;
+use \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice;
 
 class Grouped extends DefaultPrice implements GroupedInterface
 {
     /**
-     * Prefix for temporary table support.
+     * Reindex temporary (price result data) for all products
+     *
+     * @throws \Exception
+     * @return \Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price\Grouped
      */
-    const TRANSIT_PREFIX = 'transit_';
+    public function reindexAll()
+    {
+        $this->tableStrategy->setUseIdxTable(true);
+        $this->beginTransaction();
+        try {
+            $this->_prepareGroupedProductPriceData();
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+        return $this;
+    }
 
     /**
-     * @inheritdoc
+     * Reindex temporary (price result data) for defined product(s)
+     *
+     * @param int|array $entityIds
+     * @return \Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price\Grouped
      */
-    protected function reindex($entityIds = null)
+    public function reindexEntity($entityIds)
     {
         $this->_prepareGroupedProductPriceData($entityIds);
+
+        return $this;
     }
 
     /**
@@ -30,60 +49,22 @@ class Grouped extends DefaultPrice implements GroupedInterface
      * Use calculated price for relation products
      *
      * @param int|array $entityIds  the parent entity ids limitation
-     * @return $this
+     * @return \Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price\Grouped
      */
     protected function _prepareGroupedProductPriceData($entityIds = null)
     {
         if (!$this->hasEntity() && empty($entityIds)) {
             return $this;
         }
-
         $connection = $this->getConnection();
         $table = $this->getIdxTable();
 
-        if (!$this->tableStrategy->getUseIdxTable()) {
-            $additionalIdxTable = $connection->getTableName(self::TRANSIT_PREFIX . $this->getIdxTable());
-            $connection->createTemporaryTableLike($additionalIdxTable, $table);
-            $query = $connection->insertFromSelect(
-                $this->_prepareGroupedProductPriceDataSelect($entityIds),
-                $additionalIdxTable,
-                []
-            );
-            $connection->query($query);
-
-            $select = $connection->select()->from($additionalIdxTable);
-            $query = $connection->insertFromSelect(
-                $select,
-                $table,
-                [],
-                \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_ON_DUPLICATE
-            );
-            $connection->query($query);
-            $connection->dropTemporaryTable($additionalIdxTable);
-        } else {
-            $query = $this->_prepareGroupedProductPriceDataSelect($entityIds)->insertFromSelect($table);
-            $connection->query($query);
-        }
-        return $this;
-    }
-
-    /**
-     * Prepare data index select for Grouped products prices
-     *
-     * @param int|array $entityIds  the parent entity ids limitation
-     * @return \Magento\Framework\DB\Select
-     */
-    protected function _prepareGroupedProductPriceDataSelect($entityIds = null)
-    {
-        $connection = $this->getConnection();
-        $table = $this->getIdxTable();
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         $select = $connection->select()->from(
             ['e' => $this->getTable('catalog_product_entity')],
             'entity_id'
         )->joinLeft(
             ['l' => $this->getTable('catalog_product_link')],
-            'e.' . $linkField . ' = l.product_id AND l.link_type_id=' .
+            'e.entity_id = l.product_id AND l.link_type_id=' .
             \Magento\GroupedProduct\Model\ResourceModel\Product\Link::LINK_TYPE_GROUPED,
             []
         )->join(
@@ -126,7 +107,7 @@ class Grouped extends DefaultPrice implements GroupedInterface
         );
 
         if ($entityIds !== null) {
-            $select->where('e.entity_id IN(?)', $entityIds);
+            $select->where('l.product_id IN(?)', $entityIds);
         }
 
         /**
@@ -141,6 +122,10 @@ class Grouped extends DefaultPrice implements GroupedInterface
                 'store_field' => new \Zend_Db_Expr('cs.store_id')
             ]
         );
-        return $select;
+
+        $query = $select->insertFromSelect($table);
+        $connection->query($query);
+
+        return $this;
     }
 }

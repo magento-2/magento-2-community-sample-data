@@ -2,12 +2,12 @@
 /**
  * Integration test for Magento\Framework\Session\Config\Validator\CookieDomainValidator
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Session\Config\Validator;
 
-class CookieDomainValidatorTest extends \PHPUnit\Framework\TestCase
+class CookieDomainValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\Session\Config\Validator\CookieDomainValidator   */
     private $model;
@@ -15,7 +15,7 @@ class CookieDomainValidatorTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->model = $objectManager->create(\Magento\Framework\Session\Config\Validator\CookieDomainValidator::class);
+        $this->model = $objectManager->create('Magento\Framework\Session\Config\Validator\CookieDomainValidator');
     }
 
     public function testEmptyString()

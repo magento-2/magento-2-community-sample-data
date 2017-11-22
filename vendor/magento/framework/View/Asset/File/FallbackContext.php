@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,11 +10,14 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * An advanced context that contains information necessary for view files fallback system
- *
- * @api
  */
 class FallbackContext extends Context
 {
+    /**
+     * Secure path
+     */
+    const SECURE_PATH = 'secure';
+
     /**
      * @var string
      */
@@ -31,16 +34,23 @@ class FallbackContext extends Context
     private $locale;
 
     /**
+     * @var bool
+     */
+    private $isSecure;
+
+    /**
      * @param string $baseUrl
      * @param string $areaType
      * @param string $themePath
      * @param string $localeCode
+     * @param bool $isSecure
      */
-    public function __construct($baseUrl, $areaType, $themePath, $localeCode)
+    public function __construct($baseUrl, $areaType, $themePath, $localeCode, $isSecure = false)
     {
         $this->area = $areaType;
         $this->theme = $themePath;
         $this->locale = $localeCode;
+        $this->isSecure = $isSecure;
         parent::__construct($baseUrl, DirectoryList::STATIC_VIEW, $this->generatePath());
     }
 
@@ -93,6 +103,6 @@ class FallbackContext extends Context
      */
     public function getConfigPath()
     {
-        return $this->getPath();
+        return $this->getPath() . ($this->isSecure ? '/' . self::SECURE_PATH : '');
     }
 }

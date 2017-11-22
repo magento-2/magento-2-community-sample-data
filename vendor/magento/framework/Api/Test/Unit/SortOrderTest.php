@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Framework\Api\SortOrder;
 /**
  * @covers \Magento\Framework\Api\SortOrder
  */
-class SortOrderTest extends \PHPUnit\Framework\TestCase
+class SortOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SortOrder

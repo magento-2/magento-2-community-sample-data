@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,10 @@ namespace Magento\CatalogWidget\Test\Unit\Controller\Adminhtml\Product\Widget;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ConditionsTest extends \PHPUnit\Framework\TestCase
+/**
+ * Test class for \Magento\CatalogWidget\Controller\Adminhtml\Product\Widget\Conditions
+ */
+class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogWidget\Controller\Adminhtml\Product\Widget\Conditions
@@ -37,7 +40,7 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->rule = $this->createMock(\Magento\CatalogWidget\Model\Rule::class);
+        $this->rule = $this->getMock(\Magento\CatalogWidget\Model\Rule::class, [], [], '', false);
         $this->response = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
             ->setMethods(['setBody', 'sendResponse'])
             ->disableOriginalConstructor()

@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'underscore',
@@ -20,10 +16,8 @@ define([
             minVisible: 1,
             maxVisible: 30,
             viewportSize: 18,
-            displayArea: 'dataGridActions',
-            columnsProvider: 'ns = ${ $.ns }, componentType = columns',
             imports: {
-                addColumns: '${ $.columnsProvider }:elems'
+                addColumns: '${ $.columnsData.provider }:elems'
             },
             templates: {
                 headerMsg: $t('${ $.visible } out of ${ $.total } visible')

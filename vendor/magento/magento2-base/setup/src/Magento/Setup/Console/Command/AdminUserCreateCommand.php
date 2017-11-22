@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,7 +25,7 @@ class AdminUserCreateCommand extends AbstractSetupCommand
      * @var UserValidationRules
      */
     private $validationRules;
-
+    
     /**
      * @param InstallerFactory $installerFactory
      * @param UserValidationRules $validationRules
@@ -58,8 +58,7 @@ class AdminUserCreateCommand extends AbstractSetupCommand
         $errors = $this->validate($input);
         if ($errors) {
             $output->writeln('<error>' . implode('</error>' . PHP_EOL .  '<error>', $errors) . '</error>');
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
         $installer = $this->installerFactory->create(new ConsoleLogger($output));
         $installer->installAdminUser($input->getOptions());

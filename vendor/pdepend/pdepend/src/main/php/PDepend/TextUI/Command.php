@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -50,7 +50,7 @@ use PDepend\Util\Workarounds;
 /**
  * Handles the command line stuff and starts the text ui runner.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 class Command
@@ -210,14 +210,6 @@ class Command
             unset($options['--optimization']);
         }
 
-        if (isset($options['--quiet'])) {
-            $runSilent = true;
-            unset($options['--quiet']);
-        } else {
-            $runSilent = false;
-            $this->runner->addProcessListener(new \PDepend\TextUI\ResultPrinter());
-        }
-
         if (isset($options['--notify-me'])) {
             $this->runner->addProcessListener(
                 new \PDepend\DbusUI\ResultPrinter()
@@ -233,10 +225,8 @@ class Command
 
         try {
             // Output current pdepend version and author
-            if ($runSilent === false) {
-                $this->printVersion();
-                $this->printWorkarounds();
-            }
+            $this->printVersion();
+            $this->printWorkarounds();
 
             $startTime = time();
 
@@ -246,7 +236,7 @@ class Command
                 $errors = $this->runner->getParseErrors();
 
                 printf(
-                    '%sThe following error%s occurred:%s',
+                    '%sThe following error%s occured:%s',
                     PHP_EOL,
                     count($errors) > 1 ? 's' : '',
                     PHP_EOL
@@ -257,9 +247,17 @@ class Command
                 }
                 echo PHP_EOL;
             }
-            if ($runSilent === false) {
-                $this->printStatistics($startTime);
+
+            $duration = time() - $startTime;
+            $hours = intval($duration / 3600);
+            $minutes = intval(($duration - $hours * 3600) / 60);
+            $seconds = $duration % 60;
+            echo PHP_EOL, 'Time: ', sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
+            if (function_exists('memory_get_peak_usage')) {
+                $memory = (memory_get_peak_usage(true) / (1024 * 1024));
+                printf('; Memory: %4.2fMb', $memory);
             }
+            echo PHP_EOL;
 
             return $result;
         } catch (\RuntimeException $e) {
@@ -483,7 +481,6 @@ class Command
         );
         echo PHP_EOL;
 
-        $this->printOption('--quiet', 'Prints errors only.', $length);
         $this->printOption('--debug', 'Prints debugging information.', $length);
         $this->printOption('--help', 'Print this help text.', $length);
         $this->printOption('--version', 'Print the current version.', $length);
@@ -625,22 +622,5 @@ class Command
     {
         $command = new Command();
         return $command->run();
-    }
-
-    /**
-     * @param $startTime
-     */
-    private function printStatistics($startTime)
-    {
-        $duration = time() - $startTime;
-        $hours = intval($duration / 3600);
-        $minutes = intval(($duration - $hours * 3600) / 60);
-        $seconds = $duration % 60;
-        echo PHP_EOL, 'Time: ', sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
-        if (function_exists('memory_get_peak_usage')) {
-            $memory = (memory_get_peak_usage(true) / (1024 * 1024));
-            printf('; Memory: %4.2fMb', $memory);
-        }
-        echo PHP_EOL;
     }
 }

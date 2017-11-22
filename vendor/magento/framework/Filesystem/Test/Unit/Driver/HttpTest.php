@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filesystem\Test\Unit\Driver;
 
 use \Magento\Framework\Filesystem\Driver\Http;
 
-class HttpTest extends \PHPUnit\Framework\TestCase
+class HttpTest extends \PHPUnit_Framework_TestCase
 {
     /** @var array Result of get_headers() function */
     public static $headers;
@@ -21,7 +21,7 @@ class HttpTest extends \PHPUnit\Framework\TestCase
     /** @var bool Result of fsockopen() function */
     public static $fsockopen;
 
-    protected function setUp()
+    public function setUp()
     {
         require_once __DIR__ . '/../_files/http_mock.php';
 

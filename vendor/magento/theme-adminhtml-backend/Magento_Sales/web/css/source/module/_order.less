@@ -1,11 +1,11 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
 //
 //  Page components
-//  _____________________________________________
+//  ---------------------------------------------
 
 @import 'order/_address.less';
 @import 'order/_discounts.less';
@@ -20,7 +20,7 @@
 
 //
 //  Variables
-//  _____________________________________________
+//  ---------------------------------------------
 
 @order-create-icon-refresh__font-size: 2rem;
 @order-create-icon-refresh__color: @color-gray83;
@@ -242,61 +242,9 @@
             display: block;
             font-size: 1.3rem;
             &:before {
-                content: attr(data-label) ': ';
+                content: attr(data-label) ": ";
             }
         }
-    }
-}
-
-.options-list {
-    &.nested {
-        .admin__field-option {
-            .admin__field-label {
-                > span {
-                    &:after {
-                        content: none;
-                    }
-                }
-            }
-        }
-    }
-}
-
-.summary-total {
-    cursor: pointer;
-
-    .summary-collapse {
-        display: inline-block;
-        padding: 0 0 0 (@collapsible-title-icon__size + .5rem);
-        position: relative;
-        &:before {
-            &:extend(.abs-icon all);
-            content: @icon-expand-open__content;
-            font-size: @collapsible-title-icon__size;
-            left: 0;
-            position: absolute;
-            top: 0;
-        }
-        &:active {
-            &:before {
-                .scale();
-            }
-        }
-    }
-}
-
-.show-details {
-    .summary-collapse {
-        &:before {
-            content: @icon-expand-close__content;
-        }
-    }
-}
-
-.summary-details {
-    .label,
-    .admin__total-mark {
-        padding-left: @collapsible-title-icon__size + .5rem + @admin__table-secondary__padding-horizontal;
     }
 }
 
@@ -308,14 +256,14 @@
 //        &:before {
 //            @iconsize: 16px;
 //
-//            -webkit-font-smoothing: antialiased;
 //            background: #f2ebde;
-//            border-radius: 2px;
 //            border: 1px solid #ada89e;
+//            border-radius: 2px;
 //            color: #816063;
 //            content: '+';
 //            display: inline-block;
 //            font-size: @iconsize;
+//            -webkit-font-smoothing: antialiased;
 //            font-style: normal;
 //            font-weight: normal;
 //            height: @iconsize;

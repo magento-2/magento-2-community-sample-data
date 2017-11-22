@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\Source\Option\Selection\Price;
@@ -10,8 +10,7 @@ use Magento\Bundle\Api\Data\LinkInterface;
 /**
  * Extended Attributes Source Model
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Type implements \Magento\Framework\Option\ArrayInterface
 {

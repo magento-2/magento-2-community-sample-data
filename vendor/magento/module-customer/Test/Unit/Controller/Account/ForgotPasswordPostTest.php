@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Account;
@@ -20,7 +20,7 @@ use Magento\Framework\Message\ManagerInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ForgotPasswordPostTest extends \PHPUnit\Framework\TestCase
+class ForgotPasswordPostTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ForgotPasswordPost
@@ -71,14 +71,14 @@ class ForgotPasswordPostTest extends \PHPUnit\Framework\TestCase
     {
         $this->prepareContext();
 
-        $this->session = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->session = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->accountManagement = $this->getMockBuilder(\Magento\Customer\Api\AccountManagementInterface::class)
+        $this->accountManagement = $this->getMockBuilder('Magento\Customer\Api\AccountManagementInterface')
             ->getMockForAbstractClass();
 
-        $this->escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $this->escaper = $this->getMockBuilder('Magento\Framework\Escaper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -212,28 +212,26 @@ class ForgotPasswordPostTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareContext()
     {
-        $this->resultRedirect = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $this->resultRedirect = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resultRedirectFactory = $this->getMockBuilder(
-            \Magento\Framework\Controller\Result\RedirectFactory::class
-        )
+        $this->resultRedirectFactory = $this->getMockBuilder('Magento\Framework\Controller\Result\RedirectFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getPost',
             ])
             ->getMock();
 
-        $this->messageManager = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManager = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMockForAbstractClass();
 
         $this->resultRedirectFactory->expects($this->any())

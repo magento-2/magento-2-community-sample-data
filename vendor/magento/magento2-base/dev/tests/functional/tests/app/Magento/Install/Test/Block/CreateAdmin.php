@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,7 +21,7 @@ class CreateAdmin extends Form
      *
      * @var string
      */
-    protected $next = "[ng-click*='validateCredentials']";
+    protected $next = "[ng-click*='next']";
 
     /**
      * First field selector

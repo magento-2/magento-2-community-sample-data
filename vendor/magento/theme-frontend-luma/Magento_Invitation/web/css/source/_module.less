@@ -1,51 +1,47 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
 //
-//  Common
-//  _____________________________________________
+//    Common
+//--------------------------------------
 
 & when (@media-common = true) {
 
-    .form-add-invitations {
-        &:extend(.abs-add-fields all);
-
-        .fields {
-            .label {
-                &:extend(.abs-visually-hidden all);
-            }
+.form-add-invitations {
+    &:extend(.abs-add-fields all);
+    .fields {
+        .label {
+            &:extend(.abs-visually-hidden all);
         }
-
-        .additional,
-        .field.message {
-            .lib-css(margin-top, @form-field__vertical-indent);
+    }
+    .additional,
+    .field.message {
+        .lib-css(margin-top, @form-field__vertical-indent);
+    }
+    .action {
+        &.remove {
+            top: 4px;
         }
-
-        .action {
-            &.remove {
-                top: 4px;
-            }
-
-            &.add {
-                .lib-button-icon(
-                    @_icon-font-content: @icon-expand,
-                    @_icon-font-text-hide: true,
-                    @_icon-font-size: 18px
-                );
-                line-height: normal;
-                padding: 4px;
-                width: auto;
-            }
+        &.add {
+            .lib-button-icon(
+                @_icon-font-content: @icon-expand,
+                @_icon-font-text-hide: true,
+                @_icon-font-size: 18px
+            );
+            line-height: normal;
+            padding: 4px;
+            width: auto;
         }
     }
 }
 
-//
-//  Mobile
-//  _____________________________________________
+}
 
+//
+//    Mobile
+//--------------------------------------
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
     .form-add-invitations {
         .action {
@@ -62,9 +58,8 @@
 }
 
 //
-//  Desktop
-//  _____________________________________________
-
+//    Desktop
+//--------------------------------------
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__s) {
     .form-add-invitations {
         &:extend(.abs-add-fields-desktop all);

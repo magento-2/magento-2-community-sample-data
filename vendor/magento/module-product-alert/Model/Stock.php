@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductAlert\Model;
@@ -10,6 +10,8 @@ use Magento\ProductAlert\Model\ResourceModel\Stock\Customer\Collection;
 /**
  * ProductAlert for back in stock model
  *
+ * @method \Magento\ProductAlert\Model\ResourceModel\Stock _getResource()
+ * @method \Magento\ProductAlert\Model\ResourceModel\Stock getResource()
  * @method int getCustomerId()
  * @method \Magento\ProductAlert\Model\Stock setCustomerId(int $value)
  * @method int getProductId()
@@ -26,9 +28,6 @@ use Magento\ProductAlert\Model\ResourceModel\Stock\Customer\Collection;
  * @method \Magento\ProductAlert\Model\Stock setStatus(int $value)
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
  */
 class Stock extends \Magento\Framework\Model\AbstractModel
 {
@@ -62,7 +61,7 @@ class Stock extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\ProductAlert\Model\ResourceModel\Stock::class);
+        $this->_init('Magento\ProductAlert\Model\ResourceModel\Stock');
     }
 
     /**

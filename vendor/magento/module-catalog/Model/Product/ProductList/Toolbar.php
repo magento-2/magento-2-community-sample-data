@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Product\ProductList;
 
 /**
  * Class Toolbar
- *
- * @api
- * @since 100.0.2
  */
 class Toolbar
 {
@@ -93,7 +90,6 @@ class Toolbar
     {
         return $this->request->getParam(self::LIMIT_PARAM_NAME);
     }
-
     /**
      * Return current page from request
      *

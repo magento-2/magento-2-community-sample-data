@@ -12,6 +12,7 @@ namespace Zend\ModuleManager\Listener;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\ModuleManager\ModuleEvent;
+use Zend\Stdlib\CallbackHandler;
 
 /**
  * Default listener aggregate
@@ -22,7 +23,7 @@ class DefaultListenerAggregate extends AbstractListener implements
     /**
      * @var array
      */
-    protected $listeners = [];
+    protected $listeners = array();
 
     /**
      * @var ConfigMergerInterface
@@ -33,51 +34,28 @@ class DefaultListenerAggregate extends AbstractListener implements
      * Attach one or more listeners
      *
      * @param  EventManagerInterface $events
-     * @param  int $priority
      * @return DefaultListenerAggregate
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
         $options                     = $this->getOptions();
         $configListener              = $this->getConfigListener();
         $locatorRegistrationListener = new LocatorRegistrationListener($options);
 
-        // High priority, we assume module autoloading (for FooNamespace\Module
-        // classes) should be available before anything else.
-        // Register it only if use_zend_loader config is true, however.
-        if ($options->useZendLoader()) {
-            $moduleLoaderListener = new ModuleLoaderListener($options);
-            $moduleLoaderListener->attach($events);
-            $this->listeners[] = $moduleLoaderListener;
-        }
+        // High priority, we assume module autoloading (for FooNamespace\Module classes) should be available before anything else
+        $this->listeners[] = $events->attach(new ModuleLoaderListener($options));
         $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE_RESOLVE, new ModuleResolverListener);
-
-        if ($options->useZendLoader()) {
-            // High priority, because most other loadModule listeners will assume
-            // the module's classes are available via autoloading
-            // Register it only if use_zend_loader config is true, however.
-            $this->listeners[] = $events->attach(
-                ModuleEvent::EVENT_LOAD_MODULE,
-                new AutoloaderListener($options),
-                9000
-            );
-        }
+        // High priority, because most other loadModule listeners will assume the module's classes are available via autoloading
+        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new AutoloaderListener($options), 9000);
 
         if ($options->getCheckDependencies()) {
-            $this->listeners[] = $events->attach(
-                ModuleEvent::EVENT_LOAD_MODULE,
-                new ModuleDependencyCheckerListener,
-                8000
-            );
+            $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new ModuleDependencyCheckerListener, 8000);
         }
 
         $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new InitTrigger($options));
         $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new OnBootstrapListener($options));
-
-        $locatorRegistrationListener->attach($events);
-        $configListener->attach($events);
-        $this->listeners[] = $locatorRegistrationListener;
-        $this->listeners[] = $configListener;
+        $this->listeners[] = $events->attach($locatorRegistrationListener);
+        $this->listeners[] = $events->attach($configListener);
         return $this;
     }
 
@@ -90,14 +68,19 @@ class DefaultListenerAggregate extends AbstractListener implements
     public function detach(EventManagerInterface $events)
     {
         foreach ($this->listeners as $key => $listener) {
-            if ($listener instanceof ListenerAggregateInterface) {
-                $listener->detach($events);
-                unset($this->listeners[$key]);
+            $detached = false;
+            if ($listener === $this) {
                 continue;
             }
+            if ($listener instanceof ListenerAggregateInterface) {
+                $detached = $listener->detach($events);
+            } elseif ($listener instanceof CallbackHandler) {
+                $detached = $events->detach($listener);
+            }
 
-            $events->detach($listener);
-            unset($this->listeners[$key]);
+            if ($detached) {
+                unset($this->listeners[$key]);
+            }
         }
     }
 
@@ -108,7 +91,7 @@ class DefaultListenerAggregate extends AbstractListener implements
      */
     public function getConfigListener()
     {
-        if (! $this->configListener instanceof ConfigMergerInterface) {
+        if (!$this->configListener instanceof ConfigMergerInterface) {
             $this->setConfigListener(new ConfigListener($this->getOptions()));
         }
         return $this->configListener;

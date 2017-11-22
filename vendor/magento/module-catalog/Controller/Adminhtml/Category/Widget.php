@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Category;
@@ -15,7 +15,7 @@ use Magento\Framework\View\Element\BlockInterface;
 abstract class Widget extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
@@ -43,16 +43,15 @@ abstract class Widget extends \Magento\Backend\App\Action
      */
     protected function _getCategoryTreeBlock()
     {
-        return $this->layoutFactory->create()
-            ->createBlock(
-                \Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser::class,
-                '',
-                [
-                    'data' => [
-                        'id' => $this->getRequest()->getParam('uniq_id'),
-                        'use_massaction' => $this->getRequest()->getParam('use_massaction', false),
-                    ]
+        return $this->layoutFactory->create()->createBlock(
+            \Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser::class,
+            '',
+            [
+                'data' => [
+                    'id' => $this->getRequest()->getParam('uniq_id'),
+                    'use_massaction' => $this->getRequest()->getParam('use_massaction', false),
                 ]
-            );
+            ]
+        );
     }
 }

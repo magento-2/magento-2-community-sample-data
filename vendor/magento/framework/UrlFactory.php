@@ -1,15 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework;
 
 class UrlFactory
 {
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $_objectManager = null;
 
@@ -19,13 +21,11 @@ class UrlFactory
     protected $_instanceName = null;
 
     /**
-     * @param ObjectManagerInterface $objectManager
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param string $instanceName
      */
-    public function __construct(
-        ObjectManagerInterface $objectManager,
-        $instanceName = UrlInterface::class
-    ) {
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager, $instanceName = 'Magento\Framework\UrlInterface')
+    {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
     }
@@ -34,7 +34,7 @@ class UrlFactory
      * Create Url instance with specified parameters
      *
      * @param array $data
-     * @return UrlInterface
+     * @return \Magento\Framework\UrlInterface
      */
     public function create(array $data = [])
     {

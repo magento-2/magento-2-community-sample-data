@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Search\Controller\Adminhtml\Term;
@@ -11,9 +11,7 @@ use Magento\Framework\Controller\ResultFactory;
 class Report extends ReportsIndexController
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Reports::report_search';
 
@@ -27,10 +25,10 @@ class Report extends ReportsIndexController
         $this->_eventManager->dispatch('on_view_report', ['report' => 'search']);
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-        $resultPage->setActiveMenu('Magento_Search::report_search_term')
+        $resultPage->setActiveMenu('Magento_Reports::report_search')
             ->addBreadcrumb(__('Reports'), __('Reports'))
             ->addBreadcrumb(__('Search Terms'), __('Search Terms'));
-        $resultPage->getConfig()->getTitle()->prepend(__('Search Terms Report'));
+        $resultPage->getConfig()->getTitle()->set(__('Search Terms Report'));
         return $resultPage;
     }
 }

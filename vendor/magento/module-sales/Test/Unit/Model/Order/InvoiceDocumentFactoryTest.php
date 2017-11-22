@@ -1,22 +1,22 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
 
 use Magento\Sales\Api\Data\InvoiceCommentCreationInterface;
 use Magento\Sales\Api\Data\InvoiceCreationArgumentsInterface;
-use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\InvoiceItemCreationInterface;
+use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\InvoiceDocumentFactory;
 use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\InvoiceDocumentFactory;
 
 /**
  * Class InvoiceDocumentFactoryTest
  */
-class InvoiceDocumentFactoryTest extends \PHPUnit\Framework\TestCase
+class InvoiceDocumentFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|InvoiceService

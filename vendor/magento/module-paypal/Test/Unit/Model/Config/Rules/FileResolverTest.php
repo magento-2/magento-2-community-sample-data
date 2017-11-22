@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Config\Rules;
@@ -10,7 +10,7 @@ namespace Magento\Paypal\Test\Unit\Model\Config\Rules;
  *
  * Test for class \Magento\Paypal\Model\Config\Rules\FileResolver
  */
-class FileResolverTest extends \PHPUnit\Framework\TestCase
+class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @vat \Magento\Paypal\Model\Config\Rules\FileResolver
@@ -29,7 +29,7 @@ class FileResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->readerMock = $this->getMockBuilder(\Magento\Framework\Module\Dir\Reader::class)
+        $this->readerMock = $this->getMockBuilder('Magento\Framework\Module\Dir\Reader')
             ->disableOriginalConstructor()
             ->getMock();
 

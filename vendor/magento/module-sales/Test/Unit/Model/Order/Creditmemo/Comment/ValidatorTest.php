@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo\Comment;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo\Comment;
 /**
  * Class ValidatorTest
  */
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Creditmemo\Comment\Validator
@@ -25,9 +25,12 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->commentModelMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Creditmemo\Comment::class,
-            ['hasData', 'getData', '__wakeup']
+        $this->commentModelMock = $this->getMock(
+            'Magento\Sales\Model\Order\Creditmemo\Comment',
+            ['hasData', 'getData', '__wakeup'],
+            [],
+            '',
+            false
         );
         $this->validator = new \Magento\Sales\Model\Order\Creditmemo\Comment\Validator();
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search;
@@ -57,7 +57,7 @@ class Search implements SearchInterface
     {
         $this->requestBuilder->setRequestName($searchCriteria->getRequestName());
 
-        $scope = $this->scopeResolver->getScope()->getId();
+        $scope = $this->scopeResolver->getScope();
         $this->requestBuilder->bindDimension('scope', $scope);
 
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
@@ -84,7 +84,7 @@ class Search implements SearchInterface
      */
     private function addFieldToFilter($field, $condition = null)
     {
-        if (!is_array($condition) || !in_array(key($condition), ['from', 'to'], true)) {
+        if (!is_array($condition) || !in_array(key($condition), ['from', 'to'])) {
             $this->requestBuilder->bind($field, $condition);
         } else {
             if (!empty($condition['from'])) {

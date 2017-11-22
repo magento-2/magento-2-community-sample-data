@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model;
@@ -8,7 +8,7 @@ namespace Magento\Backend\Test\Unit\Model;
 use Magento\Backend\Model\AdminPathConfig;
 use Magento\Store\Model\Store;
 
-class AdminPathConfigTest extends \PHPUnit\Framework\TestCase
+class AdminPathConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -30,22 +30,17 @@ class AdminPathConfigTest extends \PHPUnit\Framework\TestCase
      */
     protected $adminPathConfig;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->coreConfig = $this->getMockForAbstractClass(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class,
+            'Magento\Framework\App\Config\ScopeConfigInterface',
             [],
             '',
             false
         );
-        $this->backendConfig = $this->getMockForAbstractClass(
-            \Magento\Backend\App\ConfigInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->backendConfig = $this->getMockForAbstractClass('Magento\Backend\App\ConfigInterface', [], '', false);
         $this->url = $this->getMockForAbstractClass(
-            \Magento\Framework\UrlInterface::class,
+            'Magento\Framework\UrlInterface',
             [],
             '',
             false,
@@ -59,7 +54,7 @@ class AdminPathConfigTest extends \PHPUnit\Framework\TestCase
     public function testGetCurrentSecureUrl()
     {
         $request = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            'Magento\Framework\App\RequestInterface',
             [],
             '',
             false,

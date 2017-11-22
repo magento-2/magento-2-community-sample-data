@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,7 +17,7 @@ class AddStockStatusToCollection
      * @var \Magento\CatalogInventory\Helper\Stock
      */
     protected $stockHelper;
-    
+
     /**
      * @param \Magento\CatalogInventory\Model\Configuration $configuration
      * @param \Magento\CatalogInventory\Helper\Stock $stockHelper

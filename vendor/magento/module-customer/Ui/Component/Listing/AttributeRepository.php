@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Ui\Component\Listing;
 
-use Magento\Customer\Api\AddressMetadataInterface;
-use Magento\Customer\Api\AddressMetadataManagementInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
-use Magento\Customer\Api\CustomerMetadataManagementInterface;
+use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
+use Magento\Customer\Api\CustomerMetadataManagementInterface;
+use Magento\Customer\Api\AddressMetadataManagementInterface;
 use Magento\Customer\Api\MetadataManagementInterface;
 use Magento\Customer\Model\Indexer\Attribute\Filter;
 
@@ -17,34 +17,22 @@ class AttributeRepository
 {
     const BILLING_ADDRESS_PREFIX = 'billing_';
 
-    /**
-     * @var array
-     */
+    /** @var [] */
     protected $attributes;
 
-    /**
-     * @var \Magento\Customer\Api\CustomerMetadataInterface
-     */
+    /** @var CustomerMetadataInterface */
     protected $customerMetadata;
 
-    /**
-     * @var \Magento\Customer\Api\AddressMetadataInterface
-     */
+    /** @var AddressMetadataInterface */
     protected $addressMetadata;
 
-    /**
-     * @var \Magento\Customer\Api\CustomerMetadataManagementInterface
-     */
+    /** @var CustomerMetadataManagementInterface */
     protected $customerMetadataManagement;
 
-    /**
-     * @var \Magento\Customer\Api\AddressMetadataManagementInterface
-     */
+    /** @var AddressMetadataManagementInterface */
     protected $addressMetadataManagement;
 
-    /**
-     * @var \Magento\Customer\Model\Indexer\Attribute\Filter
-     */
+    /** @var Filter */
     protected $attributeFilter;
 
     /**
@@ -140,6 +128,7 @@ class AttributeRepository
         }
         return $options;
     }
+
 
     /**
      * @param string $code

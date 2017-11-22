@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Block\Widget;
 
 use Magento\Customer\Block\Widget\AbstractWidget;
 
-class AbstractWidgetTest extends \PHPUnit\Framework\TestCase
+class AbstractWidgetTest extends \PHPUnit_Framework_TestCase
 {
     /** Constants used in the various unit tests. */
     const KEY_FIELD_ID_FORMAT = 'field_id_format';
@@ -24,14 +24,14 @@ class AbstractWidgetTest extends \PHPUnit\Framework\TestCase
     /** @var AbstractWidget */
     private $_block;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_addressHelper = $this->createMock(\Magento\Customer\Helper\Address::class);
+        $this->_addressHelper = $this->getMock('Magento\Customer\Helper\Address', [], [], '', false);
 
         $this->_block = new \Magento\Customer\Block\Widget\AbstractWidget(
-            $this->createMock(\Magento\Framework\View\Element\Template\Context::class),
+            $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false),
             $this->_addressHelper,
-            $this->getMockBuilder(\Magento\Customer\Api\CustomerMetadataInterface::class)->getMockForAbstractClass()
+            $this->getMockBuilder('\Magento\Customer\Api\CustomerMetadataInterface')->getMockForAbstractClass()
         );
     }
 

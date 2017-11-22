@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\View;
@@ -8,8 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\View;
 /**
  * Order history block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class History extends \Magento\Backend\Block\Template
 {
@@ -61,7 +60,7 @@ class History extends \Magento\Backend\Block\Template
     {
         $onclick = "submitAndReloadArea($('order_history_block').parentNode, '" . $this->getSubmitUrl() . "')";
         $button = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             ['label' => __('Submit Comment'), 'class' => 'action-save action-secondary', 'onclick' => $onclick]
         );

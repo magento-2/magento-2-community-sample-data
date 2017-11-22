@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Payment\Operations;
@@ -59,12 +59,10 @@ class CaptureOperation extends AbstractOperation
             $method->setStore(
                 $order->getStoreId()
             );
-            if ($method->canFetchTransactionInfo()) {
-                $method->fetchTransactionInfo(
-                    $payment,
-                    $invoice->getTransactionId()
-                );
-            }
+            $method->fetchTransactionInfo(
+                $payment,
+                $invoice->getTransactionId()
+            );
         }
 
         if ($invoice->getIsPaid()) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Account;
@@ -19,7 +19,7 @@ use Magento\Framework\Controller\Result\Redirect;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class LoginPostTest extends \PHPUnit\Framework\TestCase
+class LoginPostTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var LoginPost
@@ -72,6 +72,11 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
     protected $redirectFactory;
 
     /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $scopeConfig;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $redirect;
@@ -81,16 +86,11 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
      */
     protected $messageManager;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface | \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $scopeConfig;
-
     protected function setUp()
     {
         $this->prepareContext();
 
-        $this->session = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->session = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([
                 'isLoggedIn',
@@ -100,22 +100,22 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->accountManagement = $this->getMockBuilder(\Magento\Customer\Api\AccountManagementInterface::class)
+        $this->accountManagement = $this->getMockBuilder('Magento\Customer\Api\AccountManagementInterface')
             ->getMockForAbstractClass();
 
-        $this->url = $this->getMockBuilder(\Magento\Customer\Model\Url::class)
+        $this->url = $this->getMockBuilder('Magento\Customer\Model\Url')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formkeyValidator = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
+        $this->formkeyValidator = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey\Validator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->accountRedirect = $this->getMockBuilder(\Magento\Customer\Model\Account\Redirect::class)
+        $this->accountRedirect = $this->getMockBuilder('Magento\Customer\Model\Account\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMockForAbstractClass();
 
         $this->controller = new LoginPost(
@@ -126,10 +126,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             $this->formkeyValidator,
             $this->accountRedirect
         );
-        $reflection = new \ReflectionClass(get_class($this->controller));
-        $reflectionProperty = $reflection->getProperty('scopeConfig');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->controller, $this->scopeConfig);
+        $this->controller->setScopeConfig($this->scopeConfig);
     }
 
     /**
@@ -299,18 +296,6 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             ->method('getRedirect')
             ->willReturn($this->resultRedirect);
 
-        $cookieMetadataManager = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\PhpCookieManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cookieMetadataManager->expects($this->once())
-            ->method('getCookie')
-            ->with('mage-cache-sessid')
-            ->willReturn(false);
-        $refClass = new \ReflectionClass(LoginPost::class);
-        $refProperty = $refClass->getProperty('cookieMetadataManager');
-        $refProperty->setAccessible(true);
-        $refProperty->setValue($this->controller, $cookieMetadataManager);
-
         $this->assertSame($this->resultRedirect, $this->controller->execute());
     }
 
@@ -339,7 +324,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
                 'password' => $password,
             ]);
 
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->getMockForAbstractClass();
 
         $this->scopeConfig->expects($this->once())
@@ -364,38 +349,6 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             ->method('getRedirect')
             ->willReturn($this->resultRedirect);
 
-        $cookieMetadataManager = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\PhpCookieManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cookieMetadataManager->expects($this->once())
-            ->method('getCookie')
-            ->with('mage-cache-sessid')
-            ->willReturn(true);
-        $cookieMetadataFactory = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cookieMetadata = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\CookieMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cookieMetadataFactory->expects($this->once())
-            ->method('createCookieMetadata')
-            ->willReturn($cookieMetadata);
-        $cookieMetadata->expects($this->once())
-            ->method('setPath')
-            ->with('/');
-        $cookieMetadataManager->expects($this->once())
-            ->method('deleteCookie')
-            ->with('mage-cache-sessid', $cookieMetadata);
-
-        $refClass = new \ReflectionClass(LoginPost::class);
-        $cookieMetadataManagerProperty = $refClass->getProperty('cookieMetadataManager');
-        $cookieMetadataManagerProperty->setAccessible(true);
-        $cookieMetadataManagerProperty->setValue($this->controller, $cookieMetadataManager);
-
-        $cookieMetadataFactoryProperty = $refClass->getProperty('cookieMetadataFactory');
-        $cookieMetadataFactoryProperty->setAccessible(true);
-        $cookieMetadataFactoryProperty->setValue($this->controller, $cookieMetadataFactory);
-
         $this->assertSame($this->resultRedirect, $this->controller->execute());
     }
 
@@ -409,6 +362,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
     ) {
         $username = 'user1';
         $password = 'pass1';
+
 
         $this->session->expects($this->once())
             ->method('isLoggedIn')
@@ -455,13 +409,13 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             [
                 [
                     'message' => 'EmailNotConfirmedException',
-                    'exception' => \Magento\Framework\Exception\EmailNotConfirmedException::class,
+                    'exception' => '\Magento\Framework\Exception\EmailNotConfirmedException',
                 ],
             ],
             [
                 [
                     'message' => 'AuthenticationException',
-                    'exception' => \Magento\Framework\Exception\AuthenticationException::class,
+                    'exception' => '\Magento\Framework\Exception\AuthenticationException',
                 ],
             ],
             [
@@ -470,22 +424,16 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
                     'exception' => '\Exception',
                 ],
             ],
-            [
-                [
-                    'message' => 'UserLockedException',
-                    'exception' => \Magento\Framework\Exception\State\UserLockedException::class,
-                ],
-            ],
         ];
     }
 
     protected function prepareContext()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->setMethods([
                 'isPost',
@@ -497,7 +445,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageManager = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManager = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -538,7 +486,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
         $url = 'url1';
 
         switch ($exception) {
-            case \Magento\Framework\Exception\EmailNotConfirmedException::class:
+            case '\Magento\Framework\Exception\EmailNotConfirmedException':
                 $this->url->expects($this->once())
                     ->method('getEmailConfirmationUrl')
                     ->with($username)
@@ -560,10 +508,10 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
                     ->willReturnSelf();
                 break;
 
-            case \Magento\Framework\Exception\AuthenticationException::class:
+            case '\Magento\Framework\Exception\AuthenticationException':
                 $this->messageManager->expects($this->once())
                     ->method('addError')
-                    ->with(__('You did not sign in correctly or your account is temporarily disabled.'))
+                    ->with(__('Invalid login or password.'))
                     ->willReturnSelf();
 
                 $this->session->expects($this->once())
@@ -575,21 +523,7 @@ class LoginPostTest extends \PHPUnit\Framework\TestCase
             case '\Exception':
                 $this->messageManager->expects($this->once())
                     ->method('addError')
-                    ->with(__('An unspecified error occurred. Please contact us for assistance.'))
-                    ->willReturnSelf();
-                break;
-
-            case \Magento\Framework\Exception\State\UserLockedException::class:
-                $message = __(
-                    'You did not sign in correctly or your account is temporarily disabled.'
-                );
-                $this->messageManager->expects($this->once())
-                    ->method('addError')
-                    ->with($message)
-                    ->willReturnSelf();
-                $this->session->expects($this->once())
-                    ->method('setUsername')
-                    ->with($username)
+                    ->with(__('Invalid login or password.'))
                     ->willReturnSelf();
                 break;
         }

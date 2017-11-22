@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Session;
@@ -10,7 +10,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * @magentoAppIsolation enabled
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Session\Config */
     protected $_model;
@@ -31,11 +31,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $sessionManager \Magento\Framework\Session\SessionManager */
-        $sessionManager = $this->_objectManager->create(\Magento\Framework\Session\SessionManager::class);
+        $sessionManager = $this->_objectManager->create('Magento\Framework\Session\SessionManager');
         if ($sessionManager->isSessionExists()) {
             $sessionManager->writeClose();
         }
-        $this->deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $this->deploymentConfigMock = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
 
         $this->deploymentConfigMock->expects($this->at(0))
             ->method('get')
@@ -47,14 +47,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->_cacheLimiter));
 
         $this->_model = $this->_objectManager->create(
-            \Magento\Framework\Session\Config::class,
+            'Magento\Framework\Session\Config',
             ['deploymentConfig' => $this->deploymentConfigMock]
         );
         $this->defaultSavePath = $this->_objectManager
-            ->get(\Magento\Framework\Filesystem\DirectoryList::class)
+            ->get('Magento\Framework\Filesystem\DirectoryList')
             ->getPath(DirectoryList::SESSION);
     }
-
+    
     /**
      * @magentoAppIsolation enabled
      */
@@ -62,7 +62,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Filesystem $filesystem */
         $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Filesystem::class
+            'Magento\Framework\Filesystem'
         );
         $path = ini_get('session.save_path') ?:
             $filesystem->getDirectoryRead(DirectoryList::SESSION)->getAbsolutePath();
@@ -171,7 +171,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testWrongMethodCall()
     {
-        $this->expectException(
+        $this->setExpectedException(
             '\BadMethodCallException',
             'Method "methodThatNotExist" does not exist in Magento\Framework\Session\Config'
         );
@@ -286,7 +286,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($given));
 
         $this->_model = $this->_objectManager->create(
-            \Magento\Framework\Session\Config::class,
+            'Magento\Framework\Session\Config',
             ['deploymentConfig' => $this->deploymentConfigMock]
         );
         $this->assertEquals($expected, $this->_model->getOption('save_path'));

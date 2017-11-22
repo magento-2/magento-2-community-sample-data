@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,10 +8,10 @@
 
 namespace Magento\Theme\Test\Unit\Model\View;
 
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Theme\Model\View\Design;
 
-class DesignTest extends \PHPUnit\Framework\TestCase
+class DesignTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\State|\PHPUnit_Framework_MockObject_MockObject
@@ -55,12 +55,14 @@ class DesignTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManager = $this->getMockForAbstractClass(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->flyweightThemeFactory = $this->createMock(\Magento\Framework\View\Design\Theme\FlyweightFactory::class);
-        $this->config = $this->getMockForAbstractClass(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->themeFactory = $this->createPartialMock(\Magento\Theme\Model\ThemeFactory::class, ['create']);
-        $this->objectManager = $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class);
-        $this->state = $this->createMock(\Magento\Framework\App\State::class);
+        $this->storeManager = $this->getMockForAbstractClass('Magento\Store\Model\StoreManagerInterface');
+        $this->flyweightThemeFactory = $this->getMock(
+            'Magento\Framework\View\Design\Theme\FlyweightFactory', [], [], '', false
+        );
+        $this->config = $this->getMockForAbstractClass('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->themeFactory = $this->getMock('Magento\Theme\Model\ThemeFactory', ['create'], [], '', false);
+        $this->objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface');
+        $this->state = $this->getMock('Magento\Framework\App\State', [], [], '', false);
         $themes = [Design::DEFAULT_AREA => $this->defaultTheme];
         $this->model = new Design(
             $this->storeManager,
@@ -81,7 +83,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetThemePath($themePath, $themeId, $expectedResult)
     {
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
         $theme->expects($this->once())->method('getThemePath')->will($this->returnValue($themePath));
         $theme->expects($this->any())->method('getId')->will($this->returnValue($themeId));
         /** @var $theme \Magento\Framework\View\Design\ThemeInterface */
@@ -106,8 +108,8 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     public function designThemeDataProvider()
     {
         return [
-            'single' => [true, ScopeInterface::SCOPE_WEBSITES],
-            'multi'  => [false, ScopeInterface::SCOPE_STORE],
+            'single' => [true, ScopeConfigInterface::SCOPE_TYPE_DEFAULT],
+            'multi'  => [false, \Magento\Store\Model\ScopeInterface::SCOPE_STORE],
         ];
     }
 
@@ -149,7 +151,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     {
         $locale = 'locale';
         $area = Design::DEFAULT_AREA;
-        $localeMock = $this->getMockForAbstractClass(\Magento\Framework\Locale\ResolverInterface::class);
+        $localeMock = $this->getMockForAbstractClass('\Magento\Framework\Locale\ResolverInterface');
         $localeMock->expects($this->once())
             ->method('getLocale')
             ->will($this->returnValue($locale));
@@ -161,11 +163,11 @@ class DesignTest extends \PHPUnit\Framework\TestCase
             ->willReturn($area);
         $this->themeFactory->expects($this->once())
             ->method('create')
-            ->willReturn($this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)->getMock());
+            ->willReturn($this->getMockBuilder('Magento\Framework\View\Design\ThemeInterface')->getMock());
 
         $params = $this->model->getDesignParams();
 
-        $this->assertInstanceOf(\Magento\Framework\View\Design\ThemeInterface::class, $params['themeModel']);
+        $this->assertInstanceOf('Magento\Framework\View\Design\ThemeInterface', $params['themeModel']);
         $this->assertEquals($area, $params['area']);
         $this->assertEquals($locale, $params['locale']);
     }
@@ -179,7 +181,7 @@ class DesignTest extends \PHPUnit\Framework\TestCase
     public function testSetDesignTheme()
     {
         $area = 'adminhtml';
-        $theme = $this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)->getMock();
+        $theme = $this->getMockBuilder('Magento\Framework\View\Design\ThemeInterface')->getMock();
 
         $this->assertInstanceOf(get_class($this->model), $this->model->setDesignTheme($theme, $area));
     }

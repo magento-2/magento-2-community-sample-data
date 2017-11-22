@@ -1,62 +1,80 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Category;
-
-use Magento\Catalog\Controller\Adminhtml\Category\Save as Model;
 
 /**
  * Class SaveTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\View\Result\RedirectFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resultRedirectFactoryMock;
+    protected $resultRedirectFactoryMock;
+
+    /**
+     * @var \Magento\Framework\Controller\Result\RawFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $resultRawFactoryMock;
 
     /**
      * @var \Magento\Framework\Controller\Result\JsonFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resultJsonFactoryMock;
+    protected $resultJsonFactoryMock;
 
     /**
      * @var \Magento\Framework\View\LayoutFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $layoutFactoryMock;
+    protected $layoutFactoryMock;
+
+    /**
+     * @var \Magento\Backend\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $contextMock;
+
+    /**
+     * @var \Magento\Framework\View\Page\Title|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $titleMock;
 
     /**
      * @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $requestMock;
+    protected $requestMock;
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManagerMock;
+    protected $objectManagerMock;
 
     /**
      * @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $eventManagerMock;
+    protected $eventManagerMock;
+
+    /**
+     * @var \Magento\Framework\App\ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $responseMock;
 
     /**
      * @var \Magento\Framework\Message\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $messageManagerMock;
+    protected $messageManagerMock;
 
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var \Magento\Catalog\Controller\Adminhtml\Category\Save
      */
-    private $save;
+    protected $save;
 
     /**
      * Set up
@@ -67,15 +85,50 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->resultRedirectFactoryMock = $this->createPartialMock(
+
+        $this->contextMock = $this->getMock(
+            \Magento\Backend\App\Action\Context::class,
+            [
+                'getTitle',
+                'getRequest',
+                'getObjectManager',
+                'getEventManager',
+                'getResponse',
+                'getMessageManager',
+                'getResultRedirectFactory'
+            ],
+            [],
+            '',
+            false
+        );
+        $this->resultRedirectFactoryMock = $this->getMock(
             \Magento\Backend\Model\View\Result\RedirectFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->resultJsonFactoryMock = $this->createPartialMock(
+        $this->resultRawFactoryMock = $this->getMock(
+            \Magento\Framework\Controller\Result\RawFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->resultJsonFactoryMock = $this->getMock(
             \Magento\Framework\Controller\Result\JsonFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->layoutFactoryMock = $this->createPartialMock(\Magento\Framework\View\LayoutFactory::class, ['create']);
+        $this->layoutFactoryMock = $this->getMock(
+            \Magento\Framework\View\LayoutFactory::class,
+            ['create'],
+            [],
+            '',
+            false
+        );
         $this->requestMock = $this->getMockForAbstractClass(
             \Magento\Framework\App\RequestInterface::class,
             [],
@@ -97,6 +150,12 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             true,
             ['dispatch']
         );
+        $this->responseMock = $this->getMockForAbstractClass(
+            \Magento\Framework\App\ResponseInterface::class,
+            [],
+            '',
+            false
+        );
         $this->messageManagerMock = $this->getMockForAbstractClass(
             \Magento\Framework\Message\ManagerInterface::class,
             [],
@@ -107,15 +166,23 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ['addSuccess', 'getMessages']
         );
 
+        $this->contextMock->expects($this->any())->method('getTitle')->willReturn($this->titleMock);
+        $this->contextMock->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
+        $this->contextMock->expects($this->any())->method('getObjectManager')->willReturn($this->objectManagerMock);
+        $this->contextMock->expects($this->any())->method('getEventManager')->willReturn($this->eventManagerMock);
+        $this->contextMock->expects($this->any())->method('getResponse')->willReturn($this->responseMock);
+        $this->contextMock->expects($this->any())->method('getMessageManager')->willReturn($this->messageManagerMock);
+        $this->contextMock->expects($this->any())
+            ->method('getResultRedirectFactory')
+            ->willReturn($this->resultRedirectFactoryMock);
+
         $this->save = $this->objectManager->getObject(
             \Magento\Catalog\Controller\Adminhtml\Category\Save::class,
             [
-                'request' => $this->requestMock,
-                'eventManager' => $this->eventManagerMock,
-                'messageManager' => $this->messageManagerMock,
+                'context' => $this->contextMock,
+                'resultRawFactory' => $this->resultRawFactoryMock,
                 'resultJsonFactory' => $this->resultJsonFactoryMock,
-                'layoutFactory' => $this->layoutFactoryMock,
-                'resultRedirectFactory' => $this->resultRedirectFactoryMock
+                'layoutFactory' => $this->layoutFactoryMock
             ]
         );
     }
@@ -125,45 +192,50 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      *
      * @param int|bool $categoryId
      * @param int $storeId
+     * @param int|string $activeTabId
      * @param int|null $parentId
      * @return void
      *
      * @dataProvider dataProviderExecute
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testExecute($categoryId, $storeId, $parentId)
+    public function testExecute($categoryId, $storeId, $activeTabId, $parentId)
     {
-        $this->markTestSkipped('Due to MAGETWO-48956');
-
-        $rootCategoryId = \Magento\Catalog\Model\Category::TREE_ROOT_ID;
+        $rootCategoryId = 896;
         $products = [['any_product']];
         $postData = [
-            'general-data',
-            'parent' => $parentId,
+            'general' => ['general-data'],
             'category_products' => json_encode($products),
         ];
-
-        if (isset($storeId)) {
-            $postData['store_id'] = $storeId;
-        }
         /**
          * @var \Magento\Backend\Model\View\Result\Redirect
          * |\PHPUnit_Framework_MockObject_MockObject $resultRedirectMock
          */
-        $resultRedirectMock = $this->createMock(\Magento\Backend\Model\View\Result\Redirect::class);
+        $resultRedirectMock = $this->getMock(
+            \Magento\Backend\Model\View\Result\Redirect::class,
+            [],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Framework\View\Element\Messages
          * |\PHPUnit_Framework_MockObject_MockObject $blockMock
          */
-        $blockMock = $this->createPartialMock(
+        $blockMock = $this->getMock(
             \Magento\Framework\View\Element\Messages::class,
-            ['setMessages', 'getGroupedHtml']
+            ['setMessages', 'getGroupedHtml'],
+            [],
+            '',
+            false
         );
         /**
          * @var \Magento\Catalog\Model\Category
          * |\PHPUnit_Framework_MockObject_MockObject $categoryMock
          */
-        $categoryMock = $this->createPartialMock(\Magento\Catalog\Model\Category::class, [
+        $categoryMock = $this->getMock(
+            \Magento\Catalog\Model\Category::class,
+            [
                 'setStoreId',
                 'load',
                 'getPath',
@@ -181,12 +253,18 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 'unsetData',
                 'save',
                 'toArray'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Catalog\Model\Category
          * |\PHPUnit_Framework_MockObject_MockObject $parentCategoryMock
          */
-        $parentCategoryMock = $this->createPartialMock(\Magento\Catalog\Model\Category::class, [
+        $parentCategoryMock = $this->getMock(
+            \Magento\Catalog\Model\Category::class,
+            [
                 'setStoreId',
                 'load',
                 'getPath',
@@ -199,22 +277,44 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 'getProductsReadonly',
                 'setPostedProducts',
                 'getId'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Backend\Model\Auth\Session
          * |\PHPUnit_Framework_MockObject_MockObject $sessionMock
          */
-        $sessionMock = $this->createMock(\Magento\Backend\Model\Auth\Session::class);
+        $sessionMock = $this->getMock(
+            \Magento\Backend\Model\Auth\Session::class,
+            ['setActiveTabId'],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Framework\Registry
          * |\PHPUnit_Framework_MockObject_MockObject $registryMock
          */
-        $registryMock = $this->createPartialMock(\Magento\Framework\Registry::class, ['register']);
+        $registryMock = $this->getMock(
+            \Magento\Framework\Registry::class,
+            ['register'],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Cms\Model\Wysiwyg\Config
          * |\PHPUnit_Framework_MockObject_MockObject $wysiwygConfigMock
          */
-        $wysiwygConfigMock = $this->createPartialMock(\Magento\Cms\Model\Wysiwyg\Config::class, ['setStoreId']);
+        $wysiwygConfigMock = $this->getMock(
+            \Magento\Cms\Model\Wysiwyg\Config::class,
+            ['setStoreId'],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Store\Model\StoreManagerInterface
          * |\PHPUnit_Framework_MockObject_MockObject $storeManagerMock
@@ -226,7 +326,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             false,
             true,
             true,
-            ['getStore', 'getRootCategoryId']
+            ['getStore', 'getRootCategoryId', 'setCurrentStore']
         );
         /**
          * @var \Magento\Framework\View\Layout
@@ -245,16 +345,37 @@ class SaveTest extends \PHPUnit\Framework\TestCase
          * @var \Magento\Framework\Controller\Result\Json
          * |\PHPUnit_Framework_MockObject_MockObject $resultJsonMock
          */
-        $resultJsonMock = $this->createPartialMock(\Magento\Cms\Model\Wysiwyg\Config::class, ['setData']);
+        $resultJsonMock = $this->getMock(
+            \Magento\Cms\Model\Wysiwyg\Config::class,
+            ['setData'],
+            [],
+            '',
+            false
+        );
         /**
          * @var \Magento\Framework\Message\Collection
          * |\PHPUnit_Framework_MockObject_MockObject $messagesMock
          */
-        $messagesMock = $this->createMock(\Magento\Framework\Message\Collection::class);
+        $messagesMock = $this->getMock(
+            \Magento\Framework\Message\Collection::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $messagesMock->expects($this->once())
-            ->method('getCountByType')
-            ->will($this->returnValue(0));
+        /**
+         * @var \Magento\Store\Model\Store|\PHPUnit_Framework_MockObject_MockObject $storeMock
+         */
+        $storeMock = $this->getMock(
+            \Magento\Store\Model\Store::class,
+            [
+                'getCode',
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->resultRedirectFactoryMock->expects($this->once())
             ->method('create')
@@ -266,10 +387,20 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                     [
                         ['id', false, $categoryId],
                         ['store', null, $storeId],
+                        ['active_tab_id', null, $activeTabId],
                         ['parent', null, $parentId],
                     ]
                 )
             );
+
+        $storeMock->expects($this->once())
+            ->method('getCode')
+            ->will($this->returnValue('admin'));
+
+        $storeManagerMock->expects($this->once())
+            ->method('setCurrentStore')
+            ->with('admin');
+
         $this->objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
             ->will($this->returnValue($categoryMock));
@@ -288,6 +419,14 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $categoryMock->expects($this->once())
             ->method('setStoreId')
             ->with($storeId);
+        if ($activeTabId) {
+            $sessionMock->expects($this->once())
+                ->method('setActiveTabId')
+                ->with($activeTabId);
+        } else {
+            $sessionMock->expects($this->never())
+                ->method('setActiveTabId');
+        }
         $registryMock->expects($this->any())
             ->method('register')
             ->will(
@@ -315,26 +454,32 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->requestMock->expects($this->atLeastOnce())
             ->method('getPostValue')
             ->willReturn($postData);
-        $addData = $postData;
-        $addData['image'] = ['delete' => true];
         $categoryMock->expects($this->once())
             ->method('addData')
-            ->with($addData);
-        $categoryMock->expects($this->any())
+            ->with($postData['general']);
+        $categoryMock->expects($this->at(0))
             ->method('getId')
             ->will($this->returnValue($categoryId));
 
         if (!$parentId) {
             if ($storeId) {
-                $storeManagerMock->expects($this->once())
+                $storeManagerMock->expects($this->exactly(2))
                     ->method('getStore')
                     ->with($storeId)
-                    ->will($this->returnSelf());
+                    ->willReturnOnConsecutiveCalls(
+                        $storeMock,
+                        $this->returnSelf()
+                    );
                 $storeManagerMock->expects($this->once())
                     ->method('getRootCategoryId')
                     ->will($this->returnValue($rootCategoryId));
                 $parentId = $rootCategoryId;
             }
+        } else {
+            $storeManagerMock->expects($this->once())
+                ->method('getStore')
+                ->with($storeId)
+                ->will($this->returnValue($storeMock));
         }
         $categoryMock->expects($this->any())
             ->method('load')
@@ -342,9 +487,6 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $parentCategoryMock->expects($this->once())
             ->method('getPath')
             ->will($this->returnValue('parent_category_path'));
-        $parentCategoryMock->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue($parentId));
         $categoryMock->expects($this->once())
             ->method('setPath')
             ->with('parent_category_path');
@@ -381,7 +523,13 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 ['category' => $categoryMock, 'request' => $this->requestMock]
             );
 
-        $categoryResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
+        $categoryResource = $this->getMock(
+            \Magento\Catalog\Model\ResourceModel\Category::class,
+            [],
+            [],
+            '',
+            false
+        );
         $categoryMock->expects($this->once())
             ->method('getResource')
             ->will($this->returnValue($categoryResource));
@@ -405,8 +553,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $layoutMock->expects($this->once())
             ->method('getMessagesBlock')
             ->will($this->returnValue($blockMock));
-        $this->messageManagerMock->expects($this->any())
+        $this->messageManagerMock->expects($this->once())
             ->method('getMessages')
+            ->with(true)
             ->will($this->returnValue($messagesMock));
         $blockMock->expects($this->once())
             ->method('setMessages')
@@ -431,9 +580,6 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             )
             ->will($this->returnValue('result-execute'));
 
-        $categoryMock->expects($this->once())
-            ->method('setStoreId')
-            ->will($this->returnValue(1));
         $this->assertEquals('result-execute', $this->save->execute());
     }
 
@@ -448,104 +594,15 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             [
                 'categoryId' => false,
                 'storeId' => 7,
+                'activeTabId' => 33,
                 'parentId' => 123,
             ],
             [
                 'categoryId' => false,
                 'storeId' => 7,
+                'activeTabId' => '',
                 'parentId' => null,
             ]
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function imagePreprocessingDataProvider()
-    {
-        return [
-            [['attribute1' => null, 'attribute2' => 123]],
-            [['attribute2' => 123]]
-        ];
-    }
-
-    /**
-     * @dataProvider imagePreprocessingDataProvider
-     *
-     * @param array $data
-     */
-    public function testImagePreprocessingWithoutValue($data)
-    {
-        $eavConfig = $this->createPartialMock(\Magento\Eav\Model\Config::class, ['getEntityType']);
-
-        $imageBackendModel = $this->objectManager->getObject(
-            \Magento\Catalog\Model\Category\Attribute\Backend\Image::class
-        );
-
-        $collection = new \Magento\Framework\DataObject(['attribute_collection' => [
-            new \Magento\Framework\DataObject([
-                'attribute_code' => 'attribute1',
-                'backend' => $imageBackendModel
-            ]),
-            new \Magento\Framework\DataObject([
-                'attribute_code' => 'attribute2',
-                'backend' => new \Magento\Framework\DataObject()
-            ])
-        ]]);
-
-        $eavConfig->expects($this->once())
-            ->method('getEntityType')
-            ->with(\Magento\Catalog\Api\Data\CategoryAttributeInterface::ENTITY_TYPE_CODE)
-            ->will($this->returnValue($collection));
-
-        $model = $this->objectManager->getObject(\Magento\Catalog\Controller\Adminhtml\Category\Save::class, [
-            'eavConfig' => $eavConfig
-        ]);
-
-        $result = $model->imagePreprocessing($data);
-
-        $this->assertEquals([
-            'attribute1' => false,
-            'attribute2' => 123
-        ], $result);
-    }
-
-    public function testImagePreprocessingWithValue()
-    {
-        $eavConfig = $this->createPartialMock(\Magento\Eav\Model\Config::class, ['getEntityType']);
-
-        $imageBackendModel = $this->objectManager->getObject(
-            \Magento\Catalog\Model\Category\Attribute\Backend\Image::class
-        );
-
-        $collection = new \Magento\Framework\DataObject(['attribute_collection' => [
-            new \Magento\Framework\DataObject([
-                'attribute_code' => 'attribute1',
-                'backend' => $imageBackendModel
-            ]),
-            new \Magento\Framework\DataObject([
-                'attribute_code' => 'attribute2',
-                'backend' => new \Magento\Framework\DataObject()
-            ])
-        ]]);
-
-        $eavConfig->expects($this->once())
-            ->method('getEntityType')
-            ->with(\Magento\Catalog\Api\Data\CategoryAttributeInterface::ENTITY_TYPE_CODE)
-            ->will($this->returnValue($collection));
-
-        $model = $this->objectManager->getObject(Model::class, [
-            'eavConfig' => $eavConfig
-        ]);
-
-        $result = $model->imagePreprocessing([
-            'attribute1' => 'somevalue',
-            'attribute2' => null
-        ]);
-
-        $this->assertEquals([
-            'attribute1' => 'somevalue',
-            'attribute2' => null
-        ], $result);
     }
 }

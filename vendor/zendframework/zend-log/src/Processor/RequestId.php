@@ -1,13 +1,15 @@
 <?php
 /**
  * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zend-log for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
+*
+* @link      http://github.com/zendframework/zf2 for the canonical source repository
+* @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+* @license   http://framework.zend.com/license/new-bsd New BSD License
+*/
 
 namespace Zend\Log\Processor;
+
+use Zend\Console\Console;
 
 class RequestId implements ProcessorInterface
 {
@@ -32,8 +34,8 @@ class RequestId implements ProcessorInterface
             return $event;
         }
 
-        if (! isset($event['extra'])) {
-            $event['extra'] = [];
+        if (!isset($event['extra'])) {
+            $event['extra'] = array();
         }
 
         $event['extra']['requestId'] = $this->getIdentifier();
@@ -51,16 +53,21 @@ class RequestId implements ProcessorInterface
             return $this->identifier;
         }
 
-        $identifier = (string) $_SERVER['REQUEST_TIME_FLOAT'];
+        $requestTime = (PHP_VERSION_ID >= 50400)
+                     ? $_SERVER['REQUEST_TIME_FLOAT']
+                     : $_SERVER['REQUEST_TIME'];
 
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $identifier .= $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $identifier .= $_SERVER['REMOTE_ADDR'];
+        if (Console::isConsole()) {
+            $this->identifier = md5($requestTime);
+            return $this->identifier;
         }
 
-        $this->identifier = md5($identifier);
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $this->identifier = md5($requestTime . $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return $this->identifier;
+        }
 
+        $this->identifier = md5($requestTime . $_SERVER['REMOTE_ADDR']);
         return $this->identifier;
     }
 }

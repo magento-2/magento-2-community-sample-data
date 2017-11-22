@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -24,8 +24,8 @@ class WidgetForm extends FormTabs
      */
     public function fill(FixtureInterface $fixture, SimpleElement $element = null)
     {
-        $tabs = $this->getFixtureFieldsByContainers($fixture);
-        $this->fillTabs(['settings' => $tabs['settings']], $element);
+        $tabs = $this->getFieldsByTabs($fixture);
+        $this->fillTabs(['settings' => $tabs['settings']]);
         $key = 0;
         foreach ($tabs as $key => $value) {
             if (isset($value['parameters'])) {

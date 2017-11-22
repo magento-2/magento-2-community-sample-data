@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Model\Indexer;
@@ -66,6 +66,7 @@ abstract class AbstractIndexer implements IndexerActionInterface, MviewActionInt
     {
         $this->indexBuilder->reindexFull();
         $this->_eventManager->dispatch('clean_cache_by_tags', ['object' => $this]);
+
         //TODO: remove after fix fpc. MAGETWO-50668
         $this->getCacheManager()->clean($this->getIdentities());
     }
@@ -139,7 +140,7 @@ abstract class AbstractIndexer implements IndexerActionInterface, MviewActionInt
     /**
      * @return \Magento\Framework\App\CacheInterface|mixed
      *
-     * @deprecated 100.0.7
+     * @deprecated
      */
     private function getCacheManager()
     {
@@ -155,7 +156,7 @@ abstract class AbstractIndexer implements IndexerActionInterface, MviewActionInt
      * Get cache context
      *
      * @return \Magento\Framework\Indexer\CacheContext
-     * @deprecated 100.0.7
+     * @deprecated
      */
     protected function getCacheContext()
     {

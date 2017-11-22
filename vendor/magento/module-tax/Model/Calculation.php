@@ -1,23 +1,24 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Tax\Model;
 
-use Magento\Customer\Api\AccountManagementInterface as CustomerAccountManagement;
-use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
-use Magento\Customer\Api\Data\AddressInterface as CustomerAddress;
-use Magento\Customer\Api\Data\CustomerInterface as CustomerDataObject;
-use Magento\Customer\Api\Data\RegionInterface as AddressRegion;
-use Magento\Customer\Api\GroupManagementInterface as CustomerGroupManagement;
-use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Store\Model\Store;
+use Magento\Customer\Api\Data\CustomerInterface as CustomerDataObject;
+use Magento\Customer\Api\Data\RegionInterface as AddressRegion;
+use Magento\Customer\Api\AccountManagementInterface as CustomerAccountManagement;
+use Magento\Customer\Api\GroupManagementInterface as CustomerGroupManagement;
+use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
+use Magento\Customer\Api\Data\AddressInterface as CustomerAddress;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Tax\Api\TaxClassRepositoryInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Tax\Model\Config;
 
 /**
  * Tax Calculation Model
@@ -253,7 +254,7 @@ class Calculation extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Tax\Model\ResourceModel\Calculation::class);
+        $this->_init('Magento\Tax\Model\ResourceModel\Calculation');
     }
 
     /**
@@ -520,6 +521,7 @@ class Calculation extends \Magento\Framework\Model\AbstractModel
         ) {
             $basedOn = 'default';
         } else {
+
             if (($billingAddress === null || !$billingAddress->getCountryId())
                 && $basedOn == 'billing'
                 || ($shippingAddress === null || !$shippingAddress->getCountryId())

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,8 +10,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 use Magento\Bundle\Model\Product\Price;
-use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Api\ProductCustomOptionRepositoryInterface;
 
 /**
  * Final price model
@@ -37,11 +35,6 @@ class FinalPrice extends \Magento\Catalog\Pricing\Price\FinalPrice implements Fi
      * @var \Magento\Bundle\Pricing\Price\BundleOptionPrice
      */
     protected $bundleOptionPrice;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductCustomOptionRepositoryInterface
-     */
-    private $productOptionRepository;
 
     /**
      * @param Product $saleableItem
@@ -89,22 +82,6 @@ class FinalPrice extends \Magento\Catalog\Pricing\Price\FinalPrice implements Fi
     }
 
     /**
-     * Return ProductCustomOptionRepository
-     *
-     * @return ProductCustomOptionRepositoryInterface
-     * @deprecated 100.1.0
-     */
-    private function getProductOptionRepository()
-    {
-        if (!$this->productOptionRepository) {
-            $this->productOptionRepository = ObjectManager::getInstance()->get(
-                ProductCustomOptionRepositoryInterface::class
-            );
-        }
-        return $this->productOptionRepository;
-    }
-
-    /**
      * Returns min price
      *
      * @return \Magento\Framework\Pricing\Amount\AmountInterface
@@ -124,7 +101,6 @@ class FinalPrice extends \Magento\Catalog\Pricing\Price\FinalPrice implements Fi
         if (!$this->minimalPrice) {
             $price = parent::getValue();
             if ($this->product->getPriceType() == Price::PRICE_TYPE_FIXED) {
-                $this->loadProductCustomOptions();
                 /** @var \Magento\Catalog\Pricing\Price\CustomOptionPrice $customOptionPrice */
                 $customOptionPrice = $this->priceInfo->getPrice(CustomOptionPrice::PRICE_CODE);
                 $price += $customOptionPrice->getCustomOptionRange(true);
@@ -132,23 +108,6 @@ class FinalPrice extends \Magento\Catalog\Pricing\Price\FinalPrice implements Fi
             $this->minimalPrice = $this->calculator->getAmount($price, $this->product);
         }
         return $this->minimalPrice;
-    }
-
-    /**
-     * Load product custom options
-     *
-     * @return void
-     */
-    private function loadProductCustomOptions()
-    {
-        if (!$this->product->getOptions()) {
-            $options = [];
-            foreach ($this->getProductOptionRepository()->getProductOptions($this->product) as $option) {
-                $option->setProduct($this->product);
-                $options[] = $option;
-            }
-            $this->product->setOptions($options);
-        }
     }
 
     /**

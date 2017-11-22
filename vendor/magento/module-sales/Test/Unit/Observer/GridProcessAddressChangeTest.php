@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Sales\Test\Unit\Observer;
 /**
  * Class GridProcessAddressChangeTest
  */
-class GridProcessAddressChangeTest extends \PHPUnit\Framework\TestCase
+class GridProcessAddressChangeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Observer\GridProcessAddressChange
@@ -26,12 +26,12 @@ class GridProcessAddressChangeTest extends \PHPUnit\Framework\TestCase
      */
     protected $eventObserverMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->gridPoolMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\GridPool::class)
+        $this->gridPoolMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\GridPool')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventObserverMock = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $this->eventObserverMock = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->setMethods(['getOrderId'])
             ->getMock();

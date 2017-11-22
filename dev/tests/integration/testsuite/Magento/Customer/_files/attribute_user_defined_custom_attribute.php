@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+/** @var Magento\Customer\Model\Attribute $model */
+$model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Attribute');
 
-/** @var Magento\Customer\Model\Attribute $attribute1 */
-$attribute1 = $objectManager->create(\Magento\Customer\Model\Attribute::class);
-$attribute1->setName(
+$model->setName(
     'custom_attribute1'
 )->setEntityTypeId(
     1
@@ -22,15 +21,15 @@ $attribute1->setName(
     'text'
 )->setFrontendLabel(
     'custom_attribute_frontend_label'
-)->setBackendType(
-    'varchar'
 )->setSortOrder(
     1221
-)->save();
+);
 
-/** @var Magento\Customer\Model\Attribute $attribute2 */
-$attribute2 = $objectManager->create(\Magento\Customer\Model\Attribute::class);
-$attribute2->setName(
+$model->save();
+
+$model2 = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Attribute');
+
+$model2->setName(
     'custom_attribute2'
 )->setEntityTypeId(
     1
@@ -46,11 +45,13 @@ $attribute2->setName(
     'custom_attributes_frontend_label'
 )->setSortOrder(
     1222
-)->save();
+);
 
-/** @var Magento\Customer\Model\Attribute $attribute3 */
-$attribute3 = $objectManager->create(\Magento\Customer\Model\Attribute::class);
-$attribute3->setName(
+$model2->save();
+
+$model3 = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Attribute');
+
+$model3->setName(
     'customer_image'
 )->setEntityTypeId(
     1
@@ -64,8 +65,8 @@ $attribute3->setName(
     'image'
 )->setFrontendLabel(
     'customer_image'
-)->setBackendType(
-    'varchar'
 )->setSortOrder(
     1223
-)->save();
+)->setBackendType("varchar");
+
+$model3->save();

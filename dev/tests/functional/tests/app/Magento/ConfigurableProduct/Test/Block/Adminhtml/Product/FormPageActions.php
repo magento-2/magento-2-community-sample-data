@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,7 +21,7 @@ class FormPageActions extends \Magento\Catalog\Test\Block\Adminhtml\Product\Form
      *
      * @var string
      */
-    protected $affectedAttributeSetForm = '.product_form_product_form_configurable_attribute_set_handler_modal [data-role="focusable-scope"]';
+    protected $affectedAttributeSetForm = '//div[@data-role="affected-attribute-set-selector"]/ancestor::*[@data-role="modal"]';
     // @codingStandardsIgnoreEnd
 
     /**
@@ -47,8 +47,8 @@ class FormPageActions extends \Magento\Catalog\Test\Block\Adminhtml\Product\Form
     protected function getAffectedAttributeSetForm()
     {
         return $this->blockFactory->create(
-            \Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\AffectedAttributeSet::class,
-            ['element' => $this->browser->find($this->affectedAttributeSetForm)]
+            '\Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\AffectedAttributeSet',
+            ['element' => $this->browser->find($this->affectedAttributeSetForm, Locator::SELECTOR_XPATH)]
         );
     }
 }

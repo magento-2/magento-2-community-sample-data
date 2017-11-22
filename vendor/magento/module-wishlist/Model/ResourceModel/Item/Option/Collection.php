@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,10 +14,6 @@ namespace Magento\Wishlist\Model\ResourceModel\Item\Option;
 use Magento\Catalog\Model\Product;
 use Magento\Wishlist\Model\Item;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
@@ -41,10 +37,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Wishlist\Model\Item\Option::class,
-            \Magento\Wishlist\Model\ResourceModel\Item\Option::class
-        );
+        $this->_init('Magento\Wishlist\Model\Item\Option', 'Magento\Wishlist\Model\ResourceModel\Item\Option');
     }
 
     /**

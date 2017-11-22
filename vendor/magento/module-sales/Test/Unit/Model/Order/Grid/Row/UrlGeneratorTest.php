@@ -1,32 +1,30 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Test\Unit\Model\Order\Grid\Row;
 
-class UrlGeneratorTest extends \PHPUnit\Framework\TestCase
+class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Grid\Row\UrlGenerator
      */
     protected $urlGenerator;
-
     /**
      * @var \Magento\Backend\Model\UrlInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $urlMock;
-
     /**
      * @var \Magento\Framework\AuthorizationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $authorizationMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->urlMock = $this->getMockForAbstractClass(
-            \Magento\Backend\Model\UrlInterface::class,
+            'Magento\Backend\Model\UrlInterface',
             [],
             '',
             false,
@@ -35,7 +33,7 @@ class UrlGeneratorTest extends \PHPUnit\Framework\TestCase
             []
         );
         $this->authorizationMock = $this->getMockForAbstractClass(
-            \Magento\Framework\AuthorizationInterface::class,
+            'Magento\Framework\AuthorizationInterface',
             [],
             '',
             false,

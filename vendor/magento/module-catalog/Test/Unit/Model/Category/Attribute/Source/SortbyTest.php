@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Category\Attribute\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SortbyTest extends \PHPUnit\Framework\TestCase
+class SortbyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Category\Attribute\Source\Sortby
@@ -24,7 +24,7 @@ class SortbyTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Category\Attribute\Source\Sortby::class,
+            '\Magento\Catalog\Model\Category\Attribute\Source\Sortby',
             [
                 'catalogConfig' => $this->getMockedConfig()
             ]
@@ -36,7 +36,7 @@ class SortbyTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedConfig()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Catalog\Model\Config::class);
+        $mockBuilder = $this->getMockBuilder('\Magento\Catalog\Model\Config');
         $mockBuilder->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 

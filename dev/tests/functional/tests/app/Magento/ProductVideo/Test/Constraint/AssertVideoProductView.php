@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,9 +26,10 @@ class AssertVideoProductView extends AbstractConstraint
     public function processAssert(
         BrowserInterface $browser,
         CatalogProductView $catalogProductView,
-        InjectableFixture $product
+        InjectableFixture $initialProduct
     ) {
-        $browser->open($_ENV['app_frontend_url'] . $product->getUrlKey() . '.html');
+        $browser->open($_ENV['app_frontend_url'] . $initialProduct->getUrlKey() . '.html');
+
         \PHPUnit_Framework_Assert::assertTrue(
             $catalogProductView->getViewBlock()->isVideoVisible(),
             'Product video is not displayed on product view when it should.'

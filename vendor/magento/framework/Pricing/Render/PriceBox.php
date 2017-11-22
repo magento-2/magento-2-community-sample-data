@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\Pricing\Render;
 
-use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\Pricing\Price\PriceInterface;
@@ -18,11 +17,8 @@ use Magento\Framework\View\Element\Template;
  * @method bool hasListClass()
  * @method string getListClass()
  */
-class PriceBox extends Template implements PriceBoxRenderInterface, IdentityInterface
+class PriceBox extends Template implements PriceBoxRenderInterface
 {
-    /** Default block lifetime */
-    const DEFAULT_LIFETIME = 3600;
-
     /**
      * @var SaleableInterface
      */
@@ -69,26 +65,6 @@ class PriceBox extends Template implements PriceBoxRenderInterface, IdentityInte
         return parent::_toHtml();
     }
 
-    /**
-     * Get Key for caching block content
-     *
-     * @return string
-     */
-    public function getCacheKey()
-    {
-        return parent::getCacheKey() . '-' . $this->getPriceId() . '-' . $this->getPrice()->getPriceCode();
-    }
-
-    /**
-     * Get block cache life time
-     *
-     * @return int
-     */
-    protected function getCacheLifetime()
-    {
-        return parent::hasCacheLifetime() ? parent::getCacheLifetime() : null;
-    }
-    
     /**
      * @return SaleableInterface
      */
@@ -169,20 +145,5 @@ class PriceBox extends Template implements PriceBoxRenderInterface, IdentityInte
     public function getRendererPool()
     {
         return $this->rendererPool;
-    }
-
-    /**
-     * Return unique ID(s) for each object in system
-     *
-     * @return array
-     */
-    public function getIdentities()
-    {
-        $item = $this->getSaleableItem();
-        if ($item instanceof IdentityInterface) {
-            return $item->getIdentities();
-        } else {
-            return [];
-        }
     }
 }

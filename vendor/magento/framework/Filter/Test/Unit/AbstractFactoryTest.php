@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filter\Test\Unit;
 
-class AbstractFactoryTest extends \PHPUnit\Framework\TestCase
+class AbstractFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filter\AbstractFactory
@@ -16,17 +16,17 @@ class AbstractFactoryTest extends \PHPUnit\Framework\TestCase
      * @var array
      */
     protected $_invokableList = [
-        'sprintf' => \Magento\Framework\Filter\Sprintf::class,
-        'template' => \Magento\Framework\Filter\Template::class,
-        'arrayFilter' => \Magento\Framework\Filter\ArrayFilter::class,
+        'sprintf' => 'Magento\Framework\Filter\Sprintf',
+        'template' => 'Magento\Framework\Filter\Template',
+        'arrayFilter' => 'Magento\Framework\Filter\ArrayFilter',
     ];
 
     /**
      * @var array
      */
     protected $_sharedList = [
-        \Magento\Framework\Filter\Template::class => true,
-        \Magento\Framework\Filter\ArrayFilter::class => false,
+        'Magento\Framework\Filter\Template' => true,
+        'Magento\Framework\Filter\ArrayFilter' => false,
     ];
 
     /**
@@ -34,19 +34,19 @@ class AbstractFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $_objectManager;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $this->_factory = $this->getMockForAbstractClass(
-            \Magento\Framework\Filter\AbstractFactory::class,
+            'Magento\Framework\Filter\AbstractFactory',
             ['objectManger' => $this->_objectManager]
         );
-        $property = new \ReflectionProperty(\Magento\Framework\Filter\AbstractFactory::class, 'invokableClasses');
+        $property = new \ReflectionProperty('Magento\Framework\Filter\AbstractFactory', 'invokableClasses');
         $property->setAccessible(true);
         $property->setValue($this->_factory, $this->_invokableList);
 
-        $property = new \ReflectionProperty(\Magento\Framework\Filter\AbstractFactory::class, 'shared');
+        $property = new \ReflectionProperty('Magento\Framework\Filter\AbstractFactory', 'shared');
         $property->setAccessible(true);
         $property->setValue($this->_factory, $this->_sharedList);
     }
@@ -85,9 +85,9 @@ class AbstractFactoryTest extends \PHPUnit\Framework\TestCase
     public function isSharedDataProvider()
     {
         return [
-            'shared' => [\Magento\Framework\Filter\Template::class, true],
-            'not shared' => [\Magento\Framework\Filter\ArrayFilter::class, false],
-            'default value' => [\Magento\Framework\Filter\Sprintf::class, true]
+            'shared' => ['Magento\Framework\Filter\Template', true],
+            'not shared' => ['Magento\Framework\Filter\ArrayFilter', false],
+            'default value' => ['Magento\Framework\Filter\Sprintf', true]
         ];
     }
 
@@ -99,10 +99,10 @@ class AbstractFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateFilter($alias, $arguments, $isShared)
     {
-        $property = new \ReflectionProperty(\Magento\Framework\Filter\AbstractFactory::class, 'sharedInstances');
+        $property = new \ReflectionProperty('Magento\Framework\Filter\AbstractFactory', 'sharedInstances');
         $property->setAccessible(true);
 
-        $filterMock = $this->getMockBuilder('FactoryInterface')->setMethods(['filter'])->getMock();
+        $filterMock = $this->getMock('FactoryInterface', ['filter']);
         $this->_objectManager->expects(
             $this->atLeastOnce()
         )->method(

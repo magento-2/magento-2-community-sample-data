@@ -1,94 +1,89 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
+require_once realpath(dirname(__FILE__)) . '/SubscriptionTestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test;
-use Test\Setup;
-use Braintree;
-
-class MultipleValueNodeTest extends Setup
+class Braintree_MultipleValueNodeTest extends PHPUnit_Framework_TestCase
 {
-    public function testIn_singleValue()
+    function testIn_singleValue()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $activeSubscription = Braintree\Subscription::create([
+        $activeSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '3'
-        ])->subscription;
+        ))->subscription;
 
-        $canceledSubscription = Braintree\Subscription::create([
+        $canceledSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '3'
-        ])->subscription;
-        Braintree\Subscription::cancel($canceledSubscription->id);
+        ))->subscription;
+        Braintree_Subscription::cancel($canceledSubscription->id);
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->in([Braintree\Subscription::ACTIVE]),
-            Braintree\SubscriptionSearch::price()->is('3'),
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->in(array(Braintree_Subscription::ACTIVE)),
+            Braintree_SubscriptionSearch::price()->is('3')
+        ));
         foreach ($collection AS $item) {
-            $this->assertEquals(Braintree\Subscription::ACTIVE, $item->status);
+            $this->assertEquals(Braintree_Subscription::ACTIVE, $item->status);
         }
 
-        $this->assertTrue(Test\Helper::includes($collection, $activeSubscription));
-        $this->assertFalse(Test\Helper::includes($collection, $canceledSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $activeSubscription));
+        $this->assertFalse(Braintree_TestHelper::includes($collection, $canceledSubscription));
     }
 
-    public function testIs()
+    function testIs()
     {
         $found = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->is(Braintree\Subscription::PAST_DUE)
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->is(Braintree_Subscription::PAST_DUE)
+        ));
         foreach ($collection AS $item) {
             $found = true;
-            $this->assertEquals(Braintree\Subscription::PAST_DUE, $item->status);
+            $this->assertEquals(Braintree_Subscription::PAST_DUE, $item->status);
         }
         $this->assertTrue($found);
     }
 
-    public function testSearch_statusIsExpired()
+    function testSearch_statusIsExpired()
     {
         $found = false;
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->in([Braintree\Subscription::EXPIRED])
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->in(array(Braintree_Subscription::EXPIRED))
+        ));
         foreach ($collection AS $item) {
             $found = true;
-            $this->assertEquals(Braintree\Subscription::EXPIRED, $item->status);
+            $this->assertEquals(Braintree_Subscription::EXPIRED, $item->status);
         }
         $this->assertTrue($found);
     }
 
-    public function testIn_multipleValues()
+    function testIn_multipleValues()
     {
-        $creditCard = SubscriptionHelper::createCreditCard();
-        $triallessPlan = SubscriptionHelper::triallessPlan();
+        $creditCard = Braintree_SubscriptionTestHelper::createCreditCard();
+        $triallessPlan = Braintree_SubscriptionTestHelper::triallessPlan();
 
-        $activeSubscription = Braintree\Subscription::create([
+        $activeSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '4'
-        ])->subscription;
+        ))->subscription;
 
-        $canceledSubscription = Braintree\Subscription::create([
+        $canceledSubscription = Braintree_Subscription::create(array(
             'paymentMethodToken' => $creditCard->token,
             'planId' => $triallessPlan['id'],
             'price' => '4'
-        ])->subscription;
-        Braintree\Subscription::cancel($canceledSubscription->id);
+        ))->subscription;
+        Braintree_Subscription::cancel($canceledSubscription->id);
 
-        $collection = Braintree\Subscription::search([
-            Braintree\SubscriptionSearch::status()->in([Braintree\Subscription::ACTIVE, Braintree\Subscription::CANCELED]),
-            Braintree\SubscriptionSearch::price()->is('4')
-        ]);
+        $collection = Braintree_Subscription::search(array(
+            Braintree_SubscriptionSearch::status()->in(array(Braintree_Subscription::ACTIVE, Braintree_Subscription::CANCELED)),
+            Braintree_SubscriptionSearch::price()->is('4')
+        ));
 
-        $this->assertTrue(Test\Helper::includes($collection, $activeSubscription));
-        $this->assertTrue(Test\Helper::includes($collection, $canceledSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $activeSubscription));
+        $this->assertTrue(Braintree_TestHelper::includes($collection, $canceledSubscription));
     }
 }

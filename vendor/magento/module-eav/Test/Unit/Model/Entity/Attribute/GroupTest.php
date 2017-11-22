@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute;
@@ -8,7 +8,7 @@ namespace Magento\Eav\Test\Unit\Model\Entity\Attribute;
 use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GroupTest extends \PHPUnit\Framework\TestCase
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Group
@@ -27,14 +27,20 @@ class GroupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resourceMock = $this->createMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Group::class);
+        $this->resourceMock = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Group',
+            [],
+            [],
+            '',
+            false
+        );
         $translitFilter = $this->getMockBuilder(\Magento\Framework\Filter\Translit::class)
             ->disableOriginalConstructor()
             ->getMock();
         $translitFilter->expects($this->atLeastOnce())->method('filter')->willReturnArgument(0);
 
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
+        $this->eventManagerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $contextMock = $this->getMock('Magento\Framework\Model\Context', [], [], '', false);
         $contextMock->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventManagerMock);
         $constructorArguments = [
             'resource' => $this->resourceMock,
@@ -42,10 +48,7 @@ class GroupTest extends \PHPUnit\Framework\TestCase
             'context' => $contextMock,
         ];
         $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
-            \Magento\Eav\Model\Entity\Attribute\Group::class,
-            $constructorArguments
-        );
+        $this->model = $objectManager->getObject('Magento\Eav\Model\Entity\Attribute\Group', $constructorArguments);
     }
 
     /**

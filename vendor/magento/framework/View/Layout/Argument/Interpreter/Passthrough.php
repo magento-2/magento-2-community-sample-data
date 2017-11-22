@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Layout\Argument\Interpreter;
@@ -12,6 +12,7 @@ use Magento\Framework\Data\Argument\InterpreterInterface;
  */
 class Passthrough implements InterpreterInterface
 {
+
     /**
      * {@inheritdoc}
      * @return array

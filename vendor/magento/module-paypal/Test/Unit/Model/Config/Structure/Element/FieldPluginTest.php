@@ -1,98 +1,82 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Paypal\Test\Unit\Model\Config\Structure\Element;
 
-use Magento\Paypal\Model\Config\Structure\Element\FieldPlugin as FieldConfigStructurePlugin;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\App\RequestInterface;
-use Magento\Config\Model\Config\Structure\Element\Field as FieldConfigStructureMock;
-
-class FieldPluginTest extends \PHPUnit\Framework\TestCase
+class FieldPluginTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var FieldConfigStructurePlugin
-     */
-    private $plugin;
+    /** @var FieldPlugin */
+    protected $model;
 
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
+    /** @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
 
-    /**
-     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $requestMock;
-
-    /**
-     * @var FieldConfigStructureMock|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $subjectMock;
+    /** @var  \Magento\Config\Model\Config\Structure\Element\Field|\PHPUnit_Framework_MockObject_MockObject */
+    protected $subject;
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-        $this->subjectMock = $this->getMockBuilder(FieldConfigStructureMock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->getMockForAbstractClass('Magento\Framework\App\RequestInterface');
+        $this->subject = $this->getMock('Magento\Config\Model\Config\Structure\Element\Field', [], [], '', false);
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->plugin = $this->objectManagerHelper->getObject(
-            FieldConfigStructurePlugin::class,
-            ['request' => $this->requestMock]
+        $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->model = $helper->getObject(
+            'Magento\Paypal\Model\Config\Structure\Element\FieldPlugin',
+            ['request' => $this->request]
         );
     }
 
     public function testAroundGetConfigPathHasResult()
     {
         $someResult = 'some result';
-
-        $this->assertEquals($someResult, $this->plugin->afterGetConfigPath($this->subjectMock, $someResult));
+        $callback = function () use ($someResult) {
+            return $someResult;
+        };
+        $this->assertEquals($someResult, $this->model->aroundGetConfigPath($this->subject, $callback));
     }
 
     public function testAroundGetConfigPathNonPaymentSection()
     {
-        $this->requestMock->expects(static::once())
+        $callback = function () {
+            return null;
+        };
+        $this->request->expects($this->once())
             ->method('getParam')
             ->with('section')
-            ->willReturn('non-payment');
-
-        $this->assertNull($this->plugin->afterGetConfigPath($this->subjectMock, null));
+            ->will($this->returnValue('non-payment'));
+        $this->assertNull($this->model->aroundGetConfigPath($this->subject, $callback));
     }
 
     /**
      * @param string $subjectPath
      * @param string $expectedConfigPath
-     *
-     * @dataProvider afterGetConfigPathDataProvider
+     * @dataProvider aroundGetConfigPathDataProvider
      */
     public function testAroundGetConfigPath($subjectPath, $expectedConfigPath)
     {
-        $this->requestMock->expects(static::once())
+        $callback = function () {
+            return null;
+        };
+        $this->request->expects($this->once())
             ->method('getParam')
             ->with('section')
-            ->willReturn('payment');
-        $this->subjectMock->expects(static::once())
+            ->will($this->returnValue('payment'));
+        $this->subject->expects($this->once())
             ->method('getPath')
-            ->willReturn($subjectPath);
-
-        $this->assertEquals($expectedConfigPath, $this->plugin->afterGetConfigPath($this->subjectMock, null));
+            ->will($this->returnValue($subjectPath));
+        $this->assertEquals($expectedConfigPath, $this->model->aroundGetConfigPath($this->subject, $callback));
     }
 
-    /**
-     * @return array
-     */
-    public function afterGetConfigPathDataProvider()
+    public function aroundGetConfigPathDataProvider()
     {
         return [
             ['payment_us/group/field', 'payment/group/field'],
             ['payment_other/group/field', 'payment/group/field'],
             ['payment_us', 'payment_us'],
-            ['payment_wrong_country/group/field', 'payment_wrong_country/group/field']
+            ['payment_wrong_country/group/field', 'payment_wrong_country/group/field'],
         ];
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Page\Widget;
@@ -11,7 +11,9 @@ use Magento\Backend\App\Action;
 class Chooser extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 

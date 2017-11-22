@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Test\Unit\Model\Country\Postcode\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Address\Config\Converter
@@ -17,9 +17,9 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
      */
     protected $booleanUtilsMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->booleanUtilsMock = $this->createMock(\Magento\Framework\Stdlib\BooleanUtils::class);
+        $this->booleanUtilsMock = $this->getMock('Magento\Framework\Stdlib\BooleanUtils', [], [], '', false);
         $this->model = new \Magento\Directory\Model\Country\Postcode\Config\Converter($this->booleanUtilsMock);
     }
 

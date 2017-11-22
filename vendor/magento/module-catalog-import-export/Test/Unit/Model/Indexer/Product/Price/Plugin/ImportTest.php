@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Test\Unit\Model\Indexer\Product\Price\Plugin;
 
-class ImportTest extends \PHPUnit\Framework\TestCase
+class ImportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -27,21 +27,27 @@ class ImportTest extends \PHPUnit\Framework\TestCase
      */
     protected $indexerRegistryMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->_indexerMock = $this->createPartialMock(
-            \Magento\Indexer\Model\Indexer::class,
-            ['getId', 'invalidate', 'getPriceIndexer', 'isScheduled']
+        $this->_indexerMock = $this->getMock(
+            'Magento\Indexer\Model\Indexer',
+            ['getId', 'invalidate', 'getPriceIndexer', 'isScheduled'],
+            [],
+            '',
+            false
         );
-        $this->indexerRegistryMock = $this->createPartialMock(
-            \Magento\Framework\Indexer\IndexerRegistry::class,
-            ['get']
+        $this->indexerRegistryMock = $this->getMock(
+            'Magento\Framework\Indexer\IndexerRegistry',
+            ['get'],
+            [],
+            '',
+            false
         );
 
         $this->_model = $this->_objectManager->getObject(
-            \Magento\CatalogImportExport\Model\Indexer\Product\Price\Plugin\Import::class,
+            'Magento\CatalogImportExport\Model\Indexer\Product\Price\Plugin\Import',
             ['indexerRegistry' => $this->indexerRegistryMock]
         );
     }
@@ -60,7 +66,7 @@ class ImportTest extends \PHPUnit\Framework\TestCase
             ->method('isScheduled')
             ->will($this->returnValue(false));
 
-        $importMock = $this->createMock(\Magento\ImportExport\Model\Import::class);
+        $importMock = $this->getMock('Magento\ImportExport\Model\Import', [], [], '', false);
         $this->assertEquals('return_value', $this->_model->afterImportSource($importMock, 'return_value'));
     }
 }

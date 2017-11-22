@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Model\ResourceModel\Group\Collection;
 use Magento\Framework\Api\Search\FilterGroup;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\State\InvalidTransitionException;
 use Magento\Tax\Api\Data\TaxClassInterface;
@@ -71,11 +71,6 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
     protected $extensionAttributesJoinProcessor;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
      * @param \Magento\Customer\Model\GroupRegistry $groupRegistry
      * @param \Magento\Customer\Model\GroupFactory $groupFactory
      * @param \Magento\Customer\Api\Data\GroupInterfaceFactory $groupDataFactory
@@ -84,7 +79,6 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
      * @param \Magento\Customer\Api\Data\GroupSearchResultsInterfaceFactory $searchResultsFactory
      * @param \Magento\Tax\Api\TaxClassRepositoryInterface $taxClassRepositoryInterface
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
-     * @param CollectionProcessorInterface $collectionProcessor
      */
     public function __construct(
         \Magento\Customer\Model\GroupRegistry $groupRegistry,
@@ -94,8 +88,7 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
         \Magento\Framework\Reflection\DataObjectProcessor $dataObjectProcessor,
         \Magento\Customer\Api\Data\GroupSearchResultsInterfaceFactory $searchResultsFactory,
         \Magento\Tax\Api\TaxClassRepositoryInterface $taxClassRepositoryInterface,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
-        CollectionProcessorInterface $collectionProcessor = null
+        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
     ) {
         $this->groupRegistry = $groupRegistry;
         $this->groupFactory = $groupFactory;
@@ -105,7 +98,6 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
         $this->searchResultsFactory = $searchResultsFactory;
         $this->taxClassRepository = $taxClassRepositoryInterface;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -117,12 +109,12 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
 
         /** @var \Magento\Customer\Model\Group $groupModel */
         $groupModel = null;
-        if ($group->getId() || (string)$group->getId() === '0') {
+        if ($group->getId()) {
             $this->_verifyTaxClassModel($group->getTaxClassId(), $group);
             $groupModel = $this->groupRegistry->retrieve($group->getId());
             $groupDataAttributes = $this->dataObjectProcessor->buildOutputDataArray(
                 $group,
-                \Magento\Customer\Api\Data\GroupInterface::class
+                '\Magento\Customer\Api\Data\GroupInterface'
             );
             foreach ($groupDataAttributes as $attributeCode => $attributeData) {
                 $groupModel->setDataUsingMethod($attributeCode, $attributeData);
@@ -183,11 +175,33 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
 
         /** @var \Magento\Customer\Model\ResourceModel\Group\Collection $collection */
         $collection = $this->groupFactory->create()->getCollection();
-        $groupInterfaceName = \Magento\Customer\Api\Data\GroupInterface::class;
+        $groupInterfaceName = 'Magento\Customer\Api\Data\GroupInterface';
         $this->extensionAttributesJoinProcessor->process($collection, $groupInterfaceName);
         $collection->addTaxClass();
 
-        $this->collectionProcessor->process($searchCriteria, $collection);
+        //Add filters from root filter group to the collection
+        /** @var FilterGroup $group */
+        foreach ($searchCriteria->getFilterGroups() as $group) {
+            $this->addFilterGroupToCollection($group, $collection);
+        }
+        $sortOrders = $searchCriteria->getSortOrders();
+        /** @var SortOrder $sortOrder */
+        if ($sortOrders) {
+            foreach ($searchCriteria->getSortOrders() as $sortOrder) {
+                $field = $this->translateField($sortOrder->getField());
+                $collection->addOrder(
+                    $field,
+                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                );
+            }
+        } else {
+            // set a default sorting order since this method is used constantly in many
+            // different blocks
+            $field = $this->translateField('id');
+            $collection->addOrder($field, 'ASC');
+        }
+        $collection->setCurPage($searchCriteria->getCurrentPage());
+        $collection->setPageSize($searchCriteria->getPageSize());
 
         /** @var \Magento\Customer\Api\Data\GroupInterface[] $groups */
         $groups = [];
@@ -215,7 +229,6 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
     /**
      * Helper function that adds a FilterGroup to the collection.
      *
-     * @deprecated 100.2.0
      * @param FilterGroup $filterGroup
      * @param Collection $collection
      * @return void
@@ -238,7 +251,6 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
     /**
      * Translates a field name to a DB column name for use in collection queries.
      *
-     * @deprecated 100.2.0
      * @param string $field a field name that should be translated to a DB column name.
      * @return string
      */
@@ -305,7 +317,7 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
     {
         $exception = new InputException();
         if (!\Zend_Validate::is($group->getCode(), 'NotEmpty')) {
-            $exception->addError(__('%fieldName is a required field.', ['fieldName' => 'code']));
+            $exception->addError(__(InputException::REQUIRED_FIELD, ['fieldName' => 'code']));
         }
 
         if ($exception->wasErrorAdded()) {
@@ -332,21 +344,5 @@ class GroupRepository implements \Magento\Customer\Api\GroupRepositoryInterface
         if ($taxClassData->getClassType() !== TaxClassManagementInterface::TYPE_CUSTOMER) {
             throw InputException::invalidFieldValue('taxClassId', $group->getTaxClassId());
         }
-    }
-
-    /**
-     * Retrieve collection processor
-     *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
-     */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                'Magento\Customer\Model\Api\SearchCriteria\GroupCollectionProcessor'
-            );
-        }
-        return $this->collectionProcessor;
     }
 }

@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Model\Design\Backend;
 
 use Magento\Config\Model\Config\Backend\Serialized\ArraySerialized;
-use Magento\Framework\Serialize\Serializer\Json;
 
 class Exceptions extends ArraySerialized
 {
@@ -28,7 +27,6 @@ class Exceptions extends ArraySerialized
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -38,20 +36,10 @@ class Exceptions extends ArraySerialized
         \Magento\Framework\View\DesignInterface $design,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
-        Json $serializer = null
+        array $data = []
     ) {
         $this->_design = $design;
-        parent::__construct(
-            $context,
-            $registry,
-            $config,
-            $cacheTypeList,
-            $resource,
-            $resourceCollection,
-            $data,
-            $serializer
-        );
+        parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
 
     /**
@@ -66,14 +54,16 @@ class Exceptions extends ArraySerialized
         $design = clone $this->_design;
         // For value validations
         $exceptions = $this->getValue();
+        foreach ($exceptions as $rowKey => $row) {
+            if ($rowKey === '__empty') {
+                continue;
+            }
 
-        foreach ($exceptions as $rowKey => &$row) {
-            unset($row['record_id']);
             // Validate that all values have come
             foreach (['search', 'value'] as $fieldName) {
                 if (!isset($row[$fieldName])) {
                     throw new \Magento\Framework\Exception\LocalizedException(
-                        __('%1 does not contain field \'%2\'', $this->getData('field_config/fieldset'), $fieldName)
+                        __('Exception does not contain field \'%1\'', $fieldName)
                     );
                 }
             }
@@ -144,29 +134,5 @@ class Exceptions extends ArraySerialized
         }
 
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function afterLoad()
-    {
-        parent::afterLoad();
-        $values = $this->getValue();
-        foreach ($values as &$value) {
-            if (isset($value['record_id'])) {
-                unset($value['record_id']);
-            }
-        }
-        $this->setValue($values);
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getValue()
-    {
-        return $this->getData('value') ?: [];
     }
 }

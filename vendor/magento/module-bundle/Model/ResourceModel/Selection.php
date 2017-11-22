@@ -1,60 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\ResourceModel;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\EntityManager;
-use Magento\Framework\Model\ResourceModel\Db\Context;
-
 /**
  * Bundle Selection Resource Model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    /**
-     * @var MetadataPool
-     * @since 100.1.0
-     */
-    protected $metadataPool;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * Selection constructor.
-     *
-     * @param Context $context
-     * @param MetadataPool $metadataPool
-     * @param null|string $connectionName
-     * @param EntityManager|null $entityManager
-     */
-    public function __construct(
-        Context $context,
-        MetadataPool $metadataPool,
-        $connectionName = null,
-        EntityManager $entityManager = null
-    ) {
-        parent::__construct(
-            $context,
-            $connectionName
-        );
-
-        $this->metadataPool = $metadataPool;
-
-        $this->entityManager = $entityManager
-            ?: ObjectManager::getInstance()->get(EntityManager::class);
-    }
-
     /**
      * Define main table and id field
      *
@@ -80,7 +37,6 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $childrenIds = [];
         $notRequired = [];
         $connection = $this->getConnection();
-        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
         $select = $connection->select()->from(
             ['tbl_selection' => $this->getMainTable()],
             ['product_id', 'parent_product_id', 'option_id']
@@ -89,14 +45,11 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             'e.entity_id = tbl_selection.product_id AND e.required_options=0',
             []
         )->join(
-            ['parent' => $this->getTable('catalog_product_entity')],
-            'tbl_selection.parent_product_id = parent.' . $linkField
-        )->join(
             ['tbl_option' => $this->getTable('catalog_product_bundle_option')],
             'tbl_option.option_id = tbl_selection.option_id',
             ['required']
         )->where(
-            'parent.entity_id = :parent_id'
+            'tbl_selection.parent_product_id = :parent_id'
         );
         foreach ($connection->fetchAll($select, ['parent_id' => $parentId]) as $row) {
             if ($row['required']) {
@@ -133,18 +86,13 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function getParentIdsByChild($childId)
     {
         $connection = $this->getConnection();
-        $metadata = $this->metadataPool->getMetadata(ProductInterface::class);
         $select = $connection->select()->distinct(
             true
         )->from(
             $this->getMainTable(),
-            ''
-        )->join(
-            ['e' => $this->metadataPool->getMetadata(ProductInterface::class)->getEntityTable()],
-            'e.' . $metadata->getLinkField() . ' = ' .  $this->getMainTable() . '.parent_product_id',
-            ['e.entity_id as parent_product_id']
+            'parent_product_id'
         )->where(
-            $this->getMainTable() . '.product_id IN(?)',
+            'product_id IN(?)',
             $childId
         );
 
@@ -163,11 +111,7 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         if ($item->getDefaultPriceScope()) {
             $connection->delete(
                 $this->getTable('catalog_product_bundle_selection_price'),
-                [
-                    'selection_id = ?' => $item->getSelectionId(),
-                    'website_id = ?' => $item->getWebsiteId(),
-                    'parent_product_id = ?' => $item->getParentProductId(),
-                ]
+                ['selection_id = ?' => $item->getSelectionId(), 'website_id = ?' => $item->getWebsiteId()]
             );
         } else {
             $values = [
@@ -175,7 +119,6 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 'website_id' => $item->getWebsiteId(),
                 'selection_price_type' => $item->getSelectionPriceType(),
                 'selection_price_value' => $item->getSelectionPriceValue(),
-                'parent_product_id' => $item->getParentProductId(),
             ];
             $connection->insertOnDuplicate(
                 $this->getTable('catalog_product_bundle_selection_price'),
@@ -183,16 +126,5 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 ['selection_price_type', 'selection_price_value']
             );
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     * @since 100.2.0
-     */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $this->entityManager->save($object);
-
-        return $this;
     }
 }

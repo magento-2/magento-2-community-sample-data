@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,9 +12,7 @@ use Magento\Tax\Model\Calculation\RuleFactory as TaxRuleModelFactory;
 
 class TaxRuleRegistry
 {
-    /**
-     * @var \Magento\Tax\Model\Calculation\RuleFactory
-     */
+    /** @var  TaxRuleModelFactory */
     private $taxRuleModelFactory;
 
     /**

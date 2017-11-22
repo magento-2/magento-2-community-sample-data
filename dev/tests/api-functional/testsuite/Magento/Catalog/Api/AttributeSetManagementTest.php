@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Api;
@@ -196,7 +196,7 @@ class AttributeSetManagementTest extends WebapiAbstract
     {
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Eav\Model\Entity\Attribute\Set $attributeSet */
-        $attributeSet = $objectManager->create(\Magento\Eav\Model\Entity\Attribute\Set::class)
+        $attributeSet = $objectManager->create('Magento\Eav\Model\Entity\Attribute\Set')
             ->load($attributeSetName, 'attribute_set_name');
         if ($attributeSet->getId() === null) {
             return null;
@@ -214,7 +214,7 @@ class AttributeSetManagementTest extends WebapiAbstract
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Eav\Model\Entity\Type $entityType */
-        $entityType = $objectManager->create(\Magento\Eav\Model\Config::class)
+        $entityType = $objectManager->create('Magento\Eav\Model\Config')
             ->getEntityType($entityTypeCode);
         return $entityType;
     }

@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\AdminNotification\Test\Unit\Model;
 
-use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FeedTest extends \PHPUnit\Framework\TestCase
+class FeedTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\AdminNotification\Model\Feed */
     protected $feed;
@@ -52,19 +52,34 @@ class FeedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->inboxFactory = $this->createPartialMock(
+        $this->inboxFactory = $this->getMock(
             \Magento\AdminNotification\Model\InboxFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->curlFactory = $this->createPartialMock(\Magento\Framework\HTTP\Adapter\CurlFactory::class, ['create']);
+        $this->curlFactory = $this->getMock(
+            \Magento\Framework\HTTP\Adapter\CurlFactory::class,
+            ['create'],
+            [],
+            '',
+            false
+        );
         $this->curl = $this->getMockBuilder(\Magento\Framework\HTTP\Adapter\Curl::class)
             ->disableOriginalConstructor()->getMock();
-        $this->appState = $this->createPartialMock(\Magento\Framework\App\State::class, ['getInstallDate']);
-        $this->inboxModel = $this->createPartialMock(\Magento\AdminNotification\Model\Inbox::class, [
+        $this->appState = $this->getMock(\Magento\Framework\App\State::class, ['getInstallDate'], [], '', false);
+        $this->inboxModel = $this->getMock(
+            \Magento\AdminNotification\Model\Inbox::class,
+            [
                 '__wakeup',
                 'parse'
-            ]);
-        $this->backendConfig = $this->createPartialMock(
+            ],
+            [],
+            '',
+            false
+        );
+        $this->backendConfig = $this->getMock(
             \Magento\Backend\App\ConfigInterface::class,
             [
                 'getValue',
@@ -72,7 +87,7 @@ class FeedTest extends \PHPUnit\Framework\TestCase
                 'isSetFlag'
             ]
         );
-        $this->cacheManager = $this->createPartialMock(
+        $this->cacheManager = $this->getMock(
             \Magento\Framework\App\CacheInterface::class,
             [
                 'load',
@@ -85,13 +100,10 @@ class FeedTest extends \PHPUnit\Framework\TestCase
 
         $this->deploymentConfig = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig::class)
             ->disableOriginalConstructor()->getMock();
-
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->productMetadata = $this->getMockBuilder(\Magento\Framework\App\ProductMetadata::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->productMetadata = $this->getMock(\Magento\Framework\App\ProductMetadata::class);
+        $this->urlBuilder = $this->getMock(\Magento\Framework\UrlInterface::class);
 
         $this->feed = $this->objectManagerHelper->getObject(
             \Magento\AdminNotification\Model\Feed::class,
@@ -155,7 +167,7 @@ class FeedTest extends \PHPUnit\Framework\TestCase
                             return array_reduce(
                                 $fieldsToCheck,
                                 function ($initialValue, $item) use ($data) {
-                                    $haystack = $data[0][$item] ?? false;
+                                    $haystack = (isset($data[0][$item]) ? $data[0][$item] : false);
                                     return $haystack
                                         ? $initialValue && !strpos($haystack, '<') && !strpos($haystack, '>')
                                         : true;

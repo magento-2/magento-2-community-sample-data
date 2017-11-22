@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Reflection\Test\Unit;
@@ -10,7 +10,7 @@ use Magento\Framework\Reflection\FieldNamer;
 /**
  * Field namer Test
  */
-class FieldNamerTest extends \PHPUnit\Framework\TestCase
+class FieldNamerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FieldNamer
@@ -20,10 +20,10 @@ class FieldNamerTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up helper.
      */
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\Framework\Reflection\FieldNamer::class);
+        $this->model = $objectManager->getObject('Magento\Framework\Reflection\FieldNamer');
     }
 
     /**

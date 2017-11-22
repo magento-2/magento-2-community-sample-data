@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Address;
@@ -101,11 +101,7 @@ class FormPost extends \Magento\Customer\Controller\Address
         $existingAddressData = $this->getExistingAddressData();
 
         /** @var \Magento\Customer\Model\Metadata\Form $addressForm */
-        $addressForm = $this->_formFactory->create(
-            'customer_address',
-            'customer_address_edit',
-            $existingAddressData
-        );
+        $addressForm = $this->_formFactory->create('customer_address', 'customer_address_edit', $existingAddressData);
         $addressData = $addressForm->extractData($this->getRequest());
         $attributeValues = $addressForm->compactData($addressData);
 
@@ -115,7 +111,7 @@ class FormPost extends \Magento\Customer\Controller\Address
         $this->dataObjectHelper->populateWithArray(
             $addressDataObject,
             array_merge($existingAddressData, $attributeValues),
-            \Magento\Customer\Api\Data\AddressInterface::class
+            '\Magento\Customer\Api\Data\AddressInterface'
         );
         $addressDataObject->setCustomerId($this->_getSession()->getCustomerId())
             ->setIsDefaultBilling($this->getRequest()->getParam('default_billing', false))
@@ -152,10 +148,12 @@ class FormPost extends \Magento\Customer\Controller\Address
      */
     protected function updateRegionData(&$attributeValues)
     {
-        if (!empty($attributeValues['region_id'])) {
+        if ($this->helperData->isRegionRequired($attributeValues['country_id'])) {
             $newRegion = $this->regionFactory->create()->load($attributeValues['region_id']);
             $attributeValues['region_code'] = $newRegion->getCode();
             $attributeValues['region'] = $newRegion->getDefaultName();
+        } else {
+            $attributeValues['region_id'] = null;
         }
 
         $regionData = [
@@ -170,7 +168,7 @@ class FormPost extends \Magento\Customer\Controller\Address
         $this->dataObjectHelper->populateWithArray(
             $region,
             $regionData,
-            \Magento\Customer\Api\Data\RegionInterface::class
+            '\Magento\Customer\Api\Data\RegionInterface'
         );
         $attributeValues['region'] = $region;
     }
@@ -224,14 +222,12 @@ class FormPost extends \Magento\Customer\Controller\Address
      *
      * @return Mapper
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getCustomerAddressMapper()
     {
         if ($this->customerAddressMapper === null) {
-            $this->customerAddressMapper = ObjectManager::getInstance()->get(
-                \Magento\Customer\Model\Address\Mapper::class
-            );
+            $this->customerAddressMapper = ObjectManager::getInstance()->get(Mapper::class);
         }
         return $this->customerAddressMapper;
     }

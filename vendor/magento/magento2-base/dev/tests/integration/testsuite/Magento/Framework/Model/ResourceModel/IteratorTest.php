@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Model\ResourceModel;
 
-class IteratorTest extends \PHPUnit\Framework\TestCase
+class IteratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\ResourceModel\Iterator
@@ -22,14 +22,14 @@ class IteratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Model\ResourceModel\Iterator::class
+            'Magento\Framework\Model\ResourceModel\Iterator'
         );
     }
 
     public function testWalk()
     {
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\ResourceModel\Store\Collection::class
+            'Magento\Store\Model\ResourceModel\Store\Collection'
         );
         $this->_model->walk($collection->getSelect(), [[$this, 'walkCallback']]);
         $this->assertGreaterThan(0, $this->_callbackCounter);

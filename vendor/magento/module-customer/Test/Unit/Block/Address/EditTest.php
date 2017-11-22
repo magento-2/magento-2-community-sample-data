@@ -1,14 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Block\Address;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -59,36 +56,36 @@ class EditTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->getMock();
 
-        $this->addressRepositoryMock = $this->getMockBuilder(\Magento\Customer\Api\AddressRepositoryInterface::class)
+        $this->addressRepositoryMock = $this->getMockBuilder('Magento\Customer\Api\AddressRepositoryInterface')
             ->getMock();
 
-        $this->customerSessionMock = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSessionMock = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods(['getAddressFormData', 'getCustomerId'])
             ->getMock();
 
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dataObjectHelperMock = $this->getMockBuilder(\Magento\Framework\Api\DataObjectHelper::class)
+        $this->dataObjectHelperMock = $this->getMockBuilder('Magento\Framework\Api\DataObjectHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressDataFactoryMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterfaceFactory::class)
+        $this->addressDataFactoryMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterfaceFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->currentCustomerMock = $this->getMockBuilder(\Magento\Customer\Helper\Session\CurrentCustomer::class)
+        $this->currentCustomerMock = $this->getMockBuilder('Magento\Customer\Helper\Session\CurrentCustomer')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->model = $this->objectManager->getObject(
-            \Magento\Customer\Block\Address\Edit::class,
+            'Magento\Customer\Block\Address\Edit',
             [
                 'request' => $this->requestMock,
                 'addressRepository' => $this->addressRepositoryMock,
@@ -113,7 +110,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $newPostedData = $postedData;
         $newPostedData['region'] = $postedData;
 
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->getMock();
 
         $this->requestMock->expects($this->once())
@@ -121,7 +118,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with('id', null)
             ->willReturn($addressId);
 
-        $addressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $addressMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterface')
             ->getMock();
         $this->addressRepositoryMock->expects($this->once())
             ->method('getById')
@@ -140,7 +137,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn($addressId);
 
-        $pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $this->pageConfigMock->expects($this->once())
@@ -162,7 +159,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $addressMock,
                 $newPostedData,
-                \Magento\Customer\Api\Data\AddressInterface::class
+                '\Magento\Customer\Api\Data\AddressInterface'
             )->willReturnSelf();
 
         $this->assertEquals($this->model, $this->model->setLayout($layoutMock));
@@ -184,7 +181,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $customerSuffix = 'suffix';
         $title = __('Add New Address');
 
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->getMock();
 
         $this->requestMock->expects($this->once())
@@ -192,7 +189,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with('id', null)
             ->willReturn($addressId);
 
-        $addressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $addressMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterface')
             ->getMock();
         $this->addressRepositoryMock->expects($this->once())
             ->method('getById')
@@ -207,13 +204,13 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->method('getCustomerId')
             ->willReturn($customerId + 1);
 
-        $newAddressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $newAddressMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterface')
             ->getMock();
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->getMock();
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
@@ -260,7 +257,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(null);
 
-        $pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $this->pageConfigMock->expects($this->once())
@@ -285,7 +282,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $customerSuffix = 'suffix';
         $title = 'title';
 
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->getMock();
 
         $this->requestMock->expects($this->once())
@@ -293,13 +290,13 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with('id', null)
             ->willReturn('');
 
-        $newAddressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $newAddressMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterface')
             ->getMock();
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->getMock();
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
@@ -342,7 +339,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with($customerSuffix)
             ->willReturnSelf();
 
-        $pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $this->pageConfigMock->expects($this->once())
@@ -370,7 +367,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $customerSuffix = 'suffix';
         $title = 'title';
 
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->getMock();
 
         $this->requestMock->expects($this->once())
@@ -385,13 +382,13 @@ class EditTest extends \PHPUnit\Framework\TestCase
                 \Magento\Framework\Exception\NoSuchEntityException::singleField('addressId', $addressId)
             );
 
-        $newAddressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $newAddressMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterface')
             ->getMock();
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->getMock();
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
@@ -434,7 +431,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->with($customerSuffix)
             ->willReturnSelf();
 
-        $pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $this->pageConfigMock->expects($this->once())

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy\Magento\Core\Block;
 
 use Magento\Framework\App\Utility\Files;
 
-class AbstractBlockTest extends \PHPUnit\Framework\TestCase
+class AbstractBlockTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetChildHtml()
     {

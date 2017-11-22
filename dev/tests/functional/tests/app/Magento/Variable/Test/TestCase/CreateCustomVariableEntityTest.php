@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,14 +20,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click 'Save' button.
  * 6. Perform all asserts.
  *
- * @group Variables
+ * @group Variables_(PS)
  * @ZephyrId MAGETWO-23293
  */
 class CreateCustomVariableEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = 'extended_acceptance_test';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

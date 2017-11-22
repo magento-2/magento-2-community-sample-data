@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Block\Code;
 
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GoogleOptimizer\Block\Code\Product
@@ -20,9 +20,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
+        $this->registry = $this->getMock('Magento\Framework\Registry', [], [], '', false);
         $this->block = $objectManager->getObject(
-            \Magento\GoogleOptimizer\Block\Code\Product::class,
+            'Magento\GoogleOptimizer\Block\Code\Product',
             ['registry' => $this->registry]
         );
     }
@@ -35,7 +35,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentities()
     {
         $productTags = ['catalog_product_1'];
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->once())->method('getIdentities')->will($this->returnValue($productTags));
         $this->registry->expects(
             $this->once()

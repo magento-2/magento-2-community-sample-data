@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Acl\Test\Unit\AclResource\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Acl\AclResource\Config\SchemaLocator
@@ -31,7 +31,7 @@ class XsdTest extends \PHPUnit\Framework\TestCase
         $this->_schemaLocator = new \Magento\Framework\Acl\AclResource\Config\SchemaLocator(
             new \Magento\Framework\Config\Dom\UrnResolver()
         );
-        $this->_xsdSchema = $this->_schemaLocator->getPerFileSchema();
+        $this->_xsdSchema = $this->_schemaLocator->getSchema();
         $this->_xsdValidator = new \Magento\Framework\TestFramework\Unit\Utility\XsdValidator();
     }
 

@@ -1,24 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 // @codingStandardsIgnoreFile
 
+/**
+ * Directory Country Resource Collection
+ */
 namespace Magento\Directory\Model\ResourceModel\Country;
 
-use Magento\Directory\Model\AllowedCountries;
-use Magento\Framework\App\ObjectManager;
-use Magento\Store\Model\ScopeInterface;
-
 /**
- * Country Resource Collection
- *
- * @api
- *
+ * Class Collection
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -59,19 +54,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $helperData;
 
     /**
-     * @var AllowedCountries
-     */
-    private $allowedCountriesReader;
-
-    /**
-     * @var string[]
-     * @since 100.1.0
-     */
-    protected $countriesWithNotRequiredStates;
-
-    /**
-     * Initialize dependencies.
-     *
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -82,7 +64,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @param \Magento\Framework\Stdlib\ArrayUtils $arrayUtils
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Framework\App\Helper\AbstractHelper $helperData
-     * @param array $countriesWithNotRequiredStates
      * @param mixed $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -98,7 +79,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         \Magento\Framework\Stdlib\ArrayUtils $arrayUtils,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Framework\App\Helper\AbstractHelper $helperData,
-        array $countriesWithNotRequiredStates = [],
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
@@ -109,7 +89,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         $this->_countryFactory = $countryFactory;
         $this->_arrayUtils = $arrayUtils;
         $this->helperData = $helperData;
-        $this->countriesWithNotRequiredStates = $countriesWithNotRequiredStates;
     }
 
     /**
@@ -120,46 +99,13 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $_foregroundCountries = [];
 
     /**
-     * Add top destinition countries to head of option array
-     *
-     * @param $emptyLabel
-     * @param $options
-     * @return array
-     */
-    private function addForegroundCountriesToOptionArray($emptyLabel, $options)
-    {
-        if ($emptyLabel !== false && count($this->_foregroundCountries) !== 0 &&
-            count($options) === count($this->_foregroundCountries)
-        ) {
-            $options[] = ['value' => '', 'label' => $emptyLabel];
-            return $options;
-        }
-        return $options;
-    }
-
-    /**
      * Define main table
      *
      * @return void
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Directory\Model\Country::class, \Magento\Directory\Model\ResourceModel\Country::class);
-    }
-
-    /**
-     * Return Allowed Countries reader
-     *
-     * @deprecated 100.1.2
-     * @return \Magento\Directory\Model\AllowedCountries
-     */
-    private function getAllowedCountriesReader()
-    {
-        if (!$this->allowedCountriesReader) {
-            $this->allowedCountriesReader = ObjectManager::getInstance()->get(AllowedCountries::class);
-        }
-
-        return $this->allowedCountriesReader;
+        $this->_init('Magento\Directory\Model\Country', 'Magento\Directory\Model\ResourceModel\Country');
     }
 
     /**
@@ -170,13 +116,16 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function loadByStore($store = null)
     {
-        $allowedCountries = $this->getAllowedCountriesReader()
-            ->getAllowedCountries(ScopeInterface::SCOPE_STORE, $store);
-
-        if (!empty($allowedCountries)) {
-            $this->addFieldToFilter("country_id", ['in' => $allowedCountries]);
+        $allowCountries = explode(',',
+            (string)$this->_scopeConfig->getValue(
+                'general/country/allow',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $store
+            )
+        );
+        if (!empty($allowCountries)) {
+            $this->addFieldToFilter("country_id", ['in' => $allowCountries]);
         }
-
         return $this;
     }
 
@@ -184,7 +133,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Loads Item By Id
      *
      * @param string $countryId
-     * @return \Magento\Directory\Model\ResourceModel\Country|null
+     * @return \Magento\Directory\Model\ResourceModel\Country
      */
     public function getItemById($countryId)
     {
@@ -193,7 +142,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                 return $country;
             }
         }
-        return null;
+        return $this->_countryFactory->create();
     }
 
     /**
@@ -261,6 +210,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function toOptionArray($emptyLabel = ' ')
     {
         $options = $this->_toOptionArray('country_id', 'name', ['title' => 'iso2_code']);
+
         $sort = [];
         foreach ($options as $data) {
             $name = (string)$this->_localeLists->getCountryTranslation($data['value']);
@@ -274,22 +224,19 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             unset($sort[$name]);
             $sort = [$name => $foregroundCountry] + $sort;
         }
-        $isRegionVisible = (bool)$this->helperData->isShowNonRequiredState();
         $options = [];
         foreach ($sort as $label => $value) {
-            $options = $this->addForegroundCountriesToOptionArray($emptyLabel, $options);
             $option = ['value' => $value, 'label' => $label];
             if ($this->helperData->isRegionRequired($value)) {
                 $option['is_region_required'] = true;
-            } else {
-                $option['is_region_visible'] = $isRegionVisible;
             }
             if ($this->helperData->isZipCodeOptional($value)) {
                 $option['is_zipcode_optional'] = true;
             }
             $options[] = $option;
         }
-        if ($emptyLabel !== false && count($options) > 0) {
+
+        if (count($options) > 0 && $emptyLabel !== false) {
             array_unshift($options, ['value' => '', 'label' => $emptyLabel]);
         }
 
@@ -309,25 +256,5 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         }
         $this->_foregroundCountries = (array)$foregroundCountries;
         return $this;
-    }
-
-    /**
-     * Get list of countries with required states
-     *
-     * @return \Magento\Directory\Model\Country[]
-     * @since 100.1.0
-     */
-    public function getCountriesWithRequiredStates()
-    {
-        $countries = [];
-        foreach ($this->getItems() as $country) {
-            /** @var \Magento\Directory\Model\Country $country  */
-            if ($country->getRegionCollection()->getSize() > 0
-                && !in_array($country->getId(), $this->countriesWithNotRequiredStates)
-            ) {
-                $countries[$country->getId()] = $country;
-            }
-        }
-        return $countries;
     }
 }

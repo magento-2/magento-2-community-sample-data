@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,14 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click "Delete Page" button.
  * 5. Perform all assertions.
  *
- * @group CMS_Content
+ * @group CMS_Content_(PS)
  * @ZephyrId MAGETWO-23291
  */
 class DeleteCmsPageEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

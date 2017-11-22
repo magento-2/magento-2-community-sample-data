@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Controller\Adminhtml\Integration;
@@ -15,7 +15,6 @@ class NewAction extends \Magento\Integration\Controller\Adminhtml\Integration
      */
     public function execute()
     {
-        $this->restoreResourceAndSaveToRegistry();
         $this->_view->loadLayout();
         $this->_setActiveMenu('Magento_Integration::system_integrations');
         $this->_addBreadcrumb(__('New Integration'), __('New Integration'));

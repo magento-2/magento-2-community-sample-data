@@ -1,12 +1,10 @@
 <?php
-namespace Braintree;
-
 /**
  * Braintree PayPalAccount module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -17,21 +15,20 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
- * @property-read string $customerId
  * @property-read string $email
  * @property-read string $token
  * @property-read string $imageUrl
  */
-class PayPalAccount extends Base
+class Braintree_PayPalAccount extends Braintree
 {
     /**
-     *  factory method: returns an instance of PayPalAccount
+     *  factory method: returns an instance of Braintree_PayPalAccount
      *  to the requesting method, with populated properties
      *
      * @ignore
-     * @return PayPalAccount
+     * @return object instance of Braintree_PayPalAccount
      */
     public static function factory($attributes)
     {
@@ -57,17 +54,17 @@ class PayPalAccount extends Base
      *
      * @access protected
      * @param array $paypalAccountAttribs array of paypalAccount data
-     * @return void
+     * @return none
      */
     protected function _initialize($paypalAccountAttribs)
     {
         // set the attributes
         $this->_attributes = $paypalAccountAttribs;
 
-        $subscriptionArray = [];
+        $subscriptionArray = array();
         if (isset($paypalAccountAttribs['subscriptions'])) {
             foreach ($paypalAccountAttribs['subscriptions'] AS $subscription) {
-                $subscriptionArray[] = Subscription::factory($subscription);
+                $subscriptionArray[] = Braintree_Subscription::factory($subscription);
             }
         }
 
@@ -82,7 +79,7 @@ class PayPalAccount extends Base
     public function  __toString()
     {
         return __CLASS__ . '[' .
-                Util::attributesToString($this->_attributes) . ']';
+                Braintree_Util::attributesToString($this->_attributes) .']';
     }
 
 
@@ -90,22 +87,21 @@ class PayPalAccount extends Base
 
     public static function find($token)
     {
-        return Configuration::gateway()->payPalAccount()->find($token);
+        return Braintree_Configuration::gateway()->payPalAccount()->find($token);
     }
 
     public static function update($token, $attributes)
     {
-        return Configuration::gateway()->payPalAccount()->update($token, $attributes);
+        return Braintree_Configuration::gateway()->payPalAccount()->update($token, $attributes);
     }
 
     public static function delete($token)
     {
-        return Configuration::gateway()->payPalAccount()->delete($token);
+        return Braintree_Configuration::gateway()->payPalAccount()->delete($token);
     }
 
     public static function sale($token, $transactionAttribs)
     {
-        return Configuration::gateway()->payPalAccount()->sale($token, $transactionAttribs);
+        return Braintree_Configuration::gateway()->payPalAccount()->sale($token, $transactionAttribs);
     }
 }
-class_alias('Braintree\PayPalAccount', 'Braintree_PayPalAccount');

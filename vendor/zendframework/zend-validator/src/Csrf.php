@@ -26,9 +26,9 @@ class Csrf extends AbstractValidator
      * Error messages
      * @var array
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::NOT_SAME => "The form submitted did not originate from the expected site",
-    ];
+    );
 
     /**
      * Actual hash used.
@@ -74,7 +74,7 @@ class Csrf extends AbstractValidator
      *
      * @param  array|Traversable $options
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
         parent::__construct($options);
 
@@ -82,7 +82,7 @@ class Csrf extends AbstractValidator
             $options = ArrayUtils::iteratorToArray($options);
         }
 
-        if (! is_array($options)) {
+        if (!is_array($options)) {
             $options = (array) $options;
         }
 
@@ -124,7 +124,7 @@ class Csrf extends AbstractValidator
         $tokenFromValue = $this->getTokenFromHash($value);
         $tokenFromHash = $this->getTokenFromHash($hash);
 
-        if (! $tokenFromValue || ! $tokenFromHash || ($tokenFromValue !== $tokenFromHash)) {
+        if (!$tokenFromValue || !$tokenFromHash || ($tokenFromValue !== $tokenFromHash)) {
             $this->error(self::NOT_SAME);
             return false;
         }
@@ -235,7 +235,7 @@ class Csrf extends AbstractValidator
     {
         return str_replace('\\', '_', __CLASS__) . '_'
             . $this->getSalt() . '_'
-            . strtr($this->getName(), ['[' => '_', ']' => '']);
+            . strtr($this->getName(), array('[' => '_', ']' => ''));
     }
 
     /**
@@ -278,7 +278,7 @@ class Csrf extends AbstractValidator
         $tokenId = $this->getTokenIdFromHash($hash);
 
         if (! $session->tokenList) {
-            $session->tokenList = [];
+            $session->tokenList = array();
         }
         $session->tokenList[$tokenId] = $token;
         $session->hash = $hash; // @todo remove this, left for BC

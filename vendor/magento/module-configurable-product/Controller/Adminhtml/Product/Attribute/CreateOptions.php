@@ -1,22 +1,21 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Attribute;
 
 use Magento\Backend\App\Action;
+use Magento\Catalog\Controller\Adminhtml\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 
 class CreateOptions extends Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
-    const ADMIN_RESOURCE = 'Magento_Catalog::products';
+    const ADMIN_RESOURCE = 'Magento_Catalog::attributes_attributes';
 
     /**
      * @var \Magento\Framework\Json\Helper\Data

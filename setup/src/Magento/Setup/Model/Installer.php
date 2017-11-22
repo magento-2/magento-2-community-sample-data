@@ -1,44 +1,44 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Model;
 
-use Magento\Backend\Setup\ConfigOptionsList as BackendConfigOptionsList;
-use Magento\Framework\App\DeploymentConfig\Reader;
 use Magento\Framework\App\DeploymentConfig\Writer;
+use Magento\Framework\App\DeploymentConfig\Reader;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\MaintenanceMode;
 use Magento\Framework\App\ResourceConnection\Config;
-use Magento\Framework\App\State\CleanupFiles;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Config\Data\ConfigData;
-use Magento\Framework\Config\File\ConfigFilePool;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Module\ModuleList\Loader as ModuleLoader;
 use Magento\Framework\Module\ModuleListInterface;
-use Magento\Framework\Setup\FilePermissions;
-use Magento\Framework\Setup\InstallDataInterface;
+use Magento\Framework\Shell;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\LoggerInterface;
-use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
-use Magento\Setup\Console\Command\InstallCommand;
-use Magento\Setup\Controller\ResponseTypeInterface;
+use Magento\Framework\Setup\InstallDataInterface;
+use Magento\Framework\Setup\UpgradeDataInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Setup\Model\ConfigModel as SetupConfigModel;
-use Magento\Setup\Module\ConnectionFactory;
 use Magento\Setup\Module\DataSetupFactory;
-use Magento\Setup\Module\Setup;
 use Magento\Setup\Module\SetupFactory;
-use Magento\Setup\Validator\DbValidator;
 use Magento\Store\Model\Store;
+use Magento\Setup\Module\ConnectionFactory;
+use Magento\Setup\Module\Setup;
+use Magento\Framework\Config\File\ConfigFilePool;
+use Magento\Framework\App\State\CleanupFiles;
+use Magento\Setup\Console\Command\InstallCommand;
+use Magento\Setup\Validator\DbValidator;
+use \Magento\Backend\Setup\ConfigOptionsList as BackendConfigOptionsList;
+use Magento\SampleData;
 
 /**
  * Class Installer contains the logic to install Magento application.
@@ -66,10 +66,10 @@ class Installer
     /**#@+
      * Instance types for schema and data handler
      */
-    const SCHEMA_INSTALL = \Magento\Framework\Setup\InstallSchemaInterface::class;
-    const SCHEMA_UPGRADE = \Magento\Framework\Setup\UpgradeSchemaInterface::class;
-    const DATA_INSTALL = \Magento\Framework\Setup\InstallDataInterface::class;
-    const DATA_UPGRADE = \Magento\Framework\Setup\UpgradeDataInterface::class;
+    const SCHEMA_INSTALL = 'Magento\Framework\Setup\InstallSchemaInterface';
+    const SCHEMA_UPGRADE = 'Magento\Framework\Setup\UpgradeSchemaInterface';
+    const DATA_INSTALL = 'Magento\Framework\Setup\InstallDataInterface';
+    const DATA_UPGRADE = 'Magento\Framework\Setup\UpgradeDataInterface';
     /**#@- */
 
     const INFO_MESSAGE = 'message';
@@ -96,7 +96,7 @@ class Installer
     /**
      * Deployment configuration reader
      *
-     * @var Reader
+     * @var Writer
      */
     private $deploymentConfigReader;
 
@@ -220,11 +220,6 @@ class Installer
     private $componentRegistrar;
 
     /**
-     * @var PhpReadinessCheck
-     */
-    private $phpReadinessCheck;
-
-    /**
      * Constructor
      *
      * @param FilePermissions $filePermissions
@@ -247,7 +242,6 @@ class Installer
      * @param DataSetupFactory $dataSetupFactory
      * @param \Magento\Framework\Setup\SampleData\State $sampleDataState
      * @param ComponentRegistrar $componentRegistrar
-     * @param PhpReadinessCheck $phpReadinessCheck
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -271,8 +265,7 @@ class Installer
         SetupFactory $setupFactory,
         DataSetupFactory $dataSetupFactory,
         \Magento\Framework\Setup\SampleData\State $sampleDataState,
-        ComponentRegistrar $componentRegistrar,
-        PhpReadinessCheck $phpReadinessCheck
+        ComponentRegistrar $componentRegistrar
     ) {
         $this->filePermissions = $filePermissions;
         $this->deploymentConfigWriter = $deploymentConfigWriter;
@@ -295,7 +288,6 @@ class Installer
         $this->dataSetupFactory = $dataSetupFactory;
         $this->sampleDataState = $sampleDataState;
         $this->componentRegistrar = $componentRegistrar;
-        $this->phpReadinessCheck = $phpReadinessCheck;
     }
 
     /**
@@ -308,7 +300,6 @@ class Installer
     public function install($request)
     {
         $script[] = ['File permissions check...', 'checkInstallationFilePermissions', []];
-        $script[] = ['Required extensions check...', 'checkExtensions', []];
         $script[] = ['Enabling Maintenance Mode...', 'setMaintenanceMode', [1]];
         $script[] = ['Installing deployment configuration...', 'installDeploymentConfig', [$request]];
         if (!empty($request[InstallCommand::INPUT_KEY_CLEANUP_DB])) {
@@ -331,8 +322,8 @@ class Installer
         $script[] = ['Post installation file permissions check...', 'checkApplicationFilePermissions', []];
         $script[] = ['Write installation date...', 'writeInstallationDate', []];
 
-        $estimatedModules = $this->createModulesConfig($request, true);
-        $total = count($script) + 4 * count(array_filter($estimatedModules));
+        $estimatedModules = $this->createModulesConfig($request);
+        $total = count($script) + 3 * count(array_filter($estimatedModules));
         $this->progress = new Installer\Progress($total, 0);
 
         $this->log->log('Starting Magento installation:');
@@ -375,16 +366,15 @@ class Installer
      * Creates modules deployment configuration segment
      *
      * @param \ArrayObject|array $request
-     * @param bool $dryRun
      * @return array
      * @throws \LogicException
      */
-    private function createModulesConfig($request, $dryRun = false)
+    private function createModulesConfig($request)
     {
         $all = array_keys($this->moduleLoader->load());
         $deploymentConfig = $this->deploymentConfigReader->load();
         $currentModules = isset($deploymentConfig[ConfigOptionsListConstants::KEY_MODULES])
-            ? $deploymentConfig[ConfigOptionsListConstants::KEY_MODULES] : [];
+            ? $deploymentConfig[ConfigOptionsListConstants::KEY_MODULES] : [] ;
         $enable = $this->readListOfModules($all, $request, self::ENABLE_MODULES);
         $disable = $this->readListOfModules($all, $request, self::DISABLE_MODULES);
         $result = [];
@@ -401,9 +391,7 @@ class Installer
                 $result[$module] = 1;
             }
         }
-        if (!$dryRun) {
-            $this->deploymentConfigWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['modules' => $result]], true);
-        }
+        $this->deploymentConfigWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['modules' => $result]], true);
         return $result;
     }
 
@@ -458,25 +446,9 @@ class Installer
      */
     public function checkInstallationFilePermissions()
     {
-        $this->throwExceptionForNotWritablePaths(
-            $this->filePermissions->getMissingWritablePathsForInstallation()
-        );
-    }
-
-    /**
-     * Check required extensions for installation
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function checkExtensions()
-    {
-        $phpExtensionsCheckResult = $this->phpReadinessCheck->checkPhpExtensions();
-        if ($phpExtensionsCheckResult['responseType'] === ResponseTypeInterface::RESPONSE_TYPE_ERROR
-            && isset($phpExtensionsCheckResult['data']['missing'])
-        ) {
-            $errorMsg = "Missing following extensions: '"
-                . implode("' '", $phpExtensionsCheckResult['data']['missing']) . "'";
+        $results = $this->filePermissions->getMissingWritableDirectoriesForInstallation();
+        if ($results) {
+            $errorMsg = "Missing write permissions to the following directories: '" . implode("' '", $results) . "'";
             throw new \Exception($errorMsg);
         }
     }
@@ -506,7 +478,6 @@ class Installer
     public function installDeploymentConfig($data)
     {
         $this->checkInstallationFilePermissions();
-        $this->createModulesConfig($data);
         $userData = is_array($data) ? $data : $data->getArrayCopy();
         $this->setupConfigModel->process($userData);
         $deploymentConfigData = $this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_CRYPT_KEY);
@@ -515,6 +486,16 @@ class Installer
         }
         // reset object manager now that there is a deployment config
         $this->objectManagerProvider->reset();
+    }
+
+    /**
+     * Get Object Manager Provider
+     *
+     * @return ObjectManagerProvider
+     */
+    public function getObjectManagerProvider()
+    {
+        return $this->objectManagerProvider;
     }
 
     /**
@@ -786,37 +767,9 @@ class Installer
         $this->assertDbConfigExists();
         $this->assertDbAccessible();
         $setup = $this->dataSetupFactory->create();
-        $this->checkFilePermissionsForDbUpgrade();
+        $this->checkInstallationFilePermissions();
         $this->log->log('Data install/update:');
         $this->handleDBSchemaData($setup, 'data');
-    }
-
-    /**
-     * Check permissions of directories that are expected to be writable for database upgrade
-     *
-     * @return void
-     * @throws \Exception If some of the required directories isn't writable
-     */
-    public function checkFilePermissionsForDbUpgrade()
-    {
-        $this->throwExceptionForNotWritablePaths(
-            $this->filePermissions->getMissingWritableDirectoriesForDbUpgrade()
-        );
-    }
-
-    /**
-     * Throws exception with appropriate message if given not empty array of paths that requires writing permission
-     *
-     * @param array $paths List of not writable paths
-     * @return void
-     * @throws \Exception If given not empty array of not writable paths
-     */
-    private function throwExceptionForNotWritablePaths(array $paths)
-    {
-        if ($paths) {
-            $errorMsg = "Missing write permissions to the following paths:" . PHP_EOL . implode(PHP_EOL, $paths);
-            throw new \Exception($errorMsg);
-        }
     }
 
     /**
@@ -835,6 +788,7 @@ class Installer
         if (!(($type === 'schema') || ($type === 'data'))) {
             throw  new \Magento\Setup\Exception("Unsupported operation type $type is requested");
         }
+
         $resource = new \Magento\Framework\Module\ModuleResource($this->context);
         $verType = $type . '-version';
         $installType = $type . '-install';
@@ -863,12 +817,12 @@ class Installer
             } elseif ($configVer) {
                 $installer = $this->getSchemaDataHandler($moduleName, $installType);
                 if ($installer) {
-                    $this->log->logInline("Installing $type... ");
+                    $this->log->logInline("Installing $type.. ");
                     $installer->install($setup, $moduleContextList[$moduleName]);
                 }
                 $upgrader = $this->getSchemaDataHandler($moduleName, $upgradeType);
                 if ($upgrader) {
-                    $this->log->logInline("Upgrading $type... ");
+                    $this->log->logInline("Upgrading $type.. ");
                     $upgrader->upgrade($setup, $moduleContextList[$moduleName]);
                 }
                 if ($type === 'schema') {
@@ -882,19 +836,15 @@ class Installer
 
         if ($type === 'schema') {
             $this->log->log('Schema post-updates:');
-            $handlerType = 'schema-recurring';
-        } elseif ($type === 'data') {
-            $this->log->log('Data post-updates:');
-            $handlerType = 'data-recurring';
-        }
-        foreach ($moduleNames as $moduleName) {
-            $this->log->log("Module '{$moduleName}':");
-            $modulePostUpdater = $this->getSchemaDataHandler($moduleName, $handlerType);
-            if ($modulePostUpdater) {
-                $this->log->logInline('Running ' . str_replace('-', ' ', $handlerType) . '...');
-                $modulePostUpdater->install($setup, $moduleContextList[$moduleName]);
+            foreach ($moduleNames as $moduleName) {
+                $this->log->log("Module '{$moduleName}':");
+                $modulePostUpdater = $this->getSchemaDataHandler($moduleName, 'schema-recurring');
+                if ($modulePostUpdater) {
+                    $this->log->logInline("Running recurring.. ");
+                    $modulePostUpdater->install($setup, $moduleContextList[$moduleName]);
+                }
+                $this->logProgress();
             }
-            $this->logProgress();
         }
     }
 
@@ -922,15 +872,15 @@ class Installer
     {
         $userConfig = new StoreConfigurationDataMapper();
         /** @var \Magento\Framework\App\State $appState */
-        $appState = $this->objectManagerProvider->get()->get(\Magento\Framework\App\State::class);
-        $appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
+        $appState = $this->objectManagerProvider->get()->get('Magento\Framework\App\State');
+        $appState->setAreaCode('setup');
         $configData = $userConfig->getConfigData($data);
         if (count($configData) === 0) {
             return;
         }
 
         /** @var \Magento\Config\Model\Config\Factory $configFactory */
-        $configFactory = $this->objectManagerProvider->get()->create(\Magento\Config\Model\Config\Factory::class);
+        $configFactory = $this->objectManagerProvider->get()->create('Magento\Config\Model\Config\Factory');
         foreach ($configData as $key => $val) {
             $configModel = $configFactory->create();
             $configModel->setDataByPath($key, $val);
@@ -1011,18 +961,17 @@ class Installer
     {
         $this->assertDbConfigExists();
         $setup = $this->setupFactory->create($this->context->getResources());
-        $adminAccount = $this->adminAccountFactory->create($setup->getConnection(), (array)$data);
+        $adminAccount = $this->adminAccountFactory->create($setup, (array)$data);
         $adminAccount->save();
     }
 
     /**
      * Updates modules in deployment configuration
      *
-     * @param bool $keepGeneratedFiles Cleanup generated classes and view files and reset ObjectManager
+     * @param bool $keepGeneratedCode Cleanup var/generation and reset ObjectManager
      * @return void
-     * @throws \Magento\Setup\Exception
      */
-    public function updateModulesSequence($keepGeneratedFiles = false)
+    public function updateModulesSequence($keepGeneratedCode = false)
     {
         $config = $this->deploymentConfig->get(ConfigOptionsListConstants::KEY_MODULES);
         if (!$config) {
@@ -1031,9 +980,10 @@ class Installer
                 . " Run 'magento setup:config:set --help' for options."
             );
         }
+
         $this->cleanCaches();
-        if (!$keepGeneratedFiles) {
-            $this->cleanupGeneratedFiles();
+        if (!$keepGeneratedCode) {
+            $this->cleanupGeneratedCode();
         }
         $this->log->log('Updating modules:');
         $this->createModulesConfig([]);
@@ -1048,16 +998,7 @@ class Installer
     {
         $this->log->log('Starting Magento uninstallation:');
 
-        try {
-            $this->cleanCaches();
-        } catch (\Exception $e) {
-            $this->log->log(
-                'Can\'t clear cache due to the following error: '
-                . $e->getMessage() . PHP_EOL
-                . 'To fully clean up your uninstallation, you must manually clear your cache.'
-            );
-        }
-
+        $this->cleanCaches();
         $this->cleanupDb();
 
         $this->log->log('File system cleanup:');
@@ -1081,7 +1022,7 @@ class Installer
     private function enableCaches()
     {
         /** @var \Magento\Framework\App\Cache\Manager $cacheManager */
-        $cacheManager = $this->objectManagerProvider->get()->create(\Magento\Framework\App\Cache\Manager::class);
+        $cacheManager = $this->objectManagerProvider->get()->create('Magento\Framework\App\Cache\Manager');
         $types = $cacheManager->getAvailableTypes();
         $enabledTypes = $cacheManager->setEnabled($types, true);
         $cacheManager->clean($enabledTypes);
@@ -1100,7 +1041,7 @@ class Installer
     private function cleanCaches()
     {
         /** @var \Magento\Framework\App\Cache\Manager $cacheManager */
-        $cacheManager = $this->objectManagerProvider->get()->get(\Magento\Framework\App\Cache\Manager::class);
+        $cacheManager = $this->objectManagerProvider->get()->get('Magento\Framework\App\Cache\Manager');
         $types = $cacheManager->getAvailableTypes();
         $cacheManager->clean($types);
         $this->log->log('Cache cleared successfully');
@@ -1181,6 +1122,26 @@ class Installer
     }
 
     /**
+     * Validates that deployment configuration exists
+     *
+     * @deprecated
+     *
+     * @throws \Magento\Setup\Exception
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
+    private function assertDeploymentConfigExists()
+    {
+        if (!$this->deploymentConfig->isAvailable()) {
+            throw new \Magento\Setup\Exception(
+                "Can't run this operation: deployment configuration is absent."
+                . " Run 'magento setup:config:set --help' for options."
+            );
+        }
+    }
+
+    /**
      * Validates that MySQL is accessible and MySQL version is supported
      *
      * @return void
@@ -1246,10 +1207,6 @@ class Installer
                 $className .= '\UpgradeData';
                 $interface = self::DATA_UPGRADE;
                 break;
-            case 'data-recurring':
-                $className .= '\RecurringData';
-                $interface = self::DATA_INSTALL;
-                break;
             default:
                 throw new \Magento\Setup\Exception("$className does not exist");
         }
@@ -1286,18 +1243,18 @@ class Installer
     }
 
     /**
-     * Clear generated/code and reset object manager
+     * Clear var/generation and reset object manager
      *
      * @return void
      */
-    private function cleanupGeneratedFiles()
+    private function cleanupGeneratedCode()
     {
         $this->log->log('File system cleanup:');
-        $messages = $this->cleanupFiles->clearCodeGeneratedFiles();
+        $messages = $this->cleanupFiles->clearCodeGeneratedClasses();
 
         // unload Magento autoloader because it may be using compiled definition
         foreach (spl_autoload_functions() as $autoloader) {
-            if (is_array($autoloader) && $autoloader[0] instanceof \Magento\Framework\Code\Generator\Autoloader) {
+            if ($autoloader[0] instanceof \Magento\Framework\Code\Generator\Autoloader) {
                 spl_autoload_unregister([$autoloader[0], $autoloader[1]]);
                 break;
             }

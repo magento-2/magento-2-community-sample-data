@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Block;
@@ -9,8 +9,6 @@ use Magento\Customer\Model\Context;
 
 /**
  * Shopping cart block
- *
- * @api
  */
 class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
 {
@@ -233,16 +231,5 @@ class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
     public function getItemsCount()
     {
         return $this->getQuote()->getItemsCount();
-    }
-
-    /**
-     * Render pagination HTML
-     *
-     * @return string
-     * @since 100.2.0
-     */
-    public function getPagerHtml()
-    {
-        return $this->getChildHtml('pager');
     }
 }

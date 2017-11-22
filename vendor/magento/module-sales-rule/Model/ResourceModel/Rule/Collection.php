@@ -1,20 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\SalesRule\Model\ResourceModel\Rule;
 
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Quote\Model\Quote\Address;
-
 /**
- * Sales Rules resource collection model.
+ * Sales Rules resource collection model
  *
- * @api
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection
 {
@@ -23,23 +18,23 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      *
      * @var array
      */
-    protected $_associatedEntitiesMap;
-
-    /**
-     * @var \Magento\SalesRule\Model\ResourceModel\Rule\DateApplier
-     * @since 100.1.0
-     */
-    protected $dateApplier;
+    protected $_associatedEntitiesMap = [
+        'website' => [
+            'associations_table' => 'salesrule_website',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'website_id',
+        ],
+        'customer_group' => [
+            'associations_table' => 'salesrule_customer_group',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'customer_group_id',
+        ],
+    ];
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
      */
     protected $_date;
-
-    /**
-     * @var Json $serializer
-     */
-    private $serializer;
 
     /**
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
@@ -49,7 +44,6 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $date
      * @param mixed $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
-     * @param Json $serializer Optional parameter for backward compatibility
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -58,13 +52,10 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $date,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        Json $serializer = null
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
         $this->_date = $date;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Json::class);
-        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
     }
 
     /**
@@ -74,56 +65,8 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      */
     protected function _construct()
     {
-        $this->_init(\Magento\SalesRule\Model\Rule::class, \Magento\SalesRule\Model\ResourceModel\Rule::class);
+        $this->_init('Magento\SalesRule\Model\Rule', 'Magento\SalesRule\Model\ResourceModel\Rule');
         $this->_map['fields']['rule_id'] = 'main_table.rule_id';
-    }
-
-    /**
-     * @param string $entityType
-     * @param string $objectField
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
-     * @since 100.1.0
-     */
-    protected function mapAssociatedEntities($entityType, $objectField)
-    {
-        if (!$this->_items) {
-            return;
-        }
-
-        $entityInfo = $this->_getAssociatedEntityInfo($entityType);
-        $ruleIdField = $entityInfo['rule_id_field'];
-        $entityIds = $this->getColumnValues($ruleIdField);
-
-        $select = $this->getConnection()->select()->from(
-            $this->getTable($entityInfo['associations_table'])
-        )->where(
-            $ruleIdField . ' IN (?)',
-            $entityIds
-        );
-
-        $associatedEntities = $this->getConnection()->fetchAll($select);
-
-        array_map(function ($associatedEntity) use ($entityInfo, $ruleIdField, $objectField) {
-            $item = $this->getItemByColumnValue($ruleIdField, $associatedEntity[$ruleIdField]);
-            $itemAssociatedValue = $item->getData($objectField) === null ? [] : $item->getData($objectField);
-            $itemAssociatedValue[] = $associatedEntity[$entityInfo['entity_id_field']];
-            $item->setData($objectField, $itemAssociatedValue);
-        }, $associatedEntities);
-    }
-
-    /**
-     * @return $this
-     * @throws \Exception
-     * @since 100.1.0
-     */
-    protected function _afterLoad()
-    {
-        $this->mapAssociatedEntities('website', 'website_ids');
-        $this->mapAssociatedEntities('customer_group', 'customer_group_ids');
-
-        $this->setFlag('add_websites_to_result', false);
-        return parent::_afterLoad();
     }
 
     /**
@@ -135,18 +78,11 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      * @param int $customerGroupId
      * @param string $couponCode
      * @param string|null $now
-     * @param Address $address allow extensions to further filter out rules based on quote address
      * @use $this->addWebsiteGroupDateFilter()
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return $this
      */
-    public function setValidationFilter(
-        $websiteId,
-        $customerGroupId,
-        $couponCode = '',
-        $now = null,
-        Address $address = null
-    ) {
+    public function setValidationFilter($websiteId, $customerGroupId, $couponCode = '', $now = null)
+    {
         if (!$this->getFlag('validation_filter')) {
             /* We need to overwrite joinLeft if coupon is applied */
             $this->getSelect()->reset();
@@ -259,9 +195,13 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
                     (int)$customerGroupId
                 ),
                 []
+            )->where(
+                'from_date is null or from_date <= ?',
+                $now
+            )->where(
+                'to_date is null or to_date >= ?',
+                $now
             );
-
-            $this->getDateApplier()->applyDate($this->getSelect(), $now);
 
             $this->addIsActiveFilter();
 
@@ -295,23 +235,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      */
     public function addAttributeInConditionFilter($attributeCode)
     {
-        $match = sprintf('%%%s%%', substr($this->serializer->serialize(['attribute' => $attributeCode]), 1, -1));
-        /**
-         * Information about conditions and actions stored in table as JSON encoded array
-         * in fields conditions_serialized and actions_serialized.
-         * If you want to find rules that contains some particular attribute, the easiest way to do so is serialize
-         * attribute code in the same way as it stored in the serialized columns and execute SQL search
-         * with like condition.
-         * Table
-         * +-------------------------------------------------------------------+
-         * |     conditions_serialized       |         actions_serialized      |
-         * +-------------------------------------------------------------------+
-         * | {..."attribute":"attr_name"...} | {..."attribute":"attr_name"...} |
-         * +---------------------------------|---------------------------------+
-         * From attribute code "attr_code", will be generated such SQL:
-         * `condition_serialized` LIKE '%"attribute":"attr_name"%'
-         *      OR `actions_serialized` LIKE '%"attribute":"attr_name"%'
-         */
+        $match = sprintf('%%%s%%', substr(serialize(['attribute' => $attributeCode]), 5, -1));
         $field = $this->_getMappedField('conditions_serialized');
         $cCond = $this->_getConditionSql($field, ['like' => $match]);
         $field = $this->_getMappedField('actions_serialized');
@@ -336,57 +260,5 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
         $this->addFieldToFilter('main_table.use_auto_generation', ['neq' => 1]);
 
         return $this;
-    }
-
-    /**
-     * Limit rules collection by specific customer group
-     *
-     * @param int $customerGroupId
-     * @return $this
-     * @since 100.1.0
-     */
-    public function addCustomerGroupFilter($customerGroupId)
-    {
-        $entityInfo = $this->_getAssociatedEntityInfo('customer_group');
-        if (!$this->getFlag('is_customer_group_joined')) {
-            $this->setFlag('is_customer_group_joined', true);
-            $this->getSelect()->join(
-                ['customer_group' => $this->getTable($entityInfo['associations_table'])],
-                $this->getConnection()
-                    ->quoteInto('customer_group.' . $entityInfo['entity_id_field'] . ' = ?', $customerGroupId)
-                . ' AND main_table.' . $entityInfo['rule_id_field'] . ' = customer_group.'
-                . $entityInfo['rule_id_field'],
-                []
-            );
-        }
-        return $this;
-    }
-
-    /**
-     * @return array
-     * @deprecated 100.1.0
-     */
-    private function getAssociatedEntitiesMap()
-    {
-        if (!$this->_associatedEntitiesMap) {
-            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap::class)
-                ->getData();
-        }
-        return $this->_associatedEntitiesMap;
-    }
-
-    /**
-     * @return DateApplier
-     * @deprecated 100.1.0
-     */
-    private function getDateApplier()
-    {
-        if (null === $this->dateApplier) {
-            $this->dateApplier = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\SalesRule\Model\ResourceModel\Rule\DateApplier::class);
-        }
-
-        return $this->dateApplier;
     }
 }

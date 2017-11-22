@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Model\Config\Structure\Element\Group;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Proxy extends \Magento\Config\Model\Config\Structure\Element\Group implements
     \Magento\Framework\ObjectManager\NoninterceptableInterface
 {
@@ -39,9 +35,7 @@ class Proxy extends \Magento\Config\Model\Config\Structure\Element\Group impleme
     protected function _getSubject()
     {
         if (!$this->_subject) {
-            $this->_subject = $this->_objectManager->create(
-                \Magento\Config\Model\Config\Structure\Element\Group::class
-            );
+            $this->_subject = $this->_objectManager->create('Magento\Config\Model\Config\Structure\Element\Group');
         }
         return $this->_subject;
     }

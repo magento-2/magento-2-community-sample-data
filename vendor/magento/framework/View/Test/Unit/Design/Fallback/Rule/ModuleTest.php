@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Design\Fallback\Rule;
@@ -10,7 +10,7 @@ use Magento\Framework\Component\ComponentRegistrarInterface;
 use \Magento\Framework\View\Design\Fallback\Rule\Module;
 use Magento\Framework\View\Design\Fallback\Rule\RuleInterface;
 
-class ModuleTest extends \PHPUnit\Framework\TestCase
+class ModuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RuleInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,9 +29,9 @@ class ModuleTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->rule = $this->getMockForAbstractClass(\Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class);
+        $this->rule = $this->getMockForAbstractClass('\Magento\Framework\View\Design\Fallback\Rule\RuleInterface');
         $this->componentRegistrar = $this->getMockForAbstractClass(
-            \Magento\Framework\Component\ComponentRegistrarInterface::class
+            '\Magento\Framework\Component\ComponentRegistrarInterface'
         );
         $this->model = new Module($this->rule, $this->componentRegistrar);
     }

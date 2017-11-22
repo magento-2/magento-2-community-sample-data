@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\SendFriend\Test\Unit\Block;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SendTest extends \PHPUnit\Framework\TestCase
+class SendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SendFriend\Block\Send
@@ -30,22 +30,22 @@ class SendTest extends \PHPUnit\Framework\TestCase
      */
     protected $requestMock;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
 
-        $this->sendfriendMock = $this->getMockBuilder(\Magento\SendFriend\Model\SendFriend::class)
+        $this->sendfriendMock = $this->getMockBuilder('Magento\SendFriend\Model\SendFriend')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->model = $objectManager->getObject(
-            \Magento\SendFriend\Block\Send::class,
+            'Magento\SendFriend\Block\Send',
             [
                 'sendfriend' => $this->sendfriendMock,
                 'urlBuilder' => $this->urlBuilderMock,

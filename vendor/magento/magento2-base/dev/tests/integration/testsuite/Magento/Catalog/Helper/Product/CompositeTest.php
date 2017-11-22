@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test Composite
  */
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Composite
@@ -27,8 +27,8 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->helper = Bootstrap::getObjectManager()->get(\Magento\Catalog\Helper\Product\Composite::class);
-        $this->registry = Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+        $this->helper = Bootstrap::getObjectManager()->get('Magento\Catalog\Helper\Product\Composite');
+        $this->registry = Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
     }
 
     protected function tearDown()
@@ -45,16 +45,9 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
      */
     public function testRenderConfigureResult()
     {
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Api\ProductRepositoryInterface::class
-        );
-        /** @var $product \Magento\Catalog\Model\Product */
-        $product = $productRepository->get('simple');
-
         $configureResult = new \Magento\Framework\DataObject();
         $configureResult->setOk(true)
-            ->setProductId($product->getId())
+            ->setProductId(1)
             ->setCurrentCustomerId(1);
 
         $this->helper->renderConfigureResult($configureResult);

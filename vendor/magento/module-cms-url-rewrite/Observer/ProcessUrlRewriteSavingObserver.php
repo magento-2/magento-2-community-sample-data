@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CmsUrlRewrite\Observer;
@@ -9,7 +9,6 @@ use Magento\Framework\Event\Observer as EventObserver;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\CmsUrlRewrite\Model\CmsPageUrlRewriteGenerator;
-use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 class ProcessUrlRewriteSavingObserver implements ObserverInterface
 {
@@ -43,14 +42,8 @@ class ProcessUrlRewriteSavingObserver implements ObserverInterface
     {
         /** @var $cmsPage \Magento\Cms\Model\Page */
         $cmsPage = $observer->getEvent()->getObject();
-
-        if ($cmsPage->dataHasChangedFor('identifier') || $cmsPage->dataHasChangedFor('store_id')) {
+        if ($cmsPage->dataHasChangedFor('identifier')) {
             $urls = $this->cmsPageUrlRewriteGenerator->generate($cmsPage);
-
-            $this->urlPersist->deleteByData([
-                UrlRewrite::ENTITY_ID => $cmsPage->getId(),
-                UrlRewrite::ENTITY_TYPE => CmsPageUrlRewriteGenerator::ENTITY_TYPE,
-            ]);
             $this->urlPersist->replace($urls);
         }
     }

@@ -1,76 +1,46 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Block\Adminhtml\Store;
 
-use Magento\Paypal\Block\Adminhtml\Store\SwitcherPlugin as StoreSwitcherBlockPlugin;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Backend\Block\Store\Switcher as StoreSwitcherBlock;
-use Magento\Framework\App\RequestInterface;
-use Magento\Paypal\Model\Config\StructurePlugin as ConfigStructurePlugin;
-
-class SwitcherPluginTest extends \PHPUnit\Framework\TestCase
+class SwitcherPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var StoreSwitcherBlockPlugin
+     * @var SwitcherPlugin
      */
-    private $plugin;
-
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
-     * @var StoreSwitcherBlock|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $subjectMock;
-
-    /**
-     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $requestMock;
+    protected $_model;
 
     protected function setUp()
     {
-        $this->subjectMock = $this->getMockBuilder(StoreSwitcherBlock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->plugin = $this->objectManagerHelper->getObject(StoreSwitcherBlockPlugin::class);
+        $this->_model = new \Magento\Paypal\Block\Adminhtml\Store\SwitcherPlugin();
     }
 
     /**
-     * @param string|null $countryParam
+     * @param null|string $countryParam
      * @param array $getUrlParams
-     *
-     * @dataProvider beforeGetUrlDataProvider
+     * @dataProvider aroundGetUrlDataProvider
      */
-    public function testBeforeGetUrl($countryParam, $getUrlParams)
+    public function testAroundGetUrl($countryParam, $getUrlParams)
     {
-        $this->requestMock->expects(static::once())
+        $subjectRequest = $this->getMockForAbstractClass('Magento\Framework\App\RequestInterface');
+        $subjectRequest->expects($this->once())
             ->method('getParam')
-            ->with(ConfigStructurePlugin::REQUEST_PARAM_COUNTRY)
-            ->willReturn($countryParam);
-        $this->subjectMock->expects(static::any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
-
-        $this->assertEquals(['', $getUrlParams], $this->plugin->beforeGetUrl($this->subjectMock, '', []));
+            ->with(\Magento\Paypal\Model\Config\StructurePlugin::REQUEST_PARAM_COUNTRY)
+            ->will($this->returnValue($countryParam));
+        $subject = $this->getMock('Magento\Backend\Block\Store\Switcher', ['getRequest'], [], '', false);
+        $subject->expects($this->any())->method('getRequest')->will($this->returnValue($subjectRequest));
+        $getUrl = function ($route, $params) {
+            return [$route, $params];
+        };
+        $this->assertEquals(['', $getUrlParams], $this->_model->aroundGetUrl($subject, $getUrl, '', []));
     }
 
-    /**
-     * @return array
-     */
-    public function beforeGetUrlDataProvider()
+    public function aroundGetUrlDataProvider()
     {
         return [
-            ['any value', [ConfigStructurePlugin::REQUEST_PARAM_COUNTRY => null]],
+            ['any value', [\Magento\Paypal\Model\Config\StructurePlugin::REQUEST_PARAM_COUNTRY => null]],
             [null, []]
         ];
     }

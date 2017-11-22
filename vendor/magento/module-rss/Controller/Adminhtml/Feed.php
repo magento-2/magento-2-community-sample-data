@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rss\Controller\Adminhtml;
@@ -12,10 +12,12 @@ namespace Magento\Rss\Controller\Adminhtml;
 abstract class Feed extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Rss::rss';
-
+    
     /**
      * @var \Magento\Rss\Model\RssManager
      */
@@ -44,7 +46,7 @@ abstract class Feed extends \Magento\Backend\App\Action
         \Magento\Rss\Model\RssFactory $rssFactory
     ) {
         parent::__construct($context);
-        $this->_objectManager->get(\Magento\Backend\Model\UrlInterface::class)->turnOffSecretKey();
+        $this->_objectManager->get('Magento\Backend\Model\UrlInterface')->turnOffSecretKey();
         $this->rssManager = $rssManager;
         $this->scopeConfig = $scopeConfig;
         $this->rssFactory = $rssFactory;

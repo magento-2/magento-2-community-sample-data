@@ -1,681 +1,529 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
+require_once realpath(dirname(__FILE__)) . '/HttpClientApi.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test;
-use Test\Setup;
-use Braintree;
-
-class PaymentMethodTest extends Setup
+class Braintree_PaymentMethodTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreate_fromVaultedCreditCardNonce()
+    function testCreate_fromVaultedCreditCardNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099'
-            ],
+            ),
             'share' => true
-        ]);
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertSame('411111', $result->paymentMethod->bin);
         $this->assertSame('1111', $result->paymentMethod->last4);
         $this->assertNotNull($result->paymentMethod->token);
         $this->assertNotNull($result->paymentMethod->imageUrl);
-        $this->assertSame($customer->id, $result->paymentMethod->customerId);
     }
 
-    public function testGatewayCreate_fromVaultedCreditCardNonce()
+    function testGatewayCreate_fromVaultedCreditCardNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099'
-            ],
+            ),
             'share' => true
-        ]);
+        ));
 
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
-        $result = $gateway->paymentMethod()->create([
+        ));
+        $result = $gateway->paymentMethod()->create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertSame('411111', $result->paymentMethod->bin);
         $this->assertSame('1111', $result->paymentMethod->last4);
         $this->assertNotNull($result->paymentMethod->token);
         $this->assertNotNull($result->paymentMethod->imageUrl);
-        $this->assertSame($customer->id, $result->paymentMethod->customerId);
     }
 
-    public function testCreate_fromFakeApplePayNonce()
+    function testCreate_fromFakeApplePayNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$applePayVisa,
-        ]);
+            'paymentMethodNonce' => Braintree_Test_Nonces::$applePayVisa
+        ));
 
         $this->assertTrue($result->success);
         $applePayCard = $result->paymentMethod;
         $this->assertNotNull($applePayCard->token);
-        $this->assertSame(Braintree\ApplePayCard::VISA, $applePayCard->cardType);
+        $this->assertSame(Braintree_ApplePayCard::VISA, $applePayCard->cardType);
         $this->assertContains("Visa ", $applePayCard->paymentInstrumentName);
-        $this->assertContains("Visa ", $applePayCard->sourceDescription);
         $this->assertTrue($applePayCard->default);
         $this->assertContains('apple_pay', $applePayCard->imageUrl);
         $this->assertTrue(intval($applePayCard->expirationMonth) > 0);
         $this->assertTrue(intval($applePayCard->expirationYear) > 0);
-        $this->assertSame($customer->id, $applePayCard->customerId);
     }
 
-    public function testCreate_fromFakeAndroidPayProxyCardNonce()
+    function testCreate_fromUnvalidatedCreditCardNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$androidPayDiscover
-        ]);
-
-        $this->assertTrue($result->success);
-        $androidPayCard = $result->paymentMethod;
-        $this->assertNotNull($androidPayCard->token);
-        $this->assertSame(Braintree\CreditCard::DISCOVER, $androidPayCard->virtualCardType);
-        $this->assertSame(Braintree\CreditCard::DISCOVER, $androidPayCard->cardType);
-        $this->assertSame("1117", $androidPayCard->virtualCardLast4);
-        $this->assertSame("1117", $androidPayCard->last4);
-        $this->assertSame(Braintree\CreditCard::VISA, $androidPayCard->sourceCardType);
-        $this->assertSame("1111", $androidPayCard->sourceCardLast4);
-        $this->assertSame("Visa 1111", $androidPayCard->sourceDescription);
-        $this->assertTrue($androidPayCard->default);
-        $this->assertContains('android_pay', $androidPayCard->imageUrl);
-        $this->assertTrue(intval($androidPayCard->expirationMonth) > 0);
-        $this->assertTrue(intval($androidPayCard->expirationYear) > 0);
-        $this->assertSame($customer->id, $androidPayCard->customerId);
-    }
-
-    public function testCreate_fromFakeAndroidPayNetworkTokenNonce()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$androidPayMasterCard
-        ]);
-
-        $this->assertTrue($result->success);
-        $androidPayCard = $result->paymentMethod;
-        $this->assertNotNull($androidPayCard->token);
-        $this->assertSame(Braintree\CreditCard::MASTER_CARD, $androidPayCard->virtualCardType);
-        $this->assertSame(Braintree\CreditCard::MASTER_CARD, $androidPayCard->cardType);
-        $this->assertSame("4444", $androidPayCard->virtualCardLast4);
-        $this->assertSame("4444", $androidPayCard->last4);
-        $this->assertSame(Braintree\CreditCard::MASTER_CARD, $androidPayCard->sourceCardType);
-        $this->assertSame("4444", $androidPayCard->sourceCardLast4);
-        $this->assertSame("MasterCard 4444", $androidPayCard->sourceDescription);
-        $this->assertTrue($androidPayCard->default);
-        $this->assertContains('android_pay', $androidPayCard->imageUrl);
-        $this->assertTrue(intval($androidPayCard->expirationMonth) > 0);
-        $this->assertTrue(intval($androidPayCard->expirationYear) > 0);
-        $this->assertSame($customer->id, $androidPayCard->customerId);
-    }
-
-    public function testCreate_fromFakeAmexExpressCheckoutCardNonce()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$amexExpressCheckout
-        ]);
-
-        $this->assertTrue($result->success);
-        $amexExpressCheckoutCard = $result->paymentMethod;
-        $this->assertInstanceOf('Braintree\AmexExpressCheckoutCard', $amexExpressCheckoutCard);
-
-        $this->assertNotNull($amexExpressCheckoutCard->token);
-        $this->assertSame(Braintree\CreditCard::AMEX, $amexExpressCheckoutCard->cardType);
-        $this->assertSame("341111", $amexExpressCheckoutCard->bin);
-        $this->assertSame("12/21", $amexExpressCheckoutCard->cardMemberExpiryDate);
-        $this->assertSame("0005", $amexExpressCheckoutCard->cardMemberNumber);
-        $this->assertSame("American Express", $amexExpressCheckoutCard->cardType);
-        $this->assertNotNull($amexExpressCheckoutCard->sourceDescription);
-        $this->assertContains(".png", $amexExpressCheckoutCard->imageUrl);
-        $this->assertTrue(intval($amexExpressCheckoutCard->expirationMonth) > 0);
-        $this->assertTrue(intval($amexExpressCheckoutCard->expirationYear) > 0);
-        $this->assertTrue($amexExpressCheckoutCard->default);
-        $this->assertSame($customer->id, $amexExpressCheckoutCard->customerId);
-        $this->assertEquals([], $amexExpressCheckoutCard->subscriptions);
-    }
-
-    public function testCreate_fromFakeVenmoAccountNonce()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create(array(
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$venmoAccount
-        ));
-
-        $this->assertTrue($result->success);
-        $venmoAccount = $result->paymentMethod;
-        $this->assertInstanceOf('Braintree\VenmoAccount', $venmoAccount);
-
-        $this->assertNotNull($venmoAccount->token);
-        $this->assertNotNull($venmoAccount->sourceDescription);
-        $this->assertContains(".png", $venmoAccount->imageUrl);
-        $this->assertTrue($venmoAccount->default);
-        $this->assertSame($customer->id, $venmoAccount->customerId);
-        $this->assertEquals(array(), $venmoAccount->subscriptions);
-        $this->assertSame("venmojoe", $venmoAccount->username);
-        $this->assertSame("Venmo-Joe-1", $venmoAccount->venmoUserId);
-    }
-
-    public function testCreate_fromUnvalidatedCreditCardNonce()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertSame('411111', $result->paymentMethod->bin);
         $this->assertSame('1111', $result->paymentMethod->last4);
-        $this->assertSame($customer->id, $result->paymentMethod->customerId);
         $this->assertNotNull($result->paymentMethod->token);
     }
 
-    public function testCreate_fromUnvalidatedFuturePaypalAccountNonce()
+    function testCreate_fromUnvalidatedFuturePaypalAccountNonce()
     {
         $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'PAYPAL_CONSENT_CODE',
                 'token' => $paymentMethodToken
-            ]
-        ]);
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertSame('jane.doe@example.com', $result->paymentMethod->email);
         $this->assertSame($paymentMethodToken, $result->paymentMethod->token);
-        $this->assertSame($customer->id, $result->paymentMethod->customerId);
     }
 
-    public function testCreate_fromUsBankAccountNonce()
+    function testCreate_fromAbstractPaymentMethodNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $result = Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
-            'paymentMethodNonce' => Test\Helper::generateValidUsBankAccountNonce()
-        ]);
-
-        $usBankAccount = $result->paymentMethod;
-        $this->assertEquals('021000021', $usBankAccount->routingNumber);
-        $this->assertEquals('1234', $usBankAccount->last4);
-        $this->assertEquals('checking', $usBankAccount->accountType);
-        $this->assertEquals('Dan Schulman', $usBankAccount->accountHolderName);
-        $this->assertRegexp('/CHASE/', $usBankAccount->bankName);
-    }
-
-    public function testCreate_fromAbstractPaymentMethodNonce()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$abstractTransactable,
-        ]);
+            'paymentMethodNonce' => Braintree_Test_Nonces::$abstractTransactable
+        ));
 
         $this->assertTrue($result->success);
         $this->assertNotNull($result->paymentMethod->token);
-        $this->assertSame($customer->id, $result->paymentMethod->customerId);
     }
 
-    public function testCreate_doesNotWorkForUnvalidatedOnetimePaypalAccountNonce()
+    function testCreate_doesNotWorkForUnvalidatedOnetimePaypalAccountNonce()
     {
         $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'access_token' => 'PAYPAL_ACCESS_TOKEN',
                 'token' => $paymentMethodToken
-            ]
-        ]);
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertFalse($result->success);
         $errors = $result->errors->forKey('paypalAccount')->errors;
-        $this->assertEquals(Braintree\Error\Codes::PAYPAL_ACCOUNT_CANNOT_VAULT_ONE_TIME_USE_PAYPAL_ACCOUNT, $errors[0]->code);
+        $this->assertEquals(Braintree_Error_Codes::PAYPAL_ACCOUNT_CANNOT_VAULT_ONE_TIME_USE_PAYPAL_ACCOUNT, $errors[0]->code);
     }
 
-    public function testCreate_handlesValidationErrorsForPayPalAccounts()
+    function testCreate_handlesValidationErrorsForPayPalAccounts()
     {
         $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'token' => $paymentMethodToken
-            ]
-        ]);
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
         $this->assertFalse($result->success);
         $errors = $result->errors->forKey('paypalAccount')->errors;
-        $this->assertEquals(Braintree\Error\Codes::PAYPAL_ACCOUNT_CANNOT_VAULT_ONE_TIME_USE_PAYPAL_ACCOUNT, $errors[0]->code);
-        $this->assertEquals(Braintree\Error\Codes::PAYPAL_ACCOUNT_CONSENT_CODE_OR_ACCESS_TOKEN_IS_REQUIRED, $errors[1]->code);
+        $this->assertEquals(Braintree_Error_Codes::PAYPAL_ACCOUNT_CANNOT_VAULT_ONE_TIME_USE_PAYPAL_ACCOUNT, $errors[0]->code);
+        $this->assertEquals(Braintree_Error_Codes::PAYPAL_ACCOUNT_CONSENT_CODE_OR_ACCESS_TOKEN_IS_REQUIRED, $errors[1]->code);
     }
 
-    public function testCreate_allowsPassingDefaultOptionWithNonce()
+    function testCreate_allowsPassingDefaultOptionWithNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $card1 = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $card1 = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
             'cardholderName' => 'Cardholder',
             'number' => '5105105105105100',
             'expirationDate' => '05/12'
-        ])->creditCard;
+        ))->creditCard;
 
         $this->assertTrue($card1->isDefault());
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce,
-            'options' => [
+            'options' => array(
                 'makeDefault' => true
-            ]
-        ]);
+            )
+        ));
 
         $card2 = $result->paymentMethod;
-        $card1 = Braintree\CreditCard::find($card1->token);
+        $card1 = Braintree_CreditCard::find($card1->token);
         $this->assertFalse($card1->isDefault());
         $this->assertTrue($card2->isDefault());
     }
 
-    public function testCreate_overridesNonceToken()
+    function testCreate_overridesNonceToken()
     {
-        $customer = Braintree\Customer::createNoValidate();
+        $customer = Braintree_Customer::createNoValidate();
         $firstToken = 'FIRST_TOKEN-' . strval(rand());
         $secondToken = 'SECOND_TOKEN-' . strval(rand());
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'token' => $firstToken,
                 'number' => '4111111111111111',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce,
             'token' => $secondToken
-        ]);
+        ));
 
         $card = $result->paymentMethod;
         $this->assertEquals($secondToken, $card->token);
     }
 
-    public function testCreateWithVerificationAmount()
+    function testCreate_respectsVerifyCardAndVerificationMerchantAccountIdWhenIncludedOutsideOfTheNonce()
     {
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4000111111111115',
                 'expirationMonth' => '11',
                 'expirationYear' => '2099',
-            ]
-        ]);
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
+            )
+        ));
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'options' => [
+            'options' => array(
                 'verifyCard' => 'true',
-                'verificationAmount' => '5.00',
-            ]
-        ]);
+                'verificationMerchantAccountId' => Braintree_TestHelper::nonDefaultMerchantAccountId()
+            )
+        ));
 
         $this->assertFalse($result->success);
-        $this->assertEquals(Braintree\Result\CreditCardVerification::PROCESSOR_DECLINED, $result->creditCardVerification->status);
-    }
-
-    public function testCreate_respectsVerifyCardAndVerificationMerchantAccountIdWhenIncludedOutsideOfTheNonce()
-    {
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
-                'number' => '4000111111111115',
-                'expirationMonth' => '11',
-                'expirationYear' => '2099',
-            ]
-        ]);
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'paymentMethodNonce' => $nonce,
-            'customerId' => $customer->id,
-            'options' => [
-                'verifyCard' => 'true',
-                'verificationMerchantAccountId' => Test\Helper::nonDefaultMerchantAccountId(),
-            ]
-        ]);
-
-        $this->assertFalse($result->success);
-        $this->assertEquals(Braintree\Result\CreditCardVerification::PROCESSOR_DECLINED, $result->creditCardVerification->status);
+        $this->assertEquals(Braintree_Result_CreditCardVerification::PROCESSOR_DECLINED, $result->creditCardVerification->status);
         $this->assertEquals('2000', $result->creditCardVerification->processorResponseCode);
         $this->assertEquals('Do Not Honor', $result->creditCardVerification->processorResponseText);
-        $this->assertEquals(Test\Helper::nonDefaultMerchantAccountId(), $result->creditCardVerification->merchantAccountId);
+        $this->assertEquals(Braintree_TestHelper::nonDefaultMerchantAccountId(), $result->creditCardVerification->merchantAccountId);
     }
 
-    public function testCreate_respectsFailOnDuplicatePaymentMethodWhenIncludedOutsideTheNonce()
+    function testCreate_respectsFailOnDuplicatePaymentMethodWhenIncludedOutsideTheNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012"
-        ]);
+        ));
         $this->assertTrue($result->success);
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
-                'number' => Braintree\Test\CreditCardNumbers::$visa,
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
+                'number' => Braintree_Test_CreditCardNumbers::$visa,
                 'expirationDate' => "05/2012"
-            ]
-        ]);
-        $updateResult = Braintree\PaymentMethod::create([
+            )
+        ));
+        $updateResult = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'options' => [
+            'options' => array(
                 'failOnDuplicatePaymentMethod' => 'true',
-            ]
-        ]);
+            )
+        ));
 
         $this->assertFalse($updateResult->success);
         $resultErrors = $updateResult->errors->deepAll();
         $this->assertEquals("81724", $resultErrors[0]->code);
     }
 
-    public function testCreate_allowsPassingABillingAddressOutsideOfTheNonce()
+    function testCreate_allowsPassingABillingAddressOutsideOfTheNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '12',
                 'expirationYear' => '2020',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Abc Way'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\CreditCard'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_CreditCard'));
         $token = $result->paymentMethod->token;
 
-        $foundCreditCard = Braintree\CreditCard::find($token);
+        $foundCreditCard = Braintree_CreditCard::find($token);
         $this->assertTrue(NULL != $foundCreditCard);
         $this->assertEquals('123 Abc Way', $foundCreditCard->billingAddress->streetAddress);
     }
 
-    public function testCreate_overridesTheBillingAddressInTheNonce()
+    function testCreate_overridesTheBillingAddressInTheNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '12',
                 'expirationYear' => '2020',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ],
-                'billingAddress' => [
+                ),
+                'billingAddress' => array(
                     'streetAddress' => '456 Xyz Way'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Abc Way'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\CreditCard'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_CreditCard'));
         $token = $result->paymentMethod->token;
 
-        $foundCreditCard = Braintree\CreditCard::find($token);
+        $foundCreditCard = Braintree_CreditCard::find($token);
         $this->assertTrue(NULL != $foundCreditCard);
         $this->assertEquals('123 Abc Way', $foundCreditCard->billingAddress->streetAddress);
     }
 
-    public function testCreate_doesNotOverrideTheBillingAddressForAVaultedCreditCard()
+    function testCreate_doesNotOverrideTheBillingAddressForAVaultedCreditCard()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
             'customerId' => $customer->id,
-            'credit_card' => [
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '12',
                 'expirationYear' => '2020',
-                'billingAddress' => [
+                'billingAddress' => array(
                     'streetAddress' => '456 Xyz Way'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Abc Way'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\CreditCard'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_CreditCard'));
         $token = $result->paymentMethod->token;
 
-        $foundCreditCard = Braintree\CreditCard::find($token);
+        $foundCreditCard = Braintree_CreditCard::find($token);
         $this->assertTrue(NULL != $foundCreditCard);
         $this->assertEquals('456 Xyz Way', $foundCreditCard->billingAddress->streetAddress);
     }
 
-    public function testCreate_allowsPassingABillingAddressIdOutsideOfTheNonce()
+    function testCreate_allowsPassingABillingAddressIdOutsideOfTheNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonce_for_new_card([
-            'credit_card' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonce_for_new_card(array(
+            'credit_card' => array(
                 'number' => '4111111111111111',
                 'expirationMonth' => '12',
                 'expirationYear' => '2020',
-                'options' => [
+                'options' => array(
                     'validate' => false
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $address = Braintree\Address::create([
+        $address = Braintree_Address::create(array(
             'customerId' => $customer->id,
             'firstName' => 'Bobby',
             'lastName' => 'Tables'
-        ])->address;
-        $result = Braintree\PaymentMethod::create([
+        ))->address;
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
             'billingAddressId' => $address->id
-        ]);
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\CreditCard'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_CreditCard'));
         $token = $result->paymentMethod->token;
 
-        $foundCreditCard = Braintree\CreditCard::find($token);
+        $foundCreditCard = Braintree_CreditCard::find($token);
         $this->assertTrue(NULL != $foundCreditCard);
         $this->assertEquals('Bobby', $foundCreditCard->billingAddress->firstName);
         $this->assertEquals('Tables', $foundCreditCard->billingAddress->lastName);
     }
 
-    public function testCreate_doesNotReturnAnErrorIfCreditCardOptionsArePresentForAPaypalNonce()
+    function testCreate_doesNotReturnAnErrorIfCreditCardOptionsArePresentForAPaypalNonce()
     {
-        $customer = Braintree\Customer::createNoValidate();
+        $customer = Braintree_Customer::createNoValidate();
         $originalToken = 'paypal-account-' . strval(rand());
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPaypalAccount([
-            'paypalAccount' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPaypalAccount(array(
+            'paypalAccount' => array(
                 'consentCode' => 'consent-code',
                 'token' => $originalToken
-            ]
-        ]);
+            )
+        ));
 
-        $result = Braintree\PaymentMethod::create([
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'options' => [
+            'options' => array(
                 'verifyCard' => 'true',
                 'failOnDuplicatePaymentMethod' => 'true',
                 'verificationMerchantAccountId' => 'Not a Real Merchant Account Id'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($result->success);
     }
 
-    public function testCreate_ignoresPassedBillingAddressParamsForPaypalAccount()
+    function testCreate_ignoresPassedBillingAddressParamsForPaypalAccount()
     {
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPaypalAccount([
-            'paypalAccount' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPaypalAccount(array(
+            'paypalAccount' => array(
                 'consentCode' => 'PAYPAL_CONSENT_CODE',
-            ]
-        ]);
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
+            )
+        ));
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Abc Way'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\PaypalAccount'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_PaypalAccount'));
         $token = $result->paymentMethod->token;
 
-        $foundPaypalAccount = Braintree\PaypalAccount::find($token);
+        $foundPaypalAccount = Braintree_PaypalAccount::find($token);
         $this->assertTrue(NULL != $foundPaypalAccount);
     }
 
-    public function testCreate_ignoresPassedBillingAddressIdForPaypalAccount()
+    function testCreate_ignoresPassedBillingAddressIdForPaypalAccount()
     {
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPaypalAccount([
-            'paypalAccount' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPaypalAccount(array(
+            'paypalAccount' => array(
                 'consentCode' => 'PAYPAL_CONSENT_CODE',
-            ]
-        ]);
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
+            )
+        ));
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id,
             'billingAddressId' => 'address_id'
-        ]);
+        ));
 
         $this->assertTrue($result->success);
-        $this->assertTrue(is_a($result->paymentMethod, 'Braintree\PaypalAccount'));
+        $this->assertTrue(is_a($result->paymentMethod,'Braintree_PaypalAccount'));
         $token = $result->paymentMethod->token;
 
-        $foundPaypalAccount = Braintree\PaypalAccount::find($token);
+        $foundPaypalAccount = Braintree_PaypalAccount::find($token);
         $this->assertTrue(NULL != $foundPaypalAccount);
     }
 
-    public function testCreate_acceptsNumberAndOtherCreditCardParameters()
+    function testCreate_acceptsNumberAndOtherCreditCardParameters()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$transactable,
+            'paymentMethodNonce' => Braintree_Test_Nonces::$transactable,
             'cardholderName' => 'Jane Doe',
             'cvv' => '123',
             'expirationMonth' => '10',
             'expirationYear' => '24',
             'number' => '4242424242424242'
-        ]);
+        ));
 
         $this->assertTrue($result->success);
         $this->assertTrue('Jane Doe' == $result->paymentMethod->cardholderName);
@@ -685,19 +533,19 @@ class PaymentMethodTest extends Setup
         $this->assertTrue('4242' == $result->paymentMethod->last4);
     }
 
-    public function testFind_returnsCreditCards()
+    function testFind_returnsCreditCards()
     {
         $paymentMethodToken = 'CREDIT_CARD_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
             'number' => '5105105105105100',
             'expirationDate' => '05/2011',
             'token' => $paymentMethodToken
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
 
-        $foundCreditCard = Braintree\PaymentMethod::find($creditCardResult->creditCard->token);
+        $foundCreditCard = Braintree_PaymentMethod::find($creditCardResult->creditCard->token);
 
         $this->assertEquals($paymentMethodToken, $foundCreditCard->token);
         $this->assertEquals('510510', $foundCreditCard->bin);
@@ -705,236 +553,161 @@ class PaymentMethodTest extends Setup
         $this->assertEquals('05/2011', $foundCreditCard->expirationDate);
     }
 
-    public function testFind_returnsCreditCardsWithSubscriptions()
+    function testFind_returnsCreditCardsWithSubscriptions()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
             'number' => '5105105105105100',
             'expirationDate' => '05/2011',
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
 
         $subscriptionId = strval(rand());
-        Braintree\Subscription::create([
+        Braintree_Subscription::create(array(
             'id' => $subscriptionId,
             'paymentMethodToken' => $creditCardResult->creditCard->token,
             'planId' => 'integration_trialless_plan',
             'price' => '1.00'
-        ]);
+        ));
 
-        $foundCreditCard = Braintree\PaymentMethod::find($creditCardResult->creditCard->token);
+        $foundCreditCard = Braintree_PaymentMethod::find($creditCardResult->creditCard->token);
         $this->assertEquals($subscriptionId, $foundCreditCard->subscriptions[0]->id);
         $this->assertEquals('integration_trialless_plan', $foundCreditCard->subscriptions[0]->planId);
         $this->assertEquals('1.00', $foundCreditCard->subscriptions[0]->price);
     }
 
-    public function testFind_returnsPayPalAccounts()
+    function testFind_returnsPayPalAccounts()
     {
         $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'PAYPAL_CONSENT_CODE',
                 'token' => $paymentMethodToken
-            ]
-        ]);
+            )
+        ));
 
-        Braintree\PaymentMethod::create([
+        Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
 
-        $foundPayPalAccount = Braintree\PaymentMethod::find($paymentMethodToken);
+        $foundPayPalAccount = Braintree_PaymentMethod::find($paymentMethodToken);
 
         $this->assertSame('jane.doe@example.com', $foundPayPalAccount->email);
         $this->assertSame($paymentMethodToken, $foundPayPalAccount->token);
     }
 
-    public function testFind_returnsUsBankAccount()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Test\Helper::generateValidUsBankAccountNonce()
-        ]);
-
-        $foundUsBankAccount = Braintree\PaymentMethod::find($result->paymentMethod->token);
-        $this->assertInstanceOf('Braintree\UsBankAccount', $foundUsBankAccount);
-        $this->assertEquals('021000021', $foundUsBankAccount->routingNumber);
-        $this->assertEquals('1234', $foundUsBankAccount->last4);
-        $this->assertEquals('checking', $foundUsBankAccount->accountType);
-        $this->assertEquals('Dan Schulman', $foundUsBankAccount->accountHolderName);
-        $this->assertRegExp('/CHASE/', $foundUsBankAccount->bankName);
-    }
-
-    public function testFind_returnsApplePayCards()
+    function testFind_returnsApplePayCards()
     {
         $paymentMethodToken = 'APPLE_PAY-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $nonce = Braintree\Test\Nonces::$applePayVisa;
-        Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $nonce = Braintree_Test_Nonces::$applePayVisa;
+        Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce,
             'token' => $paymentMethodToken
-        ]);
+        ));
 
-        $foundApplePayCard = Braintree\PaymentMethod::find($paymentMethodToken);
+        $foundApplePayCard = Braintree_PaymentMethod::find($paymentMethodToken);
 
         $this->assertSame($paymentMethodToken, $foundApplePayCard->token);
-        $this->assertInstanceOf('Braintree\ApplePayCard', $foundApplePayCard);
+        $this->assertInstanceOf('Braintree_ApplePayCard', $foundApplePayCard);
         $this->assertTrue(intval($foundApplePayCard->expirationMonth) > 0);
         $this->assertTrue(intval($foundApplePayCard->expirationYear) > 0);
     }
 
-    public function testFind_returnsAndroidPayCards()
+    function testFind_returnsCoinbaseAccounts()
     {
-        $paymentMethodToken = 'ANDROID-PAY-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $nonce = Braintree\Test\Nonces::$androidPay;
-        Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $result = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
-            'paymentMethodNonce' => $nonce,
-            'token' => $paymentMethodToken
-        ]);
-
-        $foundAndroidPayCard = Braintree\PaymentMethod::find($paymentMethodToken);
-
-        $this->assertSame($paymentMethodToken, $foundAndroidPayCard->token);
-        $this->assertInstanceOf('Braintree\AndroidPayCard', $foundAndroidPayCard);
-        $this->assertSame(Braintree\CreditCard::DISCOVER, $foundAndroidPayCard->virtualCardType);
-        $this->assertSame("1117", $foundAndroidPayCard->virtualCardLast4);
-        $this->assertSame(Braintree\CreditCard::VISA, $foundAndroidPayCard->sourceCardType);
-        $this->assertSame("1111", $foundAndroidPayCard->sourceCardLast4);
-        $this->assertSame($customer->id, $foundAndroidPayCard->customerId);
-        $this->assertTrue($foundAndroidPayCard->default);
-        $this->assertContains('android_pay', $foundAndroidPayCard->imageUrl);
-        $this->assertTrue(intval($foundAndroidPayCard->expirationMonth) > 0);
-        $this->assertTrue(intval($foundAndroidPayCard->expirationYear) > 0);
-    }
-
-    public function testFind_returnsCoinbaseAccounts()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$coinbase
-        ]);
+            'paymentMethodNonce' => Braintree_Test_Nonces::$coinbase
+        ));
 
         $this->assertTrue($result->success);
         $coinbaseAccount = $result->paymentMethod;
         $this->assertNotNull($coinbaseAccount->token);
-        $foundCoinbaseAccount = Braintree\PaymentMethod::find($coinbaseAccount->token);
-        $this->assertInstanceOf('Braintree\CoinbaseAccount', $foundCoinbaseAccount);
+        $foundCoinbaseAccount = Braintree_PaymentMethod::find($coinbaseAccount->token);
+        $this->assertInstanceOf('Braintree_CoinbaseAccount', $foundCoinbaseAccount);
         $this->assertNotNull($foundCoinbaseAccount->userId);
         $this->assertNotNull($foundCoinbaseAccount->userName);
         $this->assertNotNull($foundCoinbaseAccount->userEmail);
-        $this->assertNotNull($foundCoinbaseAccount->customerId);
     }
 
 
-    public function testFind_returnsAbstractPaymentMethods()
+    function testFind_returnsAbstractPaymentMethods()
     {
         $paymentMethodToken = 'ABSTRACT-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $nonce = Braintree\Test\Nonces::$abstractTransactable;
-        Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $nonce = Braintree_test_Nonces::$abstractTransactable;
+        Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce,
             'token' => $paymentMethodToken
-        ]);
+        ));
 
-        $foundPaymentMethod = Braintree\PaymentMethod::find($paymentMethodToken);
+        $foundPaymentMethod = Braintree_PaymentMethod::find($paymentMethodToken);
 
         $this->assertSame($paymentMethodToken, $foundPaymentMethod-> token);
     }
 
-    public function testFind_throwsIfCannotBeFound()
+    function testFind_throwsIfCannotBeFound()
     {
-        $this->setExpectedException('Braintree\Exception\NotFound');
-        Braintree\PaymentMethod::find('NON_EXISTENT_TOKEN');
+        $this->setExpectedException('Braintree_Exception_NotFound');
+        Braintree_PaymentMethod::find('NON_EXISTENT_TOKEN');
     }
 
-    public function testUpdate_updatesTheCreditCard()
+    function testUpdate_updatesTheCreditCard()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'cardholderName' => 'Original Holder',
             'customerId' => $customer->id,
             'cvv' => '123',
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012"
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
             'cardholderName' => 'New Holder',
             'cvv' => '456',
-            'number' => Braintree\Test\CreditCardNumbers::$masterCard,
+            'number' => Braintree_Test_CreditCardNumbers::$masterCard,
             'expirationDate' => "06/2013"
-        ]);
+        ));
 
         $this->assertTrue($updateResult->success);
         $this->assertSame($updateResult->paymentMethod->token, $creditCard->token);
         $updatedCreditCard = $updateResult->paymentMethod;
         $this->assertSame("New Holder", $updatedCreditCard->cardholderName);
-        $this->assertSame(substr(Braintree\Test\CreditCardNumbers::$masterCard, 0, 6), $updatedCreditCard->bin);
-        $this->assertSame(substr(Braintree\Test\CreditCardNumbers::$masterCard, -4), $updatedCreditCard->last4);
+        $this->assertSame(substr(Braintree_Test_CreditCardNumbers::$masterCard, 0, 6), $updatedCreditCard->bin);
+        $this->assertSame(substr(Braintree_Test_CreditCardNumbers::$masterCard, -4), $updatedCreditCard->last4);
         $this->assertSame("06/2013", $updatedCreditCard->expirationDate);
     }
 
-    public function testUpdate_updatesTheCoinbaseAccount()
+    function testUpdate_createsANewBillingAddressByDefault()
     {
-        $customer = Braintree\Customer::createNoValidate();
-
-        $result = Braintree\PaymentMethod::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$venmoAccount
-        ]);
-        $this->assertTrue($result->success);
-        $this->assertTrue($result->paymentMethod->isDefault());
-
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$coinbase
-        ]);
-        $this->assertTrue($result->success);
-        $coinbaseAccount = $result->paymentMethod;
-
-        $updateResult = Braintree\PaymentMethod::update($coinbaseAccount->token, [
-            'options' => [
-                'makeDefault' => 'true'
-            ]
-        ]);
-
-        $this->assertTrue($updateResult->success);
-        $this->assertSame($updateResult->paymentMethod->token, $coinbaseAccount->token);
-        $updatedCoinbaseAccount = $updateResult->paymentMethod;
-        $this->assertTrue($updatedCoinbaseAccount->isDefault());
-    }
-
-    public function testUpdate_createsANewBillingAddressByDefault()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
-            'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012",
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Nigeria Ave'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'billingAddress' => [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
+            'billingAddress' => array(
                 'region' => 'IL'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($updateResult->success);
         $updatedCreditCard = $updateResult->paymentMethod;
@@ -943,28 +716,28 @@ class PaymentMethodTest extends Setup
         $this->assertFalse($creditCard->billingAddress->id == $updatedCreditCard->billingAddress->id);
     }
 
-    public function testUpdate_updatesTheBillingAddressIfOptionIsSpecified()
+    function testUpdate_updatesTheBillingAddressIfOptionIsSpecified()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012",
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Nigeria Ave'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'billingAddress' => [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
+            'billingAddress' => array(
                 'region' => 'IL',
-                'options' => [
+                'options' => array(
                     'updateExisting' => 'true'
-                ]
-            ],
-        ]);
+                )
+            ),
+        ));
 
         $this->assertTrue($updateResult->success);
         $updatedCreditCard = $updateResult->paymentMethod;
@@ -973,31 +746,31 @@ class PaymentMethodTest extends Setup
         $this->assertTrue($creditCard->billingAddress->id == $updatedCreditCard->billingAddress->id);
     }
 
-    public function testUpdate_updatesTheCountryViaCodes()
+    function testUpdate_updatesTheCountryViaCodes()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012",
-            'billingAddress' => [
+            'billingAddress' => array(
                 'streetAddress' => '123 Nigeria Ave'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'billingAddress' => [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
+            'billingAddress' => array(
                 'countryName' => 'American Samoa',
                 'countryCodeAlpha2' => 'AS',
                 'countryCodeAlpha3' => 'ASM',
                 'countryCodeNumeric' => '016',
-                'options' => [
+                'options' => array(
                     'updateExisting' => 'true'
-                ]
-            ],
-        ]);
+                )
+            ),
+        ));
 
         $this->assertTrue($updateResult->success);
         $updatedCreditCard = $updateResult->paymentMethod;
@@ -1007,22 +780,22 @@ class PaymentMethodTest extends Setup
         $this->assertSame("016", $updatedCreditCard->billingAddress->countryCodeNumeric);
     }
 
-    public function testUpdate_canPassExpirationMonthAndExpirationYear()
+    function testUpdate_canPassExpirationMonthAndExpirationYear()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012"
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'number' => Braintree\Test\CreditCardNumbers::$masterCard,
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
+            'number' => Braintree_Test_CreditCardNumbers::$masterCard,
             'expirationMonth' => "07",
             'expirationYear' => "2011"
-        ]);
+        ));
 
         $this->assertTrue($updateResult->success);
         $this->assertSame($updateResult->paymentMethod->token, $creditCard->token);
@@ -1032,70 +805,44 @@ class PaymentMethodTest extends Setup
         $this->assertSame("07/2011", $updatedCreditCard->expirationDate);
     }
 
-    public function testUpdate_verifiesTheUpdateIfOptionsVerifyCardIsTrue()
+    function testUpdate_verifiesTheUpdateIfOptionsVerifyCardIsTrue()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'cardholderName' => 'Original Holder',
             'customerId' => $customer->id,
             'cvv' => '123',
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012"
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
             'cardholderName' => 'New Holder',
             'cvv' => '456',
-            'number' => Braintree\Test\CreditCardNumbers::$failsSandboxVerification['MasterCard'],
+            'number' => Braintree_Test_CreditCardNumbers::$failsSandboxVerification['MasterCard'],
             'expirationDate' => "06/2013",
-            'options' => [
+            'options' => array(
                 'verifyCard' => 'true'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertFalse($updateResult->success);
-        $this->assertEquals(Braintree\Result\CreditCardVerification::PROCESSOR_DECLINED, $updateResult->creditCardVerification->status);
+        $this->assertEquals(Braintree_Result_CreditCardVerification::PROCESSOR_DECLINED, $updateResult->creditCardVerification->status);
         $this->assertEquals(NULL, $updateResult->creditCardVerification->gatewayRejectionReason);
     }
 
-    public function testUpdate_canPassCustomVerificationAmount()
+    function testUpdate_canUpdateTheBillingAddress()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
-            'cardholderName' => 'Card Holder',
-            'customerId' => $customer->id,
-            'cvv' => '123',
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
-            'expirationDate' => "05/2020"
-        ]);
-        $this->assertTrue($creditCardResult->success);
-        $creditCard = $creditCardResult->creditCard;
-
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'paymentMethodNonce' => Braintree\Test\Nonces::$processorDeclinedMasterCard,
-            'options' => [
-                'verifyCard' => 'true',
-                'verificationAmount' => '2.34'
-            ]
-        ]);
-
-        $this->assertFalse($updateResult->success);
-        $this->assertEquals(Braintree\Result\CreditCardVerification::PROCESSOR_DECLINED, $updateResult->creditCardVerification->status);
-        $this->assertEquals(NULL, $updateResult->creditCardVerification->gatewayRejectionReason);
-    }
-
-    public function testUpdate_canUpdateTheBillingAddress()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'cardholderName' => 'Original Holder',
             'customerId' => $customer->id,
             'cvv' => '123',
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => '05/2012',
-            'billingAddress' => [
+            'billingAddress' => array(
                 'firstName' => 'Old First Name',
                 'lastName' => 'Old Last Name',
                 'company' => 'Old Company',
@@ -1105,13 +852,13 @@ class PaymentMethodTest extends Setup
                 'region' => 'Old State',
                 'postalCode' => '12345',
                 'countryName' => 'Canada'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
-            'billingAddress' => [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
+            'billingAddress' => array(
                 'firstName' => 'New First Name',
                 'lastName' => 'New Last Name',
                 'company' => 'New Company',
@@ -1121,8 +868,8 @@ class PaymentMethodTest extends Setup
                 'region' => 'New State',
                 'postalCode' => '56789',
                 'countryName' => 'United States of America'
-            ]
-        ]);
+            )
+        ));
 
         $this->assertTrue($updateResult->success);
         $address = $updateResult->paymentMethod->billingAddress;
@@ -1137,46 +884,46 @@ class PaymentMethodTest extends Setup
         $this->assertSame('United States of America', $address->countryName);
     }
 
-    public function testUpdate_returnsAnErrorIfInvalid()
+    function testUpdate_returnsAnErrorIfInvalid()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'cardholderName' => 'Original Holder',
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2012"
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard->token, [
+        $updateResult = Braintree_PaymentMethod::update($creditCard->token, array(
             'cardholderName' => 'New Holder',
             'number' => 'invalid',
             'expirationDate' => "05/2014",
-        ]);
+        ));
 
         $this->assertFalse($updateResult->success);
         $numberErrors = $updateResult->errors->forKey('creditCard')->onAttribute('number');
         $this->assertEquals("Credit card number must be 12-19 digits.", $numberErrors[0]->message);
     }
 
-    public function testUpdate_canUpdateTheDefault()
+    function testUpdate_canUpdateTheDefault()
     {
-        $customer = Braintree\Customer::createNoValidate();
+        $customer = Braintree_Customer::createNoValidate();
 
-        $creditCardResult1 = Braintree\CreditCard::create([
+        $creditCardResult1 = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2009"
-        ]);
+        ));
         $this->assertTrue($creditCardResult1->success);
         $creditCard1 = $creditCardResult1->creditCard;
 
-        $creditCardResult2 = Braintree\CreditCard::create([
+        $creditCardResult2 = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
             'expirationDate' => "05/2009"
-        ]);
+        ));
         $this->assertTrue($creditCardResult2->success);
         $creditCard2 = $creditCardResult2->creditCard;
 
@@ -1184,128 +931,128 @@ class PaymentMethodTest extends Setup
         $this->assertFalse($creditCard2->default);
 
 
-        $updateResult = Braintree\PaymentMethod::update($creditCard2->token, [
-            'options' => [
+        $updateResult = Braintree_PaymentMethod::update($creditCard2->token, array(
+            'options' => array(
                 'makeDefault' => 'true'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($updateResult->success);
 
-        $this->assertFalse(Braintree\PaymentMethod::find($creditCard1->token)->default);
-        $this->assertTrue(Braintree\PaymentMethod::find($creditCard2->token)->default);
+        $this->assertFalse(Braintree_PaymentMethod::find($creditCard1->token)->default);
+        $this->assertTrue(Braintree_PaymentMethod::find($creditCard2->token)->default);
     }
 
-    public function testUpdate_updatesAPaypalAccountsToken()
+    function testUpdate_updatesAPaypalAccountsToken()
     {
-        $customer = Braintree\Customer::createNoValidate();
+        $customer = Braintree_Customer::createNoValidate();
         $originalToken = 'paypal-account-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'consent-code',
                 'token' => $originalToken
-            ]
-        ]);
+            )
+        ));
 
-        $originalResult = Braintree\PaymentMethod::create([
+        $originalResult = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id
-        ]);
+        ));
         $this->assertTrue($originalResult->success);
 
         $originalPaypalAccount = $originalResult->paymentMethod;
 
         $updatedToken = 'UPDATED_TOKEN-' . strval(rand());
-        $updateResult = Braintree\PaymentMethod::update($originalPaypalAccount->token, [
+        $updateResult = Braintree_PaymentMethod::update($originalPaypalAccount->token, array(
             'token' => $updatedToken
-        ]);
+        ));
         $this->assertTrue($updateResult->success);
 
-        $updatedPaypalAccount = Braintree\PaymentMethod::find($updatedToken);
+        $updatedPaypalAccount = Braintree_PaymentMethod::find($updatedToken);
         $this->assertEquals($originalPaypalAccount->email, $updatedPaypalAccount->email);
 
-        $this->setExpectedException('Braintree\Exception\NotFound', 'payment method with token ' . $originalToken . ' not found');
-        Braintree\PaymentMethod::find($originalToken);
+        $this->setExpectedException('Braintree_Exception_NotFound', 'payment method with token ' . $originalToken . ' not found');
+        Braintree_PaymentMethod::find($originalToken);
 
     }
 
-    public function testUpdate_canMakeAPaypalAccountTheDefaultPaymentMethod()
+    function testUpdate_canMakeAPaypalAccountTheDefaultPaymentMethod()
     {
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
-            'number' => Braintree\Test\CreditCardNumbers::$visa,
-            'expirationDate' => '05/2009',
-            'options' => [
+            'number' => Braintree_Test_CreditCardNumbers::$visa,
+            'expirationDate' => "05/2009",
+            'options' => array(
                 'makeDefault' => 'true'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($creditCardResult->success);
         $creditCard = $creditCardResult->creditCard;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'consent-code',
-            ]
-        ]);
+            )
+        ));
 
-        $originalToken = Braintree\PaymentMethod::create([
+        $originalToken = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $nonce,
             'customerId' => $customer->id
-        ])->paymentMethod->token;
+        ))->paymentMethod->token;
 
-        $updateResult = Braintree\PaymentMethod::update($originalToken, [
-            'options' => [
+        $updateResult = Braintree_PaymentMethod::update($originalToken, array(
+            'options' => array(
                 'makeDefault' => 'true'
-            ]
-        ]);
+            )
+        ));
         $this->assertTrue($updateResult->success);
 
-        $updatedPaypalAccount = Braintree\PaymentMethod::find($originalToken);
+        $updatedPaypalAccount = Braintree_PaymentMethod::find($originalToken);
         $this->assertTrue($updatedPaypalAccount->default);
 
     }
 
-    public function testUpdate_returnsAnErrorIfATokenForAccountIsUsedToAttemptAnUpdate()
+    function testUpdate_returnsAnErrorIfATokenForAccountIsUsedToAttemptAnUpdate()
     {
-        $customer = Braintree\Customer::createNoValidate();
+        $customer = Braintree_Customer::createNoValidate();
         $firstToken = 'paypal-account-' . strval(rand());
         $secondToken = 'paypal-account-' . strval(rand());
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $firstNonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $firstNonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'consent-code',
                 'token' => $firstToken
-            ]
-        ]);
-        $firstResult = Braintree\PaymentMethod::create([
+            )
+        ));
+        $firstResult = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $firstNonce,
             'customerId' => $customer->id
-        ]);
+        ));
         $this->assertTrue($firstResult->success);
         $firstPaypalAccount = $firstResult->paymentMethod;
 
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $secondNonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $secondNonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'consent-code',
                 'token' => $secondToken
-            ]
-        ]);
-        $secondResult = Braintree\PaymentMethod::create([
+            )
+        ));
+        $secondResult = Braintree_PaymentMethod::create(array(
             'paymentMethodNonce' => $secondNonce,
             'customerId' => $customer->id
-        ]);
+        ));
         $this->assertTrue($secondResult->success);
         $secondPaypalAccount = $firstResult->paymentMethod;
 
 
-        $updateResult = Braintree\PaymentMethod::update($firstToken, [
+        $updateResult = Braintree_PaymentMethod::update($firstToken, array(
             'token' => $secondToken
-        ]);
+        ));
 
         $this->assertFalse($updateResult->success);
         $resultErrors = $updateResult->errors->deepAll();
@@ -1313,299 +1060,47 @@ class PaymentMethodTest extends Setup
 
     }
 
-    public function testDelete_worksWithCreditCards()
+    function testDelete_worksWithCreditCards()
     {
         $paymentMethodToken = 'CREDIT_CARD_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $creditCardResult = Braintree\CreditCard::create([
+        $customer = Braintree_Customer::createNoValidate();
+        $creditCardResult = Braintree_CreditCard::create(array(
             'customerId' => $customer->id,
             'number' => '5105105105105100',
             'expirationDate' => '05/2011',
             'token' => $paymentMethodToken
-        ]);
+        ));
         $this->assertTrue($creditCardResult->success);
 
-        Braintree\PaymentMethod::delete($paymentMethodToken);
+        Braintree_PaymentMethod::delete($paymentMethodToken);
 
-        $this->setExpectedException('Braintree\Exception\NotFound');
-        Braintree\PaymentMethod::find($paymentMethodToken);
-        self::integrationMerchantConfig();
+        $this->setExpectedException('Braintree_Exception_NotFound');
+        Braintree_PaymentMethod::find($paymentMethodToken);
+        integrationMerchantConfig();
     }
 
-    public function testDelete_worksWithPayPalAccounts()
+    function testDelete_worksWithPayPalAccounts()
     {
         $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
-        $customer = Braintree\Customer::createNoValidate();
-        $http = new HttpClientApi(Braintree\Configuration::$global);
-        $nonce = $http->nonceForPayPalAccount([
-            'paypal_account' => [
+        $customer = Braintree_Customer::createNoValidate();
+        $http = new Braintree_HttpClientApi(Braintree_Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount(array(
+            'paypal_account' => array(
                 'consent_code' => 'PAYPAL_CONSENT_CODE',
                 'token' => $paymentMethodToken
-            ]
-        ]);
+            )
+        ));
 
-        $paypalAccountResult = Braintree\PaymentMethod::create([
+        $paypalAccountResult = Braintree_PaymentMethod::create(array(
             'customerId' => $customer->id,
             'paymentMethodNonce' => $nonce
-        ]);
+        ));
         $this->assertTrue($paypalAccountResult->success);
 
-        Braintree\PaymentMethod::delete($paymentMethodToken, ['revokeAllGrants' => false]);
+        Braintree_PaymentMethod::delete($paymentMethodToken);
 
-        $this->setExpectedException('Braintree\Exception\NotFound');
-        Braintree\PaymentMethod::find($paymentMethodToken);
+        $this->setExpectedException('Braintree_Exception_NotFound');
+        Braintree_PaymentMethod::find($paymentMethodToken);
     }
 
-    public function testGrant_returnsASingleUseNonce()
-    {
-        $partnerMerchantGateway = new Braintree\Gateway([
-            'environment' => 'development',
-            'merchantId' => 'integration_merchant_public_id',
-            'publicKey' => 'oauth_app_partner_user_public_key',
-            'privateKey' => 'oauth_app_partner_user_private_key'
-        ]);
-
-        $customer = $partnerMerchantGateway->customer()->create([
-            'firstName' => 'Joe',
-            'lastName' => 'Brown'
-        ])->customer;
-        $creditCard = $partnerMerchantGateway->creditCard()->create([
-            'customerId' => $customer->id,
-            'cardholderName' => 'Adam Davis',
-            'number' => '4111111111111111',
-            'expirationDate' => '05/2009'
-        ])->creditCard;
-
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $grantResult = $grantingGateway->paymentMethod()->grant($creditCard->token);
-        $this->assertTrue($grantResult->success);
-
-        $result = Braintree\Transaction::sale([
-            'amount' => '100.00',
-            'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
-        ]);
-        $this->assertTrue($result->success);
-
-        $secondResult = Braintree\Transaction::sale([
-            'amount' => '100.00',
-            'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
-        ]);
-        $this->assertFalse($secondResult->success);
-    }
-
-    public function testGrant_returnsANonceThatIsNotVaultable()
-    {
-        $partnerMerchantGateway = new Braintree\Gateway([
-            'environment' => 'development',
-            'merchantId' => 'integration_merchant_public_id',
-            'publicKey' => 'oauth_app_partner_user_public_key',
-            'privateKey' => 'oauth_app_partner_user_private_key'
-        ]);
-
-        $customer = $partnerMerchantGateway->customer()->create([
-            'firstName' => 'Joe',
-            'lastName' => 'Brown'
-        ])->customer;
-        $creditCard = $partnerMerchantGateway->creditCard()->create([
-            'customerId' => $customer->id,
-            'cardholderName' => 'Adam Davis',
-            'number' => '4111111111111111',
-            'expirationDate' => '05/2009'
-        ])->creditCard;
-
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $grantResult = $grantingGateway->paymentMethod()->grant($creditCard->token, ['allow_vaulting' => false]);
-
-        $customer = $partnerMerchantGateway->customer()->create([
-            'firstName' => 'Bob',
-            'lastName' => 'Rob'
-        ])->customer;
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
-        ]);
-        $this->assertFalse($result->success);
-    }
-
-    public function testGrant_returnsANonceThatIsVaultable()
-    {
-        $partnerMerchantGateway = new Braintree\Gateway([
-            'environment' => 'development',
-            'merchantId' => 'integration_merchant_public_id',
-            'publicKey' => 'oauth_app_partner_user_public_key',
-            'privateKey' => 'oauth_app_partner_user_private_key'
-        ]);
-
-        $customer = $partnerMerchantGateway->customer()->create([
-            'firstName' => 'Joe',
-            'lastName' => 'Brown'
-        ])->customer;
-        $creditCard = $partnerMerchantGateway->creditCard()->create([
-            'customerId' => $customer->id,
-            'cardholderName' => 'Adam Davis',
-            'number' => '4111111111111111',
-            'expirationDate' => '05/2009'
-        ])->creditCard;
-
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $grantResult = $grantingGateway->paymentMethod()->grant($creditCard->token, ['allow_vaulting' => true]);
-
-        $customer = Braintree\Customer::create([
-            'firstName' => 'Bob',
-            'lastName' => 'Rob'
-        ])->customer;
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
-        ]);
-        $this->assertTrue($result->success);
-    }
-
-    public function testGrant_raisesAnErrorIfTokenIsNotFound()
-    {
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $this->setExpectedException('Braintree\Exception\NotFound');
-        $grantResult = $grantingGateway->paymentMethod()->grant("not_a_real_token", false);
-    }
-
-    public function testRevoke_rendersANonceUnusable()
-    {
-        $partnerMerchantGateway = new Braintree\Gateway([
-            'environment' => 'development',
-            'merchantId' => 'integration_merchant_public_id',
-            'publicKey' => 'oauth_app_partner_user_public_key',
-            'privateKey' => 'oauth_app_partner_user_private_key'
-        ]);
-
-        $customer = $partnerMerchantGateway->customer()->create([
-            'firstName' => 'Joe',
-            'lastName' => 'Brown'
-        ])->customer;
-        $creditCard = $partnerMerchantGateway->creditCard()->create([
-            'customerId' => $customer->id,
-            'cardholderName' => 'Adam Davis',
-            'number' => '4111111111111111',
-            'expirationDate' => '05/2009'
-        ])->creditCard;
-
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $grantResult = $grantingGateway->paymentMethod()->grant($creditCard->token, false);
-        $revokeResult = $grantingGateway->paymentMethod()->revoke($creditCard->token);
-        $this->assertTrue($revokeResult->success);
-
-        $result = Braintree\Transaction::sale([
-            'amount' => '100.00',
-            'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
-        ]);
-        $this->assertFalse($result->success);
-    }
-
-    public function testRevoke_raisesAnErrorIfTokenIsNotFound()
-    {
-        $oauthAppGateway = new Braintree\Gateway([
-            'clientId' =>  'client_id$development$integration_client_id',
-            'clientSecret' => 'client_secret$development$integration_client_secret'
-        ]);
-
-        $code = Test\Braintree\OAuthTestHelper::createGrant($oauthAppGateway, [
-            'merchant_public_id' => 'integration_merchant_id',
-            'scope' => 'grant_payment_method'
-        ]);
-
-        $credentials = $oauthAppGateway->oauth()->createTokenFromCode([
-            'code' => $code,
-        ]);
-
-        $grantingGateway = new Braintree\Gateway([
-            'accessToken' => $credentials->accessToken
-        ]);
-
-        $this->setExpectedException('Braintree\Exception\NotFound');
-        $grantResult = $grantingGateway->paymentMethod()->revoke("not_a_real_token");
-    }
 }

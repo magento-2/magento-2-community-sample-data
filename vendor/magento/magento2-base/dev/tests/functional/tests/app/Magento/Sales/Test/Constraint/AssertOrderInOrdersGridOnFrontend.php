@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -51,7 +51,7 @@ class AssertOrderInOrdersGridOnFrontend extends AbstractConstraint
         ];
 
         $objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $customerAccountIndex->getAccountMenuBlock()->openMenuItem('My Orders');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Observer;
@@ -12,9 +12,7 @@ use Magento\Framework\Event\ObserverInterface;
 
 class ProductUrlKeyAutogeneratorObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator
-     */
+    /** @var ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
 
     /**

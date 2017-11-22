@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -48,7 +48,7 @@ class AssertProductNotVisibleInCategory extends AbstractConstraint
         }
         \PHPUnit_Framework_Assert::assertFalse(
             $isProductVisible,
-            'Product exists on category page.'
+            'Product is exist on category page.'
         );
     }
 

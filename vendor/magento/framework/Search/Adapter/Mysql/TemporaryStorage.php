@@ -1,20 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\Search\Adapter\Mysql;
 
-use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Select;
 
-/**
- * @api
- */
 class TemporaryStorage
 {
     const TEMPORARY_TABLE_PREFIX = 'search_tmp_';
@@ -28,64 +23,28 @@ class TemporaryStorage
     private $resource;
 
     /**
-     * @var DeploymentConfig
-     */
-    private $config;
-
-    /**
      * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param DeploymentConfig|null $config
      */
-    public function __construct(
-        \Magento\Framework\App\ResourceConnection $resource,
-        DeploymentConfig $config = null
-    ) {
+    public function __construct(\Magento\Framework\App\ResourceConnection $resource)
+    {
         $this->resource = $resource;
-        $this->config = $config !== null ? $config : ObjectManager::getInstance()->get(DeploymentConfig::class);
     }
 
     /**
-     * Stores Documents
-     *
-     * @param \Magento\Framework\Api\Search\DocumentInterface[] $documents
+     * @param \ArrayIterator|\Magento\Framework\Search\Document[] $documents
      * @return Table
-     * @deprecated 100.1.0
      */
     public function storeDocuments($documents)
-    {
-        return $this->storeApiDocuments($documents);
-    }
-
-    /**
-     * Stores Api type Documents
-     *
-     * @param \Magento\Framework\Api\Search\DocumentInterface[] $documents
-     * @return Table
-     * @since 100.1.0
-     */
-    public function storeApiDocuments($documents)
     {
         $data = [];
         foreach ($documents as $document) {
             $data[] = [
                 $document->getId(),
-                $document->getCustomAttribute('score')->getValue(),
+                $document->getField('score')->getValue(),
             ];
         }
 
-        return $this->populateTemporaryTable($this->createTemporaryTable(), $data);
-    }
-
-    /**
-     * Populates temporary table
-     *
-     * @param Table $table
-     * @param array $data
-     * @return Table
-     * @throws \Zend_Db_Exception
-     */
-    private function populateTemporaryTable(Table $table, $data)
-    {
+        $table = $this->createTemporaryTable();
         if (count($data)) {
             $this->getConnection()->insertArray(
                 $table->getName(),
@@ -128,9 +87,7 @@ class TemporaryStorage
         $connection = $this->getConnection();
         $tableName = $this->resource->getTableName(str_replace('.', '_', uniqid(self::TEMPORARY_TABLE_PREFIX, true)));
         $table = $connection->newTable($tableName);
-        if ($this->config->get('db/connection/indexer/persistent')) {
-            $connection->dropTemporaryTable($table->getName());
-        }
+        $connection->dropTemporaryTable($table->getName());
         $table->addColumn(
             self::FIELD_ENTITY_ID,
             Table::TYPE_INTEGER,

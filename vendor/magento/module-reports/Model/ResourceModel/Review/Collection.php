@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Review;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Review\Model\ResourceModel\Review\Collection
 {
     /**
@@ -24,7 +20,7 @@ class Collection extends \Magento\Review\Model\ResourceModel\Review\Collection
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Review\Model\Review::class, \Magento\Review\Model\ResourceModel\Review::class);
+        $this->_init('Magento\Review\Model\Review', 'Magento\Review\Model\ResourceModel\Review');
     }
 
     /**

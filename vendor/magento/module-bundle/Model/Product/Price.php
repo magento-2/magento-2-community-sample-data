@@ -1,19 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Bundle\Model\Product;
 
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
 
 /**
- * @api
+ * Bundle Price Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Price extends \Magento\Catalog\Model\Product\Type\Price
 {
@@ -42,14 +40,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     protected $_catalogData = null;
 
     /**
-     * Serializer interface instance.
-     *
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * Constructor
+     * Price constructor.
      *
      * @param \Magento\CatalogRule\Model\ResourceModel\RuleFactory $ruleFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
@@ -61,8 +52,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      * @param \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $config
      * @param \Magento\Catalog\Helper\Data $catalogData
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @param ProductTierPriceExtensionFactory|null $tierPriceExtensionFactory
+     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -75,13 +65,9 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         GroupManagementInterface $groupManagement,
         \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
-        \Magento\Catalog\Helper\Data $catalogData,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
+        \Magento\Catalog\Helper\Data $catalogData
     ) {
         $this->_catalogData = $catalogData;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         parent::__construct(
             $ruleFactory,
             $storeManager,
@@ -91,8 +77,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
             $priceCurrency,
             $groupManagement,
             $tierPriceFactory,
-            $config,
-            $tierPriceExtensionFactory
+            $config
         );
     }
 
@@ -169,8 +154,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     {
         $customOption = $product->getCustomOption('bundle_selection_ids');
         if ($customOption) {
-            $selectionIds = $this->serializer->unserialize($customOption->getValue());
-            if (is_array($selectionIds) && !empty($selectionIds)) {
+            $selectionIds = unserialize($customOption->getValue());
+            if (!empty($selectionIds) && is_array($selectionIds)) {
                 return $selectionIds;
             }
         }
@@ -198,9 +183,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         $finalPrice = $this->_applyOptionsPrice($product, $qty, $finalPrice);
         $finalPrice += $this->getTotalBundleItemsPrice($product, $qty);
 
-        $finalPrice = max(0, $finalPrice);
         $product->setFinalPrice($finalPrice);
-        return $finalPrice;
+        return max(0, $product->getData('final_price'));
     }
 
     /**
@@ -344,8 +328,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
                             }
 
                             $multiTypes = [
-                                \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_CHECKBOX,
-                                \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_MULTIPLE,
+                                \Magento\Catalog\Model\Product\Option::OPTION_TYPE_CHECKBOX,
+                                \Magento\Catalog\Model\Product\Option::OPTION_TYPE_MULTIPLE,
                             ];
 
                             if (in_array($customOption->getType(), $multiTypes)) {
@@ -548,10 +532,6 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
             $prevGroup = $allCustomersGroupId;
 
             foreach ($prices as $price) {
-                if (empty($price['percentage_value'])) {
-                    // can use only percentage tier price
-                    continue;
-                }
                 if ($price['cust_group'] != $custGroup && $price['cust_group'] != $allCustomersGroupId) {
                     // tier not for current customer group nor is for all groups
                     continue;
@@ -572,8 +552,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
                     continue;
                 }
 
-                if ($price['percentage_value'] > $prevPrice) {
-                    $prevPrice = $price['percentage_value'];
+                if ($price['website_price'] > $prevPrice) {
+                    $prevPrice = $price['website_price'];
                     $prevQty = $price['price_qty'];
                     $prevGroup = $price['cust_group'];
                 }

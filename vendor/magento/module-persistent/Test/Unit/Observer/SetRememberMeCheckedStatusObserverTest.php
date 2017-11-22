@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Persistent\Test\Unit\Observer;
 
-class SetRememberMeCheckedStatusObserverTest extends \PHPUnit\Framework\TestCase
+class SetRememberMeCheckedStatusObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\SetRememberMeCheckedStatusObserver
@@ -46,17 +46,14 @@ class SetRememberMeCheckedStatusObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->helperMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
+        $this->requestMock = $this->getMock('\Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->helperMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
+        $this->sessionHelperMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
         $checkoutMethods = ['setRememberMeChecked', '__wakeUp'];
-        $this->checkoutSessionMock = $this->createPartialMock(
-            \Magento\Checkout\Model\Session::class,
-            $checkoutMethods
-        );
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $this->checkoutSessionMock = $this->getMock('Magento\Checkout\Model\Session', $checkoutMethods, [], '', false);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $eventMethods = ['getRequest', '__wakeUp'];
-        $this->eventManagerMock = $this->createPartialMock(\Magento\Framework\Event::class, $eventMethods);
+        $this->eventManagerMock = $this->getMock('\Magento\Framework\Event', $eventMethods, [], '', false);
         $this->model = new \Magento\Persistent\Observer\SetRememberMeCheckedStatusObserver(
             $this->helperMock,
             $this->sessionHelperMock,

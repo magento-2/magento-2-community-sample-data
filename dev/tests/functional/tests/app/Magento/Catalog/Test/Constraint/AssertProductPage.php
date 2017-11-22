@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Test\Constraint;
 
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
+use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
 use Magento\Mtf\Client\BrowserInterface;
 use Magento\Mtf\Constraint\AbstractAssertForm;
 use Magento\Mtf\Fixture\FixtureInterface;
@@ -20,21 +21,16 @@ class AssertProductPage extends AbstractAssertForm
     /**
      * Product view block on frontend page
      *
-     * @var \Magento\Catalog\Test\Block\Product\View
+     * @var \Magento\ConfigurableProduct\Test\Block\Product\View
      */
     protected $productView;
 
     /**
      * Product fixture
      *
-     * @var FixtureInterface
+     * @var ConfigurableProduct
      */
     protected $product;
-
-    /**
-     * @var CatalogProductView
-     */
-    protected $pageView;
 
     /**
      * Assert that displayed product data on product page(front-end) equals passed from fixture:
@@ -58,7 +54,6 @@ class AssertProductPage extends AbstractAssertForm
         $browser->open($_ENV['app_frontend_url'] . $product->getUrlKey() . '.html');
 
         $this->product = $product;
-        $this->pageView = $catalogProductView;
         $this->productView = $catalogProductView->getViewBlock();
 
         $errors = $this->verify();
@@ -88,24 +83,20 @@ class AssertProductPage extends AbstractAssertForm
     }
 
     /**
-     * Verify displayed product name on Storefront product page equals to the passed from fixture
+     * Verify displayed product name on product page(front-end) equals passed from fixture
      *
      * @return string|null
      */
     protected function verifyName()
     {
-        $expectedName = $this->product->getName();
-        try {
-            $actualName = $this->productView->getProductName();
-        } catch (\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e) {
-            return "Could not find product '{$this->product->getName()}' name on the page.\n" . $e->getMessage();
-        }
+        $fixtureProductName = $this->product->getName();
+        $formProductName = $this->productView->getProductName();
 
-        if ($expectedName == $actualName) {
+        if ($fixtureProductName == $formProductName) {
             return null;
         }
-        return "Product name on Storefront product '{$this->product->getName()}' page is unexpected. "
-        . "Actual: {$actualName}, expected: {$expectedName}.";
+        return "Displayed product name on product page(front-end) not equals passed from fixture. "
+        . "Actual: {$formProductName}, expected: {$fixtureProductName}.";
     }
 
     /**
@@ -120,15 +111,12 @@ class AssertProductPage extends AbstractAssertForm
         }
 
         $priceBlock = $this->productView->getPriceBlock();
-        if (!$priceBlock->isVisible()) {
-            return "Price block for '{$this->product->getName()}' product' is not visible.";
-        }
-        $actualPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
-        $expectedPrice = number_format($this->product->getPrice(), 2, '.', '');
+        $formPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
+        $fixturePrice = number_format($this->product->getPrice(), 2, '.', '');
 
-        if ($expectedPrice != $actualPrice) {
-            return "Displayed product price on Storefront product '{$this->product->getName()}' page is unexpected. "
-                . "Actual: {$actualPrice}, expected: {$expectedPrice}.";
+        if ($fixturePrice != $formPrice) {
+            return "Displayed product price on product page(front-end) not equals passed from fixture. "
+                . "Actual: {$fixturePrice}, expected: {$formPrice}.";
         }
         return null;
     }
@@ -143,18 +131,14 @@ class AssertProductPage extends AbstractAssertForm
         if (!$this->product->hasData('special_price')) {
             return null;
         }
-        $expectedSpecialPrice = $this->product->getSpecialPrice();
-        $expectedSpecialPrice = number_format($expectedSpecialPrice, 2);
-        $priceBlock = $this->productView->getPriceBlock();
-        if (!$priceBlock->isVisible()) {
-            return "Price block for '{$this->product->getName()}' product' is not visible.";
-        }
-        $actualSpecialPrice = $priceBlock->getSpecialPrice();
-        if ($expectedSpecialPrice == $actualSpecialPrice) {
+        $fixtureProductSpecialPrice = $this->product->getSpecialPrice();
+        $fixtureProductSpecialPrice = number_format($fixtureProductSpecialPrice, 2);
+        $formProductSpecialPrice = $this->productView->getPriceBlock()->getSpecialPrice();
+        if ($fixtureProductSpecialPrice == $formProductSpecialPrice) {
             return null;
         }
-        return "Displayed product special price on Storefront product '{$this->product->getName()}' page is unexpected."
-            . "Actual: {$actualSpecialPrice}, expected: {$expectedSpecialPrice}.";
+        return "Displayed product special price on product page(front-end) not equals passed from fixture. "
+            . "Actual: {$formProductSpecialPrice}, expected: {$fixtureProductSpecialPrice}.";
     }
 
     /**
@@ -164,18 +148,14 @@ class AssertProductPage extends AbstractAssertForm
      */
     protected function verifySku()
     {
-        $expectedSku = $this->product->getSku();
-        try {
-            $actualSku = $this->productView->getProductSku();
-        } catch (\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e) {
-            return "Could not find product {$this->product->getName()}' SKU on the page.\n" . $e->getMessage();
-        }
+        $fixtureProductSku = $this->product->getSku();
+        $formProductSku = $this->productView->getProductSku();
 
-        if ($expectedSku === null || $expectedSku == $actualSku) {
+        if ($fixtureProductSku === null || $fixtureProductSku == $formProductSku) {
             return null;
         }
-        return "Displayed product SKU on Storefront product '{$this->product->getName()}' page is unexpected. "
-            . "Actual: {$actualSku}, expected: {$expectedSku}.";
+        return "Displayed product sku on product page(front-end) not equals passed from fixture. "
+            . "Actual: {$formProductSku}, expected: {$fixtureProductSku}.";
     }
 
     /**
@@ -185,14 +165,14 @@ class AssertProductPage extends AbstractAssertForm
      */
     protected function verifyDescription()
     {
-        $expectedDescription = $this->product->getDescription();
-        $actualDescription = $this->productView->getProductDescription();
+        $fixtureProductDescription = $this->product->getDescription();
+        $formProductDescription = $this->productView->getProductDescription();
 
-        if ($expectedDescription === null || $expectedDescription == $actualDescription) {
+        if ($fixtureProductDescription == $formProductDescription) {
             return null;
         }
-        return "Displayed product description on Storefront product '{$this->product->getName()}' page is unexpected. "
-            . "Actual: {$actualDescription}, expected: {$expectedDescription}.";
+        return "Displayed product description on product page(front-end) not equals passed from fixture. "
+            . "Actual: {$formProductDescription}, expected: {$fixtureProductDescription}.";
     }
 
     /**
@@ -202,14 +182,14 @@ class AssertProductPage extends AbstractAssertForm
      */
     protected function verifyShortDescription()
     {
-        $expected = $this->product->getShortDescription();
-        $actual = $this->productView->getProductShortDescription();
+        $fixtureProductShortDescription = $this->product->getShortDescription();
+        $formProductShortDescription = $this->productView->getProductShortDescription();
 
-        if ($expected === null || $expected == $actual) {
+        if ($fixtureProductShortDescription == $formProductShortDescription) {
             return null;
         }
-        return "Displayed short description on Storefront product '{$this->product->getName()}' page is unexpected. "
-            . "Actual: {$actual}, expected: {$expected}.";
+        return "Displayed product short description on product page(front-end) not equals passed from fixture. "
+            . "Actual: {$formProductShortDescription}, expected: {$fixtureProductShortDescription}.";
     }
 
     /**

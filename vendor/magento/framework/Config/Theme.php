@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,9 +9,8 @@
  */
 namespace Magento\Framework\Config;
 
-/**
- * @api
- */
+use Magento\Framework\Config\Composer\Package;
+
 class Theme
 {
     /**
@@ -26,9 +25,7 @@ class Theme
      */
     protected $_data;
 
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver
-     */
+    /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolver;
 
     /**

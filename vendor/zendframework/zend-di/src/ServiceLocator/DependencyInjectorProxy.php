@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -37,7 +37,7 @@ class DependencyInjectorProxy extends Di
      * {@inheritDoc}
      * @return GeneratorInstance
      */
-    public function get($name, array $params = [])
+    public function get($name, array $params = array())
     {
         return parent::get($name, $params);
     }
@@ -46,7 +46,7 @@ class DependencyInjectorProxy extends Di
      * {@inheritDoc}
      * @return GeneratorInstance
      */
-    public function newInstance($name, array $params = [], $isShared = true)
+    public function newInstance($name, array $params = array(), $isShared = true)
     {
         $instance = parent::newInstance($name, $params, $isShared);
 
@@ -70,13 +70,13 @@ class DependencyInjectorProxy extends Di
      */
     public function createInstanceViaConstructor($class, $params, $alias = null)
     {
-        $callParameters = [];
+        $callParameters = array();
 
         if ($this->di->definitions->hasMethod($class, '__construct')
             && (count($this->di->definitions->getMethodParameters($class, '__construct')) > 0)
         ) {
             $callParameters = $this->resolveMethodParameters($class, '__construct', $params, $alias, true, true);
-            $callParameters = $callParameters ?: [];
+            $callParameters = $callParameters ?: array();
         }
 
         return new GeneratorInstance($class, $alias, '__construct', $callParameters);
@@ -106,12 +106,12 @@ class DependencyInjectorProxy extends Di
         $class  = $callback[0];
         $method = $callback[1];
 
-        $callParameters = [];
+        $callParameters = array();
         if ($this->di->definitions->hasMethod($class, $method)) {
             $callParameters = $this->resolveMethodParameters($class, $method, $params, $alias, true, true);
         }
 
-        $callParameters = $callParameters ?: [];
+        $callParameters = $callParameters ?: array();
 
         return new GeneratorInstance(null, $alias, $callback, $callParameters);
     }
@@ -121,10 +121,10 @@ class DependencyInjectorProxy extends Di
      */
     public function handleInjectionMethodForObject($class, $method, $params, $alias, $isRequired)
     {
-        return [
+        return array(
             'method' => $method,
             'params' =>  $this->resolveMethodParameters($class, $method, $params, $alias, $isRequired),
-        ];
+        );
     }
 
     /**
@@ -141,10 +141,10 @@ class DependencyInjectorProxy extends Di
         $callParameters = $this->resolveMethodParameters($methodClass, $method, $params, $alias, $methodIsRequired);
 
         if ($callParameters !== false) {
-            $instance->addMethod([
+            $instance->addMethod(array(
                 'method' => $method,
                 'params' => $callParameters,
-            ]);
+            ));
 
             return true;
         }

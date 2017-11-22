@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,14 +8,13 @@ namespace Magento\Customer\Api\Data;
 
 /**
  * Interface for customer address search results.
- * @api
- * @since 100.0.2
  */
 interface AddressSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {
     /**
      * Get customer addresses list.
      *
+     * @api
      * @return \Magento\Customer\Api\Data\AddressInterface[]
      */
     public function getItems();
@@ -23,6 +22,7 @@ interface AddressSearchResultsInterface extends \Magento\Framework\Api\SearchRes
     /**
      * Set customer addresses list.
      *
+     * @api
      * @param \Magento\Customer\Api\Data\AddressInterface[] $items
      * @return $this
      */

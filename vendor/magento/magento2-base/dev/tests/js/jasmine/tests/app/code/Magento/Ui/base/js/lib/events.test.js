@@ -1,9 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/* eslint-disable max-nested-callbacks */
 define([
     'Magento_Ui/js/lib/core/events'
 ], function (EventBus) {

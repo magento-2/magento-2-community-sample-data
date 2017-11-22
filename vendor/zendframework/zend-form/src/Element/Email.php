@@ -22,9 +22,9 @@ class Email extends Element implements InputProviderInterface
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'email',
-    ];
+    );
 
     /**
      * @var ValidatorInterface
@@ -50,9 +50,9 @@ class Email extends Element implements InputProviderInterface
                       ? $this->attributes['multiple'] : null;
 
             if (true === $multiple || 'multiple' === $multiple) {
-                $this->validator = new ExplodeValidator([
+                $this->validator = new ExplodeValidator(array(
                     'validator' => $emailValidator,
-                ]);
+                ));
             } else {
                 $this->validator = $emailValidator;
             }
@@ -125,15 +125,15 @@ class Email extends Element implements InputProviderInterface
      */
     public function getInputSpecification()
     {
-        return [
+        return array(
             'name' => $this->getName(),
             'required' => true,
-            'filters' => [
-                ['name' => 'Zend\Filter\StringTrim'],
-            ],
-            'validators' => [
+            'filters' => array(
+                array('name' => 'Zend\Filter\StringTrim'),
+            ),
+            'validators' => array(
                 $this->getValidator(),
-            ],
-        ];
+            ),
+        );
     }
 }

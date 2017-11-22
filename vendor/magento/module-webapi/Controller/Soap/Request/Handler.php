@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Controller\Soap\Request;
@@ -8,7 +8,7 @@ namespace Magento\Webapi\Controller\Soap\Request;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Framework\Api\MetadataObjectInterface;
 use Magento\Framework\Api\SimpleDataObjectConverter;
-use Magento\Framework\Webapi\Authorization;
+use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Webapi\ServiceInputProcessor;
@@ -29,44 +29,28 @@ class Handler
 {
     const RESULT_NODE_NAME = 'result';
 
-    /**
-     * @var \Magento\Framework\Webapi\Request
-     */
+    /** @var SoapRequest */
     protected $_request;
 
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $_objectManager;
 
-    /**
-     * @var \Magento\Webapi\Model\Soap\Config
-     */
+    /** @var SoapConfig */
     protected $_apiConfig;
 
-    /**
-     * @var \Magento\Framework\Webapi\Authorization
-     */
-    protected $authorization;
+    /** @var AuthorizationInterface */
+    protected $_authorization;
 
-    /**
-     * @var \Magento\Framework\Api\SimpleDataObjectConverter
-     */
+    /** @var SimpleDataObjectConverter */
     protected $_dataObjectConverter;
 
-    /**
-     * @var \Magento\Framework\Webapi\ServiceInputProcessor
-     */
+    /** @var ServiceInputProcessor */
     protected $serviceInputProcessor;
 
-    /**
-     * @var \Magento\Framework\Reflection\DataObjectProcessor
-     */
+    /** @var DataObjectProcessor */
     protected $_dataObjectProcessor;
 
-    /**
-     * @var \Magento\Framework\Reflection\MethodsMap
-     */
+    /** @var MethodsMap */
     protected $methodsMapProcessor;
 
     /**
@@ -75,7 +59,7 @@ class Handler
      * @param SoapRequest $request
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param SoapConfig $apiConfig
-     * @param Authorization $authorization
+     * @param AuthorizationInterface $authorization
      * @param SimpleDataObjectConverter $dataObjectConverter
      * @param ServiceInputProcessor $serviceInputProcessor
      * @param DataObjectProcessor $dataObjectProcessor
@@ -85,7 +69,7 @@ class Handler
         SoapRequest $request,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         SoapConfig $apiConfig,
-        Authorization $authorization,
+        AuthorizationInterface $authorization,
         SimpleDataObjectConverter $dataObjectConverter,
         ServiceInputProcessor $serviceInputProcessor,
         DataObjectProcessor $dataObjectProcessor,
@@ -94,7 +78,7 @@ class Handler
         $this->_request = $request;
         $this->_objectManager = $objectManager;
         $this->_apiConfig = $apiConfig;
-        $this->authorization = $authorization;
+        $this->_authorization = $authorization;
         $this->_dataObjectConverter = $dataObjectConverter;
         $this->serviceInputProcessor = $serviceInputProcessor;
         $this->_dataObjectProcessor = $dataObjectProcessor;
@@ -123,10 +107,18 @@ class Handler
             throw new WebapiException(__("Operation allowed only in HTTPS"));
         }
 
-        if (!$this->authorization->isAllowed($serviceMethodInfo[ServiceMetadata::KEY_ACL_RESOURCES])) {
+        $isAllowed = true;
+        foreach ($serviceMethodInfo[ServiceMetadata::KEY_ACL_RESOURCES] as $resource) {
+            if (!$this->_authorization->isAllowed($resource)) {
+                $isAllowed = false;
+                break;
+            }
+        }
+
+        if (!$isAllowed) {
             throw new AuthorizationException(
                 __(
-                    'Consumer is not authorized to access %resources',
+                    AuthorizationException::NOT_AUTHORIZED,
                     ['resources' => implode(', ', $serviceMethodInfo[ServiceMetadata::KEY_ACL_RESOURCES])]
                 )
             );
@@ -173,11 +165,7 @@ class Handler
         } elseif (is_array($data)) {
             $dataType = substr($dataType, 0, -2);
             foreach ($data as $key => $value) {
-                if ($value instanceof $dataType
-                    // the following two options are supported for backward compatibility
-                    || $value instanceof ExtensibleDataInterface
-                    || $value instanceof MetadataObjectInterface
-                ) {
+                if ($value instanceof ExtensibleDataInterface || $value instanceof MetadataObjectInterface) {
                     $result[] = $this->_dataObjectConverter
                         ->convertKeysToCamelCase($this->_dataObjectProcessor->buildOutputDataArray($value, $dataType));
                 } else {

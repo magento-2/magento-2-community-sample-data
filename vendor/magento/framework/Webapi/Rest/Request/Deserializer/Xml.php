@@ -2,7 +2,7 @@
 /**
  * XML deserializer of REST request content.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Rest\Request\Deserializer;
@@ -12,14 +12,10 @@ use Magento\Framework\Phrase;
 
 class Xml implements \Magento\Framework\Webapi\Rest\Request\DeserializerInterface
 {
-    /**
-     * @var \Magento\Framework\Xml\Parser
-     */
+    /** @var \Magento\Framework\Xml\Parser */
     protected $_xmlParser;
 
-    /**
-     * @var \Magento\Framework\App\State
-     */
+    /** @var State */
     protected $_appState;
 
     /**

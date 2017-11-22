@@ -1,12 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 use Magento\Setup\Mvc\Bootstrap\InitParamListener;
-use Zend\Mvc\Service\DiAbstractServiceFactoryFactory;
-use Zend\ServiceManager\Di\DiAbstractServiceFactory;
 
 return [
     'modules' => [
@@ -20,17 +18,10 @@ return [
             __DIR__ . '/autoload/{,*.}{global,local}.php',
         ],
     ],
-    'listeners' => [
-        InitParamListener::class
-    ],
+    'listeners' => ['Magento\Setup\Mvc\Bootstrap\InitParamListener'],
     'service_manager' => [
         'factories' => [
-            DiAbstractServiceFactory::class => DiAbstractServiceFactoryFactory::class,
-            InitParamListener::BOOTSTRAP_PARAM => InitParamListener::class,
+            InitParamListener::BOOTSTRAP_PARAM => 'Magento\Setup\Mvc\Bootstrap\InitParamListener',
         ],
     ],
-    // list of Magento specific required services, like default abstract factory
-    'required_services' => [
-        DiAbstractServiceFactory::class
-    ]
 ];

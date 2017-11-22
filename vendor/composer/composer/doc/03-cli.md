@@ -15,7 +15,6 @@ The following options are available with every command:
 * **--help (-h):** Display help information.
 * **--quiet (-q):** Do not output any message.
 * **--no-interaction (-n):** Do not ask any interactive question.
-* **--no-plugins:** Disables plugins.
 * **--working-dir (-d):** If specified, use the given directory as working directory.
 * **--profile:** Display timing and memory usage information
 * **--ansi:** Force ANSI output.
@@ -97,15 +96,14 @@ resolution.
   generation skips the `autoload-dev` rules.
 * **--no-autoloader:** Skips autoloader generation.
 * **--no-scripts:** Skips execution of scripts defined in `composer.json`.
+* **--no-plugins:** Disables plugins.
 * **--no-progress:** Removes the progress display that can mess with some
   terminals or scripts which don't handle backspace characters.
-* **--no-suggest:** Skips suggested packages in the output.
 * **--optimize-autoloader (-o):** Convert PSR-0/4 autoloading to classmap to get a faster
   autoloader. This is recommended especially for production, but can take
   a bit of time to run so it is currently not done by default.
 * **--classmap-authoritative (-a):** Autoload classes from the classmap only.
   Implicitly enables `--optimize-autoloader`.
-* **--apcu-autoloader:** Use APCu to cache found/not-found classes.
 
 ## update
 
@@ -143,15 +141,14 @@ php composer.phar update vendor/*
 * **--no-dev:** Skip installing packages listed in `require-dev`. The autoloader generation skips the `autoload-dev` rules.
 * **--no-autoloader:** Skips autoloader generation.
 * **--no-scripts:** Skips execution of scripts defined in `composer.json`.
+* **--no-plugins:** Disables plugins.
 * **--no-progress:** Removes the progress display that can mess with some
   terminals or scripts which don't handle backspace characters.
-* **--no-suggest:** Skips suggested packages in the output.
 * **--optimize-autoloader (-o):** Convert PSR-0/4 autoloading to classmap to get a faster
   autoloader. This is recommended especially for production, but can take
   a bit of time to run so it is currently not done by default.
 * **--classmap-authoritative (-a):** Autoload classes from the classmap only.
   Implicitly enables `--optimize-autoloader`.
-* **--apcu-autoloader:** Use APCu to cache found/not-found classes.
 * **--lock:** Only updates the lock file hash to suppress warning about the
   lock file being out of date.
 * **--with-dependencies:** Add also all dependencies of whitelisted packages to the whitelist.
@@ -190,8 +187,6 @@ php composer.phar require vendor/package:2.* vendor/package2:dev-master
 * **--no-update:** Disables the automatic update of the dependencies.
 * **--no-progress:** Removes the progress display that can mess with some
   terminals or scripts which don't handle backspace characters.
-* **--no-suggest:** Skips suggested packages in the output.
-* **--no-scripts:** Skips execution of scripts defined in `composer.json`.
 * **--update-no-dev:** Run the dependency update with the `--no-dev` option.
 * **--update-with-dependencies:** Also update dependencies of the newly
   required packages.
@@ -201,10 +196,6 @@ php composer.phar require vendor/package:2.* vendor/package2:dev-master
   can take a bit of time to run so it is currently not done by default.
 * **--classmap-authoritative (-a):** Autoload classes from the classmap only.
   Implicitly enables `--optimize-autoloader`.
-* **--apcu-autoloader:** Use APCu to cache found/not-found classes.
-* **--prefer-stable:** Prefer stable versions of dependencies.
-* **--prefer-lowest:** Prefer lowest versions of dependencies. Useful for testing minimal
-  versions of requirements, generally used with `--prefer-stable`.
 
 ## remove
 
@@ -226,7 +217,6 @@ uninstalled.
 * **--no-update:** Disables the automatic update of the dependencies.
 * **--no-progress:** Removes the progress display that can mess with some
   terminals or scripts which don't handle backspace characters.
-* **--no-scripts:** Skips execution of scripts defined in `composer.json`.
 * **--update-no-dev:** Run the dependency update with the --no-dev option.
 * **--update-with-dependencies:** Also update dependencies of the removed packages.
 * **--optimize-autoloader (-o):** Convert PSR-0/4 autoloading to classmap to
@@ -234,7 +224,6 @@ uninstalled.
   can take a bit of time to run so it is currently not done by default.
 * **--classmap-authoritative (-a):** Autoload classes from the classmap only.
   Implicitly enables `--optimize-autoloader`.
-* **--apcu-autoloader:** Use APCu to cache found/not-found classes.
 
 ## global
 
@@ -245,21 +234,17 @@ directory.
 This is merely a helper to manage a project stored in a central location that
 can hold CLI tools or Composer plugins that you want to have available everywhere.
 
-This can be used to install CLI utilities globally. Here is an example:
+This can be used to install CLI utilities globally and if you add
+`$COMPOSER_HOME/vendor/bin` to your `$PATH` environment variable. Here is an
+example:
 
 ```sh
-php composer.phar global require fabpot/php-cs-fixer
+php composer.phar global require fabpot/php-cs-fixer:dev-master
 ```
 
-Now the `php-cs-fixer` binary is available globally. Just make sure your global
-[vendor binaries](articles/vendor-binaries.md) directory is in your `$PATH`
-environment variable, you can get its location with the following command :
-
-```sh
-php composer.phar global config bin-dir --absolute
-```
-
-If you wish to update the binary later on you can just run a global update:
+Now the `php-cs-fixer` binary is available globally (assuming you adjusted
+your PATH). If you wish to update the binary later on you can just run a
+global update:
 
 ```sh
 php composer.phar global update
@@ -287,14 +272,6 @@ To list all of the available packages, you can use the `show` command.
 
 ```sh
 php composer.phar show
-```
-
-To filter the list you can pass a package mask using wildcards.
-
-```sh
-php composer.phar show monolog/*
-
-monolog/monolog 1.19.0 Sends your logs to files, sockets, inboxes, databases and various web services
 ```
 
 If you want to see the details of a certain package, you can pass the package
@@ -328,39 +305,10 @@ php composer.phar show monolog/monolog 1.0.2
 
 ### Options
 
-* **--latest (-l):** List all installed packages including their latest version.
-* **--all (-a):** List all packages available in all your repositories.
-* **--installed (-i):** List the packages that are installed (this is enabled by default, and deprecated).
+* **--installed (-i):** List the packages that are installed.
 * **--platform (-p):** List only platform packages (php & extensions).
 * **--self (-s):** List the root package info.
-* **--tree (-t):** List your dependencies as a tree. If you pass a package name it will show the dependency tree for that package.
-* **--name-only (-N):** List package names only.
-* **--path (-P):** List package paths.
-* **--outdated (-o):** Implies --latest, but this lists *only* packages that have a newer version available.
-* **--minor-only (-m):** Use with --latest. Only shows packages that have minor SemVer-compatible updates.
-* **--direct (-D):** Restricts the list of packages to your direct dependencies.
-* **--format (-f):** Lets you pick between text (default) or json output format.
-
-## outdated
-
-The `outdated` command shows a list of installed packages that have updates available,
-including their current and latest versions. This is basically an alias for
-`composer show -lo`.
-
-The color coding is as such:
-
-- **green (=)**: Dependency is in the latest version and is up to date.
-- **yellow (~)**: Dependency has a new version available that includes backwards compatibility breaks according to semver, so upgrade when
-  you can but it may involve work.
-- **red (!)**: Dependency has a new version that is semver-compatible and you should upgrade it.
-
-### Options
-
-* **--all (-a):** Show all packages, not just outdated (alias for `composer show -l`).
-* **--direct (-D):** Restricts the list of packages to your direct dependencies.
-* **--minor-only (-m):** Only shows packages that have minor SemVer-compatible updates.
-* **--strict:** Returns non-zero exit code if any package is outdated.
-* **--format (-f):** Lets you pick between text (default) or json output format.
+* **--tree (-t):** List the dependencies as a tree. Only usable when giving a single package name or combined with `-i`.
 
 ## browse / home
 
@@ -520,10 +468,8 @@ sudo -H composer self-update
 
 ## config
 
-The `config` command allows you to edit composer config settings and repositories
-in either the local `composer.json` file or the global `config.json` file.
-
-Additionally it lets you edit most properties in the local `composer.json`.
+The `config` command allows you to edit some basic Composer settings in either
+the local composer.json file or the global config.json file.
 
 ```sh
 php composer.phar config --list
@@ -536,11 +482,6 @@ php composer.phar config --list
 `setting-key` is a configuration option name and `setting-value1` is a
 configuration value.  For settings that can take an array of values (like
 `github-protocols`), more than one setting-value arguments are allowed.
-
-You can also edit the values of the following properties:
-
-`description`, `homepage`, `keywords`, `license`, `minimum-stability`,
-`name`, `prefer-stable`, `type` and `version`.
 
 See the [Config](06-config.md) chapter for valid configuration options.
 
@@ -574,18 +515,6 @@ If your repository requires more configuration options, you can instead pass its
 ```sh
 php composer.phar config repositories.foo '{"type": "vcs", "url": "http://svn.example.org/my-project/", "trunk-path": "master"}'
 ```
-
-### Modifying Extra Values
-
-In addition to modifying the config section, the `config` command also supports making
-changes to the extra section by using it the following way:
-
-```sh
-php composer.phar config extra.foo.bar value
-```
-
-The dots indicate array nesting, a max depth of 3 levels is allowed though. The above
-would set `"extra": { "foo": { "bar": "value" } }`.
 
 ## create-project
 
@@ -627,6 +556,7 @@ By default the command checks for the packages on packagist.org.
 * **--prefer-dist:** Install packages from `dist` when available.
 * **--dev:** Install packages listed in `require-dev`.
 * **--no-install:** Disables installation of the vendors.
+* **--no-plugins:** Disables plugins.
 * **--no-scripts:** Disables the execution of the scripts defined in the root
   package.
 * **--no-progress:** Removes the progress display that can mess with some
@@ -658,7 +588,6 @@ performance.
   a bit of time to run so it is currently not done by default.
 * **--classmap-authoritative (-a):** Autoload classes from the classmap only.
   Implicitly enables `--optimize`.
-* **--apcu:** Use APCu to cache found/not-found classes.
 * **--no-dev:** Disables autoload-dev rules.
 
 ## clear-cache
@@ -781,11 +710,6 @@ some tools like git or curl will only use the lower-cased `http_proxy` version.
 Alternatively you can also define the git proxy using
 `git config --global http.proxy <proxy url>`.
 
-If you are using Composer in a non-CLI context (i.e. integration into a CMS or
-similar use case), and need to support proxies, please provide the `CGI_HTTP_PROXY`
-environment variable instead. See [httpoxy.org](https://httpoxy.org/) for further
-details.
-
 ### no_proxy
 
 If you are behind a proxy and would like to disable it for certain domains, you
@@ -854,7 +778,7 @@ file to be used during SSL/TLS peer verification.
 
 The `COMPOSER_AUTH` var allows you to set up authentication as an environment variable.
 The contents of the variable should be a JSON formatted object containing http-basic,
-github-oauth, bitbucket-oauth, ... objects as needed, and following the
+github-oauth, ... objects as needed, and following the
 [spec from the config](06-config.md#gitlab-oauth).
 
 ### COMPOSER_DISCARD_CHANGES
@@ -866,16 +790,8 @@ This env var controls the [`discard-changes`](06-config.md#discard-changes) conf
 If set to 1, this env var will make Composer behave as if you passed the
 `--no-interaction` flag to every command. This can be set on build boxes/CI.
 
-### COMPOSER_ALLOW_SUPERUSER
+### COMPOSER_DISABLE_XDEBUG_WARN
 
-If set to 1, this env disables the warning about running commands as root/super user.
-It also disables automatic clearing of sudo sessions, so you should really only set this
-if you use Composer as super user at all times like in docker containers.
-
-### COMPOSER_MIRROR_PATH_REPOS
-
-If set to 1, this env changes the default path repository strategy to `mirror` instead
-of `symlink`. As it is the default strategy being set it can still be overwritten by
-repository options.
+If set to 1, this env disables the warning about having xdebug enabled.
 
 &larr; [Libraries](02-libraries.md)  |  [Schema](04-schema.md) &rarr;

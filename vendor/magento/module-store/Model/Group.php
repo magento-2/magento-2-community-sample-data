@@ -1,25 +1,25 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /**
  * Store group model
+ *
+ * @method \Magento\Store\Model\ResourceModel\Group _getResource()
+ * @method \Magento\Store\Model\ResourceModel\Group getResource()
  */
 namespace Magento\Store\Model;
 
 /**
  * Class Group
  *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\Framework\DataObject\IdentityInterface,
-    \Magento\Store\Api\Data\GroupInterface,
-    \Magento\Framework\App\ScopeInterface
+    \Magento\Store\Api\Data\GroupInterface
 {
     const ENTITY = 'store_group';
 
@@ -141,7 +141,7 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Store\Model\ResourceModel\Group::class);
+        $this->_init('Magento\Store\Model\ResourceModel\Group');
     }
 
     /**
@@ -336,7 +336,7 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
             return false;
         }
 
-        return $this->getWebsite()->getGroupsCount() > 1;
+        return $this->getWebsite()->getDefaultGroupId() != $this->getId();
     }
 
     /**
@@ -400,28 +400,6 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * @inheritdoc
-     * @since 100.1.0
-     */
-    public function afterDelete()
-    {
-        $result = parent::afterDelete();
-
-        if ($this->getId() === $this->getWebsite()->getDefaultGroupId()) {
-            $ids = $this->getWebsite()->getGroupIds();
-            if (!empty($ids) && count($ids) > 1) {
-                unset($ids[$this->getId()]);
-                $defaultId = current($ids);
-            } else {
-                $defaultId = null;
-            }
-            $this->getWebsite()->setDefaultGroupId($defaultId);
-            $this->getWebsite()->save();
-        }
-        return $result;
-    }
-
-    /**
      * Get/Set isReadOnly flag
      *
      * @param bool $value
@@ -442,7 +420,7 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     public function getIdentities()
     {
-        return [self::CACHE_TAG];
+        return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
     /**
@@ -462,24 +440,6 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * @inheritdoc
-     * @since 100.1.0
-     */
-    public function getCode()
-    {
-        return $this->getData('code');
-    }
-
-    /**
-     * @inheritdoc
-     * @since 100.2.0
-     */
-    public function setCode($code)
-    {
-        return $this->setData('code', $code);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getExtensionAttributes()
@@ -494,23 +454,5 @@ class Group extends \Magento\Framework\Model\AbstractExtensibleModel implements
         \Magento\Store\Api\Data\GroupExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @since 100.1.0
-     */
-    public function getScopeType()
-    {
-        return ScopeInterface::SCOPE_GROUP;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @since 100.1.0
-     */
-    public function getScopeTypeName()
-    {
-        return 'Store';
     }
 }

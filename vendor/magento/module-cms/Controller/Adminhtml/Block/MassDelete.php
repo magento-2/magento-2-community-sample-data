@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Block;
@@ -17,7 +17,7 @@ use Magento\Cms\Model\ResourceModel\Block\CollectionFactory;
 class MassDelete extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
@@ -64,6 +64,7 @@ class MassDelete extends \Magento\Backend\App\Action
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+
         return $resultRedirect->setPath('*/*/');
     }
 }

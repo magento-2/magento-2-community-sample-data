@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,6 +27,7 @@ class AssertSearchTermForm extends AbstractConstraint
      *  - correct Store
      *  - correct Number of results
      *  - correct Number of Uses
+     *  - correct Synonym For
      *  - correct Redirect URL
      *  - correct Display in Suggested Terms
      *

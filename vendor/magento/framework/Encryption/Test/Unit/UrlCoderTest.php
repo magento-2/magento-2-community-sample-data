@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Encryption\Test\Unit;
 
-class UrlCoderTest extends \PHPUnit\Framework\TestCase
+class UrlCoderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Encryption\UrlCoder
@@ -29,7 +29,7 @@ class UrlCoderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_urlMock = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->_urlMock = $this->getMock('Magento\Framework\UrlInterface', [], [], '', false);
         $this->_urlCoder = new \Magento\Framework\Encryption\UrlCoder($this->_urlMock);
     }
 

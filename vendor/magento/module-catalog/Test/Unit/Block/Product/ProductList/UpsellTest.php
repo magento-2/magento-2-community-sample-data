@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Product\ProductList;
 
-class UpsellTest extends \PHPUnit\Framework\TestCase
+class UpsellTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\ProductList\Upsell
@@ -15,7 +15,7 @@ class UpsellTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->block = $objectManager->getObject(\Magento\Catalog\Block\Product\ProductList\Upsell::class);
+        $this->block = $objectManager->getObject('Magento\Catalog\Block\Product\ProductList\Upsell');
     }
 
     protected function tearDown()
@@ -26,10 +26,10 @@ class UpsellTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentities()
     {
         $productTag = ['compare_item_1'];
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->once())->method('getIdentities')->will($this->returnValue($productTag));
 
-        $itemsCollection = new \ReflectionProperty(\Magento\Catalog\Block\Product\ProductList\Upsell::class, '_items');
+        $itemsCollection = new \ReflectionProperty('Magento\Catalog\Block\Product\ProductList\Upsell', '_items');
         $itemsCollection->setAccessible(true);
         $itemsCollection->setValue($this->block, [$product]);
 

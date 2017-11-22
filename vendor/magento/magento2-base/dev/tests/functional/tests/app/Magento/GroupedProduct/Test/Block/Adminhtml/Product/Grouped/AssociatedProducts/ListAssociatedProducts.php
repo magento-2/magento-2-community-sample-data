@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,23 +10,17 @@ use Magento\Mtf\Block\Form;
 use Magento\Mtf\Client\Locator;
 
 /**
- * List associated products on product page.
+ * Class ListAssociatedProducts
+ * List associated products on the page
  */
 class ListAssociatedProducts extends Form
 {
     /**
-     * Selector with item product.
+     * Selector with item product
      *
      * @var string
      */
-    protected $itemProduct = '//table[contains(@data-role,"grid")]/tbody/tr[%d]';
-
-    /**
-     * Selector with item products.
-     *
-     * @var string
-     */
-    protected $itemProducts = '[data-index="associated"] tbody tr';
+    protected $itemProduct = '//tr[@data-role="row"][@class="pointer"][%d]';
 
     /**
      * Getting block products
@@ -66,20 +60,5 @@ class ListAssociatedProducts extends Form
     public function getProductOptions(array $data, $index)
     {
         return $this->getProductBlock($index)->getOption($data);
-    }
-
-    /**
-     * Get product sku.
-     *
-     * @return string
-     */
-    public function getAssociatedProductSku()
-    {
-        $productsSku = [];
-        $productsQty = count($this->_rootElement->getElements($this->itemProducts));
-        for ($i = 1; $i <= $productsQty; $i++) {
-            $productsSku[] = $this->getProductBlock($i)->getProductSku();
-        }
-        return $productsSku;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Bundle\Test\Unit\Block\Catalog\Product\View\Type\Bundle;
 
-class OptionTest extends \PHPUnit\Framework\TestCase
+class OptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option
@@ -27,12 +27,12 @@ class OptionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->product = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getPriceInfo', 'hasPreconfiguredValues', 'getPreconfiguredValues', '__wakeup'])
             ->getMock();
 
-        $registry = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $registry = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -41,9 +41,9 @@ class OptionTest extends \PHPUnit\Framework\TestCase
             ->with('current_product')
             ->will($this->returnValue($this->product));
 
-        $this->layout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
+        $this->layout = $this->getMock('Magento\Framework\View\LayoutInterface');
 
-        $context = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $context = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $context->expects($this->atLeastOnce())
@@ -52,14 +52,13 @@ class OptionTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->block = $objectManagerHelper->getObject(
-            \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option::class,
+            '\Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option',
             ['registry' => $registry, 'context' => $context]
         );
     }
 
     public function testSetOption()
     {
-        $selectionId = 315;
         $this->product->expects($this->atLeastOnce())
             ->method('hasPreconfiguredValues')
             ->will($this->returnValue(true));
@@ -69,25 +68,20 @@ class OptionTest extends \PHPUnit\Framework\TestCase
                 new \Magento\Framework\DataObject(['bundle_option' => [15 => 315, 16 => 316]]))
             );
 
-        $option = $this->createMock(\Magento\Bundle\Model\Option::class);
+        $option = $this->getMock('\Magento\Bundle\Model\Option', [], [], '', false);
         $option->expects($this->any())->method('getId')->will($this->returnValue(15));
 
-        $otherOption = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $otherOption = $this->getMock('\Magento\Bundle\Model\Option', [], [], '', false);
         $otherOption->expects($this->any())->method('getId')->will($this->returnValue(16));
 
-        $selection = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getSelectionId', '__wakeup']
+        $selection = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['getSelectionId', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $otherSelection = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getSelectionId', '__wakeup']
-        );
-        $otherOption->expects($this->any())->method('getSelectionById')->willReturn($selection);
-        $selection->expects($this->atLeastOnce())->method('getSelectionId')->willReturn($selectionId);
-        $option->expects($this->once())->method('getSelectionById')->with(315)->willReturn($otherSelection);
+        $selection->expects($this->atLeastOnce())->method('getSelectionId')->will($this->returnValue(315));
 
         $this->assertSame($this->block, $this->block->setOption($option));
         $this->assertTrue($this->block->isSelected($selection));
@@ -104,17 +98,17 @@ class OptionTest extends \PHPUnit\Framework\TestCase
         $includeContainer = false;
         $priceHtml = 'price-html';
 
-        $selection = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $selection = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
-        $bundlePrice = $this->getMockBuilder(\Magento\Bundle\Pricing\Price\BundleOptionPrice::class)
+        $bundlePrice = $this->getMockBuilder('Magento\Bundle\Pricing\Price\BundleOptionPrice')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $priceInfo = $this->createMock(\Magento\Framework\Pricing\PriceInfo\Base::class);
-        $amount = $this->createMock(\Magento\Framework\Pricing\Amount\AmountInterface::class);
+        $priceInfo = $this->getMock('Magento\Framework\Pricing\PriceInfo\Base', [], [], '', false);
+        $amount = $this->getMock('Magento\Framework\Pricing\Amount\AmountInterface');
 
-        $priceRenderBlock = $this->getMockBuilder(\Magento\Framework\Pricing\Render::class)
+        $priceRenderBlock = $this->getMockBuilder('Magento\Framework\Pricing\Render')
             ->disableOriginalConstructor()
             ->setMethods(['renderAmount'])
             ->getMock();

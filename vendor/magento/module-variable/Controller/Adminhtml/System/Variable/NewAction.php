@@ -1,17 +1,11 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Variable\Controller\Adminhtml\System\Variable;
 
-/**
- * Create new variable form
- *
- * @api
- * @since 100.0.2
- */
 class NewAction extends \Magento\Variable\Controller\Adminhtml\System\Variable
 {
     /**

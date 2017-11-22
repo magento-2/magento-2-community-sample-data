@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Api;
@@ -8,7 +8,6 @@ namespace Magento\Quote\Api;
 /**
  * Shipping method management interface for guest carts.
  * @api
- * @since 100.0.2
  */
 interface GuestShippingMethodManagementInterface
 {
@@ -28,7 +27,7 @@ interface GuestShippingMethodManagementInterface
      * @param string $cartId The shopping cart ID.
      * @param \Magento\Quote\Api\Data\EstimateAddressInterface $address The estimate address
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[] An array of shipping methods.
-     * @deprecated 100.0.7
+     * @deprecated
      */
     public function estimateByAddress($cartId, \Magento\Quote\Api\Data\EstimateAddressInterface $address);
 }

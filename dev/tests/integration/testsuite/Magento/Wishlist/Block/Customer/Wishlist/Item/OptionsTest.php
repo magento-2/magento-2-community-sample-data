@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,14 +9,14 @@
  */
 namespace Magento\Wishlist\Block\Customer\Wishlist\Item;
 
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTemplate()
     {
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Wishlist\Block\Customer\Wishlist\Item\Options::class
+            'Magento\Wishlist\Block\Customer\Wishlist\Item\Options'
         );
         $this->assertEmpty($block->getTemplate());
         $product = new \Magento\Framework\DataObject(['type_id' => 'test']);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -56,26 +56,23 @@ class Minifier implements MinifierInterface
     ];
 
     /**
+     * @var Filesystem\Directory\ReadInterface
+     */
+    protected $rootDirectory;
+
+    /**
      * @var Filesystem\Directory\WriteInterface
      */
     protected $htmlDirectory;
 
     /**
-     * @var Filesystem\Directory\ReadFactory
-     */
-    protected $readFactory;
-
-    /**
      * @param Filesystem $filesystem
-     * @param Filesystem\Directory\ReadFactory $readFactory
      */
     public function __construct(
-        Filesystem $filesystem,
-        Filesystem\Directory\ReadFactory $readFactory
+        Filesystem $filesystem
     ) {
-        $this->filesystem = $filesystem;
-        $this->htmlDirectory = $filesystem->getDirectoryWrite(DirectoryList::TMP_MATERIALIZATION_DIR);
-        $this->readFactory = $readFactory;
+        $this->rootDirectory = $filesystem->getDirectoryRead(DirectoryList::ROOT);
+        $this->htmlDirectory = $filesystem->getDirectoryWrite(DirectoryList::TEMPLATE_MINIFICATION_DIR);
     }
 
     /**
@@ -87,7 +84,7 @@ class Minifier implements MinifierInterface
     public function getMinified($file)
     {
         $file = $this->htmlDirectory->getDriver()->getRealPathSafety($file);
-        if (!$this->htmlDirectory->isExist($this->getRelativeGeneratedPath($file))) {
+        if (!$this->htmlDirectory->isExist($this->rootDirectory->getRelativePath($file))) {
             $this->minify($file);
         }
         return $this->getPathToMinified($file);
@@ -101,7 +98,9 @@ class Minifier implements MinifierInterface
      */
     public function getPathToMinified($file)
     {
-        return $this->htmlDirectory->getAbsolutePath($this->getRelativeGeneratedPath($file));
+        return $this->htmlDirectory->getAbsolutePath(
+            $this->rootDirectory->getRelativePath($file)
+        );
     }
 
     /**
@@ -112,8 +111,7 @@ class Minifier implements MinifierInterface
      */
     public function minify($file)
     {
-        $dir = dirname($file);
-        $fileName = basename($file);
+        $file = $this->rootDirectory->getRelativePath($file);
         $content = preg_replace(
             '#(?<!]]>)\s+</#',
             '</',
@@ -131,12 +129,12 @@ class Minifier implements MinifierInterface
                             '#(?<!:|\\\\|\'|")//(?!\s*\<\!\[)(?!\s*]]\>)[^\n\r]*#',
                             '',
                             preg_replace(
-                                '#(?<!:|\'|")//[^\n\r]*(\s\?\>)#',
+                                '#(?<!:)//[^\n\r]*(\s\?\>)#',
                                 '$1',
                                 preg_replace(
-                                    '#(?<!:)//[^\n\r]*(\<\?php)[^\n\r]*(\s\?\>)[^\n\r]*#',
+                                    '#//[^\n\r]*(\<\?php)[^\n\r]*(\s\?\>)[^\n\r]*#',
                                     '',
-                                    $this->readFactory->create($dir)->readFile($fileName)
+                                    $this->rootDirectory->readFile($file)
                                 )
                             )
                         )
@@ -148,17 +146,6 @@ class Minifier implements MinifierInterface
         if (!$this->htmlDirectory->isExist()) {
             $this->htmlDirectory->create();
         }
-        $this->htmlDirectory->writeFile($this->getRelativeGeneratedPath($file), rtrim($content));
-    }
-
-    /**
-     * Gets the relative path of minified file to generation directory
-     *
-     * @param string $sourcePath
-     * @return string
-     */
-    private function getRelativeGeneratedPath($sourcePath)
-    {
-        return $this->filesystem->getDirectoryRead(DirectoryList::ROOT)->getRelativePath($sourcePath);
+        $this->htmlDirectory->writeFile($file, rtrim($content));
     }
 }

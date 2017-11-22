@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Attribute\Data;
@@ -36,6 +36,7 @@ class Select extends \Magento\Eav\Model\Attribute\Data\AbstractData
     {
         $errors = [];
         $attribute = $this->getAttribute();
+        $label = __($attribute->getStoreLabel());
 
         if ($value === false) {
             // try to load original value and validate it
@@ -43,7 +44,6 @@ class Select extends \Magento\Eav\Model\Attribute\Data\AbstractData
         }
 
         if ($attribute->getIsRequired() && empty($value) && $value != '0') {
-            $label = __($attribute->getStoreLabel());
             $errors[] = __('"%1" is a required value.', $label);
         }
 

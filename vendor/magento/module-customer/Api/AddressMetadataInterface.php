@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,6 @@ namespace Magento\Customer\Api;
 
 /**
  * Interface for retrieval information about customer address attributes metadata.
- * @api
- * @since 100.0.2
  */
 interface AddressMetadataInterface extends MetadataInterface
 {
@@ -17,5 +15,5 @@ interface AddressMetadataInterface extends MetadataInterface
 
     const ENTITY_TYPE_ADDRESS = 'customer_address';
 
-    const DATA_INTERFACE_NAME = \Magento\Customer\Api\Data\AddressInterface::class;
+    const DATA_INTERFACE_NAME = 'Magento\Customer\Api\Data\AddressInterface';
 }

@@ -1,16 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Test\Unit\Model\Export;
 
-use Magento\Store\Model\Store;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use \Magento\Store\Model\Store;
 
 /**
  * @SuppressWarnings(PHPMD)
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Stdlib\DateTime\Timezone|\PHPUnit_Framework_MockObject_MockObject
@@ -98,11 +99,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     protected $rowCustomizer;
 
     /**
-     * @var \Magento\Framework\EntityManager\MetadataPool|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataPool;
-
-    /**
      * @var \Magento\ImportExport\Model\Export\Adapter\AbstractAdapter| \PHPUnit_Framework_MockObject_MockObject
      */
     protected $writer;
@@ -112,6 +108,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     protected $product;
 
+
     /**
      * @var StubProduct|\Magento\CatalogImportExport\Model\Export\Product
      */
@@ -119,20 +116,62 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->localeDate = $this->createMock(\Magento\Framework\Stdlib\DateTime\Timezone::class);
+        $this->localeDate = $this->getMock(
+            'Magento\Framework\Stdlib\DateTime\Timezone',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->config = $this->createPartialMock(\Magento\Eav\Model\Config::class, ['getEntityType']);
-        $type = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
+        $this->config = $this->getMock(
+            'Magento\Eav\Model\Config',
+            ['getEntityType'],
+            [],
+            '',
+            false
+        );
+        $type = $this->getMock(
+            '\Magento\Eav\Model\Entity\Type',
+            [],
+            [],
+            '',
+            false
+        );
         $this->config->expects($this->once())->method('getEntityType')->willReturn($type);
 
-        $this->resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resource = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManager::class);
-        $this->logger = $this->createMock(\Magento\Framework\Logger\Monolog::class);
+        $this->storeManager = $this->getMock(
+            'Magento\Store\Model\StoreManager',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->logger = $this->getMock(
+            'Magento\Framework\Logger\Monolog',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class);
+        $this->collection = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->abstractCollection = $this->getMockForAbstractClass(
-            \Magento\Eav\Model\Entity\Collection\AbstractCollection::class,
+            '\Magento\Eav\Model\Entity\Collection\AbstractCollection',
             [],
             '',
             false,
@@ -146,50 +185,103 @@ class ProductTest extends \PHPUnit\Framework\TestCase
                 'getLastPageNumber',
             ]
         );
-        $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
+        $this->exportConfig = $this->getMock(
+            'Magento\ImportExport\Model\Export\Config',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->productFactory = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\ProductFactory::class, [
+        $this->productFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\ProductFactory',
+            [
                 'create',
                 'getTypeId',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->attrSetColFactory = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory::class,
+        $this->attrSetColFactory = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory',
             [
                 'create',
                 'setEntityTypeFilter',
-            ]
+            ],
+            [],
+            '',
+            false
         );
 
-        $this->categoryColFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory::class,
+        $this->categoryColFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Category\CollectionFactory',
             [
                 'create',
                 'addNameToResult',
-            ]
+            ],
+            [],
+            '',
+            false
         );
 
-        $this->itemFactory = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory::class);
-        $this->optionColFactory = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class
+        $this->itemFactory = $this->getMock(
+            'Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->optionColFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->attributeColFactory = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory::class
+        $this->attributeColFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->typeFactory = $this->createMock(\Magento\CatalogImportExport\Model\Export\Product\Type\Factory::class);
-
-        $this->linkTypeProvider = $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class);
-        $this->rowCustomizer = $this->createMock(
-            \Magento\CatalogImportExport\Model\Export\RowCustomizer\Composite::class
+        $this->typeFactory = $this->getMock(
+            'Magento\CatalogImportExport\Model\Export\Product\Type\Factory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->metadataPool = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
 
-        $this->writer = $this->createPartialMock(\Magento\ImportExport\Model\Export\Adapter\AbstractAdapter::class, [
+        $this->linkTypeProvider = $this->getMock(
+            'Magento\Catalog\Model\Product\LinkTypeProvider',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->rowCustomizer = $this->getMock(
+            'Magento\CatalogImportExport\Model\Export\RowCustomizer\Composite',
+            [],
+            [],
+            '',
+            false
+        );
+
+        $this->writer = $this->getMock(
+            'Magento\ImportExport\Model\Export\Adapter\AbstractAdapter',
+            [
                 'setHeaderCols',
                 'writeRow',
                 'getContents',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $constructorMethods = [
             'initTypeModels',
@@ -212,9 +304,12 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'paginateCollection',
             '_getHeaderColumns',
         ]);
-        $this->product = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Export\Product::class,
-            $mockMethods
+        $this->product = $this->getMock(
+            'Magento\CatalogImportExport\Model\Export\Product',
+            $mockMethods,
+            [],
+            '',
+            false
         );
 
         foreach ($constructorMethods as $method) {
@@ -239,7 +334,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             $this->linkTypeProvider,
             $this->rowCustomizer
         );
-        $this->setPropertyValue($this->product, 'metadataPool', $this->metadataPool);
 
         $this->object = new StubProduct();
     }
@@ -263,22 +357,21 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetHeaderColumns()
     {
-        $product = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Export\Product::class,
-            ['_customHeadersMapping']
+        $product = $this->getMock(
+            'Magento\CatalogImportExport\Model\Export\Product',
+            ['_customHeadersMapping'],
+            [],
+            '',
+            false
         );
         $headerColumnsValue = ['headerColumns value'];
         $expectedResult = 'result';
         $this->setPropertyValue($product, '_headerColumns', $headerColumnsValue);
-        $this->setPropertyValue($product, 'rowCustomizer', $this->rowCustomizer);
-        $product->expects($this->once())
+        $product
+            ->expects($this->once())
             ->method('_customHeadersMapping')
             ->with($headerColumnsValue)
             ->willReturn($expectedResult);
-        $this->rowCustomizer->expects($this->once())
-            ->method('addHeaderColumns')
-            ->with($headerColumnsValue)
-            ->willReturn($headerColumnsValue);
 
         $result = $product->_getHeaderColumns();
 
@@ -298,7 +391,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->product->expects($this->once())->method('_prepareEntityCollection')->with($this->abstractCollection);
         $this->product->expects($this->once())->method('getItemsPerPage')->willReturn($itemsPerPage);
         $this->product->expects($this->once())->method('paginateCollection')->with($page, $itemsPerPage);
-        $this->abstractCollection->expects($this->once())->method('setOrder')->with('entity_id', 'asc');
+        $this->abstractCollection->expects($this->once())->method('setOrder')->with('has_options', 'asc');
         $this->abstractCollection->expects($this->once())->method('setStoreId')->with(Store::DEFAULT_STORE_ID);
 
         $this->abstractCollection->expects($this->once())->method('count')->willReturn(0);
@@ -329,7 +422,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->product->expects($this->once())->method('_prepareEntityCollection')->with($this->abstractCollection);
         $this->product->expects($this->once())->method('getItemsPerPage')->willReturn($itemsPerPage);
         $this->product->expects($this->once())->method('paginateCollection')->with($page, $itemsPerPage);
-        $this->abstractCollection->expects($this->once())->method('setOrder')->with('entity_id', 'asc');
+        $this->abstractCollection->expects($this->once())->method('setOrder')->with('has_options', 'asc');
         $this->abstractCollection->expects($this->once())->method('setStoreId')->with(Store::DEFAULT_STORE_ID);
 
         $this->abstractCollection->expects($this->once())->method('count')->willReturn(1);

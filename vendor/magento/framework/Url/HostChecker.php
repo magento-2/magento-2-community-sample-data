@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Url;
@@ -8,7 +8,7 @@ namespace Magento\Framework\Url;
 use Magento\Framework\UrlInterface;
 
 /**
- * Class provides functionality for checks of a host name
+ * Class provides functionality for checks of a host name.
  */
 class HostChecker
 {
@@ -26,7 +26,7 @@ class HostChecker
     }
 
     /**
-     * Check if provided URL is one of the domain URLs assigned to scopes
+     * Check if provided URL is one of the domain URLs assigned to scopes.
      *
      * @param string $url
      * @return bool
@@ -43,6 +43,7 @@ class HostChecker
             $scopeHostNames[] = parse_url($scope->getBaseUrl(UrlInterface::URL_TYPE_LINK, true), PHP_URL_HOST);
         }
         $scopeHostNames = array_unique($scopeHostNames);
+
         return in_array($hostName, $scopeHostNames);
     }
 }

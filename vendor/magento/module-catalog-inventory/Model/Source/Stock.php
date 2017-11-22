@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\Source;
@@ -9,8 +9,6 @@ use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 
 /**
  * CatalogInventory Stock source model
- * @api
- * @since 100.0.2
  */
 class Stock extends AbstractSource
 {

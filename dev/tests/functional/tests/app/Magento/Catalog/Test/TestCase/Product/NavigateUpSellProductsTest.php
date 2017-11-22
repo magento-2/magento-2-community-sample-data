@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,13 +17,14 @@ use Magento\Mtf\Fixture\InjectableFixture;
  * 1. Navigate through up-sell products.
  *
  * @ZephyrId MAGETWO-12391
- * @group Up-sells
+ * @group Up-sells_(MX)
  */
 class NavigateUpSellProductsTest extends AbstractProductPromotedProductsTest
 {
     /* tags */
-    const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
+    const TEST_TYPE = 'acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

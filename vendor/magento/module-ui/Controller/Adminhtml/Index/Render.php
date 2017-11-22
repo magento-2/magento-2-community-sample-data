@@ -1,13 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Controller\Adminhtml\Index;
 
+use Magento\Backend\App\Action\Context;
 use Magento\Ui\Controller\Adminhtml\AbstractAction;
+use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
 
+/**
+ * Class Render
+ */
 class Render extends AbstractAction
 {
     /**
@@ -17,16 +22,17 @@ class Render extends AbstractAction
      */
     public function execute()
     {
-        if ($this->_request->getParam('namespace') === null) {
+        $component = $this->factory->create($this->_request->getParam('namespace'));
+        $aclResource = $component->getData('acl');
+
+        if ($aclResource && !$this->_authorization->isAllowed($aclResource)) {
             $this->_redirect('admin/noroute');
             return;
         }
 
-        $component = $this->factory->create($this->_request->getParam('namespace'));
-        if ($this->validateAclResource($component->getContext()->getDataProvider()->getConfigData())) {
-            $this->prepareComponent($component);
-            $this->_response->appendBody((string) $component->render());
-        }
+        $this->prepareComponent($component);
+
+        $this->_response->appendBody((string) $component->render());
     }
 
     /**
@@ -40,25 +46,6 @@ class Render extends AbstractAction
         foreach ($component->getChildComponents() as $child) {
             $this->prepareComponent($child);
         }
-
         $component->prepare();
-    }
-
-    /**
-     * Optionally validate ACL resource of components with a DataSource/DataProvider
-     *
-     * @param mixed $dataProviderConfigData
-     * @return bool
-     */
-    private function validateAclResource($dataProviderConfigData)
-    {
-        if (isset($dataProviderConfigData['aclResource'])) {
-            if (!$this->_authorization->isAllowed($dataProviderConfigData['aclResource'])) {
-                $this->_redirect('admin/denied');
-                return false;
-            }
-        }
-
-        return true;
     }
 }

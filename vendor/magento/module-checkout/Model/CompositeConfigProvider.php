@@ -1,16 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
 
-/**
- * Composite checkout configuration provider.
- *
- * @see \Magento\Checkout\Model\ConfigProviderInterface
- * @api
- */
 class CompositeConfigProvider implements ConfigProviderInterface
 {
     /**

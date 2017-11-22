@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Asset\PreProcessor;
@@ -25,7 +25,7 @@ use Magento\Framework\View\Asset\PreProcessor\AlternativeSource\AssetBuilder;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AlternativeSourceTest extends \PHPUnit\Framework\TestCase
+class AlternativeSourceTest extends \PHPUnit_Framework_TestCase
 {
     const AREA = 'test-area';
 
@@ -168,7 +168,7 @@ class AlternativeSourceTest extends \PHPUnit\Framework\TestCase
     {
         $alternatives = [
             'processor' => [
-                AlternativeSource::PROCESSOR_CLASS => \Magento\Framework\View\Asset\ContentProcessorInterface::class
+                AlternativeSource::PROCESSOR_CLASS => 'Magento\Framework\View\Asset\ContentProcessorInterface'
             ]
         ];
 
@@ -216,7 +216,7 @@ class AlternativeSourceTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerMock->expects(self::once())
             ->method('get')
-            ->with(\Magento\Framework\View\Asset\ContentProcessorInterface::class)
+            ->with('Magento\Framework\View\Asset\ContentProcessorInterface')
             ->willReturn($this->getProcessorMock($assetMock));
 
         $alternativeSource = new AlternativeSource(

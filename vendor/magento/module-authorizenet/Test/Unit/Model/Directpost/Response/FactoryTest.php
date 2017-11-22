@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Test\Unit\Model\Directpost\Response;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorizenet\Model\Directpost\Response\Factory
@@ -28,16 +28,16 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->responseMock = $this->createMock(\Magento\Authorizenet\Model\Directpost\Response::class);
+        $this->responseMock = $this->getMock('Magento\Authorizenet\Model\Directpost\Response', [], [], '', false);
 
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface', [], [], '', false);
         $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Authorizenet\Model\Directpost\Response::class, [])
+            ->with('Magento\Authorizenet\Model\Directpost\Response', [])
             ->willReturn($this->responseMock);
 
         $this->responseFactory = $objectManager->getObject(
-            \Magento\Authorizenet\Model\Directpost\Response\Factory::class,
+            'Magento\Authorizenet\Model\Directpost\Response\Factory',
             ['objectManager' => $this->objectManagerMock]
         );
     }

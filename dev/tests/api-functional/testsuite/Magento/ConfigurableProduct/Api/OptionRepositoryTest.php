@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -76,6 +76,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $this->assertNotEmpty($option);
 
         $this->assertCount(2, $option['values']);
+
 
         foreach ($option['values'] as $value) {
             $this->assertTrue(is_array($value));
@@ -186,12 +187,11 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
             ]
         ];
 
-        $requestBody = [
-            'option' => [
-                'label' => 'Update Test Configurable',
-            ]
+        $option = [
+            'label' => 'Update Test Configurable'
         ];
 
+        $requestBody = ['option' => $option];
         if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
             $requestBody['sku'] = $productSku;
             $requestBody['option']['id'] = $optionId;
@@ -200,7 +200,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $result = $this->_webApiCall($serviceInfo, $requestBody);
         $this->assertGreaterThan(0, $result);
         $configurableAttribute = $this->getConfigurableAttribute($productSku);
-        $this->assertEquals($requestBody['option']['label'], $configurableAttribute[0]['label']);
+        $this->assertEquals($option['label'], $configurableAttribute[0]['label']);
     }
 
     /**

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Customer\Test\Constraint;
 
-use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\AdvancedPricing;
+use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\AdvancedPricingTab;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductNew;
 use Magento\Customer\Test\Fixture\CustomerGroup;
@@ -32,10 +32,10 @@ class AssertCustomerGroupOnProductForm extends AbstractConstraint
     ) {
         $catalogProductIndex->open();
         $catalogProductIndex->getGridPageActionBlock()->addProduct();
-        $catalogProductNew->getProductForm()->openSection('advanced-pricing');
+        $catalogProductNew->getProductForm()->openTab('advanced-pricing');
 
-        /** @var AdvancedPricing $advancedPricingTab */
-        $advancedPricingTab = $catalogProductNew->getProductForm()->getSection('advanced-pricing');
+        /** @var AdvancedPricingTab $advancedPricingTab */
+        $advancedPricingTab = $catalogProductNew->getProductForm()->getTab('advanced-pricing');
         \PHPUnit_Framework_Assert::assertTrue(
             $advancedPricingTab->getTierPriceForm()->isVisibleCustomerGroup($customerGroup),
             "Customer group {$customerGroup->getCustomerGroupCode()} not in tier price form on product page."

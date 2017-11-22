@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -85,13 +85,6 @@ class ListCompare extends Block
      * @var string
      */
     protected $messageBlock = '#messages';
-
-    /**
-     * Selector for confirm.
-     *
-     * @var string
-     */
-    protected $confirmModal = '.confirm._show[data-role=modal]';
 
     /**
      * Get product info.
@@ -196,13 +189,6 @@ class ListCompare extends Block
     public function removeProduct($index = 1)
     {
         $this->_rootElement->find(sprintf($this->removeButton, $index), Locator::SELECTOR_XPATH)->click();
-        $modalElement = $this->browser->find($this->confirmModal);
-        /** @var \Magento\Ui\Test\Block\Adminhtml\Modal $modal */
-        $modal = $this->blockFactory->create(
-            \Magento\Ui\Test\Block\Adminhtml\Modal::class,
-            ['element' => $modalElement]
-        );
-        $modal->acceptAlert();
     }
 
     /**
@@ -215,7 +201,7 @@ class ListCompare extends Block
         $this->waitForElementVisible(sprintf($this->removeButton, 1), Locator::SELECTOR_XPATH);
         /** @var \Magento\Backend\Test\Block\Messages $messageBlock */
         $messageBlock = $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Messages::class,
+            'Magento\Backend\Test\Block\Messages',
             ['element' => $this->browser->find($this->messageBlock)]
         );
 

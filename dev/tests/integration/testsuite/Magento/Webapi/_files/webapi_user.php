@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 
 /** @var $model \Magento\User\Model\User */
-$model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\User\Model\User::class);
+$model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
 $model->setFirstname("Web")
     ->setLastname("Api")
     ->setUsername('webapi_user')
@@ -19,6 +19,6 @@ $model->setFirstname("Web")
     ->setResourceId('Magento_Backend::all')
     ->setPrivileges("")
     ->setAssertId(0)
-    ->setRoleId(2)
+    ->setRoleId(1)
     ->setPermission('allow');
 $model->save();

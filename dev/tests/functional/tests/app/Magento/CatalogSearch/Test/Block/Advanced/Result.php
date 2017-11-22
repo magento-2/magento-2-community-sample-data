@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -87,7 +87,6 @@ class Result extends Block
             $explodeData = explode(':', $dataRow);
             $explodeData[1] = trim($explodeData[1]);
             $explodeData[0] = str_replace(' ', '_', strtolower($explodeData[0]));
-            $explodeData[0] = str_replace('product_', '', $explodeData[0]);
             if ($explodeData[0] === 'price') {
                 $matches = [];
                 if (preg_match('#^(\d+)[^\d]+(\d+)$#umis', $explodeData[1], $matches)) { // range

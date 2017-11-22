@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,32 +9,32 @@ namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo\Total;
 /**
  * Class CostTest
  */
-class CostTest extends \PHPUnit\Framework\TestCase
+class CostTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Creditmemo\Total\Cost
      */
     protected $total;
-
     /**
      * @var \Magento\Sales\Model\Order\Creditmemo|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $creditmemoMock;
-
     /**
      * @var \Magento\Sales\Model\Order\Creditmemo\Item|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $creditmemoItemMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->creditmemoMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Creditmemo::class,
-            ['setBaseCost', 'getAllItems']
-        );
-        $this->creditmemoItemMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Creditmemo\Item::class,
-            ['getHasChildren', 'getBaseCost', 'getQty']
+        $this->creditmemoMock = $this->getMock('\Magento\Sales\Model\Order\Creditmemo', [
+            'setBaseCost', 'getAllItems'
+        ], [], '', false);
+        $this->creditmemoItemMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Creditmemo\Item',
+            ['getHasChildren', 'getBaseCost', 'getQty'],
+            [],
+            '',
+            false
         );
         $this->total = new \Magento\Sales\Model\Order\Creditmemo\Total\Cost();
     }

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Request\Config;
 
-class FileSystemReaderTest extends \PHPUnit\Framework\TestCase
+class FileSystemReaderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  FilesystemReader */
     protected $object;
@@ -13,10 +13,10 @@ class FileSystemReaderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $fileResolver = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Search\Request\Config\FileResolverStub::class
+            '\Magento\Framework\Search\Request\Config\FileResolverStub'
         );
         $this->object = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Search\Request\Config\FilesystemReader::class,
+            '\Magento\Framework\Search\Request\Config\FilesystemReader',
             ['fileResolver' => $fileResolver]
         );
     }

@@ -1,21 +1,17 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Sales\Controller\Download;
 
-use Magento\Framework\App\ObjectManager;
+use Magento\Sales\Model\Download;
 use Magento\Framework\App\Action\Context;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Framework\Controller\Result\ForwardFactory;
+use \Magento\Framework\Unserialize\Unserialize;
 
-/**
- * Class DownloadCustomOption
- * @package Magento\Sales\Controller\Download
- */
 class DownloadCustomOption extends \Magento\Framework\App\Action\Action
 {
     /**
@@ -24,42 +20,31 @@ class DownloadCustomOption extends \Magento\Framework\App\Action\Action
     protected $resultForwardFactory;
 
     /**
-     * @var \Magento\Sales\Model\Download
+     * @var Download
      */
     protected $download;
 
     /**
-     * @var \Magento\Framework\Unserialize\Unserialize
-     * @deprecated 100.2.0
+     * @var Unserialize
      */
     protected $unserialize;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * @param Context $context
      * @param ForwardFactory $resultForwardFactory
-     * @param \Magento\Sales\Model\Download $download
-     * @param \Magento\Framework\Unserialize\Unserialize $unserialize
-     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
+     * @param Download $download
+     * @param Unserialize $unserialize
      */
     public function __construct(
         Context $context,
         ForwardFactory $resultForwardFactory,
-        \Magento\Sales\Model\Download $download,
-        \Magento\Framework\Unserialize\Unserialize $unserialize,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        Download $download,
+        Unserialize $unserialize
     ) {
         parent::__construct($context);
         $this->resultForwardFactory = $resultForwardFactory;
         $this->download = $download;
         $this->unserialize = $unserialize;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(
-            \Magento\Framework\Serialize\Serializer\Json::class
-        );
     }
 
     /**
@@ -73,9 +58,7 @@ class DownloadCustomOption extends \Magento\Framework\App\Action\Action
     {
         $quoteItemOptionId = $this->getRequest()->getParam('id');
         /** @var $option \Magento\Quote\Model\Quote\Item\Option */
-        $option = $this->_objectManager->create(
-            \Magento\Quote\Model\Quote\Item\Option::class
-        )->load($quoteItemOptionId);
+        $option = $this->_objectManager->create('Magento\Quote\Model\Quote\Item\Option')->load($quoteItemOptionId);
         /** @var \Magento\Framework\Controller\Result\Forward $resultForward */
         $resultForward = $this->resultForwardFactory->create();
 
@@ -93,17 +76,18 @@ class DownloadCustomOption extends \Magento\Framework\App\Action\Action
         $productOption = null;
         if ($optionId) {
             /** @var $productOption \Magento\Catalog\Model\Product\Option */
-            $productOption = $this->_objectManager->create(
-                \Magento\Catalog\Model\Product\Option::class
-            )->load($optionId);
+            $productOption = $this->_objectManager->create('Magento\Catalog\Model\Product\Option')->load($optionId);
         }
-
-        if (!$productOption || !$productOption->getId() || $productOption->getType() != 'file') {
+        if (!$productOption ||
+            !$productOption->getId() ||
+            $productOption->getProductId() != $option->getProductId() ||
+            $productOption->getType() != 'file'
+        ) {
             return $resultForward->forward('noroute');
         }
 
         try {
-            $info = $this->serializer->unserialize($option->getValue());
+            $info = $this->unserialize->unserialize($option->getValue());
             if ($this->getRequest()->getParam('key') != $info['secret_key']) {
                 return $resultForward->forward('noroute');
             }

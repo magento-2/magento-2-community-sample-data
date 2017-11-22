@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Test\Unit\Model\GuestCart;
 
-class GuestPaymentMethodManagementTest extends \PHPUnit\Framework\TestCase
+class GuestPaymentMethodManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\GuestCart\GuestPaymentMethodManagement
@@ -45,10 +45,14 @@ class GuestPaymentMethodManagementTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->paymentMethodManagementMock = $this->createMock(
-            \Magento\Quote\Api\PaymentMethodManagementInterface::class
+        $this->paymentMethodManagementMock = $this->getMock(
+            'Magento\Quote\Api\PaymentMethodManagementInterface',
+            [],
+            [],
+            '',
+            false
         );
-        $this->paymentMock = $this->createMock(\Magento\Quote\Model\Quote\Payment::class);
+        $this->paymentMock = $this->getMock('Magento\Quote\Model\Quote\Payment', [], [], '', false);
 
         $this->maskedCartId = 'f216207248d65c789b17be8545e0aa73';
         $this->cartId = 11;
@@ -60,7 +64,7 @@ class GuestPaymentMethodManagementTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->model = $objectManager->getObject(
-            \Magento\Quote\Model\GuestCart\GuestPaymentMethodManagement::class,
+            'Magento\Quote\Model\GuestCart\GuestPaymentMethodManagement',
             [
                 'paymentMethodManagement' => $this->paymentMethodManagementMock,
                 'quoteIdMaskFactory' => $this->quoteIdMaskFactoryMock
@@ -76,7 +80,7 @@ class GuestPaymentMethodManagementTest extends \PHPUnit\Framework\TestCase
 
     public function testGetList()
     {
-        $paymentMethod = $this->createMock(\Magento\Quote\Api\Data\PaymentMethodInterface::class);
+        $paymentMethod = $this->getMock('Magento\Quote\Api\Data\PaymentMethodInterface', [], [], '', false);
         $this->paymentMethodManagementMock->expects($this->once())->method('getList')->willReturn([$paymentMethod]);
         $this->assertEquals([$paymentMethod], $this->model->getList($this->maskedCartId));
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,11 @@ define([
 
     describe('ui/js/grid/sticky/sticky', function () {
         var stickyObj,
-            data;
+            data,
+            stub;
 
-        /** Stub */
-        Sticky.prototype.initialize = function () {};
+        Sticky.prototype.initialize = function () {
+        };
 
         stickyObj = new Sticky({});
 
@@ -62,8 +63,7 @@ define([
         });
         describe('has handlers', function () {
             it('has onWindowScroll event', function () {
-                /** Stub */
-                stickyObj.adjustOffset = function () {
+                stickyObj.adjustOffset = function (){
                     return this;
                 };
 
@@ -86,7 +86,6 @@ define([
         describe('has getters', function () {
             it('has getListingWidth', function () {
                 stickyObj.listingNode = {
-                    /** Stub */
                     width: function () {
                         return 100500;
                     }
@@ -136,22 +135,16 @@ define([
                 stickyObj.resetToTop();
                 expect(stickyObj.resetToTop).toHaveBeenCalled();
             });
-            it('has "toggleContainerVisibility" method', function () {
-                stickyObj.visible = false;
+            it('has toggleContainerVisibility event', function () {
+                spyOn(stickyObj, 'visible');
                 stickyObj.toggleContainerVisibility();
-                expect(stickyObj.visible).toEqual(true);
-                stickyObj.visible = true;
-                stickyObj.toggleContainerVisibility();
-                expect(stickyObj.visible).toEqual(false);
+                expect(stickyObj.visible).toHaveBeenCalled();
             });
             it('has adjustContainerElemsWidth event', function () {
-                /** Stub */
-                stickyObj.resizeContainer = function () {
+                stickyObj.resizeContainer = function(){
                     return this;
                 };
-
-                /** Stub */
-                stickyObj.resizeCols = function () {
+                stickyObj.resizeCols = function(){
                     return this;
                 };
                 spyOn(stickyObj, 'resizeBulk');
@@ -163,6 +156,17 @@ define([
                 stickyObj.adjustOffset();
                 expect(stickyObj.adjustOffset).toHaveBeenCalled();
             });
+            it('has checkPos event', function () {
+                stickyObj.visible = function(){
+                    return false;
+                };
+                stickyObj.getMustBeSticky = function(){
+                    return false;
+                };
+
+                data = stickyObj.checkPos();
+                expect(data).toBeDefined();
+            })
         });
-    });
+    })
 });

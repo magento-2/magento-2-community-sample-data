@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @since 1.0.0
  */
@@ -49,7 +49,7 @@ use PDepend\Util\Cache\CacheDriver;
 /**
  * Represents any valid complex php type.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @since 1.0.0
  */
@@ -100,6 +100,20 @@ abstract class AbstractASTType extends AbstractASTArtifact
     protected $nodes = array();
 
     /**
+     * The start line number of the class or interface declaration.
+     *
+     * @var integer
+     */
+    protected $startLine = 0;
+
+    /**
+     * The end line number of the class or interface declaration.
+     *
+     * @var integer
+     */
+    protected $endLine = 0;
+
+    /**
      * Name of the parent namespace for this class or interface instance. Or
      * <b>NULL</b> when no namespace was specified.
      *
@@ -120,7 +134,7 @@ abstract class AbstractASTType extends AbstractASTArtifact
      * @var   \PDepend\Source\AST\ASTMethod[]
      * @since 1.0.2
      */
-    protected $methods = array();
+    private $methods = array();
 
 
     /**
@@ -172,13 +186,7 @@ abstract class AbstractASTType extends AbstractASTArtifact
         if (isset($this->nodes[$index])) {
             return $this->nodes[$index];
         }
-        throw new \OutOfBoundsException(
-            sprintf(
-                'No node found at index %d in node of type: %s',
-                $index,
-                get_class($this)
-            )
-        );
+        throw new \OutOfBoundsException("No child at index {$index} exists.");
     }
 
     /**
@@ -368,7 +376,7 @@ abstract class AbstractASTType extends AbstractASTArtifact
     /**
      * Sets the tokens for this type.
      *
-     * @param \PDepend\Source\Tokenizer\Token[] $tokens
+     * @param  \PDepend\Source\Tokenizer\Token[] $tokens The generated tokens.
      * @return void
      */
     public function setTokens(array $tokens)
@@ -382,14 +390,23 @@ abstract class AbstractASTType extends AbstractASTArtifact
     }
 
     /**
-     * @return string
+     * Returns the line number where the class or interface declaration starts.
+     *
+     * @return integer
      */
-    public function getNamespacedName()
+    public function getStartLine()
     {
-        if (null === $this->namespace || $this->namespace->isPackageAnnotation()) {
-            return $this->name;
-        }
-        return sprintf('%s\\%s', $this->namespaceName, $this->name);
+        return $this->startLine;
+    }
+
+    /**
+     * Returns the line number where the class or interface declaration ends.
+     *
+     * @return integer
+     */
+    public function getEndLine()
+    {
+        return $this->endLine;
     }
 
     /**
@@ -485,7 +502,7 @@ abstract class AbstractASTType extends AbstractASTArtifact
         return array(
             'cache',
             'context',
-            'comment',
+            'docComment',
             'endLine',
             'modifiers',
             'name',

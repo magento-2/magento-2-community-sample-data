@@ -1,34 +1,33 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Deploy\Console\Command;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\App\State;
+use Magento\TestFramework\Event\Magento;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\App\State;
 
 /**
- * Command to set application mode
+ * Command for change the Magento mode
  */
 class SetModeCommand extends Command
 {
-    /**
-     * Name of "target application mode" input argument
+
+    /**#@+
+     * Input arguments for mode setter command
      */
     const MODE_ARGUMENT = 'mode';
-
-    /**
-     * Name of "skip compilation" input option
-     */
     const SKIP_COMPILATION_OPTION = 'skip-compilation';
+    /**#@-*/
 
     /**
      * Object manager factory
@@ -49,7 +48,7 @@ class SetModeCommand extends Command
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -75,14 +74,14 @@ class SetModeCommand extends Command
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             /** @var \Magento\Deploy\Model\Mode $modeController */
             $modeController = $this->objectManager->create(
-                \Magento\Deploy\Model\Mode::class,
+                'Magento\Deploy\Model\Mode',
                 [
                     'input' => $input,
                     'output' => $output,
@@ -90,7 +89,7 @@ class SetModeCommand extends Command
             );
             $toMode = $input->getArgument(self::MODE_ARGUMENT);
             $skipCompilation = $input->getOption(self::SKIP_COMPILATION_OPTION);
-            switch ($toMode) {
+            switch($toMode) {
                 case State::MODE_DEVELOPER:
                     $modeController->enableDeveloperMode();
                     break;
@@ -105,15 +104,12 @@ class SetModeCommand extends Command
                     throw new LocalizedException(__('Cannot switch into given mode "%1"', $toMode));
             }
             $output->writeln('Enabled ' . $toMode . ' mode.');
-
-            return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
                 $output->writeln($e->getTraceAsString());
             }
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+            return;
         }
     }
 }

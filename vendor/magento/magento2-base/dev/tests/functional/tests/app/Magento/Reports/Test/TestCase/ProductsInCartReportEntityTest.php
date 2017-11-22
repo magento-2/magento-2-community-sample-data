@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Add product to cart as unregistered customer
  * 5. Perform all assertions
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-27952
  */
 class ProductsInCartReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -96,14 +97,14 @@ class ProductsInCartReportEntityTest extends Injectable
 
         //Steps
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $productUrl = $_ENV['app_frontend_url'] . $product->getUrlKey() . '.html';
         $browser->open($productUrl);
         $this->catalogProductView->getViewBlock()->addToCart($product);
         if ($isGuest) {
-            $this->objectManager->create(\Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep::class)->run();
+            $this->objectManager->create('Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep')->run();
             $browser->open($productUrl);
             $this->catalogProductView->getViewBlock()->addToCart($product);
         }
@@ -116,6 +117,6 @@ class ProductsInCartReportEntityTest extends Injectable
      */
     public function tearDown()
     {
-        $this->objectManager->create(\Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep::class)->run();
+        $this->objectManager->create('Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep')->run();
     }
 }

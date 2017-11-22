@@ -1,38 +1,33 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class RangeNodeTest extends Setup
+class Braintree_RangeNodeTest extends PHPUnit_Framework_TestCase
 {
-    public function testGreaterThanOrEqualTo()
+    function testGreaterThanOrEqualTo()
     {
-        $node = new Braintree\RangeNode('field');
+        $node = new Braintree_RangeNode('field');
         $node->greaterThanOrEqualTo('smallest');
-        $this->assertEquals(['min' => 'smallest'], $node->toParam());
+        $this->assertEquals(array('min' => 'smallest'), $node->toParam());
     }
 
-    public function testLessThanOrEqualTo()
+    function testLessThanOrEqualTo()
     {
-        $node = new Braintree\RangeNode('field');
+        $node = new Braintree_RangeNode('field');
         $node->lessThanOrEqualTo('biggest');
-        $this->assertEquals(['max' => 'biggest'], $node->toParam());
+        $this->assertEquals(array('max' => 'biggest'), $node->toParam());
     }
 
-    public function testBetween()
+    function testBetween()
     {
-        $node = new Braintree\RangeNode('field');
+        $node = new Braintree_RangeNode('field');
         $node->between('alpha', 'omega');
-        $this->assertEquals(['min' => 'alpha', 'max' => 'omega'], $node->toParam());
+        $this->assertEquals(array('min' => 'alpha', 'max' => 'omega'), $node->toParam());
     }
 
-    public function testIs()
+    function testIs()
     {
-        $node = new Braintree\RangeNode('field');
+        $node = new Braintree_RangeNode('field');
         $node->is('something');
-        $this->assertEquals(['is' => 'something'], $node->toParam());
+        $this->assertEquals(array('is' => 'something'), $node->toParam());
     }
 }

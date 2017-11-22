@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Weee\Block\Item\Price;
@@ -14,9 +14,7 @@ use Magento\Weee\Model\Tax as WeeeDisplayConfig;
 /**
  * Item price render block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
 {
@@ -198,13 +196,7 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      */
     public function getBaseUnitDisplayPriceExclTax()
     {
-        $orderItem = $this->getItem();
-        if ($orderItem instanceof InvoiceItem || $orderItem instanceof CreditMemoItem) {
-            $orderItem = $orderItem->getOrderItem();
-        }
-
-        $qty = $orderItem->getQtyOrdered();
-        $basePriceExclTax = $orderItem->getBaseRowTotal() / $qty;
+        $basePriceExclTax = $this->getItem()->getBasePrice();
 
         if (!$this->weeeHelper->isEnabled($this->getStoreId())) {
             return $basePriceExclTax;
@@ -346,13 +338,7 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      */
     public function getBaseFinalUnitDisplayPriceExclTax()
     {
-        $orderItem = $this->getItem();
-        if ($orderItem instanceof InvoiceItem || $orderItem instanceof CreditMemoItem) {
-            $orderItem = $orderItem->getOrderItem();
-        }
-
-        $qty = $orderItem->getQtyOrdered();
-        $basePriceExclTax = $orderItem->getBaseRowTotal() / $qty;
+        $basePriceExclTax = $this->getItem()->getBasePrice();
 
         if (!$this->weeeHelper->isEnabled($this->getStoreId())) {
             return $basePriceExclTax;

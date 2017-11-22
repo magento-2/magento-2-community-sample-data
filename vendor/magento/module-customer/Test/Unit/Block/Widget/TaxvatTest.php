@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Customer\Test\Unit\Block\Widget;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Customer\Block\Widget\Taxvat;
 
-class TaxvatTest extends \PHPUnit\Framework\TestCase
+class TaxvatTest extends \PHPUnit_Framework_TestCase
 {
     /** Constants used in the unit tests */
     const CUSTOMER_ENTITY_TYPE = 'customer';
@@ -29,11 +29,11 @@ class TaxvatTest extends \PHPUnit\Framework\TestCase
     /** @var Taxvat */
     private $_block;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->attribute = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $this->attribute = $this->getMockBuilder('\Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->getMockForAbstractClass();
-        $this->customerMetadata = $this->getMockBuilder(\Magento\Customer\Api\CustomerMetadataInterface::class)
+        $this->customerMetadata = $this->getMockBuilder('\Magento\Customer\Api\CustomerMetadataInterface')
             ->getMockForAbstractClass();
         $this->customerMetadata->expects(
             $this->any()
@@ -46,8 +46,8 @@ class TaxvatTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_block = new \Magento\Customer\Block\Widget\Taxvat(
-            $this->createMock(\Magento\Framework\View\Element\Template\Context::class),
-            $this->createMock(\Magento\Customer\Helper\Address::class),
+            $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false),
+            $this->getMock('Magento\Customer\Helper\Address', [], [], '', false),
             $this->customerMetadata
         );
     }
@@ -82,7 +82,7 @@ class TaxvatTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->throwException(new NoSuchEntityException(
                 __(
-                    'No such entity with %fieldName = %fieldValue',
+                    NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                     ['fieldName' => 'field', 'fieldValue' => 'value']
                 )
             ))
@@ -120,7 +120,7 @@ class TaxvatTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->throwException(new NoSuchEntityException(
                 __(
-                    'No such entity with %fieldName = %fieldValue',
+                    NoSuchEntityException::MESSAGE_SINGLE_FIELD,
                     ['fieldName' => 'field', 'fieldValue' => 'value']
                 )
             ))

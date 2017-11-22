@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Model\ResourceModel\Report\Product\Viewed;
@@ -8,7 +8,7 @@ namespace Magento\Reports\Model\ResourceModel\Report\Product\Viewed;
 /**
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection
@@ -18,7 +18,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection::class
+            'Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection'
         );
         $this->_collection->setPeriod('day')
             ->setDateRange(null, null)
@@ -30,13 +30,13 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetItems()
     {
+        $expectedResult = [1 => 3, 2 => 1, 21 => 2];
         $actualResult = [];
         /** @var \Magento\Reports\Model\Item $reportItem */
         foreach ($this->_collection->getItems() as $reportItem) {
             $actualResult[$reportItem->getData('product_id')] = $reportItem->getData('views_num');
         }
-        $this->assertNotEmpty($actualResult);
-        $this->assertCount(3, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**

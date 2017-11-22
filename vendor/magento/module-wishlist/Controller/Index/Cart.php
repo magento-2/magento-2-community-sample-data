@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Controller\Index;
@@ -60,22 +60,16 @@ class Cart extends \Magento\Wishlist\Controller\AbstractIndex
     protected $helper;
 
     /**
-     * @var \Magento\Framework\Data\Form\FormKey\Validator
-     */
-    protected $formKeyValidator;
-
-    /**
      * @param Action\Context $context
      * @param \Magento\Wishlist\Controller\WishlistProviderInterface $wishlistProvider
      * @param \Magento\Wishlist\Model\LocaleQuantityProcessor $quantityProcessor
      * @param \Magento\Wishlist\Model\ItemFactory $itemFactory
      * @param \Magento\Checkout\Model\Cart $cart
-     * @param \Magento\Wishlist\Model\Item\OptionFactory $optionFactory
+     * @param \Magento\Wishlist\Model\Item\OptionFactory $
      * @param \Magento\Catalog\Helper\Product $productHelper
      * @param \Magento\Framework\Escaper $escaper
      * @param \Magento\Wishlist\Helper\Data $helper
      * @param \Magento\Checkout\Helper\Cart $cartHelper
-     * @param \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -88,8 +82,7 @@ class Cart extends \Magento\Wishlist\Controller\AbstractIndex
         \Magento\Catalog\Helper\Product $productHelper,
         \Magento\Framework\Escaper $escaper,
         \Magento\Wishlist\Helper\Data $helper,
-        \Magento\Checkout\Helper\Cart $cartHelper,
-        \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator
+        \Magento\Checkout\Helper\Cart $cartHelper
     ) {
         $this->wishlistProvider = $wishlistProvider;
         $this->quantityProcessor = $quantityProcessor;
@@ -100,7 +93,6 @@ class Cart extends \Magento\Wishlist\Controller\AbstractIndex
         $this->escaper = $escaper;
         $this->helper = $helper;
         $this->cartHelper = $cartHelper;
-        $this->formKeyValidator = $formKeyValidator;
         parent::__construct($context);
     }
 
@@ -113,17 +105,12 @@ class Cart extends \Magento\Wishlist\Controller\AbstractIndex
      * @return \Magento\Framework\Controller\ResultInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function execute()
     {
+        $itemId = (int)$this->getRequest()->getParam('item');
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        if (!$this->formKeyValidator->validate($this->getRequest())) {
-            return $resultRedirect->setPath('*/*/');
-        }
-
-        $itemId = (int)$this->getRequest()->getParam('item');
         /* @var $item \Magento\Wishlist\Model\Item */
         $item = $this->itemFactory->create()->load($itemId);
         if (!$item->getId()) {
@@ -142,6 +129,7 @@ class Cart extends \Magento\Wishlist\Controller\AbstractIndex
         if ($postQty !== null && $qty !== $postQty) {
             $qty = $postQty;
         }
+
         if (is_array($qty)) {
             if (isset($qty[$itemId])) {
                 $qty = $qty[$itemId];

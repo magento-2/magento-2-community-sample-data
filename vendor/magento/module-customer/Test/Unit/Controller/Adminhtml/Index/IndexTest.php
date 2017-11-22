@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Adminhtml\Index;
@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Controller\Adminhtml\Index;
 /**
  * @covers \Magento\Customer\Controller\Adminhtml\Index\Index
  */
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Controller\Adminhtml\Index\Index
@@ -62,45 +62,43 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(
-            \Magento\Backend\Model\View\Result\ForwardFactory::class
-        )
+        $this->resultForwardFactoryMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\ForwardFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Forward::class)
+        $this->resultForwardMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->setMethods(['setActiveMenu', 'getConfig', 'addBreadcrumb'])
             ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
+        $this->sessionMock = $this->getMockBuilder('Magento\Backend\Model\Session')
             ->disableOriginalConstructor()
-            ->setMethods(['unsCustomerData', 'unsCustomerFormData'])
+            ->setMethods(['unsCustomerData'])
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->context = $objectManager->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'request' => $this->requestMock,
                 'session' => $this->sessionMock
             ]
         );
         $this->indexController = $objectManager->getObject(
-            \Magento\Customer\Controller\Adminhtml\Index\Index::class,
+            'Magento\Customer\Controller\Adminhtml\Index\Index',
             [
                 'context' => $this->context,
                 'resultForwardFactory' => $this->resultForwardFactoryMock,
@@ -139,11 +137,9 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             );
         $this->sessionMock->expects($this->once())
             ->method('unsCustomerData');
-        $this->sessionMock->expects($this->once())
-            ->method('unsCustomerFormData');
 
         $this->assertInstanceOf(
-            \Magento\Framework\View\Result\Page::class,
+            'Magento\Framework\View\Result\Page',
             $this->indexController->execute()
         );
     }
@@ -164,7 +160,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         $this->assertInstanceOf(
-            \Magento\Backend\Model\View\Result\Forward::class,
+            'Magento\Backend\Model\View\Result\Forward',
             $this->indexController->execute()
         );
     }

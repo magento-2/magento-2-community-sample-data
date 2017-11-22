@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Test\Unit;
@@ -10,7 +10,7 @@ use \Magento\Framework\Data\SearchResultProcessor;
 /**
  * Class SearchResultProcessorTest
  */
-class SearchResultProcessorTest extends \PHPUnit\Framework\TestCase
+class SearchResultProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SearchResultProcessor
@@ -27,13 +27,13 @@ class SearchResultProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected $searchCriteriaMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->searchCriteriaMock = $this->getMockBuilder(\Magento\Framework\Api\CriteriaInterface::class)
+        $this->searchCriteriaMock = $this->getMockBuilder('Magento\Framework\Api\CriteriaInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->searchResultCollectionMock = $this->getMockBuilder(\Magento\Framework\Data\AbstractSearchResult::class)
+        $this->searchResultCollectionMock = $this->getMockBuilder('Magento\Framework\Data\AbstractSearchResult')
             ->disableOriginalConstructor()
             ->setMethods(['getSearchCriteria', 'getItems', 'getItemId'])
             ->getMockForAbstractClass();

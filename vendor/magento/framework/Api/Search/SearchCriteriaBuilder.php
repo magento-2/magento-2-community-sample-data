@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,8 +12,6 @@ use Magento\Framework\Api\SortOrderBuilder;
 
 /**
  * Builder for SearchCriteria Service Data Object
- *
- * @api
  */
 class SearchCriteriaBuilder extends AbstractSimpleObjectBuilder
 {
@@ -26,11 +24,6 @@ class SearchCriteriaBuilder extends AbstractSimpleObjectBuilder
      * @var FilterGroupBuilder
      */
     protected $filterGroupBuilder;
-
-    /**
-     * @var array
-     */
-    private $filters = [];
 
     /**
      * @param ObjectFactory $objectFactory
@@ -54,11 +47,7 @@ class SearchCriteriaBuilder extends AbstractSimpleObjectBuilder
      */
     public function create()
     {
-        foreach ($this->filters as $filter) {
-            $this->data[SearchCriteria::FILTER_GROUPS][] = $this->filterGroupBuilder->setFilters([])
-                ->addFilter($filter)
-                ->create();
-        }
+        $this->data[SearchCriteria::FILTER_GROUPS] = [$this->filterGroupBuilder->create()];
         $this->data[SearchCriteria::SORT_ORDERS] = [$this->sortOrderBuilder->create()];
         return parent::create();
     }
@@ -71,7 +60,7 @@ class SearchCriteriaBuilder extends AbstractSimpleObjectBuilder
      */
     public function addFilter(\Magento\Framework\Api\Filter $filter)
     {
-        $this->filters[] = $filter;
+        $this->filterGroupBuilder->addFilter($filter);
         return $this;
     }
 

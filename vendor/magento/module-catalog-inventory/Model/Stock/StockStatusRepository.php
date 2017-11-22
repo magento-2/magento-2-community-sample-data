@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\Stock;
@@ -9,7 +9,6 @@ use Magento\CatalogInventory\Api\Data\StockStatusCollectionInterfaceFactory;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockStatusRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Status as StockStatusResource;
-use Magento\CatalogInventory\Model\StockRegistryStorage;
 use Magento\Framework\DB\MapperFactory;
 use Magento\Framework\DB\QueryBuilderFactory;
 use Magento\Framework\Exception\CouldNotDeleteException;
@@ -47,11 +46,6 @@ class StockStatusRepository implements StockStatusRepositoryInterface
     protected $mapperFactory;
 
     /**
-     * @var StockRegistryStorage
-     */
-    protected $stockRegistryStorage;
-
-    /**
      * @param StockStatusResource $resource
      * @param StatusFactory $stockStatusFactory
      * @param StockStatusCollectionInterfaceFactory $collectionFactory
@@ -82,7 +76,7 @@ class StockStatusRepository implements StockStatusRepositoryInterface
         try {
             $this->resource->save($stockStatus);
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__('Unable to save Stock Status'), $exception);
+            throw new CouldNotSaveException(__($exception->getMessage()));
         }
         return $stockStatus;
     }
@@ -121,12 +115,8 @@ class StockStatusRepository implements StockStatusRepositoryInterface
     {
         try {
             $this->resource->delete($stockStatus);
-            $this->getStockRegistryStorage()->removeStockStatus($stockStatus->getProductId());
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(
-                __('Unable to remove Stock Status for product %1', $stockStatus->getProductId()),
-                $exception
-            );
+            throw new CouldNotDeleteException(__($exception->getMessage()));
         }
         return true;
     }
@@ -142,23 +132,8 @@ class StockStatusRepository implements StockStatusRepositoryInterface
             $stockStatus = $this->get($id);
             $this->delete($stockStatus);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(
-                __('Unable to remove Stock Status for product %1', $id),
-                $exception
-            );
+            throw new CouldNotDeleteException(__($exception->getMessage()));
         }
         return true;
-    }
-
-    /**
-     * @return StockRegistryStorage
-     */
-    private function getStockRegistryStorage()
-    {
-        if (null === $this->stockRegistryStorage) {
-            $this->stockRegistryStorage = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
-        }
-        return $this->stockRegistryStorage;
     }
 }

@@ -1,24 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Model;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Downloadable\Api\Data\SampleInterfaceFactory;
 use Magento\Downloadable\Model\Product\Type;
 use Magento\Downloadable\Api\Data\File\ContentUploaderInterface;
 use Magento\Downloadable\Api\Data\SampleInterface;
-use Magento\Downloadable\Model\Product\TypeHandler\Sample as SampleHandler;
 use Magento\Downloadable\Model\Sample\ContentValidator;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\StateException;
 use Magento\Framework\Json\EncoderInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class SampleRepository
@@ -42,11 +37,6 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
     protected $downloadableType;
 
     /**
-     * @var SampleFactory
-     */
-    protected $sampleFactory;
-
-    /**
      * @var SampleInterfaceFactory
      */
     protected $sampleDataObjectFactory;
@@ -60,16 +50,6 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
      * @var EncoderInterface
      */
     protected $jsonEncoder;
-
-    /**
-     * @var SampleHandler
-     */
-    private $sampleTypeHandler;
-
-    /**
-     * @var MetadataPool
-     */
-    private $metadataPool;
 
     /**
      * @param ProductRepositoryInterface $productRepository
@@ -95,6 +75,7 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         $this->fileContentUploader = $fileContentUploader;
         $this->jsonEncoder = $jsonEncoder;
         $this->sampleFactory = $sampleFactory;
+        $this->downloadableType = $downloadableType;
         $this->sampleDataObjectFactory = $sampleDataObjectFactory;
     }
 
@@ -168,8 +149,6 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
      * @param \Magento\Downloadable\Api\Data\SampleInterface $sample
      * @param bool $isGlobalScopeContent
      * @return int
-     * @throws InputException
-     * @throws NoSuchEntityException
      */
     public function save(
         $sku,
@@ -183,14 +162,13 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
             return $this->updateSample($product, $sample, $isGlobalScopeContent);
         } else {
             if ($product->getTypeId() !== Type::TYPE_DOWNLOADABLE) {
-                throw new InputException(__('Provided product must be type \'downloadable\'.'));
+                throw new InputException(__('Product type of the product must be \'downloadable\'.'));
             }
-            $validateSampleContent = !($sample->getSampleType() === 'file' && $sample->getSampleFile());
-            if (!$this->contentValidator->isValid($sample, $validateSampleContent)) {
+            if (!$this->contentValidator->isValid($sample)) {
                 throw new InputException(__('Provided sample information is invalid.'));
             }
 
-            if (!in_array($sample->getSampleType(), ['url', 'file'], true)) {
+            if (!in_array($sample->getSampleType(), ['url', 'file'])) {
                 throw new InputException(__('Invalid sample type.'));
             }
 
@@ -215,14 +193,14 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         $isGlobalScopeContent
     ) {
         $sampleData = [
-            'sample_id' => (int)$sample->getid(),
+            'sample_id' => $sample->getid() === null ? 0 : $sample->getid(),
             'is_delete' => 0,
             'type' => $sample->getSampleType(),
             'sort_order' => $sample->getSortOrder(),
             'title' => $sample->getTitle(),
         ];
 
-        if ($sample->getSampleType() === 'file' && $sample->getSampleFile() === null) {
+        if ($sample->getSampleType() == 'file' && $sample->getSampleFile() === null) {
             $sampleData['file'] = $this->jsonEncoder->encode(
                 [
                     $this->fileContentUploader->upload($sample->getSampleFileContent(), 'sample'),
@@ -243,11 +221,11 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         }
 
         $downloadableData = ['sample' => [$sampleData]];
-
+        $product->setDownloadableData($downloadableData);
         if ($isGlobalScopeContent) {
             $product->setStoreId(0);
         }
-        $this->getSampleTypeHandler()->save($product, $downloadableData);
+        $this->downloadableType->save($product);
         return $product->getLastAddedSampleId();
     }
 
@@ -273,10 +251,8 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         if (!$existingSample->getId()) {
             throw new NoSuchEntityException(__('There is no downloadable sample with provided ID.'));
         }
-        $linkFieldValue = $product->getData(
-            $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField()
-        );
-        if ($existingSample->getProductId() != $linkFieldValue) {
+
+        if ($existingSample->getProductId() != $product->getId()) {
             throw new InputException(__('Provided downloadable sample is not related to given product.'));
         }
 
@@ -316,41 +292,7 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         if (!$sample->getId()) {
             throw new NoSuchEntityException(__('There is no downloadable sample with provided ID.'));
         }
-        try {
-            $sample->delete();
-        } catch (\Exception $exception) {
-            throw new StateException(__('Cannot delete sample with id %1', $sample->getId()), $exception);
-        }
+        $sample->delete();
         return true;
-    }
-
-    /**
-     * Get MetadataPool instance
-     *
-     * @deprecated 100.1.0
-     * @return MetadataPool
-     */
-    private function getMetadataPool()
-    {
-        if (!$this->metadataPool) {
-            $this->metadataPool = ObjectManager::getInstance()->get(MetadataPool::class);
-        }
-
-        return $this->metadataPool;
-    }
-
-    /**
-     * Get SampleTypeHandler Instance
-     *
-     * @deprecated 100.1.0
-     * @return SampleHandler
-     */
-    private function getSampleTypeHandler()
-    {
-        if (!$this->sampleTypeHandler) {
-            $this->sampleTypeHandler = ObjectManager::getInstance()->get(SampleHandler::class);
-        }
-
-        return $this->sampleTypeHandler;
     }
 }

@@ -1,13 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\OfflineShippingSampleData\Model;
 
 use Magento\Framework\Setup\SampleData\Context as SampleDataContext;
-use Magento\Framework\App\ObjectManager;
-use Magento\Config\App\Config\Type\System as SystemConfig;
 
 /**
  * Class Tablerate
@@ -60,19 +58,13 @@ class Tablerate
     protected $storeManager;
 
     /**
-     * @var SystemConfig
-     */
-    private $systemConfig;
-
-    /**
      * @param SampleDataContext $sampleDataContext
      * @param \Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate $tablerate
-     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Framework\App\ResourceModel $resource
      * @param \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollectionFactory
      * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
      * @param \Magento\Framework\App\Config\Storage\WriterInterface $configWriter
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param SystemConfig|null $systemConfig
      */
     public function __construct(
         SampleDataContext $sampleDataContext,
@@ -81,8 +73,7 @@ class Tablerate
         \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollectionFactory,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        SystemConfig $systemConfig = null
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->fixtureManager = $sampleDataContext->getFixtureManager();
         $this->csvReader = $sampleDataContext->getCsvReader();
@@ -92,7 +83,6 @@ class Tablerate
         $this->cacheTypeList = $cacheTypeList;
         $this->configWriter = $configWriter;
         $this->storeManager = $storeManager;
-        $this->systemConfig = $systemConfig ?: ObjectManager::getInstance()->get(SystemConfig::class);
     }
 
     /**
@@ -148,7 +138,6 @@ class Tablerate
         $this->configWriter->save('carriers/tablerate/active', 1);
         $this->configWriter->save('carriers/tablerate/condition_name', 'package_value');
         $this->cacheTypeList->cleanType('config');
-        $this->systemConfig->clean();
     }
 
     /**

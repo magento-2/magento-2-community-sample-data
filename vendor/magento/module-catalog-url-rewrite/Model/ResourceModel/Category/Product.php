@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogUrlRewrite\Model\ResourceModel\Category;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
-use Magento\UrlRewrite\Model\Storage\DbStorage;
 
 class Product extends AbstractDb
 {
@@ -56,8 +55,6 @@ class Product extends AbstractDb
     }
 
     /**
-     * Removes data by primary key
-     *
      * @param array $removeData
      * @return int
      */
@@ -67,37 +64,5 @@ class Product extends AbstractDb
             $this->getTable(self::TABLE_NAME),
             ['url_rewrite_id in (?)' => $removeData]
         );
-    }
-
-    /**
-     * Removes multiple entities from url_rewrite table using entities from catalog_url_rewrite_product_category
-     * Example: $filter = ['category_id' => [1, 2, 3], 'product_id' => [1, 2, 3]]
-     *
-     * @param array $filter
-     * @return int
-     */
-    public function removeMultipleByProductCategory(array $filter)
-    {
-        return $this->getConnection()->delete(
-            $this->getTable(self::TABLE_NAME),
-            ['url_rewrite_id in (?)' => $this->prepareSelect($filter)]
-        );
-    }
-
-    /**
-     * Prepare select statement for specific filter
-     *
-     * @param array $data
-     * @return \Magento\Framework\DB\Select
-     */
-    private function prepareSelect($data)
-    {
-        $select = $this->getConnection()->select();
-        $select->from($this->getTable(DbStorage::TABLE_NAME), 'url_rewrite_id');
-
-        foreach ($data as $column => $value) {
-            $select->where($this->getConnection()->quoteIdentifier($column) . ' IN (?)', $value);
-        }
-        return $select;
     }
 }

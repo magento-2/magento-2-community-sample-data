@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Entity\Collection;
@@ -12,12 +12,9 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Entity/Attribute/Model - collection abstract
- *
- * @api
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class AbstractCollection extends AbstractDb implements SourceProviderInterface
 {
@@ -703,7 +700,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         }
 
         if (empty($filter)) {
-            $filter = $entity->getLinkField();
+            $filter = $entity->getEntityIdField();
         }
 
         // add joined attribute
@@ -1023,7 +1020,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     public function importFromArray($arr)
     {
-        $entityIdField = $this->getEntity()->getLinkField();
+        $entityIdField = $this->getEntity()->getEntityIdField();
         foreach ($arr as $row) {
             $entityId = $row[$entityIdField];
             if (!isset($this->_items[$entityId])) {
@@ -1044,7 +1041,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     public function exportToArray()
     {
         $result = [];
-        $entityIdField = $this->getEntity()->getLinkField();
+        $entityIdField = $this->getEntity()->getEntityIdField();
         foreach ($this->getItems() as $item) {
             $result[$item->getData($entityIdField)] = $item->getData();
         }
@@ -1178,11 +1175,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         foreach ($selectGroups as $selects) {
             if (!empty($selects)) {
                 try {
-                    if (is_array($selects)) {
-                        $select = implode(' UNION ALL ', $selects);
-                    } else {
-                        $select = $selects;
-                    }
+                    $select = implode(' UNION ALL ', $selects);
                     $values = $this->getConnection()->fetchAll($select);
                 } catch (\Exception $e) {
                     $this->printLogQuery(true, true, $select);
@@ -1211,23 +1204,17 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
             $attributeIds = $this->_selectAttributes;
         }
         $entity = $this->getEntity();
-        $linkField = $entity->getLinkField();
-        $select = $this->getConnection()->select()
-            ->from(
-                ['e' => $this->getEntity()->getEntityTable()],
-                ['entity_id']
-            )
-            ->join(
-                ['t_d' => $table],
-                "e.{$linkField} = t_d.{$linkField}",
-                ['t_d.attribute_id']
-            )->where(
-                " e.entity_id IN (?)",
-                array_keys($this->_itemsById)
-            )->where(
-                't_d.attribute_id IN (?)',
-                $attributeIds
-            );
+        $entityIdField = $entity->getEntityIdField();
+        $select = $this->getConnection()->select()->from(
+            $table,
+            [$entityIdField, 'attribute_id']
+        )->where(
+            "{$entityIdField} IN (?)",
+            array_keys($this->_itemsById)
+        )->where(
+            'attribute_id IN (?)',
+            $attributeIds
+        );
 
         if ($entity->getEntityTable() == \Magento\Eav\Model\Entity::DEFAULT_ENTITY_TABLE && $entity->getTypeId()) {
             $select->where(
@@ -1250,7 +1237,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _addLoadAttributesSelectValues($select, $table, $type)
     {
-        $select->columns(['value' => 't_d.value']);
+        $select->columns(['value' => $table . '.value']);
         return $select;
     }
 
@@ -1373,9 +1360,10 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
             $pKey = $attrTable . '.' . $this->_joinAttributes[$attributeCode]['filter'];
         } else {
             $entity = $this->getEntity();
-            $fKey = 'e.' . $this->getEntityPkName($entity);
-            $pKey = $attrTable . '.' . $this->getEntityPkName($entity);
+            $entityIdField = $entity->getEntityIdField();
             $attribute = $entity->getAttribute($attributeCode);
+            $fKey = 'e.' . $entityIdField;
+            $pKey = $attrTable . '.' . $entityIdField;
         }
 
         if (!$attribute) {
@@ -1415,18 +1403,6 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         $this->_joinFields[$attributeCode] = ['table' => '', 'field' => $attrFieldName];
 
         return $this;
-    }
-
-    /**
-     * Retrieve Entity Primary Key
-     *
-     * @param \Magento\Eav\Model\Entity\AbstractEntity $entity
-     * @return string
-     * @since 100.1.0
-     */
-    protected function getEntityPkName(\Magento\Eav\Model\Entity\AbstractEntity $entity)
-    {
-        return $entity->getEntityIdField();
     }
 
     /**
@@ -1522,7 +1498,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     public function toArray($arrAttributes = [])
     {
         $arr = [];
-        foreach ($this->getItems() as $key => $item) {
+        foreach ($this->_items as $key => $item) {
             $arr[$key] = $item->toArray($arrAttributes);
         }
         return $arr;

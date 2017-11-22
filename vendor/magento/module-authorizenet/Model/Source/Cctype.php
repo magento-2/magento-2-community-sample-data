@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Model\Source;
@@ -17,6 +17,6 @@ class Cctype extends PaymentCctype
      */
     public function getAllowedTypes()
     {
-        return ['VI', 'MC', 'AE', 'DI', 'JCB', 'DN'];
+        return ['VI', 'MC', 'AE', 'DI'];
     }
 }

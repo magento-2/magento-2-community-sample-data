@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Test\Unit\Model\Currency\Import;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Currency\Import\Config
@@ -29,7 +29,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorException(array $configData, $expectedException)
     {
-        $this->expectException('InvalidArgumentException', $expectedException);
+        $this->setExpectedException('InvalidArgumentException', $expectedException);
         new \Magento\Directory\Model\Currency\Import\Config($configData);
     }
 

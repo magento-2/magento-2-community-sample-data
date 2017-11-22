@@ -1,8 +1,7 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'jquery',
     'priceUtils',
@@ -12,12 +11,39 @@ define([
     'use strict';
 
     var globalOptions = {
-            fromSelector: 'form',
-            dropdownsSelector: '[data-role=calendar-dropdown]'
-        },
-        optionHandler = {};
+        fromSelector: 'form',
+        dropdownsSelector: '[data-role=calendar-dropdown]'
+    };
 
-    optionHandler.optionHandlers = {};
+    $.widget('mage.priceOptionDate', {
+        options: globalOptions,
+
+        /**
+         * Function-initializer of priceOptionDate widget
+         * @private
+         */
+        _create: function initOptionDate() {
+            var field = this.element,
+                form = field.closest(this.options.fromSelector),
+                dropdowns = $(this.options.dropdownsSelector, field),
+                optionHandler = {},
+                dateOptionId;
+
+            if (dropdowns.length) {
+                dateOptionId = this.options.dropdownsSelector + dropdowns.attr('name');
+
+                optionHandler.optionHandlers = {};
+                optionHandler.optionHandlers[dateOptionId] = onCalendarDropdownChange(dropdowns);
+
+                form.priceOptions(optionHandler);
+
+                dropdowns.data('role', dateOptionId);
+                dropdowns.on('change', onDateChange.bind(this, dropdowns));
+            }
+        }
+    });
+
+    return $.mage.priceOptionDate;
 
     /**
      * Custom handler for Date-with-Dropdowns option type.
@@ -25,7 +51,7 @@ define([
      * @return {Function} function that return object { optionHash : optionAdditionalPrice }
      */
     function onCalendarDropdownChange(siblings) {
-        return function (element, optionConfig) {
+        return function (element, optionConfig, form) {
             var changes = {},
                 optionId = utils.findOptionId(element),
                 overhead = optionConfig[optionId].prices,
@@ -41,16 +67,6 @@ define([
 
             return changes;
         };
-    }
-
-    /**
-     * Returns number of days for special month and year
-     * @param  {Number} month
-     * @param  {Number} year
-     * @return {Number}
-     */
-    function getDaysInMonth(month, year) {
-        return new Date(year, month, 0).getDate();
     }
 
     /**
@@ -82,41 +98,21 @@ define([
                 options = [];
                 needed = expectedDays - daysNodes.length + 1;
 
-                while (needed--) { //eslint-disable-line max-depth
-                    options.push(
-                        '<option value="' + (expectedDays - needed) + '">' + (expectedDays - needed) + '</option>'
-                    );
+                while (needed--) {
+                    options.push('<option value="' + (expectedDays - needed) + '">' + (expectedDays - needed) + '</option>');
                 }
                 $(options.join('')).insertAfter(daysNodes.last());
             }
         }
     }
 
-    $.widget('mage.priceOptionDate', {
-        options: globalOptions,
-
-        /**
-         * Function-initializer of priceOptionDate widget
-         * @private
-         */
-        _create: function initOptionDate() {
-            var field = this.element,
-                form = field.closest(this.options.fromSelector),
-                dropdowns = $(this.options.dropdownsSelector, field),
-                dateOptionId;
-
-            if (dropdowns.length) {
-                dateOptionId = this.options.dropdownsSelector + dropdowns.attr('name');
-
-                optionHandler.optionHandlers[dateOptionId] = onCalendarDropdownChange(dropdowns);
-
-                form.priceOptions(optionHandler);
-
-                dropdowns.data('role', dateOptionId);
-                dropdowns.on('change', onDateChange.bind(this, dropdowns));
-            }
-        }
-    });
-
-    return $.mage.priceOptionDate;
+    /**
+     * Returns number of days for special month and year
+     * @param  {Number} month
+     * @param  {Number} year
+     * @return {Number}
+     */
+    function getDaysInMonth(month, year) {
+        return new Date(year, month, 0).getDate();
+    }
 });

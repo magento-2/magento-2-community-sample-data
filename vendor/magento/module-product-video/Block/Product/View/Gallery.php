@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,6 @@
  */
 namespace Magento\ProductVideo\Block\Product\View;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
 {
     /**
@@ -76,15 +72,5 @@ class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
             'videoAutoRestart' => $this->mediaHelper->getVideoAutoRestartAttribute(),
         ];
         return $this->jsonEncoder->encode($videoSettingData);
-    }
-
-    /**
-     * Return media gallery for product options
-     * @return string
-     * @since 100.1.0
-     */
-    public function getOptionsMediaGalleryDataJson()
-    {
-        return  $this->jsonEncoder->encode([]);
     }
 }

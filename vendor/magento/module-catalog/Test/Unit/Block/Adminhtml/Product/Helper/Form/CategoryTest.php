@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Helper\Form;
 
-class CategoryTest extends \PHPUnit\Framework\TestCase
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\AuthorizationInterface
@@ -17,9 +17,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManager;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->authorization = $this->getMockBuilder(\Magento\Framework\AuthorizationInterface::class)
+        $this->authorization = $this->getMockBuilder('Magento\Framework\AuthorizationInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
@@ -35,7 +35,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             ->method('isAllowed')
             ->will($this->returnValue($isAllowed));
         $model = $this->objectManager->getObject(
-            \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category',
             ['authorization' => $this->authorization]
         );
         switch ($isAllowed) {
@@ -61,7 +61,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     public function testGetAfterElementHtml()
     {
         $model = $this->objectManager->getObject(
-            \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category',
             ['authorization' => $this->authorization]
         );
         $this->authorization->expects($this->any())

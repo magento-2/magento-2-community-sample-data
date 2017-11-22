@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Block;
@@ -9,9 +9,6 @@ use Magento\Store\Model\ScopeInterface;
 
 /**
  * Cms page content block
- *
- * @api
- * @since 100.0.2
  */
 class Page extends \Magento\Framework\View\Element\AbstractBlock implements
     \Magento\Framework\DataObject\IdentityInterface
@@ -104,8 +101,7 @@ class Page extends \Magento\Framework\View\Element\AbstractBlock implements
         $page = $this->getPage();
         $this->_addBreadcrumbs($page);
         $this->pageConfig->addBodyClass('cms-' . $page->getIdentifier());
-        $metaTitle = $page->getMetaTitle();
-        $this->pageConfig->getTitle()->set($metaTitle ? $metaTitle : $page->getTitle());
+        $this->pageConfig->getTitle()->set($page->getTitle());
         $this->pageConfig->setKeywords($page->getMetaKeywords());
         $this->pageConfig->setDescription($page->getMetaDescription());
 
@@ -127,26 +123,16 @@ class Page extends \Magento\Framework\View\Element\AbstractBlock implements
      */
     protected function _addBreadcrumbs(\Magento\Cms\Model\Page $page)
     {
-        $homePageIdentifier = $this->_scopeConfig->getValue(
-            'web/default/cms_home_page',
-            ScopeInterface::SCOPE_STORE
-        );
-        $homePageDelimiterPosition = strrpos($homePageIdentifier, '|');
-        if ($homePageDelimiterPosition) {
-            $homePageIdentifier = substr($homePageIdentifier, 0, $homePageDelimiterPosition);
-        }
-        $noRouteIdentifier = $this->_scopeConfig->getValue(
-            'web/default/cms_no_route',
-            ScopeInterface::SCOPE_STORE
-        );
-        $noRouteDelimiterPosition = strrpos($noRouteIdentifier, '|');
-        if ($noRouteDelimiterPosition) {
-            $noRouteIdentifier = substr($noRouteIdentifier, 0, $noRouteDelimiterPosition);
-        }
         if ($this->_scopeConfig->getValue('web/default/show_cms_breadcrumbs', ScopeInterface::SCOPE_STORE)
             && ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs'))
-            && $page->getIdentifier() !== $homePageIdentifier
-            && $page->getIdentifier() !== $noRouteIdentifier
+            && $page->getIdentifier() !== $this->_scopeConfig->getValue(
+                'web/default/cms_home_page',
+                ScopeInterface::SCOPE_STORE
+            )
+            && $page->getIdentifier() !== $this->_scopeConfig->getValue(
+                'web/default/cms_no_route',
+                ScopeInterface::SCOPE_STORE
+            )
         ) {
             $breadcrumbsBlock->addCrumb(
                 'home',

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data;
@@ -15,7 +15,7 @@ class SearchResultProcessor extends AbstractDataObject implements SearchResultPr
      *
      * @var string
      */
-    protected $dataInterface = \Magento\Framework\DataObject::class;
+    protected $dataInterface = 'Magento\Framework\DataObject';
 
     /**
      * @var AbstractSearchResult

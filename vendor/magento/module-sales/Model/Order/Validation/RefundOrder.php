@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Validation;
@@ -88,17 +88,19 @@ class RefundOrder implements RefundOrderInterface
 
         $itemsValidation = [];
         foreach ($items as $item) {
-            $itemsValidation[] = $this->itemCreationValidator->validate(
+            $itemValidation = $this->itemCreationValidator->validate(
                 $item,
                 [CreationQuantityValidator::class],
                 $order
             )->getMessages();
+
+            $itemsValidation = array_merge($itemsValidation, $itemValidation);
         }
 
         return $this->validatorResultMerger->merge(
             $orderValidationResult,
             $creditmemoValidationResult,
-            ...$itemsValidation
+            $itemsValidation
         );
     }
 }

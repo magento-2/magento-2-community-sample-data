@@ -1,21 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\AdminOrder;
 
-use Magento\Sales\Api\OrderManagementInterface;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Sales\Model\Order;
-use Magento\Framework\Registry;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @magentoAppArea adminhtml
- * @magentoAppIsolation enabled
  */
-class CreateTest extends \PHPUnit\Framework\TestCase
+class CreateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\AdminOrder\Create
@@ -28,9 +24,9 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->_messageManager = Bootstrap::getObjectManager()->get(\Magento\Framework\Message\ManagerInterface::class);
+        $this->_messageManager = Bootstrap::getObjectManager()->get('Magento\Framework\Message\ManagerInterface');
         $this->_model = Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\AdminOrder\Create::class,
+            'Magento\Sales\Model\AdminOrder\Create',
             ['messageManager' => $this->_messageManager]
         );
     }
@@ -42,74 +38,16 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     public function testInitFromOrderShippingAddressSameAsBillingWhenEmpty()
     {
         /** @var $order \Magento\Sales\Model\Order */
-        $order = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $order = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001');
         $this->assertNull($order->getShippingAddress());
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('rule_data');
+        $objectManager->get('Magento\Framework\Registry')->unregister('rule_data');
         $this->_model->initFromOrder($order);
 
         $this->assertNull($order->getShippingAddress());
-    }
-
-    /**
-     * @magentoDataFixture Magento/Customer/_files/customer.php
-     * @magentoDataFixture Magento/Downloadable/_files/product_downloadable.php
-     * @magentoDataFixture Magento/Downloadable/_files/order_with_downloadable_product_with_additional_options.php
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     */
-    public function testInitFromOrderAndCreateOrderFromQuoteWithAdditionalOptions()
-    {
-        /** @var $serializer \Magento\Framework\Serialize\Serializer\Json */
-        $serializer = Bootstrap::getObjectManager()->create(\Magento\Framework\Serialize\Serializer\Json::class);
-
-        /** @var $order \Magento\Sales\Model\Order */
-        $order = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
-        $order->loadByIncrementId('100000001');
-
-        /** @var $orderCreate \Magento\Sales\Model\AdminOrder\Create */
-        $orderCreate = $this->_model->initFromOrder($order);
-
-        $quoteItems = $orderCreate->getQuote()->getItemsCollection();
-
-        $this->assertEquals(1, $quoteItems->count());
-
-        $quoteItem = $quoteItems->getFirstItem();
-        $quoteItemOptions = $quoteItem->getOptionsByCode();
-
-        $this->assertEquals(
-            $serializer->serialize(['additional_option_key' => 'additional_option_value']),
-            $quoteItemOptions['additional_options']->getValue()
-        );
-
-        $session = Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session\Quote::class);
-        $session->setCustomerId(1);
-
-        $customer = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Customer::class);
-        $customer->load(1)->setDefaultBilling(null)->setDefaultShipping(null)->save();
-
-        $rate = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote\Address\Rate::class);
-        $rate->setCode('freeshipping_freeshipping');
-
-        $this->_model->getQuote()->getShippingAddress()->addShippingRate($rate);
-        $this->_model->getQuote()->getShippingAddress()->setCountryId('EE');
-        $this->_model->setShippingAsBilling(0);
-        $this->_model->setPaymentData(['method' => 'checkmo']);
-
-        $newOrder = $this->_model->createOrder();
-        $newOrderItems = $newOrder->getItemsCollection();
-
-        $this->assertEquals(1, $newOrderItems->count());
-
-        $newOrderItem = $newOrderItems->getFirstItem();
-
-        $this->assertEquals(
-            ['additional_option_key' => 'additional_option_value'],
-            $newOrderItem->getProductOptionByCode('additional_options')
-        );
     }
 
     /**
@@ -120,14 +58,14 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     public function testInitFromOrderShippingAddressSameAsBillingWhenSame()
     {
         /** @var $order \Magento\Sales\Model\Order */
-        $order = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $order = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001');
 
         $this->assertNull($order->getShippingAddress()->getSameAsBilling());
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('rule_data');
+        $objectManager->get('Magento\Framework\Registry')->unregister('rule_data');
         $this->_model->initFromOrder($order);
 
         $this->assertTrue($order->getShippingAddress()->getSameAsBilling());
@@ -144,12 +82,12 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
 
         /** @var $order \Magento\Sales\Model\Order */
-        $order = $objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000002');
 
         $this->assertNull($order->getShippingAddress()->getSameAsBilling());
 
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('rule_data');
+        $objectManager->get('Magento\Framework\Registry')->unregister('rule_data');
         $this->_model->initFromOrder($order);
 
         $this->assertFalse($order->getShippingAddress()->getSameAsBilling());
@@ -164,7 +102,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
 
         /** @var $order \Magento\Sales\Model\Order */
-        $order = $objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001');
 
         $payment = $order->getPayment();
@@ -173,7 +111,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('AE', $payment->getCcType());
         $this->assertEquals('0005', $payment->getCcLast4());
 
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('rule_data');
+        $objectManager->get('Magento\Framework\Registry')->unregister('rule_data');
         $payment = $this->_model->initFromOrder($order)->getQuote()->getPayment();
 
         $this->assertNull($payment->getCcExpMonth());
@@ -183,38 +121,12 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Sales/_files/order.php
-     */
-    public function testInitFromOrderWithEmptyPaymentDetails()
-    {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
-        $objectManager = Bootstrap::getObjectManager();
-        /** @var $order \Magento\Sales\Model\Order */
-        $order = $objectManager->create(Order::class);
-        $order->loadByIncrementId('100000001');
-
-        $objectManager->get(Registry::class)
-            ->unregister('rule_data');
-
-        $initOrder = $this->_model->initFromOrder($order);
-        $payment = $initOrder->getQuote()->getPayment();
-
-        static::assertEquals($initOrder->getQuote()->getId(), $payment->getData('quote_id'));
-        $payment->unsetData('quote_id');
-
-        static::assertEmpty($payment->getMethod());
-        static::assertEmpty($payment->getAdditionalInformation());
-        static::assertEmpty($payment->getAdditionalData());
-        static::assertEmpty($payment->getData());
-    }
-
-    /**
      * @magentoAppIsolation enabled
      */
     public function testGetCustomerWishlistNoCustomerId()
     {
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId(null);
         $this->assertFalse(
             $this->_model->getCustomerWishlist(true),
@@ -233,14 +145,14 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         $customerIdFromFixture = 1;
         $productIdFromFixture = 1;
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId($customerIdFromFixture);
 
         /** Test new wishlist creation for the customer specified above */
         /** @var \Magento\Wishlist\Model\Wishlist $wishlist */
         $wishlist = $this->_model->getCustomerWishlist(true);
         $this->assertInstanceOf(
-            \Magento\Wishlist\Model\Wishlist::class,
+            'Magento\Wishlist\Model\Wishlist',
             $wishlist,
             'New Wish List is expected to be created if existing Customer does not have one yet.'
         );
@@ -278,7 +190,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         /** Validate data before creating address object */
         $this->_model->setIsValidate(true)->setBillingAddress($addressData);
         $this->assertInstanceOf(
-            \Magento\Quote\Model\Quote\Address::class,
+            'Magento\Quote\Model\Quote\Address',
             $this->_model->getBillingAddress(),
             'Billing address object was not created.'
         );
@@ -294,12 +206,11 @@ class CreateTest extends \PHPUnit\Framework\TestCase
                 'region_id' => 1,
             ]
         );
-
-        $result = $this->_model->getBillingAddress()->getData();
-        foreach ($expectedAddressData as $key => $value) {
-            $this->assertArrayHasKey($key, $result);
-            $this->assertEquals($value, $result[$key]);
-        }
+        $this->assertEquals(
+            $expectedAddressData,
+            $this->_model->getBillingAddress()->getData(),
+            'Created billing address is invalid.'
+        );
     }
 
     /**
@@ -311,7 +222,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     {
         $customerIdFromFixture = 1;
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId($customerIdFromFixture);
         $invalidAddressData = array_merge($this->_getValidAddressData(), ['firstname' => '', 'lastname' => '']);
         /**
@@ -380,7 +291,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         $order = $this->_model->createOrder();
         $this->_verifyCreatedOrder($order, $shippingMethod);
         /** @var \Magento\Customer\Model\Customer $customer */
-        $customer = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Customer::class);
+        $customer = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
         $customer->load($order->getCustomerId());
         $this->assertEquals(
             $firstNameForShippingAddress,
@@ -425,94 +336,6 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Tests order creation with new customer after failed first place order action.
-     *
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     * @dataProvider createOrderNewCustomerWithFailedFirstPlaceOrderActionDataProvider
-     * @param string $customerEmailFirstAttempt
-     * @param string $customerEmailSecondAttempt
-     */
-    public function testCreateOrderNewCustomerWithFailedFirstPlaceOrderAction(
-        $customerEmailFirstAttempt,
-        $customerEmailSecondAttempt
-    ) {
-        $productIdFromFixture = 1;
-        $shippingMethod = 'freeshipping_freeshipping';
-        $paymentMethod = 'checkmo';
-        $shippingAddressAsBilling = 1;
-        $customerEmail = $customerEmailFirstAttempt;
-        $orderData = [
-            'currency' => 'USD',
-            'account' => ['group_id' => '1', 'email' => $customerEmail],
-            'billing_address' => array_merge($this->_getValidAddressData(), ['save_in_address_book' => '1']),
-            'shipping_method' => $shippingMethod,
-            'comment' => ['customer_note' => ''],
-            'send_confirmation' => false,
-        ];
-        $paymentData = ['method' => $paymentMethod];
-
-        $this->_preparePreconditionsForCreateOrder(
-            $productIdFromFixture,
-            $customerEmail,
-            $shippingMethod,
-            $shippingAddressAsBilling,
-            $paymentData,
-            $orderData,
-            $paymentMethod
-        );
-
-        // Emulates failing place order action
-        $orderManagement = $this->getMockForAbstractClass(OrderManagementInterface::class);
-        $orderManagement->method('place')
-            ->willThrowException(new \Exception('Can\'t place order'));
-        Bootstrap::getObjectManager()->addSharedInstance($orderManagement, OrderManagementInterface::class);
-        try {
-            $this->_model->createOrder();
-        } catch (\Exception $e) {
-            Bootstrap::getObjectManager()->removeSharedInstance(OrderManagementInterface::class);
-        }
-
-        $customerEmail = $customerEmailSecondAttempt ? :$this->_model->getQuote()->getCustomer()->getEmail();
-        $orderData['account']['email'] = $customerEmailSecondAttempt;
-
-        $this->_preparePreconditionsForCreateOrder(
-            $productIdFromFixture,
-            $customerEmail,
-            $shippingMethod,
-            $shippingAddressAsBilling,
-            $paymentData,
-            $orderData,
-            $paymentMethod
-        );
-
-        $order = $this->_model->createOrder();
-        $this->_verifyCreatedOrder($order, $shippingMethod);
-    }
-
-    /**
-     * Email before and after failed first place order action.
-     *
-     * @case #1 Is the same.
-     * @case #2 Is empty.
-     * @case #3 Filled after failed first place order action.
-     * @case #4 Empty after failed first place order action.
-     * @case #5 Changed after failed first place order action.
-     * @return array
-     */
-    public function createOrderNewCustomerWithFailedFirstPlaceOrderActionDataProvider()
-    {
-        return [
-            1 => ['customer@email.com', 'customer@email.com'],
-            2 => ['', ''],
-            3 => ['', 'customer@email.com'],
-            4 => ['customer@email.com', ''],
-            5 => ['customer@email.com', 'changed_customer@email.com'],
-        ];
-    }
-
-    /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @magentoDbIsolation enabled
@@ -552,7 +375,6 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         );
         $order = $this->_model->createOrder();
         $this->_verifyCreatedOrder($order, $shippingMethod);
-        $this->getCustomerRegistry()->remove($order->getCustomerId());
         $customer = $this->getCustomerById($order->getCustomerId());
         $address = $this->getAddressById($customer->getDefaultShipping());
         $this->assertEquals(
@@ -600,9 +422,9 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoAppIsolation enabled
      * @magentoDataFixture Magento/Sales/_files/quote.php
      * @magentoDataFixture Magento/Customer/_files/customer.php
-     * @magentoAppIsolation enabled
      */
     public function testGetCustomerCartExistingCart()
     {
@@ -610,10 +432,10 @@ class CreateTest extends \PHPUnit\Framework\TestCase
 
         /** Preconditions */
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId($fixtureCustomerId);
         /** @var $quoteFixture \Magento\Quote\Model\Quote */
-        $quoteFixture = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+        $quoteFixture = Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
         $quoteFixture->load('test01', 'reserved_order_id');
         $quoteFixture->setCustomerIsGuest(false)->setCustomerId($fixtureCustomerId)->save();
 
@@ -624,32 +446,6 @@ class CreateTest extends \PHPUnit\Framework\TestCase
         /** Try to load quote once again to ensure that caching works correctly */
         $customerQuoteFromCache = $this->_model->getCustomerCart();
         $this->assertSame($customerQuote, $customerQuoteFromCache, 'Customer quote caching does not work correctly.');
-    }
-
-    /**
-     * @magentoDataFixture Magento/Sales/_files/quote.php
-     * @magentoDataFixture Magento/Customer/_files/customer.php
-     * @magentoAppIsolation enabled
-     */
-    public function testMoveQuoteItemToCart()
-    {
-        $fixtureCustomerId = 1;
-
-        /** Preconditions */
-        /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
-        $session->setCustomerId($fixtureCustomerId);
-        /** @var $quoteFixture \Magento\Quote\Model\Quote */
-        $quoteFixture = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
-        $quoteFixture->load('test01', 'reserved_order_id');
-        $quoteFixture->setCustomerIsGuest(false)->setCustomerId($fixtureCustomerId)->save();
-
-        $customerQuote = $this->_model->getCustomerCart();
-        $item = $customerQuote->getAllVisibleItems()[0];
-
-        $this->_model->moveQuoteItem($item, 'cart', 3);
-        $this->assertEquals(4, $item->getQty(), 'Number of Qty isn\'t correct for Quote item.');
-        $this->assertEquals(3, $item->getQtyToAdd(), 'Number of added qty isn\'t correct for Quote item.');
     }
 
     /**
@@ -664,7 +460,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
 
         /** Preconditions */
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId($customerIdFromFixture);
 
         /** SUT execution */
@@ -701,18 +497,18 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     ) {
         /** Disable product options */
         /** @var \Magento\Catalog\Model\Product $product */
-        $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+        $product = Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
         $product->load($productIdFromFixture)->setHasOptions(false)->save();
 
         /** Set current customer */
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->get('Magento\Backend\Model\Session\Quote');
         if ($customerIdFromFixture !== null) {
             $session->setCustomerId($customerIdFromFixture);
 
             /** Unset fake IDs for default billing and shipping customer addresses */
             /** @var \Magento\Customer\Model\Customer $customer */
-            $customer = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Customer::class);
+            $customer = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
             $customer->load($customerIdFromFixture)->setDefaultBilling(null)->setDefaultShipping(null)->save();
         } else {
             /**
@@ -724,7 +520,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
 
         /** Emulate availability of shipping method (all are disabled by default) */
         /** @var $rate \Magento\Quote\Model\Quote\Address\Rate */
-        $rate = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote\Address\Rate::class);
+        $rate = Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote\Address\Rate');
         $rate->setCode($shippingMethod);
         $this->_model->getQuote()->getShippingAddress()->addShippingRate($rate);
 
@@ -836,7 +632,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
      */
     private function getCustomerRepository()
     {
-        return Bootstrap::getObjectManager()->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        return Bootstrap::getObjectManager()->create('Magento\Customer\Api\CustomerRepositoryInterface');
     }
 
     /**
@@ -854,15 +650,6 @@ class CreateTest extends \PHPUnit\Framework\TestCase
     private function getAddressRepository()
     {
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
-        return Bootstrap::getObjectManager()->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
-    }
-
-    /**
-     * @return \Magento\Customer\Model\CustomerRegistry
-     */
-    private function getCustomerRegistry()
-    {
-        /** @var \Magento\Customer\Model\CustomerRegistry $addressRepository */
-        return Bootstrap::getObjectManager()->get(\Magento\Customer\Model\CustomerRegistry::class);
+        return Bootstrap::getObjectManager()->create('Magento\Customer\Api\AddressRepositoryInterface');
     }
 }

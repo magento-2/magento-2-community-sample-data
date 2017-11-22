@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,7 +18,7 @@ class Initializer
 {
     /**
      * @param \Magento\Sales\Model\AdminOrder\Product\Quote\Initializer $subject
-     * @param \Magento\Quote\Model\Quote\Item|string $item
+     * @param callable $proceed
      * @param \Magento\Quote\Model\Quote $quote
      * @param \Magento\Catalog\Model\Product $product
      * @param \Magento\Framework\DataObject $config
@@ -26,13 +26,15 @@ class Initializer
      * @return \Magento\Quote\Model\Quote\Item|string
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterInit(
+    public function aroundInit(
         \Magento\Sales\Model\AdminOrder\Product\Quote\Initializer $subject,
-        $item,
+        \Closure $proceed,
         \Magento\Quote\Model\Quote $quote,
         \Magento\Catalog\Model\Product $product,
         \Magento\Framework\DataObject $config
     ) {
+        $item = $proceed($quote, $product, $config);
+
         if (is_string($item) && $product->getTypeId() != Grouped::TYPE_CODE) {
             $item = $quote->addProduct(
                 $product,

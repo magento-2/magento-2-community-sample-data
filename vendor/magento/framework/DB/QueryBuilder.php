@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB;
@@ -83,7 +83,7 @@ class QueryBuilder
         $mapperInstance = $this->mapperFactory->create($mapper);
         $select = $mapperInstance->map($this->criteria);
         $query = $this->queryFactory->create(
-            \Magento\Framework\DB\Query::class,
+            'Magento\Framework\DB\Query',
             [
                 'select' => $select,
                 'criteria' => $this->criteria,

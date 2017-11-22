@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Rss;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class EmailLinkTest extends \PHPUnit\Framework\TestCase
+class EmailLinkTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Wishlist\Block\Rss\EmailLink */
     protected $link;
@@ -29,18 +29,21 @@ class EmailLinkTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $wishlist = $this->createPartialMock(\Magento\Wishlist\Model\Wishlist::class, ['getId', 'getSharingCode']);
+        $wishlist = $this->getMock('Magento\Wishlist\Model\Wishlist', ['getId', 'getSharingCode'], [], '', false);
         $wishlist->expects($this->any())->method('getId')->will($this->returnValue(5));
         $wishlist->expects($this->any())->method('getSharingCode')->will($this->returnValue('somesharingcode'));
-        $customer = $this->createMock(\Magento\Customer\Api\Data\CustomerInterface::class);
+        $customer = $this->getMock('Magento\Customer\Api\Data\CustomerInterface', [], [], '', false);
         $customer->expects($this->any())->method('getId')->will($this->returnValue(8));
         $customer->expects($this->any())->method('getEmail')->will($this->returnValue('test@example.com'));
 
-        $this->wishlistHelper = $this->createPartialMock(
-            \Magento\Wishlist\Helper\Data::class,
-            ['getWishlist', 'getCustomer', 'urlEncode']
+        $this->wishlistHelper = $this->getMock(
+            'Magento\Wishlist\Helper\Data',
+            ['getWishlist', 'getCustomer', 'urlEncode'],
+            [],
+            '',
+            false
         );
-        $this->urlEncoder = $this->createPartialMock(\Magento\Framework\Url\EncoderInterface::class, ['encode']);
+        $this->urlEncoder = $this->getMock('Magento\Framework\Url\EncoderInterface', ['encode'], [], '', false);
 
         $this->wishlistHelper->expects($this->any())->method('getWishlist')->will($this->returnValue($wishlist));
         $this->wishlistHelper->expects($this->any())->method('getCustomer')->will($this->returnValue($customer));
@@ -50,10 +53,10 @@ class EmailLinkTest extends \PHPUnit\Framework\TestCase
                 return strtr(base64_encode($url), '+/=', '-_,');
             });
 
-        $this->urlBuilder = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
+        $this->urlBuilder = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->link = $this->objectManagerHelper->getObject(
-            \Magento\Wishlist\Block\Rss\EmailLink::class,
+            'Magento\Wishlist\Block\Rss\EmailLink',
             [
                 'wishlistHelper' => $this->wishlistHelper,
                 'rssUrlBuilder' => $this->urlBuilder,

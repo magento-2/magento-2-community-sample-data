@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Test\Unit\Model\Indexer\Fulltext\Plugin;
 
-use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Attribute;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use \Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Attribute;
 
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Indexer\IndexerInterface
@@ -26,31 +25,15 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
     protected $indexerRegistryMock;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Attribute|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $attributeMock;
-
-    /**
      * @var Attribute
      */
     protected $model;
 
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
-
-    /**
-     * @var \Magento\Framework\Search\Request\Config|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $config;
-
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Attribute::class);
+        $this->subjectMock = $this->getMock('Magento\Catalog\Model\ResourceModel\Attribute', [], [], '', false);
         $this->indexerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Indexer\IndexerInterface::class,
+            'Magento\Framework\Indexer\IndexerInterface',
             [],
             '',
             false,
@@ -58,118 +41,120 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             true,
             ['getId', 'getState', '__wakeup']
         );
-        $this->indexerRegistryMock = $this->createPartialMock(
-            \Magento\Framework\Indexer\IndexerRegistry::class,
-            ['get']
-        );
-        $this->attributeMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            ['dataHasChangedFor', 'isObjectNew', 'getIsSearchable']
+        $this->indexerRegistryMock = $this->getMock(
+            'Magento\Framework\Indexer\IndexerRegistry',
+            ['get'],
+            [],
+            '',
+            false
         );
         $this->config =  $this->getMockBuilder(\Magento\Framework\Search\Request\Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['reset'])
             ->getMock();
-        $this->model = $this->objectManager->getObject(
-            Attribute::class,
-            [
-                'indexerRegistry' => $this->indexerRegistryMock,
-                'config' => $this->config
-            ]
-        );
+        $this->model = new Attribute($this->indexerRegistryMock, $this->config);
     }
 
-    public function testBeforeSave()
+    /**
+     * @param bool $isObjectNew
+     * @param bool $isSearchableChanged
+     * @param int $invalidateCounter
+     * @return void
+     * @dataProvider aroundSaveDataProvider
+     */
+    public function testAroundSave($isObjectNew, $isSearchableChanged, $invalidateCounter)
     {
-        $this->attributeMock->expects($this->once())
-            ->method('isObjectNew')
-            ->willReturn(true);
-        $this->attributeMock->expects($this->once())
+        $attributeMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            ['dataHasChangedFor', 'isObjectNew', '__wakeup'],
+            [],
+            '',
+            false
+        );
+        $attributeMock->expects($this->any())
             ->method('dataHasChangedFor')
-            ->with('is_searchable')
-            ->willReturn(true);
-        $this->assertEquals(
-            null,
-            $this->model->beforeSave($this->subjectMock, $this->attributeMock)
-        );
-    }
+            ->will($this->returnValue($isSearchableChanged));
 
-    public function testAfterSaveNoInvalidation()
-    {
-        $this->assertEquals(
-            $this->subjectMock,
-            $this->model->afterSave($this->subjectMock, $this->subjectMock)
-        );
-    }
+        $attributeMock->expects($this->any())->method('isObjectNew')->will($this->returnValue($isObjectNew));
 
-    public function testAfterSaveWithInvalidation()
-    {
-        $model = $this->objectManager->getObject(
-            Attribute::class,
-            [
-                'indexerRegistry' => $this->indexerRegistryMock,
-                'config' => $this->config,
-                'saveNeedInvalidation' => true,
-                'saveIsNew' => true
-            ]
-        );
+        $closureMock = function (\Magento\Catalog\Model\ResourceModel\Eav\Attribute $object) use ($attributeMock) {
+            $this->assertEquals($object, $attributeMock);
+            return $this->subjectMock;
+        };
 
-        $this->indexerMock->expects($this->once())->method('invalidate');
-        $this->prepareIndexer();
-        $this->config->expects($this->once())
-            ->method('reset');
+        $this->indexerMock->expects($this->exactly($invalidateCounter))->method('invalidate');
+        $this->prepareIndexer($invalidateCounter);
 
         $this->assertEquals(
             $this->subjectMock,
-            $model->afterSave($this->subjectMock, $this->subjectMock)
+            $this->model->aroundSave($this->subjectMock, $closureMock, $attributeMock)
         );
     }
 
-    public function testBeforeDelete()
+    /**
+     * @return array
+     */
+    public function aroundSaveDataProvider()
     {
-        $this->attributeMock->expects($this->once())
-            ->method('isObjectNew')
-            ->willReturn(false);
-        $this->attributeMock->expects($this->once())
-            ->method('getIsSearchable')
-            ->willReturn(true);
-        $this->assertEquals(
-            null,
-            $this->model->beforeDelete($this->subjectMock, $this->attributeMock)
-        );
+        return [
+            [false, false, 0],
+            [false, true, 1],
+            [true, false, 0],
+            [true, true, 0],
+        ];
     }
 
-    public function testAfterDeleteNoInvalidation()
+    /**
+     * @param bool $isObjectNew
+     * @param bool $isSearchable
+     * @param int $invalidateCounter
+     * @return void
+     * @dataProvider aroundDeleteDataProvider
+     */
+    public function testAroundDelete($isObjectNew, $isSearchable, $invalidateCounter)
     {
+        $attributeMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            ['getIsSearchable', 'isObjectNew', '__wakeup'],
+            [],
+            '',
+            false
+        );
+        $attributeMock->expects($this->any())->method('getIsSearchable')->will($this->returnValue($isSearchable));
+        $attributeMock->expects($this->once())->method('isObjectNew')->will($this->returnValue($isObjectNew));
+
+        $closureMock = function (\Magento\Catalog\Model\ResourceModel\Eav\Attribute $object) use ($attributeMock) {
+            $this->assertEquals($object, $attributeMock);
+            return $this->subjectMock;
+        };
+
+        $this->indexerMock->expects($this->exactly($invalidateCounter))->method('invalidate');
+        $this->prepareIndexer($invalidateCounter);
+
         $this->assertEquals(
             $this->subjectMock,
-            $this->model->afterDelete($this->subjectMock, $this->subjectMock)
+            $this->model->aroundDelete($this->subjectMock, $closureMock, $attributeMock)
         );
     }
 
-    public function testAfterDeleteWithInvalidation()
+    /**
+     * @return array
+     */
+    public function aroundDeleteDataProvider()
     {
-        $model = $this->objectManager->getObject(
-            Attribute::class,
-            [
-                'indexerRegistry' => $this->indexerRegistryMock,
-                'config' => $this->config,
-                'deleteNeedInvalidation' => true
-            ]
-        );
-
-        $this->indexerMock->expects($this->once())->method('invalidate');
-        $this->prepareIndexer();
-
-        $this->assertEquals(
-            $this->subjectMock,
-            $model->afterDelete($this->subjectMock, $this->subjectMock)
-        );
+        return [
+            [false, false, 0],
+            [false, true, 1],
+            [true, false, 0],
+            [true, true, 0],
+        ];
     }
 
-    private function prepareIndexer()
+    /**
+     * @param $invalidateCounter
+     */
+    protected function prepareIndexer($invalidateCounter)
     {
-        $this->indexerRegistryMock->expects($this->once())
+        $this->indexerRegistryMock->expects($this->exactly($invalidateCounter))
             ->method('get')
             ->with(\Magento\CatalogSearch\Model\Indexer\Fulltext::INDEXER_ID)
             ->will($this->returnValue($this->indexerMock));

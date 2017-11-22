@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,13 +20,14 @@ use Magento\Mtf\Fixture\InjectableFixture;
  * 2. Verify Cross-sell block on checkout page.
  *
  * @ZephyrId MAGETWO-12390
- * @group Cross-sells
+ * @group Cross-sells_(MX)
  */
 class AddToCartCrossSellTest extends AbstractProductPromotedProductsTest
 {
     /* tags */
-    const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
+    const TEST_TYPE = 'acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

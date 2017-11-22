@@ -1,6 +1,6 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -21,24 +21,32 @@
         <table class="data-grid data-grid-configurable">
             <thead>
             <tr>
-                <th repeat="foreach: grid.columns, item: '$column'" class="data-grid-th" data-bind="text: $column"></th>
+                <!-- ko foreach: { data: grid.columns, as: 'column' } -->
+                <th class="data-grid-th" data-bind="text: column"></th>
+                <!-- /ko -->
             </tr>
             </thead>
 
             <tbody>
-            <tr repeat="foreach: grid, item: '$product'">
-                <!-- ko foreach: { data: $product(), as: 'property' } -->
-                <td if="property && property.preview" class="data-grid-thumbnail-cell">
+            <!-- ko foreach: { data: grid, as: 'product' } -->
+            <tr>
+                <!-- ko foreach: { data: product, as: 'property' } -->
+                <!-- ko if: property && property.preview -->
+                <td class="data-grid-thumbnail-cell">
                     <div class="images-uploaded">
                         <img data-bind="attr: {src: property.preview}"/>
                         <span data-bind="text: property.images.length"></span>
                     </div>
                 </td>
-                <td ifnot="property && property.preview">
+                <!-- /ko -->
+                <!-- ko ifnot: property && property.preview -->
+                <td>
                     <span data-bind='text: property'></span>
                 </td>
                 <!-- /ko -->
+                <!-- /ko -->
             </tr>
+            <!-- /ko -->
             </tbody>
         </table>
     </div>

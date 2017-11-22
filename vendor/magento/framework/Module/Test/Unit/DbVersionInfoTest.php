@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Module\Test\Unit;
 
 use \Magento\Framework\Module\DbVersionInfo;
 
-class DbVersionInfoTest extends \PHPUnit\Framework\TestCase
+
+class DbVersionInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DbVersionInfo
@@ -26,7 +27,7 @@ class DbVersionInfoTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->moduleList = $this->getMockForAbstractClass(\Magento\Framework\Module\ModuleListInterface::class);
+        $this->moduleList = $this->getMockForAbstractClass('Magento\Framework\Module\ModuleListInterface');
         $this->moduleList->expects($this->any())
             ->method('getOne')
             ->will($this->returnValueMap([
@@ -38,8 +39,8 @@ class DbVersionInfoTest extends \PHPUnit\Framework\TestCase
             ->method('getNames')
             ->will($this->returnValue(['Module_One', 'Module_Two']));
 
-        $this->_outputConfig = $this->getMockForAbstractClass(\Magento\Framework\Module\Output\ConfigInterface::class);
-        $this->moduleResource = $this->getMockForAbstractClass(\Magento\Framework\Module\ResourceInterface::class);
+        $this->_outputConfig = $this->getMockForAbstractClass('Magento\Framework\Module\Output\ConfigInterface');
+        $this->moduleResource = $this->getMockForAbstractClass('\Magento\Framework\Module\ResourceInterface');
 
         $this->dbVersionInfo = new DbVersionInfo(
             $this->moduleList,
@@ -85,6 +86,7 @@ class DbVersionInfoTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+
     /**
      * @return array
      */
@@ -92,21 +94,24 @@ class DbVersionInfoTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'version in config == version in db' => ['Module_One', '1', true],
-            'version in config < version in db' => [
-                'Module_One',
-                '2',
-                false
-            ],
-            'version in config > version in db' => [
-                'Module_Two',
-                '1',
-                false
-            ],
-            'no version in db' => [
-                'Module_One',
-                false,
-                false
-            ],
+            'version in config < version in db' =>
+                [
+                    'Module_One',
+                    '2',
+                    false
+                ],
+            'version in config > version in db' =>
+                [
+                    'Module_Two',
+                    '1',
+                    false
+                ],
+            'no version in db' =>
+                [
+                    'Module_One',
+                    false,
+                    false
+                ],
         ];
     }
 

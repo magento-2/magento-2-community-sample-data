@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,10 +13,6 @@ namespace Magento\LayeredNavigation\Block;
 
 use Magento\Framework\View\Element\Template;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Navigation extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -63,6 +59,7 @@ class Navigation extends \Magento\Framework\View\Element\Template
      */
     protected function _prepareLayout()
     {
+        $this->renderer = $this->getChildBlock('renderer');
         foreach ($this->filterList->getFilters($this->_catalogLayer) as $filter) {
             $filter->apply($this->getRequest());
         }

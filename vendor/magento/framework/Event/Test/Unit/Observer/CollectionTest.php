@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Event\Test\Unit\Observer;
@@ -10,7 +10,7 @@ use \Magento\Framework\Event\Observer\Collection;
 /**
  * Class CollectionTest
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Collection
@@ -37,7 +37,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getObserverMock($name, $event = null)
     {
-        $observer = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $observer = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $observer->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));
@@ -111,7 +111,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     public function testDispatch()
     {
-        $eventMock = $this->createMock(\Magento\Framework\Event::class);
+        $eventMock = $this->getMock('Magento\Framework\Event', [], [], '', false);
 
         $observer1 = $this->getObserverMock('test_observer1', $eventMock);
         $observer2 = $this->getObserverMock('test_observer2', $eventMock);

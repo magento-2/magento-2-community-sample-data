@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -12,9 +12,7 @@ use Magento\Framework\App\ResponseInterface;
 class GetShippingItemsGrid extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -49,7 +47,7 @@ class GetShippingItemsGrid extends \Magento\Backend\App\Action
         $this->shipmentLoader->load();
         return $this->getResponse()->setBody(
             $this->_view->getLayout()->createBlock(
-                \Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid::class
+                'Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid'
             )->setIndex(
                 $this->getRequest()->getParam('index')
             )->toHtml()

@@ -1,16 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\ResourceModel;
 
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
-
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
+class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
@@ -67,25 +62,26 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $repository;
 
-    /**
-     * @var CollectionProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $collectionProcessor;
-
     protected function setUp()
     {
-        $this->addressFactory = $this->createPartialMock(\Magento\Customer\Model\AddressFactory::class, ['create']);
-        $this->addressRegistry = $this->createMock(\Magento\Customer\Model\AddressRegistry::class);
-        $this->customerRegistry = $this->createMock(\Magento\Customer\Model\CustomerRegistry::class);
-        $this->addressResourceModel = $this->createMock(\Magento\Customer\Model\ResourceModel\Address::class);
-        $this->directoryData = $this->createMock(\Magento\Directory\Helper\Data::class);
-        $this->addressSearchResultsFactory = $this->createPartialMock(
+        $this->addressFactory = $this->getMock(\Magento\Customer\Model\AddressFactory::class, ['create'], [], '', false);
+        $this->addressRegistry = $this->getMock(\Magento\Customer\Model\AddressRegistry::class, [], [], '', false);
+        $this->customerRegistry = $this->getMock(\Magento\Customer\Model\CustomerRegistry::class, [], [], '', false);
+        $this->addressResourceModel = $this->getMock(\Magento\Customer\Model\ResourceModel\Address::class, [], [], '', false);
+        $this->directoryData = $this->getMock(\Magento\Directory\Helper\Data::class, [], [], '', false);
+        $this->addressSearchResultsFactory = $this->getMock(
             \Magento\Customer\Api\Data\AddressSearchResultsInterfaceFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->addressCollectionFactory = $this->createPartialMock(
+        $this->addressCollectionFactory = $this->getMock(
             \Magento\Customer\Model\ResourceModel\Address\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->extensionAttributesJoinProcessor = $this->getMockForAbstractClass(
             \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class,
@@ -93,8 +89,10 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             '',
             false
         );
-        $this->customer = $this->createMock(\Magento\Customer\Model\Customer::class);
-        $this->address = $this->createPartialMock(\Magento\Customer\Model\Address::class, [
+        $this->customer = $this->getMock(\Magento\Customer\Model\Customer::class, [], [], '', false);
+        $this->address = $this->getMock(
+            \Magento\Customer\Model\Address::class,
+            [
                 'getId',
                 'getCountryId',
                 'getFirstname',
@@ -103,19 +101,18 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 'getCity',
                 'getTelephone',
                 'getRegionId',
-                'getRegion',
                 'updateData',
                 'setCustomer',
                 'getCountryModel',
                 'getShouldIgnoreValidation',
-                'validate',
                 'save',
                 'getDataModel',
                 'getCustomerId',
-            ]);
-
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMockForAbstractClass();
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->repository = new \Magento\Customer\Model\ResourceModel\AddressRepository(
             $this->addressFactory,
@@ -125,8 +122,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             $this->directoryData,
             $this->addressSearchResultsFactory,
             $this->addressCollectionFactory,
-            $this->extensionAttributesJoinProcessor,
-            $this->collectionProcessor
+            $this->extensionAttributesJoinProcessor
         );
     }
 
@@ -134,14 +130,9 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $customerId = 34;
         $addressId = 53;
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\AddressInterface::class, [], '', false);
         $addressCollection =
-            $this->createMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class);
+            $this->getMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class, [], [], '', false);
         $customerAddress->expects($this->atLeastOnce())
             ->method('getCustomerId')
             ->willReturn($customerId);
@@ -169,9 +160,6 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('setCustomer')
             ->with($this->customer);
         $this->address->expects($this->once())
-            ->method('validate')
-            ->willReturn(true);
-        $this->address->expects($this->once())
             ->method('save');
         $this->addressRegistry->expects($this->once())
             ->method('push')
@@ -188,6 +176,9 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->address->expects($this->once())
             ->method('getDataModel')
             ->willReturn($customerAddress);
+        $this->address->expects($this->once())
+            ->method('getShouldIgnoreValidation')
+            ->willReturn(true);
 
         $this->repository->save($customerAddress);
     }
@@ -199,13 +190,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $customerId = 34;
         $addressId = 53;
-        $errors[] = __('Please enter the state/province.');
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\AddressInterface::class, [], '', false);
         $customerAddress->expects($this->atLeastOnce())
             ->method('getCustomerId')
             ->willReturn($customerId);
@@ -223,106 +208,63 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->address->expects($this->once())
             ->method('updateData')
             ->with($customerAddress);
-        $this->address->expects($this->once())
-            ->method('validate')
-            ->willReturn($errors);
+        $this->prepareMocksForInvalidAddressValidation();
 
         $this->repository->save($customerAddress);
     }
 
-    /**
-     * @expectedException \Magento\Framework\Exception\InputException
-     * @expectedExceptionMessage region is a required field.
-     */
-    public function testSaveWithInvalidRegion()
+    protected function prepareMocksForInvalidAddressValidation()
     {
-        $customerId = 34;
-        $addressId = 53;
-        $errors[] = __('region is a required field.');
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
+        $countryModel = $this->getMock(\Magento\Directory\Model\Country::class, [], [], '', false);
+        $regionCollection = $this->getMock(
+            \Magento\Directory\Model\ResourceModel\Region\Collection::class,
+            [],
             [],
             '',
             false
         );
-        $customerAddress->expects($this->atLeastOnce())
-            ->method('getCustomerId')
-            ->willReturn($customerId);
-        $customerAddress->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($addressId);
-        $this->customerRegistry->expects($this->once())
-            ->method('retrieve')
-            ->with($customerId)
-            ->willReturn($this->customer);
-        $this->addressRegistry->expects($this->once())
-            ->method('retrieve')
-            ->with($addressId)
-            ->willReturn($this->address);
-        $this->address->expects($this->once())
-            ->method('updateData')
-            ->with($customerAddress);
 
-        $this->address->expects($this->never())
+        $this->address->expects($this->once())
+            ->method('getShouldIgnoreValidation')
+            ->willReturn(false);
+        $this->address->expects($this->atLeastOnce())
+            ->method('getCountryId');
+        $this->address->expects($this->once())
+            ->method('getFirstname');
+        $this->address->expects($this->once())
+            ->method('getLastname');
+        $this->address->expects($this->once())
+            ->method('getStreetLine')
+            ->with(1);
+        $this->address->expects($this->once())
+            ->method('getCity');
+        $this->address->expects($this->once())
+            ->method('getTelephone');
+        $this->address->expects($this->once())
             ->method('getRegionId')
             ->willReturn(null);
-        $this->address->expects($this->once())
-            ->method('validate')
-            ->willReturn($errors);
 
-        $this->repository->save($customerAddress);
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Exception\InputException
-     * @expectedExceptionMessage regionId is a required field.
-     */
-    public function testSaveWithInvalidRegionId()
-    {
-        $customerId = 34;
-        $addressId = 53;
-        $errors[] = __('regionId is a required field.');
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
-            [],
-            '',
-            false
-        );
-        $customerAddress->expects($this->atLeastOnce())
-            ->method('getCustomerId')
-            ->willReturn($customerId);
-        $customerAddress->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($addressId);
-        $this->customerRegistry->expects($this->once())
-            ->method('retrieve')
-            ->with($customerId)
-            ->willReturn($this->customer);
-        $this->addressRegistry->expects($this->once())
-            ->method('retrieve')
-            ->with($addressId)
-            ->willReturn($this->address);
+        $this->directoryData->expects($this->once())
+            ->method('getCountriesWithOptionalZip')
+            ->willReturn([]);
         $this->address->expects($this->once())
-            ->method('updateData')
-            ->with($customerAddress);
-        $this->address->expects($this->never())
-            ->method('getRegion')
-            ->willReturn('');
-        $this->address->expects($this->once())
-            ->method('validate')
-            ->willReturn($errors);
-
-        $this->repository->save($customerAddress);
+            ->method('getCountryModel')
+            ->willReturn($countryModel);
+        $countryModel->expects($this->once())
+            ->method('getRegionCollection')
+            ->willReturn($regionCollection);
+        $regionCollection->expects($this->once())
+            ->method('getSize')
+            ->willReturn(2);
+        $this->directoryData->expects($this->once())
+            ->method('isRegionRequired')
+            ->with(null)
+            ->willReturn(true);
     }
 
     public function testGetById()
     {
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\AddressInterface::class, [], '', false);
         $this->addressRegistry->expects($this->once())
             ->method('retrieve')
             ->with(12)
@@ -330,13 +272,15 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->address->expects($this->once())
             ->method('getDataModel')
             ->willReturn($customerAddress);
-
+        
         $this->assertSame($customerAddress, $this->repository->getById(12));
     }
 
     public function testGetList()
     {
-        $collection = $this->createMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class);
+        $filterGroup = $this->getMock(\Magento\Framework\Api\Search\FilterGroup::class, [], [], '', false);
+        $filter = $this->getMock(\Magento\Framework\Api\Filter::class, [], [], '', false);
+        $collection = $this->getMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class, [], [], '', false);
         $searchResults = $this->getMockForAbstractClass(
             \Magento\Customer\Api\Data\AddressSearchResultsInterface::class,
             [],
@@ -349,33 +293,71 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             '',
             false
         );
-        $this->addressSearchResultsFactory->expects($this->once())->method('create')->willReturn($searchResults);
-        $this->addressCollectionFactory->expects($this->once())->method('create')->willReturn($collection);
+        $this->addressSearchResultsFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($searchResults);
+        $this->addressCollectionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($collection);
         $this->extensionAttributesJoinProcessor->expects($this->once())
             ->method('process')
             ->with($collection, \Magento\Customer\Api\Data\AddressInterface::class);
-
-        $this->collectionProcessor->expects($this->once())
-            ->method('process')
-            ->with($searchCriteria, $collection)
-            ->willReturnSelf();
-
-        $collection->expects($this->once())->method('getSize')->willReturn(23);
+        $searchCriteria->expects($this->once())
+            ->method('getFilterGroups')
+            ->willReturn([$filterGroup]);
+        $filterGroup->expects($this->once())
+            ->method('getFilters')
+            ->willReturn([$filter]);
+        $filter->expects($this->once())
+            ->method('getConditionType')
+            ->willReturn(false);
+        $filter->expects($this->once())
+            ->method('getField')
+            ->willReturn('Field');
+        $filter->expects($this->atLeastOnce())
+            ->method('getValue')
+            ->willReturn('Value');
+        $collection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with([['attribute' => 'Field', 'eq' => 'Value']], [['eq' => 'Value']]);
+        $collection->expects($this->once())
+            ->method('getSize')
+            ->willReturn(23);
         $searchResults->expects($this->once())
             ->method('setTotalCount')
             ->with(23);
+        $sortOrder = $this->getMock(\Magento\Framework\Api\SortOrder::class, [], [], '', false);
+        $searchCriteria->expects($this->once())
+            ->method('getSortOrders')
+            ->willReturn([$sortOrder]);
+        $sortOrder->expects($this->once())
+            ->method('getField')
+            ->willReturn('Field');
+        $sortOrder->expects($this->once())
+            ->method('getDirection')
+            ->willReturn(\Magento\Framework\Api\SortOrder::SORT_ASC);
+        $collection->expects($this->once())
+            ->method('addOrder')
+            ->with('Field', 'ASC');
+        $searchCriteria->expects($this->once())
+            ->method('getCurrentPage')
+            ->willReturn(1);
+        $collection->expects($this->once())
+            ->method('setCurPage')
+            ->with(1);
+        $searchCriteria->expects($this->once())
+            ->method('getPageSize')
+            ->willReturn(10);
+        $collection->expects($this->once())
+            ->method('setPageSize')
+            ->with(10);
         $collection->expects($this->once())
             ->method('getItems')
             ->willReturn([$this->address]);
         $this->address->expects($this->once())
             ->method('getId')
             ->willReturn(12);
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\AddressInterface::class, [], '', false);
         $this->addressRegistry->expects($this->once())
             ->method('retrieve')
             ->with(12)
@@ -398,13 +380,14 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $addressId = 12;
         $customerId = 43;
 
-        $addressCollection = $this->createMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class);
-        $customerAddress = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AddressInterface::class,
+        $addressCollection = $this->getMock(
+            \Magento\Customer\Model\ResourceModel\Address\Collection::class,
+            [],
             [],
             '',
             false
         );
+        $customerAddress = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\AddressInterface::class, [], '', false);
         $customerAddress->expects($this->once())
             ->method('getId')
             ->willReturn($addressId);
@@ -444,7 +427,13 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->address->expects($this->once())
             ->method('getCustomerId')
             ->willReturn($customerId);
-        $addressCollection = $this->createMock(\Magento\Customer\Model\ResourceModel\Address\Collection::class);
+        $addressCollection = $this->getMock(
+            \Magento\Customer\Model\ResourceModel\Address\Collection::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->addressRegistry->expects($this->once())
             ->method('retrieve')
             ->with($addressId)

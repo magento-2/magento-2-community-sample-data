@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter;
 
 use \Magento\Framework\View\Layout\Argument\Interpreter\HelperMethod;
 
-class HelperMethodTest extends \PHPUnit\Framework\TestCase
+class HelperMethodTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,8 +26,14 @@ class HelperMethodTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->_interpreter = $this->createMock(\Magento\Framework\View\Layout\Argument\Interpreter\NamedParams::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->_interpreter = $this->getMock(
+            'Magento\Framework\View\Layout\Argument\Interpreter\NamedParams',
+            [],
+            [],
+            '',
+            false
+        );
         $this->_model = new HelperMethod($this->_objectManager, $this->_interpreter);
     }
 
@@ -67,7 +73,7 @@ class HelperMethodTest extends \PHPUnit\Framework\TestCase
      */
     public function testEvaluateException($helperMethod, $expectedExceptionMessage)
     {
-        $this->expectException('\InvalidArgumentException', $expectedExceptionMessage);
+        $this->setExpectedException('\InvalidArgumentException', $expectedExceptionMessage);
         $input = ['value' => 'some text', 'helper' => $helperMethod];
         $this->_model->evaluate($input);
     }

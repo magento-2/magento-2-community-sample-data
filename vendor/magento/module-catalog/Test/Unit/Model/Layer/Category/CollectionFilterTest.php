@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Layer\Category;
 
 use \Magento\Catalog\Model\Layer\Category\CollectionFilter;
 
-class CollectionFilterTest extends \PHPUnit\Framework\TestCase
+class CollectionFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -29,8 +29,10 @@ class CollectionFilterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->visibilityMock = $this->createMock(\Magento\Catalog\Model\Product\Visibility::class);
-        $this->catalogConfigMock = $this->createMock(\Magento\Catalog\Model\Config::class);
+        $this->visibilityMock = $this->getMock(
+            '\Magento\Catalog\Model\Product\Visibility', [], [], '', false
+        );
+        $this->catalogConfigMock = $this->getMock('\Magento\Catalog\Model\Config', [], [], '', false);
         $this->model = new CollectionFilter($this->visibilityMock, $this->catalogConfigMock);
     }
 
@@ -40,9 +42,11 @@ class CollectionFilterTest extends \PHPUnit\Framework\TestCase
      */
     public function testFilter()
     {
-        $collectionMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collectionMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection', [], [], '', false
+        );
 
-        $categoryMock = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $categoryMock = $this->getMock('\Magento\Catalog\Model\Category', [], [], '', false);
         $categoryMock->expects($this->once())->method('getId');
 
         $this->catalogConfigMock->expects($this->once())->method('getProductAttributes');

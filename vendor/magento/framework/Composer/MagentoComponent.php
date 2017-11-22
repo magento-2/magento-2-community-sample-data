@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Composer;
@@ -19,7 +19,7 @@ class MagentoComponent
     {
         $typePattern = 'module|theme|language|framework';
         $areaPattern = 'frontend|adminhtml';
-        $namePattern = '[a-z0-9_-]+';
+        $namePattern = '[a-z_-]+';
         $regex = '/^magento\/(?P<type>' . $typePattern . ')(?:-(?P<area>' . $areaPattern . '))?(?:-(?P<name>'
             . $namePattern . '))?$/';
         if (preg_match($regex, $key, $matches)) {

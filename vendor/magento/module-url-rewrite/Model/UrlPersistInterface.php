@@ -1,14 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\UrlRewrite\Model;
 
 /**
  * Url Persist Interface
- * @api
- * @since 100.0.2
  */
 interface UrlPersistInterface
 {
@@ -16,8 +14,8 @@ interface UrlPersistInterface
      * Save new url rewrites and remove old if exist
      *
      * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $urls
-     * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
-     * @throws \Magento\UrlRewrite\Model\Exception\UrlAlreadyExistsException|\Exception
+     * @return void
+     * @throws \Magento\Framework\Exception\AlreadyExistsException
      */
     public function replace(array $urls);
 

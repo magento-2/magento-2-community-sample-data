@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,14 +9,14 @@
  */
 namespace Magento\Framework\View\Test\Unit\Design\Theme\Domain;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers \Magento\Framework\View\Design\Theme\Domain\Factory::create
      */
     public function testCreate()
     {
-        $themeMock = $this->createPartialMock(\Magento\Theme\Model\Theme::class, ['__wakeup', 'getType']);
+        $themeMock = $this->getMock('Magento\Theme\Model\Theme', ['__wakeup', 'getType'], [], '', false);
         $themeMock->expects(
             $this->any()
         )->method(
@@ -25,15 +25,15 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(\Magento\Framework\View\Design\ThemeInterface::TYPE_VIRTUAL)
         );
 
-        $newThemeMock = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $newThemeMock = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
 
-        $objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $objectManager->expects(
             $this->once()
         )->method(
             'create'
         )->with(
-            \Magento\Framework\View\Design\Theme\Domain\VirtualInterface::class,
+            'Magento\Framework\View\Design\Theme\Domain\VirtualInterface',
             ['theme' => $themeMock]
         )->will(
             $this->returnValue($newThemeMock)
@@ -49,15 +49,15 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateWithWrongThemeType()
     {
         $wrongThemeType = 'wrong_theme_type';
-        $themeMock = $this->createPartialMock(\Magento\Theme\Model\Theme::class, ['__wakeup', 'getType']);
+        $themeMock = $this->getMock('Magento\Theme\Model\Theme', ['__wakeup', 'getType'], [], '', false);
         $themeMock->expects($this->any())->method('getType')->will($this->returnValue($wrongThemeType));
 
-        $objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $themeDomainFactory = new \Magento\Framework\View\Design\Theme\Domain\Factory($objectManager);
 
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
+        $this->setExpectedException(
+            'Magento\Framework\Exception\LocalizedException',
             sprintf('Invalid type of theme domain model "%s"', $wrongThemeType)
         );
         $themeDomainFactory->create($themeMock);

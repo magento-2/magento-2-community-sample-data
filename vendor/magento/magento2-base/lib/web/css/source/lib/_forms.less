@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -96,7 +96,6 @@
 ) {
     .lib-css(margin, @_margin);
     .lib-css(vertical-align, @_vertical-align);
-
     &:disabled {
         ._lib-form-element-add-opacity(@_disabled-opacity);
     }
@@ -108,7 +107,6 @@
       -webkit-appearance: none;
       margin: 0;
     }
-
     -moz-appearance: textfield;
 }
 
@@ -147,21 +145,17 @@
         ._lib-form-element-state-add-background(@_focus-background, @_background);
         ._lib-form-element-state-add-font-color(@_focus-color, @_color);
     }
-
     &:disabled {
         ._lib-form-element-state-add-border-color(@_disabled-border-color, @_border-color);
         ._lib-form-element-state-add-background(@_disabled-background, @_background);
         ._lib-form-element-state-add-font-color(@_disabled-color, @_color);
     }
-
     &::-moz-placeholder {
         .lib-css(color, @_placeholder-color);
     }
-
     &::-webkit-input-placeholder {
         .lib-css(color, @_placeholder-color);
     }
-
     &:-ms-input-placeholder {
         .lib-css(color, @_placeholder-color);
     }
@@ -182,7 +176,6 @@
             @_color: @_element-color-error
         );
     }
-
     &.valid {
         .lib-form-element-color(
             @_border-color: @_element-border-color-valid,
@@ -254,7 +247,6 @@
             @_color: @_element-color-error
         );
     }
-
     &.valid {
         .lib-form-element-color(
             @_border-color: @_element-border-color-valid,
@@ -321,6 +313,7 @@
     input[type="submit"] {
         cursor: pointer;
         -webkit-appearance: button;
+        *overflow: visible;
     }
 
     input::-moz-focus-inner {
@@ -415,12 +408,10 @@
         .lib-css(color, @_color);
         ._lib-form-element-state-add-font-style(@_font-style-state, @_font-style-default);
     }
-
     &::-webkit-input-placeholder {
         .lib-css(color, @_color);
         ._lib-form-element-state-add-font-style(@_font-style-state, @_font-style-default);
     }
-
     &:-ms-input-placeholder {
         .lib-css(color, @_color);
         ._lib-form-element-state-add-font-style(@_font-style-state, @_font-style-default);
@@ -487,7 +478,6 @@
             @_line-height: @_legend-line-height,
             @_font-style: @_legend-font-style
         );
-
         & + br {
             clear: both;
             display: block;
@@ -606,19 +596,15 @@
             box-sizing: border-box;
             float: left;
         }
-
         &.group-2 .field {
             width: 50% !important;
         }
-
         &.group-3 .field {
             width: 33.3% !important;
         }
-
         &.group-4 .field {
             width: 25% !important;
         }
-
         &.group-5 .field {
             width: 20% !important;
         }
@@ -763,7 +749,6 @@
         float: left;
         height: 1px;
     }
-
     .description {
         .lib-css(padding, @_type-inline-label-padding);
         .lib-css(text-align, @_type-inline-label-align);
@@ -771,7 +756,6 @@
         box-sizing: border-box;
         float: left;
     }
-
     &:not(.choice) {
         > .label {
             .lib-css(margin, @_type-inline-label-margin);
@@ -781,7 +765,6 @@
             box-sizing: border-box;
             float: left;
         }
-
         > .control {
             .lib-css(width, @_type-inline-control-width);
             float: left;
@@ -813,8 +796,7 @@
     @_line-height: @form-field-label-asterisk__line-height,
     @_margin: @form-field-label-asterisk__margin
 ) {
-    &.required > .label,
-    &._required > .label {
+    &.required > .label {
         &:after {
             content: '*';
             .lib-typography(
@@ -909,7 +891,6 @@
                 @_type-block-label-padding
             );
         }
-
         > .control {
             float: none;
             width: auto;

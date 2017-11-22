@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -132,20 +132,6 @@ class View extends Block
     // @codingStandardsIgnoreEnd
 
     /**
-     * Order items top pager selector
-     *
-     * @var string
-     */
-    private $itemTopPagerSelector = '[data-block=order-items-pager-top]';
-
-    /**
-     * Order items bottom pager selector
-     *
-     * @var string
-     */
-    private $itemBottomPagerSelector = '[data-block=order-items-pager-bottom]';
-
-    /**
      * Get item block
      *
      * @param int $id [optional]
@@ -155,7 +141,7 @@ class View extends Block
     {
         $selector = ($id === null) ? $this->content : sprintf($this->itemBlock, $id) . $this->content;
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Order\Items::class,
+            'Magento\Sales\Test\Block\Order\Items',
             ['element' => $this->_rootElement->find($selector, Locator::SELECTOR_XPATH)]
         );
     }
@@ -333,25 +319,5 @@ class View extends Block
     {
         preg_match("/^\\D*\\s*([\\d,\\.]+)\\s*\\D*$/", $price, $matches);
         return (isset($matches[1])) ? $matches[1] : null;
-    }
-
-    /**
-     * Is order items top pager displayed
-     *
-     * @return bool
-     */
-    public function isTopPagerDisplayed()
-    {
-        return $this->_rootElement->find($this->itemTopPagerSelector)->isVisible();
-    }
-
-    /**
-     * Is order items bottom pager displayed
-     *
-     * @return bool
-     */
-    public function isBottomPagerDisplayed()
-    {
-        return $this->_rootElement->find($this->itemBottomPagerSelector)->isVisible();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesSampleData\Model\Order;
@@ -130,16 +130,20 @@ class Processor
     {
         $this->setPhraseRenderer();
         if (!empty($orderData)) {
-            $this->currentSession = $this->sessionQuoteFactory->create();
+            $orderCreateModel = $this->processQuote($orderData);
+            if (!empty($orderData['payment'])) {
+                $orderCreateModel->setPaymentData($orderData['payment']);
+                $orderCreateModel->getQuote()->getPayment()->addData($orderData['payment']);
+            }
             $customer = $this->customerRepository->get(
                 $orderData['order']['account']['email'],
                 $this->storeManager->getWebsite()->getId()
             );
-            $this->currentSession->setCustomerId($customer->getId());
-            $orderCreateModel = $this->processQuote($orderData);
             $orderCreateModel->getQuote()->setCustomer($customer);
-
-            $order = $orderCreateModel->createOrder();
+            $orderCreateModel->getSession()->setCustomerId($customer->getId());
+            $order = $orderCreateModel
+                ->importPostData($orderData['order'])
+                ->createOrder();
             $orderItem = $this->getOrderItemForTransaction($order);
             $this->invoiceOrder($orderItem);
             $this->shipOrder($orderItem);
@@ -165,19 +169,28 @@ class Processor
      */
     protected function processQuote($data = [])
     {
+        $this->currentSession = $this->sessionQuoteFactory->create();
         /** @var \Magento\Sales\Model\AdminOrder\Create $orderCreateModel */
         $orderCreateModel = $this->createOrderFactory->create(
             ['quoteSession' => $this->currentSession]
         );
-        $orderCreateModel->importPostData($data['order'])->initRuleData();
+        if (!empty($data['order'])) {
+            $orderCreateModel->importPostData($data['order']);
+        }
+        $orderCreateModel->getQuote()->setReservedOrderId(null);
         $orderCreateModel->getBillingAddress();
-        $orderCreateModel->setShippingAsBilling(1);
-        $orderCreateModel->addProducts($data['add_products']);
-        $orderCreateModel->getQuote()->getShippingAddress()->unsetData('cached_items_all');
-        $orderCreateModel->getQuote()->getShippingAddress()->setShippingMethod($data['order']['shipping_method']);
-        $orderCreateModel->getQuote()->setTotalsCollectedFlag(false);
+        $orderCreateModel->setShippingAsBilling(true);
+        if (!empty($data['add_products'])) {
+            $orderCreateModel->addProducts($data['add_products']);
+        }
         $orderCreateModel->collectShippingRates();
-        $orderCreateModel->getQuote()->getPayment()->addData($data['payment'])->setQuote($orderCreateModel->getQuote());
+        if (!empty($data['payment'])) {
+            /** @var \Magento\Quote\Model\Quote\Payment $payment */
+            $payment = $orderCreateModel->getQuote()->getPayment();
+            $payment->addData($data['payment']);
+            $payment->setQuote($orderCreateModel->getQuote());
+        }
+        $orderCreateModel->initRuleData();
         return $orderCreateModel;
     }
 

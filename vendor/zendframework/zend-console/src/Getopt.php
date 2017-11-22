@@ -117,7 +117,7 @@ class Getopt
      * cumulative flags are disable,
      * freeform flags are disable.
      */
-    protected $getoptConfig = [
+    protected $getoptConfig = array(
         self::CONFIG_RULEMODE                => self::MODE_ZEND,
         self::CONFIG_DASHDASH                => true,
         self::CONFIG_IGNORECASE              => false,
@@ -127,14 +127,14 @@ class Getopt
         self::CONFIG_PARAMETER_SEPARATOR     => null,
         self::CONFIG_FREEFORM_FLAGS          => false,
         self::CONFIG_NUMERIC_FLAGS           => false
-    ];
+    );
 
     /**
      * Stores the command-line arguments for the calling application.
      *
      * @var array
      */
-    protected $argv = [];
+    protected $argv = array();
 
     /**
      * Stores the name of the calling application.
@@ -148,14 +148,14 @@ class Getopt
      *
      * @var array
      */
-    protected $rules = [];
+    protected $rules = array();
 
     /**
      * Stores alternate spellings of legal options.
      *
      * @var array
      */
-    protected $ruleMap = [];
+    protected $ruleMap = array();
 
     /**
      * Stores options given by the user in the current invocation
@@ -163,14 +163,14 @@ class Getopt
      *
      * @var array
      */
-    protected $options = [];
+    protected $options = array();
 
     /**
      * Stores the command-line arguments other than options.
      *
      * @var array
      */
-    protected $remainingArgs = [];
+    protected $remainingArgs = array();
 
     /**
      * State of the options: parsed or not yet parsed?
@@ -184,7 +184,7 @@ class Getopt
      *
      * @var array
      */
-    protected $optionCallbacks = [];
+    protected $optionCallbacks = array();
 
     /**
      * The constructor takes one to three parameters.
@@ -203,7 +203,7 @@ class Getopt
      * @param  array $getoptConfig
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($rules, $argv = null, $getoptConfig = [])
+    public function __construct($rules, $argv = null, $getoptConfig = array())
     {
         if (!isset($_SERVER['argv'])) {
             $errorDescription = (ini_get('register_argc_argv') == false)
@@ -407,7 +407,7 @@ class Getopt
     public function toString()
     {
         $this->parse();
-        $s = [];
+        $s = array();
         foreach ($this->options as $flag => $value) {
             $s[] = $flag . '=' . ($value === true ? 'true' : $value);
         }
@@ -426,7 +426,7 @@ class Getopt
     public function toArray()
     {
         $this->parse();
-        $s = [];
+        $s = array();
         foreach ($this->options as $flag => $value) {
             $s[] = $flag;
             if ($value !== true) {
@@ -444,14 +444,14 @@ class Getopt
     public function toJson()
     {
         $this->parse();
-        $j = [];
+        $j = array();
         foreach ($this->options as $flag => $value) {
-            $j['options'][] = [
-                'option' => [
+            $j['options'][] = array(
+                'option' => array(
                     'flag' => $flag,
                     'parameter' => $value
-                ]
-            ];
+                )
+            );
         }
 
         $json = \Zend\Json\Json::encode($j);
@@ -550,12 +550,12 @@ class Getopt
     {
         $usage = "Usage: {$this->progname} [ options ]\n";
         $maxLen = 20;
-        $lines = [];
+        $lines = array();
         foreach ($this->rules as $rule) {
             if (isset($rule['isFreeformFlag'])) {
                 continue;
             }
-            $flags = [];
+            $flags = array();
             if (is_array($rule['alias'])) {
                 foreach ($rule['alias'] as $flag) {
                     $flags[] = (strlen($flag) == 1 ? '-' : '--') . $flag;
@@ -660,8 +660,8 @@ class Getopt
         }
 
         $argv = $this->argv;
-        $this->options = [];
-        $this->remainingArgs = [];
+        $this->options = array();
+        $this->remainingArgs = array();
         while (count($argv) > 0) {
             if ($argv[0] == '--') {
                 array_shift($argv);
@@ -796,10 +796,10 @@ class Getopt
             // Magic methods in future will use this mark as real flag value
             $this->ruleMap[$flag] = $flag;
             $realFlag = $flag;
-            $this->rules[$realFlag] = [
+            $this->rules[$realFlag] = array(
                 'param'          => 'optional',
                 'isFreeformFlag' => true
-            ];
+            );
         } else {
             $realFlag = $this->ruleMap[$flag];
         }
@@ -948,7 +948,7 @@ class Getopt
      */
     protected function _addRulesModeGnu($rules)
     {
-        $ruleArray = [];
+        $ruleArray = array();
 
         /**
          * Options may be single alphanumeric characters.
@@ -957,7 +957,7 @@ class Getopt
          */
         preg_match_all('/([a-zA-Z0-9]:?)/', $rules, $ruleArray);
         foreach ($ruleArray[1] as $rule) {
-            $r = [];
+            $r = array();
             $flag = substr($rule, 0, 1);
             if ($this->getoptConfig[self::CONFIG_IGNORECASE]) {
                 $flag = strtolower($flag);
@@ -986,7 +986,7 @@ class Getopt
             // this may have to translate the long parm type if there
             // are any complaints that =string will not work (even though that use
             // case is not documented)
-            if (in_array(substr($ruleCode, -2, 1), ['-', '='])) {
+            if (in_array(substr($ruleCode, -2, 1), array('-', '='))) {
                 $flagList  = substr($ruleCode, 0, -2);
                 $delimiter = substr($ruleCode, -2, 1);
                 $paramType = substr($ruleCode, -1);
@@ -998,7 +998,7 @@ class Getopt
                 $flagList = strtolower($flagList);
             }
             $flags = explode('|', $flagList);
-            $rule = [];
+            $rule = array();
             $mainFlag = $flags[0];
             foreach ($flags as $flag) {
                 if (empty($flag)) {

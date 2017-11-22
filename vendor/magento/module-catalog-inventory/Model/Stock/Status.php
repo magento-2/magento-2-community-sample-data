@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\Stock;
@@ -74,11 +74,10 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\CatalogInventory\Model\ResourceModel\Stock\Status::class);
+        $this->_init('Magento\CatalogInventory\Model\ResourceModel\Stock\Status');
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * @return int
      */
@@ -118,7 +117,6 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
     {
         return $this->getData(self::KEY_STOCK_STATUS);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**
@@ -130,7 +128,6 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * @param int $productId
      * @return $this
@@ -197,6 +194,5 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

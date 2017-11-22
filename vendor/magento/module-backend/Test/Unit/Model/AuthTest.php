@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model;
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Class AuthTest
  */
-class AuthTest extends \PHPUnit\Framework\TestCase
+class AuthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth
@@ -34,16 +34,12 @@ class AuthTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->_credentialStorage = $this->getMockBuilder(
-            \Magento\Backend\Model\Auth\Credential\StorageInterface::class
-        )
-            ->setMethods(['getId'])
-            ->getMockForAbstractClass();
-        $this->_modelFactoryMock = $this->createMock(\Magento\Framework\Data\Collection\ModelFactory::class);
+        $this->_eventManagerMock = $this->getMock('\Magento\Framework\Event\ManagerInterface');
+        $this->_credentialStorage = $this->getMock('\Magento\Backend\Model\Auth\Credential\StorageInterface');
+        $this->_modelFactoryMock = $this->getMock('\Magento\Framework\Data\Collection\ModelFactory', [], [], '', false);
         $objectManager = new ObjectManager($this);
         $this->_model = $objectManager->getObject(
-            \Magento\Backend\Model\Auth::class,
+            'Magento\Backend\Model\Auth',
             [
                 'eventManager' => $this->_eventManagerMock,
                 'credentialStorage' => $this->_credentialStorage,
@@ -61,7 +57,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         $this->_modelFactoryMock
             ->expects($this->once())
             ->method('create')
-            ->with(\Magento\Backend\Model\Auth\Credential\StorageInterface::class)
+            ->with('Magento\Backend\Model\Auth\Credential\StorageInterface')
             ->will($this->returnValue($this->_credentialStorage));
         $exceptionMock = new \Magento\Framework\Exception\LocalizedException(
             __('You did not sign in correctly or your account is temporarily disabled.')

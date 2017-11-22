@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Indexer\Test\Unit\Model\ResourceModel\Indexer\State;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Indexer\Model\ResourceModel\Indexer\State\Collection
@@ -14,18 +14,18 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     public function testConstruct()
     {
-        $entityFactoryMock = $this->createMock(\Magento\Framework\Data\Collection\EntityFactoryInterface::class);
-        $loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $fetchStrategyMock = $this->createMock(\Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class);
-        $managerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
-        $selectRendererMock = $this->createMock(\Magento\Framework\DB\Select\SelectRenderer::class);
-        $resourceMock = $this->createMock(\Magento\Framework\Flag\FlagResource::class);
+        $entityFactoryMock = $this->getMock('Magento\Framework\Data\Collection\EntityFactoryInterface');
+        $loggerMock = $this->getMock('Psr\Log\LoggerInterface');
+        $fetchStrategyMock = $this->getMock('Magento\Framework\Data\Collection\Db\FetchStrategyInterface');
+        $managerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $connectionMock = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
+        $resourceMock = $this->getMock('Magento\Framework\Flag\FlagResource', [], [], '', false);
         $resourceMock->expects($this->any())->method('getConnection')->will($this->returnValue($connectionMock));
-        $selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
-            ->setMethods(['getPart', 'setPart', 'from', 'columns'])
-            ->setConstructorArgs([$connectionMock, $selectRendererMock])
-            ->getMock();
+        $selectMock = $this->getMock(
+            'Magento\Framework\DB\Select',
+            ['getPart', 'setPart', 'from', 'columns'],
+            [$connectionMock]
+        );
         $connectionMock->expects($this->any())->method('select')->will($this->returnValue($selectMock));
 
         $this->model = new \Magento\Indexer\Model\ResourceModel\Indexer\State\Collection(
@@ -38,15 +38,15 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertInstanceOf(
-            \Magento\Indexer\Model\ResourceModel\Indexer\State\Collection::class,
+            'Magento\Indexer\Model\ResourceModel\Indexer\State\Collection',
             $this->model
         );
         $this->assertEquals(
-            \Magento\Indexer\Model\Indexer\State::class,
+            'Magento\Indexer\Model\Indexer\State',
             $this->model->getModelName()
         );
         $this->assertEquals(
-            \Magento\Indexer\Model\ResourceModel\Indexer\State::class,
+            'Magento\Indexer\Model\ResourceModel\Indexer\State',
             $this->model->getResourceModelName()
         );
     }

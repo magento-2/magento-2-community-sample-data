@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Framework\View\Asset\PreProcessor\Minify;
 /**
  * Unit test for Magento\Framework\View\Asset\PreProcessor\Minify
  */
-class MinifyTest extends \PHPUnit\Framework\TestCase
+class MinifyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Asset\PreProcessor\Minify
@@ -33,11 +33,11 @@ class MinifyTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->adapterMock = $this->getMockBuilder(\Magento\Framework\Code\Minifier\AdapterInterface::class)
+        $this->adapterMock = $this->getMockBuilder('Magento\Framework\Code\Minifier\AdapterInterface')
             ->setMethods(['minify'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $this->minificationMock = $this->getMockBuilder(\Magento\Framework\View\Asset\Minification::class)
+        $this->minificationMock = $this->getMockBuilder('Magento\Framework\View\Asset\Minification')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +58,7 @@ class MinifyTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcess($targetPath, $originalPath, $minifyCalls, $setContentCalls, $isEnabled)
     {
-        $chainMock = $this->getMockBuilder(\Magento\Framework\View\Asset\PreProcessor\Chain::class)
+        $chainMock = $this->getMockBuilder('Magento\Framework\View\Asset\PreProcessor\Chain')
             ->disableOriginalConstructor()
             ->getMock();
         $chainMock

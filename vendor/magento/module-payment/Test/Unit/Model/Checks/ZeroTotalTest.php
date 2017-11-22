@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Model\Checks;
 
 use \Magento\Payment\Model\Checks\ZeroTotal;
 
-class ZeroTotalTest extends \PHPUnit\Framework\TestCase
+class ZeroTotalTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider paymentMethodDataProvider
@@ -18,7 +18,7 @@ class ZeroTotalTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsApplicable($code, $total, $expectation)
     {
-        $paymentMethod = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $paymentMethod = $this->getMockBuilder('\Magento\Payment\Model\MethodInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -29,7 +29,7 @@ class ZeroTotalTest extends \PHPUnit\Framework\TestCase
                 ->will($this->returnValue($code));
         }
 
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quote = $this->getMockBuilder('Magento\Quote\Model\Quote')
             ->disableOriginalConstructor()
             ->setMethods(['getBaseGrandTotal', '__wakeup'])
             ->getMock();

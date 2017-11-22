@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Mtf\Util\ModuleResolver;
@@ -16,7 +16,6 @@ class SequenceSorter implements SequenceSorterInterface
      * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $magentoObjectManager;
-
     /**
      * @constructor
      */
@@ -24,7 +23,6 @@ class SequenceSorter implements SequenceSorterInterface
     {
         $this->initObjectManager();
     }
-
     /**
      * Initialize Magento ObjectManager.
      *
@@ -40,7 +38,6 @@ class SequenceSorter implements SequenceSorterInterface
             $this->magentoObjectManager = $objectManagerFactory->create($_SERVER);
         }
     }
-
     /**
      * Get Magento module sequence load.
      *
@@ -50,7 +47,6 @@ class SequenceSorter implements SequenceSorterInterface
     {
         return $this->magentoObjectManager->create(\Magento\Framework\Module\ModuleList\Loader::class)->load();
     }
-
     /**
      * Sort files according to specified sequence.
      *
@@ -72,7 +68,6 @@ class SequenceSorter implements SequenceSorterInterface
             }
         }
         $sortedPaths = array_merge($sortedPaths, $paths);
-
         return $sortedPaths;
     }
 }

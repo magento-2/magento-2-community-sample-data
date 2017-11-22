@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -51,14 +51,14 @@ class Pro
      *
      * @var string
      */
-    protected $_apiType = \Magento\Paypal\Model\Api\Nvp::class;
+    protected $_apiType = 'Magento\Paypal\Model\Api\Nvp';
 
     /**
      * Config model type
      *
      * @var string
      */
-    protected $_configType = \Magento\Paypal\Model\Config::class;
+    protected $_configType = 'Magento\Paypal\Model\Config';
 
     /**
      * @var \Magento\Paypal\Model\Config\Factory

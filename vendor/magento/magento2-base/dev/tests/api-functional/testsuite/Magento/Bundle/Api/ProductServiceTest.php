@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -33,7 +33,7 @@ class ProductServiceTest extends WebapiAbstract
     public function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $this->productCollection = $objectManager->get(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $this->productCollection = $objectManager->get('Magento\Catalog\Model\ResourceModel\Product\Collection');
     }
 
     /**
@@ -119,6 +119,8 @@ class ProductServiceTest extends WebapiAbstract
         $bundleProduct = $this->createFixedPriceBundleProduct();
         $bundleProductOptions = $this->getBundleProductOptions($bundleProduct);
 
+        $existingSelectionId = $bundleProductOptions[0]['product_links'][0]['id'];
+
         //Change the type of existing option
         $bundleProductOptions[0]['type'] = 'select';
         //Change the sku of existing link and qty
@@ -134,6 +136,7 @@ class ProductServiceTest extends WebapiAbstract
         $this->assertEquals('select', $bundleOptions[0]['type']);
         $this->assertEquals('simple2', $bundleOptions[0]['product_links'][0]['sku']);
         $this->assertEquals(2, $bundleOptions[0]['product_links'][0]['qty']);
+        $this->assertEquals($existingSelectionId, $bundleOptions[0]['product_links'][0]['id']);
         $this->assertEquals(10, $bundleOptions[0]['product_links'][0]['price']);
         $this->assertEquals(1, $bundleOptions[0]['product_links'][0]['price_type']);
     }
@@ -147,9 +150,12 @@ class ProductServiceTest extends WebapiAbstract
         $bundleProduct = $this->createFixedPriceBundleProduct();
         $bundleProductOptions = $this->getBundleProductOptions($bundleProduct);
 
+        $existingSelectionId = $bundleProductOptions[0]['product_links'][0]['id'];
+
         //Change the type of existing option
         $bundleProductOptions[0]['type'] = 'select';
-
+        //unset product_links attribute
+        unset($bundleProductOptions[0]['product_links']);
         $this->setBundleProductOptions($bundleProduct, $bundleProductOptions);
 
         $updatedProduct = $this->saveProduct($bundleProduct);
@@ -158,6 +164,7 @@ class ProductServiceTest extends WebapiAbstract
         $this->assertEquals('select', $bundleOptions[0]['type']);
         $this->assertEquals('simple', $bundleOptions[0]['product_links'][0]['sku']);
         $this->assertEquals(1, $bundleOptions[0]['product_links'][0]['qty']);
+        $this->assertEquals($existingSelectionId, $bundleOptions[0]['product_links'][0]['id']);
         $this->assertEquals(20, $bundleOptions[0]['product_links'][0]['price']);
         $this->assertEquals(1, $bundleOptions[0]['product_links'][0]['price_type']);
     }

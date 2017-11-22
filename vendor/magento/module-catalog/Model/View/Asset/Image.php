@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,9 +13,9 @@ use Magento\Framework\View\Asset\ContextInterface;
 use Magento\Framework\View\Asset\LocalInterface;
 
 /**
- * A locally available image file asset that can be referred with a file path
+ * A locally available image file asset that can be referred with a file path.
  *
- * This class is a value object with lazy loading of some of its data (content, physical file path)
+ * This class is a value object with lazy loading of some of its data (content, physical file path).
  */
 class Image implements LocalInterface
 {
@@ -95,11 +95,11 @@ class Image implements LocalInterface
      */
     public function getPath()
     {
-        return $this->getAbsolutePath($this->context->getPath());
+        return $this->getRelativePath($this->context->getPath());
     }
 
     /**
-     * Subroutine for building path
+     * Subroutine for building path.
      *
      * @param string $path
      * @param string $item
@@ -123,7 +123,7 @@ class Image implements LocalInterface
     }
 
     /**
-     * Get source content type
+     * Get source content type.
      *
      * @return string
      */
@@ -166,7 +166,7 @@ class Image implements LocalInterface
     }
 
     /**
-     * Retrieve part of path based on misc params
+     * Retrieve part of path based on misc params.
      *
      * @return string
      */
@@ -176,22 +176,7 @@ class Image implements LocalInterface
     }
 
     /**
-     * Generate absolute path
-     *
-     * @param string $result
-     * @return string
-     */
-    private function getAbsolutePath($result)
-    {
-        $prefix = (substr($result, 0, 1) == DIRECTORY_SEPARATOR) ? DIRECTORY_SEPARATOR : '';
-        $result = $this->join($result, $this->getModule());
-        $result = $this->join($result, $this->getMiscPath());
-        $result = $this->join($result, $this->getFilePath());
-        return $prefix . $result;
-    }
-
-    /**
-     * Generate relative path
+     * Generate relative path.
      *
      * @param string $result
      * @return string
@@ -201,6 +186,7 @@ class Image implements LocalInterface
         $result = $this->join($result, $this->getModule());
         $result = $this->join($result, $this->getMiscPath());
         $result = $this->join($result, $this->getFilePath());
+
         return DIRECTORY_SEPARATOR . $result;
     }
 }

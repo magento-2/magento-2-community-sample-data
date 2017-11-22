@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Utility;
 
-class XssOutputValidatorTest extends \PHPUnit\Framework\TestCase
+class XssOutputValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $file

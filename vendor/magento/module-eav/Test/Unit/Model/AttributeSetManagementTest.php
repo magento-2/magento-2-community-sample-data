@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model;
 
 use Magento\Eav\Model\AttributeSetManagement;
 
-class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
+class AttributeSetManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AttributeSetManagement
@@ -26,8 +26,8 @@ class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->repositoryMock = $this->createMock(\Magento\Eav\Api\AttributeSetRepositoryInterface::class);
-        $this->eavConfigMock = $this->createPartialMock(\Magento\Eav\Model\Config::class, ['getEntityType']);
+        $this->repositoryMock = $this->getMock('Magento\Eav\Api\AttributeSetRepositoryInterface');
+        $this->eavConfigMock = $this->getMock('Magento\Eav\Model\Config', ['getEntityType'], [], '', false);
 
         $this->model = new \Magento\Eav\Model\AttributeSetManagement(
             $this->eavConfigMock,
@@ -40,15 +40,18 @@ class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
         $skeletonId = 1;
         $entityTypeCode = 'catalog_product';
         $entityTypeId = 4;
-        $entityTypeMock = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
+        $entityTypeMock = $this->getMock('Magento\Eav\Model\Entity\Type', [], [], '', false);
         $entityTypeMock->expects($this->any())->method('getId')->will($this->returnValue($entityTypeId));
         $this->eavConfigMock->expects($this->once())
             ->method('getEntityType')
             ->with($entityTypeCode)
             ->will($this->returnValue($entityTypeMock));
-        $attributeSetMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Set::class,
-            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton']
+        $attributeSetMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Set',
+            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton'],
+            [],
+            '',
+            false
         );
         $attributeSetMock->expects($this->once())->method('validate');
         $attributeSetMock->expects($this->once())->method('setEntityTypeId')->with($entityTypeId);
@@ -68,9 +71,12 @@ class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
     {
         $skeletonId = 1;
         $entityTypeCode = 'catalog_product';
-        $attributeSetMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Set::class,
-            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton']
+        $attributeSetMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Set',
+            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton'],
+            [],
+            '',
+            false
         );
         $attributeSetMock->expects($this->any())->method('getId')->will($this->returnValue(1));
         $this->repositoryMock->expects($this->never())->method('save')->with($attributeSetMock);
@@ -86,9 +92,12 @@ class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
     {
         $skeletonId = 0;
         $entityTypeCode = 'catalog_product';
-        $attributeSetMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Set::class,
-            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton']
+        $attributeSetMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Set',
+            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton'],
+            [],
+            '',
+            false
         );
         $this->repositoryMock->expects($this->never())->method('save')->with($attributeSetMock);
         $attributeSetMock->expects($this->never())->method('initFromSkeleton')->with($skeletonId);
@@ -104,12 +113,15 @@ class AttributeSetManagementTest extends \PHPUnit\Framework\TestCase
         $entityTypeId = 4;
         $skeletonId = 5;
         $entityTypeCode = 'catalog_product';
-        $attributeSetMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Set::class,
-            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton']
+        $attributeSetMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Set',
+            ['validate', 'getId', 'setEntityTypeId', 'initFromSkeleton'],
+            [],
+            '',
+            false
         );
 
-        $entityTypeMock = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
+        $entityTypeMock = $this->getMock('Magento\Eav\Model\Entity\Type', [], [], '', false);
         $entityTypeMock->expects($this->any())->method('getId')->will($this->returnValue($entityTypeId));
         $this->eavConfigMock->expects($this->once())
             ->method('getEntityType')

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductAlert\Model;
@@ -8,7 +8,7 @@ namespace Magento\ProductAlert\Model;
 /**
  * @magentoAppIsolation enabled
  */
-class ObserverTest extends \PHPUnit\Framework\TestCase
+class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -29,14 +29,14 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->_customerSession = $this->_objectManager->get(
-            \Magento\Customer\Model\Session::class
+            'Magento\Customer\Model\Session'
         );
         $service = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
         $customer = $service->authenticate('customer@example.com', 'password');
         $this->_customerSession->setCustomerDataAsLoggedIn($customer);
-        $this->_customerViewHelper = $this->_objectManager->create(\Magento\Customer\Helper\View::class);
+        $this->_customerViewHelper = $this->_objectManager->create('Magento\Customer\Helper\View');
     }
 
     /**
@@ -47,13 +47,11 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
-        $observer = $this->_objectManager->get(\Magento\ProductAlert\Model\Observer::class);
+        $observer = $this->_objectManager->get('Magento\ProductAlert\Model\Observer');
         $observer->process();
 
         /** @var \Magento\TestFramework\Mail\Template\TransportBuilderMock $transportBuilder */
-        $transportBuilder = $this->_objectManager->get(
-            \Magento\TestFramework\Mail\Template\TransportBuilderMock::class
-        );
+        $transportBuilder = $this->_objectManager->get('Magento\TestFramework\Mail\Template\TransportBuilderMock');
         $this->assertContains(
             'John Smith,',
             $transportBuilder->getSentMessage()->getBodyHtml()->getRawContent()

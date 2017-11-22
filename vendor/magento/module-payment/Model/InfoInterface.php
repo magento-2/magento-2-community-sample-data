@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,6 @@ namespace Magento\Payment\Model;
 
 /**
  * Interface InfoInterface
- * @api
- * @since 100.0.2
  */
 interface InfoInterface
 {
@@ -18,6 +16,7 @@ interface InfoInterface
      *
      * @param string $data
      * @return string
+     * @api
      */
     public function encrypt($data);
 
@@ -26,6 +25,7 @@ interface InfoInterface
      *
      * @param string $data
      * @return string
+     * @api
      */
     public function decrypt($data);
 
@@ -35,6 +35,7 @@ interface InfoInterface
      * @param string $key
      * @param string|null $value
      * @return mixed
+     * @api
      */
     public function setAdditionalInformation($key, $value = null);
 
@@ -43,6 +44,7 @@ interface InfoInterface
      *
      * @param mixed|null $key
      * @return bool
+     * @api
      */
     public function hasAdditionalInformation($key = null);
 
@@ -51,6 +53,7 @@ interface InfoInterface
      *
      * @param string|null $key
      * @return $this
+     * @api
      */
     public function unsAdditionalInformation($key = null);
 
@@ -59,6 +62,7 @@ interface InfoInterface
      *
      * @param string|null $key
      * @return mixed
+     * @api
      */
     public function getAdditionalInformation($key = null);
 
@@ -67,6 +71,7 @@ interface InfoInterface
      *
      * @return \Magento\Payment\Model\MethodInterface
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @api
      */
     public function getMethodInstance();
 }

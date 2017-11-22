@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,15 +11,14 @@
 /**
  * Top menu for store
  *
- * @var $block \Magento\Theme\Block\Html\Topmenu
+ * @see \Magento\Theme\Block\Html\Topmenu
  */
 ?>
 <?php $columnsLimit = $block->getColumnsLimit() ?: 0; ?>
 <?php $_menu = $block->getHtml('level-top', 'submenu', $columnsLimit) ?>
 
-<nav class="navigation" data-action="navigation">
+<nav class="navigation" role="navigation">
     <ul data-mage-init='{"menu":{"responsive":true, "expanded":true, "position":{"my":"left top","at":"left bottom"}}}'>
-        <?= /* @escapeNotVerified */ $_menu ?>
-        <?= /* @escapeNotVerified */ $block->getChildHtml() ?>
+        <?php /* @escapeNotVerified */ echo $_menu; ?>
     </ul>
 </nav>

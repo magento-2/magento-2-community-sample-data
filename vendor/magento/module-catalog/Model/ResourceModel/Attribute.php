@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Attribute\LockValidatorInterface;
 
 /**
@@ -26,11 +25,6 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
      * @var LockValidatorInterface
      */
     protected $attrLockValidator;
-
-    /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    protected $metadataPool;
 
     /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
@@ -120,10 +114,17 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
             return $this;
         }
 
-        $result = $this->getEntityAttribute($object->getEntityAttributeId());
+        $select = $this->getConnection()->select()->from(
+            $this->getTable('eav_entity_attribute')
+        )->where(
+            'entity_attribute_id = ?',
+            (int)$object->getEntityAttributeId()
+        );
+        $result = $this->getConnection()->fetchRow($select);
+
         if ($result) {
             $attribute = $this->_eavConfig->getAttribute(
-                $object->getEntityTypeId(),
+                \Magento\Catalog\Model\Product::ENTITY,
                 $result['attribute_id']
             );
 
@@ -137,13 +138,9 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
 
             $backendTable = $attribute->getBackend()->getTable();
             if ($backendTable) {
-                $linkField = $this->getMetadataPool()
-                    ->getMetadata(ProductInterface::class)
-                    ->getLinkField();
-
                 $select = $this->getConnection()->select()->from(
                     $attribute->getEntity()->getEntityTable(),
-                    $linkField
+                    'entity_id'
                 )->where(
                     'attribute_set_id = ?',
                     $result['attribute_set_id']
@@ -151,7 +148,7 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
 
                 $clearCondition = [
                     'attribute_id =?' => $attribute->getId(),
-                    $linkField . ' IN (?)' => $select,
+                    'entity_id IN (?)' => $select,
                 ];
                 $this->getConnection()->delete($backendTable, $clearCondition);
             }
@@ -161,17 +158,5 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
         $this->getConnection()->delete($this->getTable('eav_entity_attribute'), $condition);
 
         return $this;
-    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     */
-    private function getMetadataPool()
-    {
-        if (null === $this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        }
-        return $this->metadataPool;
     }
 }

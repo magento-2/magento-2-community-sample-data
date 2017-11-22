@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Increment;
 
 use Magento\Eav\Model\Entity\Increment\Alphanum;
 
-class AlphanumTest extends \PHPUnit\Framework\TestCase
+class AlphanumTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Alphanum

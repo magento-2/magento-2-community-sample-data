@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'underscore',
@@ -35,11 +31,7 @@ define([
      * @returns {Object}
      */
     function removeEmpty(data) {
-        var result = utils.mapRecursive(data, utils.removeEmptyValues.bind(utils));
-
-        return utils.mapRecursive(result, function (value) {
-            return _.isString(value) ? value.trim() : value;
-        });
+        return utils.mapRecursive(data, utils.removeEmptyValues.bind(utils));
     }
 
     return Collection.extend({
@@ -47,7 +39,6 @@ define([
             template: 'ui/grid/filters/filters',
             stickyTmpl: 'ui/grid/sticky/filters',
             _processed: [],
-            columnsProvider: 'ns = ${ $.ns }, componentType = columns',
             applied: {
                 placeholder: true
             },
@@ -68,11 +59,11 @@ define([
                     },
                     text: {
                         component: 'Magento_Ui/js/form/element/abstract',
-                        template: 'ui/grid/filters/field'
+                        template: 'ui/grid/filters/elements/input'
                     },
                     select: {
                         component: 'Magento_Ui/js/form/element/select',
-                        template: 'ui/grid/filters/field',
+                        template: 'ui/grid/filters/elements/select',
                         options: '${ JSON.stringify($.$data.column.options) }',
                         caption: ' '
                     },

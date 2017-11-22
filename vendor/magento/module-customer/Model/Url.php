@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model;
@@ -146,6 +146,7 @@ class Url
                 self::REFERER_QUERY_PARAM_NAME => $referer,
             ];
         }
+
         return $this->urlBuilder->getUrl('customer/account/loginPost', $params);
     }
 
@@ -241,6 +242,11 @@ class Url
     }
 
     /**
+     * Returns request referrer.
+     *
+     * Will return referrer in case referrer from the same origin.
+     * Otherwise NULL will be returned.
+     *
      * @return mixed|null
      */
     private function getRequestReferrer()
@@ -249,6 +255,7 @@ class Url
         if ($referer && $this->hostChecker->isOwnOrigin($this->urlDecoder->decode($referer))) {
             return $referer;
         }
+
         return null;
     }
 }

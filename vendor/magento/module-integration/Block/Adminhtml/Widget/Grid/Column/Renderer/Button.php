@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Block\Adminhtml\Widget\Grid\Column\Renderer;
@@ -85,11 +85,7 @@ class Button extends AbstractRenderer
             ) : $this->getColumn()->{$rowMethodName}();
 
             if ($attributeValue) {
-                $attributes[] = sprintf(
-                    '%s="%s"',
-                    $attributeName,
-                    $this->escapeHtmlAttr($attributeValue, false)
-                );
+                $attributes[] = sprintf('%s="%s"', $attributeName, $this->escapeHtml($attributeValue));
             }
         }
         return $attributes;

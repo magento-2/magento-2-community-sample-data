@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -19,8 +19,6 @@ use Magento\Integration\Api\CustomerTokenServiceInterface;
 
 /**
  * api-functional test for \Magento\Integration\Model\CustomerTokenService.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CustomerTokenServiceTest extends WebapiAbstract
 {
@@ -59,17 +57,15 @@ class CustomerTokenServiceTest extends WebapiAbstract
     public function setUp()
     {
         $this->_markTestAsRestOnly();
-        $this->tokenService = Bootstrap::getObjectManager()->get(
-            \Magento\Integration\Model\CustomerTokenService::class
-        );
+        $this->tokenService = Bootstrap::getObjectManager()->get('Magento\Integration\Model\CustomerTokenService');
         $this->customerAccountManagement = Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
         $tokenCollectionFactory = Bootstrap::getObjectManager()->get(
-            \Magento\Integration\Model\ResourceModel\Oauth\Token\CollectionFactory::class
+            'Magento\Integration\Model\ResourceModel\Oauth\Token\CollectionFactory'
         );
         $this->tokenCollection = $tokenCollectionFactory->create();
-        $this->userModel = Bootstrap::getObjectManager()->get(\Magento\User\Model\User::class);
+        $this->userModel = Bootstrap::getObjectManager()->get('Magento\User\Model\User');
         /** @var TokenThrottlerConfig $tokenThrottlerConfig */
         $tokenThrottlerConfig = Bootstrap::getObjectManager()->get(TokenThrottlerConfig::class);
         $this->attemptsCountToLockAccount = $tokenThrottlerConfig->getMaxFailuresCount();
@@ -165,16 +161,16 @@ class CustomerTokenServiceTest extends WebapiAbstract
         $this->assertEquals(HTTPExceptionCodes::HTTP_BAD_REQUEST, $e->getCode());
         $exceptionData = $this->processRestExceptionResult($e);
         $expectedExceptionData = [
-            'message' => 'One or more input exceptions have occurred.',
+            'message' => InputException::DEFAULT_MESSAGE,
             'errors' => [
                 [
-                    'message' => '%fieldName is a required field.',
+                    'message' => InputException::REQUIRED_FIELD,
                     'parameters' => [
                         'fieldName' => 'username',
                     ],
                 ],
                 [
-                    'message' => '%fieldName is a required field.',
+                    'message' => InputException::REQUIRED_FIELD,
                     'parameters' => [
                         'fieldName' => 'password',
                     ]

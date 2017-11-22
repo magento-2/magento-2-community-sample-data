@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use \Magento\Framework\Webapi\Rest\Response\FieldsFilter;
 /**
  * Unit test for FieldsFilter
  */
-class FieldsFilterTest extends \PHPUnit\Framework\TestCase
+class FieldsFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FieldsFilter SUT
@@ -29,9 +29,9 @@ class FieldsFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * Setup SUT
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->requestMock = $this->createMock(\Magento\Framework\Webapi\Rest\Request::class);
+        $this->requestMock = $this->getMock('Magento\Framework\Webapi\Rest\Request', [], [], '', false);
         $this->processor = new FieldsFilter($this->requestMock);
         $this->sampleResponseValue = [
             'customer' => [

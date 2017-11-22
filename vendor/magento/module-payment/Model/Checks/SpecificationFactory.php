@@ -1,17 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Model\Checks;
 
 /**
- * Creates complex specification.
- *
- * Use this class to register predefined list of specifications that should be added to any complex specification.
- *
- * @api
- * @since 100.0.2
+ * Class \Magento\Payment\Model\Methods\SpecificationFactory
  */
 class SpecificationFactory
 {
@@ -22,9 +17,7 @@ class SpecificationFactory
      */
     protected $compositeFactory;
 
-    /**
-     * @var array
-     */
+    /** @var  array mapping */
     protected $mapping;
 
     /**

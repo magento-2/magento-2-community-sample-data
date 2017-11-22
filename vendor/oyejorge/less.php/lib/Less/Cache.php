@@ -83,14 +83,15 @@ class Less_Cache{
 		$hash = md5(json_encode($less_files));
  		$list_file = Less_Cache::$cache_dir . Less_Cache::$prefix . $hash . '.list';
 
+
  		// check cached content
  		if( !isset($parser_options['use_cache']) || $parser_options['use_cache'] === true ){
 			if( file_exists($list_file) ){
 
 				self::ListFiles($list_file, $list, $cached_name);
-				$compiled_name = self::CompiledName($list, $hash);
+				$compiled_name = self::CompiledName($list);
 
-				// if $cached_name is the same as the $compiled name, don't regenerate
+				// if $cached_name != $compiled_name, we know we need to recompile
 				if( !$cached_name || $cached_name === $compiled_name ){
 
 					$output_file = self::OutputFile($compiled_name, $parser_options );
@@ -108,7 +109,7 @@ class Less_Cache{
 			return false;
 		}
 
-		$compiled_name = self::CompiledName( $less_files, $hash );
+		$compiled_name = self::CompiledName( $less_files );
 		$output_file = self::OutputFile($compiled_name, $parser_options );
 
 
@@ -193,7 +194,7 @@ class Less_Cache{
 	}
 
 
-	private static function CompiledName( $files, $extrahash ){
+	private static function CompiledName( $files ){
 
 		//save the file list
 		$temp = array(Less_Version::cache_version);
@@ -201,13 +202,12 @@ class Less_Cache{
 			$temp[] = filemtime($file)."\t".filesize($file)."\t".$file;
 		}
 
-		return Less_Cache::$prefix.sha1(json_encode($temp).$extrahash).'.css';
+		return Less_Cache::$prefix.sha1(json_encode($temp)).'.css';
 	}
 
 
 	public static function SetCacheDir( $dir ){
 		Less_Cache::$cache_dir = $dir;
-		self::CheckCacheDir();
 	}
 
 	public static function CheckCacheDir(){
@@ -238,63 +238,60 @@ class Less_Cache{
 	public static function CleanCache(){
 		static $clean = false;
 
-
-		if( $clean || empty(Less_Cache::$cache_dir) ){
+		if( $clean ){
 			return;
+		}
+
+		$files = scandir(Less_Cache::$cache_dir);
+		if( $files ){
+			$check_time = time() - self::$gc_lifetime;
+			foreach($files as $file){
+
+				// don't delete if the file wasn't created with less.php
+				if( strpos($file,Less_Cache::$prefix) !== 0 ){
+					continue;
+				}
+
+				$full_path = Less_Cache::$cache_dir.'/'.$file;
+
+				// make sure the file still exists
+				// css files may have already been deleted
+				if( !file_exists($full_path) ){
+					continue;
+				}
+				$mtime = filemtime($full_path);
+
+				// don't delete if it's a relatively new file
+				if( $mtime > $check_time ){
+					continue;
+				}
+
+				$parts = explode('.',$file);
+				$type = array_pop($parts);
+
+
+				// delete css files based on the list files
+				if( $type === 'css' ){
+					continue;
+				}
+
+
+				// delete the list file and associated css file
+				if( $type === 'list' ){
+					self::ListFiles($full_path, $list, $css_file_name);
+					if( $css_file_name ){
+						$css_file = Less_Cache::$cache_dir.'/'.$css_file_name;
+						if( file_exists($css_file) ){
+							unlink($css_file);
+						}
+					}
+				}
+
+				unlink($full_path);
+			}
 		}
 
 		$clean = true;
-
-		// only remove files with extensions created by less.php
-		// css files removed based on the list files
-		$remove_types = array('lesscache'=>1,'list'=>1,'less'=>1,'map'=>1);
-
-		$files = scandir(Less_Cache::$cache_dir);
-		if( !$files ){
-			return;
-		}
-
-		$check_time = time() - self::$gc_lifetime;
-		foreach($files as $file){
-
-
-			// don't delete if the file wasn't created with less.php
-			if( strpos($file,Less_Cache::$prefix) !== 0 ){
-				continue;
-			}
-
-			$parts = explode('.',$file);
-			$type = array_pop($parts);
-
-
-			if( !isset($remove_types[$type]) ){
-				continue;
-			}
-
-			$full_path = Less_Cache::$cache_dir . $file;
-			$mtime = filemtime($full_path);
-
-			// don't delete if it's a relatively new file
-			if( $mtime > $check_time ){
-				continue;
-			}
-
-
-			// delete the list file and associated css file
-			if( $type === 'list' ){
-				self::ListFiles($full_path, $list, $css_file_name);
-				if( $css_file_name ){
-					$css_file = Less_Cache::$cache_dir . $css_file_name;
-					if( file_exists($css_file) ){
-						unlink($css_file);
-					}
-				}
-			}
-
-			unlink($full_path);
-		}
-
-
 	}
 
 

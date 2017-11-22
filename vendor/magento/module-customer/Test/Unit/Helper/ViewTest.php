@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Helper;
 
 use Magento\Customer\Api\CustomerMetadataInterface;
 
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\Helper\Context|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
@@ -18,14 +18,14 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerMetadataInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $customerMetadataService;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerMetadataService = $this->createMock(\Magento\Customer\Api\CustomerMetadataInterface::class);
+        $this->customerMetadataService = $this->getMock('Magento\Customer\Api\CustomerMetadataInterface');
 
-        $attributeMetadata = $this->createMock(\Magento\Customer\Api\Data\AttributeMetadataInterface::class);
+        $attributeMetadata = $this->getMock('Magento\Customer\Api\Data\AttributeMetadataInterface');
         $attributeMetadata->expects($this->any())->method('isVisible')->will($this->returnValue(true));
         $this->customerMetadataService->expects($this->any())
             ->method('getAttributeMetadata')
@@ -39,7 +39,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCustomerName($prefix, $firstName, $middleName, $lastName, $suffix, $result)
     {
-        $customerData = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerData = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $customerData->expects($this->any())

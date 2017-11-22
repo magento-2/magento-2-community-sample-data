@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,13 +21,14 @@ use Magento\Customer\Test\Fixture\Customer;
  * 3. Add created product to Wishlist according to dataset
  * 4. Perform all assertions
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-29045
  */
 class AddProductToWishlistEntityTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -48,16 +49,15 @@ class AddProductToWishlistEntityTest extends AbstractWishlistTest
      *
      * @param Customer $customer
      * @param string $product
-     * @param bool $configure
      * @return array
      */
-    public function test(Customer $customer, $product, $configure = true)
+    public function test(Customer $customer, $product)
     {
         $product = $this->createProducts($product)[0];
 
         // Steps:
         $this->loginCustomer($customer);
-        $this->addToWishlist([$product], $configure);
+        $this->addToWishlist([$product], true);
 
         return ['product' => $product];
     }

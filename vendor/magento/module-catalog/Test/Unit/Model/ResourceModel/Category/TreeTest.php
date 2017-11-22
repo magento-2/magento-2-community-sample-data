@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,14 +8,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Category;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Framework\EntityManager\EntityMetadata;
-use Magento\Framework\EntityManager\MetadataPool;
-
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class TreeTest extends \PHPUnit\Framework\TestCase
+class TreeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\Tree
@@ -37,22 +30,14 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      */
     protected $_collectionFactory;
 
-    /**
-     * @var MetadataPool|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $metadataPoolMock;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $select->expects($this->once())->method('from')->with('catalog_category_entity');
-        $connection = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $connection = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
         $connection->expects($this->once())->method('select')->will($this->returnValue($select));
-        $this->_resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->_resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->_resource->expects(
             $this->once()
         )->method(
@@ -71,22 +56,28 @@ class TreeTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnArgument(0)
         );
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->_attributeConfig = $this->createMock(\Magento\Catalog\Model\Attribute\Config::class);
-        $this->_collectionFactory = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection\Factory::class);
-
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $this->_attributeConfig = $this->getMock(
+            'Magento\Catalog\Model\Attribute\Config',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_collectionFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Category\Collection\Factory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->_model = $objectHelper->getObject(
-            \Magento\Catalog\Model\ResourceModel\Category\Tree::class,
+            'Magento\Catalog\Model\ResourceModel\Category\Tree',
             [
                 'resource' => $this->_resource,
                 'eventManager' => $eventManager,
                 'attributeConfig' => $this->_attributeConfig,
-                'collectionFactory' => $this->_collectionFactory,
-                'metadataPool' => $this->metadataPoolMock,
+                'collectionFactory' => $this->_collectionFactory
             ]
         );
     }
@@ -116,7 +107,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getCollectionMock()
     {
-        return $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+        return $this->getMock('Magento\Catalog\Model\ResourceModel\Category\Collection', [], [], '', false);
     }
 
     public function testSetCollection()
@@ -130,7 +121,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
     public function testCallCleaningDuringSetCollection()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Tree $model */
-        $model = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Category\Tree::class, ['_clean']);
+        $model = $this->getMock('Magento\Catalog\Model\ResourceModel\Category\Tree', ['_clean'], [], '', false);
         $model->expects($this->once())->method('_clean')->will($this->returnSelf());
 
         $this->assertEquals($model, $model->setCollection($this->getCollectionMock()));
@@ -140,23 +131,28 @@ class TreeTest extends \PHPUnit\Framework\TestCase
     public function testAddCollectionData()
     {
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $select->expects($this->any())->method('from')->will($this->returnSelf());
         $select->expects($this->any())->method('join')->will($this->returnSelf());
-        $select->expects($this->any())->method('joinInner')->will($this->returnSelf());
         $select->expects($this->any())->method('joinLeft')->will($this->returnSelf());
         $select->expects($this->any())->method('where')->will($this->returnSelf());
 
-        $connection = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+        $connection = $this->getMock('Magento\Framework\DB\Adapter\AdapterInterface');
         $connection->expects($this->any())->method('select')->will($this->returnValue($select));
         $connection->expects($this->any())->method('fetchCol')->will($this->returnValue([]));
 
-        $resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $resource->expects($this->any())->method('getConnection')->will($this->returnValue($connection));
         $resource->expects($this->any())->method('getTableName')->will($this->returnArgument(0));
 
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $attributeConfig = $this->createMock(\Magento\Catalog\Model\Attribute\Config::class);
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $attributeConfig = $this->getMock(
+            'Magento\Catalog\Model\Attribute\Config',
+            [],
+            [],
+            '',
+            false
+        );
 
         $attributes = ['attribute_one', 'attribute_two'];
         $attributeConfig->expects(
@@ -169,43 +165,35 @@ class TreeTest extends \PHPUnit\Framework\TestCase
                 $this->returnValue($attributes)
             );
 
-        $collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+        $collection = $this->getMock('Magento\Catalog\Model\ResourceModel\Category\Collection', [], [], '', false);
         $collection->expects($this->never())->method('getAllIds')->will($this->returnValue([]));
-        $collection->expects($this->once())->method('getAllIdsSql')->will($this->returnValue($select));
-        $collectionFactory = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection\Factory::class);
+        $collectionFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Category\Collection\Factory',
+            [],
+            [],
+            '',
+            false
+        );
         $collectionFactory->expects($this->once())->method('create')->will($this->returnValue($collection));
 
-        $store = $this->createMock(\Magento\Store\Model\Store::class);
+        $store = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $store->expects($this->any())->method('getId')->will($this->returnValue(1));
 
-        $storeManager = $this->getMockForAbstractClass(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManager = $this->getMockForAbstractClass('Magento\Store\Model\StoreManagerInterface');
         $storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
-        $categoryMetadataMock = $this->getMockBuilder(EntityMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryMetadataMock->expects($this->any())
-            ->method('getLinkField')
-            ->willReturn('id');
-        $this->metadataPoolMock
-            ->expects($this->any())
-            ->method('getMetadata')
-            ->with(CategoryInterface::class)
-            ->willReturn($categoryMetadataMock);
-
         $model = $objectHelper->getObject(
-            \Magento\Catalog\Model\ResourceModel\Category\Tree::class,
+            'Magento\Catalog\Model\ResourceModel\Category\Tree',
             [
                 'storeManager' => $storeManager,
                 'resource' => $resource,
                 'eventManager' => $eventManager,
                 'attributeConfig' => $attributeConfig,
-                'collectionFactory' => $collectionFactory,
-                'metadataPool' => $this->metadataPoolMock
+                'collectionFactory' => $collectionFactory
             ]
         );
 
-        $nodeMock = $this->createPartialMock(\Magento\Framework\Data\Tree\Node::class, ['getId', 'getPath']);
+        $nodeMock = $this->getMock('\Magento\Framework\Data\Tree\Node', ['getId', 'getPath'], [], '', false);
         $nodeMock->expects($this->any())->method('getId')->will($this->returnValue(1));
         $nodeMock->expects($this->once())->method('getPath')->will($this->returnValue([]));
 

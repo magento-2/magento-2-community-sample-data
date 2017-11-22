@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -46,8 +46,7 @@ class AssertProductRelatedProducts extends AbstractConstraint
         foreach ($promotedProducts as $promotedProduct) {
             \PHPUnit_Framework_Assert::assertTrue(
                 $catalogProductView->getRelatedProductBlock()->getProductItem($promotedProduct)->isVisible(),
-                'Product \'' . $promotedProduct->getName()
-                . '\' is absent in related products \'' . $product->getName() . '\'.'
+                'Product \'' . $promotedProduct->getName() . '\' is absent in related products.'
             );
         }
     }

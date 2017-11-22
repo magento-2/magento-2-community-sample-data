@@ -2,15 +2,11 @@
 /**
  * Represents a Field Element on the UI that can be configured via xml.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Model\Config\Structure\Element;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Field extends \Magento\Config\Model\Config\Structure\AbstractElement
 {
     /**
@@ -284,17 +280,6 @@ class Field extends \Magento\Config\Model\Config\Structure\AbstractElement
     public function showInStore()
     {
         return isset($this->_data['showInStore']) && (int)$this->_data['showInStore'];
-    }
-
-    /**
-     * Check if the field can be restored to default
-     *
-     * @return bool
-     * @since 100.1.0
-     */
-    public function canRestore()
-    {
-        return isset($this->_data['canRestore']) && (int)$this->_data['canRestore'];
     }
 
     /**

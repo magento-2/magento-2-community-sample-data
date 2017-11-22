@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -13,9 +13,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Shopping cart model
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @deprecated 100.1.0
  */
 class Cart extends DataObject implements CartInterface
 {
@@ -336,8 +334,8 @@ class Cart extends DataObject implements CartInterface
                 __('We found an invalid request for adding product to quote.')
             );
         }
-        $this->getRequestInfoFilter()->filter($request);
 
+        $this->getRequestInfoFilter()->filter($request);
         return $request;
     }
 
@@ -359,10 +357,11 @@ class Cart extends DataObject implements CartInterface
         if ($productId) {
             $stockItem = $this->stockRegistry->getStockItem($productId, $product->getStore()->getWebsiteId());
             $minimumQty = $stockItem->getMinSaleQty();
-            //If product quantity is not specified in request and there is set minimal qty for it
+            //If product was not found in cart and there is set minimal qty for it
             if ($minimumQty
                 && $minimumQty > 0
                 && !$request->getQty()
+                && !$this->getQuote()->hasProductId($productId)
             ) {
                 $request->setQty($minimumQty);
             }
@@ -735,7 +734,7 @@ class Cart extends DataObject implements CartInterface
     /**
      * Getter for RequestInfoFilter
      *
-     * @deprecated 100.1.2
+     * @deprecated
      * @return \Magento\Checkout\Model\Cart\RequestInfoFilterInterface
      */
     private function getRequestInfoFilter()

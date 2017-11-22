@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Email;
@@ -10,12 +10,6 @@ use Magento\Sales\Model\Order\Email\Container\IdentityInterface;
 use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Address\Renderer;
 
-/**
- * Class Sender
- * @api
- *
- * @since 100.0.2
- */
 abstract class Sender
 {
     /**

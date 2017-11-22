@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Filesystem\Directory;
@@ -68,7 +68,7 @@ class Write extends Read implements WriteInterface
         $absolutePath = $this->driver->getAbsolutePath($this->path, $path);
         if (!$this->driver->isFile($absolutePath)) {
             throw new FileSystemException(
-                new \Magento\Framework\Phrase('The file "%1" doesn\'t exist or not a file', [$absolutePath])
+                new \Magento\Framework\Phrase('The "%1" file doesn\'t exist or not a file', [$absolutePath])
             );
         }
     }

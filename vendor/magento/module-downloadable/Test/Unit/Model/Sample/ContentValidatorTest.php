@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Test\Unit\Model\Sample;
 
 use Magento\Downloadable\Model\Sample\ContentValidator;
 
-class ContentValidatorTest extends \PHPUnit\Framework\TestCase
+class ContentValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContentValidator
@@ -36,15 +36,27 @@ class ContentValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->fileValidatorMock = $this->createMock(\Magento\Downloadable\Model\File\ContentValidator::class);
-        $this->urlValidatorMock = $this->createMock(\Magento\Framework\Url\Validator::class);
-        $this->sampleFileMock = $this->createMock(\Magento\Downloadable\Api\Data\File\ContentInterface::class);
+        $this->fileValidatorMock = $this->getMock(
+            '\Magento\Downloadable\Model\File\ContentValidator',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->urlValidatorMock = $this->getMock(
+            '\Magento\Framework\Url\Validator',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->sampleFileMock = $this->getMock('\Magento\Downloadable\Api\Data\File\ContentInterface');
         $this->validator = new ContentValidator($this->fileValidatorMock, $this->urlValidatorMock);
     }
 
     public function testIsValid()
     {
-        $sampleFileContentMock = $this->createMock(\Magento\Downloadable\Api\Data\File\ContentInterface::class);
+        $sampleFileContentMock = $this->getMock('Magento\Downloadable\Api\Data\File\ContentInterface');
         $sampleContentData = [
             'title' => 'Title',
             'sort_order' => 1,
@@ -93,7 +105,7 @@ class ContentValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getSampleContentMock(array $sampleContentData)
     {
-        $contentMock = $this->createMock(\Magento\Downloadable\Api\Data\SampleInterface::class);
+        $contentMock = $this->getMock('\Magento\Downloadable\Api\Data\SampleInterface');
         $contentMock->expects($this->any())->method('getTitle')->will($this->returnValue(
             $sampleContentData['title']
         ));

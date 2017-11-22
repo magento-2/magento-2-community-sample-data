@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backup\Test\Unit\Model;
 
-class BackupFactoryTest extends \PHPUnit\Framework\TestCase
+class BackupFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backup\Model\BackupFactory
@@ -41,7 +41,7 @@ class BackupFactoryTest extends \PHPUnit\Framework\TestCase
             'name' => '',
             'type' => 'snapshot',
         ];
-        $this->_fsCollection = $this->createMock(\Magento\Backup\Model\Fs\Collection::class);
+        $this->_fsCollection = $this->getMock('Magento\Backup\Model\Fs\Collection', [], [], '', false);
         $this->_fsCollection->expects(
             $this->at(0)
         )->method(
@@ -50,15 +50,15 @@ class BackupFactoryTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(new \ArrayIterator([new \Magento\Framework\DataObject($this->_data)]))
         );
 
-        $this->_backupModel = $this->createMock(\Magento\Backup\Model\Backup::class);
+        $this->_backupModel = $this->getMock('Magento\Backup\Model\Backup', [], [], '', false);
 
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_objectManager->expects(
             $this->at(0)
         )->method(
             'get'
         )->with(
-            \Magento\Backup\Model\Fs\Collection::class
+            'Magento\Backup\Model\Fs\Collection'
         )->will(
             $this->returnValue($this->_fsCollection)
         );
@@ -67,7 +67,7 @@ class BackupFactoryTest extends \PHPUnit\Framework\TestCase
         )->method(
             'get'
         )->with(
-            \Magento\Backup\Model\Backup::class
+            'Magento\Backup\Model\Backup'
         )->will(
             $this->returnValue($this->_backupModel)
         );

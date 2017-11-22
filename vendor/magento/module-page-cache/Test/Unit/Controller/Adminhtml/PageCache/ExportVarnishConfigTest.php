@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * Class PageCacheTest
  *
  */
-class ExportVarnishConfigTest extends \PHPUnit\Framework\TestCase
+class ExportVarnishConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Request\Http|\PHPUnit_Framework_MockObject_MockObject
@@ -53,24 +53,22 @@ class ExportVarnishConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->fileFactoryMock = $this->getMockBuilder(
-            \Magento\Framework\App\Response\Http\FileFactory::class
+            'Magento\Framework\App\Response\Http\FileFactory'
         )->disableOriginalConstructor()->getMock();
         $this->configMock = $this->getMockBuilder(
-            \Magento\PageCache\Model\Config::class
+            'Magento\PageCache\Model\Config'
         )->disableOriginalConstructor()->getMock();
         $contextMock = $this->getMockBuilder(
-            \Magento\Backend\App\Action\Context::class
+            'Magento\Backend\App\Action\Context'
         )->disableOriginalConstructor()->getMock();
 
         $this->requestMock = $this->getMockBuilder(
-            \Magento\Framework\App\Request\Http::class
+            'Magento\Framework\App\Request\Http'
         )->disableOriginalConstructor()->getMock();
         $this->responseMock = $this->getMockBuilder(
-            \Magento\Framework\App\Response\Http::class
+            'Magento\Framework\App\Response\Http'
         )->disableOriginalConstructor()->getMock();
-        $this->viewMock = $this->getMockBuilder(
-            \Magento\Framework\App\View::class
-        )->disableOriginalConstructor()->getMock();
+        $this->viewMock = $this->getMockBuilder('Magento\Framework\App\View')->disableOriginalConstructor()->getMock();
 
         $contextMock->expects($this->any())->method('getRequest')->will($this->returnValue($this->requestMock));
         $contextMock->expects($this->any())->method('getResponse')->will($this->returnValue($this->responseMock));
@@ -88,7 +86,7 @@ class ExportVarnishConfigTest extends \PHPUnit\Framework\TestCase
         $fileContent = 'some conetnt';
         $filename = 'varnish.vcl';
         $responseMock = $this->getMockBuilder(
-            \Magento\Framework\App\ResponseInterface::class
+            'Magento\Framework\App\ResponseInterface'
         )->disableOriginalConstructor()->getMock();
 
         $this->configMock->expects($this->once())->method('getVclFile')->will($this->returnValue($fileContent));
@@ -105,6 +103,6 @@ class ExportVarnishConfigTest extends \PHPUnit\Framework\TestCase
         );
 
         $result = $this->action->execute();
-        $this->assertInstanceOf(\Magento\Framework\App\ResponseInterface::class, $result);
+        $this->assertInstanceOf('Magento\Framework\App\ResponseInterface', $result);
     }
 }

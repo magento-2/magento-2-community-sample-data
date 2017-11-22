@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model\Metadata;
@@ -46,12 +46,12 @@ class AttributeResolver
         } else {
             throw new NoSuchEntityException(
                 __(
-                    'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value',
+                    NoSuchEntityException::MESSAGE_DOUBLE_FIELDS,
                     [
                         'fieldName' => 'entityType',
                         'fieldValue' => $entityType,
                         'field2Name' => 'attributeCode',
-                        'field2Value' => $attribute->getAttributeCode()
+                        'field2Value' => $attribute->getAttributeCode(),
                     ]
                 )
             );

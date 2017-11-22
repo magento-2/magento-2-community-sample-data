@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Test\Unit\Controller\Block;
 
 use Magento\Cms\Controller\Adminhtml\Block\InlineEdit;
 
-class InlineEditTest extends \PHPUnit\Framework\TestCase
+class InlineEditTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
@@ -30,33 +30,42 @@ class InlineEditTest extends \PHPUnit\Framework\TestCase
     /** @var InlineEdit */
     protected $controller;
 
-    protected function setUp()
+    public function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->request = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            'Magento\Framework\App\RequestInterface',
             [],
             '',
             false
         );
-        $this->cmsBlock = $this->createMock(\Magento\Cms\Model\Block::class);
+        $this->cmsBlock = $this->getMock(
+            'Magento\Cms\Model\Block',
+            [],
+            [],
+            '',
+            false
+        );
         $this->context = $helper->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'request' => $this->request
             ]
         );
         $this->blockRepository = $this->getMockForAbstractClass(
-            \Magento\Cms\Api\BlockRepositoryInterface::class,
+            'Magento\Cms\Api\BlockRepositoryInterface',
             [],
             '',
             false
         );
-        $this->resultJson = $this->createMock(\Magento\Framework\Controller\Result\Json::class);
-        $this->jsonFactory = $this->createPartialMock(
-            \Magento\Framework\Controller\Result\JsonFactory::class,
-            ['create']
+        $this->resultJson = $this->getMock('Magento\Framework\Controller\Result\Json', [], [], '', false);
+        $this->jsonFactory = $this->getMock(
+            'Magento\Framework\Controller\Result\JsonFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->controller = new InlineEdit(
             $this->context,

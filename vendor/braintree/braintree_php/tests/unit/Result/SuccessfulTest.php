@@ -1,20 +1,15 @@
 <?php
-namespace Test\Unit\Result;
+require_once realpath(dirname(__FILE__)) . '/../../TestHelper.php';
 
-require_once dirname(dirname(__DIR__)) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class SuccessfulTest extends Setup
+class Braintree_Result_SuccessfulTest extends PHPUnit_Framework_TestCase
 {
      /**
      * @expectedException        PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined property on Braintree\Result\Successful: notAProperty
+     * @expectedExceptionMessage Undefined property on Braintree_Result_Successful: notAProperty
      */
-    public function testCallingNonExsitingFieldReturnsNull()
+    function testCallingNonExsitingFieldReturnsNull()
     {
-        $result = new Braintree\Result\Successful(1, 'transaction');
+        $result = new Braintree_Result_Successful(1, "transaction");
         $this->assertNotNull($result->transaction);
         $this->assertNull($result->notAProperty);
     }

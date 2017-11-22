@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\AdminNotification\Model\Config\Source;
@@ -9,8 +9,6 @@ namespace Magento\AdminNotification\Model\Config\Source;
  * AdminNotification update frequency source
  *
  * @codeCoverageIgnore
- * @api
- * @since 100.0.2
  */
 class Frequency implements \Magento\Framework\Option\ArrayInterface
 {

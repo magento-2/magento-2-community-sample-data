@@ -1,22 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogWidget\Test\Unit\Block\Product;
 
-use Magento\Catalog\Model\Product\Visibility;
+use \Magento\CatalogWidget\Block\Product\ProductsList;
 
-use Magento\CatalogWidget\Block\Product\ProductsList;
-use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Catalog\Model\Product\Visibility;
 
 /**
  * Class ProductsListTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductsListTest extends \PHPUnit\Framework\TestCase
+class ProductsListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogWidget\Block\Product\ProductsList
@@ -74,15 +73,8 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
     protected $layout;
 
     /**
-     * @var PriceCurrencyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @inheritdoc
      */
-    private $priceCurrency;
-
-    /**
-     * @var \Magento\Framework\Serialize\Serializer\Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializer;
-
     protected function setUp()
     {
         $this->collectionFactory =
@@ -93,15 +85,14 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['getVisibleInCatalogIds'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->httpContext = $this->createMock(\Magento\Framework\App\Http\Context::class);
-        $this->builder = $this->createMock(\Magento\Rule\Model\Condition\Sql\Builder::class);
-        $this->rule = $this->createMock(\Magento\CatalogWidget\Model\Rule::class);
-        $this->serializer = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->httpContext = $this->getMock(\Magento\Framework\App\Http\Context::class);
+        $this->builder = $this->getMock(\Magento\Rule\Model\Condition\Sql\Builder::class, [], [], '', false);
+        $this->rule = $this->getMock(\Magento\CatalogWidget\Model\Rule::class, [], [], '', false);
         $this->widgetConditionsHelper = $this->getMockBuilder(\Magento\Widget\Helper\Conditions::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->design = $this->createMock(\Magento\Framework\View\DesignInterface::class);
+            ->setMethods(['decode'])
+            ->disableOriginalConstructor()->getMock();
+        $this->storeManager = $this->getMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->design = $this->getMock(\Magento\Framework\View\DesignInterface::class);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $arguments = $objectManagerHelper->getConstructArguments(
@@ -115,18 +106,15 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
                 'conditionsHelper' => $this->widgetConditionsHelper,
                 'storeManager' => $this->storeManager,
                 'design' => $this->design,
-                'json' => $this->serializer
             ]
         );
         $this->request = $arguments['context']->getRequest();
         $this->layout = $arguments['context']->getLayout();
-        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
 
         $this->productsList = $objectManagerHelper->getObject(
             \Magento\CatalogWidget\Block\Product\ProductsList::class,
             $arguments
         );
-        $objectManagerHelper->setBackwardCompatibleProperty($this->productsList, 'priceCurrency', $this->priceCurrency);
     }
 
     public function testGetCacheKeyInfo()
@@ -136,36 +124,16 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
         $store->expects($this->once())->method('getId')->willReturn(1);
         $this->storeManager->expects($this->once())->method('getStore')->willReturn($store);
 
-        $theme = $this->createMock(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMock(\Magento\Framework\View\Design\ThemeInterface::class);
         $theme->expects($this->once())->method('getId')->willReturn('blank');
         $this->design->expects($this->once())->method('getDesignTheme')->willReturn($theme);
 
         $this->httpContext->expects($this->once())->method('getValue')->willReturn('context_group');
         $this->productsList->setData('conditions', 'some_serialized_conditions');
 
-        $this->productsList->setData('page_var_name', 'page_number');
-        $this->request->expects($this->once())->method('getParam')->with('page_number')->willReturn(1);
+        $this->request->expects($this->once())->method('getParam')->with('np')->willReturn(1);
 
-        $this->request->expects($this->once())->method('getParams')->willReturn('request_params');
-        $this->priceCurrency->expects($this->once())->method('getCurrencySymbol')->willReturn('$');
-
-        $this->serializer->expects($this->any())
-            ->method('serialize')
-            ->willReturnCallback(function ($value) {
-                return json_encode($value);
-            });
-
-        $cacheKey = [
-            'CATALOG_PRODUCTS_LIST_WIDGET',
-            '$',
-            1,
-            'blank',
-            'context_group',
-            1,
-            5,
-            'some_serialized_conditions',
-            json_encode('request_params')
-        ];
+        $cacheKey = ['CATALOG_PRODUCTS_LIST_WIDGET', 1, 'blank', 'context_group', 1, 5, 'some_serialized_conditions'];
         $this->assertEquals($cacheKey, $this->productsList->getCacheKeyInfo());
     }
 
@@ -187,7 +155,7 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
                 'include_container' => false,
                 'display_minimal_price' => false,
                 'zone' => 'item_list',
-                'price_id' => 'old-price-1-some-price-type'
+                'price_id' => 'old-price-1-some-price-type',
             ])
             ->willReturn('<html>');
         $this->layout->expects($this->once())->method('getBlock')->willReturn($priceRenderer);
@@ -198,7 +166,7 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
             \Magento\Framework\Pricing\Render::ZONE_ITEM_LIST,
             [
                 'include_container' => false,
-                'display_minimal_price' => false
+                'display_minimal_price' => false,
             ]
         ));
     }
@@ -258,6 +226,7 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
     {
         $this->visibility->expects($this->once())->method('getVisibleInCatalogIds')
             ->willReturn([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
+        $this->widgetConditionsHelper->expects($this->once())->method('decode')->willReturn('some_unserialized_value');
         $collection = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
             ->setMethods([
                 'setVisibility',
@@ -269,7 +238,6 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
                 'addStoreFilter',
                 'setPageSize',
                 'setCurPage',
-                'distinct'
             ])->disableOriginalConstructor()
             ->getMock();
         $collection->expects($this->once())->method('setVisibility')
@@ -283,19 +251,24 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
         $collection->expects($this->once())->method('addStoreFilter')->willReturnSelf();
         $collection->expects($this->once())->method('setPageSize')->with($expectedPageSize)->willReturnSelf();
         $collection->expects($this->once())->method('setCurPage')->willReturnSelf();
-        $collection->expects($this->once())->method('distinct')->willReturnSelf();
 
         $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
         $this->productsList->setData('conditions_encoded', 'some_serialized_conditions');
 
-        $this->widgetConditionsHelper->expects($this->once())
-            ->method('decode')
-            ->with('some_serialized_conditions')
-            ->willReturn([]);
+        $conditions = $this->getMockBuilder(\Magento\Rule\Model\Condition\Combine::class)
+            ->setMethods(['collectValidatedAttributes'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $conditions->expects($this->once())->method('collectValidatedAttributes')
+            ->with($collection)
+            ->willReturnSelf();
 
         $this->builder->expects($this->once())->method('attachConditionToCollection')
-            ->with($collection, $this->getConditionsForCollection($collection))
+            ->with($collection, $conditions)
             ->willReturnSelf();
+
+        $this->rule->expects($this->once())->method('loadPost')->willReturnSelf();
+        $this->rule->expects($this->once())->method('getConditions')->willReturn($conditions);
 
         if ($productsPerPage) {
             $this->productsList->setData('products_per_page', $productsPerPage);
@@ -323,7 +296,7 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
             [false, 5, null, 5],
             [false, 1, 3, 1],
             [false, 3, 5, 3],
-            [false, 5, 10, 5]
+            [false, 5, 10, 5],
         ];
     }
 
@@ -354,47 +327,7 @@ class ProductsListTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdentities()
     {
-        $collection = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
-            ->setMethods([
-                'addAttributeToSelect',
-                'getIterator',
-            ])->disableOriginalConstructor()
-            ->getMock();
-
-        $product = $this->createPartialMock(\Magento\Framework\DataObject\IdentityInterface::class, ['getIdentities']);
-        $notProduct = $this->getMockBuilder('NotProduct')
-            ->setMethods(['getIdentities'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->once())->method('getIdentities')->willReturn(['product_identity']);
-        $collection->expects($this->once())->method('getIterator')->willReturn(
-            new \ArrayIterator([$product, $notProduct])
-        );
-        $this->productsList->setData('product_collection', $collection);
-
-        $this->assertEquals(
-            ['product_identity'],
-            $this->productsList->getIdentities()
-        );
-    }
-
-    /**
-     * @param $collection
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getConditionsForCollection($collection)
-    {
-        $conditions = $this->getMockBuilder(\Magento\Rule\Model\Condition\Combine::class)
-            ->setMethods(['collectValidatedAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $conditions->expects($this->once())->method('collectValidatedAttributes')
-            ->with($collection)
-            ->willReturnSelf();
-
-        $this->rule->expects($this->once())->method('loadPost')->willReturnSelf();
-        $this->rule->expects($this->once())->method('getConditions')->willReturn($conditions);
-        return $conditions;
+        $this->assertEquals([\Magento\Catalog\Model\Product::CACHE_TAG], $this->productsList->getIdentities());
     }
 
     public function testGetTitle()

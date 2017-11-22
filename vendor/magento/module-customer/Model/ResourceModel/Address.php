@@ -2,12 +2,11 @@
 /**
  * Customer address entity resource model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model\ResourceModel;
 
-use Magento\Customer\Controller\Adminhtml\Group\Delete;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\ResourceModel\Address\DeleteRelation;
 use Magento\Framework\App\ObjectManager;
@@ -28,6 +27,16 @@ class Address extends \Magento\Eav\Model\Entity\VersionControl\AbstractEntity
      * @var \Magento\Customer\Api\CustomerRepositoryInterface
      */
     protected $customerRepository;
+
+    /**
+     * @var DeleteRelation
+     */
+    protected $deleteRelation;
+
+    /**
+     * @var CustomerRegistry
+     */
+    protected $customerRegistry;
 
     /**
      * @param \Magento\Eav\Model\Entity\Context $context
@@ -120,21 +129,27 @@ class Address extends \Magento\Eav\Model\Entity\VersionControl\AbstractEntity
     }
 
     /**
-     * @deprecated 100.2.0
+     * @deprecated
      * @return DeleteRelation
      */
     private function getDeleteRelation()
     {
-        return ObjectManager::getInstance()->get(DeleteRelation::class);
+        if ($this->deleteRelation === null) {
+            $this->deleteRelation = ObjectManager::getInstance()->get(DeleteRelation::class);
+        }
+        return $this->deleteRelation;
     }
 
     /**
-     * @deprecated 100.2.0
+     * @deprecated
      * @return CustomerRegistry
      */
     private function getCustomerRegistry()
     {
-        return ObjectManager::getInstance()->get(CustomerRegistry::class);
+        if ($this->customerRegistry === null) {
+            $this->customerRegistry = ObjectManager::getInstance()->get(CustomerRegistry::class);
+        }
+        return $this->customerRegistry;
     }
 
     /**

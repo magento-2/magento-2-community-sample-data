@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\ConfigurableProduct\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Pricing\Price\AbstractPrice;
 
@@ -35,9 +36,7 @@ class ConfigurableRegularPrice extends AbstractPrice implements ConfigurableRegu
      */
     protected $values = [];
 
-    /**
-     * @var \Magento\ConfigurableProduct\Pricing\Price\PriceResolverInterface
-     */
+    /** @var PriceResolverInterface */
     protected $priceResolver;
 
     /**
@@ -101,6 +100,7 @@ class ConfigurableRegularPrice extends AbstractPrice implements ConfigurableRegu
             $this->maxRegularAmount = $this->doGetMaxRegularAmount() ?: false;
         }
         return $this->maxRegularAmount;
+
     }
 
     /**
@@ -126,7 +126,7 @@ class ConfigurableRegularPrice extends AbstractPrice implements ConfigurableRegu
     public function getMinRegularAmount()
     {
         if (null === $this->minRegularAmount) {
-            $this->minRegularAmount = $this->doGetMinRegularAmount() ?: parent::getAmount();
+            $this->minRegularAmount = $this->doGetMinRegularAmount() ?: false;
         }
         return $this->minRegularAmount;
     }
@@ -160,7 +160,7 @@ class ConfigurableRegularPrice extends AbstractPrice implements ConfigurableRegu
 
     /**
      * @return \Magento\ConfigurableProduct\Pricing\Price\ConfigurableOptionsProviderInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getConfigurableOptionsProvider()
     {

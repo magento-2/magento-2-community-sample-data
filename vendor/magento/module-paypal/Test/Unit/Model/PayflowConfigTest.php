@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model;
@@ -16,7 +16,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Class PayflowConfigTest
  */
-class PayflowConfigTest extends \PHPUnit\Framework\TestCase
+class PayflowConfigTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -36,15 +36,15 @@ class PayflowConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->setMethods(['getValue', 'isSetFlag'])
             ->getMockForAbstractClass();
-        $this->methodInterfaceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $this->methodInterfaceMock = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->getMockForAbstractClass();
 
         $om = new ObjectManager($this);
         $this->config = $om->getObject(
-            \Magento\Paypal\Model\PayflowConfig::class,
+            'Magento\Paypal\Model\PayflowConfig',
             [
                 'scopeConfig' => $this->scopeConfigMock
             ]

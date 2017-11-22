@@ -2,10 +2,11 @@
 /**
  * test Magento\Customer\Model\Metadata\Form\Date
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
+
 
 class DateTest extends AbstractFormTestCase
 {
@@ -48,7 +49,7 @@ class DateTest extends AbstractFormTestCase
 
     public function testExtractValue()
     {
-        $requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $requestMock->expects($this->once())->method('getParam')->will($this->returnValue('1999-1-2'));
@@ -69,7 +70,7 @@ class DateTest extends AbstractFormTestCase
     public function testValidateValue($value, $validation, $required, $expected)
     {
         $validationRules = [];
-        $validationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $validationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getName', 'getValue'])
             ->getMockForAbstractClass();
@@ -83,7 +84,7 @@ class DateTest extends AbstractFormTestCase
         $validationRules[] = $validationRule;
         if (is_array($validation)) {
             foreach ($validation as $ruleName => $ruleValue) {
-                $validationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+                $validationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
                     ->disableOriginalConstructor()
                     ->setMethods(['getName', 'getValue'])
                     ->getMockForAbstractClass();

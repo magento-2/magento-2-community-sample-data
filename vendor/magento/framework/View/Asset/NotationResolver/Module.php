@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,9 +9,6 @@ namespace Magento\Framework\View\Asset\NotationResolver;
 use Magento\Framework\View\Asset;
 use Magento\Framework\View\FileSystem;
 
-/**
- * Module notation normalizer
- */
 class Module
 {
     /**

@@ -2,12 +2,12 @@
 /**
  * Test \Magento\Framework\Math\Random
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Math\Test\Unit;
 
-class RandomTest extends \PHPUnit\Framework\TestCase
+class RandomTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param int    $length

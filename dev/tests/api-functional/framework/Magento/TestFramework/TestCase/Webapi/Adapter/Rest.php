@@ -2,7 +2,7 @@
 /**
  * Test client for REST API testing.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -48,13 +48,13 @@ class Rest implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
     {
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
-        $this->_config = $objectManager->get(\Magento\Webapi\Model\Config::class);
-        $this->curlClient = $objectManager->get(\Magento\TestFramework\TestCase\Webapi\Adapter\Rest\CurlClient::class);
+        $this->_config = $objectManager->get('Magento\Webapi\Model\Config');
+        $this->curlClient = $objectManager->get('Magento\TestFramework\TestCase\Webapi\Adapter\Rest\CurlClient');
         $this->documentationGenerator = $objectManager->get(
-            \Magento\TestFramework\TestCase\Webapi\Adapter\Rest\DocumentationGenerator::class
+            'Magento\TestFramework\TestCase\Webapi\Adapter\Rest\DocumentationGenerator'
         );
         $this->defaultStoreCode = Bootstrap::getObjectManager()
-            ->get(\Magento\Store\Model\StoreManagerInterface::class)
+            ->get('Magento\Store\Model\StoreManagerInterface')
             ->getStore()
             ->getCode();
     }

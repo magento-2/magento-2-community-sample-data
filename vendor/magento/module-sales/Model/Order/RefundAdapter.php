@@ -1,39 +1,37 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order;
 
-use Magento\Sales\Api\Data\CreditmemoInterface;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\Order\Creditmemo\RefundOperation;
-
 /**
- * @inheritdoc
+ * Class RefundAdapter
  */
 class RefundAdapter implements RefundAdapterInterface
 {
     /**
-     * @var RefundOperation
+     * @var \Magento\Sales\Model\Order\Creditmemo\RefundOperation
      */
     private $refundOperation;
 
     /**
-     * @param RefundOperation $refundOperation
+     * PaymentAdapter constructor.
+     *
+     * @param \Magento\Sales\Model\Order\Creditmemo\RefundOperation $refundOperation
      */
     public function __construct(
-        RefundOperation $refundOperation
+        \Magento\Sales\Model\Order\Creditmemo\RefundOperation $refundOperation
     ) {
         $this->refundOperation = $refundOperation;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refund(
-        CreditmemoInterface $creditmemo,
-        OrderInterface $order,
+        \Magento\Sales\Api\Data\CreditmemoInterface $creditmemo,
+        \Magento\Sales\Api\Data\OrderInterface $order,
         $isOnline = false
     ) {
         return $this->refundOperation->execute($creditmemo, $order, $isOnline);

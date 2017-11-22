@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,13 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save.
  * 6. Perform asserts.
  *
- * @group Newsletters
+ * @group Newsletters_(MX)
  * @ZephyrId MAGETWO-23302
  */
 class CreateNewsletterTemplateEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

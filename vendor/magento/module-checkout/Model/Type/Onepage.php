@@ -1,11 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model\Type;
 
 use Magento\Customer\Api\AccountManagementInterface;
+use Magento\Customer\Api\AddressMetadataInterface as AddressMetadata;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory as CustomerDataFactory;
@@ -405,7 +406,7 @@ class Onepage
         $address = $this->getQuote()->getShippingAddress();
 
         $addressForm = $this->_formFactory->create(
-            \customer_address::class,
+            'customer_address',
             'customer_address_edit',
             [],
             $this->_request->isAjax(),
@@ -444,9 +445,7 @@ class Onepage
                 if (!isset($data[$attributeCode])) {
                     $address->setData($attributeCode, null);
                 } else {
-                    if (isset($compactedData[$attributeCode])) {
-                        $address->setDataUsingMethod($attributeCode, $compactedData[$attributeCode]);
-                    }
+                    $address->setDataUsingMethod($attributeCode, $compactedData[$attributeCode]);
                 }
             }
 
@@ -585,7 +584,7 @@ class Onepage
         $this->dataObjectHelper->populateWithArray(
             $customer,
             $dataArray,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         $quote->setCustomer($customer)->setCustomerId(true);
 

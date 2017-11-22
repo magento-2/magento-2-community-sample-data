@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method;
@@ -8,9 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method;
 /**
  * Adminhtml sales order create payment method form block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Form extends \Magento\Payment\Block\Form\Container
 {
@@ -27,18 +25,16 @@ class Form extends \Magento\Payment\Block\Form\Container
      * @param \Magento\Payment\Model\Checks\SpecificationFactory $methodSpecificationFactory
      * @param \Magento\Backend\Model\Session\Quote $sessionQuote
      * @param array $data
-     * @param array $additionalChecks
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Helper\Data $paymentHelper,
         \Magento\Payment\Model\Checks\SpecificationFactory $methodSpecificationFactory,
         \Magento\Backend\Model\Session\Quote $sessionQuote,
-        array $data = [],
-        array $additionalChecks = []
+        array $data = []
     ) {
         $this->_sessionQuote = $sessionQuote;
-        parent::__construct($context, $paymentHelper, $methodSpecificationFactory, $data, $additionalChecks);
+        parent::__construct($context, $paymentHelper, $methodSpecificationFactory, $data);
     }
 
     /**
@@ -105,7 +101,6 @@ class Form extends \Magento\Payment\Block\Form\Container
      * Whether switch/solo card type available
      *
      * @return true
-     * @deprecated 100.1.0 unused
      */
     public function hasSsCardType()
     {

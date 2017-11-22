@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\MediaStorage\Test\Unit\Model\ResourceModel\File\Storage;
@@ -10,7 +10,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * Class FileTest
  */
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\MediaStorage\Model\ResourceModel\File\Storage\File
@@ -37,11 +37,20 @@ class FileTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $this->filesystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryRead']);
-        $this->directoryReadMock = $this->createPartialMock(
-            \Magento\Framework\Filesystem\Directory\Read::class,
-            ['isDirectory', 'readRecursively']
+        $this->loggerMock = $this->getMock('Psr\Log\LoggerInterface');
+        $this->filesystemMock = $this->getMock(
+            'Magento\Framework\Filesystem',
+            ['getDirectoryRead'],
+            [],
+            '',
+            false
+        );
+        $this->directoryReadMock = $this->getMock(
+            'Magento\Framework\Filesystem\Directory\Read',
+            ['isDirectory', 'readRecursively'],
+            [],
+            '',
+            false
         );
 
         $this->storageFile = new \Magento\MediaStorage\Model\ResourceModel\File\Storage\File(

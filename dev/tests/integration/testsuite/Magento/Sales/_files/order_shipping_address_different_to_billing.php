@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var $billingAddress \Magento\Sales\Model\Order\Address */
 $billingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Address::class,
+    'Magento\Sales\Model\Order\Address',
     [
         'data' => [
             'firstname' => 'guest',
@@ -27,14 +27,12 @@ $shippingAddress = clone $billingAddress;
 $shippingAddress->setId(null)->setPostcode('2')->setAddressType('shipping');
 
 /** @var $order \Magento\Sales\Model\Order */
-$order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+$order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
 $order->loadByIncrementId('100000001');
 $clonedOrder = clone $order;
 
 /** @var $payment \Magento\Sales\Model\Order\Payment */
-$payment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Payment::class
-);
+$payment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order\Payment');
 $payment->setMethod('checkmo');
 $clonedOrder->setIncrementId('100000002')
     ->setId(null)

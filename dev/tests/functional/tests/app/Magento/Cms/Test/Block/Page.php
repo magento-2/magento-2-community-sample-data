@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -43,6 +43,13 @@ class Page extends Block
     protected $textSelector = "//div[contains(.,'%s')]";
 
     /**
+     * Cms page products grid class.
+     *
+     * @var string
+     */
+    protected $productsGrid = ".products-grid";
+
+    /**
      * Widgets selectors.
      *
      * @var array
@@ -75,6 +82,20 @@ class Page extends Block
     public function getPageTitle()
     {
         return $this->_rootElement->find($this->cmsPageTitle)->getText();
+    }
+
+    /**
+     * Get products-grid content text.
+     *
+     * @return string
+     */
+    public function getProductsGridContent()
+    {
+        $content = '';
+        if ($this->_rootElement->find($this->productsGrid)->isVisible()) {
+            $content = $this->_rootElement->find($this->productsGrid)->getText();
+        }
+        return $content;
     }
 
     /**

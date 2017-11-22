@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Service\V1;
@@ -52,7 +52,7 @@ class CreditmemoAddCommentTest extends WebapiAbstract
     {
         /** @var \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection $creditmemoCollection */
         $creditmemoCollection =
-            $this->objectManager->get(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection::class);
+            $this->objectManager->get('Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection');
         $creditmemo = $creditmemoCollection->getFirstItem();
 
         $commentData = [
@@ -60,8 +60,8 @@ class CreditmemoAddCommentTest extends WebapiAbstract
             Comment::ENTITY_ID => null,
             Comment::CREATED_AT => null,
             Comment::PARENT_ID => $creditmemo->getId(),
-            Comment::IS_VISIBLE_ON_FRONT => 1,
-            Comment::IS_CUSTOMER_NOTIFIED => 1,
+            Comment::IS_VISIBLE_ON_FRONT => true,
+            Comment::IS_CUSTOMER_NOTIFIED => true,
         ];
 
         $requestData = ['entity' => $commentData];
@@ -78,9 +78,6 @@ class CreditmemoAddCommentTest extends WebapiAbstract
         ];
 
         $result = $this->_webApiCall($serviceInfo, $requestData);
-
-        self::assertNotEmpty($result);
-        self::assertNotEmpty($result[Comment::ENTITY_ID]);
-        self::assertEquals($creditmemo->getId(), $result[Comment::PARENT_ID]);
+        $this->assertNotEmpty($result);
     }
 }

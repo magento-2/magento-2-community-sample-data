@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\System\Store\Edit\Form;
@@ -50,6 +50,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
      *
      * @param \Magento\Framework\Data\Form $form
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function _prepareStoreFieldset(\Magento\Framework\Data\Form $form)
     {
@@ -59,6 +60,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
             $storeModel->setData($postData['store']);
         }
         $fieldset = $form->addFieldset('store_fieldset', ['legend' => __('Store View Information')]);
+
         $storeAction = $this->_coreRegistry->registry('store_action');
         if ($storeAction == 'edit' || $storeAction == 'add') {
             $fieldset->addField(
@@ -73,8 +75,29 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                     'disabled' => $storeModel->isReadOnly()
                 ]
             );
-            $fieldset = $this->prepareGroupIdField($form, $storeModel, $fieldset);
+            if ($storeModel->getId() && $storeModel->getGroup()->getDefaultStoreId() == $storeModel->getId()) {
+                if ($storeModel->getGroup() && $storeModel->getGroup()->getStoresCount() > 1) {
+                    $form->getElement('store_group_id')->setDisabled(true);
+
+                    $fieldset->addField(
+                        'store_hidden_group_id',
+                        'hidden',
+                        ['name' => 'store[group_id]', 'no_span' => true, 'value' => $storeModel->getGroupId()]
+                    );
+                } else {
+                    $fieldset->addField(
+                        'store_original_group_id',
+                        'hidden',
+                        [
+                            'name' => 'store[original_group_id]',
+                            'no_span' => true,
+                            'value' => $storeModel->getGroupId()
+                        ]
+                    );
+                }
+            }
         }
+
         $fieldset->addField(
             'store_name',
             'text',
@@ -97,8 +120,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'disabled' => $storeModel->isReadOnly()
             ]
         );
-        $isDisabledStatusField = $storeModel->isReadOnly()
-            || ($storeModel->getId() && $storeModel->isDefault() && $storeModel->isActive());
+
         $fieldset->addField(
             'store_is_active',
             'select',
@@ -108,19 +130,10 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'value' => $storeModel->isActive(),
                 'options' => [0 => __('Disabled'), 1 => __('Enabled')],
                 'required' => true,
-                'disabled' => $isDisabledStatusField
+                'disabled' => $storeModel->isReadOnly()
             ]
         );
-        if ($isDisabledStatusField) {
-            $fieldset->addField(
-                'store_is_active_hidden',
-                'hidden',
-                [
-                    'name' => 'store[is_active]',
-                    'value' => $storeModel->isActive(),
-                ]
-            );
-        }
+
         $fieldset->addField(
             'store_sort_order',
             'text',
@@ -132,11 +145,13 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'disabled' => $storeModel->isReadOnly()
             ]
         );
+
         $fieldset->addField(
             'store_is_default',
             'hidden',
             ['name' => 'store[is_default]', 'no_span' => true, 'value' => $storeModel->getIsDefault()]
         );
+
         $fieldset->addField(
             'store_store_id',
             'hidden',
@@ -169,42 +184,5 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
             $groups[] = ['label' => $website->getName(), 'value' => $values];
         }
         return $groups;
-    }
-
-    /**
-     * Prepare group id field in the fieldset
-     *
-     * @param \Magento\Framework\Data\Form $form
-     * @param \Magento\Store\Model\Store $storeModel
-     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
-     * @return \Magento\Framework\Data\Form\Element\Fieldset
-     */
-    private function prepareGroupIdField(
-        \Magento\Framework\Data\Form $form,
-        \Magento\Store\Model\Store $storeModel,
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldset
-    ) {
-        if ($storeModel->getId() && $storeModel->getGroup()->getDefaultStoreId() == $storeModel->getId()) {
-            if ($storeModel->getGroup() && $storeModel->getGroup()->getStoresCount() > 1) {
-                $form->getElement('store_group_id')->setDisabled(true);
-
-                $fieldset->addField(
-                    'store_hidden_group_id',
-                    'hidden',
-                    ['name' => 'store[group_id]', 'no_span' => true, 'value' => $storeModel->getGroupId()]
-                );
-            } else {
-                $fieldset->addField(
-                    'store_original_group_id',
-                    'hidden',
-                    [
-                        'name' => 'store[original_group_id]',
-                        'no_span' => true,
-                        'value' => $storeModel->getGroupId()
-                    ]
-                );
-            }
-        }
-        return $fieldset;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,6 @@ namespace Magento\Framework\Data\Tree\Node;
 use Magento\Framework\Data\Tree;
 use Magento\Framework\Data\Tree\Node;
 
-/**
- * @api
- */
 class Collection implements \ArrayAccess, \IteratorAggregate
 {
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Test for \Magento\CatalogSearch\Model\Layer\Filter\Decimal
  */
-class DecimalTest extends \PHPUnit\Framework\TestCase
+class DecimalTest extends \PHPUnit_Framework_TestCase
 {
     private $filterItem;
 
@@ -45,24 +45,24 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->request = $this->getMockBuilder('\Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getParam'])
             ->getMockForAbstractClass();
 
-        $this->layer = $this->getMockBuilder(\Magento\Catalog\Model\Layer::class)
+        $this->layer = $this->getMockBuilder('\Magento\Catalog\Model\Layer')
             ->disableOriginalConstructor()
             ->setMethods(['getState', 'getProductCollection'])
             ->getMock();
         $this->filterItemFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\Layer\Filter\ItemFactory::class
+            '\Magento\Catalog\Model\Layer\Filter\ItemFactory'
         )
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
         $this->filterItem = $this->getMockBuilder(
-            \Magento\Catalog\Model\Layer\Filter\Item::class
+            '\Magento\Catalog\Model\Layer\Filter\Item'
         )
             ->disableOriginalConstructor()
             ->setMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
@@ -75,7 +75,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->filterItem));
 
         $this->fulltextCollection = $this->fulltextCollection = $this->getMockBuilder(
-            \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection::class
+            '\Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -85,11 +85,11 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->fulltextCollection));
 
         $filterDecimalFactory =
-            $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory::class)
+            $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal::class)
+        $resource = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -97,12 +97,12 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->will($this->returnValue($resource));
 
-        $this->attribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
+        $this->attribute = $this->getMockBuilder('\Magento\Eav\Model\Entity\Attribute')
             ->disableOriginalConstructor()
             ->setMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
             ->getMock();
 
-        $this->state = $this->getMockBuilder(\Magento\Catalog\Model\Layer\State::class)
+        $this->state = $this->getMockBuilder('\Magento\Catalog\Model\Layer\State')
             ->disableOriginalConstructor()
             ->setMethods(['addFilter'])
             ->getMock();
@@ -112,7 +112,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\CatalogSearch\Model\Layer\Filter\Decimal::class,
+            'Magento\CatalogSearch\Model\Layer\Filter\Decimal',
             [
                 'filterItemFactory' => $this->filterItemFactory,
                 'layer' => $this->layer,

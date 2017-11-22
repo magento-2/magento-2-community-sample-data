@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -31,10 +31,7 @@ class WebsiteId extends DataSource
     public function __construct(FixtureFactory $fixtureFactory, array $params, array $data = [])
     {
         $this->params = $params;
-        if (isset($data['fixture'])) {
-            $this->website = $data['fixture'];
-            $this->data = $this->website->getName();
-        } elseif (isset($data['dataset'])) {
+        if (isset($data['dataset'])) {
             $website = $fixtureFactory->createByCode('website', ['dataset' => $data['dataset']]);
             /** @var Website $website */
             if (!$website->getWebsiteId()) {

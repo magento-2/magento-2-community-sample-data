@@ -1,31 +1,34 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
 //
-//  Common
-//  _____________________________________________
+//    Common
+//--------------------------------------
 
 & when (@media-common = true) {
 
-    //  Using buttons mixins
-    button,
-    a.action.primary {
-        .lib-css(border-radius, @button__border-radius);
-    }
+//
+//    Using buttons mixins
+//--------------------------------------
+button,
+a.action.primary {
+    .lib-css(border-radius, @button__border-radius);
+}
 
-    button {
-        &:active {
-            .lib-css(box-shadow, @button__shadow);
-        }
+button {
+    &:active {
+        .lib-css(box-shadow, @button__shadow);
     }
+}
 
-    a.action.primary {
-        .lib-link-as-button();
-    }
+a.action.primary {
+    .lib-link-as-button();
+}
 
-    .action.primary {
-        .lib-button-primary();
-    }
+.action.primary {
+    .lib-button-primary();
+}
+
 }

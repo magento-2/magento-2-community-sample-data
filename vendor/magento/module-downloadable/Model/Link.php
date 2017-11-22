@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Model;
@@ -11,12 +11,11 @@ use Magento\Downloadable\Model\ResourceModel\Link as Resource;
 /**
  * Downloadable link model
  *
- * @api
+ * @method Resource getResource()
  * @method int getProductId()
  * @method Link setProductId(int $value)
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Link extends \Magento\Framework\Model\AbstractExtensibleModel implements ComponentInterface, LinkInterface
 {
@@ -88,7 +87,7 @@ class Link extends \Magento\Framework\Model\AbstractExtensibleModel implements C
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Downloadable\Model\ResourceModel\Link::class);
+        $this->_init('Magento\Downloadable\Model\ResourceModel\Link');
         parent::_construct();
     }
 
@@ -273,7 +272,6 @@ class Link extends \Magento\Framework\Model\AbstractExtensibleModel implements C
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * @param string $title
      * @return $this
@@ -398,6 +396,7 @@ class Link extends \Magento\Framework\Model\AbstractExtensibleModel implements C
         return $this->setData(self::KEY_SAMPLE_FILE_CONTENT, $sampleFileContent);
     }
 
+
     /**
      * Set URL
      *
@@ -429,6 +428,5 @@ class Link extends \Magento\Framework\Model\AbstractExtensibleModel implements C
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Block\Express\Review;
@@ -10,8 +10,7 @@ use Magento\Sales\Model\Order\Address;
 /**
  * Paypal Express Onepage checkout block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Details extends \Magento\Checkout\Block\Cart\Totals
 {

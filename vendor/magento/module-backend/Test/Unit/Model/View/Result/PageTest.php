@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\Model\View\Result;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\View\Result\Page
@@ -36,20 +36,20 @@ class PageTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->setMethods(['setGeneratorPool'])
             ->getMockForAbstractClass();
-        $this->breadcrumbsBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Breadcrumbs::class)
+        $this->breadcrumbsBlockMock = $this->getMockBuilder('Magento\Backend\Block\Widget\Breadcrumbs')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->context = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\Template\Context::class,
+            'Magento\Framework\View\Element\Template\Context',
             ['layout' => $this->layoutMock]
         );
         $this->resultPage = $this->objectManagerHelper->getObject(
-            \Magento\Backend\Model\View\Result\Page::class,
+            'Magento\Backend\Model\View\Result\Page',
             ['context' => $this->context]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Product;
@@ -11,7 +11,7 @@ namespace Magento\Catalog\Block\Product;
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  * @magentoAppArea frontend
  */
-class ListTest extends \PHPUnit\Framework\TestCase
+class ListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\ListProduct
@@ -63,6 +63,29 @@ class ListTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($parent->toHtml(), 'Block HTML'); /* Template not specified */
         $this->assertEquals('grid', $parent->getMode(), 'Default Mode'); /* default mode */
         $this->assertNotEmpty($parent->getToolbarHtml(), 'Toolbar HTML'); /* toolbar for one simple product */
+    }
+
+    /**
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture Magento/Catalog/_files/product_simple_search_visibility.php
+     * @covers \Magento\Catalog\Block\Product\ListProduct::toHtml
+     */
+    public function testToolbarCoverageWithSearchOnlyProducts()
+    {
+        /** @var $parent \Magento\Catalog\Block\Product\ListProduct */
+        $parent = $this->_getLayout()->createBlock(\Magento\Catalog\Block\Product\ListProduct::class, 'productList');
+
+        /* Prepare toolbar block */
+        $toolbar = $parent->getToolbarBlock();
+
+        $parent->setChild('toolbar', $toolbar);
+        /* In order to initialize toolbar collection block toHtml should be called */
+        $this->assertEmpty($parent->toHtml(), 'Block HTML'); /* Template not specified */
+        $this->assertEquals(
+            1,
+            $parent->getLoadedProductCollection()->getSize(),
+            'Search only products are invisible in catalog'
+        ); /* Search only products are invisible in catalog*/
     }
 
     public function testGetAdditionalHtmlEmpty()

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CustomerImportExport\Test\Unit\Model\ResourceModel\Import\Customer;
 
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\Storage;
 
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Storage
@@ -27,10 +27,10 @@ class StorageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = new \Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\Storage(
-            $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\Customer\CollectionFactory::class)
+            $this->getMockBuilder('Magento\Customer\Model\ResourceModel\Customer\CollectionFactory')
                 ->disableOriginalConstructor()
                 ->getMock(),
-            $this->getMockBuilder(\Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory::class)
+            $this->getMockBuilder('Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory')
                 ->disableOriginalConstructor()
                 ->getMock(),
             $this->_getModelDependencies()
@@ -50,12 +50,12 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getModelDependencies()
     {
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->setMethods(['from'])
             ->getMock();
         $select->expects($this->any())->method('from')->will($this->returnCallback([$this, 'validateFrom']));
-        $customerCollection = $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\Customer\Collection::class)
+        $customerCollection = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\Customer\Collection')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'removeAttributeToSelect', 'getResource', 'getSelect'])
             ->getMock();
@@ -66,7 +66,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
 
         $customerCollection->expects($this->once())->method('getSelect')->will($this->returnValue($select));
 
-        $byPagesIterator = $this->createPartialMock(\stdClass::class, ['iterate']);
+        $byPagesIterator = $this->getMock('stdClass', ['iterate']);
         $byPagesIterator->expects($this->once())
             ->method('iterate')
             ->will($this->returnCallback([$this, 'iterate']));

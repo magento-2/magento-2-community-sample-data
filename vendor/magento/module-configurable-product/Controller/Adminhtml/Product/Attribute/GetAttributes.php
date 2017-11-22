@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Attribute;
@@ -12,11 +12,9 @@ use Magento\ConfigurableProduct\Model\AttributesListInterface;
 class GetAttributes extends Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
-    const ADMIN_RESOURCE = 'Magento_Catalog::products';
+    const ADMIN_RESOURCE = 'Magento_Catalog::attributes_attributes';
 
     /**
      * Store manager

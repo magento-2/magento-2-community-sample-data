@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\HTTP\Test\Unit\Adapter;
 
 use \Magento\Framework\HTTP\Adapter\Curl;
 
-class CurlTest extends \PHPUnit\Framework\TestCase
+class CurlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Curl
@@ -19,6 +19,7 @@ class CurlTest extends \PHPUnit\Framework\TestCase
      * @var \Closure
      */
     public static $curlExectClosure;
+
 
     protected function setUp()
     {

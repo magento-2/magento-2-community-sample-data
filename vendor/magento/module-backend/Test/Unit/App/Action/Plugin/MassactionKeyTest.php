@@ -1,15 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Test\Unit\App\Action\Plugin;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Backend\App\AbstractAction;
-use Magento\Framework\App\RequestInterface;
 
-class MassactionKeyTest extends \PHPUnit\Framework\TestCase
+class MassactionKeyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\App\Action\Plugin\MassactionKey
@@ -17,12 +15,17 @@ class MassactionKeyTest extends \PHPUnit\Framework\TestCase
     protected $plugin;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RequestInterface
+     * @var \Closure
+     */
+    protected $closureMock;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $requestMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractAction
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subjectMock;
 
@@ -31,33 +34,28 @@ class MassactionKeyTest extends \PHPUnit\Framework\TestCase
         $this->closureMock = function () {
             return 'Expected';
         };
-        $this->subjectMock = $this->createMock(\Magento\Backend\App\AbstractAction::class);
-        $this->requestMock = $this->getMockForAbstractClass(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getPost', 'setPostValue']
-        );
+        $this->subjectMock = $this->getMock('Magento\Backend\App\AbstractAction', [], [], '', false);
+        $this->requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
 
         $objectManager = new ObjectManager($this);
         $this->plugin = $objectManager->getObject(
-            \Magento\Backend\App\Action\Plugin\MassactionKey::class,
+            'Magento\Backend\App\Action\Plugin\MassactionKey',
             [
                 'subject' => $this->subjectMock,
+                'closure' => $this->closureMock,
                 'request' => $this->requestMock,
             ]
         );
     }
 
     /**
+     * @covers \Magento\Backend\App\Action\Plugin\MassactionKey::aroundDispatch
+     *
      * @param $postData array|string
      * @param array $convertedData
-     * @dataProvider beforeDispatchDataProvider
+     * @dataProvider aroundDispatchDataProvider
      */
-    public function testBeforeDispatchWhenMassactionPrepareKeyRequestExists($postData, $convertedData)
+    public function testAroundDispatchWhenMassactionPrepareKeyRequestExists($postData, $convertedData)
     {
         $this->requestMock->expects($this->at(0))
             ->method('getPost')
@@ -71,10 +69,13 @@ class MassactionKeyTest extends \PHPUnit\Framework\TestCase
             ->method('setPostValue')
             ->with('key', $convertedData);
 
-        $this->plugin->beforeDispatch($this->subjectMock, $this->requestMock);
+        $this->assertEquals(
+            'Expected',
+            $this->plugin->aroundDispatch($this->subjectMock, $this->closureMock, $this->requestMock)
+        );
     }
 
-    public function beforeDispatchDataProvider()
+    public function aroundDispatchDataProvider()
     {
         return [
             'post_data_is_array' => [['key'], ['key']],
@@ -82,7 +83,10 @@ class MassactionKeyTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testBeforeDispatchWhenMassactionPrepareKeyRequestNotExists()
+    /**
+     * @covers \Magento\Backend\App\Action\Plugin\MassactionKey::aroundDispatch
+     */
+    public function testAroundDispatchWhenMassactionPrepareKeyRequestNotExists()
     {
         $this->requestMock->expects($this->once())
             ->method('getPost')
@@ -91,6 +95,9 @@ class MassactionKeyTest extends \PHPUnit\Framework\TestCase
         $this->requestMock->expects($this->never())
             ->method('setPostValue');
 
-        $this->plugin->beforeDispatch($this->subjectMock, $this->requestMock);
+        $this->assertEquals(
+            'Expected',
+            $this->plugin->aroundDispatch($this->subjectMock, $this->closureMock, $this->requestMock)
+        );
     }
 }

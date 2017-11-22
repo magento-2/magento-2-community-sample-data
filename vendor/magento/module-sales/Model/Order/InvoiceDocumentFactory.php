@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,8 +8,8 @@ namespace Magento\Sales\Model\Order;
 
 use Magento\Sales\Api\Data\InvoiceCommentCreationInterface;
 use Magento\Sales\Api\Data\InvoiceCreationArgumentsInterface;
-use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\InvoiceItemCreationInterface;
+use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Service\InvoiceService;
 
@@ -17,7 +17,6 @@ use Magento\Sales\Model\Service\InvoiceService;
  * Class InvoiceDocumentFactory
  *
  * @api
- * @since 100.1.2
  */
 class InvoiceDocumentFactory
 {
@@ -44,7 +43,6 @@ class InvoiceDocumentFactory
      * @param InvoiceCreationArgumentsInterface|null $arguments
      * @return InvoiceInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @since 100.1.2
      */
     public function create(
         OrderInterface $order,
@@ -53,6 +51,7 @@ class InvoiceDocumentFactory
         $appendComment = false,
         InvoiceCreationArgumentsInterface $arguments = null
     ) {
+
         $invoiceItems = $this->itemsToArray($items);
         $invoice = $this->invoiceService->prepareInvoice($order, $invoiceItems);
 

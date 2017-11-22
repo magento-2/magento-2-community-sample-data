@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ProductAlert\Controller\Unsubscribe;
@@ -53,11 +53,11 @@ class Price extends UnsubscribeController
                 throw new NoSuchEntityException();
             }
             /** @var \Magento\ProductAlert\Model\Price $model */
-            $model = $this->_objectManager->create(\Magento\ProductAlert\Model\Price::class)
+            $model = $this->_objectManager->create('Magento\ProductAlert\Model\Price')
                 ->setCustomerId($this->customerSession->getCustomerId())
                 ->setProductId($product->getId())
                 ->setWebsiteId(
-                    $this->_objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)
+                    $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
                         ->getStore()
                         ->getWebsiteId()
                 )

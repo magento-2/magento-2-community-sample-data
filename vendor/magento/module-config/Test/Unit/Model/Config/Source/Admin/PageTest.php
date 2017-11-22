@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Source\Admin;
 
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Menu
@@ -33,16 +33,19 @@ class PageTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
         $this->_menuModel = new \Magento\Backend\Model\Menu($logger);
         $this->_menuSubModel = new \Magento\Backend\Model\Menu($logger);
 
-        $this->_factoryMock = $this->createPartialMock(
-            \Magento\Backend\Model\Menu\Filter\IteratorFactory::class,
-            ['create']
+        $this->_factoryMock = $this->getMock(
+            'Magento\Backend\Model\Menu\Filter\IteratorFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $itemOne = $this->createMock(\Magento\Backend\Model\Menu\Item::class);
+        $itemOne = $this->getMock('Magento\Backend\Model\Menu\Item', [], [], '', false);
         $itemOne->expects($this->any())->method('getId')->will($this->returnValue('item1'));
         $itemOne->expects($this->any())->method('getTitle')->will($this->returnValue('Item 1'));
         $itemOne->expects($this->any())->method('isAllowed')->will($this->returnValue(true));
@@ -52,7 +55,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
         $itemOne->expects($this->any())->method('hasChildren')->will($this->returnValue(true));
         $this->_menuModel->add($itemOne);
 
-        $itemTwo = $this->createMock(\Magento\Backend\Model\Menu\Item::class);
+        $itemTwo = $this->getMock('Magento\Backend\Model\Menu\Item', [], [], '', false);
         $itemTwo->expects($this->any())->method('getId')->will($this->returnValue('item2'));
         $itemTwo->expects($this->any())->method('getTitle')->will($this->returnValue('Item 2'));
         $itemTwo->expects($this->any())->method('isAllowed')->will($this->returnValue(true));
@@ -61,7 +64,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
         $itemTwo->expects($this->any())->method('hasChildren')->will($this->returnValue(false));
         $this->_menuSubModel->add($itemTwo);
 
-        $menuConfig = $this->createMock(\Magento\Backend\Model\Menu\Config::class);
+        $menuConfig = $this->getMock('Magento\Backend\Model\Menu\Config', [], [], '', false);
         $menuConfig->expects($this->once())->method('getMenu')->will($this->returnValue($this->_menuModel));
 
         $this->_model = new \Magento\Config\Model\Config\Source\Admin\Page($this->_factoryMock, $menuConfig);

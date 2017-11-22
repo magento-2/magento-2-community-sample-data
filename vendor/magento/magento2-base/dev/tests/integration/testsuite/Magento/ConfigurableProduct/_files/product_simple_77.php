@@ -2,12 +2,11 @@
 /**
  * Creates a simple product to be used for test cases.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 use Magento\Catalog\Api\CategoryLinkManagementInterface;
-use Magento\Catalog\Api\Data\ProductCustomOptionInterface;
 use Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
@@ -77,96 +76,6 @@ $product->setTypeId(Type::TYPE_SIMPLE)
     ->setHasOptions(true)
     ->setCustomAttribute('test_configurable', 42);
 
-$oldOptions = [
-    [
-        'previous_group' => 'text',
-        'title'     => 'Test Field',
-        'type'      => 'field',
-        'is_require' => 1,
-        'sort_order' => 0,
-        'price'     => 1,
-        'price_type' => 'fixed',
-        'sku'       => '1-text',
-        'max_characters' => 100,
-    ],
-    [
-        'previous_group' => 'date',
-        'title'     => 'Test Date and Time',
-        'type'      => 'date_time',
-        'is_require' => 1,
-        'sort_order' => 0,
-        'price'     => 2,
-        'price_type' => 'fixed',
-        'sku'       => '2-date',
-    ],
-    [
-        'previous_group' => 'select',
-        'title'     => 'Test Select',
-        'type'      => 'drop_down',
-        'is_require' => 1,
-        'sort_order' => 0,
-        'values'    => [
-            [
-                'option_type_id' => null,
-                'title'         => 'Option 1',
-                'price'         => 3,
-                'price_type'    => 'fixed',
-                'sku'           => '3-1-select',
-            ],
-            [
-                'option_type_id' => null,
-                'title'         => 'Option 2',
-                'price'         => 3,
-                'price_type'    => 'fixed',
-                'sku'           => '3-2-select',
-            ],
-        ]
-    ],
-    [
-        'previous_group' => 'select',
-        'title'     => 'Test Radio',
-        'type'      => 'radio',
-        'is_require' => 1,
-        'sort_order' => 0,
-        'values'    => [
-            [
-                'option_type_id' => null,
-                'title'         => 'Option 1',
-                'price'         => 3,
-                'price_type'    => 'fixed',
-                'sku'           => '4-1-radio',
-            ],
-            [
-                'option_type_id' => null,
-                'title'         => 'Option 2',
-                'price'         => 3,
-                'price_type'    => 'fixed',
-                'sku'           => '4-2-radio',
-            ],
-        ]
-    ]
-];
-
-$options = [];
-
-/** @var ProductCustomOptionInterfaceFactory $customOptionFactory */
-$customOptionFactory = $objectManager->create(ProductCustomOptionInterfaceFactory::class);
-
-foreach ($oldOptions as $option) {
-    /** @var ProductCustomOptionInterface $option */
-    $option = $customOptionFactory->create(['data' => $option]);
-    $option->setProductSku($product->getSku());
-
-    $options[] = $option;
-}
-
-$product->setOptions($options);
-
 /** @var ProductRepositoryInterface $productRepositoryFactory */
 $productRepositoryFactory = $objectManager->create(ProductRepositoryInterface::class);
 $productRepositoryFactory->save($product);
-
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [2]
-);

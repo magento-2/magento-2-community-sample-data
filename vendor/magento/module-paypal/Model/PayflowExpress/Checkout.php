@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\PayflowExpress;
@@ -16,7 +16,7 @@ class Checkout extends \Magento\Paypal\Model\Express\Checkout
      *
      * @var string
      */
-    protected $_apiType = \Magento\Paypal\Model\Api\PayflowNvp::class;
+    protected $_apiType = 'Magento\Paypal\Model\Api\PayflowNvp';
 
     /**
      * Payment method type

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Controller\Adminhtml\Index;
@@ -10,7 +10,6 @@ use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Controller\RegistryConstants;
-use Magento\Customer\Model\EmailNotificationInterface;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Framework\Controller\Result\Redirect;
 
@@ -19,7 +18,7 @@ use Magento\Framework\Controller\Result\Redirect;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @covers \Magento\Customer\Controller\Adminhtml\Index\Save
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Controller\Adminhtml\Index\Save
@@ -127,7 +126,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     protected $redirectFactoryMock;
 
     /**
-     * @var \Magento\Customer\Model\AccountManagement|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Customer\Api\AccountManagementInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $managementMock;
 
@@ -135,11 +134,6 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\Customer\Api\Data\AddressInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $addressDataFactoryMock;
-
-    /**
-     * @var EmailNotificationInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $emailNotificationMock;
 
     /**
      * @var \Magento\Customer\Model\Address\Mapper|\PHPUnit_Framework_MockObject_MockObject
@@ -156,95 +150,99 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(
-            \Magento\Backend\Model\View\Result\ForwardFactory::class
-        )->disableOriginalConstructor()
+        $this->resultForwardFactoryMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\ForwardFactory')
+            ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Forward::class)
+        $this->resultForwardMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->setMethods(['setActiveMenu', 'getConfig', 'addBreadcrumb'])
             ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
+        $this->sessionMock = $this->getMockBuilder('Magento\Backend\Model\Session')
             ->disableOriginalConstructor()
-            ->setMethods(['unsCustomerFormData', 'setCustomerFormData'])
+            ->setMethods(['unsCustomerData', 'setCustomerData'])
             ->getMock();
-        $this->formFactoryMock = $this->getMockBuilder(\Magento\Customer\Model\Metadata\FormFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->objectFactoryMock = $this->getMockBuilder(\Magento\Framework\DataObjectFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $this->customerDataFactoryMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
-        )->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $this->customerRepositoryMock = $this->getMockBuilder(\Magento\Customer\Api\CustomerRepositoryInterface::class)
+        $this->formFactoryMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\FormFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerAddressRepositoryMock = $this->getMockBuilder(
-            \Magento\Customer\Api\AddressRepositoryInterface::class
-        )->disableOriginalConstructor()->getMock();
-        $this->customerMapperMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Customer\Mapper::class
-        )->disableOriginalConstructor()->getMock();
-        $this->customerAddressMapperMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Address\Mapper::class
-        )->disableOriginalConstructor()->getMock();
-        $this->dataHelperMock = $this->getMockBuilder(
-            \Magento\Framework\Api\DataObjectHelper::class
-        )->disableOriginalConstructor()->getMock();
-        $this->authorizationMock = $this->getMockBuilder(\Magento\Framework\AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subscriberFactoryMock = $this->getMockBuilder(\Magento\Newsletter\Model\SubscriberFactory::class)
+        $this->objectFactoryMock = $this->getMockBuilder('Magento\Framework\DataObjectFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->redirectFactoryMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\RedirectFactory::class)
+        $this->customerDataFactoryMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterfaceFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->managementMock = $this->getMockBuilder(\Magento\Customer\Model\AccountManagement::class)
+        $this->customerRepositoryMock = $this->getMockBuilder('Magento\Customer\Api\CustomerRepositoryInterface')
             ->disableOriginalConstructor()
-            ->setMethods(['createAccount'])
             ->getMock();
-        $this->addressDataFactoryMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterfaceFactory::class)
+        $this->customerAddressRepositoryMock = $this->getMockBuilder('Magento\Customer\Api\AddressRepositoryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerMapperMock = $this->getMockBuilder('Magento\Customer\Model\Customer\Mapper')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerAddressMapperMock = $this->getMockBuilder('Magento\Customer\Model\Address\Mapper')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->dataHelperMock = $this->getMockBuilder('Magento\Framework\Api\DataObjectHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->authorizationMock = $this->getMockBuilder('Magento\Framework\AuthorizationInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->subscriberFactoryMock = $this->getMockBuilder('Magento\Newsletter\Model\SubscriberFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->emailNotificationMock = $this->getMockBuilder(EmailNotificationInterface::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
+            ->getMock();
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->redirectFactoryMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\RedirectFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $this->managementMock = $this->getMockBuilder('Magento\Customer\Api\AccountManagementInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->addressDataFactoryMock = $this->getMockBuilder('Magento\Customer\Api\Data\AddressInterfaceFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-
-        $this->model = $objectManager->getObject(
-            \Magento\Customer\Controller\Adminhtml\Index\Save::class,
+        $this->context = $objectManager->getObject(
+            'Magento\Backend\App\Action\Context',
             [
+                'request' => $this->requestMock,
+                'session' => $this->sessionMock,
+                'authorization' => $this->authorizationMock,
+                'messageManager' => $this->messageManagerMock,
+                'resultRedirectFactory' => $this->redirectFactoryMock,
+            ]
+        );
+        $this->model = $objectManager->getObject(
+            'Magento\Customer\Controller\Adminhtml\Index\Save',
+            [
+                'context' => $this->context,
                 'resultForwardFactory' => $this->resultForwardFactoryMock,
                 'resultPageFactory' => $this->resultPageFactoryMock,
                 'formFactory' => $this->formFactoryMock,
@@ -257,20 +255,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 'coreRegistry' => $this->registryMock,
                 'customerAccountManagement' => $this->managementMock,
                 'addressDataFactory' => $this->addressDataFactoryMock,
-                'request' => $this->requestMock,
-                'session' => $this->sessionMock,
-                'authorization' => $this->authorizationMock,
-                'messageManager' => $this->messageManagerMock,
-                'resultRedirectFactory' => $this->redirectFactoryMock,
                 'addressRepository' => $this->customerAddressRepositoryMock,
                 'addressMapper' => $this->customerAddressMapperMock,
             ]
-        );
-
-        $objectManager->setBackwardCompatibleProperty(
-            $this->model,
-            'emailNotification',
-            $this->emailNotificationMock
         );
     }
 
@@ -316,7 +303,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'coolness' => false,
             'disable_auto_group_change' => 'false',
             CustomerInterface::DEFAULT_BILLING => 2,
-            CustomerInterface::DEFAULT_SHIPPING => 2
+            CustomerInterface::DEFAULT_SHIPPING => 2,
         ];
         $addressExtractedData = [
             'entity_id' => $addressId,
@@ -363,7 +350,8 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'default_billing' => true,
             'default_shipping' => true,
             'code' => 'value',
-            'region' => [
+            'region' =>
+                [
                     'region' => 'region',
                     'region_id' => 'region_id',
                 ],
@@ -371,10 +359,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'id' => $addressId,
         ];
 
-        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
         $attributeMock->expects($this->exactly(2))
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -401,7 +389,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
         $objectMock->expects($this->exactly(2))
@@ -418,9 +406,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
+        $customerFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -433,9 +422,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('getAttributes')
             ->willReturn($attributes);
 
-        $customerAddressFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
+        $customerAddressFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
         $customerAddressFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'address/' . $addressId)
@@ -474,9 +463,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var CustomerInterface|\PHPUnit_Framework_MockObject_MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterface::class
-        )->disableOriginalConstructor()->getMock();
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -492,7 +481,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with($customerMock)
             ->willReturn($savedData);
 
-        $addressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $addressMock = $this->getMockBuilder('\Magento\Customer\Api\Data\AddressInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -516,12 +505,14 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 [
                     [
                         $customerMock,
-                        $mergedData, \Magento\Customer\Api\Data\CustomerInterface::class,
+                        $mergedData,
+                        '\Magento\Customer\Api\Data\CustomerInterface',
                         $this->dataHelperMock
                     ],
                     [
                         $addressMock,
-                        $mergedAddressData, \Magento\Customer\Api\Data\AddressInterface::class,
+                        $mergedAddressData,
+                        '\Magento\Customer\Api\Data\AddressInterface',
                         $this->dataHelperMock
                     ],
                 ]
@@ -537,21 +528,13 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with($customerMock)
             ->willReturnSelf();
 
-        $customerEmail = 'customer@email.com';
-        $customerMock->expects($this->once())->method('getEmail')->willReturn($customerEmail);
-
-        $this->emailNotificationMock->expects($this->once())
-            ->method('credentialsChanged')
-            ->with($customerMock, $customerEmail)
-            ->willReturnSelf();
-
         $this->authorizationMock->expects($this->once())
             ->method('isAllowed')
             ->with(null)
             ->willReturn(true);
 
         /** @var \Magento\Newsletter\Model\Subscriber|\PHPUnit_Framework_MockObject_MockObject $subscriberMock */
-        $subscriberMock = $this->getMockBuilder(\Magento\Newsletter\Model\Subscriber::class)
+        $subscriberMock = $this->getMockBuilder('Magento\Newsletter\Model\Subscriber')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -567,7 +550,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('unsubscribeCustomerById');
 
         $this->sessionMock->expects($this->once())
-            ->method('unsCustomerFormData');
+            ->method('unsCustomerData');
 
         $this->registryMock->expects($this->once())
             ->method('register')
@@ -584,7 +567,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -609,7 +592,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     {
         $customerId = 22;
         $addressId = 11;
-        $subscription = '0';
+        $subscription = 'false';
         $postValue = [
             'customer' => [
                 'coolness' => false,
@@ -649,7 +632,8 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'default_billing' => false,
             'default_shipping' => false,
             'code' => 'value',
-            'region' => [
+            'region' =>
+                [
                     'region' => 'region',
                     'region_id' => 'region_id',
                 ],
@@ -657,10 +641,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'id' => $addressId,
         ];
 
-        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
         $attributeMock->expects($this->exactly(2))
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -687,7 +671,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
         $objectMock->expects($this->exactly(2))
@@ -704,9 +688,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
+        $customerFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -719,9 +704,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('getAttributes')
             ->willReturn($attributes);
 
-        $customerAddressFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
+        $customerAddressFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
         $customerAddressFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'address/' . $addressId)
@@ -760,15 +745,15 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var CustomerInterface|\PHPUnit_Framework_MockObject_MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterface::class
-        )->disableOriginalConstructor()->getMock();
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($customerMock);
 
-        $addressMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AddressInterface::class)
+        $addressMock = $this->getMockBuilder('\Magento\Customer\Api\Data\AddressInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -792,12 +777,14 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 [
                     [
                         $customerMock,
-                        $mergedData, \Magento\Customer\Api\Data\CustomerInterface::class,
+                        $mergedData,
+                        '\Magento\Customer\Api\Data\CustomerInterface',
                         $this->dataHelperMock
                     ],
                     [
                         $addressMock,
-                        $mergedAddressData, \Magento\Customer\Api\Data\AddressInterface::class,
+                        $mergedAddressData,
+                        '\Magento\Customer\Api\Data\AddressInterface',
                         $this->dataHelperMock
                     ],
                 ]
@@ -818,7 +805,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         /** @var \Magento\Newsletter\Model\Subscriber|\PHPUnit_Framework_MockObject_MockObject $subscriberMock */
-        $subscriberMock = $this->getMockBuilder(\Magento\Newsletter\Model\Subscriber::class)
+        $subscriberMock = $this->getMockBuilder('Magento\Newsletter\Model\Subscriber')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -834,7 +821,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('subscribeCustomerById');
 
         $this->sessionMock->expects($this->once())
-            ->method('unsCustomerFormData');
+            ->method('unsCustomerData');
 
         $this->registryMock->expects($this->once())
             ->method('register')
@@ -851,7 +838,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -873,7 +860,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteWithNewCustomerAndValidationException()
     {
-        $subscription = '0';
+        $subscription = 'false';
         $postValue = [
             'customer' => [
                 'coolness' => false,
@@ -886,10 +873,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'disable_auto_group_change' => 'false',
         ];
 
-        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -914,7 +901,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
         $objectMock->expects($this->once())
@@ -927,9 +914,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
+        $customerFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -953,9 +941,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             )->willReturn($customerFormMock);
 
         /** @var CustomerInterface|\PHPUnit_Framework_MockObject_MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterface::class
-        )->disableOriginalConstructor()->getMock();
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -976,7 +964,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('create');
 
         $this->sessionMock->expects($this->never())
-            ->method('unsCustomerFormData');
+            ->method('unsCustomerData');
 
         $this->registryMock->expects($this->never())
             ->method('register');
@@ -989,11 +977,11 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with(new \Magento\Framework\Message\Error('Validator Exception'));
 
         $this->sessionMock->expects($this->once())
-            ->method('setCustomerFormData')
+            ->method('setCustomerData')
             ->with($postValue);
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -1016,7 +1004,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteWithNewCustomerAndLocalizedException()
     {
-        $subscription = '0';
+        $subscription = 'false';
         $postValue = [
             'customer' => [
                 'coolness' => false,
@@ -1029,10 +1017,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'disable_auto_group_change' => 'false',
         ];
 
-        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
-        )->disableOriginalConstructor()->getMock();
+        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -1057,7 +1045,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
         $objectMock->expects($this->once())
@@ -1070,152 +1058,10 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $formMock */
-        $customerFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
-        $customerFormMock->expects($this->once())
-            ->method('extractData')
-            ->with($this->requestMock, 'customer')
-            ->willReturn($extractedData);
-        $customerFormMock->expects($this->once())
-            ->method('compactData')
-            ->with($extractedData)
-            ->willReturn($extractedData);
-        $customerFormMock->expects($this->once())
-            ->method('getAttributes')
-            ->willReturn($attributes);
-
-        $this->formFactoryMock->expects($this->once())
-            ->method('create')
-            ->with(
-                CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
-                'adminhtml_customer',
-                [],
-                false,
-                Form::DONT_IGNORE_INVISIBLE
-            )->willReturn($customerFormMock);
-
-        $customerMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterface::class
-        )->disableOriginalConstructor()->getMock();
-
-        $this->customerDataFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($customerMock);
-
-        $this->managementMock->expects($this->once())
-            ->method('createAccount')
-            ->with($customerMock, null, '')
-            ->willThrowException(new \Magento\Framework\Exception\LocalizedException(__('Localized Exception')));
-
-        $customerMock->expects($this->never())
-            ->method('getId');
-
-        $this->authorizationMock->expects($this->never())
-            ->method('isAllowed');
-
-        $this->subscriberFactoryMock->expects($this->never())
-            ->method('create');
-
-        $this->sessionMock->expects($this->never())
-            ->method('unsCustomerFormData');
-
-        $this->registryMock->expects($this->never())
-            ->method('register');
-
-        $this->messageManagerMock->expects($this->never())
-            ->method('addSuccess');
-
-        $this->messageManagerMock->expects($this->once())
-            ->method('addMessage')
-            ->with(new \Magento\Framework\Message\Error('Localized Exception'));
-
-        $this->sessionMock->expects($this->once())
-            ->method('setCustomerFormData')
-            ->with($postValue);
-
-        /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
+        $customerFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->redirectFactoryMock->expects($this->once())
-            ->method('create')
-            ->with([])
-            ->willReturn($redirectMock);
-
-        $redirectMock->expects($this->once())
-            ->method('setPath')
-            ->with('customer/*/new', ['_current' => true])
-            ->willReturn(true);
-
-        $this->assertEquals($redirectMock, $this->model->execute());
-    }
-
-    /**
-     * @covers \Magento\Customer\Controller\Adminhtml\Index\Index::execute
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function testExecuteWithNewCustomerAndException()
-    {
-        $subscription = '0';
-        $postValue = [
-            'customer' => [
-                'coolness' => false,
-                'disable_auto_group_change' => 'false',
-            ],
-            'subscription' => $subscription,
-        ];
-        $extractedData = [
-            'coolness' => false,
-            'disable_auto_group_change' => 'false',
-        ];
-
-        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
-        )->disableOriginalConstructor()->getMock();
-        $attributeMock->expects($this->once())
-            ->method('getAttributeCode')
-            ->willReturn('coolness');
-        $attributeMock->expects($this->once())
-            ->method('getFrontendInput')
-            ->willReturn('int');
-        $attributes = [$attributeMock];
-
-        $this->requestMock->expects($this->any())
-            ->method('getPostValue')
-            ->willReturnMap([
-                [null, null, $postValue],
-                [CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER, null, $postValue['customer']],
-            ]);
-        $this->requestMock->expects($this->exactly(2))
-            ->method('getPost')
-            ->willReturnMap(
-                [
-                    ['customer', null, $postValue['customer']],
-                    ['address', null, null],
-                ]
-            );
-
-        /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $objectMock->expects($this->once())
-            ->method('getData')
-            ->with('customer')
-            ->willReturn($postValue['customer']);
-
-        $this->objectFactoryMock->expects($this->once())
-            ->method('create')
-            ->with(['data' => $postValue])
-            ->willReturn($objectMock);
-
-        $customerFormMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Metadata\Form::class
-        )->disableOriginalConstructor()->getMock();
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -1239,9 +1085,153 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             )->willReturn($customerFormMock);
 
         /** @var CustomerInterface|\PHPUnit_Framework_MockObject_MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\CustomerInterface::class
-        )->disableOriginalConstructor()->getMock();
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->customerDataFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($customerMock);
+
+        $this->managementMock->expects($this->once())
+            ->method('createAccount')
+            ->with($customerMock, null, '')
+            ->willThrowException(new \Magento\Framework\Exception\LocalizedException(__('Localized Exception')));
+
+        $customerMock->expects($this->never())
+            ->method('getId');
+
+        $this->authorizationMock->expects($this->never())
+            ->method('isAllowed');
+
+        $this->subscriberFactoryMock->expects($this->never())
+            ->method('create');
+
+        $this->sessionMock->expects($this->never())
+            ->method('unsCustomerData');
+
+        $this->registryMock->expects($this->never())
+            ->method('register');
+
+        $this->messageManagerMock->expects($this->never())
+            ->method('addSuccess');
+
+        $this->messageManagerMock->expects($this->once())
+            ->method('addMessage')
+            ->with(new \Magento\Framework\Message\Error('Localized Exception'));
+
+        $this->sessionMock->expects($this->once())
+            ->method('setCustomerData')
+            ->with($postValue);
+
+        /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->redirectFactoryMock->expects($this->once())
+            ->method('create')
+            ->with([])
+            ->willReturn($redirectMock);
+
+        $redirectMock->expects($this->once())
+            ->method('setPath')
+            ->with('customer/*/new', ['_current' => true])
+            ->willReturn(true);
+
+        $this->assertEquals($redirectMock, $this->model->execute());
+    }
+
+    /**
+     * @covers \Magento\Customer\Controller\Adminhtml\Index\Index::execute
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testExecuteWithNewCustomerAndException()
+    {
+        $subscription = 'false';
+        $postValue = [
+            'customer' => [
+                'coolness' => false,
+                'disable_auto_group_change' => 'false',
+            ],
+            'subscription' => $subscription,
+        ];
+        $extractedData = [
+            'coolness' => false,
+            'disable_auto_group_change' => 'false',
+        ];
+
+        /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attributeMock->expects($this->once())
+            ->method('getAttributeCode')
+            ->willReturn('coolness');
+        $attributeMock->expects($this->once())
+            ->method('getFrontendInput')
+            ->willReturn('int');
+        $attributes = [$attributeMock];
+
+        $this->requestMock->expects($this->any())
+            ->method('getPostValue')
+            ->willReturnMap([
+                [null, null, $postValue],
+                [CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER, null, $postValue['customer']],
+            ]);
+        $this->requestMock->expects($this->exactly(2))
+            ->method('getPost')
+            ->willReturnMap(
+                [
+                    ['customer', null, $postValue['customer']],
+                    ['address', null, null],
+                ]
+            );
+
+        /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $objectMock->expects($this->once())
+            ->method('getData')
+            ->with('customer')
+            ->willReturn($postValue['customer']);
+
+        $this->objectFactoryMock->expects($this->once())
+            ->method('create')
+            ->with(['data' => $postValue])
+            ->willReturn($objectMock);
+
+        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $customerFormMock */
+        $customerFormMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $customerFormMock->expects($this->once())
+            ->method('extractData')
+            ->with($this->requestMock, 'customer')
+            ->willReturn($extractedData);
+        $customerFormMock->expects($this->once())
+            ->method('compactData')
+            ->with($extractedData)
+            ->willReturn($extractedData);
+        $customerFormMock->expects($this->once())
+            ->method('getAttributes')
+            ->willReturn($attributes);
+
+        $this->formFactoryMock->expects($this->once())
+            ->method('create')
+            ->with(
+                CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
+                'adminhtml_customer',
+                [],
+                false,
+                Form::DONT_IGNORE_INVISIBLE
+            )->willReturn($customerFormMock);
+
+        /** @var CustomerInterface|\PHPUnit_Framework_MockObject_MockObject $customerMock */
+        $customerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -1263,7 +1253,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('create');
 
         $this->sessionMock->expects($this->never())
-            ->method('unsCustomerFormData');
+            ->method('unsCustomerData');
 
         $this->registryMock->expects($this->never())
             ->method('register');
@@ -1276,11 +1266,11 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with($exception, __('Something went wrong while saving the customer.'));
 
         $this->sessionMock->expects($this->once())
-            ->method('setCustomerFormData')
+            ->method('setCustomerData')
             ->with($postValue);
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 

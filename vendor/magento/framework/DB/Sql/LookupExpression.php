@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB\Sql;
@@ -12,8 +12,9 @@ use Magento\Framework\DB\Select;
 /**
  * Class LookupExpression
  */
-class LookupExpression extends Expression
+class LookupExpression extends \Zend_Db_Expr
 {
+
     /**
      * @var Resource
      */

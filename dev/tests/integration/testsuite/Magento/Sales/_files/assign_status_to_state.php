@@ -1,13 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Sales\Model\Order\Status $status */
-$status = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Status::class
-);
+$status = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order\Status');
 $status->setData(
     [
         'status' => 'fake_status_do_not_use_it',

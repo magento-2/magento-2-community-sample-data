@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -31,7 +31,7 @@ class Substitution extends AbstractMethod
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\Payment\Block\Info\Substitution::class;
+    protected $_infoBlockType = 'Magento\Payment\Block\Info\Substitution';
 
     /**
      * Retrieve payment method title

@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Model\Config\Backend\Admin;
 
-use Magento\Config\Model\Config\Reader\Source\Deployed\DocumentRoot;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * @magentoAppArea adminhtml
  */
-class RobotsTest extends \PHPUnit\Framework\TestCase
+class RobotsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Backend\Admin\Robots
@@ -30,14 +30,14 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->model = $objectManager->create(\Magento\Config\Model\Config\Backend\Admin\Robots::class);
+        $this->model = $objectManager->create('Magento\Config\Model\Config\Backend\Admin\Robots');
         $this->model->setPath('design/search_engine_robots/custom_instructions');
         $this->model->afterLoad();
-
-        $documentRootPath = $objectManager->get(DocumentRoot::class)->getPath();
         $this->rootDirectory = $objectManager->get(
-            \Magento\Framework\Filesystem::class
-        )->getDirectoryRead($documentRootPath);
+            'Magento\Framework\Filesystem'
+        )->getDirectoryRead(
+            DirectoryList::ROOT
+        );
     }
 
     /**

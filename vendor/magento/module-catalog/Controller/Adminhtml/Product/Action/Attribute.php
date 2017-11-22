@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,9 +16,7 @@ use Magento\Backend\App\Action;
 abstract class Attribute extends Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Catalog::update_attributes';
 
@@ -50,8 +48,7 @@ abstract class Attribute extends Action
         $productIds = $this->attributeHelper->getProductIds();
         if (!is_array($productIds)) {
             $error = __('Please select products for attributes update.');
-        } elseif (!$this->_objectManager->create(
-            \Magento\Catalog\Model\Product::class)->isProductsHasSku($productIds)) {
+        } elseif (!$this->_objectManager->create('Magento\Catalog\Model\Product')->isProductsHasSku($productIds)) {
             $error = __('Please make sure to define SKU values for all processed products.');
         }
 

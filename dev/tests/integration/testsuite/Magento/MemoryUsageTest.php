@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento;
 
-class MemoryUsageTest extends \PHPUnit\Framework\TestCase
+class MemoryUsageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Number of application reinitialization iterations to be conducted by tests
@@ -20,7 +20,7 @@ class MemoryUsageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped("Test not relevant because no gc in HHVM.");
+            $this->markTestSkipped("For HHVM it's not relevant while MAGETWO-33679 is not resolved");
         }
         $this->_helper = new \Magento\TestFramework\Helper\Memory(
             new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer())
@@ -32,8 +32,11 @@ class MemoryUsageTest extends \PHPUnit\Framework\TestCase
      */
     public function testAppReinitializationNoMemoryLeak()
     {
-        $this->markTestSkipped('Test fails at Travis. Skipped until MAGETWO-47111');
+        $this->markTestSkipped('Test fails at Travis. Skipped in scope of MAGETWO-47111');
 
+        if (extension_loaded('xdebug')) {
+            $this->markTestSkipped('Xdebug extension may significantly affect memory consumption of a process.');
+        }
         $this->_deallocateUnusedMemory();
         $actualMemoryUsage = $this->_helper->getRealMemoryUsage();
         for ($i = 0; $i < self::APP_REINITIALIZATION_LOOPS; $i++) {
@@ -68,7 +71,6 @@ class MemoryUsageTest extends \PHPUnit\Framework\TestCase
     protected function _getAllowedMemoryUsage()
     {
         // Memory usage limits should not be further increased, corresponding memory leaks have to be fixed instead!
-        // @todo fix memory leak and decrease limit to 1 M (in scope of MAGETWO-47693 limit was temporary increased)
-        return \Magento\TestFramework\Helper\Memory::convertToBytes('2M');
+        return \Magento\TestFramework\Helper\Memory::convertToBytes('1M');
     }
 }

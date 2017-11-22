@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
@@ -91,11 +91,11 @@ abstract class AbstractDependenciesCommand extends Command
     {
         try {
             /** @var \Magento\Framework\Component\ComponentRegistrar $componentRegistrar */
-            $componentRegistrar = $this->objectManager->get(\Magento\Framework\Component\ComponentRegistrar::class);
+            $componentRegistrar = $this->objectManager->get('Magento\Framework\Component\ComponentRegistrar');
             /** @var \Magento\Framework\Component\DirSearch $dirSearch */
-            $dirSearch = $this->objectManager->get(\Magento\Framework\Component\DirSearch::class);
+            $dirSearch = $this->objectManager->get('Magento\Framework\Component\DirSearch');
             /** @var \Magento\Framework\View\Design\Theme\ThemePackageList $themePackageList */
-            $themePackageList = $this->objectManager->get(\Magento\Framework\View\Design\Theme\ThemePackageList::class);
+            $themePackageList = $this->objectManager->get('Magento\Framework\View\Design\Theme\ThemePackageList');
             Files::setInstance(new Files($componentRegistrar, $dirSearch, $themePackageList));
             $this->buildReport($input->getOption(self::INPUT_KEY_OUTPUT));
             $output->writeln('<info>Report successfully processed.</info>');
@@ -104,8 +104,6 @@ abstract class AbstractDependenciesCommand extends Command
                 '<error>Please check the path you provided. Dependencies report generator failed with error: ' .
                 $e->getMessage() . '</error>'
             );
-            // we must have an exit code higher than zero to indicate something was wrong
-            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
     }
 }

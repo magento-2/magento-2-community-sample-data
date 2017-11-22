@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CheckoutAgreements\Test\Unit\Model\Checkout\Plugin;
@@ -8,7 +8,7 @@ namespace Magento\CheckoutAgreements\Test\Unit\Model\Checkout\Plugin;
 use Magento\CheckoutAgreements\Model\AgreementsProvider;
 use Magento\Store\Model\ScopeInterface;
 
-class ValidationTest extends \PHPUnit\Framework\TestCase
+class ValidationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CheckoutAgreements\Model\Checkout\Plugin\Validation
@@ -52,18 +52,19 @@ class ValidationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->agreementsValidatorMock = $this->createMock(\Magento\Checkout\Api\AgreementsValidatorInterface::class);
-        $this->subjectMock = $this->createMock(\Magento\Checkout\Api\PaymentInformationManagementInterface::class);
-        $this->paymentMock = $this->createMock(\Magento\Quote\Api\Data\PaymentInterface::class);
-        $this->addressMock = $this->createMock(\Magento\Quote\Api\Data\AddressInterface::class);
-        $this->extensionAttributesMock = $this->createPartialMock(
-            \Magento\Quote\Api\Data\PaymentExtension::class,
-            ['getAgreementIds']
+        $this->agreementsValidatorMock = $this->getMock('\Magento\Checkout\Api\AgreementsValidatorInterface');
+        $this->subjectMock = $this->getMock('\Magento\Checkout\Api\PaymentInformationManagementInterface');
+        $this->paymentMock = $this->getMock('\Magento\Quote\Api\Data\PaymentInterface');
+        $this->addressMock = $this->getMock('\Magento\Quote\Api\Data\AddressInterface');
+        $this->extensionAttributesMock = $this->getMock(
+            '\Magento\Quote\Api\Data\PaymentExtension',
+            ['getAgreementIds'],
+            [],
+            '',
+            false
         );
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->repositoryMock = $this->createMock(
-            \Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface::class
-        );
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->repositoryMock = $this->getMock('Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface');
 
         $this->model = new \Magento\CheckoutAgreements\Model\Checkout\Plugin\Validation(
             $this->agreementsValidatorMock,
@@ -84,7 +85,7 @@ class ValidationTest extends \PHPUnit\Framework\TestCase
         $this->repositoryMock->expects($this->once())->method('getList')->willReturn([1]);
         $this->extensionAttributesMock->expects($this->once())->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(true);
-        $this->paymentMock->expects(static::atLeastOnce())
+        $this->paymentMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
         $this->model->beforeSavePaymentInformation($this->subjectMock, $cartId, $this->paymentMock, $this->addressMock);
@@ -106,7 +107,7 @@ class ValidationTest extends \PHPUnit\Framework\TestCase
         $this->repositoryMock->expects($this->once())->method('getList')->willReturn([1]);
         $this->extensionAttributesMock->expects($this->once())->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(false);
-        $this->paymentMock->expects(static::atLeastOnce())
+        $this->paymentMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
         $this->model->beforeSavePaymentInformation($this->subjectMock, $cartId, $this->paymentMock, $this->addressMock);
@@ -124,7 +125,7 @@ class ValidationTest extends \PHPUnit\Framework\TestCase
         $this->repositoryMock->expects($this->once())->method('getList')->willReturn([1]);
         $this->extensionAttributesMock->expects($this->once())->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(true);
-        $this->paymentMock->expects(static::atLeastOnce())
+        $this->paymentMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
         $this->model->beforeSavePaymentInformation($this->subjectMock, $cartId, $this->paymentMock, $this->addressMock);

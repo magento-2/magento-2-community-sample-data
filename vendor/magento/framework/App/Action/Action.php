@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Action;
@@ -11,13 +11,8 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
 
 /**
- * Extend from this class to create actions controllers in frontend area of your application.
- * It contains standard action behavior (event dispatching, flag checks)
- * Action classes that do not extend from this class will lose this behavior and might not function correctly
+ * Default implementation of application action controller
  *
- * TODO: Remove this class. Allow implementation of Action Controllers by just implementing Action Interface.
- *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */

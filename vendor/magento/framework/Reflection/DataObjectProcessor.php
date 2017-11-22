@@ -1,17 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Framework\Reflection;
 
-use Magento\Framework\Api\CustomAttributesDataInterface;
 use Magento\Framework\Phrase;
+use Magento\Framework\Api\AttributeValue;
+use Magento\Framework\Api\CustomAttributesDataInterface;
+use Magento\Framework\Api\SimpleDataObjectConverter;
+use Zend\Code\Reflection\ClassReflection;
+use Zend\Code\Reflection\MethodReflection;
 
 /**
  * Data object processor for array serialization using class reflection
- *
- * @api
  */
 class DataObjectProcessor
 {
@@ -74,6 +77,7 @@ class DataObjectProcessor
         $methods = $this->methodsMapProcessor->getMethodsMap($dataObjectType);
         $outputData = [];
 
+        /** @var MethodReflection $method */
         foreach (array_keys($methods) as $methodName) {
             if (!$this->methodsMapProcessor->isMethodValidForDataField($dataObjectType, $methodName)) {
                 continue;
@@ -98,9 +102,6 @@ class DataObjectProcessor
                 $value = $this->customAttributesProcessor->buildOutputDataArray($dataObject, $dataObjectType);
             } elseif ($key === "extension_attributes") {
                 $value = $this->extensionAttributesProcessor->buildOutputDataArray($value, $returnType);
-                if (empty($value)) {
-                    continue;
-                }
             } else {
                 if (is_object($value) && !($value instanceof Phrase)) {
                     $value = $this->buildOutputDataArray($value, $returnType);

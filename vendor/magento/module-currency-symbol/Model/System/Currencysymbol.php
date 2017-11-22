@@ -1,21 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CurrencySymbol\Model\System;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Locale\Bundle\CurrencyBundle;
-use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Custom currency symbol model
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Currencysymbol
 {
@@ -114,11 +107,6 @@ class Currencysymbol
     protected $_scopeConfig;
 
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\App\Config\ReinitableConfigInterface $coreConfig
      * @param \Magento\Config\Model\Config\Factory $configFactory
@@ -127,7 +115,6 @@ class Currencysymbol
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Store\Model\System\Store $systemStore
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
-     * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -137,8 +124,7 @@ class Currencysymbol
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Store\Model\System\Store $systemStore,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        Json $serializer = null
+        \Magento\Framework\Event\ManagerInterface $eventManager
     ) {
         $this->_coreConfig = $coreConfig;
         $this->_configFactory = $configFactory;
@@ -148,7 +134,6 @@ class Currencysymbol
         $this->_systemStore = $systemStore;
         $this->_eventManager = $eventManager;
         $this->_scopeConfig = $scopeConfig;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
     /**
@@ -199,7 +184,7 @@ class Currencysymbol
         }
         $value = [];
         if ($symbols) {
-            $value['options']['fields']['customsymbol']['value'] = $this->serializer->serialize($symbols);
+            $value['options']['fields']['customsymbol']['value'] = serialize($symbols);
         } else {
             $value['options']['fields']['customsymbol']['inherit'] = 1;
         }
@@ -277,7 +262,7 @@ class Currencysymbol
             $storeId
         );
         if ($configData) {
-            $result = $this->serializer->unserialize($configData);
+            $result = unserialize($configData);
         }
 
         return is_array($result) ? $result : [];

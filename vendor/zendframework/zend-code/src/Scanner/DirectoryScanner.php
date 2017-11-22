@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -23,12 +23,12 @@ class DirectoryScanner implements ScannerInterface
     /**
      * @var string[]|DirectoryScanner[]
      */
-    protected $directories = [];
+    protected $directories = array();
 
     /**
      * @var FileScanner[]
      */
-    protected $fileScanners = [];
+    protected $fileScanners = array();
 
     /**
      * @var array
@@ -139,7 +139,7 @@ class DirectoryScanner implements ScannerInterface
     {
         $this->scan();
 
-        $return = [];
+        $return = array();
         foreach ($this->fileScanners as $fileScanner) {
             $return[] = ($returnFileScanners) ? $fileScanner : $fileScanner->getFile();
         }
@@ -173,7 +173,7 @@ class DirectoryScanner implements ScannerInterface
             $this->createClassToFileScannerCache();
         }
 
-        $returnClasses = [];
+        $returnClasses = array();
         foreach ($this->classToFileScanner as $className => $fsIndex) {
             $classScanner = $this->fileScanners[$fsIndex]->getClass($className);
             if ($returnDerivedScannerClass) {
@@ -240,7 +240,7 @@ class DirectoryScanner implements ScannerInterface
             return;
         }
 
-        $this->classToFileScanner = [];
+        $this->classToFileScanner = array();
         /** @var FileScanner $fileScanner */
         foreach ($this->fileScanners as $fsIndex => $fileScanner) {
             $fsClasses = $fileScanner->getClassNames();

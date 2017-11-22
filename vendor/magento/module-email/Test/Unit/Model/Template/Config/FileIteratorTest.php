@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Test\Unit\Model\Template\Config;
@@ -10,7 +10,7 @@ use Magento\Email\Model\Template\Config\FileIterator;
 /**
  * Class FileIteratorTest
  */
-class FileIteratorTest extends \PHPUnit\Framework\TestCase
+class FileIteratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FileIterator
@@ -42,9 +42,15 @@ class FileIteratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->filePaths = ['directory/path/file1', 'directory/path/file2'];
-        $this->fileReadFactory = $this->createMock(\Magento\Framework\Filesystem\File\ReadFactory::class);
-        $this->fileRead = $this->createMock(\Magento\Framework\Filesystem\File\Read::class);
-        $this->moduleDirResolverMock = $this->createMock(\Magento\Framework\Module\Dir\ReverseResolver::class);
+        $this->fileReadFactory = $this->getMock('Magento\Framework\Filesystem\File\ReadFactory', [], [], '', false);
+        $this->fileRead = $this->getMock('Magento\Framework\Filesystem\File\Read', [], [], '', false);
+        $this->moduleDirResolverMock = $this->getMock(
+            'Magento\Framework\Module\Dir\ReverseResolver',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->fileIterator = new \Magento\Email\Model\Template\Config\FileIterator(
             $this->fileReadFactory,
@@ -93,7 +99,7 @@ class FileIteratorTest extends \PHPUnit\Framework\TestCase
     {
         $filePath = $this->filePaths[0];
 
-        $this->expectException(
+        $this->setExpectedException(
             'UnexpectedValueException',
             sprintf("Unable to determine a module, file '%s' belongs to.", $filePath)
         );

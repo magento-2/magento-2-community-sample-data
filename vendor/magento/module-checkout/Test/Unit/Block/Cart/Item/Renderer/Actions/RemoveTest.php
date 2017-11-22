@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Test\Unit\Block\Cart\Item\Renderer\Actions;
@@ -9,7 +9,7 @@ use Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove;
 use Magento\Checkout\Helper\Cart;
 use Magento\Quote\Model\Quote\Item;
 
-class RemoveTest extends \PHPUnit\Framework\TestCase
+class RemoveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Remove
@@ -23,12 +23,12 @@ class RemoveTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->cartHelperMock = $this->getMockBuilder(\Magento\Checkout\Helper\Cart::class)
+        $this->cartHelperMock = $this->getMockBuilder('Magento\Checkout\Helper\Cart')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove::class,
+            'Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove',
             [
                 'cartHelper' => $this->cartHelperMock,
             ]
@@ -42,7 +42,7 @@ class RemoveTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->getMock();
 

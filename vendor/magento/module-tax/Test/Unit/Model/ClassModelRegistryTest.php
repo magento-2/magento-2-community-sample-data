@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Test for TaxRuleRegistry
  */
-class ClassModelRegistryTest extends \PHPUnit\Framework\TestCase
+class ClassModelRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Model\ClassModelRegistry
@@ -30,18 +30,18 @@ class ClassModelRegistryTest extends \PHPUnit\Framework\TestCase
 
     const CLASS_MODEL = 1;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->classModelFactoryMock = $this->getMockBuilder(\Magento\Tax\Model\ClassModelFactory::class)
+        $this->classModelFactoryMock = $this->getMockBuilder('Magento\Tax\Model\ClassModelFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->taxRuleRegistry = $objectManager->getObject(
-            \Magento\Tax\Model\ClassModelRegistry::class,
+            'Magento\Tax\Model\ClassModelRegistry',
             ['taxClassModelFactory' => $this->classModelFactoryMock]
         );
-        $this->classModelMock = $this->getMockBuilder(\Magento\Tax\Model\ClassModel::class)
+        $this->classModelMock = $this->getMockBuilder('Magento\Tax\Model\ClassModel')
             ->disableOriginalConstructor()
             ->getMock();
         $this->classModelFactoryMock->expects($this->any())

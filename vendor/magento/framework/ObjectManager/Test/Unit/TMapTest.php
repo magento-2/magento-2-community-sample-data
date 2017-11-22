@@ -1,20 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Test\Unit;
 
 use Magento\Framework\ObjectManager\TMap;
-use Magento\Framework\ObjectManagerInterface;
 
 require_once __DIR__ . '/_files/TMap/TClass.php';
 require_once __DIR__ . '/_files/TMap/TInterface.php';
 
-class TMapTest extends \PHPUnit\Framework\TestCase
+class TMapTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManagerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\ObjectManagerInterface | \PHPUnit_Framework_MockObject_MockObject
      */
     private $om;
 
@@ -23,12 +22,12 @@ class TMapTest extends \PHPUnit\Framework\TestCase
      */
     private $omConfig;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->om = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->om = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->getMockForAbstractClass();
 
-        $this->omConfig = $this->getMockBuilder(\Magento\Framework\ObjectManager\ConfigInterface::class)
+        $this->omConfig = $this->getMockBuilder('Magento\Framework\ObjectManager\ConfigInterface')
             ->getMockForAbstractClass();
     }
 
@@ -151,10 +150,7 @@ class TMapTest extends \PHPUnit\Framework\TestCase
             'TInterface',
             $this->om,
             $this->omConfig,
-            $testClasses,
-            function (ObjectManagerInterface $om, $objectName) {
-                return $om->create($objectName);
-            }
+            $testClasses
         );
     }
 }

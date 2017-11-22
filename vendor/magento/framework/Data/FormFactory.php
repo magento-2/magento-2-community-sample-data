@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\Data;
 
@@ -33,7 +35,7 @@ class FormFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Data\Form::class
+        $instanceName = 'Magento\Framework\Data\Form'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
@@ -52,10 +54,7 @@ class FormFactory
         $form = $this->_objectManager->create($this->_instanceName, $data);
         if (!$form instanceof \Magento\Framework\Data\Form) {
             throw new \Magento\Framework\Exception\LocalizedException(
-                new \Magento\Framework\Phrase(
-                    '%1 doesn\'t extend \Magento\Framework\Data\Form',
-                    [$this->_instanceName]
-                )
+                new \Magento\Framework\Phrase('%1 doesn\'t extend \Magento\Framework\Data\Form', [$this->_instanceName])
             );
         }
         return $form;

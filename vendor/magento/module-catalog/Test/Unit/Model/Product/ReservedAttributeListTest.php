@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product;
 
-use Magento\Catalog\Model\Product\ReservedAttributeList;
+use \Magento\Catalog\Model\Product\ReservedAttributeList;
 
-class ReservedAttributeListTest extends \PHPUnit\Framework\TestCase
+class ReservedAttributeListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReservedAttributeList
@@ -16,11 +16,7 @@ class ReservedAttributeListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->model = new ReservedAttributeList(
-            \Magento\Catalog\Model\Product::class,
-            ['some_value'],
-            ['some_attribute']
-        );
+        $this->model = new ReservedAttributeList('Magento\Catalog\Model\Product', ['some_value'], ['some_attribute']);
     }
 
     /**
@@ -29,9 +25,12 @@ class ReservedAttributeListTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsReservedAttribute($isUserDefined, $attributeCode, $expected)
     {
-        $attribute = $this->createPartialMock(
-            \Magento\Catalog\Model\Entity\Attribute::class,
-            ['getIsUserDefined', 'getAttributeCode', '__sleep', '__wakeup']
+        $attribute = $this->getMock(
+            '\Magento\Catalog\Model\Entity\Attribute',
+            ['getIsUserDefined', 'getAttributeCode', '__sleep', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $attribute->expects($this->once())->method('getIsUserDefined')->will($this->returnValue($isUserDefined));

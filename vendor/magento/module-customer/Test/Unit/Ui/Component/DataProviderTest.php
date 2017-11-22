@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Ui\Component;
@@ -12,10 +12,7 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\View\Element\UiComponent\DataProvider\Reporting;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DataProviderTest extends \PHPUnit\Framework\TestCase
+class DataProviderTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_REQUEST_NAME = 'test_request_name';
 
@@ -49,24 +46,24 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $attributeRepository;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->reporting = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\Reporting::class
-        )->disableOriginalConstructor()->getMock();
-
-        $searchCriteriaBuilder = $this->mockSearchCriteria();
-
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->filterBuilder = $this->getMockBuilder(\Magento\Framework\Api\FilterBuilder::class)
+        $this->reporting = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\DataProvider\Reporting')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->attributeRepository = $this->getMockBuilder(
-            \Magento\Customer\Ui\Component\Listing\AttributeRepository::class
-        )->disableOriginalConstructor()->getMock();
+        $searchCriteriaBuilder = $this->mockSearchCriteria();
+
+        $this->request = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
+            ->getMockForAbstractClass();
+
+        $this->filterBuilder = $this->getMockBuilder('Magento\Framework\Api\FilterBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->attributeRepository = $this->getMockBuilder('Magento\Customer\Ui\Component\Listing\AttributeRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = new DataProvider(
             self::TEST_REQUEST_NAME,
@@ -98,7 +95,7 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $attributeMock = $this->getMockBuilder(\Magento\Framework\Api\AttributeInterface::class)
+        $attributeMock = $this->getMockBuilder('Magento\Framework\Api\AttributeInterface')
             ->getMockForAbstractClass();
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
@@ -107,13 +104,13 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getValue')
             ->willReturn('opt1_value');
 
-        $searchDocumentMock = $this->getMockBuilder(\Magento\Framework\Api\Search\DocumentInterface::class)
+        $searchDocumentMock = $this->getMockBuilder('Magento\Framework\Api\Search\DocumentInterface')
             ->getMockForAbstractClass();
         $searchDocumentMock->expects($this->once())
             ->method('getCustomAttributes')
             ->willReturn([$attributeMock]);
 
-        $searchResultMock = $this->getMockBuilder(\Magento\Framework\Api\Search\SearchResultInterface::class)
+        $searchResultMock = $this->getMockBuilder('Magento\Framework\Api\Search\SearchResultInterface')
             ->getMockForAbstractClass();
         $searchResultMock->expects($this->once())
             ->method('getTotalCount')
@@ -151,10 +148,10 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function mockSearchCriteria()
     {
-        $this->searchCriteria = $this->getMockBuilder(\Magento\Framework\Api\Search\SearchCriteriaInterface::class)
+        $this->searchCriteria = $this->getMockBuilder('Magento\Framework\Api\Search\SearchCriteriaInterface')
             ->getMockForAbstractClass();
 
-        $searchCriteriaBuilder = $this->getMockBuilder(\Magento\Framework\Api\Search\SearchCriteriaBuilder::class)
+        $searchCriteriaBuilder = $this->getMockBuilder('Magento\Framework\Api\Search\SearchCriteriaBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Test for \Magento\Catalog\Model\Layer\Filter\DataProvider\Decimal
  */
-class DecimalTest extends \PHPUnit\Framework\TestCase
+class DecimalTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Catalog\Model\Layer\Filter\FilterInterface|MockObject */
     private $filter;
@@ -27,17 +27,17 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->filter = $this->getMockBuilder(\Magento\Catalog\Model\Layer\Filter\FilterInterface::class)
+        $this->filter = $this->getMockBuilder('\Magento\Catalog\Model\Layer\Filter\FilterInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMockForAbstractClass();
-        $this->resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal::class)
+        $this->resource = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal')
             ->disableOriginalConstructor()
             ->setMethods(['getMinMax', 'getCount'])
             ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Layer\Filter\DataProvider\Decimal::class,
+            'Magento\Catalog\Model\Layer\Filter\DataProvider\Decimal',
             [
                 'resource' => $this->resource,
             ]

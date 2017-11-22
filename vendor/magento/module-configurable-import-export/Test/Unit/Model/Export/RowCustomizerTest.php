@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableImportExport\Test\Unit\Model\Export;
@@ -13,7 +13,10 @@ use Magento\Catalog\Model\Product;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\ImportExport\Model\Import;
 
-class RowCustomizerTest extends \PHPUnit\Framework\TestCase
+/**
+ * Test for Magento\ConfigurableImportExport\Model\Export\RowCustomizer
+ */
+class RowCustomizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ExportRowCustomizer
@@ -172,6 +175,11 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * Init Configurable Data
+     * 
+     * @return void
+     */
     private function initConfigurableData()
     {
         $productIds = [1, 2, 3];

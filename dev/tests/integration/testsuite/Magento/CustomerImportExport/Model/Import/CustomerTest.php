@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,7 +14,7 @@ use Magento\ImportExport\Model\Import;
 /**
  * Test for class \Magento\CustomerImportExport\Model\Import\Customer which covers validation logic
  */
-class CustomerTest extends \PHPUnit\Framework\TestCase
+class CustomerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Model object which used for tests
@@ -43,7 +43,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\CustomerImportExport\Model\Import\Customer::class);
+            ->create('Magento\CustomerImportExport\Model\Import\Customer');
         $this->_model->setParameters(['behavior' => Import::BEHAVIOR_ADD_UPDATE]);
 
         $propertyAccessor = new \ReflectionProperty($this->_model, 'errorMessageTemplates');
@@ -63,7 +63,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         ];
 
         $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Filesystem::class);
+            ->create('Magento\Framework\Filesystem');
         $this->directoryWrite = $filesystem
             ->getDirectoryWrite(DirectoryList::ROOT);
     }
@@ -86,7 +86,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
 
         /** @var $customersCollection \Magento\Customer\Model\ResourceModel\Customer\Collection */
         $customersCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\ResourceModel\Customer\Collection::class
+            'Magento\Customer\Model\ResourceModel\Customer\Collection'
         );
         $customersCollection->addAttributeToSelect('firstname', 'inner')->addAttributeToSelect('lastname', 'inner');
 
@@ -112,11 +112,8 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $existingCustomer = $objectManager->get(
-            \Magento\Framework\Registry::class
-        )->registry(
-                '_fixture/Magento_ImportExport_Customer'
-            );
+        $existingCustomer = $objectManager->get('Magento\Framework\Registry')
+            ->registry('_fixture/Magento_ImportExport_Customer');
 
         $updatedCustomer = $customers[$existingCustomer->getId()];
 
@@ -137,6 +134,12 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
             $updatedCustomer->getCreatedAt(),
             'Creation date must be changed'
         );
+
+        $this->assertEquals(
+            $existingCustomer->getGender(),
+            $updatedCustomer->getGender(),
+            'Gender must be not changed'
+        );
     }
 
     /**
@@ -155,7 +158,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
 
         /** @var $customerCollection \Magento\Customer\Model\ResourceModel\Customer\Collection */
         $customerCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\ResourceModel\Customer\Collection::class
+            'Magento\Customer\Model\ResourceModel\Customer\Collection'
         );
         $this->assertEquals(3, $customerCollection->count(), 'Count of existing customers are invalid');
 

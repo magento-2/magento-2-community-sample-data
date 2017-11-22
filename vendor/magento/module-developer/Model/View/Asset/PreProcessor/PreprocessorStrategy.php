@@ -1,23 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Developer\Model\View\Asset\PreProcessor;
 
-use Magento\Developer\Model\Config\Source\WorkflowType;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\State;
 use Magento\Framework\View\Asset\PreProcessor;
-use Magento\Framework\View\Asset\PreProcessor\AlternativeSourceInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Developer\Model\Config\Source\WorkflowType;
 use Magento\Framework\View\Asset\PreProcessorInterface;
+use Magento\Framework\View\Asset\PreProcessor\AlternativeSourceInterface;
 
 /**
- * Selection of the strategy for assets pre-processing
- *
- * @api
- * @since 100.0.2
+ * Class PreprocessorStrategy
  */
 class PreprocessorStrategy implements PreProcessorInterface
 {
@@ -37,11 +32,6 @@ class PreprocessorStrategy implements PreProcessorInterface
     private $scopeConfig;
 
     /**
-     * @var State
-     */
-    private $state;
-
-    /**
      * Constructor
      *
      * @param AlternativeSourceInterface $alternativeSource
@@ -59,33 +49,17 @@ class PreprocessorStrategy implements PreProcessorInterface
     }
 
     /**
-     * Transform content and/or content type for the specified pre-processing chain object
+     * Transform content and/or content type for the specified preprocessing chain object
      *
      * @param PreProcessor\Chain $chain
      * @return void
      */
     public function process(PreProcessor\Chain $chain)
     {
-        $isClientSideCompilation =
-            $this->getState()->getMode() !== State::MODE_PRODUCTION
-            && WorkflowType::CLIENT_SIDE_COMPILATION === $this->scopeConfig->getValue(WorkflowType::CONFIG_NAME_PATH);
-
-        if ($isClientSideCompilation) {
+        if (WorkflowType::CLIENT_SIDE_COMPILATION === $this->scopeConfig->getValue(WorkflowType::CONFIG_NAME_PATH)) {
             $this->frontendCompilation->process($chain);
         } else {
             $this->alternativeSource->process($chain);
         }
-    }
-
-    /**
-     * @return State
-     * @deprecated 100.2.0
-     */
-    private function getState()
-    {
-        if (null === $this->state) {
-            $this->state = ObjectManager::getInstance()->get(State::class);
-        }
-        return $this->state;
     }
 }

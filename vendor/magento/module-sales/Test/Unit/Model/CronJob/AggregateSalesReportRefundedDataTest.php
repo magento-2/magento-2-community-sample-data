@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\CronJob;
@@ -10,7 +10,7 @@ use \Magento\Sales\Model\CronJob\AggregateSalesReportRefundedData;
 /**
  * Tests Magento\Sales\Model\CronJob\AggregateSalesReportRefundedDataTest
  */
-class AggregateSalesReportRefundedDataTest extends \PHPUnit\Framework\TestCase
+class AggregateSalesReportRefundedDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Locale\ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,17 +34,15 @@ class AggregateSalesReportRefundedDataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->refundedFactoryMock = $this->getMockBuilder(
-            \Magento\Sales\Model\ResourceModel\Report\RefundedFactory::class
-        )
+        $this->refundedFactoryMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\RefundedFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +56,7 @@ class AggregateSalesReportRefundedDataTest extends \PHPUnit\Framework\TestCase
     public function testExecute()
     {
         $date = $this->setupAggregate();
-        $refundedMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Report\Refunded::class)
+        $refundedMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\Refunded')
             ->disableOriginalConstructor()
             ->getMock();
         $refundedMock->expects($this->once())

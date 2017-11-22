@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,7 @@
  */
 namespace Magento\Catalog\Model;
 
-class ProductPriceTest extends \PHPUnit\Framework\TestCase
+class ProductPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -23,7 +23,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
     }
 
@@ -37,7 +37,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     public function testGetPriceModel()
     {
         $default = $this->_model->getPriceModel();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Type\Price::class, $default);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Type\Price', $default);
         $this->assertSame($default, $this->_model->getPriceModel());
     }
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Product\View;
 
-class GalleryTest extends \PHPUnit\Framework\TestCase
+class GalleryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\View\Gallery
@@ -130,7 +130,7 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
             ->willReturn('product_page_image_large_url');
 
         $images = $this->model->getGalleryImages();
-        $this->assertInstanceOf(\Magento\Framework\Data\Collection::class, $images);
+        $this->assertInstanceOf('Magento\Framework\Data\Collection', $images);
     }
 
     /**

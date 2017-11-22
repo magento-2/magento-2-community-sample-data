@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,17 +26,13 @@ class Curl extends Conditions implements CatalogRuleInterface
      */
     protected $mapTypeParams = [
         'Conditions combination' => [
-            'type' => \Magento\CatalogRule\Model\Rule\Condition\Combine::class,
+            'type' => 'Magento\CatalogRule\Model\Rule\Condition\Combine',
             'aggregator' => 'all',
             'value' => 1,
         ],
         'Category' => [
-            'type' => \Magento\CatalogRule\Model\Rule\Condition\Product::class,
+            'type' => 'Magento\CatalogRule\Model\Rule\Condition\Product',
             'attribute' => 'category_ids',
-        ],
-        'Attribute' => [
-            'type' => \Magento\CatalogRule\Model\Rule\Condition\Product::class,
-            'attribute' => 'attribute_id',
         ],
     ];
 

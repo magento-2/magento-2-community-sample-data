@@ -2,12 +2,12 @@
 /**
  * Test case for \Magento\Framework\Profiler\Driver\Standard\Output\Html
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Profiler\Driver\Standard\Output;
 
-class HtmlTest extends \PHPUnit\Framework\TestCase
+class HtmlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Profiler\Driver\Standard\Output\Html

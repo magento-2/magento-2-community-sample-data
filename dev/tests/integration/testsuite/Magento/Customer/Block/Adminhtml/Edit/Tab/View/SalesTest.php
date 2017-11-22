@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Adminhtml\Edit\Tab\View;
@@ -13,7 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoAppArea adminhtml
  */
-class SalesTest extends \PHPUnit\Framework\TestCase
+class SalesTest extends \PHPUnit_Framework_TestCase
 {
     const MAIN_WEBSITE = 1;
 
@@ -44,15 +44,15 @@ class SalesTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\App\State::class)->setAreaCode('adminhtml');
+        $objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
 
-        $this->coreRegistry = $objectManager->get(\Magento\Framework\Registry::class);
+        $this->coreRegistry = $objectManager->get('Magento\Framework\Registry');
         $this->coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, 1);
 
         $this->block = $objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Customer\Block\Adminhtml\Edit\Tab\View\Sales::class,
+            'Magento\Customer\Block\Adminhtml\Edit\Tab\View\Sales',
             'sales_' . mt_rand(),
             ['coreRegistry' => $this->coreRegistry]
         )->setTemplate(

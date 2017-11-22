@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Gateway\Http;
 
 use Magento\Payment\Gateway\Http\Transfer;
 
-class TransferTest extends \PHPUnit\Framework\TestCase
+class TransferTest extends \PHPUnit_Framework_TestCase
 {
     public function testIO()
     {

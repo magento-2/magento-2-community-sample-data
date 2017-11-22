@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
@@ -10,9 +10,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 /**
  * Adminhtml order create gift message block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Giftmessage extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
 {
@@ -63,7 +61,7 @@ class Giftmessage extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCr
     public function getFormHtml(\Magento\Framework\DataObject $entity, $entityType = 'quote')
     {
         return $this->getLayout()->createBlock(
-            \Magento\Sales\Block\Adminhtml\Order\Create\Giftmessage\Form::class
+            'Magento\Sales\Block\Adminhtml\Order\Create\Giftmessage\Form'
         )->setEntity(
             $entity
         )->setEntityType(

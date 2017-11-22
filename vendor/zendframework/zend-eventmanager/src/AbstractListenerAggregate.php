@@ -17,7 +17,7 @@ abstract class AbstractListenerAggregate implements ListenerAggregateInterface
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $listeners = [];
+    protected $listeners = array();
 
     /**
      * {@inheritDoc}

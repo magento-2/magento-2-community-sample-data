@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Payment\Test\Unit\Block\Info;
 
-class InstructionsTest extends \PHPUnit\Framework\TestCase
+class InstructionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\Info|\PHPUnit_Framework_MockObject_MockObject
@@ -23,9 +23,9 @@ class InstructionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
         $this->_instructions = new \Magento\Payment\Block\Info\Instructions($context);
-        $this->_info = $this->createMock(\Magento\Payment\Model\Info::class);
+        $this->_info = $this->getMock('Magento\Payment\Model\Info', [], [], '', false);
         $this->_instructions->setData('info', $this->_info);
     }
 
@@ -44,7 +44,7 @@ class InstructionsTest extends \PHPUnit\Framework\TestCase
     public function testGetInstruction()
     {
         $methodInstance = $this->getMockBuilder(
-            \Magento\Payment\Model\MethodInterface::class
+            'Magento\Payment\Model\MethodInterface'
         )->getMockForAbstractClass();
         $methodInstance->expects($this->once())
             ->method('getConfigData')

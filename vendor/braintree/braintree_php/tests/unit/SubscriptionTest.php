@@ -1,22 +1,17 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class SubscriptionTest extends Setup
+class Braintree_SubscriptionTest extends PHPUnit_Framework_TestCase
 {
-    public function testErrorsOnFindWithBlankArgument()
+    function testErrorsOnFindWithBlankArgument()
     {
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\Subscription::find('');
+        Braintree_Subscription::find('');
     }
 
-    public function testErrorsOnFindWithWhitespaceArgument()
+    function testErrorsOnFindWithWhitespaceArgument()
     {
         $this->setExpectedException('InvalidArgumentException');
-        Braintree\Subscription::find('\t');
+        Braintree_Subscription::find('\t');
     }
 }

@@ -1,55 +1,63 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Test\Unit\Controller\Sidebar;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Checkout\Model\Sidebar;
+use Magento\Checkout\Controller;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Checkout\Controller\Sidebar\RemoveItem;
 
 /**
+ * Class RemoveItemTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RemoveItemTest extends \PHPUnit\Framework\TestCase
+class RemoveItemTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Magento\Checkout\Controller\Sidebar\RemoveItem */
+    /** @var RemoveItem */
     protected $removeItem;
 
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
 
-    /** @var \Magento\Checkout\Model\Sidebar|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Sidebar|\PHPUnit_Framework_MockObject_MockObject */
     protected $sidebarMock;
 
-    /** @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $loggerMock;
 
-    /** @var \Magento\Framework\Json\Helper\Data|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Data|\PHPUnit_Framework_MockObject_MockObject */
     protected $jsonHelperMock;
 
-    /** @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestMock;
 
-    /** @var \Magento\Framework\App\ResponseInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $responseMock;
 
-    /** @var \Magento\Framework\View\Result\PageFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PageFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $resultPageFactoryMock;
 
-    /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $resultRedirectFactory;
+    /** @var Validator|\PHPUnit_Framework_MockObject_MockObject */
+    private $formKeyValidatorMock;
 
     protected function setUp()
     {
-        $this->sidebarMock = $this->createMock(\Magento\Checkout\Model\Sidebar::class);
-        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $this->jsonHelperMock = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->sidebarMock = $this->getMock(Sidebar::class, [], [], '', false);
+        $this->loggerMock = $this->getMock(LoggerInterface::class);
+        $this->jsonHelperMock = $this->getMock(Data::class, [], [], '', false);
+        $this->requestMock = $this->getMock(RequestInterface::class);
         $this->responseMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\ResponseInterface::class,
+            ResponseInterface::class,
             [],
             '',
             false,
@@ -57,15 +65,12 @@ class RemoveItemTest extends \PHPUnit\Framework\TestCase
             true,
             ['representJson']
         );
-        $this->resultPageFactoryMock = $this->createMock(\Magento\Framework\View\Result\PageFactory::class);
-        $this->resultRedirectFactory = $this->createPartialMock(
-            \Magento\Framework\Controller\Result\RedirectFactory::class,
-            ['create']
-        );
+        $this->resultPageFactoryMock =
+            $this->getMock(PageFactory::class, [], [], '', false);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->removeItem = $this->objectManagerHelper->getObject(
-            \Magento\Checkout\Controller\Sidebar\RemoveItem::class,
+            RemoveItem::class,
             [
                 'sidebar' => $this->sidebarMock,
                 'logger' => $this->loggerMock,
@@ -73,25 +78,29 @@ class RemoveItemTest extends \PHPUnit\Framework\TestCase
                 'request' => $this->requestMock,
                 'response' => $this->responseMock,
                 'resultPageFactory' => $this->resultPageFactoryMock,
-                'resultRedirectFactory' => $this->resultRedirectFactory
-
             ]
         );
-        $formKeyValidatorMock = $this->createMock(\Magento\Framework\Data\Form\FormKey\Validator::class);
-        $this->setPropertyValue($this->removeItem, 'formKeyValidator', $formKeyValidatorMock);
+
+        $this->formKeyValidatorMock =
+            $this->getMock(Validator::class, [], [], '', false);
+
+        $this->objectManagerHelper->setBackwardCompatibleProperty(
+            $this->removeItem,
+            'formKeyValidator',
+            $this->formKeyValidatorMock
+        );
     }
 
     public function testExecute()
     {
-        $this->getPropertyValue($this->removeItem, 'formKeyValidator')
-            ->expects($this->once())
-            ->method('validate')
-            ->with($this->requestMock)
-            ->willReturn(true);
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('item_id', null)
             ->willReturn('1');
+
+        $this->formKeyValidatorMock->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
 
         $this->sidebarMock->expects($this->once())
             ->method('checkQuoteItem')
@@ -137,17 +146,59 @@ class RemoveItemTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('json represented', $this->removeItem->execute());
     }
 
-    public function testExecuteWithLocalizedException()
+    public function testExecuteWithValidationLocalizedException()
     {
-        $this->getPropertyValue($this->removeItem, 'formKeyValidator')
-            ->expects($this->once())
-            ->method('validate')
-            ->with($this->requestMock)
-            ->willReturn(true);
+        $exceptionMessage = 'We can\'t remove the item.';
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('item_id', null)
             ->willReturn('1');
+
+        $this->formKeyValidatorMock->expects($this->once())
+            ->method('validate')
+            ->willReturn(false);
+
+        $this->sidebarMock->expects($this->never())
+            ->method('checkQuoteItem');
+
+        $this->sidebarMock->expects($this->once())
+            ->method('getResponseData')
+            ->with($exceptionMessage)
+            ->willReturn(
+                [
+                    'success' => false,
+                    'error_message' => $exceptionMessage,
+                ]
+            );
+
+        $this->jsonHelperMock->expects($this->once())
+            ->method('jsonEncode')
+            ->with(
+                [
+                    'success' => false,
+                    'error_message' => $exceptionMessage,
+                ]
+            )
+            ->willReturn('json encoded');
+
+        $this->responseMock->expects($this->once())
+            ->method('representJson')
+            ->with('json encoded')
+            ->willReturn('json represented');
+
+        $this->assertEquals('json represented', $this->removeItem->execute());
+    }
+
+    public function testExecuteWithLocalizedException()
+    {
+        $this->requestMock->expects($this->once())
+            ->method('getParam')
+            ->with('item_id', null)
+            ->willReturn('1');
+
+        $this->formKeyValidatorMock->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
 
         $this->sidebarMock->expects($this->once())
             ->method('checkQuoteItem')
@@ -184,15 +235,14 @@ class RemoveItemTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteWithException()
     {
-        $this->getPropertyValue($this->removeItem, 'formKeyValidator')
-            ->expects($this->once())
-            ->method('validate')
-            ->with($this->requestMock)
-            ->willReturn(true);
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('item_id', null)
             ->willReturn('1');
+
+        $this->formKeyValidatorMock->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
 
         $exception = new \Exception('Error message!');
 
@@ -232,53 +282,5 @@ class RemoveItemTest extends \PHPUnit\Framework\TestCase
             ->willReturn('json represented');
 
         $this->assertEquals('json represented', $this->removeItem->execute());
-    }
-
-    public function testExecuteWhenFormKeyValidationFailed()
-    {
-        $resultRedirect = $this->createMock(\Magento\Framework\Controller\Result\Redirect::class);
-        $resultRedirect->expects($this->once())->method('setPath')->with('*/cart/')->willReturnSelf();
-        $this->resultRedirectFactory->expects($this->once())->method('create')->willReturn($resultRedirect);
-        $this->getPropertyValue($this->removeItem, 'formKeyValidator')
-            ->expects($this->once())
-            ->method('validate')
-            ->with($this->requestMock)
-            ->willReturn(false);
-        $this->assertEquals($resultRedirect, $this->removeItem->execute());
-    }
-
-    /**
-     * Get any object property value.
-     *
-     * @param $object
-     * @param $property
-     * @return mixed
-     * @deprecated
-     */
-    protected function getPropertyValue($object, $property)
-    {
-        $reflection = new \ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-
-        return $reflectionProperty->getValue($object);
-    }
-
-    /**
-     * Set object property value.
-     *
-     * @param $object
-     * @param $property
-     * @param $value
-     * @deprecated
-     */
-    protected function setPropertyValue(&$object, $property, $value)
-    {
-        $reflection = new \ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($object, $value);
-
-        return $object;
     }
 }

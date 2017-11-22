@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Url;
@@ -23,7 +23,7 @@ class RouteParamsResolverFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Url\RouteParamsResolverInterface::class
+        $instanceName = 'Magento\Framework\Url\RouteParamsResolverInterface'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

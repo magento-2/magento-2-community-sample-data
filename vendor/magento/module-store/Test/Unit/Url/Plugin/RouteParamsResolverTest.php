@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Test\Unit\Url\Plugin;
 
-class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
+class RouteParamsResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Config\ScopeConfigInterface
@@ -29,9 +29,9 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->queryParamsResolverMock = $this->createMock(\Magento\Framework\Url\QueryParamsResolverInterface::class);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->storeManagerMock = $this->getMock('Magento\Store\Model\StoreManagerInterface');
+        $this->queryParamsResolverMock = $this->getMock('Magento\Framework\Url\QueryParamsResolverInterface');
         $this->model = new \Magento\Store\Url\Plugin\RouteParamsResolver(
             $this->scopeConfigMock,
             $this->storeManagerMock,
@@ -39,7 +39,10 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBeforeSetRouteParamsScopeInParams()
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    public function testAroundSetRouteParamsScopeInParams()
     {
         $storeCode = 'custom_store';
         $this->scopeConfigMock
@@ -54,7 +57,7 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);
         $data = ['_scope' => $storeCode, '_scope_to_url' => true];
         /** @var \PHPUnit_Framework_MockObject_MockObject $routeParamsResolverMock */
-        $routeParamsResolverMock = $this->getMockBuilder(\Magento\Framework\Url\RouteParamsResolver::class)
+        $routeParamsResolverMock = $this->getMockBuilder('Magento\Framework\Url\RouteParamsResolver')
             ->setMethods(['setScope', 'getScope'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,13 +66,20 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->queryParamsResolverMock->expects($this->once())->method('setQueryParam')->with('___store', $storeCode);
 
-        $this->model->beforeSetRouteParams(
+        $this->model->aroundSetRouteParams(
             $routeParamsResolverMock,
+            function ($data, $unsetOldParams) {
+                $this->assertArrayNotHasKey('_scope_to_url', $data, 'This data item should have been unset.');
+                $this->assertArrayNotHasKey('_scope', $data, 'This data item should have been unset.');
+            },
             $data
         );
     }
 
-    public function testBeforeSetRouteParamsScopeUseStoreInUrl()
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    public function testAroundSetRouteParamsScopeUseStoreInUrl()
     {
         $storeCode = 'custom_store';
         $this->scopeConfigMock
@@ -84,7 +94,7 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);
         $data = ['_scope' => $storeCode, '_scope_to_url' => true];
         /** @var \PHPUnit_Framework_MockObject_MockObject $routeParamsResolverMock */
-        $routeParamsResolverMock = $this->getMockBuilder(\Magento\Framework\Url\RouteParamsResolver::class)
+        $routeParamsResolverMock = $this->getMockBuilder('Magento\Framework\Url\RouteParamsResolver')
             ->setMethods(['setScope', 'getScope'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -93,13 +103,20 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->queryParamsResolverMock->expects($this->never())->method('setQueryParam');
 
-        $this->model->beforeSetRouteParams(
+        $this->model->aroundSetRouteParams(
             $routeParamsResolverMock,
+            function ($data, $unsetOldParams) {
+                $this->assertArrayNotHasKey('_scope_to_url', $data, 'This data item should have been unset.');
+                $this->assertArrayNotHasKey('_scope', $data, 'This data item should have been unset.');
+            },
             $data
         );
     }
 
-    public function testBeforeSetRouteParamsSingleStore()
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    public function testAroundSetRouteParamsSingleStore()
     {
         $storeCode = 'custom_store';
         $this->scopeConfigMock
@@ -114,7 +131,7 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(true);
         $data = ['_scope' => $storeCode, '_scope_to_url' => true];
         /** @var \PHPUnit_Framework_MockObject_MockObject $routeParamsResolverMock */
-        $routeParamsResolverMock = $this->getMockBuilder(\Magento\Framework\Url\RouteParamsResolver::class)
+        $routeParamsResolverMock = $this->getMockBuilder('Magento\Framework\Url\RouteParamsResolver')
             ->setMethods(['setScope', 'getScope'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -123,13 +140,20 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->queryParamsResolverMock->expects($this->never())->method('setQueryParam');
 
-        $this->model->beforeSetRouteParams(
+        $this->model->aroundSetRouteParams(
             $routeParamsResolverMock,
+            function ($data, $unsetOldParams) {
+                $this->assertArrayNotHasKey('_scope_to_url', $data, 'This data item should have been unset.');
+                $this->assertArrayNotHasKey('_scope', $data, 'This data item should have been unset.');
+            },
             $data
         );
     }
 
-    public function testBeforeSetRouteParamsNoScopeInParams()
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    public function testAroundSetRouteParamsNoScopeInParams()
     {
         $storeCode = 'custom_store';
         $this->scopeConfigMock
@@ -143,7 +167,7 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(false));
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);
         /** @var \PHPUnit_Framework_MockObject_MockObject| $routeParamsResolverMock */
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->setMethods(['getCode'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -152,7 +176,7 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
         $data = ['_scope_to_url' => true];
         /** @var \PHPUnit_Framework_MockObject_MockObject $routeParamsResolverMock */
-        $routeParamsResolverMock = $this->getMockBuilder(\Magento\Framework\Url\RouteParamsResolver::class)
+        $routeParamsResolverMock = $this->getMockBuilder('Magento\Framework\Url\RouteParamsResolver')
             ->setMethods(['setScope', 'getScope'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -161,8 +185,11 @@ class RouteParamsResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->queryParamsResolverMock->expects($this->once())->method('setQueryParam')->with('___store', $storeCode);
 
-        $this->model->beforeSetRouteParams(
+        $this->model->aroundSetRouteParams(
             $routeParamsResolverMock,
+            function ($data, $unsetOldParams) {
+                $this->assertArrayNotHasKey('_scope_to_url', $data, 'This data item should have been unset.');
+            },
             $data
         );
     }

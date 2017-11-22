@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Block\Form;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Cc extends \Magento\Payment\Block\Form
 {
     /**
@@ -112,7 +108,6 @@ class Cc extends \Magento\Payment\Block\Form
     /**
      * Whether switch/solo card type available
      *
-     * @deprecated 100.1.0 unused
      * @return bool
      */
     public function hasSsCardType()
@@ -128,7 +123,6 @@ class Cc extends \Magento\Payment\Block\Form
     /**
      * Solo/switch card start year
      *
-     * @deprecated 100.1.0 unused
      * @return array
      */
     public function getSsStartYears()

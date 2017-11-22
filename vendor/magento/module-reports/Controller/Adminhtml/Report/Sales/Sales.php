@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Controller\Adminhtml\Report\Sales;
@@ -25,7 +25,7 @@ class Sales extends \Magento\Reports\Controller\Adminhtml\Report\Sales
             __('Sales Report'),
             __('Sales Report')
         );
-        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Orders Report'));
+        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Sales Report'));
 
         $gridBlock = $this->_view->getLayout()->getBlock('adminhtml_sales_sales.grid');
         $filterFormBlock = $this->_view->getLayout()->getBlock('grid.filter.form');

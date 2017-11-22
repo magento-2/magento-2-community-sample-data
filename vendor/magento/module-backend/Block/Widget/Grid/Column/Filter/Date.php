@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,8 +10,6 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 
 /**
  * Date grid column filter
- * @api
- * @since 100.0.2
  */
 class Date extends \Magento\Backend\Block\Widget\Grid\Column\Filter\AbstractFilter
 {
@@ -132,7 +130,7 @@ class Date extends \Magento\Backend\Block\Widget\Grid\Column\Filter\AbstractFilt
     public function getEscapedValue($index = null)
     {
         $value = $this->getValue($index);
-        if ($value instanceof \DateTimeInterface) {
+        if ($value instanceof \DateTime) {
             return $this->dateTimeFormatter->formatObject(
                 $value,
                 $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT)

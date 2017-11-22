@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,14 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click Ok
  * 5. Perform all assertions
  *
- * @group Mini_Shopping_Cart
+ * @group Mini_Shopping_Cart_(CS)
  * @ZephyrId MAGETWO-29104
  */
 class DeleteProductFromMiniShoppingCartTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S0';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -65,11 +65,11 @@ class DeleteProductFromMiniShoppingCartTest extends Injectable
     /**
      * Run test add products to shopping cart
      *
-     * @param array $products
+     * @param string $products
      * @param int $deletedProductIndex
      * @return array
      */
-    public function test(array $products, $deletedProductIndex)
+    public function test($products, $deletedProductIndex)
     {
         // Preconditions
         $products = $this->prepareProducts($products);
@@ -89,13 +89,13 @@ class DeleteProductFromMiniShoppingCartTest extends Injectable
     /**
      * Create products
      *
-     * @param array $productList
+     * @param string $productList
      * @return InjectableFixture[]
      */
-    protected function prepareProducts(array $productList)
+    protected function prepareProducts($productList)
     {
         $productsStep = ObjectManager::getInstance()->create(
-            \Magento\Catalog\Test\TestStep\CreateProductsStep::class,
+            'Magento\Catalog\Test\TestStep\CreateProductsStep',
             ['products' => $productList]
         );
 
@@ -112,7 +112,7 @@ class DeleteProductFromMiniShoppingCartTest extends Injectable
     protected function addToCart(array $products)
     {
         $addToCartStep = ObjectManager::getInstance()->create(
-            \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
+            'Magento\Checkout\Test\TestStep\AddProductsToTheCartStep',
             ['products' => $products]
         );
         $addToCartStep->run();

@@ -1,19 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
+ */
+
+/**
+ * Catalog Product visibilite model and attribute source model
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 namespace Magento\Catalog\Model\Product;
 
 use Magento\Framework\Data\OptionSourceInterface;
 use Magento\Framework\DB\Ddl\Table;
 
-/**
- * Catalog Product visibility model and attribute source model
- *
- * @api
- * @since 100.0.2
- */
 class Visibility extends \Magento\Framework\DataObject implements OptionSourceInterface
 {
     const VISIBILITY_NOT_VISIBLE = 1;
@@ -211,13 +211,12 @@ class Visibility extends \Magento\Framework\DataObject implements OptionSourceIn
         $attributeCode = $this->getAttribute()->getAttributeCode();
         $attributeId = $this->getAttribute()->getId();
         $attributeTable = $this->getAttribute()->getBackend()->getTable();
-        $linkField = $this->getAttribute()->getEntity()->getLinkField();
 
         if ($this->getAttribute()->isScopeGlobal()) {
             $tableName = $attributeCode . '_t';
             $collection->getSelect()->joinLeft(
                 [$tableName => $attributeTable],
-                "e.{$linkField}={$tableName}.{$linkField}" .
+                "e.entity_id={$tableName}.entity_id" .
                 " AND {$tableName}.attribute_id='{$attributeId}'" .
                 " AND {$tableName}.store_id='0'",
                 []
@@ -228,13 +227,13 @@ class Visibility extends \Magento\Framework\DataObject implements OptionSourceIn
             $valueTable2 = $attributeCode . '_t2';
             $collection->getSelect()->joinLeft(
                 [$valueTable1 => $attributeTable],
-                "e.{$linkField}={$valueTable1}.{$linkField}" .
+                "e.entity_id={$valueTable1}.entity_id" .
                 " AND {$valueTable1}.attribute_id='{$attributeId}'" .
                 " AND {$valueTable1}.store_id='0'",
                 []
             )->joinLeft(
                 [$valueTable2 => $attributeTable],
-                "e.{$linkField}={$valueTable2}.{$linkField}" .
+                "e.entity_id={$valueTable2}.entity_id" .
                 " AND {$valueTable2}.attribute_id='{$attributeId}'" .
                 " AND {$valueTable2}.store_id='{$collection->getStoreId()}'",
                 []

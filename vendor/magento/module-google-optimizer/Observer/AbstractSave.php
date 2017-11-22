@@ -2,7 +2,7 @@
 /**
  * Google Experiment Abstract Save observer
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\GoogleOptimizer\Observer;
@@ -10,10 +10,6 @@ namespace Magento\GoogleOptimizer\Observer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractSave implements ObserverInterface
 {
     /**

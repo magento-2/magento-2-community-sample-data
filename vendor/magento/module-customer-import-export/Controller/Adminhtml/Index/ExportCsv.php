@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CustomerImportExport\Controller\Adminhtml\Index;
@@ -14,7 +14,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportCsv extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
@@ -50,6 +50,7 @@ class ExportCsv extends \Magento\Backend\App\Action
         $fileName = 'customers.csv';
         /** @var \Magento\Backend\Block\Widget\Grid\ExportInterface $exportBlock  */
         $exportBlock = $this->_view->getLayout()->getChildBlock('admin.block.customer.grid', 'grid.export');
+
         return $this->_fileFactory->create(
             $fileName,
             $exportBlock->getCsvFile(),

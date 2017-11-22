@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,6 @@ namespace Magento\Reports\Model\ResourceModel\Customer;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Customer\Model\ResourceModel\Customer\Collection
 {
@@ -191,13 +189,10 @@ class Collection extends \Magento\Customer\Model\ResourceModel\Customer\Collecti
             $connection = $this->orderResource->getConnection();
             $baseSubtotalRefunded = $connection->getIfNullSql('orders.base_subtotal_refunded', 0);
             $baseSubtotalCanceled = $connection->getIfNullSql('orders.base_subtotal_canceled', 0);
-            $baseDiscountCanceled = $connection->getIfNullSql('orders.base_discount_canceled', 0);
 
             $totalExpr = $this->_addOrderStatFilter ?
-                "(orders.base_subtotal-{$baseSubtotalCanceled}-{$baseSubtotalRefunded} - {$baseDiscountCanceled}"
-                    . " - ABS(orders.base_discount_amount))*orders.base_to_global_rate" :
-                "orders.base_subtotal-{$baseSubtotalCanceled}-{$baseSubtotalRefunded} - {$baseDiscountCanceled}"
-                    . " - ABS(orders.base_discount_amount)";
+                "(orders.base_subtotal-{$baseSubtotalCanceled}-{$baseSubtotalRefunded})*orders.base_to_global_rate" :
+                "orders.base_subtotal-{$baseSubtotalCanceled}-{$baseSubtotalRefunded}";
 
             $select = $this->orderResource->getConnection()->select();
             $select->from(

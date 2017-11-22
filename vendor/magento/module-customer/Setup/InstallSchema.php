@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -100,7 +100,7 @@ class InstallSchema implements InstallSchemaInterface
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             40,
             ['nullable' => true, 'default' => null],
-            'Name Prefix'
+            'Prefix'
         )->addColumn(
             'firstname',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -124,13 +124,13 @@ class InstallSchema implements InstallSchemaInterface
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             40,
             ['nullable' => true, 'default' => null],
-            'Name Suffix'
+            'Suffix'
         )->addColumn(
             'dob',
             \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
             null,
             [],
-            'Date of Birth'
+            'Date Of Birth'
         )->addColumn(
             'password_hash',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -308,7 +308,7 @@ class InstallSchema implements InstallSchemaInterface
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             40,
             ['nullable' => true, 'default' => null],
-            'Name Prefix'
+            'Prefix'
         )->addColumn(
             'region',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -332,7 +332,7 @@ class InstallSchema implements InstallSchemaInterface
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             40,
             ['nullable' => true, 'default' => null],
-            'Name Suffix'
+            'Suffix'
         )->addColumn(
             'telephone',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -1273,5 +1273,6 @@ class InstallSchema implements InstallSchemaInterface
         $installer->getConnection()->createTable($table);
 
         $installer->endSetup();
+
     }
 }

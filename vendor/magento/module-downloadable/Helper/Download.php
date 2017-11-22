@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -94,9 +94,7 @@ class Download extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_filesystem;
 
-    /**
-     * @var \Magento\Framework\Filesystem\File\ReadFactory
-     */
+    /** @var Filesystem\File\ReadFactory */
     protected $fileReadFactory;
 
     /**

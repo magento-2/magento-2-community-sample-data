@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CacheFlushCommandTest extends AbstractCacheManageCommandTest
 {
-    protected function setUp()
+    public function setUp()
     {
         $this->cacheEventName = 'adminhtml_cache_flush_all';
         parent::setUp();
@@ -22,7 +22,7 @@ class CacheFlushCommandTest extends AbstractCacheManageCommandTest
      * @param array $param
      * @param array $types
      * @param string $output
-     * @dataProvider executeDataProvider
+     * @dataProvider testExecuteDataProvider
      */
     public function testExecute($param, $types, $output)
     {

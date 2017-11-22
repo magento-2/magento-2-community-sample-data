@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TaxImportExport\Controller\Adminhtml\Rate;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class ExportPost extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
 {
@@ -38,7 +38,7 @@ class ExportPost extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
         $taxCalculationRateTitleDict = [];
 
         foreach ($this->_objectManager->create(
-            \Magento\Store\Model\Store::class
+            'Magento\Store\Model\Store'
         )->getCollection()->setLoadDefault(
             false
         ) as $store) {
@@ -52,7 +52,7 @@ class ExportPost extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
         $content .= "\n";
 
         foreach ($this->_objectManager->create(
-            \Magento\Tax\Model\Calculation\Rate\Title::class
+            'Magento\Tax\Model\Calculation\Rate\Title'
         )->getCollection() as $title) {
             $rateId = $title->getTaxCalculationRateId();
 
@@ -65,7 +65,7 @@ class ExportPost extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
         unset($title);
 
         $collection = $this->_objectManager->create(
-            \Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection::class
+            'Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection'
         )->joinCountryTable()->joinRegionTable();
 
         while ($rate = $collection->fetchItem()) {
@@ -94,5 +94,6 @@ class ExportPost extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
         ) || $this->_authorization->isAllowed(
             'Magento_TaxImportExport::import_export'
         );
+
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -30,7 +30,7 @@ class Form extends AbstractForm
     public function getItemsBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\Invoice\Form\Items::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\Invoice\Form\Items',
             ['element' => $this->_rootElement->find($this->items)]
         );
     }

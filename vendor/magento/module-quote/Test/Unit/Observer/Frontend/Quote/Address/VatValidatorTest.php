@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Test\Unit\Observer\Frontend\Quote\Address;
 
-class VatValidatorTest extends \PHPUnit\Framework\TestCase
+class VatValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var  \Magento\Quote\Observer\Frontend\Quote\Address\VatValidator
@@ -44,8 +44,8 @@ class VatValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->customerAddressMock = $this->createMock(\Magento\Customer\Helper\Address::class);
-        $this->customerVatMock = $this->createMock(\Magento\Customer\Model\Vat::class);
+        $this->customerAddressMock = $this->getMock('Magento\Customer\Helper\Address', [], [], '', false);
+        $this->customerVatMock = $this->getMock('Magento\Customer\Model\Vat', [], [], '', false);
         $this->customerVatMock->expects($this->any())
             ->method('getMerchantCountryCode')
             ->willReturn('merchantCountryCode');
@@ -53,9 +53,11 @@ class VatValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getMerchantVatNumber')
             ->willReturn('merchantVatNumber');
 
-        $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
 
-        $this->quoteAddressMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+        $this->quoteAddressMock = $this->getMock(
+            'Magento\Quote\Model\Quote\Address',
+            [
                 'getCountryId',
                 'getVatId',
                 'getValidatedCountryCode',
@@ -67,7 +69,12 @@ class VatValidatorTest extends \PHPUnit\Framework\TestCase
                 'getAddressType',
                 'save',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false,
+            false
+        );
 
         $this->testData = [
             'is_valid' => true,
@@ -314,8 +321,7 @@ class VatValidatorTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(\Magento\Customer\Model\Address\AbstractAddress::TYPE_SHIPPING)
         );
 
-        $result = $this->model->isEnabled($this->quoteAddressMock, $this->storeMock);
-        $this->assertFalse($result);
+        $this->model->isEnabled($this->quoteAddressMock, $this->storeMock);
     }
 
     public function testIsEnabledWithEnabledVatValidation()
@@ -327,7 +333,6 @@ class VatValidatorTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue(true)
         );
-        $result = $this->model->isEnabled($this->quoteAddressMock, $this->storeMock);
-        $this->assertTrue($result);
+        $this->model->isEnabled($this->quoteAddressMock, $this->storeMock);
     }
 }

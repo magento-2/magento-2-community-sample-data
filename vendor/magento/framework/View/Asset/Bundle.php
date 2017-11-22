@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,8 +13,6 @@ use Magento\Framework\View\Asset\File\FallbackContext;
 
 /**
  * Bundle model
- * @deprecated 100.2.0
- * @see \Magento\Deploy\Package\Bundle
  */
 class Bundle
 {
@@ -28,9 +26,7 @@ class Bundle
      */
     protected $assetsContent = [];
 
-    /**
-     * @var \Magento\Framework\View\Asset\Bundle\ConfigInterface
-     */
+    /** @var Bundle\ConfigInterface */
     protected $bundleConfig;
 
     /**

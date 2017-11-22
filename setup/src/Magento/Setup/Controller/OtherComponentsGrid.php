@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Controller;
 
 use Magento\Composer\InfoCommand;
+use Magento\Framework\Composer\ComposerInformation;
+use Magento\Framework\Composer\MagentoComposerApplicationFactory;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
@@ -16,38 +18,25 @@ use Zend\View\Model\JsonModel;
 class OtherComponentsGrid extends AbstractActionController
 {
     /**
-     * @var \Magento\Framework\Composer\ComposerInformation
+     * @var ComposerInformation
      */
     private $composerInformation;
 
     /**
-     * @var \Magento\Composer\InfoCommand
+     * @var InfoCommand
      */
     private $infoCommand;
 
     /**
-     * @param \Magento\Framework\Composer\ComposerInformation $composerInformation
-     * @param \Magento\Framework\Composer\MagentoComposerApplicationFactory $magentoComposerApplicationFactory
+     * @param ComposerInformation $composerInformation
+     * @param MagentoComposerApplicationFactory $magentoComposerApplicationFactory
      */
     public function __construct(
-        \Magento\Framework\Composer\ComposerInformation $composerInformation,
-        \Magento\Framework\Composer\MagentoComposerApplicationFactory $magentoComposerApplicationFactory
+        ComposerInformation $composerInformation,
+        MagentoComposerApplicationFactory $magentoComposerApplicationFactory
     ) {
         $this->composerInformation = $composerInformation;
         $this->infoCommand = $magentoComposerApplicationFactory->createInfoCommand();
-    }
-
-    /**
-     * No index action, return 404 error page
-     *
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function indexAction()
-    {
-        $view = new \Zend\View\Model\ViewModel;
-        $view->setTemplate('/error/404.phtml');
-        $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_404);
-        return $view;
     }
 
     /**
@@ -81,7 +70,7 @@ class OtherComponentsGrid extends AbstractActionController
                         'id' => $packageInfo[InfoCommand::CURRENT_VERSION],
                         'name' => $packageInfo[InfoCommand::CURRENT_VERSION]
                     ];
-
+                    
                     $versions[0]['name'] .= ' (latest)';
                     $versions[count($versions) - 1]['name'] .= ' (current)';
 

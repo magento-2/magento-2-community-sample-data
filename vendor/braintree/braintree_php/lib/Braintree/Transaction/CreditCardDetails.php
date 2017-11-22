@@ -1,15 +1,11 @@
 <?php
-namespace Braintree\Transaction;
-
-use Braintree\Instance;
-
 /**
  * CreditCard details from a transaction
  * creates an instance of CreditCardDetails
  *
  * @package    Braintree
  * @subpackage Transaction
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $bin
  * @property-read string $cardType
@@ -20,10 +16,11 @@ use Braintree\Instance;
  * @property-read string $last4
  * @property-read string $maskedNumber
  * @property-read string $token
+ * @uses Braintree_Instance inherits methods
  */
-class CreditCardDetails extends Instance
+class Braintree_Transaction_CreditCardDetails extends Braintree_Instance
 {
-    protected $_attributes = [];
+    protected $_attributes = array();
 
     /**
      * @ignore
@@ -36,4 +33,3 @@ class CreditCardDetails extends Instance
 
     }
 }
-class_alias('Braintree\Transaction\CreditCardDetails', 'Braintree_Transaction_CreditCardDetails');

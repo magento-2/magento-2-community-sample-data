@@ -1,8 +1,4 @@
 <?php
-namespace Braintree\Error;
-
-use Braintree\Collection;
-
 /**
  * collection of errors enumerating all validation errors for a given request
  *
@@ -12,15 +8,15 @@ use Braintree\Collection;
  *
  * @package    Braintree
  * @subpackage Error
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read array $errors
  * @property-read array $nested
  */
-class ValidationErrorCollection extends Collection
+class Braintree_Error_ValidationErrorCollection extends Braintree_Collection
 {
-    private $_errors = [];
-    private $_nested = [];
+    private $_errors = array();
+    private $_nested = array();
 
     /**
      * @ignore
@@ -31,17 +27,17 @@ class ValidationErrorCollection extends Collection
             // map errors to new collections recursively
             if ($key == 'errors') {
                 foreach ($errorData AS $error) {
-                    $this->_errors[] = new Validation($error);
+                    $this->_errors[] = new Braintree_Error_Validation($error);
                 }
             } else {
-                $this->_nested[$key] = new ValidationErrorCollection($errorData);
+                $this->_nested[$key] = new Braintree_Error_ValidationErrorCollection($errorData);
             }
 
     }
 
     public function deepAll()
     {
-        $validationErrors = array_merge([], $this->_errors);
+        $validationErrors = array_merge(array(), $this->_errors);
         foreach($this->_nested as $nestedErrors)
         {
             $validationErrors = array_merge($validationErrors, $nestedErrors->deepAll());
@@ -71,7 +67,7 @@ class ValidationErrorCollection extends Collection
 
     public function onAttribute($attribute)
     {
-        $matches = [];
+        $matches = array();
         foreach ($this->_errors AS $key => $error) {
            if($error->attribute == $attribute) {
                $matches[] = $error;
@@ -101,7 +97,7 @@ class ValidationErrorCollection extends Collection
      */
     public function __toString()
     {
-        $output = [];
+        $output = array();
 
         // TODO: implement scope
         if (!empty($this->_errors)) {
@@ -129,4 +125,3 @@ class ValidationErrorCollection extends Collection
         return $eOutput;
     }
 }
-class_alias('Braintree\Error\ValidationErrorCollection', 'Braintree_Error_ValidationErrorCollection');

@@ -2,15 +2,11 @@
 /**
  * Default application path for backend area
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\App;
 
-/**
- * @api
- * @since 100.0.2
- */
 class DefaultPath implements \Magento\Framework\App\DefaultPathInterface
 {
     /**

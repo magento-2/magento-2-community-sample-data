@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Flat\Plugin;
 
-class StoreGroupTest extends \PHPUnit\Framework\TestCase
+class StoreGroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Flat\Processor|\PHPUnit_Framework_MockObject_MockObject
@@ -24,15 +24,21 @@ class StoreGroupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->processorMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Processor::class,
-            ['markIndexerAsInvalid']
+        $this->processorMock = $this->getMock(
+            'Magento\Catalog\Model\Indexer\Product\Flat\Processor',
+            ['markIndexerAsInvalid'],
+            [],
+            '',
+            false
         );
 
-        $this->subjectMock = $this->createMock(\Magento\Store\Model\ResourceModel\Group::class);
-        $this->storeGroupMock = $this->createPartialMock(
-            \Magento\Store\Model\Group::class,
-            ['getId', '__wakeup', 'dataHasChangedFor']
+        $this->subjectMock = $this->getMock('Magento\Store\Model\ResourceModel\Group', [], [], '', false);
+        $this->storeGroupMock = $this->getMock(
+            'Magento\Store\Model\Group',
+            ['getId', '__wakeup', 'dataHasChangedFor'],
+            [],
+            '',
+            false
         );
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Observer;
 
 use \Magento\Wishlist\Observer\CustomerLogin as Observer;
 
-class CustomerLoginTest extends \PHPUnit\Framework\TestCase
+class CustomerLoginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Observer
@@ -20,9 +20,9 @@ class CustomerLoginTest extends \PHPUnit\Framework\TestCase
      */
     protected $helper;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->helper = $this->getMockBuilder(\Magento\Wishlist\Helper\Data::class)
+        $this->helper = $this->getMockBuilder('Magento\Wishlist\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -31,7 +31,7 @@ class CustomerLoginTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute()
     {
-        $event = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $event = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
         /** @var $event \Magento\Framework\Event\Observer */

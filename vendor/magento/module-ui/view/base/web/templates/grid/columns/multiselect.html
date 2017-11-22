@@ -1,30 +1,38 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
 
 <th class="data-grid-multicheck-cell">
-    <div class="action-multicheck-wrap" css="_disabled: !totalRecords()" collapsible="">
-        <input class="admin__control-checkbox" type="checkbox"
-            data-bind="
-                checked: allSelected(),
-                attr: {id: ++ko.uid},
-                event: { change: toggleSelectAll },
-                css: { '_indeterminate': indetermine },
-                enable: totalRecords">
-        <label attr="for: ko.uid"/>
-        <button class="action-multicheck-toggle" data-toggle="dropdown"
+    <div
+        class="action-multicheck-wrap"
+        data-bind="css: {'_disabled': !totalRecords()},
+                   collapsible">
+        <input
+            id="mass-select-checkbox"
+            class="admin__control-checkbox"
+            type="checkbox"
+            data-bind="checked: allSelected(),
+                       event: { change: toggleSelectAll },
+                       css: { '_indeterminate': indetermine },
+                       enable: totalRecords">
+        <label for="mass-select-checkbox"></label>
+        <button
+            class="action-multicheck-toggle"
+            data-toggle="dropdown"
             data-bind="css: { '_active': $collapsible.opened },
                        enable: totalRecords,
                        toggleCollapsible">
-            <span translate="'Options'"/>
+            <span data-bind="i18n: 'Options'"></span>
         </button>
-        <ul class="action-menu" each="actions" closeCollapsible="">
+        <ul
+            class="action-menu"
+            data-bind="closeCollapsible, foreach: actions">
             <li data-bind="click: $parent[value].bind($parent),
                            visible: $parent.isActionRelevant(value)">
-                <span class="action-menu-item" text="label"/>
+                <span class="action-menu-item" data-bind="text: label"></span>
             </li>
         </ul>
     </div>

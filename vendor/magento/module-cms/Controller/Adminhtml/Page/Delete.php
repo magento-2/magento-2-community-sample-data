@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Page;
@@ -9,9 +9,7 @@ namespace Magento\Cms\Controller\Adminhtml\Page;
 class Delete extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Cms::page_delete';
 
@@ -30,7 +28,7 @@ class Delete extends \Magento\Backend\App\Action
             $title = "";
             try {
                 // init model and delete
-                $model = $this->_objectManager->create(\Magento\Cms\Model\Page::class);
+                $model = $this->_objectManager->create('Magento\Cms\Model\Page');
                 $model->load($id);
                 $title = $model->getTitle();
                 $model->delete();

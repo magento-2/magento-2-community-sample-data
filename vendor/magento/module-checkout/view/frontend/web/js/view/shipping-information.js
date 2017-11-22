@@ -1,52 +1,42 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+/*jshint browser:true jquery:true*/
+/*global alert*/
+define(
+    [
+        'jquery',
+        'uiComponent',
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/step-navigator',
+        'Magento_Checkout/js/model/sidebar'
+    ],
+    function($, Component, quote, stepNavigator, sidebarModel) {
+        'use strict';
+        return Component.extend({
+            defaults: {
+                template: 'Magento_Checkout/shipping-information'
+            },
 
-define([
-    'jquery',
-    'uiComponent',
-    'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/step-navigator',
-    'Magento_Checkout/js/model/sidebar'
-], function ($, Component, quote, stepNavigator, sidebarModel) {
-    'use strict';
+            isVisible: function() {
+                return !quote.isVirtual() && stepNavigator.isProcessed('shipping');
+            },
 
-    return Component.extend({
-        defaults: {
-            template: 'Magento_Checkout/shipping-information'
-        },
+            getShippingMethodTitle: function() {
+                var shippingMethod = quote.shippingMethod();
+                return shippingMethod ? shippingMethod.carrier_title + " - " + shippingMethod.method_title : '';
+            },
 
-        /**
-         * @return {Boolean}
-         */
-        isVisible: function () {
-            return !quote.isVirtual() && stepNavigator.isProcessed('shipping');
-        },
+            back: function() {
+                sidebarModel.hide();
+                stepNavigator.navigateTo('shipping');
+            },
 
-        /**
-         * @return {String}
-         */
-        getShippingMethodTitle: function () {
-            var shippingMethod = quote.shippingMethod();
-
-            return shippingMethod ? shippingMethod['carrier_title'] + ' - ' + shippingMethod['method_title'] : '';
-        },
-
-        /**
-         * Back step.
-         */
-        back: function () {
-            sidebarModel.hide();
-            stepNavigator.navigateTo('shipping');
-        },
-
-        /**
-         * Back to shipping method.
-         */
-        backToShippingMethod: function () {
-            sidebarModel.hide();
-            stepNavigator.navigateTo('shipping', 'opc-shipping_method');
-        }
-    });
-});
+            backToShippingMethod: function() {
+                sidebarModel.hide();
+                stepNavigator.navigateTo('shipping', 'opc-shipping_method');
+            }
+        });
+    }
+);

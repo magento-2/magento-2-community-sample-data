@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Pricing\Test\Unit\Render;
@@ -10,7 +10,7 @@ use \Magento\Framework\Pricing\Render\Layout;
 /**
  * Test class for \Magento\Framework\Pricing\Render\Layout
  */
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Layout
@@ -32,16 +32,16 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
      */
     protected $generalLayout;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->layout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $this->generalLayout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
+        $this->layout = $this->getMock('Magento\Framework\View\LayoutInterface');
+        $this->generalLayout = $this->getMock('Magento\Framework\View\LayoutInterface');
 
         $isCacheable = false;
         $this->generalLayout->expects($this->once())
             ->method('isCacheable')
             ->will($this->returnValue(false));
-        $layoutFactory = $this->getMockBuilder(\Magento\Framework\View\LayoutFactory::class)
+        $layoutFactory = $this->getMockBuilder('Magento\Framework\View\LayoutFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -52,7 +52,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\Framework\Pricing\Render\Layout::class,
+            'Magento\Framework\Pricing\Render\Layout',
             [
                 'layoutFactory' => $layoutFactory,
                 'generalLayout' => $this->generalLayout
@@ -64,7 +64,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     {
         $handle = 'test_handle';
 
-        $layoutProcessor = $this->createMock(\Magento\Framework\View\Layout\ProcessorInterface::class);
+        $layoutProcessor = $this->getMock('Magento\Framework\View\Layout\ProcessorInterface');
         $layoutProcessor->expects($this->once())
             ->method('addHandle')
             ->with($handle);
@@ -77,7 +77,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
 
     public function testLoadLayout()
     {
-        $layoutProcessor = $this->createMock(\Magento\Framework\View\Layout\ProcessorInterface::class);
+        $layoutProcessor = $this->getMock('Magento\Framework\View\Layout\ProcessorInterface');
         $layoutProcessor->expects($this->once())
             ->method('load');
         $this->layout->expects($this->once())
@@ -97,7 +97,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     {
         $blockName = 'block.name';
 
-        $block = $this->createMock(\Magento\Framework\View\Element\BlockInterface::class);
+        $block = $this->getMock('Magento\Framework\View\Element\BlockInterface');
 
         $this->layout->expects($this->once())
             ->method('getBlock')

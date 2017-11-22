@@ -1,18 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\ResourceModel\Quote\Item;
 
-use \Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-
 /**
  * Quote item resource collection
- *
- * @api
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionControl\Collection
 {
@@ -91,7 +85,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Quote\Model\Quote\Item::class, \Magento\Quote\Model\ResourceModel\Quote\Item::class);
+        $this->_init('Magento\Quote\Model\Quote\Item', 'Magento\Quote\Model\ResourceModel\Quote\Item');
     }
 
     /**
@@ -217,10 +211,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
             $this->_productIds
         )->addAttributeToSelect(
             $this->_quoteConfig->getProductAttributes()
-        );
-        $this->skipStockStatusFilter($productCollection);
-        $productCollection->addOptionsToResult()->addStoreFilter()->addUrlRewrite();
-        $this->addTierPriceData($productCollection);
+        )->addOptionsToResult()->addStoreFilter()->addUrlRewrite()->addTierPriceData();
 
         $this->_eventManager->dispatch(
             'prepare_catalog_product_collection_prices',
@@ -276,33 +267,5 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
         \Magento\Framework\Profiler::stop('QUOTE:' . __METHOD__);
 
         return $this;
-    }
-
-    /**
-     * Prevents adding stock status filter to the collection of products.
-     *
-     * @param ProductCollection $productCollection
-     * @return void
-     *
-     * @see \Magento\CatalogInventory\Helper\Stock::addIsInStockFilterToCollection
-     */
-    private function skipStockStatusFilter(ProductCollection $productCollection)
-    {
-        $productCollection->setFlag('has_stock_status_filter', true);
-    }
-
-    /**
-     * Add tier prices to product collection.
-     *
-     * @param ProductCollection $productCollection
-     * @return void
-     */
-    private function addTierPriceData(ProductCollection $productCollection)
-    {
-        if (empty($this->_quote)) {
-            $productCollection->addTierPriceData();
-        } else {
-            $productCollection->addTierPriceDataByGroupId($this->_quote->getCustomerGroupId());
-        }
     }
 }

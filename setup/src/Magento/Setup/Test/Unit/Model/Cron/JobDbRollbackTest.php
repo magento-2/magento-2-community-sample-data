@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Model\Cron;
 
 use Magento\Setup\Model\Cron\JobDbRollback;
 
-class JobDbRollbackTest extends \PHPUnit\Framework\TestCase
+class JobDbRollbackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var JobDbRollback
@@ -36,29 +36,38 @@ class JobDbRollbackTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->backupRollbackFactory = $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class);
-        $this->backupRollback = $this->createMock(\Magento\Framework\Setup\BackupRollback::class);
-        $this->status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
-        $output =
-            $this->getMockForAbstractClass(\Symfony\Component\Console\Output\OutputInterface::class, [], '', false);
-        $this->objectManagerProvider =
-            $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $this->backupRollbackFactory = $this->getMock(
+            'Magento\Framework\Setup\BackupRollbackFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->backupRollback = $this->getMock('\Magento\Framework\Setup\BackupRollback', [], [], '', false);
+        $this->status = $this->getMock('Magento\Setup\Model\Cron\Status', [], [], '', false);
+        $output = $this->getMockForAbstractClass('Symfony\Component\Console\Output\OutputInterface', [], '', false);
+        $this->objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
 
-        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $appState = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
         $configLoader = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManager\ConfigLoaderInterface::class,
+            'Magento\Framework\ObjectManager\ConfigLoaderInterface',
             [],
             '',
             false
         );
         $configLoader->expects($this->any())->method('load')->willReturn([]);
-        $objectManager =
-            $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class, [], '', false);
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface', [], '', false);
         $objectManager->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap([
-                [\Magento\Framework\App\State::class, $appState],
-                [\Magento\Framework\ObjectManager\ConfigLoaderInterface::class, $configLoader],
+                ['Magento\Framework\App\State', $appState],
+                ['Magento\Framework\ObjectManager\ConfigLoaderInterface', $configLoader],
             ]));
 
         $this->objectManagerProvider->expects($this->once())->method('get')->willReturn($objectManager);

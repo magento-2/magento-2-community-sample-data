@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@
  */
 namespace Magento\OfflineShipping\Test\Unit\Block\Adminhtml\Form\Field;
 
-class ImportTest extends \PHPUnit\Framework\TestCase
+class ImportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflineShipping\Block\Adminhtml\Form\Field\Import
@@ -25,14 +25,18 @@ class ImportTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_formMock = $this->createPartialMock(
-            \Magento\Framework\Data\Form::class,
-            ['getFieldNameSuffix', 'addSuffixToName', 'getHtmlIdPrefix', 'getHtmlIdSuffix']
+        $this->_formMock = $this->getMock(
+            'Magento\Framework\Data\Form',
+            ['getFieldNameSuffix', 'addSuffixToName'],
+            [],
+            '',
+            false,
+            false
         );
         $testData = ['name' => 'test_name', 'html_id' => 'test_html_id'];
         $testHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_object = $testHelper->getObject(
-            \Magento\OfflineShipping\Block\Adminhtml\Form\Field\Import::class,
+            'Magento\OfflineShipping\Block\Adminhtml\Form\Field\Import',
             ['data' => $testData]
         );
         $this->_object->setForm($this->_formMock);
@@ -76,8 +80,8 @@ class ImportTest extends \PHPUnit\Framework\TestCase
             $testString
         );
         $this->assertStringEndsWith(
-            '<input id="test_name_prefixtest_html_idtest_name_suffix" ' .
-            'name="test_name"  data-ui-id="form-element-test_name" value="" type="file"/>',
+            '<input id="test_html_id" name="test_name"  data-ui-id="form-element-test_name"' .
+            ' value="" type="file"/>',
             $testString
         );
     }

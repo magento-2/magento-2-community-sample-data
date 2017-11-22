@@ -1,51 +1,48 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Directory\Model\Currency\Import;
+
+// @codingStandardsIgnoreFile
 
 /**
  * Currency rate import model (From www.webservicex.net)
  */
+namespace Magento\Directory\Model\Currency\Import;
+
 class Webservicex extends \Magento\Directory\Model\Currency\Import\AbstractImport
 {
     /**
-     * Currency converter url
+     * @var string
      */
-    const CURRENCY_CONVERTER_URL = 'http://www.webservicex.net/CurrencyConvertor.asmx/ConversionRate'
-        . '?FromCurrency={{CURRENCY_FROM}}&ToCurrency={{CURRENCY_TO}}';
+    const CURRENCY_CONVERTER_URL = 'http://www.webservicex.net/CurrencyConvertor.asmx/ConversionRate?FromCurrency={{CURRENCY_FROM}}&ToCurrency={{CURRENCY_TO}}';
 
     /**
-     * Http Client Factory
+     * HTTP client
      *
-     * @var \Magento\Framework\HTTP\ZendClientFactory
+     * @var \Magento\Framework\HTTP\ZendClient
      */
-    protected $httpClientFactory;
+    protected $_httpClient;
 
     /**
-     * Core scope config
+     * Core store config
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $_scopeConfig;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Framework\HTTP\ZendClientFactory|null $zendClientFactory
      */
     public function __construct(
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\HTTP\ZendClientFactory $zendClientFactory = null
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($currencyFactory);
-        $this->scopeConfig = $scopeConfig;
-        $this->httpClientFactory = $zendClientFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\HTTP\ZendClientFactory::class);
+        $this->_scopeConfig = $scopeConfig;
+        $this->_httpClient = new \Magento\Framework\HTTP\ZendClient();
     }
 
     /**
@@ -58,15 +55,13 @@ class Webservicex extends \Magento\Directory\Model\Currency\Import\AbstractImpor
     {
         $url = str_replace('{{CURRENCY_FROM}}', $currencyFrom, self::CURRENCY_CONVERTER_URL);
         $url = str_replace('{{CURRENCY_TO}}', $currencyTo, $url);
-        /** @var \Magento\Framework\HTTP\ZendClient $httpClient */
-        $httpClient = $this->httpClientFactory->create();
 
         try {
-            $response = $httpClient->setUri(
+            $response = $this->_httpClient->setUri(
                 $url
             )->setConfig(
                 [
-                    'timeout' => $this->scopeConfig->getValue(
+                    'timeout' => $this->_scopeConfig->getValue(
                         'currency/webservicex/timeout',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE
                     ),
@@ -76,7 +71,7 @@ class Webservicex extends \Magento\Directory\Model\Currency\Import\AbstractImpor
             )->getBody();
 
             $xml = simplexml_load_string($response, null, LIBXML_NOERROR);
-            if (!$xml || (isset($xml[0]) && $xml[0] == -1)) {
+            if (!$xml) {
                 $this->_messages[] = __('We can\'t retrieve a rate from %1.', $url);
                 return null;
             }

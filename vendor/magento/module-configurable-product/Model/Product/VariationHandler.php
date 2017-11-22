@@ -1,57 +1,41 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Model\Product;
 
-use Magento\Catalog\Model\Product\Type as ProductType;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Catalog\Model\Product\Type as ProductType;
 
 /**
  * Variation Handler
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class VariationHandler
 {
-    /**
-     * @var \Magento\Catalog\Model\Product\Gallery\Processor
-     * @since 100.1.0
-     */
-    protected $mediaGalleryProcessor;
+    /** @var \Magento\Catalog\Model\Product\Attribute\Backend\Media */
+    protected $media;
 
-    /**
-     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-     */
+    /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
     protected $configurableProduct;
 
-    /**
-     * @var \Magento\Eav\Model\Entity\Attribute\SetFactory
-     */
+    /** @var \Magento\Eav\Model\Entity\Attribute\SetFactory */
     protected $attributeSetFactory;
 
-    /**
-     * @var \Magento\Eav\Model\EntityFactory
-     */
+    /** @var \Magento\Eav\Model\EntityFactory */
     protected $entityFactory;
 
-    /**
-     * @var \Magento\Catalog\Model\ProductFactory
-     */
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
 
-    /**
-     * @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute[]
-     */
-    private $attributes;
+    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
+    protected $stockConfiguration;
 
     /**
-     * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
-     * @deprecated 100.1.0
+     * @var \Magento\ConfigurableProduct\Model\Product\VariationMediaAttributes
      */
-    protected $stockConfiguration;
+    protected $variationMediaAttributes;
 
     /**
      * @param Type\Configurable $configurableProduct
@@ -59,7 +43,8 @@ class VariationHandler
      * @param \Magento\Eav\Model\EntityFactory $entityFactory
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      * @param \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
-     * @param \Magento\Catalog\Model\Product\Gallery\Processor $mediaGalleryProcessor
+     * @param \Magento\Catalog\Model\Product\Attribute\Backend\Media $media
+     * @param VariationMediaAttributes $variationMediaAttributes
      */
     public function __construct(
         Type\Configurable $configurableProduct,
@@ -67,14 +52,16 @@ class VariationHandler
         \Magento\Eav\Model\EntityFactory $entityFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        \Magento\Catalog\Model\Product\Gallery\Processor $mediaGalleryProcessor
+        \Magento\Catalog\Model\Product\Attribute\Backend\Media $media,
+        \Magento\ConfigurableProduct\Model\Product\VariationMediaAttributes $variationMediaAttributes
     ) {
         $this->configurableProduct = $configurableProduct;
         $this->attributeSetFactory = $attributeSetFactory;
         $this->entityFactory = $entityFactory;
         $this->productFactory = $productFactory;
         $this->stockConfiguration = $stockConfiguration;
-        $this->mediaGalleryProcessor = $mediaGalleryProcessor;
+        $this->media = $media;
+        $this->variationMediaAttributes = $variationMediaAttributes;
     }
 
     /**
@@ -87,8 +74,8 @@ class VariationHandler
      */
     public function generateSimpleProducts($parentProduct, $productsData)
     {
+        $this->prepareAttributeSetToBeBaseForNewVariations($parentProduct);
         $generatedProductIds = [];
-        $this->attributes = null;
         $productsData = $this->duplicateImagesForVariations($productsData);
         foreach ($productsData as $simpleProductData) {
             $newSimpleProduct = $this->productFactory->create();
@@ -114,23 +101,11 @@ class VariationHandler
     /**
      * Prepare attribute set comprising all selected configurable attributes
      *
-     * @deprecated 100.1.0
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return void
      */
     protected function prepareAttributeSetToBeBaseForNewVariations(\Magento\Catalog\Model\Product $product)
-    {
-        $this->prepareAttributeSet($product);
-    }
-
-    /**
-     * Prepare attribute set comprising all selected configurable attributes
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @return void
-     * @since 100.1.0
-     */
-    public function prepareAttributeSet(\Magento\Catalog\Model\Product $product)
     {
         $attributes = $this->configurableProduct->getUsedProductAttributes($product);
         $attributeSetId = $product->getNewVariationsAttributeSetId();
@@ -168,22 +143,15 @@ class VariationHandler
         \Magento\Catalog\Model\Product $parentProduct,
         $postData
     ) {
-        $typeId = isset($postData['weight']) && !empty($postData['weight'])
-            ? ProductType::TYPE_SIMPLE
-            : ProductType::TYPE_VIRTUAL;
-
         $product->setStoreId(
             \Magento\Store\Model\Store::DEFAULT_STORE_ID
         )->setTypeId(
-            $typeId
+            $postData['weight'] ? ProductType::TYPE_SIMPLE : ProductType::TYPE_VIRTUAL
         )->setAttributeSetId(
             $parentProduct->getNewVariationsAttributeSetId()
         );
 
-        if ($this->attributes === null) {
-            $this->attributes = $product->getTypeInstance()->getSetAttributes($product);
-        }
-        foreach ($this->attributes as $attribute) {
+        foreach ($product->getTypeInstance()->getSetAttributes($product) as $attribute) {
             if ($attribute->getIsUnique() ||
                 $attribute->getAttributeCode() == 'url_key' ||
                 $attribute->getFrontend()->getInputType() == 'gallery' ||
@@ -196,12 +164,15 @@ class VariationHandler
             $product->setData($attribute->getAttributeCode(), $parentProduct->getData($attribute->getAttributeCode()));
         }
 
-        $keysFilter = ['item_id', 'product_id', 'stock_id', 'type_id', 'website_id'];
-        $postData['stock_data'] = array_diff_key((array)$parentProduct->getStockData(), array_flip($keysFilter));
+        $postData['stock_data'] = $parentProduct->getStockData();
+        $postData['stock_data']['manage_stock'] = $postData['quantity_and_stock_status']['qty'] === '' ? 0 : 1;
         if (!isset($postData['stock_data']['is_in_stock'])) {
             $stockStatus = $parentProduct->getQuantityAndStockStatus();
             $postData['stock_data']['is_in_stock'] = $stockStatus['is_in_stock'];
         }
+        $configDefaultValue = $this->stockConfiguration->getManageStock($product->getStoreId());
+        $postData['stock_data']['use_config_manage_stock'] = $postData['stock_data']['manage_stock'] ==
+        $configDefaultValue ? 1 : 0;
         $postData = $this->processMediaGallery($product, $postData);
         $postData['status'] = isset($postData['status'])
             ? $postData['status']
@@ -244,13 +215,13 @@ class VariationHandler
             foreach ($variationImages as $image) {
                 $file = $image['file'];
                 $variationId = $image['variation_id'];
-                $newFile = $this->mediaGalleryProcessor->duplicateImageFromTmp($file);
+                $newFile = $this->media->duplicateImageFromTmp($file);
                 $productsData[$variationId]['media_gallery']['images'][$imageId]['file'] = $newFile;
-                foreach ($this->mediaGalleryProcessor->getMediaAttributeCodes() as $attribute) {
-                    if (isset($productsData[$variationId][$attribute])
-                        && $productsData[$variationId][$attribute] == $file
+                foreach ($this->variationMediaAttributes->getMediaAttributes() as $attribute) {
+                    if (isset($productsData[$variationId][$attribute->getAttributeCode()])
+                        && $productsData[$variationId][$attribute->getAttributeCode()] == $file
                     ) {
-                        $productsData[$variationId][$attribute] = $newFile;
+                        $productsData[$variationId][$attribute->getAttributeCode()] = $newFile;
                     }
                 }
             }

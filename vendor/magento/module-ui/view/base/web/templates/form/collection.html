@@ -1,9 +1,11 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
-<each args="data: items, as: '$item'">
-    <each args="$item" render=""/>
-</each>
+<!-- ko foreach:  { data: items, as: 'item' }-->
+    <!-- ko foreach: { data: item, as: 'element' } -->
+        <!-- ko template: element.getTemplate() --><!-- /ko -->
+    <!-- /ko -->
+<!-- /ko -->

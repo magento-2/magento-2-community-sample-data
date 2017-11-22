@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,34 +13,27 @@ namespace Magento\Weee\Test\Unit\Model\Attribute\Backend\Weee;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class TaxTest extends \PHPUnit\Framework\TestCase
+class TaxTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManager
+     * @var \Magento\Weee\Model\Attribute\Backend\Weee\Tax
      */
-    protected $objectManager;
+    protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
+        $this->model = $this->objectManager->getObject('Magento\Weee\Model\Attribute\Backend\Weee\Tax');
     }
 
     public function testGetBackendModelName()
     {
-        $this->assertEquals(
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::class,
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::getBackendModelName()
-        );
+        $this->assertEquals('Magento\Weee\Model\Attribute\Backend\Weee\Tax', $this->model->getBackendModelName());
     }
 
-    /**
-     * @dataProvider dataProviderValidate
-     * @param $data
-     * @param $expected
-     */
-    public function testValidate($data, $expected)
+    public function testValidate()
     {
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Attribute::class)
+        $attributeMock = $this->getMockBuilder('Magento\Eav\Model\Attribute')
             ->setMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -49,7 +42,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('getName')
             ->will($this->returnValue('weeeTax'));
 
-        $modelMock = $this->getMockBuilder(\Magento\Weee\Model\Attribute\Backend\Weee\Tax::class)
+        $modelMock = $this->getMockBuilder('Magento\Weee\Model\Attribute\Backend\Weee\Tax')
             ->setMethods(['getAttribute'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,8 +51,8 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('getAttribute')
             ->will($this->returnValue($attributeMock));
 
-        $taxes = [reset($data)];
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $taxes = [['state' => 12, 'country' => 'US', 'website_id' => '1']];
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->setMethods(['getData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -71,8 +64,9 @@ class TaxTest extends \PHPUnit\Framework\TestCase
         // No exception
         $modelMock->validate($productMock);
 
-        $taxes = $data;
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $taxes = [['state' => 12, 'country' => 'US', 'website_id' => '1'],
+            ['state' => 12, 'country' => 'US', 'website_id' => '1']];
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->setMethods(['getData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -82,33 +76,16 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($taxes));
 
         // Exception caught
-        $this->expectException('Exception', $expected);
+        $this->setExpectedException('Exception',
+            'We found a duplicate of website, country and state fields for a fixed product tax');
         $modelMock->validate($productMock);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderValidate()
-    {
-        return [
-            'withDuplicate' => [
-                'data' => [
-                    ['state' => 12, 'country' => 'US', 'website_id' => '1'],
-                    ['state' => 99, 'country' => 'ES', 'website_id' => '1'],
-                    ['state' => 12, 'country' => 'US', 'website_id' => '1'],
-                    ['state' => null, 'country' => 'ES', 'website_id' => '1']
-                ],
-                'expected' => 'You must set unique country-state combinations within the same fixed product tax',
-                ]
-        ];
     }
 
     public function testAfterLoad()
     {
         $data = [['website_id' => 1, 'value' => 1]];
 
-        $attributeTaxMock = $this->getMockBuilder(\Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax::class)
+        $attributeTaxMock = $this->getMockBuilder('Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax')
             ->setMethods(['loadProductData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -117,7 +94,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('loadProductData')
             ->will($this->returnValue($data));
 
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Attribute::class)
+        $attributeMock = $this->getMockBuilder('Magento\Eav\Model\Attribute')
             ->setMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -126,8 +103,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('getName')
             ->will($this->returnValue('weeeTax'));
 
-        $model = $this->objectManager->getObject(
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::class,
+        $model = $this->objectManager->getObject('Magento\Weee\Model\Attribute\Backend\Weee\Tax',
             [
                 'attributeTax' => $attributeTaxMock,
                 '_attribute' => $attributeMock
@@ -135,13 +111,12 @@ class TaxTest extends \PHPUnit\Framework\TestCase
         );
 
         $model->setAttribute($attributeMock);
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->setMethods(['setData'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $result = $model->afterLoad($productMock);
-        $this->assertNotNull($result);
+        $model->afterLoad($productMock);
     }
 
     /**
@@ -154,7 +129,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
      */
     public function testAfterSaveWithRegion($origData, $currentData, $expectedData)
     {
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->setMethods(['getOrigData', 'getData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -168,7 +143,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->will($this->returnValue($currentData));
 
-        $attributeTaxMock = $this->getMockBuilder(\Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax::class)
+        $attributeTaxMock = $this->getMockBuilder('Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax')
             ->setMethods(['deleteProductData', 'insertProductData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -182,7 +157,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->with($productMock, $expectedData)
             ->will($this->returnValue(null));
 
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Attribute::class)
+        $attributeMock = $this->getMockBuilder('Magento\Eav\Model\Attribute')
             ->setMethods(['getName', 'getId'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -195,8 +170,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->will($this->returnValue(1));
 
-        $model = $this->objectManager->getObject(
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::class,
+        $model = $this->objectManager->getObject('Magento\Weee\Model\Attribute\Backend\Weee\Tax',
             [
                 'attributeTax' => $attributeTaxMock,
                 '_attribute' => $attributeMock
@@ -228,7 +202,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterDelete()
     {
-        $attributeTaxMock = $this->getMockBuilder(\Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax::class)
+        $attributeTaxMock = $this->getMockBuilder('Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax')
             ->setMethods(['deleteProductData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -238,8 +212,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->with(null, null)
             ->will($this->returnValue(null));
 
-        $model = $this->objectManager->getObject(
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::class,
+        $model = $this->objectManager->getObject('Magento\Weee\Model\Attribute\Backend\Weee\Tax',
             [
                 'attributeTax' => $attributeTaxMock,
             ]
@@ -250,7 +223,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTable()
     {
-        $attributeTaxMock = $this->getMockBuilder(\Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax::class)
+        $attributeTaxMock = $this->getMockBuilder('Magento\Weee\Model\ResourceModel\Attribute\Backend\Weee\Tax')
             ->setMethods(['getTable'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -260,8 +233,7 @@ class TaxTest extends \PHPUnit\Framework\TestCase
             ->with('weee_tax')
             ->will($this->returnValue(null));
 
-        $model = $this->objectManager->getObject(
-            \Magento\Weee\Model\Attribute\Backend\Weee\Tax::class,
+        $model = $this->objectManager->getObject('Magento\Weee\Model\Attribute\Backend\Weee\Tax',
             [
                 'attributeTax' => $attributeTaxMock,
             ]

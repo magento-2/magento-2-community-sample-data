@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -35,7 +35,7 @@ class ClientFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\HTTP\Client\Curl::class
+        $instanceName = 'Magento\Framework\HTTP\Client\Curl'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
@@ -45,7 +45,7 @@ class ClientFactory
      * Create class instance with specified parameters
      *
      * @param array $data
-     * @return ClientInterface
+     * @return \Magento\Framework\Flag
      */
     public function create(array $data = [])
     {

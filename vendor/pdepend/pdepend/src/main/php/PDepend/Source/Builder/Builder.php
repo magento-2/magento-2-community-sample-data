@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
   */
 
@@ -53,7 +53,7 @@ use PDepend\Util\Cache\CacheDriver;
 /**
  * Base interface for all code node builders.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 interface Builder extends \IteratorAggregate
@@ -138,13 +138,6 @@ interface Builder extends \IteratorAggregate
      * @return \PDepend\Source\AST\ASTClass
      */
     public function buildClass($qualifiedName);
-
-    /**
-     * Builds an anonymous class instance.
-     *
-     * @return \PDepend\Source\AST\ASTAnonymousClass
-     */
-    public function buildAnonymousClass();
 
     /**
      * This method will try to find an already existing instance for the given
@@ -358,11 +351,10 @@ interface Builder extends \IteratorAggregate
     /**
      * Builds a new expression node.
      *
-     * @param string $image
      * @return \PDepend\Source\AST\ASTExpression
-     * @since 0.9.8
+     * @since  0.9.8
      */
-    public function buildAstExpression($image = null);
+    public function buildAstExpression();
 
     /**
      * Builds a new assignment expression node.
@@ -505,20 +497,6 @@ interface Builder extends \IteratorAggregate
      * @since  0.9.8
      */
     public function buildAstConditionalExpression();
-
-    /**
-     * Builds a new print-expression.
-     *
-     * <code>
-     * -------------
-     * print "qafoo";
-     * -------------
-     * </code>
-     *
-     * @return \PDepend\Source\AST\ASTPrintExpression
-     * @since 2.3
-     */
-    public function buildAstPrintExpression();
 
     /**
      * Build a new shift left expression.

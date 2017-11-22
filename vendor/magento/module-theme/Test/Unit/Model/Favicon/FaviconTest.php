@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Favicon;
@@ -11,10 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class FaviconTest extends \PHPUnit\Framework\TestCase
+class FaviconTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Favicon
@@ -44,28 +41,22 @@ class FaviconTest extends \PHPUnit\Framework\TestCase
     /**
      * Initialize testable object
      */
-    protected function setUp()
+    public function setUp()
     {
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)->getMock();
-        $this->store = $this->getMockBuilder(
-            \Magento\Store\Model\Store::class
-        )->disableOriginalConstructor()->getMock();
+        $storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')->getMock();
+        $this->store = $this->getMockBuilder('Magento\Store\Model\Store')->disableOriginalConstructor()->getMock();
         $storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
         /** @var \Magento\Store\Model\StoreManagerInterface $storeManager */
-        $this->scopeManager = $this->getMockBuilder(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
-        )->getMock();
-        $this->fileStorageDatabase = $this->getMockBuilder(\Magento\MediaStorage\Helper\File\Storage\Database::class)
+        $this->scopeManager = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')->getMock();
+        $this->fileStorageDatabase = $this->getMockBuilder('Magento\MediaStorage\Helper\File\Storage\Database')
             ->disableOriginalConstructor()
             ->getMock();
-        $filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mediaDir = $this->getMockBuilder(
-            \Magento\Framework\Filesystem\Directory\ReadInterface::class
-        )->getMock();
+        $this->mediaDir = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\ReadInterface')->getMock();
         $filesystem->expects($this->once())
             ->method('getDirectoryRead')
             ->with(DirectoryList::MEDIA)

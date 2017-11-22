@@ -2,15 +2,11 @@
 /**
  * Order creditmemo configuration model
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Creditmemo;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Config extends \Magento\Sales\Model\Order\Total\Config\Base
 {
     /**

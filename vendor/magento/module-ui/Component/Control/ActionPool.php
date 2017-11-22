@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Control;
@@ -118,23 +118,6 @@ class ActionPool implements ActionPoolInterface
     }
 
     /**
-     * Add html block
-     *
-     * @param  string $type
-     * @param  string $name
-     * @param  array $arguments
-     * @return void
-     */
-    public function addHtmlBlock($type, $name = '', array $arguments = [])
-    {
-        $toolbar = $this->getToolbar();
-        $container = $this->context->getPageLayout()->createBlock($type, $name, $arguments);
-        if ($toolbar) {
-            $toolbar->setChild($name, $container);
-        }
-    }
-
-    /**
      * Create button container
      *
      * @param string $key
@@ -144,7 +127,7 @@ class ActionPool implements ActionPoolInterface
     protected function createContainer($key, UiComponentInterface $view)
     {
         $container = $this->context->getPageLayout()->createBlock(
-            \Magento\Ui\Component\Control\Container::class,
+            'Magento\Ui\Component\Control\Container',
             'container-' . $view->getName() . '-' . $key,
             [
                 'data' => [

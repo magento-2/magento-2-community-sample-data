@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Model;
@@ -55,6 +55,10 @@ class TotalsInformationManagement implements \Magento\Checkout\Api\TotalsInforma
             $quote->getShippingAddress()->setCollectShippingRates(true)->setShippingMethod(
                 $addressInformation->getShippingCarrierCode() . '_' . $addressInformation->getShippingMethodCode()
             );
+        }
+
+        if ($quote->getShippingAddress()->dataHasChangedFor('shipping_method')) {
+            $quote->setTotalsCollectedFlag(false);
         }
         $quote->collectTotals();
 

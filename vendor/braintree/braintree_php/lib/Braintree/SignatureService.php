@@ -1,7 +1,6 @@
 <?php
-namespace Braintree;
 
-class SignatureService
+class Braintree_SignatureService
 {
 
     public function __construct($key, $digest)
@@ -21,4 +20,3 @@ class SignatureService
     }
 
 }
-class_alias('Braintree\SignatureService', 'Braintree_SignatureService');

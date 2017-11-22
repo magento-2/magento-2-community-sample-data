@@ -1,21 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Account;
 
 use Magento\Customer\Model\Context;
-use Magento\Customer\Block\Account\SortLinkInterface;
 
 /**
  * Customer authorization link
  *
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
-class AuthorizationLink extends \Magento\Framework\View\Element\Html\Link implements SortLinkInterface
+class AuthorizationLink extends \Magento\Framework\View\Element\Html\Link
 {
     /**
      * Customer session
@@ -90,14 +87,5 @@ class AuthorizationLink extends \Magento\Framework\View\Element\Html\Link implem
     public function isLoggedIn()
     {
         return $this->httpContext->getValue(Context::CONTEXT_AUTH);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @since 100.2.0
-     */
-    public function getSortOrder()
-    {
-        return $this->getData(self::SORT_ORDER);
     }
 }

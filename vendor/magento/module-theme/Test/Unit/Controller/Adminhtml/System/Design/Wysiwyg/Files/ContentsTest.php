@@ -1,14 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Controller\Adminhtml\System\Design\Wysiwyg\Files;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ContentsTest extends \PHPUnit\Framework\TestCase
+class ContentsTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files */
     protected $controller;
@@ -28,17 +25,17 @@ class ContentsTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Theme\Helper\Storage|\PHPUnit_Framework_MockObject_MockObject */
     protected $storage;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->view = $this->createMock(\Magento\Framework\App\ViewInterface::class);
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->session = $this->createMock(\Magento\Backend\Model\Session::class);
-        $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->storage = $this->createMock(\Magento\Theme\Helper\Storage::class);
+        $this->view = $this->getMock('\Magento\Framework\App\ViewInterface', [], [], '', false);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->session = $this->getMock('Magento\Backend\Model\Session', [], [], '', false);
+        $this->response = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $this->storage = $this->getMock('Magento\Theme\Helper\Storage', [], [], '', false);
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->controller = $helper->getObject(
-            \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\Contents::class,
+            'Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\Contents',
             [
                 'objectManager' => $this->objectManager,
                 'view' => $this->view,
@@ -49,12 +46,13 @@ class ContentsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+
     public function testExecute()
     {
-        $layout = $this->getMockForAbstractClass(\Magento\Framework\View\LayoutInterface::class, [], '', false);
-        $storage = $this->createMock(\Magento\Theme\Model\Wysiwyg\Storage::class);
+        $layout = $this->getMockForAbstractClass('Magento\Framework\View\LayoutInterface', [], '', false);
+        $storage = $this->getMock('Magento\Theme\Model\Wysiwyg\Storage', [], [], '', false);
         $block = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\BlockInterface::class,
+            'Magento\Framework\View\Element\BlockInterface',
             [],
             '',
             false,
@@ -78,13 +76,13 @@ class ContentsTest extends \PHPUnit\Framework\TestCase
             ->with($storage);
         $this->objectManager->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Theme\Model\Wysiwyg\Storage::class)
+            ->with('Magento\Theme\Model\Wysiwyg\Storage')
             ->willReturn($storage);
         $this->storage->expects($this->once())
             ->method('getCurrentPath')
             ->willThrowException(new \Exception('Message'));
 
-        $jsonData = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
+        $jsonData = $this->getMock('Magento\Framework\Json\Helper\Data', [], [], '', false);
         $jsonData->expects($this->once())
             ->method('jsonEncode')
             ->with(['error' => true, 'message' => 'Message'])
@@ -92,7 +90,7 @@ class ContentsTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->willReturn($jsonData);
 
         $this->response->expects($this->once())

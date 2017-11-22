@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Address;
@@ -10,9 +10,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 /**
  * Customer address edit block
  *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Edit extends \Magento\Directory\Block\Data
 {
@@ -128,14 +126,16 @@ class Edit extends \Magento\Directory\Block\Data
         $this->pageConfig->getTitle()->set($this->getTitle());
 
         if ($postedData = $this->_customerSession->getAddressFormData(true)) {
-            $postedData['region'] = [
-                'region_id' => $postedData['region_id'],
-                'region' => $postedData['region'],
-            ];
+            if (!empty($postedData['region_id']) || !empty($postedData['region'])) {
+                $postedData['region'] = [
+                    'region_id' => $postedData['region_id'],
+                    'region' => $postedData['region'],
+                ];
+            }
             $this->dataObjectHelper->populateWithArray(
                 $this->_address,
                 $postedData,
-                \Magento\Customer\Api\Data\AddressInterface::class
+                '\Magento\Customer\Api\Data\AddressInterface'
             );
         }
 
@@ -150,7 +150,7 @@ class Edit extends \Magento\Directory\Block\Data
     public function getNameBlockHtml()
     {
         $nameBlock = $this->getLayout()
-            ->createBlock(\Magento\Customer\Block\Widget\Name::class)
+            ->createBlock('Magento\Customer\Block\Widget\Name')
             ->setObject($this->getAddress());
 
         return $nameBlock->toHtml();

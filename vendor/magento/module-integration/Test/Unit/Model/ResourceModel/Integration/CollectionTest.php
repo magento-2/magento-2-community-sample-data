@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Integration\Test\Unit\Model\ResourceModel\Integration;
@@ -8,7 +8,7 @@ namespace Magento\Integration\Test\Unit\Model\ResourceModel\Integration;
 /**
  * Unit test for \Magento\Integration\Model\ResourceModel\Integration\Collection
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Select|\PHPUnit_Framework_MockObject_MockObject
@@ -20,20 +20,20 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected $collection;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $this->select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $connection = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
             ->method('select')
             ->will($this->returnValue($this->select));
 
-        $resource = $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\AbstractDb::class)
+        $resource = $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\AbstractDb')
             ->disableOriginalConstructor()
             ->setMethods(['__wakeup', 'getConnection'])
             ->getMockForAbstractClass();
@@ -43,13 +43,12 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = $objectManagerHelper->getConstructArguments(
-            \Magento\Integration\Model\ResourceModel\Integration\Collection::class,
+            'Magento\Integration\Model\ResourceModel\Integration\Collection',
             ['resource' => $resource]
         );
 
-        $this->collection = $this->getMockBuilder(
-            \Magento\Integration\Model\ResourceModel\Integration\Collection::class
-        )->setConstructorArgs($arguments)
+        $this->collection = $this->getMockBuilder('Magento\Integration\Model\ResourceModel\Integration\Collection')
+            ->setConstructorArgs($arguments)
             ->setMethods(['addFilter', '_translateCondition', 'getMainTable'])
             ->getMock();
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model;
@@ -96,7 +96,7 @@ class ConfigOptionsListCollector
         }
 
         // check Setup
-        $setupOptionsClassName = \Magento\Setup\Model\ConfigOptionsList::class;
+        $setupOptionsClassName = 'Magento\Setup\Model\ConfigOptionsList';
         if (class_exists($setupOptionsClassName)) {
             $setupOptionsClass = $this->serviceLocator->get($setupOptionsClassName);
             if ($setupOptionsClass instanceof ConfigOptionsListInterface) {

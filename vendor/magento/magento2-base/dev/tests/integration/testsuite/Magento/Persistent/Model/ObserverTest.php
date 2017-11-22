@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Customer\Model\Context;
  * @magentoDataFixture Magento/Persistent/_files/persistent.php
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ObserverTest extends \PHPUnit\Framework\TestCase
+class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Helper\View
@@ -58,27 +58,27 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->_customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
 
         $this->_customerViewHelper = $this->_objectManager->create(
-            \Magento\Customer\Helper\View::class
+            'Magento\Customer\Helper\View'
         );
         $this->_escaper = $this->_objectManager->create(
-            \Magento\Framework\Escaper::class
+            'Magento\Framework\Escaper'
         );
 
         $this->customerRepository = $this->_objectManager->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
 
         $this->_checkoutSession = $this->getMockBuilder(
-            \Magento\Checkout\Model\Session::class
+            'Magento\Checkout\Model\Session'
         )->disableOriginalConstructor()->setMethods([])->getMock();
 
-        $this->_persistentSessionHelper = $this->_objectManager->create(\Magento\Persistent\Helper\Session::class);
+        $this->_persistentSessionHelper = $this->_objectManager->create('Magento\Persistent\Helper\Session');
 
         $this->_observer = $this->_objectManager->create(
-            \Magento\Persistent\Model\Observer::class,
+            'Magento\Persistent\Model\Observer',
             [
                 'escaper' => $this->_escaper,
                 'customerViewHelper' => $this->_customerViewHelper,
@@ -102,7 +102,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
         $httpContext = new \Magento\Framework\App\Http\Context();
         $httpContext->setValue(Context::CONTEXT_AUTH, 1, 1);
         $block = $this->_objectManager->create(
-            \Magento\Sales\Block\Reorder\Sidebar::class,
+            'Magento\Sales\Block\Reorder\Sidebar',
             [
                 'httpContext' => $httpContext
             ]
@@ -115,8 +115,8 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
                 )
             )
         );
-        $translation = __('Welcome, %1!', $customerName)->__toString();
-        $this->assertStringMatchesFormat('%A' . $translation . '%A', $block->getWelcome()->__toString());
+        $translation = __('Welcome, %1!', $customerName);
+        $this->assertStringMatchesFormat('%A' . $translation . '%A', $block->getWelcome());
         $this->_customerSession->logout();
     }
 }

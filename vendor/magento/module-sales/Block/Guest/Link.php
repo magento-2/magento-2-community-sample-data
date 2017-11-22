@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Guest;
@@ -10,9 +10,7 @@ use Magento\Customer\Model\Context;
 /**
  * "Orders and Returns" link
  *
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class Link extends \Magento\Framework\View\Element\Html\Link\Current
 {

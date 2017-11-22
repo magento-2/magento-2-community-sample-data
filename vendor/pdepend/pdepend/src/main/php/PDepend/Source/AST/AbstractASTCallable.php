@@ -4,7 +4,7 @@
  *
  * PHP Version 5
  *
- * Copyright (c) 2008-2017 Manuel Pichler <mapi@pdepend.org>.
+ * Copyright (c) 2008-2015, Manuel Pichler <mapi@pdepend.org>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -49,7 +49,7 @@ use PDepend\Util\Cache\CacheDriver;
  *
  * Callable objects is a generic parent for methods and functions.
  *
- * @copyright 2008-2017 Manuel Pichler. All rights reserved.
+ * @copyright 2008-2015 Manuel Pichler. All rights reserved.
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 abstract class AbstractASTCallable extends AbstractASTArtifact implements ASTCallable
@@ -261,9 +261,7 @@ abstract class AbstractASTCallable extends AbstractASTArtifact implements ASTCal
     public function getDependencies()
     {
         return new ASTClassOrInterfaceReferenceIterator(
-            $this->findChildrenOfType(
-                'PDepend\\Source\\AST\\ASTClassOrInterfaceReference'
-            )
+            $this->findChildrenOfType('PDepend\\Source\\AST\\ASTClassOrInterfaceReference')
         );
     }
 
@@ -284,24 +282,6 @@ abstract class AbstractASTCallable extends AbstractASTArtifact implements ASTCal
             return $node->getType();
         }
         return null;
-    }
-
-    /**
-     * Tests if this callable has a return class and return <b>true</b> if it is
-     * configured.
-     *
-     * @return boolean
-     * @since 2.2.4
-     */
-    public function hasReturnClass()
-    {
-        if ($this->returnClassReference) {
-            return true;
-        }
-        if (($node = $this->getReturnType()) instanceof ASTClassOrInterfaceReference) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -496,7 +476,7 @@ abstract class AbstractASTCallable extends AbstractASTArtifact implements ASTCal
             'nodes',
             'startLine',
             'endLine',
-            'comment',
+            'docComment',
             'returnsReference',
             'returnClassReference',
             'exceptionClassReferences'

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App\Test\Unit\Route\ConfigInterface;
 
-class ProxyTest extends \PHPUnit\Framework\TestCase
+class ProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Route\ConfigInterface\Proxy
@@ -18,22 +18,25 @@ class ProxyTest extends \PHPUnit\Framework\TestCase
      */
     protected $_object;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->_object = $this->createPartialMock(
-            \Magento\Framework\App\Route\ConfigInterface::class,
-            ['getRouteFrontName', 'getRouteByFrontName', 'getModulesByFrontName']
+        $this->_object = $this->getMock(
+            '\Magento\Framework\App\Route\ConfigInterface',
+            ['getRouteFrontName', 'getRouteByFrontName', 'getModulesByFrontName'],
+            [],
+            '',
+            false
         );
 
-        $objectManager = $this->createPartialMock(\Magento\Framework\ObjectManager\ObjectManager::class, ['get']);
+        $objectManager = $this->getMock('\Magento\Framework\ObjectManager\ObjectManager', ['get'], [], '', false);
         $objectManager->expects($this->once())
             ->method('get')
-            ->with(\Magento\Framework\App\Route\ConfigInterface::class)
+            ->with('Magento\Framework\App\Route\ConfigInterface')
             ->will($this->returnValue($this->_object));
 
         $this->_proxy = new \Magento\Framework\App\Route\ConfigInterface\Proxy(
             $objectManager,
-            \Magento\Framework\App\Route\ConfigInterface::class
+            'Magento\Framework\App\Route\ConfigInterface'
         );
     }
 

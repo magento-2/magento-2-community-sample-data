@@ -2,12 +2,12 @@
 /**
  * \Magento\Framework\DB\Profiler test case
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB\Test\Unit;
 
-class ProfilerTest extends \PHPUnit\Framework\TestCase
+class ProfilerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Profiler instance for test

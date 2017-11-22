@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Attribute\Backend;
@@ -9,12 +9,9 @@ use Magento\Framework\View\Model\Layout\Update\ValidatorFactory;
 use Magento\Eav\Model\Entity\Attribute\Exception;
 
 /**
- * Layout update attribute backend
- *
- * @api
+ * Product url key attribute backend
  *
  * @SuppressWarnings(PHPMD.LongVariable)
- * @since 100.0.2
  */
 class Customlayoutupdate extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {

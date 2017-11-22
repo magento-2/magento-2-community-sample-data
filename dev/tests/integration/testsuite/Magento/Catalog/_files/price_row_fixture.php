@@ -1,18 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Catalog\Setup\CategorySetup $installer */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 /**
  * After installation system has two categories: root one with ID:1 and Default category with ID:2
  */
 /** @var $category \Magento\Catalog\Model\Category */
-$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(
     9
@@ -35,11 +33,11 @@ $category->setId(
 )->save();
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
-$product->setId(
-    1
-)->setTypeId(
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
+)->setId(
+    1
 )->setAttributeSetId(
     $installer->getAttributeSetId('catalog_product', 'Default')
 )->setStoreId(
@@ -55,18 +53,11 @@ $product->setId(
 )->setWeight(
     18
 )->setStockData(
-    [
-        'use_config_manage_stock'   => 1,
-        'qty'                       => 100,
-        'is_qty_decimal'            => 0,
-        'is_in_stock'               => 1,
-    ]
+    ['use_config_manage_stock' => 0]
+)->setCategoryIds(
+    [9]
 )->setVisibility(
     \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
 )->setStatus(
     \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
 )->save();
-$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-/** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $categoryLinkManagement */
-$categoryLinkManagement = $objectManager->create(\Magento\Catalog\Api\CategoryLinkManagementInterface::class);
-$categoryLinkManagement->assignProductToCategories('simple', [9]);

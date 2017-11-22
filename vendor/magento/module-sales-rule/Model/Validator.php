@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -93,13 +93,6 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     protected $messageManager;
 
     /**
-     * Counter is used for assigning temporary id to quote address
-     *
-     * @var int
-     */
-    protected $counter = 0;
-
-    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory $collectionFactory
@@ -152,56 +145,29 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     {
         $this->setWebsiteId($websiteId)->setCustomerGroupId($customerGroupId)->setCouponCode($couponCode);
 
+        $key = $websiteId . '_' . $customerGroupId . '_' . $couponCode;
+        if (!isset($this->_rules[$key])) {
+            $this->_rules[$key] = $this->_collectionFactory->create()
+                ->setValidationFilter(
+                    $websiteId,
+                    $customerGroupId,
+                    $couponCode
+                )
+                ->addFieldToFilter('is_active', 1)
+                ->load();
+        }
         return $this;
     }
 
     /**
      * Get rules collection for current object state
      *
-     * @param Address|null $address
      * @return \Magento\SalesRule\Model\ResourceModel\Rule\Collection
      */
-    protected function _getRules(Address $address = null)
+    protected function _getRules()
     {
-        $addressId = $this->getAddressId($address);
-        $key = $this->getWebsiteId() . '_'
-            . $this->getCustomerGroupId() . '_'
-            . $this->getCouponCode() . '_'
-            . $addressId;
-        if (!isset($this->_rules[$key])) {
-            $this->_rules[$key] = $this->_collectionFactory->create()
-                ->setValidationFilter(
-                    $this->getWebsiteId(),
-                    $this->getCustomerGroupId(),
-                    $this->getCouponCode(),
-                    null,
-                    $address
-                )
-                ->addFieldToFilter('is_active', 1)
-                ->load();
-        }
+        $key = $this->getWebsiteId() . '_' . $this->getCustomerGroupId() . '_' . $this->getCouponCode();
         return $this->_rules[$key];
-    }
-
-    /**
-     * @param Address $address
-     * @return string
-     */
-    protected function getAddressId(Address $address)
-    {
-        if ($address == null) {
-            return '';
-        }
-        if (!$address->hasData('address_sales_rule_id')) {
-            if ($address->hasData('address_id')) {
-                $address->setData('address_sales_rule_id', $address->getData('address_id'));
-            } else {
-                $type = $address->getAddressType();
-                $tempId = $type . $this->counter++;
-                $address->setData('address_sales_rule_id', $tempId);
-            }
-        }
-        return $address->getData('address_sales_rule_id');
     }
 
     /**
@@ -225,7 +191,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     public function canApplyRules(AbstractItem $item)
     {
         $address = $item->getAddress();
-        foreach ($this->_getRules($address) as $rule) {
+        foreach ($this->_getRules() as $rule) {
             if (!$this->validatorUtility->canProcessRule($rule, $address) || !$rule->getActions()->validate($item)) {
                 return false;
             }
@@ -271,7 +237,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
 
         $appliedRuleIds = $this->rulesApplier->applyRules(
             $item,
-            $this->_getRules($item->getAddress()),
+            $this->_getRules(),
             $this->_skipActionsValidation,
             $this->getCouponCode()
         );
@@ -298,7 +264,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
         }
         $quote = $address->getQuote();
         $appliedRuleIds = [];
-        foreach ($this->_getRules($address) as $rule) {
+        foreach ($this->_getRules() as $rule) {
             /* @var \Magento\SalesRule\Model\Rule $rule */
             if (!$rule->getApplyToShipping() || !$this->validatorUtility->canProcessRule($rule, $address)) {
                 continue;
@@ -385,7 +351,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
         }
 
         /** @var \Magento\SalesRule\Model\Rule $rule */
-        foreach ($this->_getRules($address) as $rule) {
+        foreach ($this->_getRules() as $rule) {
             if (\Magento\SalesRule\Model\Rule::CART_FIXED_ACTION == $rule->getSimpleAction()
                 && $this->validatorUtility->canProcessRule($rule, $address)
             ) {
@@ -497,14 +463,13 @@ class Validator extends \Magento\Framework\Model\AbstractModel
      * Return items list sorted by possibility to apply prioritized rules
      *
      * @param array $items
-     * @param Address $address
      * @return array $items
      */
-    public function sortItemsByPriority($items, Address $address = null)
+    public function sortItemsByPriority($items)
     {
         $itemsSorted = [];
         /** @var $rule \Magento\SalesRule\Model\Rule */
-        foreach ($this->_getRules($address) as $rule) {
+        foreach ($this->_getRules() as $rule) {
             foreach ($items as $itemKey => $itemValue) {
                 if ($rule->getActions()->validate($itemValue)) {
                     unset($items[$itemKey]);

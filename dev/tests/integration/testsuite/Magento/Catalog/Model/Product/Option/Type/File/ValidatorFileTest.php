@@ -1,15 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Product\Option\Type\File;
 
 /**
  * @magentoDataFixture Magento/Catalog/_files/validate_image.php
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ValidatorFileTest extends \PHPUnit\Framework\TestCase
+class ValidatorFileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ValidatorFile
@@ -26,30 +25,23 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
      */
     protected $httpFactoryMock;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $maxFileSizeInMb;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $maxFileSize;
 
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->httpFactoryMock = $this->createPartialMock(
-            \Magento\Framework\HTTP\Adapter\FileTransferFactory::class,
-            ['create']
-        );
+        $this->httpFactoryMock = $this->getMock('Magento\Framework\HTTP\Adapter\FileTransferFactory', ['create']);
         /** @var \Magento\Framework\File\Size $fileSize */
-        $fileSize = $this->objectManager->create(\Magento\Framework\File\Size::class);
+        $fileSize = $this->objectManager->create('Magento\Framework\File\Size');
         $this->maxFileSize = $fileSize->getMaxFileSize();
         $this->maxFileSizeInMb = $fileSize->getMaxFileSizeInMb();
 
         $this->model = $this->objectManager->create(
-            \Magento\Catalog\Model\Product\Option\Type\File\ValidatorFile::class,
+            'Magento\Catalog\Model\Product\Option\Type\File\ValidatorFile',
             [
                 'httpFactory' => $this->httpFactoryMock
             ]
@@ -62,39 +54,35 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
      */
     public function testRunValidationException()
     {
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['isValid']);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['isValid']);
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption(['is_require' => false])
         );
     }
 
     /**
-     * @backupGlobals enabled
      * @return void
      */
     public function testLargeSizeFile()
     {
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
+        $this->setExpectedException(
+            '\Magento\Framework\Exception\LocalizedException',
             sprintf('The file you uploaded is larger than %s Megabytes allowed by server', $this->maxFileSizeInMb)
         );
         $this->prepareEnv();
         $_SERVER['CONTENT_LENGTH'] = $this->maxFileSize + 1;
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['getFileInfo']);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['getFileInfo']);
         $exception = function () {
             throw new \Exception();
         };
         $httpAdapterMock->expects($this->once())->method('getFileInfo')->will($this->returnCallback($exception));
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
-        $property = new \ReflectionProperty($httpAdapterMock, '_files');
-        $property->setAccessible(true);
-        $property->setValue($httpAdapterMock, ['options_1_file' => $_FILES['options_1_file']]);
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption(['is_require' => false])
         );
     }
@@ -106,18 +94,15 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
     public function testOptionRequiredException()
     {
         $this->prepareEnv();
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['getFileInfo']);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['getFileInfo']);
         $exception = function () {
             throw new \Exception();
         };
         $httpAdapterMock->expects($this->once())->method('getFileInfo')->will($this->returnCallback($exception));
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
-        $property = new \ReflectionProperty($httpAdapterMock, '_files');
-        $property->setAccessible(true);
-        $property->setValue($httpAdapterMock, ['options_1_file' => $_FILES['options_1_file']]);
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption(['is_require' => false])
         );
     }
@@ -130,15 +115,12 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
     public function testException()
     {
         $this->prepareEnv();
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['isUploaded']);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['isUploaded']);
         $httpAdapterMock->expects($this->once())->method('isUploaded')->will($this->returnValue(false));
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
-        $property = new \ReflectionProperty($httpAdapterMock, '_files');
-        $property->setAccessible(true);
-        $property->setValue($httpAdapterMock, ['options_1_file' => $_FILES['options_1_file']]);
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption()
         );
     }
@@ -148,8 +130,8 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidateFile()
     {
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
+        $this->setExpectedException(
+            '\Magento\Framework\Exception\LocalizedException',
             "The file 'test.jpg' for 'MediaOption' has an invalid extension.\n"
             . "The file 'test.jpg' for 'MediaOption' has an invalid extension.\n"
             . "The maximum allowed image size for 'MediaOption' is 2000x2000 px.\n"
@@ -159,31 +141,18 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->prepareEnv();
-        $httpAdapterMock = $this->createPartialMock(
-            \Zend_File_Transfer_Adapter_Http::class,
-            ['isValid', 'getErrors', 'getFileInfo', 'isUploaded']
-        );
-        $httpAdapterMock->expects($this->once())
-            ->method('isValid')
-            ->willReturn(false);
-        $httpAdapterMock->expects($this->exactly(2))
-            ->method('getErrors')
-            ->willReturn(
-                [
-                    \Zend_Validate_File_ExcludeExtension::FALSE_EXTENSION,
-                    \Zend_Validate_File_Extension::FALSE_EXTENSION,
-                    \Zend_Validate_File_ImageSize::WIDTH_TOO_BIG,
-                    \Zend_Validate_File_FilesSize::TOO_BIG,
-                ]
-            );
-        $this->httpFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($httpAdapterMock);
-        $httpAdapterMock->expects($this->once())
-            ->method('isUploaded')
-            ->willReturn(true);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['isValid', 'getErrors']);
+        $httpAdapterMock->expects($this->once())->method('isValid')->will($this->returnValue(false));
+        $httpAdapterMock->expects($this->exactly(2))->method('getErrors')->will($this->returnValue([
+            \Zend_Validate_File_ExcludeExtension::FALSE_EXTENSION,
+            \Zend_Validate_File_Extension::FALSE_EXTENSION,
+            \Zend_Validate_File_ImageSize::WIDTH_TOO_BIG,
+            \Zend_Validate_File_FilesSize::TOO_BIG,
+        ]));
+        $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
+
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption()
         );
     }
@@ -193,16 +162,13 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate()
     {
-        $this->prepareGoodEnv();
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['isValid']);
+        $this->prepareEnv();
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['isValid']);
         $httpAdapterMock->expects($this->once())->method('isValid')->will($this->returnValue(true));
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
-        $property = new \ReflectionProperty($httpAdapterMock, '_files');
-        $property->setAccessible(true);
-        $property->setValue($httpAdapterMock, ['options_1_file' => $_FILES['options_1_file']]);
         $result = $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption()
         );
         unset($result['fullpath'], $result['secret_key']);
@@ -213,20 +179,17 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
     {
         $this->prepareEnvForEmptyFile();
 
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
+        $this->setExpectedException(
+            '\Magento\Framework\Exception\LocalizedException',
             'The file is empty. Please choose another one'
         );
 
-        $httpAdapterMock = $this->createPartialMock(\Zend_File_Transfer_Adapter_Http::class, ['isValid']);
+        $httpAdapterMock = $this->getMock('Zend_File_Transfer_Adapter_Http', ['isValid']);
         $httpAdapterMock->expects($this->once())->method('isValid')->will($this->returnValue(true));
         $this->httpFactoryMock->expects($this->once())->method('create')->will($this->returnValue($httpAdapterMock));
 
-        $property = new \ReflectionProperty($httpAdapterMock, '_files');
-        $property->setAccessible(true);
-        $property->setValue($httpAdapterMock, ['options_1_file' => $_FILES['options_1_file']]);
         $this->model->validate(
-            $this->objectManager->create(\Magento\Framework\DataObject::class),
+            $this->objectManager->create('Magento\Framework\DataObject'),
             $this->getProductOption()
         );
     }
@@ -259,7 +222,7 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
             'price_type' => 'fixed',
         ];
         $option = $this->objectManager->create(
-            \Magento\Catalog\Model\Product\Option::class,
+            'Magento\Catalog\Model\Product\Option',
             [
                 'data' => array_merge($data, $options)
             ]
@@ -276,7 +239,7 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
         $file = 'magento_small_image.jpg';
 
         /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
+        $filesystem = $this->objectManager->get('Magento\Framework\Filesystem');
         $tmpDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::SYS_TMP);
         $filePath = $tmpDirectory->getAbsolutePath($file);
 
@@ -290,27 +253,6 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return void
-     */
-    protected function prepareGoodEnv()
-    {
-        $file = 'magento_small_image.jpg';
-
-        /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
-        $tmpDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::SYS_TMP);
-        $filePath = $tmpDirectory->getAbsolutePath($file);
-
-        $_FILES['options_1_file'] = [
-            'name' => 'test.jpg',
-            'type' => 'image/jpeg',
-            'tmp_name' => $filePath,
-            'error' => 0,
-            'size' => '3046',
-        ];
-    }
-
-    /**
      * Test exception for empty file
      *
      * @return void
@@ -320,7 +262,7 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
         $file = 'magento_empty.jpg';
 
         /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
+        $filesystem = $this->objectManager->get('Magento\Framework\Filesystem');
         $tmpDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::SYS_TMP);
         $filePath = $tmpDirectory->getAbsolutePath($file);
 
@@ -339,9 +281,9 @@ class ValidatorFileTest extends \PHPUnit\Framework\TestCase
         return [
             'type' => 'image/jpeg',
             'title' => 'test.jpg',
-            'quote_path' => 'custom_options/quote/t/e/a071b9ffc8fda6df1652c05a4c61bf8a.jpg',
-            'order_path' => 'custom_options/order/t/e/a071b9ffc8fda6df1652c05a4c61bf8a.jpg',
-            'size' => '3046',
+            'quote_path' => 'custom_options/quote/t/e/e1d601731b4b1a84163cd0e9370a4fcb.jpg',
+            'order_path' => 'custom_options/order/t/e/e1d601731b4b1a84163cd0e9370a4fcb.jpg',
+            'size' => '3300',
             'width' => 136,
             'height' => 131,
         ];

@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
 
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\StateResolver;
+use Magento\Sales\Model\Order;
 
 /**
  * Class StateCheckerTest
  */
-class StateResolverTest extends \PHPUnit\Framework\TestCase
+class StateResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Order

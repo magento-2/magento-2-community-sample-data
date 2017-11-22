@@ -2,7 +2,7 @@
 /**
  * Test class for \Magento\Catalog\Block\Product\View
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@
 
 namespace Magento\Catalog\Test\Unit\Block\Product;
 
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\View
@@ -30,17 +30,17 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->productTypeConfig = $this->createMock(\Magento\Catalog\Model\ProductTypes\ConfigInterface::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $this->productTypeConfig = $this->getMock('Magento\Catalog\Model\ProductTypes\ConfigInterface');
+        $this->registryMock = $this->getMock('Magento\Framework\Registry', [], [], '', false);
         $this->view = $helper->getObject(
-            \Magento\Catalog\Block\Product\View::class,
+            'Magento\Catalog\Block\Product\View',
             ['productTypeConfig' => $this->productTypeConfig, 'registry' => $this->registryMock]
         );
     }
 
     public function testShouldRenderQuantity()
     {
-        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $this->registryMock->expects(
             $this->any()
         )->method(
@@ -65,9 +65,9 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdentities()
     {
-        $productTags = ['cat_p_1'];
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $category = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $productTags = ['catalog_product_1'];
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
+        $category = $this->getMock('Magento\Catalog\Model\Category', [], [], '', false);
 
         $product->expects($this->once())
             ->method('getIdentities')
@@ -84,6 +84,6 @@ class ViewTest extends \PHPUnit\Framework\TestCase
                 ]
             )
         );
-        $this->assertEquals(['cat_p_1', 'cat_c_1'], $this->view->getIdentities());
+        $this->assertEquals(['catalog_product_1', 'catalog_category_product_1'], $this->view->getIdentities());
     }
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Block\Adminhtml\System\Config\Field;
 
 use Magento\Paypal\Block\Adminhtml\System\Config\Field\Country;
 
-class CountryTest extends \PHPUnit\Framework\TestCase
+class CountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Country
@@ -38,7 +38,7 @@ class CountryTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_element = $this->getMockForAbstractClass(
-            \Magento\Framework\Data\Form\Element\AbstractElement::class,
+            'Magento\Framework\Data\Form\Element\AbstractElement',
             [],
             '',
             false,
@@ -55,11 +55,11 @@ class CountryTest extends \PHPUnit\Framework\TestCase
         $this->_element->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('name'));
-        $this->_request = $this->getMockForAbstractClass(\Magento\Framework\App\RequestInterface::class);
-        $this->_jsHelper = $this->createMock(\Magento\Framework\View\Helper\Js::class);
-        $this->_url = $this->createMock(\Magento\Backend\Model\Url::class);
+        $this->_request = $this->getMockForAbstractClass('Magento\Framework\App\RequestInterface');
+        $this->_jsHelper = $this->getMock('Magento\Framework\View\Helper\Js', [], [], '', false);
+        $this->_url = $this->getMock('Magento\Backend\Model\Url', [], [], '', false);
         $this->_model = $helper->getObject(
-            \Magento\Paypal\Block\Adminhtml\System\Config\Field\Country::class,
+            'Magento\Paypal\Block\Adminhtml\System\Config\Field\Country',
             ['request' => $this->_request, 'jsHelper' => $this->_jsHelper, 'url' => $this->_url]
         );
     }
@@ -87,19 +87,19 @@ class CountryTest extends \PHPUnit\Framework\TestCase
         $this->_element->setInherit($inherit);
         $this->_element->setCanUseDefaultValue($canUseDefault);
         $constraints = [
-            new \PHPUnit\Framework\Constraint\StringContains('document.observe("dom:loaded", function() {'),
-            new \PHPUnit\Framework\Constraint\StringContains(
+            new \PHPUnit_Framework_Constraint_StringContains('document.observe("dom:loaded", function() {'),
+            new \PHPUnit_Framework_Constraint_StringContains(
                 '$("' . $this->_element->getHtmlId() . '").observe("change", function () {'
             ),
         ];
         if ($canUseDefault && ($requestCountry == 'US') && $requestDefaultCountry) {
-            $constraints[] = new \PHPUnit\Framework\Constraint\StringContains(
+            $constraints[] = new \PHPUnit_Framework_Constraint_StringContains(
                 '$("' . $this->_element->getHtmlId() . '_inherit").observe("click", function () {'
             );
         }
         $this->_jsHelper->expects($this->once())
             ->method('getScript')
-            ->with(new \PHPUnit\Framework\Constraint\LogicalAnd($constraints));
+            ->with(new \PHPUnit_Framework_Constraint_And($constraints));
         $this->_url->expects($this->once())
             ->method('getUrl')
             ->with(

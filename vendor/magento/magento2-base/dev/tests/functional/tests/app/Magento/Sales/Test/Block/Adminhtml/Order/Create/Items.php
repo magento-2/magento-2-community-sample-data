@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,6 @@ namespace Magento\Sales\Test\Block\Adminhtml\Order\Create;
 use Magento\Backend\Test\Block\Template;
 use Magento\Mtf\Block\Block;
 use Magento\Mtf\Client\Locator;
-use Magento\Mtf\Fixture\InjectableFixture;
 
 /**
  * Adminhtml sales order create items block.
@@ -22,20 +21,6 @@ class Items extends Block
      * @var string
      */
     protected $addProducts = "//button[span='Add Products']";
-
-    /**
-     * Locator for Select element with action in Items Ordered grid.
-     *
-     * @var string
-     */
-    protected $actionSelect = ".//span[.='%s']//parent::td//following-sibling::td/select";
-
-    /**
-     * "No items ordered" message locator.
-     *
-     * @var string
-     */
-    protected $emptyTextMessage = '.empty-text';
 
     /**
      * Item product.
@@ -86,50 +71,9 @@ class Items extends Block
     public function getItemProductByName($name)
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\Create\Items\ItemProduct::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\Create\Items\ItemProduct',
             ['element' => $this->_rootElement->find(sprintf($this->itemProduct, $name), Locator::SELECTOR_XPATH)]
         );
-    }
-
-    /**
-     * Get "No items ordered" message.
-     *
-     * @return string
-     */
-    public function getEmptyTextMessage()
-    {
-        return $this->_rootElement->find($this->emptyTextMessage, Locator::SELECTOR_CSS)->getText();
-    }
-
-    /**
-     * Get all added to order item names.
-     *
-     * @return array
-     */
-    public function getItemsNames()
-    {
-        $itemNames = [];
-        $this->getTemplateBlock()->waitLoader();
-        $items = $this->_rootElement->getElements($this->productNames, Locator::SELECTOR_XPATH);
-        foreach ($items as $item) {
-            $itemNames[] = $item->getText();
-        }
-
-        return $itemNames;
-    }
-
-    /**
-     * Select action for item added to order.
-     *
-     * @param InjectableFixture $product
-     * @param string $action
-     * @return void
-     */
-    public function selectItemAction(InjectableFixture $product, $action)
-    {
-        $this->_rootElement
-            ->find(sprintf($this->actionSelect, $product->getName()), Locator::SELECTOR_XPATH, 'select')
-            ->setValue($action);
     }
 
     /**
@@ -159,7 +103,7 @@ class Items extends Block
     public function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Template::class,
+            'Magento\Backend\Test\Block\Template',
             ['element' => $this->_rootElement->find($this->template, Locator::SELECTOR_XPATH)]
         );
     }

@@ -184,7 +184,6 @@ var ImageDialog = {
 		tinyMCEPopup.editor.execCommand('mceRepaint');
 		tinyMCEPopup.editor.focus();
 		tinyMCEPopup.close();
-		ed.onChange.dispatch(ed);
 	},
 
 	getAttrib : function(e, at) {

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Asset;
 
-class GroupedCollectionTest extends \PHPUnit\Framework\TestCase
+class GroupedCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Asset\GroupedCollection
@@ -19,7 +19,14 @@ class GroupedCollectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $factory = $this->createMock(\Magento\Framework\View\Asset\PropertyGroupFactory::class);
+        $factory = $this->getMock(
+            'Magento\Framework\View\Asset\PropertyGroupFactory',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
         $factory->expects(
             $this->any()
         )->method(
@@ -61,7 +68,7 @@ class GroupedCollectionTest extends \PHPUnit\Framework\TestCase
         $actualGroups = [];
         /** @var $actualGroup \Magento\Framework\View\Asset\PropertyGroup */
         foreach ($actualGroupObjects as $actualGroup) {
-            $this->assertInstanceOf(\Magento\Framework\View\Asset\PropertyGroup::class, $actualGroup);
+            $this->assertInstanceOf('Magento\Framework\View\Asset\PropertyGroup', $actualGroup);
             $actualGroups[] = ['properties' => $actualGroup->getProperties(), 'assets' => $actualGroup->getAll()];
         }
         $this->assertEquals($expectedGroups, $actualGroups);
@@ -84,7 +91,7 @@ class GroupedCollectionTest extends \PHPUnit\Framework\TestCase
     {
         $cssAsset = new \Magento\Framework\View\Asset\Remote('http://127.0.0.1/style.css', 'css');
         $jsAsset = new \Magento\Framework\View\Asset\Remote('http://127.0.0.1/script.js', 'js');
-        $jsAssetAllowingMerge = $this->getMockForAbstractClass(\Magento\Framework\View\Asset\MergeableInterface::class);
+        $jsAssetAllowingMerge = $this->getMockForAbstractClass('Magento\Framework\View\Asset\MergeableInterface');
         $jsAssetAllowingMerge->expects($this->any())->method('getContentType')->will($this->returnValue('js'));
 
         // assets with identical properties should be grouped together

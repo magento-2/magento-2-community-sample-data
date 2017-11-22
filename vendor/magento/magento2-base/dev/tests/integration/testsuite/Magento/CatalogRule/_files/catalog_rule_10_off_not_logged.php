@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,9 +10,7 @@
  */
 
 /** @var $banner \Magento\CatalogRule\Model\Rule */
-$catalogRule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\CatalogRule\Model\Rule::class
-);
+$catalogRule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\CatalogRule\Model\Rule');
 
 $catalogRule
     ->setIsActive(1)
@@ -21,13 +19,9 @@ $catalogRule
     ->setDiscountAmount(10)
     ->setWebsiteIds([0 => 1])
     ->setSimpleAction('by_percent')
-    ->setStopRulesProcessing(false)
-    ->setSortOrder(0)
-    ->setSubIsEnable(0)
-    ->setSubDiscountAmount(0)
     ->save();
 
 /** @var \Magento\CatalogRule\Model\Indexer\IndexBuilder $indexBuilder */
 $indexBuilder = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\CatalogRule\Model\Indexer\IndexBuilder::class);
+    ->get('Magento\CatalogRule\Model\Indexer\IndexBuilder');
 $indexBuilder->reindexFull();

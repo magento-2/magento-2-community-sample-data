@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,6 +11,8 @@ use Magento\Framework\Exception\CronException;
 /**
  * Crontab schedule model
  *
+ * @method \Magento\Cron\Model\ResourceModel\Schedule _getResource()
+ * @method \Magento\Cron\Model\ResourceModel\Schedule getResource()
  * @method string getJobCode()
  * @method \Magento\Cron\Model\Schedule setJobCode(string $value)
  * @method string getStatus()
@@ -28,8 +30,7 @@ use Magento\Framework\Exception\CronException;
  * @method array getCronExprArr()
  * @method \Magento\Cron\Model\Schedule setCronExprArr(array $value)
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Schedule extends \Magento\Framework\Model\AbstractModel
 {
@@ -65,7 +66,7 @@ class Schedule extends \Magento\Framework\Model\AbstractModel
      */
     public function _construct()
     {
-        $this->_init(\Magento\Cron\Model\ResourceModel\Schedule::class);
+        $this->_init('Magento\Cron\Model\ResourceModel\Schedule');
     }
 
     /**
@@ -220,17 +221,16 @@ class Schedule extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * Lock the cron job so no other scheduled instances run simultaneously.
-     *
-     * Sets a job to STATUS_RUNNING only if it is currently in STATUS_PENDING
-     * and no other jobs of the same code are currently in STATUS_RUNNING.
+     * Sets a job to STATUS_RUNNING only if it is currently in STATUS_PENDING.
      * Returns true if status was changed and false otherwise.
+     *
+     * This is used to implement locking for cron jobs.
      *
      * @return boolean
      */
     public function tryLockJob()
     {
-        if ($this->_getResource()->trySetJobUniqueStatusAtomic(
+        if ($this->_getResource()->trySetJobStatusAtomic(
             $this->getId(),
             self::STATUS_RUNNING,
             self::STATUS_PENDING

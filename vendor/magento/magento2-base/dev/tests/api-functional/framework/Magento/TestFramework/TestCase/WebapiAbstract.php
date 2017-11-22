@@ -2,7 +2,7 @@
 /**
  * Generic test case for Web API functional tests.
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\TestCase;
@@ -13,9 +13,8 @@ use Magento\Webapi\Model\Soap\Fault;
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
+abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
 {
     /** TODO: Reconsider implementation of fixture-management methods after implementing several tests */
     /**#@+
@@ -95,8 +94,8 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
      * @var array
      */
     protected $_webApiAdaptersMap = [
-        self::ADAPTER_SOAP => \Magento\TestFramework\TestCase\Webapi\Adapter\Soap::class,
-        self::ADAPTER_REST => \Magento\TestFramework\TestCase\Webapi\Adapter\Rest::class,
+        self::ADAPTER_SOAP => 'Magento\TestFramework\TestCase\Webapi\Adapter\Soap',
+        self::ADAPTER_REST => 'Magento\TestFramework\TestCase\Webapi\Adapter\Rest',
     ];
 
     /**
@@ -116,7 +115,9 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
     public static function tearDownAfterClass()
     {
         //clear garbage in memory
-        gc_collect_cycles();
+        if (version_compare(PHP_VERSION, '5.3', '>=')) {
+            gc_collect_cycles();
+        }
 
         $fixtureNamespace = self::_getFixtureNamespace();
         if (isset(self::$_classLevelFixtures[$fixtureNamespace])
@@ -342,9 +343,9 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('isSecureArea');
+        $objectManager->get('Magento\Framework\Registry')->unregister('isSecureArea');
         if ($flag) {
-            $objectManager->get(\Magento\Framework\Registry::class)->register('isSecureArea', $flag);
+            $objectManager->get('Magento\Framework\Registry')->register('isSecureArea', $flag);
         }
     }
 
@@ -422,16 +423,16 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
             //set application path
             $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
             /** @var \Magento\Framework\App\Config\ScopeConfigInterface $config */
-            $config = $objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+            $config = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
             $options = $config->getOptions();
             $currentCacheDir = $options->getCacheDir();
             $currentEtcDir = $options->getEtcDir();
             /** @var Filesystem $filesystem */
-            $filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
+            $filesystem = $objectManager->get('Magento\Framework\Filesystem');
             $options->setCacheDir($filesystem->getDirectoryRead(DirectoryList::CACHE)->getAbsolutePath());
             $options->setEtcDir($filesystem->getDirectoryRead(DirectoryList::CONFIG)->getAbsolutePath());
 
-            $this->_appCache = $objectManager->get(\Magento\Framework\App\Cache::class);
+            $this->_appCache = $objectManager->get('Magento\Framework\App\Cache');
 
             //revert paths options
             $options->setCacheDir($currentCacheDir);
@@ -478,13 +479,13 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $config \Magento\Config\Model\Config */
-        $config = $objectManager->create(\Magento\Config\Model\Config::class);
+        $config = $objectManager->create('Magento\Config\Model\Config');
         $data[$group]['fields'][$node]['value'] = $value;
         $config->setSection($section)->setGroups($data)->save();
 
         if ($restore && !isset($this->_origConfigValues[$path])) {
             $this->_origConfigValues[$path] = (string)$objectManager->get(
-                \Magento\Framework\App\Config\ScopeConfigInterface::class
+                'Magento\Framework\App\Config\ScopeConfigInterface'
             )->getNode(
                 $path,
                 'default'
@@ -494,8 +495,8 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
         //refresh local cache
         if ($cleanAppCache) {
             if ($updateLocalConfig) {
-                $objectManager->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class)->reinit();
-                $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)->reinitStores();
+                $objectManager->get('Magento\Framework\App\Config\ReinitableConfigInterface')->reinit();
+                $objectManager->get('Magento\Store\Model\StoreManagerInterface')->reinitStores();
             }
 
             if (!$this->_cleanAppConfigCache()) {
@@ -573,8 +574,7 @@ abstract class WebapiAbstract extends \PHPUnit\Framework\TestCase
         if ($traceString) {
             /** Check error trace */
             $traceNode = Fault::NODE_DETAIL_TRACE;
-            $mode = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-                ->get(\Magento\Framework\App\State::class)
+            $mode = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\App\State')
                 ->getMode();
             if ($mode == \Magento\Framework\App\State::MODE_DEVELOPER) {
                 /** Developer mode changes tested behavior and it cannot properly be tested for now */

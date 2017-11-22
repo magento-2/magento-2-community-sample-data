@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Model;
 
-use Symfony\Component\Console\Application;
-use Magento\Framework\Console\CommandListInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Magento\Setup\Mvc\Bootstrap\InitParamListener;
+use Magento\Framework\App\Bootstrap;
+use Magento\Framework\App\DeploymentConfig;
 
 /**
  * Object manager provider
@@ -32,20 +32,11 @@ class ObjectManagerProvider
     private $objectManager;
 
     /**
-     * @var Bootstrap
-     */
-    private $bootstrap;
-
-    /**
      * @param ServiceLocatorInterface $serviceLocator
-     * @param Bootstrap $bootstrap
      */
-    public function __construct(
-        ServiceLocatorInterface $serviceLocator,
-        Bootstrap $bootstrap
-    ) {
+    public function __construct(ServiceLocatorInterface $serviceLocator)
+    {
         $this->serviceLocator = $serviceLocator;
-        $this->bootstrap = $bootstrap;
     }
 
     /**
@@ -58,29 +49,10 @@ class ObjectManagerProvider
     {
         if (null === $this->objectManager) {
             $initParams = $this->serviceLocator->get(InitParamListener::BOOTSTRAP_PARAM);
-            $factory = $this->getObjectManagerFactory($initParams);
+            $factory = Bootstrap::createObjectManagerFactory(BP, $initParams);
             $this->objectManager = $factory->create($initParams);
-            if (PHP_SAPI == 'cli') {
-                $this->createCliCommands();
-            }
         }
         return $this->objectManager;
-    }
-
-    /**
-     * Creates cli commands and initialize them with application instance
-     *
-     * @return void
-     */
-    private function createCliCommands()
-    {
-        /** @var CommandListInterface $commandList */
-        $commandList = $this->objectManager->create(CommandListInterface::class);
-        foreach ($commandList->getCommands() as $command) {
-            $command->setApplication(
-                $this->serviceLocator->get(Application::class)
-            );
-        }
     }
 
     /**
@@ -112,7 +84,7 @@ class ObjectManagerProvider
      */
     public function getObjectManagerFactory($initParams = [])
     {
-        return $this->bootstrap->createObjectManagerFactory(
+        return Bootstrap::createObjectManagerFactory(
             BP,
             $initParams
         );

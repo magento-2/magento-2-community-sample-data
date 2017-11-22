@@ -1,94 +1,62 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Interception\Test\Unit\Code\Generator;
 
-use Composer\Autoload\ClassLoader;
-use Magento\Framework\Code\Generator\Io;
-use Magento\Framework\Interception\Code\Generator\Interceptor;
-use \PHPUnit_Framework_MockObject_MockObject as MockObject;
-
-class InterceptorTest extends \PHPUnit\Framework\TestCase
+class InterceptorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Io|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $ioGenerator;
+    protected $ioObjectMock;
 
     /**
-     * @inheritdoc
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
+    protected $classGeneratorMock;
+
     protected function setUp()
     {
-        $this->ioGenerator = $this->getMockBuilder(Io::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $loader = new ClassLoader();
-        $loader->addPsr4(
-            'Magento\\Framework\\Interception\\Code\\Generator\\',
-            __DIR__ . '/_files'
+        $this->ioObjectMock = $this->getMock('\Magento\Framework\Code\Generator\Io', [], [], '', false);
+        $this->classGeneratorMock = $this->getMock(
+            '\Magento\Framework\Code\Generator\CodeGeneratorInterface',
+            [],
+            [],
+            '',
+            false
         );
-        $loader->register();
     }
 
-    /**
-     * Checks a test case when interceptor generates code for the specified class.
-     *
-     * @param string $className
-     * @param string $resultClassName
-     * @param string $fileName
-     * @dataProvider interceptorDataProvider
-     */
-    public function testGenerate($className, $resultClassName, $fileName)
+    public function testGetDefaultResultClassName()
     {
-        /** @var Interceptor|MockObject $interceptor */
-        $interceptor = $this->getMockBuilder(Interceptor::class)
-            ->setMethods(['_validateData'])
-            ->setConstructorArgs([
-                $className,
-                $resultClassName,
-                $this->ioGenerator,
-            ])
-            ->getMock();
-
-        $this->ioGenerator
-            ->method('generateResultFileName')
-            ->with('\\' . $resultClassName)
-            ->willReturn($fileName . '.php');
-
-        $code = file_get_contents(__DIR__ . '/_files/' . $fileName . '.txt');
-        $this->ioGenerator->method('writeResultFile')
-            ->with($fileName . '.php', $code);
-
-        $interceptor->method('_validateData')
-            ->willReturn(true);
-
-        $generated = $interceptor->generate();
-        $this->assertEquals($fileName . '.php', $generated, 'Generated interceptor is invalid.');
-    }
-
-    /**
-     * Gets list of interceptor samples.
-     *
-     * @return array
-     */
-    public function interceptorDataProvider()
-    {
-        return [
+        // resultClassName should be stdClass_Interceptor
+        $model = $this->getMock('\Magento\Framework\Interception\Code\Generator\Interceptor',
+            ['_validateData'],
             [
-                \Magento\Framework\Interception\Code\Generator\Sample::class,
-                \Magento\Framework\Interception\Code\Generator\Sample\Interceptor::class,
-                'Interceptor'
-            ],
-            [
-                \Magento\Framework\Interception\Code\Generator\TSample::class,
-                \Magento\Framework\Interception\Code\Generator\TSample\Interceptor::class,
-                'TInterceptor'
+                'Exception',
+                null,
+                $this->ioObjectMock,
+                $this->classGeneratorMock,
             ]
-        ];
+        );
+
+        $this->classGeneratorMock->expects($this->once())->method('setName')
+            ->willReturnSelf();
+        $this->classGeneratorMock->expects($this->once())->method('addProperties')
+            ->willReturnSelf();
+        $this->classGeneratorMock->expects($this->once())->method('addMethods')
+            ->willReturnSelf();
+        $this->classGeneratorMock->expects($this->once())->method('setClassDocBlock')
+            ->willReturnSelf();
+        $this->classGeneratorMock->expects($this->once())->method('generate')
+            ->will($this->returnValue('source code example'));
+        $model->expects($this->once())->method('_validateData')->will($this->returnValue(true));
+        $this->ioObjectMock->expects($this->any())->method('generateResultFileName')->with('Exception_Interceptor');
+        $this->assertEquals('', $model->generate());
     }
 }

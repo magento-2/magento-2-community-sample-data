@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -22,7 +22,9 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::ship';
 
@@ -44,7 +46,7 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
     /**
      * @var ShipmentCollectionFactory
      */
-    protected $shipmentCollectionFactory;
+    protected $shipmentCollectionFactotory;
 
     /**
      * @param Context $context
@@ -68,7 +70,7 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
         $this->dateTime = $dateTime;
         $this->pdfShipment = $shipment;
         $this->collectionFactory = $collectionFactory;
-        $this->shipmentCollectionFactory = $shipmentCollectionFactory;
+        $this->shipmentCollectionFactotory = $shipmentCollectionFactory;
         parent::__construct($context, $filter);
     }
 
@@ -80,13 +82,15 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
      */
     protected function massAction(AbstractCollection $collection)
     {
-        $shipmentsCollection = $this->shipmentCollectionFactory
+        $shipmentsCollection = $this->shipmentCollectionFactotory
             ->create()
             ->setOrderFilter(['in' => $collection->getAllIds()]);
         if (!$shipmentsCollection->getSize()) {
             $this->messageManager->addError(__('There are no printable documents related to selected orders.'));
+
             return $this->resultRedirectFactory->create()->setPath($this->getComponentRefererUrl());
         }
+
         return $this->fileFactory->create(
             sprintf('packingslip%s.pdf', $this->dateTime->date('Y-m-d_H-i-s')),
             $this->pdfShipment->getPdf($shipmentsCollection->getItems())->render(),

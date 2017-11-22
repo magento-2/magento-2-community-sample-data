@@ -1,50 +1,49 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Test\Block\Adminhtml\Order\Create;
 
 use Magento\Mtf\Block\Block;
+use Magento\Mtf\Client\Locator;
 
 /**
- * Class Totals
- * Adminhtml sales order create totals block
- *
+ * Adminhtml sales order create totals block.
  */
 class Totals extends Block
 {
     /**
-     * 'Submit Order' button
+     * 'Submit Order' button.
      *
      * @var string
      */
     protected $submitOrder = '.order-totals-actions button';
 
     /**
-     * Order Totals rows locator.
+     * Order totals table.
      *
      * @var string
      */
-    private $totalsRowsLocator = '.data-table tr';
+    protected $totalsTable = '.data-table';
 
     /**
-     * Order Totals Item label locator.
+     * Total row label selector.
      *
      * @var string
      */
-    private $totalsRowKeyLocator = '.admin__total-mark';
+    protected $totalLabelLocator = './/tr[normalize-space(td)="%s"]';
 
     /**
-     * Order Totals Item amount locator.
+     * Total value selector.
      *
      * @var string
      */
-    private $totalsRowValueLocator = '.price';
+    protected $totalValueLocator = './/td/span[contains(@class,"price")]';
 
     /**
-     * Click 'Submit Order' button
+     * Click 'Submit Order' button.
      */
     public function submitOrder()
     {
@@ -52,21 +51,53 @@ class Totals extends Block
     }
 
     /**
-     * Get Order totals.
+     * Return totals by labels.
      *
+     * @param $totals string[]
      * @return array
      */
-    public function getOrderTotals()
+    public function getTotals($totals)
     {
-        $totals = [];
-        $elements = $this->_rootElement->getElements($this->totalsRowsLocator);
-        foreach ($elements as $row) {
-            if ($row->isVisible()) {
-                $key = trim($row->find($this->totalsRowKeyLocator)->getText());
-                $value = $row->find($this->totalsRowValueLocator)->getText();
-                $totals[$key] = $value;
+        if (empty ($totals)) {
+            return [];
+        }
+
+        $totalsResult = [];
+        $totalsTable = $this->_rootElement->find($this->totalsTable);
+
+        foreach ($totals as $total) {
+
+            $totalRow = $totalsTable->find(sprintf($this->totalLabelLocator, $total), Locator::SELECTOR_XPATH);
+            if ($totalRow->isVisible()) {
+                $totalValue = $totalRow->find($this->totalValueLocator, Locator::SELECTOR_XPATH);
+                $totalsResult[$total] = $this->escapeNumericValue($totalValue->getText());
             }
         }
-        return $totals;
+
+        return $totalsResult;
+    }
+
+    /**
+     * Return total presence by label.
+     *
+     * @param string $total
+     * @return bool
+     */
+    public function isTotalPresent($total)
+    {
+        $totalsTable = $this->_rootElement->find($this->totalsTable);
+        $totalRow = $totalsTable->find(sprintf($this->totalLabelLocator, $total), Locator::SELECTOR_XPATH);
+        return $totalRow->isVisible();
+    }
+
+    /**
+     * Escape numeric value.
+     *
+     * @param string $value
+     * @return mixed
+     */
+    private function escapeNumericValue($value)
+    {
+        return preg_replace("/[^-0-9\\.]/", "", $value);
     }
 }

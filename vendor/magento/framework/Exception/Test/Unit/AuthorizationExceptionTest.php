@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Exception\Test\Unit;
@@ -8,7 +8,7 @@ namespace Magento\Framework\Exception\Test\Unit;
 use \Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Phrase;
 
-class AuthorizationExceptionTest extends \PHPUnit\Framework\TestCase
+class AuthorizationExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return void
@@ -17,7 +17,7 @@ class AuthorizationExceptionTest extends \PHPUnit\Framework\TestCase
     {
         $authorizationException = new AuthorizationException(
             new Phrase(
-                'Consumer is not authorized to access %resources',
+                AuthorizationException::NOT_AUTHORIZED,
                 ['consumer_id' => 1, 'resources' => 'record2']
             )
         );

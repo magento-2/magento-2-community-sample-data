@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Theme;
 
 use Magento\Theme\Model\Theme\ThemePackageInfo;
 
-class ThemePackageInfoTest extends \PHPUnit\Framework\TestCase
+class ThemePackageInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem\Directory\Read|\PHPUnit_Framework_MockObject_MockObject
@@ -29,36 +29,26 @@ class ThemePackageInfoTest extends \PHPUnit\Framework\TestCase
      */
     private $dirReadFactory;
 
-    /** @var \Magento\Framework\Serialize\Serializer\Json|\PHPUnit_Framework_MockObject_MockObject */
-    private $serializerMock;
-
-    protected function setUp()
+    public function setUp()
     {
-        $this->componentRegistrar = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
-        $this->dirRead = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
-        $this->dirReadFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
+        $this->componentRegistrar = $this->getMock('Magento\Framework\Component\ComponentRegistrar', [], [], '', false);
+        $this->dirRead = $this->getMock('Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
+        $this->dirReadFactory = $this->getMock('Magento\Framework\Filesystem\Directory\ReadFactory', [], [], '', false);
         $this->dirReadFactory->expects($this->any())->method('create')->willReturn($this->dirRead);
-        $this->serializerMock = $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)
-            ->getMock();
         $this->themePackageInfo = new ThemePackageInfo(
             $this->componentRegistrar,
-            $this->dirReadFactory,
-            $this->serializerMock
+            $this->dirReadFactory
         );
     }
 
     public function testGetPackageName()
     {
-        $themeFileContents = '{"name": "package"}';
         $this->componentRegistrar->expects($this->once())->method('getPath')->willReturn('path/to/A');
         $this->dirRead->expects($this->once())->method('isExist')->with('composer.json')->willReturn(true);
         $this->dirRead->expects($this->once())
             ->method('readFile')
             ->with('composer.json')
-            ->willReturn($themeFileContents);
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn(json_decode($themeFileContents, true));
+            ->willReturn('{"name": "package"}');
         $this->assertEquals('package', $this->themePackageInfo->getPackageName('themeA'));
     }
 
@@ -72,13 +62,9 @@ class ThemePackageInfoTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFullThemePath()
     {
-        $themeFileContents = '{"name": "package"}';
         $this->componentRegistrar->expects($this->once())->method('getPaths')->willReturn(['themeA' => 'path/to/A']);
         $this->dirRead->expects($this->once())->method('isExist')->willReturn(true);
-        $this->dirRead->expects($this->once())->method('readFile')->willReturn($themeFileContents);
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn(json_decode($themeFileContents, true));
+        $this->dirRead->expects($this->once())->method('readFile')->willReturn('{"name": "package"}');
         $this->assertEquals('themeA', $this->themePackageInfo->getFullThemePath('package'));
         // call one more time to make sure only initialize once
         $this->assertEquals('themeA', $this->themePackageInfo->getFullThemePath('package'));
@@ -92,14 +78,14 @@ class ThemePackageInfoTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', $this->themePackageInfo->getFullThemePath('package-other'));
     }
 
+    /**
+     * @expectedException \Zend_Json_Exception
+     */
     public function testGetPackageNameInvalidJson()
     {
         $this->componentRegistrar->expects($this->once())->method('getPath')->willReturn('path/to/A');
         $this->dirRead->expects($this->once())->method('isExist')->willReturn(true);
         $this->dirRead->expects($this->once())->method('readFile')->willReturn('{"name": }');
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn(null);
-        $this->assertEquals('', $this->themePackageInfo->getPackageName('themeA'));
+        $this->themePackageInfo->getPackageName('themeA');
     }
 }

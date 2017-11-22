@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,7 @@ use Magento\Quote\Model\Quote\Address\Rate;
 /**
  * Paypal Express Onepage checkout block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Review extends \Magento\Framework\View\Element\Template
 {
@@ -288,7 +286,7 @@ class Review extends \Magento\Framework\View\Element\Template
                 ->getAdditionalInformation(\Magento\Paypal\Model\Express\Checkout::PAYMENT_INFO_BUTTON) == 1;
             // misc shipping parameters
             $this->setShippingMethodSubmitUrl(
-                $this->getUrl("{$this->_controllerPath}/saveShippingMethod", ['_secure' => true])
+                $this->getUrl("{$this->_controllerPath}/saveShippingMethod")
             )->setCanEditShippingAddress(
                 $canEditShippingAddress
             )->setCanEditShippingMethod(
@@ -299,7 +297,7 @@ class Review extends \Magento\Framework\View\Element\Template
         $this->setEditUrl(
             $this->getUrl("{$this->_controllerPath}/edit")
         )->setPlaceOrderUrl(
-            $this->getUrl("{$this->_controllerPath}/placeOrder", ['_secure' => true])
+            $this->getUrl("{$this->_controllerPath}/placeOrder")
         );
 
         return parent::_beforeToHtml();

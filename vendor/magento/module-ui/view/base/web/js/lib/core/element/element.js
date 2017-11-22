@@ -1,10 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
- */
-
-/**
- * @api
  */
 define([
     'ko',
@@ -14,7 +10,7 @@ define([
     'uiEvents',
     'uiClass',
     './links',
-    '../storage/local'
+    '../storage'
 ], function (ko, _, utils, registry, Events, Class, links) {
     'use strict';
 
@@ -66,20 +62,10 @@ define([
 
     Element = _.extend({
         defaults: {
-            _requesetd: {},
-            containers: [],
-            exports: {},
-            imports: {},
-            links: {},
-            listens: {},
-            name: '',
-            ns: '${ $.name.split(".")[0] }',
-            provider: '',
-            registerNodes: true,
-            source: null,
-            statefull: {},
             template: '',
-            tracks: {},
+            containers: [],
+            _requesetd: {},
+            registerNodes: true,
             storageConfig: {
                 provider: 'localStorage',
                 namespace: '${ $.name }',
@@ -116,12 +102,6 @@ define([
          * @returns {Element} Chainable.
          */
         initObservable: function () {
-            _.each(this.tracks, function (enabled, key) {
-                if (enabled) {
-                    this.track(key);
-                }
-            }, this);
-
             return this;
         },
 
@@ -132,10 +112,10 @@ define([
          * @returns {Element} Chainable.
          */
         initModules: function () {
-            _.each(this.modules, function (name, property) {
-                if (name) {
-                    this[property] = this.requestModule(name);
-                }
+            var modules = this.modules || {};
+
+            _.each(modules, function (name, property) {
+                this[property] = this.requestModule(name);
             }, this);
 
             if (!_.isFunction(this.source)) {
@@ -164,10 +144,14 @@ define([
          * @returns {Element} Chainable.
          */
         initStatefull: function () {
-            _.each(this.statefull, function (path, key) {
-                if (path) {
-                    this.setStatefull(key, path);
+            var statefull = this.statefull || {};
+
+            _.each(statefull, function (path, key) {
+                if (!path) {
+                    return;
                 }
+
+                this.setStatefull(key, path);
             }, this);
 
             return this;
@@ -179,11 +163,16 @@ define([
          * @returns {Element} Chainbale.
          */
         initLinks: function () {
-            return this.setListeners(this.listens)
-                       .setLinks(this.links, 'imports')
-                       .setLinks(this.links, 'exports')
-                       .setLinks(this.exports, 'exports')
-                       .setLinks(this.imports, 'imports');
+            this.setListeners(this.listens)
+                .setLinks(this.links, 'imports')
+                .setLinks(this.links, 'exports');
+
+            _.each({
+                exports: this.exports,
+                imports: this.imports
+            }, this.setLinks, this);
+
+            return this;
         },
 
         /**
@@ -507,11 +496,10 @@ define([
 
         /**
          * Destroys current instance along with all of its' children.
-         * @param {Boolean} skipUpdate - skip collection update when element to be destroyed.
          */
-        destroy: function (skipUpdate) {
+        destroy: function () {
             this._dropHandlers()
-                ._clearRefs(skipUpdate);
+                ._clearRefs();
         },
 
         /**
@@ -522,12 +510,7 @@ define([
          */
         _dropHandlers: function () {
             this.off();
-
-            if (_.isFunction(this.source)) {
-                this.source().off(this.name);
-            } else if (this.source) {
-                this.source.off(this.name);
-            }
+            this.source.off(this.name);
 
             return this;
         },
@@ -536,15 +519,14 @@ define([
          * Removes all references to current instance and
          * calls 'destroy' method on all of its' children.
          * @private
-         * @param {Boolean} skipUpdate - skip collection update when element to be destroyed.
          *
          * @returns {Element} Chainable.
          */
-        _clearRefs: function (skipUpdate) {
+        _clearRefs: function () {
             registry.remove(this.name);
 
             this.containers.forEach(function (parent) {
-                parent.removeChild(this, skipUpdate);
+                parent.removeChild(this);
             }, this);
 
             return this;
@@ -553,7 +535,7 @@ define([
         /**
          * Overrides 'EventsBus.trigger' method to implement events bubbling.
          *
-         * @param {...*} arguments - Any number of arguments that should be passed to the events' handler.
+         * @param {...*} parameters - Any number of arguments that should be passed to the events' handler.
          * @returns {Boolean} False if event bubbling was canceled.
          */
         bubble: function () {
@@ -584,50 +566,6 @@ define([
                 property = this.uniqueProp;
 
             this[property](active);
-        },
-
-        /**
-         * Clean data form data source.
-         *
-         * @returns {Element}
-         */
-        cleanData: function () {
-            if (this.source && this.source.componentType === 'dataSource') {
-                if (this.elems) {
-                    _.each(this.elems(), function (val) {
-                        val.cleanData();
-                    });
-                } else {
-                    this.source.remove(this.dataScope);
-                }
-            }
-
-            return this;
-        },
-
-        /**
-         * Fallback data.
-         */
-        cacheData: function () {
-            this.cachedComponent = utils.copy(this);
-        },
-
-        /**
-         * Update configuration in component.
-         *
-         * @param {*} oldValue
-         * @param {*} newValue
-         * @param {String} path - path to value.
-         * @returns {Element}
-         */
-        updateConfig: function (oldValue, newValue, path) {
-            var names = path.split('.'),
-                index = _.lastIndexOf(names, 'config') + 1;
-
-            names = names.splice(index, names.length - index).join('.');
-            this.set(names, newValue);
-
-            return this;
         }
     }, Events, links);
 

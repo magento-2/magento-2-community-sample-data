@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,10 +16,10 @@
  *  getForm() - html
  */
 ?>
-<form action="<?= /* @escapeNotVerified */ $block->getSaveUrl() ?>" method="post" id="config-edit-form" enctype="multipart/form-data">
-    <?= $block->getBlockHtml('formkey') ?>
+<form action="<?php /* @escapeNotVerified */ echo $block->getSaveUrl() ?>" method="post" id="config-edit-form" enctype="multipart/form-data">
+    <?php echo $block->getBlockHtml('formkey')?>
     <div class="accordion">
-        <?= $block->getChildHtml('form') ?>
+        <?php echo $block->getChildHtml('form') ?>
     </div>
 </form>
 <script>
@@ -29,7 +29,6 @@ require([
     "jquery/jquery.hashchange",
     "mage/mage",
     "prototype",
-    "mage/adminhtml/form",
     "domReady!"
 ], function(jQuery, registry){
 

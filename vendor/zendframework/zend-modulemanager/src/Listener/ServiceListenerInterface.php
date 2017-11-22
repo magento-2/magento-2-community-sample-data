@@ -10,21 +10,16 @@
 namespace Zend\ModuleManager\Listener;
 
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\ServiceManager\ServiceManager;
 
 interface ServiceListenerInterface extends ListenerAggregateInterface
 {
     /**
-     * Provide metadata describing how to aggregate service/plugin manager configuration.
-     *
-     * - $serviceManager is the service name for the service/plugin manager.
-     * - $key is the configuration key containing configuration for it.
-     * - $moduleInterface is the interface indicating a configuration provider for it.
-     * - $method is used for duck-typing configuration providers.
-     *
-     * @param  string $serviceManager  Service name for service/plugin manager
-     * @param  string $key             Configuration key
-     * @param  string $moduleInterface FQCN as string
-     * @param  string $method          Method name
+     * @param  ServiceManager|string $serviceManager  Service Manager instance or name
+     * @param  string                $key             Configuration key
+     * @param  string                $moduleInterface FQCN as string
+     * @param  string                $method          Method name
+     * @return ServiceListenerInterface
      */
     public function addServiceManager($serviceManager, $key, $moduleInterface, $method);
 

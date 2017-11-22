@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\ResourceModel;
@@ -8,8 +8,7 @@ namespace Magento\Bundle\Model\ResourceModel;
 /**
  * Bundle Resource Model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Bundle extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -61,16 +60,16 @@ class Bundle extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _getSelect($productId, $columns = [])
     {
         return $this->getConnection()->select()->from(
-            ["bo" => $this->getTable('catalog_product_bundle_option')],
+            ["bundle_option" => $this->getTable('catalog_product_bundle_option')],
             ['type', 'option_id']
         )->where(
-            "bo.parent_id = ?",
+            "bundle_option.parent_id = ?",
             $productId
         )->where(
-            "bo.required = 1"
+            "bundle_option.required = 1"
         )->joinLeft(
-            ["bs" => $this->getTable('catalog_product_bundle_selection')],
-            "bs.option_id = bo.option_id AND bs.parent_product_id = bo.parent_id",
+            ["bundle_selection" => $this->getTable('catalog_product_bundle_selection')],
+            "bundle_selection.option_id = bundle_option.option_id",
             $columns
         );
     }
@@ -141,20 +140,6 @@ class Bundle extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $this->_productRelation->processRelations($parentId, $childIds);
 
-        return $this;
-    }
-
-    /**
-     * Add product relation (duplicate will be updated)
-     *
-     * @param int $parentId
-     * @param int $childId
-     * @return $this
-     * @since 100.1.0
-     */
-    public function addProductRelation($parentId, $childId)
-    {
-        $this->_productRelation->addRelation($parentId, $childId);
         return $this;
     }
 

@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\Payflow\Service\Response\Validator;
 
 use Magento\Framework\DataObject;
-use Magento\Paypal\Model\Payflow\Transparent;
 use Magento\Paypal\Model\Payflowpro;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface;
@@ -34,18 +33,17 @@ class ResponseValidator implements ValidatorInterface
     /**
      * Validate data
      *
-     * @param DataObject $response
-     * @param Transparent $transparentModel
-     * @return bool
+     * @param Object $response
+     * @return void
      * @throws LocalizedException
      */
-    public function validate(DataObject $response, Transparent $transparentModel)
+    public function validate(DataObject $response)
     {
         switch ($response->getResult()) {
             case Payflowpro::RESPONSE_CODE_APPROVED:
             case Payflowpro::RESPONSE_CODE_FRAUDSERVICE_FILTER:
                 foreach ($this->validators as $validator) {
-                    if ($validator->validate($response, $transparentModel) === false) {
+                    if ($validator->validate($response) === false) {
                         throw new LocalizedException(__('Transaction has been declined'));
                     }
                 }

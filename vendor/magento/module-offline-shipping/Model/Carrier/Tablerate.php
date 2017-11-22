@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\OfflineShipping\Model\Carrier;
@@ -9,10 +9,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 
 /**
- * Table rate shipping model
- *
- * @api
- * @since 100.0.2
+ *  Table rate shipping model.
  */
 class Tablerate extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
@@ -157,24 +154,27 @@ class Tablerate extends \Magento\Shipping\Model\Carrier\AbstractCarrier implemen
         $request->setPackageQty($oldQty);
 
         if (!empty($rate) && $rate['price'] >= 0) {
-            if ($request->getPackageQty() == $freeQty) {
+            if ($request->getFreeShipping() === true || $request->getPackageQty() == $freeQty) {
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
             }
-            $method = $this->createShippingMethod($shippingPrice, $rate['cost']);
-            $result->append($method);
-        } elseif ($request->getPackageQty() == $freeQty) {
 
+            $method = $this->createShippingMethod($shippingPrice, $rate['cost']);
+
+            $result->append($method);
+        } elseif (empty($rate) && $request->getFreeShipping() === true || $request->getPackageQty() == $freeQty) {
             /**
              * Promotion rule was applied for the whole cart.
-             *  In this case all other shipping methods could be omitted
+             * In this case all other shipping methods could be omitted.
              * Table rate shipping method with 0$ price must be shown if grand total is more than minimal value.
              * Free package weight has been already taken into account.
              */
             $request->setPackageValue($freePackageValue);
             $request->setPackageQty($freeQty);
+
             $rate = $this->getRate($request);
+
             if (!empty($rate) && $rate['price'] >= 0) {
                 $method = $this->createShippingMethod(0, 0);
                 $result->append($method);
@@ -242,7 +242,7 @@ class Tablerate extends \Magento\Shipping\Model\Carrier\AbstractCarrier implemen
     }
 
     /**
-     * Get allowed shipping methods
+     * Get allowed shipping methods.
      *
      * @return array
      */
@@ -252,7 +252,7 @@ class Tablerate extends \Magento\Shipping\Model\Carrier\AbstractCarrier implemen
     }
 
     /**
-     * Get the method object based on the shipping price and cost
+     * Get the method object based on the shipping price and cost.
      *
      * @param float $shippingPrice
      * @param float $cost
@@ -262,15 +262,13 @@ class Tablerate extends \Magento\Shipping\Model\Carrier\AbstractCarrier implemen
     {
         /** @var  \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
         $method = $this->_resultMethodFactory->create();
-
         $method->setCarrier('tablerate');
         $method->setCarrierTitle($this->getConfigData('title'));
-
         $method->setMethod('bestway');
         $method->setMethodTitle($this->getConfigData('name'));
-
         $method->setPrice($shippingPrice);
         $method->setCost($cost);
+
         return $method;
     }
 }

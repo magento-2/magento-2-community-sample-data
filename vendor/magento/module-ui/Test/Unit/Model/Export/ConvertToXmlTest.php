@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Model\Export;
 
-use Magento\Framework\Api\Search\DocumentInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Convert\ExcelFactory;
 use Magento\Framework\Filesystem;
@@ -16,15 +15,8 @@ use Magento\Ui\Component\MassAction\Filter;
 use Magento\Ui\Model\Export\ConvertToXml;
 use Magento\Ui\Model\Export\MetadataProvider;
 use Magento\Ui\Model\Export\SearchResultIteratorFactory;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
-use Magento\Ui\Model\Export\SearchResultIterator;
-use Magento\Framework\Api\Search\SearchResultInterface;
-use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
+class ConvertToXmlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConvertToXml
@@ -71,12 +63,12 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
      */
     protected $component;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->directory = $this->getMockBuilder(DirectoryWriteInterface::class)
+        $this->directory = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\WriteInterface')
             ->getMockForAbstractClass();
 
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
+        $this->filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
         $this->filesystem->expects($this->any())
@@ -84,28 +76,28 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
             ->with(DirectoryList::VAR_DIR)
             ->willReturn($this->directory);
 
-        $this->filter = $this->getMockBuilder(Filter::class)
+        $this->filter = $this->getMockBuilder('Magento\Ui\Component\MassAction\Filter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->metadataProvider = $this->getMockBuilder(MetadataProvider::class)
+        $this->metadataProvider = $this->getMockBuilder('Magento\Ui\Model\Export\MetadataProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->excelFactory = $this->getMockBuilder(ExcelFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $this->iteratorFactory = $this->getMockBuilder(\Magento\Ui\Model\Export\SearchResultIteratorFactory::class)
+        $this->excelFactory = $this->getMockBuilder('Magento\Framework\Convert\ExcelFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->component = $this->getMockBuilder(UiComponentInterface::class)
+        $this->iteratorFactory = $this->getMockBuilder('Magento\Ui\Model\Export\SearchResultIteratorFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+
+        $this->component = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->getMockForAbstractClass();
 
-        $this->stream = $this->getMockBuilder(FileWriteInterface::class)
+        $this->stream = $this->getMockBuilder('Magento\Framework\Filesystem\File\WriteInterface')
             ->setMethods([
                 'lock',
                 'unlock',
@@ -126,8 +118,7 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
     {
         $data = ['data_value'];
 
-        /** @var DocumentInterface $document */
-        $document = $this->getMockBuilder(DocumentInterface::class)
+        $document = $this->getMockBuilder('Magento\Framework\Api\Search\DocumentInterface')
             ->getMockForAbstractClass();
 
         $this->metadataProvider->expects($this->once())
@@ -154,15 +145,14 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
     {
         $componentName = 'component_name';
 
-        /** @var DocumentInterface $document */
-        $document = $this->getMockBuilder(DocumentInterface::class)
+        $document = $this->getMockBuilder('Magento\Framework\Api\Search\DocumentInterface')
             ->getMockForAbstractClass();
 
         $this->mockComponent($componentName, $document);
         $this->mockStream();
         $this->mockFilter();
         $this->mockDirectory();
-        $this->mockExcel($componentName, $document);
+        $this->mockExcel($componentName);
 
         $this->metadataProvider->expects($this->once())
             ->method('getHeaders')
@@ -196,21 +186,20 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $componentName
-     * @param DocumentInterface $document
      */
-    protected function mockExcel($componentName, DocumentInterface $document)
+    protected function mockExcel($componentName)
     {
-        $searchResultIterator = $this->getMockBuilder(SearchResultIterator::class)
+        $searchResultIterator = $this->getMockBuilder('Magento\Ui\Model\Export\SearchResultIterator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $excel = $this->getMockBuilder(\Magento\Framework\Convert\Excel::class)
+        $excel = $this->getMockBuilder('Magento\Framework\Convert\Excel')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->iteratorFactory->expects($this->once())
             ->method('create')
-            ->with(['items' => [$document]])
+            ->with(['items' => []])
             ->willReturn($searchResultIterator);
 
         $this->excelFactory->expects($this->once())
@@ -233,30 +222,32 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $componentName
-     * @param DocumentInterface|null $document
+     * @param null|object $document
      */
-    protected function mockComponent($componentName, DocumentInterface $document = null)
+    protected function mockComponent($componentName, $document = null)
     {
-        $context = $this->getMockBuilder(ContextInterface::class)
+        $context = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->setMethods(['getDataProvider'])
             ->getMockForAbstractClass();
 
-        $dataProvider = $this->getMockBuilder(DataProviderInterface::class)
-            ->setMethods(['getSearchResult', 'setLimit'])
+        $dataProvider = $this->getMockBuilder(
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface'
+        )
+            ->setMethods(['getSearchResult'])
             ->getMockForAbstractClass();
 
-        $searchResult = $this->getMockBuilder(SearchResultInterface::class)
+        $searchResult = $this->getMockBuilder('Magento\Framework\Api\Search\SearchResultInterface')
             ->setMethods(['getItems'])
             ->getMockForAbstractClass();
 
         $this->component->expects($this->any())
             ->method('getName')
             ->willReturn($componentName);
-        $this->component->expects($this->exactly(2))
+        $this->component->expects($this->once())
             ->method('getContext')
             ->willReturn($context);
 
-        $context->expects($this->exactly(2))
+        $context->expects($this->once())
             ->method('getDataProvider')
             ->willReturn($dataProvider);
 
@@ -264,14 +255,13 @@ class ConvertToXmlTest extends \PHPUnit\Framework\TestCase
             ->method('getSearchResult')
             ->willReturn($searchResult);
 
-        $dataProvider->expects($this->once())
-            ->method('setLimit')
-            ->with(0, 0);
-
         if ($document) {
             $searchResult->expects($this->at(0))
                 ->method('getItems')
                 ->willReturn([$document]);
+            $searchResult->expects($this->at(1))
+                ->method('getItems')
+                ->willReturn([]);
         } else {
             $searchResult->expects($this->at(0))
                 ->method('getItems')

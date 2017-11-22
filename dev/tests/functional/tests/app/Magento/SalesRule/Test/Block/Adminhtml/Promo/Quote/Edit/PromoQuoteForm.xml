@@ -1,27 +1,27 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
-<sections>
+<tabs>
     <rule_information>
-        <class>\Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\RuleInformation</class>
-        <selector>//div[contains(@class,'admin__collapsible-block-wrapper')][descendant::input[@name='name']]</selector>
-        <strategy>xpath</strategy>
+        <class>\Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Tab\RuleInformation</class>
+        <selector>#promo_catalog_edit_tabs_main_section</selector>
+        <strategy>css selector</strategy>
         <fields>
             <name />
             <description />
             <is_active>
-                <input>switcher</input>
+                <input>select</input>
             </is_active>
             <website_ids>
-                <selector>[name='website_ids']</selector>
+                <selector>[name="website_ids[]"]</selector>
                 <input>multiselect</input>
             </website_ids>
             <customer_group_ids>
-                <selector>[name='customer_group_ids']</selector>
+                <selector>[name="customer_group_ids[]"]</selector>
                 <input>multiselect</input>
             </customer_group_ids>
             <coupon_type>
@@ -34,24 +34,39 @@
             <to_date />
             <sort_order />
             <is_rss>
-                <input>switcher</input>
+                <input>select</input>
             </is_rss>
         </fields>
     </rule_information>
     <conditions>
-        <class>\Magento\Ui\Test\Block\Adminhtml\Section</class>
-        <selector>[data-index="conditions"]</selector>
+        <class>\Magento\Backend\Test\Block\Widget\Tab</class>
+        <selector>#promo_catalog_edit_tabs_conditions_section</selector>
         <strategy>css selector</strategy>
         <fields>
             <conditions_serialized>
-                <selector>.fieldset[id^="sales_rule_formrule_conditions_fieldset_"]</selector>
+                <selector>#rule_conditions_fieldset</selector>
                 <input>conditions</input>
             </conditions_serialized>
         </fields>
     </conditions>
+    <coupons>
+        <class>Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons</class>
+        <selector>#promo_catalog_edit_tabs_coupons_section</selector>
+        <strategy>css selector</strategy>
+        <fields>
+            <qty />
+            <length />
+            <format>
+                <input>select</input>
+            </format>
+            <prefix />
+            <suffix />
+            <dash />
+        </fields>
+    </coupons>
     <actions>
-        <class>\Magento\Ui\Test\Block\Adminhtml\Section</class>
-        <selector>[data-index="actions"]</selector>
+        <class>\Magento\Backend\Test\Block\Widget\Tab</class>
+        <selector>#promo_catalog_edit_tabs_actions_section</selector>
         <strategy>css selector</strategy>
         <fields>
             <simple_action>
@@ -61,28 +76,23 @@
             <discount_qty />
             <discount_step />
             <apply_to_shipping>
-                <input>switcher</input>
+                <input>select</input>
             </apply_to_shipping>
             <stop_rules_processing>
-                <input>switcher</input>
+                <input>select</input>
             </stop_rules_processing>
             <simple_free_shipping>
                 <input>select</input>
             </simple_free_shipping>
             <actions_serialized>
-                <selector>.fieldset[id^="sales_rule_formrule_actions_fieldset_"]</selector>
+                <selector>#rule_actions_fieldset</selector>
                 <input>conditions</input>
             </actions_serialized>
         </fields>
     </actions>
     <labels>
-        <class>\Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\Labels</class>
-        <selector>[data-index="labels"]</selector>
+        <class>\Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Tab\Labels</class>
+        <selector>#promo_catalog_edit_tabs_labels_section</selector>
         <strategy>css selector</strategy>
     </labels>
-    <manage_coupon_code>
-        <class>\Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\ManageCouponCode</class>
-        <selector>[data-index="manage_coupon_codes"]</selector>
-        <strategy>css selector</strategy>
-    </manage_coupon_code>
-</sections>
+</tabs>

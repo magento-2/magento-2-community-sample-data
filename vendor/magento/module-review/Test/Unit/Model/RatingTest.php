@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Test\Unit\Model;
@@ -9,7 +9,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\Rating;
 
-class RatingTest extends \PHPUnit\Framework\TestCase
+class RatingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Review\Model\Rating

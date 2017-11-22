@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Framework\DataObject\Test\Unit\Copy\Config;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DataObject\Copy\Config\SchemaLocator
@@ -17,7 +17,13 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $urnResolverMock = $this->getMock(
+            'Magento\Framework\Config\Dom\UrnResolver',
+            [],
+            [],
+            '',
+            false
+        );
         $urnResolverMock->expects($this->exactly(2))
             ->method('getRealPath')
             ->will($this->returnCallback(function ($urn) {

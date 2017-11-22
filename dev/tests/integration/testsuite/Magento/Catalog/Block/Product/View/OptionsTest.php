@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Product\View;
@@ -8,47 +8,32 @@ namespace Magento\Catalog\Block\Product\View;
 /**
  * Test class for \Magento\Catalog\Block\Product\View\Options.
  */
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\View\Options
      */
-    protected $block;
+    protected $_block;
 
     /**
      * @var \Magento\Catalog\Model\Product
      */
-    protected $product;
-
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected $_product;
 
     protected function setUp()
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-
-        $this->productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-
-        try {
-            $this->product = $this->productRepository->get('simple');
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            $this->product = $this->productRepository->get('simple_dropdown_option');
-        }
-
-        $this->objectManager->get(\Magento\Framework\Registry::class)->unregister('current_product');
-        $this->objectManager->get(\Magento\Framework\Registry::class)->register('current_product', $this->product);
-
-        $this->block = $this->objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+        $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Catalog\Model\Product'
+        );
+        $this->_product->load(1);
+        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $objectManager->get('Magento\Framework\Registry')->unregister('current_product');
+        $objectManager->get('Magento\Framework\Registry')->register('current_product', $this->_product);
+        $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Catalog\Block\Product\View\Options::class
+            'Magento\Catalog\Block\Product\View\Options'
         );
     }
 
@@ -57,13 +42,13 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetGetProduct()
     {
-        $this->assertSame($this->product, $this->block->getProduct());
+        $this->assertSame($this->_product, $this->_block->getProduct());
 
-        $product = $this->objectManager->create(
-            \Magento\Catalog\Model\Product::class
+        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Catalog\Model\Product'
         );
-        $this->block->setProduct($product);
-        $this->assertSame($product, $this->block->getProduct());
+        $this->_block->setProduct($product);
+        $this->assertSame($product, $this->_block->getProduct());
     }
 
     /**
@@ -71,7 +56,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetGroupOfOption()
     {
-        $this->assertEquals('default', $this->block->getGroupOfOption('test'));
+        $this->assertEquals('default', $this->_block->getGroupOfOption('test'));
     }
 
     /**
@@ -79,10 +64,10 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetOptions()
     {
-        $options = $this->block->getOptions();
+        $options = $this->_block->getOptions();
         $this->assertNotEmpty($options);
         foreach ($options as $option) {
-            $this->assertInstanceOf(\Magento\Catalog\Model\Product\Option::class, $option);
+            $this->assertInstanceOf('Magento\Catalog\Model\Product\Option', $option);
         }
     }
 
@@ -91,7 +76,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testHasOptions()
     {
-        $this->assertTrue($this->block->hasOptions());
+        $this->assertTrue($this->_block->hasOptions());
     }
 
     /**
@@ -99,7 +84,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetJsonConfig()
     {
-        $config = json_decode($this->block->getJsonConfig(), true);
+        $config = json_decode($this->_block->getJsonConfig(), true);
         $configValues = array_values($config);
         $this->assertEquals($this->getExpectedJsonConfig(), array_values($configValues[0]));
     }
@@ -112,8 +97,8 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
     private function getExpectedJsonConfig()
     {
         return [
-            0 => [
-                'prices' =>
+            0 =>
+                ['prices' =>
                     ['oldPrice' =>
                         ['amount' => 10, 'adjustments' => []],
                         'basePrice' => ['amount' => 10],
@@ -121,9 +106,9 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
                     ],
                     'type' => 'fixed',
                     'name' => 'drop_down option 1',
-            ],
-            1 => [
-                'prices' =>
+                ],
+            1 =>
+                ['prices' =>
                     ['oldPrice' =>
                         ['amount' => 40, 'adjustments' => []],
                         'basePrice' => ['amount' => 40],
@@ -131,7 +116,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
                     ],
                     'type' => 'percent',
                     'name' => 'drop_down option 2',
-            ],
+                ],
         ];
     }
 }

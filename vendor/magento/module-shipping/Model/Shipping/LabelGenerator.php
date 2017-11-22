@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Model\Shipping;
@@ -186,9 +186,6 @@ class LabelGenerator
         $pdfImage = \Zend_Pdf_Image::imageWithPath($tmpFileName);
         $page->drawImage($pdfImage, 0, 0, $xSize, $ySize);
         $directory->delete($directory->getRelativePath($tmpFileName));
-        if (is_resource($image)) {
-            imagedestroy($image);
-        }
         return $page;
     }
 }

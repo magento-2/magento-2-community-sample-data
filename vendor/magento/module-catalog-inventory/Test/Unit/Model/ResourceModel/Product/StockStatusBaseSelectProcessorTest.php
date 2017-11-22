@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Test\Unit\Model\ResourceModel\Product;
@@ -12,7 +12,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class StockStatusBaseSelectProcessorTest extends \PHPUnit\Framework\TestCase
+class StockStatusBaseSelectProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
@@ -37,7 +37,7 @@ class StockStatusBaseSelectProcessorTest extends \PHPUnit\Framework\TestCase
         $this->stockStatusBaseSelectProcessor =  (new ObjectManager($this))->getObject(
             StockStatusBaseSelectProcessor::class,
             [
-                'resource' => $this->resource
+                'resource' => $this->resource,
             ]
         );
     }
@@ -46,13 +46,16 @@ class StockStatusBaseSelectProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $tableName = 'table_name';
 
-        $this->resource->expects($this->once())->method('getTableName')->willReturn($tableName);
+        $this->resource->expects($this->once())
+            ->method('getTableName')
+            ->with('cataloginventory_stock_status')
+            ->willReturn($tableName);
 
         $this->select->expects($this->once())
             ->method('join')
             ->with(
                 ['stock' => $tableName],
-                sprintf('stock.product_id = %s.entity_id', BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS),
+                'stock.product_id = ' . BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . '.child_id',
                 []
             )
             ->willReturnSelf();

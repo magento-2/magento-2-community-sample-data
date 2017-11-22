@@ -1,21 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Framework\Model\ResourceModel\Db\Collection;
+// @codingStandardsIgnoreFile
 
-use \Magento\Framework\App\ResourceConnection\SourceProviderInterface;
-use \Magento\Framework\Data\Collection\AbstractDb;
+namespace Magento\Framework\Model\ResourceModel\Db\Collection;
+use Magento\Framework\App\ResourceConnection\SourceProviderInterface;
 
 /**
  * Abstract Resource Collection
- *
- * @api
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
-abstract class AbstractCollection extends AbstractDb implements SourceProviderInterface
+abstract class AbstractCollection extends \Magento\Framework\Data\Collection\AbstractDb
+    implements SourceProviderInterface
 {
     /**
      * Model name
@@ -170,7 +169,9 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     }
 
     /**
-     * {@inheritdoc}
+     * Init collection select
+     *
+     * @return $this
      */
     protected function _initSelect()
     {
@@ -232,11 +233,12 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                     $column = $field;
                 }
 
-                if ($alias !== null &&
-                    in_array($alias, $columnsToSelect) ||
+                if ($alias !== null && in_array(
+                    $alias,
+                    $columnsToSelect
+                ) ||
                     // If field already joined from another table
-                    $alias === null &&
-                    isset($alias, $columnsToSelect)
+                    $alias === null && isset($alias, $columnsToSelect)
                 ) {
                     continue;
                 }
@@ -458,9 +460,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     public function getResource()
     {
         if (empty($this->_resource)) {
-            $this->_resource = \Magento\Framework\App\ObjectManager::getInstance()->create(
-                $this->getResourceModelName()
-            );
+            $this->_resource = \Magento\Framework\App\ObjectManager::getInstance()->create($this->getResourceModelName());
         }
         return $this->_resource;
     }
@@ -521,6 +521,34 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     }
 
     /**
+     * Join table to collection select.
+     *
+     * @param string $table
+     * @param string $cond
+     * @param string $cols
+     * @return $this
+     */
+    public function joinLeft($table, $cond, $cols = '*')
+    {
+        if (is_array($table)) {
+            foreach ($table as $k => $v) {
+                $alias = $k;
+                $table = $v;
+                break;
+            }
+        } else {
+            $alias = $table;
+        }
+
+        if (!isset($this->_joinedTables[$alias])) {
+            $this->getSelect()->joinLeft([$alias => $this->getTable($table)], $cond, $cols);
+            $this->_joinedTables[$alias] = true;
+        }
+        
+        return $this;
+    }
+
+    /**
      * Redeclare before load method for adding event
      *
      * @return $this
@@ -571,8 +599,13 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         parent::_afterLoad();
         foreach ($this->_items as $item) {
             $item->setOrigData();
-            if ($this->_resetItemsDataChanged && ($item instanceof \Magento\Framework\Model\AbstractModel)) {
-                $item->setDataChanges(false);
+
+            if ($item instanceof \Magento\Framework\Model\AbstractModel) {
+                $this->getResource()->unserializeFields($item);
+
+                if ($this->_resetItemsDataChanged) {
+                    $item->setDataChanges(false);
+                }
             }
         }
         $this->_eventManager->dispatch('core_collection_abstract_load_after', ['collection' => $this]);
@@ -597,7 +630,6 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
 
     /**
      * @inheritdoc
-     * @since 100.0.11
      */
     public function __sleep()
     {
@@ -609,7 +641,6 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
 
     /**
      * @inheritdoc
-     * @since 100.0.11
      */
     public function __wakeup()
     {

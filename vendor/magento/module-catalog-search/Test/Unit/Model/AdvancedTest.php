@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Test\Unit\Model;
@@ -8,45 +8,37 @@ namespace Magento\CatalogSearch\Test\Unit\Model;
 /**
  * Class AdvancedTest
  * @see \Magento\CatalogSearch\Model\Advanced
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AdvancedTest extends \PHPUnit\Framework\TestCase
+class AdvancedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection
      */
     protected $collection;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\CatalogSearch\Model\ResourceModel\Advanced
      */
     protected $resource;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\CatalogSearch\Model\ResourceModel\ResourceProvider
      */
     protected $resourceProvider;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject[]|\Magento\Catalog\Model\ResourceModel\Eav\Attribute[]
      */
     protected $attributes;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Data\Collection
      */
     protected $dataCollection;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Directory\Model\Currency
      */
     private $currency;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Store\Model\Store
      */
@@ -54,8 +46,8 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->collection = $this->createPartialMock(
-            \Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection::class,
+        $this->collection = $this->getMock(
+            'Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection',
             [
                 'addAttributeToSelect',
                 'setStore',
@@ -64,34 +56,47 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
                 'addStoreFilter',
                 'setVisibility',
                 'addFieldsToFilter'
-            ]
+            ],
+            [],
+            '',
+            false
         );
-        $this->resource = $this->createPartialMock(
-            \Magento\CatalogSearch\Model\ResourceModel\Advanced::class,
-            ['prepareCondition', '__wakeup', 'getIdFieldName']
+        $this->resource = $this->getMock(
+            'Magento\CatalogSearch\Model\ResourceModel\Advanced',
+            ['prepareCondition', '__wakeup', 'getIdFieldName'],
+            [],
+            '',
+            false
         );
 
-        $this->resourceProvider = $this->getMockBuilder(
-            \Magento\CatalogSearch\Model\ResourceModel\ResourceProvider::class
-        )
-            ->setMethods(['getResource', 'getResourceCollection', 'getAdvancedResultCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceProvider = $this->getMock(
+            'Magento\CatalogSearch\Model\ResourceModel\ResourceProvider',
+            ['getResource', 'getResourceCollection', 'getAdvancedResultCollection'],
+            [],
+            '',
+            false
+        );
 
-        $this->dataCollection = $this->createPartialMock(\Magento\Framework\Data\Collection::class, ['getIterator']);
+        $this->dataCollection = $this->getMock(
+            'Magento\Framework\Data\Collection',
+            ['getIterator'],
+            [],
+            '',
+            false
+        );
 
-        $this->currency = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
+        $this->currency = $this->getMockBuilder('\Magento\Directory\Model\Currency')
             ->setMethods(['getRate'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->store = $this->getMockBuilder('\Magento\Store\Model\Store')
             ->setMethods(['getCurrentCurrencyCode', 'getBaseCurrencyCode', 'getBaseCurrency'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->store->expects($this->any())
             ->method('getBaseCurrency')
             ->willReturn($this->currency);
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManager = $this->getMockBuilder('\Magento\Store\Model\StoreManagerInterface')
             ->setMethods(['getStore'])
             ->getMockForAbstractClass();
         $this->storeManager->expects($this->any())
@@ -157,7 +162,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
                             'static'
                         )
                     ],
-                    'values' => ['is_active' => 0],
+                    'values' => ['is_active' => false],
                     'currentCurrencyCode' => 'GBP',
                     'baseCurrencyCode' => 'USD'
                 ],
@@ -194,14 +199,14 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(new \ArrayIterator($attributes)));
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $advancedFactory = $this->getMockBuilder(\Magento\CatalogSearch\Model\ResourceModel\AdvancedFactory::class)
+        $advancedFactory = $this->getMockBuilder('Magento\CatalogSearch\Model\ResourceModel\AdvancedFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $advancedFactory->expects($this->once())->method('create')->willReturn($this->resource);
 
         $productCollectionFactory =
-            $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class)
+            $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\CollectionFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -218,7 +223,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
             ->with($currentCurrencyCode)
             ->willReturn(1.5);
 
-        $currency = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
+        $currency = $this->getMockBuilder('Magento\Directory\Model\Currency')
             ->setMethods(['load', 'format'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -228,7 +233,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
         $currency->expects($this->any())
             ->method('format')
             ->willReturnArgument(0);
-        $currencyFactory = $this->getMockBuilder(\Magento\Directory\Model\CurrencyFactory::class)
+        $currencyFactory = $this->getMockBuilder('Magento\Directory\Model\CurrencyFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -238,7 +243,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\CatalogSearch\Model\Advanced $instance */
         $instance = $objectManager->getObject(
-            \Magento\CatalogSearch\Model\Advanced::class,
+            'Magento\CatalogSearch\Model\Advanced',
             [
                 'registry' => $registry,
                 'resourceProvider' => $this->resourceProvider,
@@ -259,9 +264,12 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
      */
     private function createBackend($table)
     {
-        $backend = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend::class,
-            ['getTable']
+        $backend = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend',
+            ['getTable'],
+            [],
+            '',
+            false
         );
         $backend->expects($this->once())
             ->method('getTable')
@@ -271,7 +279,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
 
     private function createSource($optionText = 'optionText')
     {
-        $source = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class)
+        $source = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\Source\AbstractSource')
             ->setMethods(['getOptionText'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -362,6 +370,7 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+
     /**
      * @param $backend
      * @param null $source
@@ -379,7 +388,9 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
         $frontendInput = null,
         $backendType = null
     ) {
-        $attribute = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, [
+        $attribute = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            [
                 'getAttributeCode',
                 'getStoreLabel',
                 'getFrontendInput',
@@ -387,7 +398,11 @@ class AdvancedTest extends \PHPUnit\Framework\TestCase
                 'getBackendType',
                 'getSource',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $attribute->expects($this->any())->method('getBackend')->willReturn($backend);
         $attribute->expects($this->any())->method('getSource')->willReturn($source);
         $attribute->expects($this->any())->method('getAttributeCode')->will($this->returnValue($attributeCode));

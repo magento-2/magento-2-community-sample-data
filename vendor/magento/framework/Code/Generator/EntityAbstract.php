@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Generator;
@@ -187,7 +187,7 @@ abstract class EntityAbstract
             'visibility' => 'protected',
             'docblock' => [
                 'shortDescription' => 'Object Manager instance',
-                'tags' => [['name' => 'var', 'description' => '\\' . \Magento\Framework\ObjectManagerInterface::class]],
+                'tags' => [['name' => 'var', 'description' => '\Magento\Framework\ObjectManagerInterface']],
             ],
         ];
 
@@ -215,10 +215,15 @@ abstract class EntityAbstract
      */
     protected function _generateCode()
     {
-        $this->_classGenerator->setName($this->_getResultClassName())
-            ->addProperties($this->_getClassProperties())
-            ->addMethods($this->_getClassMethods())
-            ->setClassDocBlock($this->_getClassDocBlock());
+        $this->_classGenerator->setName(
+            $this->_getResultClassName()
+        )->addProperties(
+            $this->_getClassProperties()
+        )->addMethods(
+            $this->_getClassMethods()
+        )->setClassDocBlock(
+            $this->_getClassDocBlock()
+        );
 
         return $this->_getGeneratedCode();
     }
@@ -247,7 +252,8 @@ abstract class EntityAbstract
         if (!$this->definedClasses->isClassLoadable($sourceClassName)) {
             $this->_addError('Source class ' . $sourceClassName . ' doesn\'t exist.');
             return false;
-        } elseif (/**
+        } elseif (
+            /**
              * If makeResultFileDirectory only fails because the file is already created,
              * a competing process has generated the file, no exception should be thrown.
              */
@@ -313,15 +319,12 @@ abstract class EntityAbstract
         $parameterInfo = [
             'name' => $parameter->getName(),
             'passedByReference' => $parameter->isPassedByReference(),
-            'type' => $parameter->getType()
         ];
 
         if ($parameter->isArray()) {
             $parameterInfo['type'] = 'array';
         } elseif ($parameter->getClass()) {
             $parameterInfo['type'] = $this->_getFullyQualifiedClassName($parameter->getClass()->getName());
-        } elseif ($parameter->isCallable()) {
-            $parameterInfo['type'] = 'callable';
         }
 
         if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {

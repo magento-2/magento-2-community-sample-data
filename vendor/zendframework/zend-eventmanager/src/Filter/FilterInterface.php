@@ -24,7 +24,7 @@ interface FilterInterface
      * @param  array $params
      * @return mixed
      */
-    public function run($context, array $params = []);
+    public function run($context, array $params = array());
 
     /**
      * Attach an intercepting filter

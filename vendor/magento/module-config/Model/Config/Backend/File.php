@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Config\Model\Config\Backend;
@@ -8,15 +8,12 @@ namespace Magento\Config\Model\Config\Backend;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
-use Magento\MediaStorage\Model\File\Uploader;
 
 /**
  * System config file field backend model
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
- * @api
- * @since 100.0.2
  */
 class File extends \Magento\Framework\App\Config\Value
 {
@@ -87,18 +84,25 @@ class File extends \Magento\Framework\App\Config\Value
     public function beforeSave()
     {
         $value = $this->getValue();
-        $file = $this->getFileData();
+        $tmpName = $this->_requestData->getTmpName($this->getPath());
+        $file = [];
+        if ($tmpName) {
+            $file['tmp_name'] = $tmpName;
+            $file['name'] = $this->_requestData->getName($this->getPath());
+        } elseif (!empty($value['tmp_name'])) {
+            $file['tmp_name'] = $value['tmp_name'];
+            $file['name'] = $value['value'];
+        }
         if (!empty($file)) {
             $uploadDir = $this->_getUploadDir();
             try {
-                /** @var Uploader $uploader */
                 $uploader = $this->_uploaderFactory->create(['fileId' => $file]);
                 $uploader->setAllowedExtensions($this->_getAllowedExtensions());
                 $uploader->setAllowRenameFiles(true);
                 $uploader->addValidateCallback('size', $this, 'validateMaxSize');
                 $result = $uploader->save($uploadDir);
             } catch (\Exception $e) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('%1', $e->getMessage()));
+                throw new \Magento\Framework\Exception\LocalizedException(__($e->getMessage()));
             }
 
             $filename = $result['file'];
@@ -117,28 +121,6 @@ class File extends \Magento\Framework\App\Config\Value
         }
 
         return $this;
-    }
-
-    /**
-     * Receiving uploaded file data
-     *
-     * @return array
-     * @since 100.1.0
-     */
-    protected function getFileData()
-    {
-        $file = [];
-        $value = $this->getValue();
-        $tmpName = $this->_requestData->getTmpName($this->getPath());
-        if ($tmpName) {
-            $file['tmp_name'] = $tmpName;
-            $file['name'] = $this->_requestData->getName($this->getPath());
-        } elseif (!empty($value['tmp_name'])) {
-            $file['tmp_name'] = $value['tmp_name'];
-            $file['name'] = isset($value['value']) ? $value['value'] : $value['name'];
-        }
-
-        return $file;
     }
 
     /**
@@ -182,6 +164,7 @@ class File extends \Magento\Framework\App\Config\Value
     protected function _getUploadDir()
     {
         $fieldConfig = $this->getFieldConfig();
+        /* @var $fieldConfig \Magento\Framework\Simplexml\Element */
 
         if (!array_key_exists('upload_dir', $fieldConfig)) {
             throw new \Magento\Framework\Exception\LocalizedException(
@@ -191,32 +174,19 @@ class File extends \Magento\Framework\App\Config\Value
 
         if (is_array($fieldConfig['upload_dir'])) {
             $uploadDir = $fieldConfig['upload_dir']['value'];
-            if (array_key_exists('scope_info', $fieldConfig['upload_dir'])
-                && $fieldConfig['upload_dir']['scope_info']
+            if (array_key_exists('scope_info', $fieldConfig['upload_dir']) && $fieldConfig['upload_dir']['scope_info']
             ) {
                 $uploadDir = $this->_appendScopeInfo($uploadDir);
             }
 
             if (array_key_exists('config', $fieldConfig['upload_dir'])) {
-                $uploadDir = $this->getUploadDirPath($uploadDir);
+                $uploadDir = $this->_mediaDirectory->getAbsolutePath($uploadDir);
             }
         } else {
             $uploadDir = (string)$fieldConfig['upload_dir'];
         }
 
         return $uploadDir;
-    }
-
-    /**
-     * Retrieve upload directory path
-     *
-     * @param string $uploadDir
-     * @return string
-     * @since 100.1.0
-     */
-    protected function getUploadDirPath($uploadDir)
-    {
-        return $this->_mediaDirectory->getAbsolutePath($uploadDir);
     }
 
     /**

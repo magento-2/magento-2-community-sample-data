@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Order\Email\Items;
@@ -12,9 +12,7 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 /**
  * Sales Order Email items default renderer
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class DefaultItems extends \Magento\Framework\View\Element\Template
 {

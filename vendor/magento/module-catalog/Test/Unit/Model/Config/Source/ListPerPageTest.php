@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ListPerPageTest extends \PHPUnit\Framework\TestCase
+class ListPerPageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\ListPerPage
@@ -18,7 +18,7 @@ class ListPerPageTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Config\Source\ListPerPage::class,
+            'Magento\Catalog\Model\Config\Source\ListPerPage',
             ['options' => 'some,test,options']
         );
     }

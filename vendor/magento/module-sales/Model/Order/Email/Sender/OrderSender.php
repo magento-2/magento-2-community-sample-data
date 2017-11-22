@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Email\Sender;
@@ -104,9 +104,6 @@ class OrderSender extends Sender
                 $this->orderResource->saveAttribute($order, ['send_email', 'email_sent']);
                 return true;
             }
-        } else {
-            $order->setEmailSent(null);
-            $this->orderResource->saveAttribute($order, 'email_sent');
         }
 
         $this->orderResource->saveAttribute($order, 'send_email');
@@ -130,14 +127,13 @@ class OrderSender extends Sender
             'formattedShippingAddress' => $this->getFormattedShippingAddress($order),
             'formattedBillingAddress' => $this->getFormattedBillingAddress($order),
         ];
-        $transport = new \Magento\Framework\DataObject($transport);
 
         $this->eventManager->dispatch(
             'email_order_set_template_vars_before',
             ['sender' => $this, 'transport' => $transport]
         );
 
-        $this->templateContainer->setTemplateVars($transport->getData());
+        $this->templateContainer->setTemplateVars($transport);
 
         parent::prepareTemplate($order);
     }

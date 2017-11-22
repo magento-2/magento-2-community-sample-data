@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Attribute\Config;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Attribute\Config\Reader
@@ -34,7 +34,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_fileResolverMock = $this->createMock(\Magento\Framework\Config\FileResolverInterface::class);
+        $this->_fileResolverMock = $this->getMock('Magento\Framework\Config\FileResolverInterface');
         $this->_fileResolverMock->expects(
             $this->once()
         )->method(
@@ -51,12 +51,15 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->_converter = $this->createPartialMock(
-            \Magento\Catalog\Model\Attribute\Config\Converter::class,
-            ['convert']
-        );
+        $this->_converter = $this->getMock('Magento\Catalog\Model\Attribute\Config\Converter', ['convert']);
 
-        $moduleReader = $this->createPartialMock(\Magento\Framework\Module\Dir\Reader::class, ['getModuleDir']);
+        $moduleReader = $this->getMock(
+            'Magento\Framework\Module\Dir\Reader',
+            ['getModuleDir'],
+            [],
+            '',
+            false
+        );
         $moduleReader->expects(
             $this->once()
         )->method(
@@ -69,7 +72,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         );
         $this->_schemaLocator = new \Magento\Catalog\Model\Attribute\Config\SchemaLocator($moduleReader);
 
-        $this->_validationState = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $this->_validationState = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $this->_validationState->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn(false);
@@ -88,9 +91,9 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $constraint = function (\DOMDocument $actual) {
             try {
                 $expected = __DIR__ . '/_files/attributes_config_merged.xml';
-                \PHPUnit\Framework\Assert::assertXmlStringEqualsXmlFile($expected, $actual->saveXML());
+                \PHPUnit_Framework_Assert::assertXmlStringEqualsXmlFile($expected, $actual->saveXML());
                 return true;
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
                 return false;
             }
         };

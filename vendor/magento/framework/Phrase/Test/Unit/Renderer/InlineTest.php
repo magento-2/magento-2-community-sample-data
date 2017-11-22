@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Phrase\Test\Unit\Renderer;
 
-class InlineTest extends \PHPUnit\Framework\TestCase
+class InlineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TranslateInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,9 +29,9 @@ class InlineTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock(\Magento\Framework\TranslateInterface::class);
-        $this->provider = $this->createMock(\Magento\Framework\Translate\Inline\ProviderInterface::class);
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->translator = $this->getMock('Magento\Framework\TranslateInterface', [], [], '', false);
+        $this->provider = $this->getMock('Magento\Framework\Translate\Inline\ProviderInterface', [], [], '', false);
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
 
         $this->renderer = new \Magento\Framework\Phrase\Renderer\Inline(
@@ -51,7 +51,7 @@ class InlineTest extends \PHPUnit\Framework\TestCase
             ->method('getTheme')
             ->will($this->returnValue($theme));
 
-        $inlineTranslate = $this->createMock(\Magento\Framework\Translate\InlineInterface::class);
+        $inlineTranslate = $this->getMock('Magento\Framework\Translate\InlineInterface', [], [], '', []);
         $inlineTranslate->expects($this->once())
             ->method('isAllowed')
             ->will($this->returnValue(true));
@@ -67,7 +67,7 @@ class InlineTest extends \PHPUnit\Framework\TestCase
     {
         $text = 'test';
 
-        $inlineTranslate = $this->createMock(\Magento\Framework\Translate\InlineInterface::class);
+        $inlineTranslate = $this->getMock('Magento\Framework\Translate\InlineInterface', [], [], '', []);
         $inlineTranslate->expects($this->once())
             ->method('isAllowed')
             ->will($this->returnValue(false));
@@ -88,7 +88,7 @@ class InlineTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willThrowException($exception);
 
-        $this->expectException('Exception', $message);
+        $this->setExpectedException('Exception', $message);
         $this->renderer->render(['text'], []);
     }
 }

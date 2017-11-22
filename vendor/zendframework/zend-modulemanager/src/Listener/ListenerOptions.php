@@ -20,22 +20,22 @@ class ListenerOptions extends AbstractOptions
     /**
      * @var array
      */
-    protected $modulePaths = [];
+    protected $modulePaths = array();
 
     /**
      * @var array
      */
-    protected $configGlobPaths = [];
+    protected $configGlobPaths = array();
 
     /**
      * @var array
      */
-    protected $configStaticPaths = [];
+    protected $configStaticPaths = array();
 
     /**
      * @var array
      */
-    protected $extraConfig = [];
+    protected $extraConfig = array();
 
     /**
      * @var bool
@@ -68,11 +68,6 @@ class ListenerOptions extends AbstractOptions
     protected $moduleMapCacheKey;
 
     /**
-     * @var bool
-     */
-    protected $useZendLoader = true;
-
-    /**
      * Get an array of paths where modules reside
      *
      * @return array
@@ -91,7 +86,7 @@ class ListenerOptions extends AbstractOptions
      */
     public function setModulePaths($modulePaths)
     {
-        if (! is_array($modulePaths) && ! $modulePaths instanceof Traversable) {
+        if (!is_array($modulePaths) && !$modulePaths instanceof Traversable) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Argument passed to %s::%s() must be an array, '
@@ -137,7 +132,7 @@ class ListenerOptions extends AbstractOptions
      */
     public function setConfigGlobPaths($configGlobPaths)
     {
-        if (! is_array($configGlobPaths) && ! $configGlobPaths instanceof Traversable) {
+        if (!is_array($configGlobPaths) && !$configGlobPaths instanceof Traversable) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Argument passed to %s::%s() must be an array, '
@@ -163,7 +158,7 @@ class ListenerOptions extends AbstractOptions
      */
     public function setConfigStaticPaths($configStaticPaths)
     {
-        if (! is_array($configStaticPaths) && ! $configStaticPaths instanceof Traversable) {
+        if (!is_array($configStaticPaths) && !$configStaticPaths instanceof Traversable) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Argument passed to %s::%s() must be an array, '
@@ -200,7 +195,7 @@ class ListenerOptions extends AbstractOptions
      */
     public function setExtraConfig($extraConfig)
     {
-        if (! is_array($extraConfig) && ! $extraConfig instanceof Traversable) {
+        if (!is_array($extraConfig) && !$extraConfig instanceof Traversable) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Argument passed to %s::%s() must be an array, '
@@ -383,33 +378,6 @@ class ListenerOptions extends AbstractOptions
     {
         $this->checkDependencies = (bool) $checkDependencies;
 
-        return $this;
-    }
-
-    /**
-     * Whether or not to use zend-loader to autoload modules.
-     *
-     * @return bool
-     */
-    public function useZendLoader()
-    {
-        return $this->useZendLoader;
-    }
-
-    /**
-     * Set a flag indicating if the module manager should use zend-loader
-     *
-     * Setting this option to false will disable ModuleAutoloader, requiring
-     * other means of autoloading to be used (e.g., Composer).
-     *
-     * If disabled, the AutoloaderProvider feature will be disabled as well
-     *
-     * @param  bool $flag
-     * @return ListenerOptions
-     */
-    public function setUseZendLoader($flag)
-    {
-        $this->useZendLoader = (bool) $flag;
         return $this;
     }
 

@@ -1,19 +1,19 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Test\Unit\Console;
 
-class ResponseTest extends \PHPUnit\Framework\TestCase
+class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Console\Response
      */
     protected $model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->model = new \Magento\Framework\App\Console\Response();
         $this->model->terminateOnSend(false);

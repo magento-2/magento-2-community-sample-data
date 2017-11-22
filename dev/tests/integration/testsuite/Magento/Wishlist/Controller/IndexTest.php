@@ -1,13 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Controller;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
 {
     /**
@@ -28,22 +25,22 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
     protected function setUp()
     {
         parent::setUp();
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMock('Psr\Log\LoggerInterface', [], [], '', false);
         $this->_customerSession = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Model\Session::class,
+            'Magento\Customer\Model\Session',
             [$logger]
         );
         /** @var \Magento\Customer\Api\AccountManagementInterface $service */
         $service = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
         $customer = $service->authenticate('customer@example.com', 'password');
         $this->_customerSession->setCustomerDataAsLoggedIn($customer);
 
-        $this->_customerViewHelper = $this->_objectManager->create(\Magento\Customer\Helper\View::class);
+        $this->_customerViewHelper = $this->_objectManager->create('Magento\Customer\Helper\View');
 
         $this->_messages = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Message\ManagerInterface::class
+            'Magento\Framework\Message\ManagerInterface'
         );
     }
 
@@ -73,20 +70,8 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
     {
         $this->dispatch('wishlist/index/index');
         $body = $this->getResponse()->getBody();
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//img[contains(@src, "small_image.jpg") and @alt = "Simple Product"]',
-                $body
-            )
-        );
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//textarea[contains(@name, "description")]',
-                $body
-            )
-        );
+        $this->assertSelectCount('img[src~="small_image.jpg"][alt="Simple Product"]', 1, $body);
+        $this->assertSelectCount('textarea[name~="description"]', 1, $body);
     }
 
     /**
@@ -97,14 +82,14 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
     public function testAddActionProductNameXss()
     {
         /** @var \Magento\Framework\Data\Form\FormKey $formKey */
-        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
+        $formKey = $this->_objectManager->get('Magento\Framework\Data\Form\FormKey');
         $this->getRequest()->setPostValue([
             'form_key' => $formKey->getFormKey(),
         ]);
 
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
         $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+            ->create('Magento\Catalog\Api\ProductRepositoryInterface');
 
         $product = $productRepository->get('product-with-xss');
 
@@ -126,12 +111,12 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testAllcartAction()
     {
-        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class)->getFormKey();
+        $formKey = $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey();
         $this->getRequest()->setParam('form_key', $formKey);
         $this->dispatch('wishlist/index/allcart');
 
         /** @var \Magento\Checkout\Model\Cart $cart */
-        $cart = $this->_objectManager->get(\Magento\Checkout\Model\Cart::class);
+        $cart = $this->_objectManager->get('Magento\Checkout\Model\Cart');
         $quoteCount = $cart->getQuote()->getItemsCollection()->count();
 
         $this->assertEquals(0, $quoteCount);
@@ -150,7 +135,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
             ->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
 
         $request = [
-            'form_key' => $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class)->getFormKey(),
+            'form_key' => $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey(),
             'emails' => 'test@tosend.com',
             'message' => 'message',
             'rss_url' => null, // no rss
@@ -158,16 +143,14 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->getRequest()->setPostValue($request);
 
-        $this->_objectManager->get(\Magento\Framework\Registry::class)->register(
+        $this->_objectManager->get('Magento\Framework\Registry')->register(
             'wishlist',
-            $this->_objectManager->get(\Magento\Wishlist\Model\Wishlist::class)->loadByCustomerId(1)
+            $this->_objectManager->get('Magento\Wishlist\Model\Wishlist')->loadByCustomerId(1)
         );
         $this->dispatch('wishlist/index/send');
 
         /** @var \Magento\TestFramework\Mail\Template\TransportBuilderMock $transportBuilder */
-        $transportBuilder = $this->_objectManager->get(
-            \Magento\TestFramework\Mail\Template\TransportBuilderMock::class
-        );
+        $transportBuilder = $this->_objectManager->get('Magento\TestFramework\Mail\Template\TransportBuilderMock');
 
         $actualResult = \Zend_Mime_Decode::decodeQuotedPrintable(
             $transportBuilder->getSentMessage()->getBodyHtml()->getContent()

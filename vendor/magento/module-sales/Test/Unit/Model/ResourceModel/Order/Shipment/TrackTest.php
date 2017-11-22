@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Shipment;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Shipment;
 /**
  * Class TrackTest
  */
-class TrackTest extends \PHPUnit\Framework\TestCase
+class TrackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Shipment\Track
@@ -34,7 +34,6 @@ class TrackTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\Sales\Model\Order\Shipment\Track\Validator|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $validatorMock;
-
     /**
      * @var \Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -45,12 +44,40 @@ class TrackTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->trackModelMock = $this->createMock(\Magento\Sales\Model\Order\Shipment\Track::class);
-        $this->appResourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
-        $this->validatorMock = $this->createMock(\Magento\Sales\Model\Order\Shipment\Track\Validator::class);
-        $this->entitySnapshotMock = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot::class
+        $this->trackModelMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\Track',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->appResourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->validatorMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\Track\Validator',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->entitySnapshotMock = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot',
+            [],
+            [],
+            '',
+            false
         );
         $this->appResourceMock->expects($this->any())
             ->method('getConnection')
@@ -65,17 +92,21 @@ class TrackTest extends \PHPUnit\Framework\TestCase
         $this->trackModelMock->expects($this->any())->method('hasDataChanges')->will($this->returnValue(true));
         $this->trackModelMock->expects($this->any())->method('isSaveAllowed')->will($this->returnValue(true));
 
-        $relationProcessorMock = $this->createMock(
-            \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor::class
+        $relationProcessorMock = $this->getMock(
+            '\Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor',
+            [],
+            [],
+            '',
+            false
         );
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('\Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->once())->method('getResources')->willReturn($this->appResourceMock);
         $contextMock->expects($this->once())->method('getObjectRelationProcessor')->willReturn($relationProcessorMock);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->trackResource = $objectManager->getObject(
-            \Magento\Sales\Model\ResourceModel\Order\Shipment\Track::class,
+            'Magento\Sales\Model\ResourceModel\Order\Shipment\Track',
             [
                 'context' => $contextMock,
                 'validator' => $this->validatorMock,

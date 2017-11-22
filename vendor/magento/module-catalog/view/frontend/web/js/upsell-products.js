@@ -1,24 +1,24 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint jquery:true*/
 define([
-    'jquery',
-    'jquery/ui'
-], function ($) {
-    'use strict';
-
+    "jquery",
+    "jquery/ui"
+], function($){
+    "use strict";
+    
     $.widget('mage.upsellProducts', {
         options: {
-            elementsSelector: '.item.product'
+            elementsSelector: ".item.product"
         },
 
         /**
          * Bind events to the appropriate handlers.
          * @private
          */
-        _create: function () {
+        _create: function() {
             this._showUpsellProducts(
                 this.element.find(this.options.elementsSelector),
                 this.element.data('limit'),
@@ -28,29 +28,23 @@ define([
 
         /**
          * Show upsell products according to limit. Shuffle if needed.
-         * @param {*} elements
-         * @param {Number} limit
-         * @param {Boolean} shuffle
+         * @param elements
+         * @param limit
+         * @param shuffle
          * @private
          */
-        _showUpsellProducts: function (elements, limit, shuffle) {
-            var index;
-
+        _showUpsellProducts: function(elements, limit, shuffle) {
             if (shuffle) {
                 this._shuffle(elements);
             }
-
             if (limit === 0) {
                 limit = elements.length;
             }
-
-            for (index = 0; index < limit; index++) {
+            for (var index = 0; index < limit; index++) {
                 $(this.element).find(elements[index]).show();
             }
         },
 
-        /* jscs:disable */
-        /* eslint-disable */
         /**
          * Shuffle an array
          * @param o
@@ -60,9 +54,6 @@ define([
             for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
             return o;
         }
-
-        /* jscs:disable */
-        /* eslint:disable */
     });
 
     return $.mage.upsellProducts;

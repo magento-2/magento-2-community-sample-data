@@ -1,20 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\ResourceModel\Order\Item;
 
-use \Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection;
-
 /**
  * Flat sales order payment collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
-class Collection extends AbstractCollection implements \Magento\Sales\Api\Data\OrderItemSearchResultInterface
+class Collection extends \Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection
 {
     /**
      * Event prefix
@@ -44,7 +40,7 @@ class Collection extends AbstractCollection implements \Magento\Sales\Api\Data\O
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\Order\Item::class, \Magento\Sales\Model\ResourceModel\Order\Item::class);
+        $this->_init('Magento\Sales\Model\Order\Item', 'Magento\Sales\Model\ResourceModel\Order\Item');
     }
 
     /**
@@ -59,7 +55,6 @@ class Collection extends AbstractCollection implements \Magento\Sales\Api\Data\O
          * Assign parent items
          */
         foreach ($this as $item) {
-            $this->_resource->unserializeFields($item);
             if ($item->getParentItemId()) {
                 $item->setParentItem($this->getItemById($item->getParentItemId()));
             }

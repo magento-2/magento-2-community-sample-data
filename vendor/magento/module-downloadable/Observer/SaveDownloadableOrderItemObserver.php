@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Observer;
@@ -69,6 +69,7 @@ class SaveDownloadableOrderItemObserver implements ObserverInterface
         $this->_objectCopyService = $objectCopyService;
     }
 
+
     /**
      * Save data from order to purchased links
      *
@@ -104,13 +105,13 @@ class SaveDownloadableOrderItemObserver implements ObserverInterface
             if ($linkIds = $orderItem->getProductOptionByCode('links')) {
                 $linkPurchased = $this->_createPurchasedModel();
                 $this->_objectCopyService->copyFieldsetToTarget(
-                    \downloadable_sales_copy_order::class,
+                    'downloadable_sales_copy_order',
                     'to_downloadable',
                     $orderItem->getOrder(),
                     $linkPurchased
                 );
                 $this->_objectCopyService->copyFieldsetToTarget(
-                    \downloadable_sales_copy_order_item::class,
+                    'downloadable_sales_copy_order_item',
                     'to_downloadable',
                     $orderItem,
                     $linkPurchased
@@ -132,7 +133,7 @@ class SaveDownloadableOrderItemObserver implements ObserverInterface
                         );
 
                         $this->_objectCopyService->copyFieldsetToTarget(
-                            \downloadable_sales_copy_link::class,
+                            'downloadable_sales_copy_link',
                             'to_purchased',
                             $links[$linkId],
                             $linkPurchasedItem

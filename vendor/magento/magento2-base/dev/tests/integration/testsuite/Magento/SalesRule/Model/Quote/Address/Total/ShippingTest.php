@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\SalesRule\Model\Quote\Address\Total;
 
-class ShippingTest extends \PHPUnit\Framework\TestCase
+class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Api\GuestCartManagementInterface
@@ -31,9 +31,8 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppIsolation enabled
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
+     * @magentoDataFixture Magento/Catalog/_files/product_simple_without_options.php
      */
     public function testRuleByProductWeightWithFreeShipping()
     {
@@ -43,12 +42,12 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(count($methods) > 0);
         $this->assertEquals('flatrate', $methods[0]->getMethodCode());
         $this->assertEquals(0, $methods[0]->getAmount());
+
     }
 
     /**
-     * @magentoAppIsolation enabled
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
+     * @magentoDataFixture Magento/Catalog/_files/product_simple_without_options.php
      */
     public function testRuleByProductWeightWithoutFreeShipping()
     {
@@ -58,10 +57,11 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(count($methods) > 0);
         $this->assertEquals('flatrate', $methods[0]->getMethodCode());
         $this->assertEquals(25, $methods[0]->getAmount());
+
     }
 
     /**
-     * Estimate shipment for guest cart
+     * Estimate shipment for guest cart.
      *
      * @param int $cartId
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]
@@ -73,14 +73,14 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $address = $addressFactory->create();
         $address->setCountryId('US');
         $address->setRegionId(2);
-
         /** @var \Magento\Quote\Api\GuestShipmentEstimationInterface $estimation */
         $estimation = $this->objectManager->get(\Magento\Quote\Api\GuestShipmentEstimationInterface::class);
+
         return $estimation->estimateByExtendedAddress($cartId, $address);
     }
 
     /**
-     * Create guest quote with products
+     * Create guest quote with products.
      *
      * @param int $itemQty
      * @return int
@@ -96,7 +96,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $cartItem = $cartItemFactory->create();
         $cartItem->setQuoteId($cartId);
         $cartItem->setQty($itemQty);
-        $cartItem->setSku('simple-99');
+        $cartItem->setSku('simple');
         $cartItem->setProductType(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
 
         $this->itemRepository->save($cartItem);

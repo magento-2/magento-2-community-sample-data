@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\Di\Code\Scanner;
 
-class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
+class DirectoryScannerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Scanner\DirectoryScanner

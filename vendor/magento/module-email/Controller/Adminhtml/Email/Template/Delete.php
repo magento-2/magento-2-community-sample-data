@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Controller\Adminhtml\Email\Template;
@@ -23,7 +23,7 @@ class Delete extends \Magento\Email\Controller\Adminhtml\Email\Template
                     $template->delete();
                     // display success message
                     $this->messageManager->addSuccess(__('You deleted the email template.'));
-                    $this->_objectManager->get(\Magento\Framework\App\ReinitableConfig::class)->reinit();
+                    $this->_objectManager->get('Magento\Framework\App\ReinitableConfig')->reinit();
                     // go to grid
                     $this->_redirect('adminhtml/*/');
                     return;
@@ -39,10 +39,10 @@ class Delete extends \Magento\Email\Controller\Adminhtml\Email\Template
                 $this->messageManager->addError(
                     __('We can\'t delete email template data right now. Please review log and try again.')
                 );
-                $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
                 // save data in session
                 $this->_objectManager->get(
-                    \Magento\Backend\Model\Session::class
+                    'Magento\Backend\Model\Session'
                 )->setFormData(
                     $this->getRequest()->getParams()
                 );

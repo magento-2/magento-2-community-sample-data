@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Element\UiComponent\DataProvider;
 
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\Search\ReportingInterface;
 use Magento\Framework\Api\Search\SearchCriteria;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 use Magento\Framework\Api\Search\SearchResultInterface;
@@ -51,7 +50,7 @@ class DataProvider implements DataProviderInterface
     protected $data = [];
 
     /**
-     * @var ReportingInterface
+     * @var Reporting
      */
     protected $reporting;
 
@@ -79,7 +78,7 @@ class DataProvider implements DataProviderInterface
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
-     * @param ReportingInterface $reporting
+     * @param Reporting $reporting
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param RequestInterface $request
      * @param FilterBuilder $filterBuilder
@@ -90,7 +89,7 @@ class DataProvider implements DataProviderInterface
         $name,
         $primaryFieldName,
         $requestFieldName,
-        ReportingInterface $reporting,
+        Reporting $reporting,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         RequestInterface $request,
         FilterBuilder $filterBuilder,
@@ -123,7 +122,7 @@ class DataProvider implements DataProviderInterface
             }
             if ($paramValue) {
                 $this->data['config']['update_url'] = sprintf(
-                    '%s%s/%s/',
+                    '%s%s/%s',
                     $this->data['config']['update_url'],
                     $paramName,
                     $paramValue
@@ -190,7 +189,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getFieldsMetaInfo($fieldSetName)
     {
-        return isset($this->meta[$fieldSetName]['children']) ? $this->meta[$fieldSetName]['children'] : [];
+        return isset($this->meta[$fieldSetName]['fields']) ? $this->meta[$fieldSetName]['fields'] : [];
     }
 
     /**
@@ -200,8 +199,8 @@ class DataProvider implements DataProviderInterface
      */
     public function getFieldMetaInfo($fieldSetName, $fieldName)
     {
-        return isset($this->meta[$fieldSetName]['children'][$fieldName])
-            ? $this->meta[$fieldSetName]['children'][$fieldName]
+        return isset($this->meta[$fieldSetName]['fields'][$fieldName])
+            ? $this->meta[$fieldSetName]['fields'][$fieldName]
             : [];
     }
 
@@ -245,6 +244,7 @@ class DataProvider implements DataProviderInterface
     protected function searchResultToOutput(SearchResultInterface $searchResult)
     {
         $arrItems = [];
+        $arrItems['totalRecords'] = $searchResult->getTotalCount();
 
         $arrItems['items'] = [];
         foreach ($searchResult->getItems() as $item) {
@@ -254,9 +254,6 @@ class DataProvider implements DataProviderInterface
             }
             $arrItems['items'][] = $itemData;
         }
-
-        $arrItems['totalRecords'] = $searchResult->getTotalCount();
-
         return $arrItems;
     }
 

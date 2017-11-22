@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Review\Model\Rating;
@@ -8,6 +8,8 @@ namespace Magento\Review\Model\Rating;
 /**
  * Ratings entity model
  *
+ * @method \Magento\Review\Model\ResourceModel\Rating\Entity _getResource()
+ * @method \Magento\Review\Model\ResourceModel\Rating\Entity getResource()
  * @method string getEntityCode()
  * @method \Magento\Review\Model\Rating\Entity setEntityCode(string $value)
  *
@@ -21,7 +23,7 @@ class Entity extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Review\Model\ResourceModel\Rating\Entity::class);
+        $this->_init('Magento\Review\Model\ResourceModel\Rating\Entity');
     }
 
     /**

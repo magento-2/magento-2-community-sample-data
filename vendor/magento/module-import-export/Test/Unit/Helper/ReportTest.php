@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ImportExport\Test\Unit\Helper;
@@ -9,10 +9,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 
 /**
  * Class ReportTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ReportTest extends \PHPUnit\Framework\TestCase
+class ReportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -47,18 +45,36 @@ class ReportTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\App\Helper\Context::class);
-        $this->timezone = $this->createPartialMock(
-            \Magento\Framework\Stdlib\DateTime\Timezone::class,
-            ['date', 'getConfigTimezone', 'diff', 'format']
+        $this->context = $this->getMock(
+            'Magento\Framework\App\Helper\Context',
+            [],
+            [],
+            '',
+            false
         );
-        $this->varDirectory = $this->createPartialMock(
-            \Magento\Framework\Filesystem\Directory\Write::class,
-            ['getRelativePath', 'readFile', 'isFile', 'stat']
+        $this->timezone = $this->getMock(
+            'Magento\Framework\Stdlib\DateTime\Timezone',
+            ['date', 'getConfigTimezone', 'diff', 'format'],
+            [],
+            '',
+            false
         );
-        $this->filesystem = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryWrite']);
+        $this->varDirectory = $this->getMock(
+            'Magento\Framework\Filesystem\Directory\Write',
+            ['getRelativePath', 'readFile', 'isFile', 'stat'],
+            [],
+            '',
+            false
+        );
+        $this->filesystem = $this->getMock(
+            'Magento\Framework\Filesystem',
+            ['getDirectoryWrite'],
+            [],
+            '',
+            false
+        );
         $this->varDirectory->expects($this->any())->method('getRelativePath')->willReturn('path');
         $this->varDirectory->expects($this->any())->method('readFile')->willReturn('contents');
         $this->varDirectory->expects($this->any())->method('isFile')->willReturn(true);
@@ -66,13 +82,14 @@ class ReportTest extends \PHPUnit\Framework\TestCase
         $this->filesystem->expects($this->any())->method('getDirectoryWrite')->willReturn($this->varDirectory);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->report = $this->objectManagerHelper->getObject(
-            \Magento\ImportExport\Helper\Report::class,
+            'Magento\ImportExport\Helper\Report',
             [
                 'context' => $this->context,
                 'timeZone' => $this->timezone,
                 'filesystem' =>$this->filesystem
             ]
         );
+
     }
 
     /**
@@ -93,30 +110,51 @@ class ReportTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetSummaryStats()
     {
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $importExportData = $this->createMock(\Magento\ImportExport\Helper\Data::class);
-        $coreConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $importConfig = $this->createPartialMock(\Magento\ImportExport\Model\Import\Config::class, ['getEntities']);
+        $logger = $this->getMock('Psr\Log\LoggerInterface', [], [], '', false);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $importExportData = $this->getMock('Magento\ImportExport\Helper\Data', [], [], '', false);
+        $coreConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
+        $importConfig = $this->getMock(
+            'Magento\ImportExport\Model\Import\Config',
+            ['getEntities'],
+            [],
+            '',
+            false
+        );
         $importConfig->expects($this->any())
             ->method('getEntities')
             ->willReturn(['catalog_product' => ['model' => 'catalog_product']]);
-        $entityFactory = $this->createPartialMock(\Magento\ImportExport\Model\Import\Entity\Factory::class, ['create']);
-        $product = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Product::class,
-            ['getEntityTypeCode', 'setParameters']
+        $entityFactory = $this->getMock(
+            'Magento\ImportExport\Model\Import\Entity\Factory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $product = $this->getMock(
+            'Magento\CatalogImportExport\Model\Import\Product',
+            ['getEntityTypeCode', 'setParameters'],
+            [],
+            '',
+            false
         );
         $product->expects($this->any())->method('getEntityTypeCode')->willReturn('catalog_product');
         $product->expects($this->any())->method('setParameters')->willReturn('');
         $entityFactory->expects($this->any())->method('create')->willReturn($product);
-        $importData = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
-        $csvFactory = $this->createMock(\Magento\ImportExport\Model\Export\Adapter\CsvFactory::class);
-        $httpFactory = $this->createMock(\Magento\Framework\HTTP\Adapter\FileTransferFactory::class);
-        $uploaderFactory = $this->createMock(\Magento\MediaStorage\Model\File\UploaderFactory::class);
-        $behaviorFactory = $this->createMock(\Magento\ImportExport\Model\Source\Import\Behavior\Factory::class);
-        $indexerRegistry = $this->createMock(\Magento\Framework\Indexer\IndexerRegistry::class);
-        $importHistoryModel = $this->createMock(\Magento\ImportExport\Model\History::class);
-        $localeDate = $this->createMock(\Magento\Framework\Stdlib\DateTime\DateTime::class);
+        $importData = $this->getMock('Magento\ImportExport\Model\ResourceModel\Import\Data', [], [], '', false);
+        $csvFactory = $this->getMock('Magento\ImportExport\Model\Export\Adapter\CsvFactory', [], [], '', false);
+        $httpFactory = $this->getMock('Magento\Framework\HTTP\Adapter\FileTransferFactory', [], [], '', false);
+        $uploaderFactory = $this->getMock('Magento\MediaStorage\Model\File\UploaderFactory', [], [], '', false);
+        $behaviorFactory = $this->getMock(
+            'Magento\ImportExport\Model\Source\Import\Behavior\Factory',
+            [],
+            [],
+            '',
+            false
+        );
+        $indexerRegistry = $this->getMock('Magento\Framework\Indexer\IndexerRegistry', [], [], '', false);
+        $importHistoryModel = $this->getMock('Magento\ImportExport\Model\History', [], [], '', false);
+        $localeDate = $this->getMock('Magento\Framework\Stdlib\DateTime\DateTime', [], [], '', false);
         $import = new \Magento\ImportExport\Model\Import(
             $logger,
             $filesystem,
@@ -135,7 +173,7 @@ class ReportTest extends \PHPUnit\Framework\TestCase
         );
         $import->setData('entity', 'catalog_product');
         $message = $this->report->getSummaryStats($import);
-        $this->assertInstanceOf(\Magento\Framework\Phrase::class, $message);
+        $this->assertInstanceOf('Magento\Framework\Phrase', $message);
     }
 
     public function testImportFileExists()
@@ -156,7 +194,6 @@ class ReportTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetReportSize()
     {
-        $result = $this->report->getReportSize('file');
-        $this->assertNull($result);
+        $this->report->getReportSize('file');
     }
 }

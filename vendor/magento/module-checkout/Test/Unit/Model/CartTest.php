@@ -1,19 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Checkout\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Catalog\Model\Product;
 
 /**
  * Class CartTest
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CartTest extends \PHPUnit\Framework\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Checkout\Model\Cart */
     protected $cart;
@@ -29,7 +30,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     protected $customerSessionMock;
 
-    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $stockItemMock;
 
     /**
@@ -79,34 +80,56 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->checkoutSessionMock = $this->createMock(\Magento\Checkout\Model\Session::class);
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->productRepository = $this->createMock(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $this->stockRegistry = $this->getMockBuilder(\Magento\CatalogInventory\Model\StockRegistry::class)
+        $this->checkoutSessionMock = $this->getMock('Magento\Checkout\Model\Session', [], [], '', false);
+        $this->customerSessionMock = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
+        $this->scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->stockRegistry = $this->getMockBuilder('Magento\CatalogInventory\Model\StockRegistry')
             ->disableOriginalConstructor()
             ->setMethods(['getStockItem', '__wakeup'])
             ->getMock();
-        $this->stockItemMock = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\Stock\Item::class,
-            ['getMinSaleQty', '__wakeup']
-        );
-        $this->stockState = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\StockState::class,
-            ['suggestQty', '__wakeup']
-        );
-        $this->storeMock =
-            $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId', 'getId', '__wakeup']);
-        $this->requestInfoFilterMock = $this->createMock(
-            \Magento\Checkout\Model\Cart\RequestInfoFilterInterface::class
+
+        $this->stockItemMock = $this->getMock(
+            'Magento\CatalogInventory\Model\Stock\Item',
+            ['getMinSaleQty', '__wakeup'],
+            [],
+            '',
+            false
         );
 
+        $this->stockState = $this->getMock(
+            'Magento\CatalogInventory\Model\StockState',
+            ['suggestQty', '__wakeup'],
+            [],
+            '',
+            false
+        );
+
+        $this->storeManagerMock = $this->getMockForAbstractClass(
+            \Magento\Store\Model\StoreManagerInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->productRepository = $this->getMockForAbstractClass(
+            \Magento\Catalog\Api\ProductRepositoryInterface::class,
+            ['getById'],
+            '',
+            false
+        );
         $this->stockRegistry->expects($this->any())
             ->method('getStockItem')
             ->will($this->returnValue($this->stockItemMock));
+        $this->quoteMock = $this->getMock('Magento\Quote\Model\Quote', [], [], '', false);
+        $this->eventManagerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $this->storeMock = $this->getMock(
+            \Magento\Store\Model\Store::class,
+            ['getWebsiteId', 'getId', '__wakeup'],
+            [],
+            '',
+            false
+        );
+        $this->requestInfoFilterMock = $this->getMock(\Magento\Checkout\Model\Cart\RequestInfoFilterInterface::class);
+
         $this->storeMock->expects($this->any())
             ->method('getWebsiteId')
             ->will($this->returnValue(10));
@@ -119,7 +142,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->cart = $this->objectManagerHelper->getObject(
-            \Magento\Checkout\Model\Cart::class,
+            'Magento\Checkout\Model\Cart',
             [
                 'scopeConfig' => $this->scopeConfigMock,
                 'checkoutSession' => $this->checkoutSessionMock,
@@ -132,8 +155,11 @@ class CartTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->objectManagerHelper
-            ->setBackwardCompatibleProperty($this->cart, 'requestInfoFilter', $this->requestInfoFilterMock);
+        $this->objectManagerHelper->setBackwardCompatibleProperty(
+            $this->cart,
+            'requestInfoFilter',
+            $this->requestInfoFilterMock
+        );
     }
 
     public function testSuggestItemsQty()
@@ -175,10 +201,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
     public function testUpdateItems()
     {
         $data = [['qty' => 5.5, 'before_suggest_qty' => 5.5]];
-        $infoDataObject = $this->objectManagerHelper->getObject(
-            \Magento\Framework\DataObject::class,
-            ['data' => $data]
-        );
+        $infoDataObject = $this->objectManagerHelper->getObject('Magento\Framework\DataObject', ['data' => $data]);
 
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuote')
@@ -202,22 +225,18 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     public function prepareQuoteItemMock($itemId)
     {
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId', '__wakeup', 'getWebsiteId']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getWebsiteId', '__wakeup'], [], '', false);
         $store->expects($this->any())
             ->method('getWebsiteId')
             ->will($this->returnValue(10));
-        $store->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue(10));
-        $this->storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->will($this->returnValue($store));
-
         switch ($itemId) {
             case 2:
-                $product = $this->createPartialMock(
-                    \Magento\Catalog\Model\Product::class,
-                    ['getStore', 'getId', '__wakeup']
+                $product = $this->getMock(
+                    'Magento\Catalog\Model\Product',
+                    ['getStore', 'getId', '__wakeup'],
+                    [],
+                    '',
+                    false
                 );
                 $product->expects($this->once())
                     ->method('getId')
@@ -227,9 +246,12 @@ class CartTest extends \PHPUnit\Framework\TestCase
                     ->will($this->returnValue($store));
                 break;
             case 3:
-                $product = $this->createPartialMock(
-                    \Magento\Catalog\Model\Product::class,
-                    ['getStore', 'getId', '__wakeup']
+                $product = $this->getMock(
+                    'Magento\Catalog\Model\Product',
+                    ['getStore', 'getId', '__wakeup'],
+                    [],
+                    '',
+                    false
                 );
                 $product->expects($this->once())
                     ->method('getId')
@@ -245,7 +267,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
                 return false;
         }
 
-        $quoteItem = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $quoteItem = $this->getMock('Magento\Quote\Model\Quote\Item', [], [], '', false);
         $quoteItem->expects($this->once())
             ->method('getProduct')
             ->will($this->returnValue($product));
@@ -260,9 +282,12 @@ class CartTest extends \PHPUnit\Framework\TestCase
     {
         $quoteId = 1;
         $itemsCount = 1;
-        $quoteMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote::class,
-            ['getItemsCount', 'getItemsQty', '__wakeup']
+        $quoteMock = $this->getMock(
+            'Magento\Quote\Model\Quote',
+            ['getItemsCount', 'getItemsQty', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $this->checkoutSessionMock->expects($this->any())->method('getQuote')->will($this->returnValue($quoteMock));
@@ -290,15 +315,18 @@ class CartTest extends \PHPUnit\Framework\TestCase
     /**
      * Test successful scenarios for AddProduct
      *
-     * @param int|\Magento\Catalog\Model\Product $productInfo
+     * @param int|Product $productInfo
      * @param \Magento\Framework\DataObject|int|array $requestInfo
      * @dataProvider addProductDataProvider
      */
     public function testAddProduct($productInfo, $requestInfo)
     {
-        $product = $this->createPartialMock(
+        $product = $this->getMock(
             \Magento\Catalog\Model\Product::class,
-            ['getStore', 'getWebsiteIds', 'getProductUrl', 'getId', '__wakeup']
+            ['getStore', 'getWebsiteIds', 'getProductUrl', 'getId', '__wakeup'],
+            [],
+            '',
+            false
         );
         $product->expects($this->any())
             ->method('getId')
@@ -341,9 +369,12 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddProductException()
     {
-        $product = $this->createPartialMock(
+        $product = $this->getMock(
             \Magento\Catalog\Model\Product::class,
-            ['getStore', 'getWebsiteIds', 'getProductUrl', 'getId', '__wakeup']
+            ['getStore', 'getWebsiteIds', 'getProductUrl', 'getId', '__wakeup'],
+            [],
+            '',
+            false
         );
         $product->expects($this->any())
             ->method('getId')
@@ -371,7 +402,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
             'checkout_cart_product_add_after',
             ['quote_item' => 1, 'product' => $product]
         );
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->setExpectedException(\Magento\Framework\Exception\LocalizedException::class);
         $this->cart->addProduct(4, 4);
     }
 
@@ -382,9 +413,12 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddProductExceptionBadParams()
     {
-        $product = $this->createPartialMock(
+        $product = $this->getMock(
             \Magento\Catalog\Model\Product::class,
-            ['getWebsiteIds', 'getId', '__wakeup']
+            ['getWebsiteIds', 'getId', '__wakeup'],
+            [],
+            '',
+            false
         );
         $product->expects($this->any())
             ->method('getId')
@@ -400,7 +434,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
             'checkout_cart_product_add_after',
             ['quote_item' => 1, 'product' => $product]
         );
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->setExpectedException(\Magento\Framework\Exception\LocalizedException::class);
         $this->cart->addProduct(4, 'bad');
     }
 
@@ -411,7 +445,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     public function addProductDataProvider()
     {
-        $obj = new ObjectManagerHelper($this);
+        $obj = new ObjectManagerHelper($this) ;
         $data = ['qty' => 5.5, 'sku' => 'prod'];
 
         return [

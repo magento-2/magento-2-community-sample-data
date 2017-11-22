@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -24,26 +24,17 @@
 & when (@media-common = true) {
     .checkout-payment-method {
         .step-title {
-            border-bottom: 0;
             margin-bottom: 0;
         }
-
         .payment-method {
             &:first-child {
                 .payment-method-title {
                     border-top: 0;
                 }
             }
-
             &._active {
                 .payment-method-content {
                     display: block;
-                }
-            }
-
-            & + .payment-method {
-                .payment-method-title {
-                    .lib-css(border-top, @checkout-payment-method-title__border);
                 }
             }
         }
@@ -61,6 +52,7 @@
         }
 
         .payment-method-title {
+            .lib-css(border-top, @checkout-payment-method-title__border);
             .lib-css(padding, @checkout-payment-method-title__padding 0);
             margin: 0;
 
@@ -82,14 +74,6 @@
             .fieldset {
                 &:not(:last-child) {
                     margin: 0 0 @indent__base;
-                }
-            }
-        }
-
-        .payment-group {
-            & + .payment-group {
-                .step-title {
-                    margin: @indent__base 0 0;
                 }
             }
         }
@@ -133,17 +117,14 @@
                 &:extend(.abs-visually-hidden all);
             }
         }
-
         .payment-method-iframe {
             background-color: transparent;
             display: none;
             width: 100%;
         }
-
         .no-payments-block {
             margin: @indent__base 0;
         }
-
         .payments {
             .legend {
                 &:extend(.abs-visually-hidden all);
@@ -204,12 +185,10 @@
             .fieldset {
                 > .field {
                     margin: 0 0 @indent__base;
-
                     &.type {
                         .control {
                             margin-left: 25.8%;
                         }
-
                         &.no-detection {
                             .control {
                                 margin-left: 0;
@@ -225,7 +204,6 @@
         .action-update {
             float: right;
         }
-
         .actions-toolbar {
             .action-cancel {
                 margin: 6px @indent__base 0 0;

@@ -1,15 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Magento application action
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App;
 
-/**
- * Magento application action controller type. Every action controller in Application should implement this interface.
- *
- * @api
- */
 interface ActionInterface
 {
     const FLAG_NO_DISPATCH = 'no-dispatch';
@@ -23,9 +20,7 @@ interface ActionInterface
     const PARAM_NAME_URL_ENCODED = 'uenc';
 
     /**
-     * Execute action based on request and return result
-     *
-     * Note: Request will be added as operation argument in future
+     * Dispatch request
      *
      * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
      * @throws \Magento\Framework\Exception\NotFoundException

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Circular\Data;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ModuleTest extends \PHPUnit\Framework\TestCase
+class ModuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $name
@@ -18,7 +18,7 @@ class ModuleTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
         return $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Dependency\Report\Circular\Data\Module::class,
+            'Magento\Setup\Module\Dependency\Report\Circular\Data\Module',
             ['name' => $name, 'chains' => $chains]
         );
     }

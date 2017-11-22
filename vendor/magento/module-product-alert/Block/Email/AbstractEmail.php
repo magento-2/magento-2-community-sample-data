@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -172,7 +172,7 @@ abstract class AbstractEmail extends \Magento\Framework\View\Element\Template
     protected function getPriceRender()
     {
         return $this->_layout->createBlock(
-            \Magento\Framework\Pricing\Render::class,
+            'Magento\Framework\Pricing\Render',
             '',
             ['data' => ['price_render_handle' => 'catalog_product_prices']]
         );

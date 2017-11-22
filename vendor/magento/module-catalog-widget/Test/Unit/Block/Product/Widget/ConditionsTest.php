@@ -1,23 +1,22 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogWidget\Test\Unit\Block\Product\Widget;
 
-use Magento\Backend\Block\Template\Context;
-use Magento\CatalogWidget\Block\Product\Widget\Conditions;
-use Magento\CatalogWidget\Model\Rule;
-use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\View\Element\BlockInterface;
+use Magento\CatalogWidget\Block\Product\Widget\Conditions;
+use Magento\Framework\Registry;
+use Magento\Backend\Block\Template\Context;
+use Magento\CatalogWidget\Model\Rule;
 use Magento\Framework\View\LayoutInterface;
+use Magento\Framework\View\Element\BlockInterface;
 
 /**
  * Test class for \Magento\CatalogWidget\Block\Product\Widget\Conditions
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ConditionsTest extends \PHPUnit\Framework\TestCase
+class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -49,14 +48,6 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
      */
     private $blockMock;
 
-    /**
-     * @var Conditions
-     */
-    private $widgetConditions;
-
-    /**
-     * return void
-     */
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -78,9 +69,6 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->layoutMock);
     }
 
-    /**
-     * @return void
-     */
     public function testConstructWithEmptyData()
     {
         $this->registryMock->expects($this->once())
@@ -106,9 +94,6 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return void
-     */
     public function testConstructWithWidgetInstance()
     {
         $widgetParams = ['conditions' => 'some conditions'];
@@ -144,9 +129,6 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return void
-     */
     public function testConstructWithParamsFromBlock()
     {
         $widgetParams = ['conditions' => 'some conditions'];
@@ -175,54 +157,5 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
                 'rule' => $this->ruleMock,
             ]
         );
-    }
-
-    /**
-     * @return void
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function testRender()
-    {
-        $data = ['area' => 'backend'];
-        $abstractElementMock = $this->createPartialMock(
-            \Magento\Framework\Data\Form\Element\AbstractElement::class,
-            ['getContainer']
-        );
-        $eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $fieldsetMock = $this->createMock(\Magento\Framework\Data\Form\Element\Fieldset::class);
-        $combineMock = $this->createMock(\Magento\Rule\Model\Condition\Combine::class);
-        $resolverMock = $this->createMock(\Magento\Framework\View\Element\Template\File\Resolver::class);
-        $filesystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryRead']);
-        $validatorMock = $this->createMock(\Magento\Framework\View\Element\Template\File\Validator::class);
-        $templateEnginePoolMock = $this->createMock(\Magento\Framework\View\TemplateEnginePool::class);
-        $templateEngineMock = $this->createMock(\Magento\Framework\View\TemplateEngineInterface::class);
-        $directoryReadMock = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
-
-        $this->ruleMock->expects($this->once())->method('getConditions')->willReturn($combineMock);
-        $combineMock->expects($this->once())->method('setJsFormObject')->willReturnSelf();
-        $abstractElementMock->expects($this->any())->method('getContainer')->willReturn($fieldsetMock);
-        $filesystemMock->expects($this->once())->method('getDirectoryRead')->willReturn($directoryReadMock);
-        $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
-        $this->contextMock->expects($this->once())->method('getEnginePool')->willReturn($templateEnginePoolMock);
-        $templateEnginePoolMock->expects($this->once())->method('get')->willReturn($templateEngineMock);
-        $templateEngineMock->expects($this->once())->method('render')->willReturn('html');
-
-        $this->widgetConditions = $this->objectManagerHelper->getObject(
-            Conditions::class,
-            [
-                'context' => $this->contextMock,
-                'registry' => $this->registryMock,
-                'rule' => $this->ruleMock,
-                '_eventManager' => $eventManagerMock,
-                '_filesystem' => $filesystemMock,
-                '_scopeConfig' => $scopeConfigMock,
-                'validator' => $validatorMock,
-                'resolver' => $resolverMock,
-                'data' => $data
-            ]
-        );
-
-        $this->assertEquals($this->widgetConditions->render($abstractElementMock), 'html');
     }
 }

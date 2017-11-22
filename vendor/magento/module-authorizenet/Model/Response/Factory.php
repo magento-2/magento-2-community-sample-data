@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Model\Response;
@@ -32,7 +32,7 @@ class Factory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Authorizenet\Model\Response::class
+        $instanceName = 'Magento\Authorizenet\Model\Response'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

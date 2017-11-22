@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
@@ -8,9 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create;
 /**
  * Adminhtml sales order create sidebar
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Sidebar extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
 {
@@ -23,7 +21,7 @@ class Sidebar extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
     {
         if ($this->getCustomerId()) {
             $button = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Button::class
+                'Magento\Backend\Block\Widget\Button'
             )->setData(
                 [
                     'label' => __('Update Changes'),

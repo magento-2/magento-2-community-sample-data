@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -55,22 +55,22 @@ class AttributeForm extends FormTabs
         $this->waitForElementVisible($this->propertiesTab);
         $data = [];
         if (null === $fixture) {
-            foreach ($this->getTabs() as $tabName => $tab) {
+            foreach ($this->tabs as $tabName => $tab) {
                 if ($this->isTabVisible($tabName)) {
                     $this->openTab($tabName);
                     $this->expandAllToggles();
-                    $tabData = $this->getTab($tabName)->getFieldsData();
+                    $tabData = $this->getTab($tabName)->getDataFormTab();
                     $data = array_merge($data, $tabData);
                 }
             }
         } else {
             $isHasData = ($fixture instanceof InjectableFixture) ? $fixture->hasData() : true;
-            $tabsFields = $isHasData ? $this->getFixtureFieldsByContainers($fixture) : [];
+            $tabsFields = $isHasData ? $this->getFieldsByTabs($fixture) : [];
             foreach ($tabsFields as $tabName => $fields) {
                 if ($this->isTabVisible($tabName)) {
                     $this->openTab($tabName);
                     $this->expandAllToggles();
-                    $tabData = $this->getTab($tabName)->getFieldsData($fields, $this->_rootElement);
+                    $tabData = $this->getTab($tabName)->getDataFormTab($fields, $this->_rootElement);
                     $data = array_merge($data, $tabData);
                 }
             }
@@ -109,7 +109,9 @@ class AttributeForm extends FormTabs
     {
         $closedToggles = $this->_rootElement->getElements($this->closedToggle);
         foreach ($closedToggles as $toggle) {
-            $toggle->click();
+            if ($toggle->isVisible()) {
+                $toggle->click();
+            }
         }
     }
 

@@ -1,25 +1,24 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model;
 
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
-use Magento\Framework\Exception\InputException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Sales\Api\Data\OrderExtensionFactory;
-use Magento\Sales\Api\Data\OrderExtensionInterface;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\Data\OrderSearchResultInterfaceFactory as SearchResultFactory;
-use Magento\Sales\Api\Data\ShippingAssignmentInterface;
-use Magento\Sales\Model\Order\ShippingAssignmentBuilder;
+use Magento\Sales\Model\ResourceModel\Order as Resource;
 use Magento\Sales\Model\ResourceModel\Metadata;
-use Magento\Framework\App\ObjectManager;
+use Magento\Sales\Model\Order\ShippingAssignmentBuilder;
+use Magento\Sales\Api\Data\OrderSearchResultInterfaceFactory as SearchResultFactory;
+use Magento\Sales\Api\Data\OrderExtensionInterface;
+use Magento\Sales\Api\Data\OrderExtension;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\ShippingAssignmentInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Api\SortOrder;
 
 /**
- * Repository class
- *
+ * Repository class for @see OrderInterface
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
@@ -35,9 +34,9 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
     protected $searchResultFactory = null;
 
     /**
-     * @var OrderExtensionFactory
+     * @var OrderExtension
      */
-    private $orderExtensionFactory;
+    private $orderExtension;
 
     /**
      * @var ShippingAssignmentBuilder
@@ -45,35 +44,24 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
     private $shippingAssignmentBuilder;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
-     * @var OrderInterface[]
+     * OrderInterface[]
+     *
+     * @var array
      */
     protected $registry = [];
 
     /**
-     * Constructor
+     * OrderRepository constructor.
      *
      * @param Metadata $metadata
      * @param SearchResultFactory $searchResultFactory
-     * @param CollectionProcessorInterface|null $collectionProcessor
-     * @param \Magento\Sales\Api\Data\OrderExtensionFactory|null $orderExtensionFactory
      */
     public function __construct(
         Metadata $metadata,
-        SearchResultFactory $searchResultFactory,
-        CollectionProcessorInterface $collectionProcessor = null,
-        \Magento\Sales\Api\Data\OrderExtensionFactory $orderExtensionFactory = null
+        SearchResultFactory $searchResultFactory
     ) {
         $this->metadata = $metadata;
         $this->searchResultFactory = $searchResultFactory;
-        $this->collectionProcessor = $collectionProcessor ?: ObjectManager::getInstance()
-            ->get(\Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface::class);
-        $this->orderExtensionFactory = $orderExtensionFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\Sales\Api\Data\OrderExtensionFactory::class);
     }
 
     /**
@@ -104,15 +92,32 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
     /**
      * Find entities by criteria
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Magento\Sales\Api\Data\OrderSearchResultInterface
+     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria
+     * @return OrderInterface[]
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria)
     {
         /** @var \Magento\Sales\Api\Data\OrderSearchResultInterface $searchResult */
         $searchResult = $this->searchResultFactory->create();
-        $this->collectionProcessor->process($searchCriteria, $searchResult);
+        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
+            $this->addFilterGroupToCollection($filterGroup, $searchResult);
+        }
+
+        $sortOrders = $searchCriteria->getSortOrders();
+        if ($sortOrders === null) {
+            $sortOrders = [];
+        }
+        /** @var \Magento\Framework\Api\SortOrder $sortOrder */
+        foreach ($sortOrders as $sortOrder) {
+            $field = $sortOrder->getField();
+            $searchResult->addOrder(
+                $field,
+                ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+            );
+        }
         $searchResult->setSearchCriteria($searchCriteria);
+        $searchResult->setCurPage($searchCriteria->getCurrentPage());
+        $searchResult->setPageSize($searchCriteria->getPageSize());
         foreach ($searchResult->getItems() as $order) {
             $this->setShippingAssignments($order);
         }
@@ -152,16 +157,6 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
      */
     public function save(\Magento\Sales\Api\Data\OrderInterface $entity)
     {
-        /** @var  \Magento\Sales\Api\Data\OrderExtensionInterface $extensionAttributes */
-        $extensionAttributes = $entity->getExtensionAttributes();
-        if ($entity->getIsNotVirtual() && $extensionAttributes && $extensionAttributes->getShippingAssignments()) {
-            $shippingAssignments = $extensionAttributes->getShippingAssignments();
-            if (!empty($shippingAssignments)) {
-                $shipping = array_shift($shippingAssignments)->getShipping();
-                $entity->setShippingAddress($shipping->getAddress());
-                $entity->setShippingMethod($shipping->getMethod());
-            }
-        }
         $this->metadata->getMapper()->save($entity);
         $this->registry[$entity->getEntityId()] = $entity;
         return $this->registry[$entity->getEntityId()];
@@ -177,7 +172,7 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
         $extensionAttributes = $order->getExtensionAttributes();
 
         if ($extensionAttributes === null) {
-            $extensionAttributes = $this->orderExtensionFactory->create();
+            $extensionAttributes = $this->getOrderExtensionDependency();
         } elseif ($extensionAttributes->getShippingAssignments() !== null) {
             return;
         }
@@ -189,16 +184,31 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
     }
 
     /**
+     * Get the new OrderExtension dependency for application code
+     * @return OrderExtension
+     * @deprecated
+     */
+    private function getOrderExtensionDependency()
+    {
+        if (!$this->orderExtension instanceof OrderExtension) {
+            $this->orderExtension = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                '\Magento\Sales\Api\Data\OrderExtension'
+            );
+        }
+        return $this->orderExtension;
+    }
+
+    /**
      * Get the new ShippingAssignmentBuilder dependency for application code
      *
      * @return ShippingAssignmentBuilder
-     * @deprecated 100.0.4
+     * @deprecated
      */
     private function getShippingAssignmentBuilderDependency()
     {
         if (!$this->shippingAssignmentBuilder instanceof ShippingAssignmentBuilder) {
             $this->shippingAssignmentBuilder = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Sales\Model\Order\ShippingAssignmentBuilder::class
+                '\Magento\Sales\Model\Order\ShippingAssignmentBuilder'
             );
         }
         return $this->shippingAssignmentBuilder;
@@ -210,7 +220,6 @@ class OrderRepository implements \Magento\Sales\Api\OrderRepositoryInterface
      * @param \Magento\Framework\Api\Search\FilterGroup $filterGroup
      * @param \Magento\Sales\Api\Data\OrderSearchResultInterface $searchResult
      * @return void
-     * @deprecated 100.2.0
      * @throws \Magento\Framework\Exception\InputException
      */
     protected function addFilterGroupToCollection(

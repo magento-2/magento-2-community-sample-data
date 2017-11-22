@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -32,6 +32,18 @@ class ConfiguredPrice extends CatalogFinalPrice implements ConfiguredPriceInterf
     {
         $this->item = $item;
         return $this;
+    }
+
+    /**
+     * Get Price Amount object
+     *
+     * @return AmountInterface
+     */
+    public function getAmount()
+    {
+        // Reset amount
+        $this->amount = null;
+        return parent::getAmount();
     }
 
     /**

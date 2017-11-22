@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Product\Widget;
@@ -9,7 +9,9 @@ namespace Magento\Catalog\Controller\Adminhtml\Product\Widget;
 class Chooser extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 
@@ -86,6 +88,7 @@ class Chooser extends \Magento\Backend\App\Action
 
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
+
         return $resultRaw->setContents($html);
     }
 }

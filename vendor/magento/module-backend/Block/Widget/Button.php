@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget;
@@ -8,10 +8,7 @@ namespace Magento\Backend\Block\Widget;
 /**
  * Button widget
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Button extends \Magento\Backend\Block\Widget
 {
@@ -116,7 +113,7 @@ class Button extends \Magento\Backend\Block\Widget
             if ($attributeValue === null || $attributeValue == '') {
                 continue;
             }
-            $html .= $attributeKey . '="' . $this->escapeHtmlAttr($attributeValue, false) . '" ';
+            $html .= $attributeKey . '="' . $this->escapeHtml($attributeValue) . '" ';
         }
 
         return $html;

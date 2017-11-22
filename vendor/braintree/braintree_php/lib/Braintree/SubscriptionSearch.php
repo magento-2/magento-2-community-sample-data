@@ -1,72 +1,64 @@
 <?php
-namespace Braintree;
-
-class SubscriptionSearch
+class Braintree_SubscriptionSearch
 {
-    public static function billingCyclesRemaining()
+    static function billingCyclesRemaining()
     {
-        return new RangeNode('billing_cycles_remaining');
+        return new Braintree_RangeNode('billing_cycles_remaining');
     }
 
-    public static function daysPastDue()
+    static function daysPastDue()
     {
-        return new RangeNode('days_past_due');
+        return new Braintree_RangeNode('days_past_due');
     }
 
-    public static function id()
+    static function id()
     {
-        return new TextNode('id');
+        return new Braintree_TextNode('id');
     }
 
-    public static function inTrialPeriod()
+    static function inTrialPeriod()
     {
-        return new MultipleValueNode('in_trial_period', [true, false]);
+        return new Braintree_MultipleValueNode('in_trial_period', array(true, false));
     }
 
-    public static function merchantAccountId()
+    static function merchantAccountId()
     {
-        return new MultipleValueNode('merchant_account_id');
+        return new Braintree_MultipleValueNode('merchant_account_id');
     }
 
-    public static function nextBillingDate()
+    static function nextBillingDate()
     {
-        return new RangeNode('next_billing_date');
+        return new Braintree_RangeNode('next_billing_date');
     }
 
-    public static function planId()
+    static function planId()
     {
-        return new MultipleValueOrTextNode('plan_id');
+        return new Braintree_MultipleValueOrTextNode('plan_id');
     }
 
-    public static function price()
+    static function price()
     {
-        return new RangeNode('price');
+        return new Braintree_RangeNode('price');
     }
 
-    public static function status()
+    static function status()
     {
-        return new MultipleValueNode('status', [
-            Subscription::ACTIVE,
-            Subscription::CANCELED,
-            Subscription::EXPIRED,
-            Subscription::PAST_DUE,
-            Subscription::PENDING,
-        ]);
+        return new Braintree_MultipleValueNode("status", array(
+            Braintree_Subscription::ACTIVE,
+            Braintree_Subscription::CANCELED,
+            Braintree_Subscription::EXPIRED,
+            Braintree_Subscription::PAST_DUE,
+            Braintree_Subscription::PENDING
+        ));
     }
 
-    public static function transactionId()
+    static function transactionId()
     {
-        return new TextNode('transaction_id');
+        return new Braintree_TextNode('transaction_id');
     }
 
-    public static function ids()
+    static function ids()
     {
-        return new MultipleValueNode('ids');
-    }
-
-    public static function createdAt()
-    {
-        return new RangeNode('created_at');
+        return new Braintree_MultipleValueNode('ids');
     }
 }
-class_alias('Braintree\SubscriptionSearch', 'Braintree_SubscriptionSearch');

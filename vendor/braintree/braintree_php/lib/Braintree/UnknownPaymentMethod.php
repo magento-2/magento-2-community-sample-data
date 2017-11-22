@@ -1,12 +1,10 @@
 <?php
-namespace Braintree;
-
 /**
  * Braintree UnknownPaymentMethod module
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -17,21 +15,21 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $token
  * @property-read string $imageUrl
  */
-class UnknownPaymentMethod extends Base
+class Braintree_UnknownPaymentMethod extends Braintree
 {
 
 
     /**
-     *  factory method: returns an instance of UnknownPaymentMethod
+     *  factory method: returns an instance of Braintree_UnknownPaymentMethod
      *  to the requesting method, with populated properties
      *
      * @ignore
-     * @return UnknownPaymentMethod
+     * @return object instance of Braintree_UnknownPaymentMethod
      */
     public static function factory($attributes)
     {
@@ -58,7 +56,7 @@ class UnknownPaymentMethod extends Base
      *
      * @access protected
      * @param array $unknownPaymentMethodAttribs array of unknownPaymentMethod data
-     * @return void
+     * @return none
      */
     protected function _initialize($unknownPaymentMethodAttribs)
     {
@@ -68,4 +66,3 @@ class UnknownPaymentMethod extends Base
     }
 
 }
-class_alias('Braintree\UnknownPaymentMethod', 'Braintree_UnknownPaymentMethod');

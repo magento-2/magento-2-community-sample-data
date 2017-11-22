@@ -1,15 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Controller\Adminhtml\Bookmark;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Ui\Api\BookmarkManagementInterface;
-use Magento\Ui\Api\BookmarkRepositoryInterface;
 use Magento\Ui\Controller\Adminhtml\AbstractAction;
+use Magento\Framework\View\Element\UiComponentInterface;
+use Magento\Ui\Api\BookmarkRepositoryInterface;
+use Magento\Ui\Api\BookmarkManagementInterface;
 
 /**
  * Class Delete action
@@ -20,7 +21,6 @@ class Delete extends AbstractAction
      * @var BookmarkRepositoryInterface
      */
     protected $bookmarkRepository;
-
     /**
      * @var BookmarkManagementInterface
      */
@@ -59,5 +59,6 @@ class Delete extends AbstractAction
         if ($bookmark && $bookmark->getId()) {
             $this->bookmarkRepository->delete($bookmark);
         }
+
     }
 }

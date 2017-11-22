@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,5 +18,5 @@ class ShippingoptgroupElement extends OptgroupselectElement
      *
      * @var string
      */
-    protected $optGroupValue = ".//optgroup[@label = '%s']/option[contains(text(), '%s')]";
+    protected $optionGroupValue = ".//optgroup[@label = '%s']/option[contains(text(), '%s')]";
 }

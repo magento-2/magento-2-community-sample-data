@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -57,7 +57,6 @@
         content: '';
         display: table;
     }
-
     &:after {
         clear: both;
     }
@@ -335,18 +334,6 @@
 }
 
 //
-//  Url existing check
-//  ---------------------------------------------
-
-.lib-url-check(@_path) {
-    @lib-url-check-output: @_path;
-}
-
-.lib-url-check(@_path) when not (@_path = false) {
-    @lib-url-check-output: url(@_path);
-}
-
-//
 //  Arrow
 //  ---------------------------------------------
 
@@ -365,28 +352,28 @@
     @_position,
     @_color
 ) when (@_position = left) {
-    .lib-css(border-right-color, @_color);
+    border-right-color: @_color;
 }
 
 ._lib-abbor_el(
     @_position,
     @_color
 ) when (@_position = right) {
-    .lib-css(border-left-color, @_color);
+    border-left-color: @_color;
 }
 
 ._lib-abbor_el(
     @_position,
     @_color
 ) when (@_position = up) {
-    .lib-css(border-bottom-color, @_color);
+    border-bottom-color: @_color;
 }
 
 ._lib-abbor_el(
     @_position,
     @_color
 ) when (@_position = down) {
-    .lib-css(border-top-color, @_color);
+    border-top-color: @_color;
 }
 
 //
@@ -398,23 +385,20 @@
     @_input-placeholder-font-weight: @form-element-input__font-weight
 ) {
     &::-webkit-input-placeholder {
-        .lib-css(color, @_input-placeholder-color);
-        .lib-css(font-weight, @_input-placeholder-font-weight);
+        color: @_input-placeholder-color;
+        font-weight: @_input-placeholder-font-weight;
     }
-
     &:-moz-placeholder {
-        .lib-css(color, @_input-placeholder-color);
-        .lib-css(font-weight, @_input-placeholder-font-weight);
+        color: @_input-placeholder-color;
+        font-weight: @_input-placeholder-font-weight;
     }
-
     &::-moz-placeholder {
-        .lib-css(color, @_input-placeholder-color);
-        .lib-css(font-weight, @_input-placeholder-font-weight);
+        color: @_input-placeholder-color;
+        font-weight: @_input-placeholder-font-weight;
     }
-
     &:-ms-input-placeholder {
-        .lib-css(color, @_input-placeholder-color);
-        .lib-css(font-weight, @_input-placeholder-font-weight);
+        color: @_input-placeholder-color;
+        font-weight: @_input-placeholder-font-weight;
     }
 }
 
@@ -521,7 +505,6 @@
         height: 0;
         border-bottom-style: solid;
     }
-
     &:before {
         .lib-css(@_position__horizontal, @_position__horizontal__value);
         .lib-css(@_position__vertical, @_position__vertical__value);
@@ -529,7 +512,6 @@
         .lib-css(border-color, transparent transparent @_background-color transparent);
         .lib-css(z-index, @_z-index);
     }
-
     &:after {
         .lib-css(@_position__horizontal, @_position__horizontal__value - 1);
         .lib-css(@_position__vertical, @_position__vertical__value - 2);

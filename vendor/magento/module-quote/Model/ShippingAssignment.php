@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,6 @@ class ShippingAssignment extends \Magento\Framework\Model\AbstractExtensibleMode
 {
     const SHIPPING = 'shipping';
     const ITEMS = 'items';
-
     /**
      * @inheritDoc
      */

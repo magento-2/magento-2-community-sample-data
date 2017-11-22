@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variations;
@@ -28,24 +28,16 @@ class Config extends Widget implements TabInterface
     protected $_coreRegistry;
 
     /**
-     * @var Configurable
-     */
-    protected $configurableType;
-
-    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $coreRegistry
-     * @param Configurable $configurableType
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $coreRegistry,
-        Configurable $configurableType,
         array $data = []
     ) {
         $this->_coreRegistry = $coreRegistry;
-        $this->configurableType = $configurableType;
         parent::__construct($context, $data);
     }
 
@@ -137,10 +129,9 @@ class Config extends Widget implements TabInterface
     /**
      * @return bool
      */
-    public function isHasVariations()
+    public function isConfigurableProduct()
     {
-        return $this->getProduct()->getTypeId() === Configurable::TYPE_CODE
-            && $this->configurableType->getUsedProducts($this->getProduct());
+        return $this->getProduct()->getTypeId() === Configurable::TYPE_CODE || $this->getRequest()->has('attributes');
     }
 
     /**
@@ -148,7 +139,7 @@ class Config extends Widget implements TabInterface
      */
     protected function _prepareLayout()
     {
-        $this->setData('opened', $this->getProduct()->getTypeId() === Configurable::TYPE_CODE);
+        $this->setData('opened', $this->isConfigurableProduct());
         return parent::_prepareLayout();
     }
 }

@@ -1,11 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\App\Action\Plugin;
-
-use Magento\Framework\Message\MessageInterface;
 
 class Design
 {
@@ -15,45 +13,29 @@ class Design
     protected $_designLoader;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
      * @param \Magento\Framework\View\DesignLoader $designLoader
-     * @param \Magento\Framework\Message\ManagerInterface $messageManager
      */
-    public function __construct(
-        \Magento\Framework\View\DesignLoader $designLoader,
-        \Magento\Framework\Message\ManagerInterface $messageManager
-    ) {
+    public function __construct(\Magento\Framework\View\DesignLoader $designLoader)
+    {
         $this->_designLoader = $designLoader;
-        $this->messageManager = $messageManager;
     }
 
     /**
      * Initialize design
      *
      * @param \Magento\Framework\App\ActionInterface $subject
+     * @param callable $proceed
      * @param \Magento\Framework\App\RequestInterface $request
      *
-     * @return void
+     * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeDispatch(
+    public function aroundDispatch(
         \Magento\Framework\App\ActionInterface $subject,
+        \Closure $proceed,
         \Magento\Framework\App\RequestInterface $request
     ) {
-        try {
-            $this->_designLoader->load();
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            if ($e->getPrevious() instanceof \Magento\Framework\Config\Dom\ValidationException) {
-                /** @var MessageInterface $message */
-                $message = $this->messageManager
-                    ->createMessage(MessageInterface::TYPE_ERROR)
-                    ->setText($e->getMessage());
-                $this->messageManager->addUniqueMessages([$message]);
-            }
-        }
+        $this->_designLoader->load();
+        return $proceed($request);
     }
 }

@@ -1,29 +1,28 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Test\Unit\Model\Payflow\Service\Response\Handler;
 
 use Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerComposite;
 
-class HandlerCompositeTest extends \PHPUnit\Framework\TestCase
+class HandlerCompositeTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructorSuccess()
     {
         $handler = $this->getMockBuilder(
-            \Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface::class
+            'Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface'
         )->getMock();
 
-        $result = new HandlerComposite(
+        new HandlerComposite(
             ['some_handler' => $handler]
         );
-        $this->assertNotNull($result);
     }
 
     public function testConstructorException()
     {
-        $this->expectException(
+        $this->setExpectedException(
             'LogicException',
             'Type mismatch. Expected type: HandlerInterface. Actual: string, Code: weird_handler'
         );
@@ -35,14 +34,14 @@ class HandlerCompositeTest extends \PHPUnit\Framework\TestCase
 
     public function testHandle()
     {
-        $paymentMock = $this->getMockBuilder(\Magento\Payment\Model\InfoInterface::class)
+        $paymentMock = $this->getMockBuilder('Magento\Payment\Model\InfoInterface')
             ->getMock();
-        $responseMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $responseMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
 
         $handler = $this->getMockBuilder(
-            \Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface::class
+            'Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface'
         )->getMock();
         $handler->expects($this->once())
             ->method('handle')

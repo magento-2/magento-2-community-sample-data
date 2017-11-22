@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Observer;
 
-use Magento\Paypal\Helper\Shortcut\Factory;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Paypal\Model\Config as PaypalConfig;
 use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Paypal\Model\Config as PaypalConfig;
 
 /**
  * PayPal module observer
@@ -16,7 +15,7 @@ use Magento\Framework\Event\Observer as EventObserver;
 class AddPaypalShortcutsObserver implements ObserverInterface
 {
     /**
-     * @var Factory
+     * @var \Magento\Paypal\Helper\Shortcut\Factory
      */
     protected $shortcutFactory;
 
@@ -28,11 +27,11 @@ class AddPaypalShortcutsObserver implements ObserverInterface
     /**
      * Constructor
      *
-     * @param Factory $shortcutFactory
+     * @param \Magento\Paypal\Helper\Shortcut\Factory $shortcutFactory
      * @param PaypalConfig $paypalConfig
      */
     public function __construct(
-        Factory $shortcutFactory,
+        \Magento\Paypal\Helper\Shortcut\Factory $shortcutFactory,
         PaypalConfig $paypalConfig
     ) {
         $this->shortcutFactory = $shortcutFactory;
@@ -50,14 +49,12 @@ class AddPaypalShortcutsObserver implements ObserverInterface
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
         $blocks = [
-            \Magento\Paypal\Block\Express\InContext\Minicart\Button::class =>
-                PaypalConfig::METHOD_WPS_EXPRESS,
-            \Magento\Paypal\Block\Express\Shortcut::class => PaypalConfig::METHOD_WPP_EXPRESS,
-            \Magento\Paypal\Block\Bml\Shortcut::class => PaypalConfig::METHOD_WPP_EXPRESS,
-            \Magento\Paypal\Block\WpsExpress\Shortcut::class => PaypalConfig::METHOD_WPS_EXPRESS,
-            \Magento\Paypal\Block\WpsBml\Shortcut::class => PaypalConfig::METHOD_WPS_EXPRESS,
-            \Magento\Paypal\Block\PayflowExpress\Shortcut::class => PaypalConfig::METHOD_WPP_PE_EXPRESS,
-            \Magento\Paypal\Block\Payflow\Bml\Shortcut::class => PaypalConfig::METHOD_WPP_PE_EXPRESS
+            'Magento\Paypal\Block\Express\Shortcut' => PaypalConfig::METHOD_WPP_EXPRESS,
+            'Magento\Paypal\Block\WpsExpress\Shortcut' => PaypalConfig::METHOD_WPS_EXPRESS,
+            'Magento\Paypal\Block\PayflowExpress\Shortcut' => PaypalConfig::METHOD_WPP_PE_EXPRESS,
+            'Magento\Paypal\Block\Bml\Shortcut' => PaypalConfig::METHOD_WPP_EXPRESS,
+            'Magento\Paypal\Block\WpsBml\Shortcut' => PaypalConfig::METHOD_WPS_EXPRESS,
+            'Magento\Paypal\Block\Payflow\Bml\Shortcut' => PaypalConfig::METHOD_WPP_PE_EXPRESS
         ];
         foreach ($blocks as $blockInstanceName => $paymentMethodCode) {
             if (!$this->paypalConfig->isMethodAvailable($paymentMethodCode)) {

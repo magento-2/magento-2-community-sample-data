@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,8 +11,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Customer group interface.
- * @api
- * @since 100.0.2
  */
 interface GroupInterface extends ExtensibleDataInterface
 {
@@ -31,6 +29,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Get id
      *
+     * @api
      * @return int|null
      */
     public function getId();
@@ -38,6 +37,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Set id
      *
+     * @api
      * @param int $id
      * @return $this
      */
@@ -46,6 +46,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Get code
      *
+     * @api
      * @return string
      */
     public function getCode();
@@ -53,6 +54,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Set code
      *
+     * @api
      * @param string $code
      * @return $this
      */
@@ -61,6 +63,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Get tax class id
      *
+     * @api
      * @return int
      */
     public function getTaxClassId();
@@ -68,6 +71,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Set tax class id
      *
+     * @api
      * @param int $taxClassId
      * @return $this
      */
@@ -76,6 +80,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Get tax class name
      *
+     * @api
      * @return string|null
      */
     public function getTaxClassName();
@@ -83,6 +88,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Set tax class name
      *
+     * @api
      * @param string $taxClassName
      * @return string|null
      */
@@ -91,6 +97,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Retrieve existing extension attributes object or create a new one.
      *
+     * @api
      * @return \Magento\Customer\Api\Data\GroupExtensionInterface|null
      */
     public function getExtensionAttributes();
@@ -98,6 +105,7 @@ interface GroupInterface extends ExtensibleDataInterface
     /**
      * Set an extension attributes object.
      *
+     * @api
      * @param \Magento\Customer\Api\Data\GroupExtensionInterface $extensionAttributes
      * @return $this
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Setup\Test\Unit\Module\Di\Code\Scanner;
 
-class XmlScannerTest extends \PHPUnit\Framework\TestCase
+class XmlScannerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Scanner\XmlScanner
@@ -28,7 +28,7 @@ class XmlScannerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = new \Magento\Setup\Module\Di\Code\Scanner\XmlScanner(
-            $this->_logMock = $this->createMock(\Magento\Setup\Module\Di\Compiler\Log\Log::class)
+            $this->_logMock = $this->getMock('\Magento\Setup\Module\Di\Compiler\Log\Log', [], [], '', false)
         );
         $testDir = __DIR__ . '/../../' . '/_files';
         $this->_testFiles = [

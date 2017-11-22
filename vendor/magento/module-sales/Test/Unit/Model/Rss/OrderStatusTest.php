@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Rss;
@@ -10,9 +10,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class OrderStatusTest
  * @package Magento\Sales\Model\Rss
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class OrderStatusTest extends \PHPUnit\Framework\TestCase
+class OrderStatusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Rss\OrderStatus
@@ -63,7 +62,6 @@ class OrderStatusTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\Sales\Model\Order|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $order;
-
     /**
      * @var array
      */
@@ -88,19 +86,19 @@ class OrderStatusTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->urlInterface = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->requestInterface = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->urlInterface = $this->getMock('Magento\Framework\UrlInterface');
+        $this->requestInterface = $this->getMock('Magento\Framework\App\RequestInterface');
         $this->orderStatusFactory =
-            $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatusFactory::class)
+            $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatusFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->timezoneInterface = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $this->orderFactory = $this->createPartialMock(\Magento\Sales\Model\OrderFactory::class, ['create']);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->timezoneInterface = $this->getMock('Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+        $this->orderFactory = $this->getMock('Magento\Sales\Model\OrderFactory', ['create'], [], '', false);
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
-        $this->order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $this->order = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->setMethods([
                 '__sleep',
                 '__wakeup',
@@ -122,7 +120,7 @@ class OrderStatusTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Model\Rss\OrderStatus::class,
+            'Magento\Sales\Model\Rss\OrderStatus',
             [
                 'objectManager' => $this->objectManager,
                 'urlBuilder' => $this->urlInterface,
@@ -142,7 +140,7 @@ class OrderStatusTest extends \PHPUnit\Framework\TestCase
 
         $this->requestInterface->expects($this->any())->method('getParam')->with('data')->willReturn($requestData);
 
-        $resource = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatus::class)
+        $resource = $this->getMockBuilder('\Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatus')
             ->setMethods(['getAllCommentCollection'])
             ->disableOriginalConstructor()
             ->getMock();

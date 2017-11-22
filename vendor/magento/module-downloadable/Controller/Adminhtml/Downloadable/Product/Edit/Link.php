@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Downloadable\Controller\Adminhtml\Downloadable\Product\Edit;
@@ -15,7 +15,7 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
      */
     protected function _createLink()
     {
-        return $this->_objectManager->create(\Magento\Downloadable\Model\Link::class);
+        return $this->_objectManager->create('Magento\Downloadable\Model\Link');
     }
 
     /**
@@ -23,7 +23,7 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
      */
     protected function _getLink()
     {
-        return $this->_objectManager->get(\Magento\Downloadable\Model\Link::class);
+        return $this->_objectManager->get('Magento\Downloadable\Model\Link');
     }
 
     /**
@@ -36,7 +36,7 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
     protected function _processDownload($resource, $resourceType)
     {
         /* @var $helper \Magento\Downloadable\Helper\Download */
-        $helper = $this->_objectManager->get(\Magento\Downloadable\Helper\Download::class);
+        $helper = $this->_objectManager->get('Magento\Downloadable\Helper\Download');
         $helper->setResource($resource, $resourceType);
 
         $fileName = $helper->getFilename();
@@ -92,7 +92,7 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
                     $resourceType = DownloadHelper::LINK_TYPE_URL;
                 } elseif ($link->getLinkType() == DownloadHelper::LINK_TYPE_FILE) {
                     $resource = $this->_objectManager->get(
-                        \Magento\Downloadable\Helper\File::class
+                        'Magento\Downloadable\Helper\File'
                     )->getFilePath(
                         $this->_getLink()->getBasePath(),
                         $link->getLinkFile()
@@ -105,7 +105,7 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
                     $resourceType = DownloadHelper::LINK_TYPE_URL;
                 } elseif ($link->getSampleType() == DownloadHelper::LINK_TYPE_FILE) {
                     $resource = $this->_objectManager->get(
-                        \Magento\Downloadable\Helper\File::class
+                        'Magento\Downloadable\Helper\File'
                     )->getFilePath(
                         $this->_getLink()->getBaseSamplePath(),
                         $link->getSampleFile()

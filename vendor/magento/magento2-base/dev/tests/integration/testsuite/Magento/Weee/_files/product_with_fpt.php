@@ -1,23 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-use Magento\Catalog\Model\Product;
-use Magento\TestFramework\Helper\Bootstrap;
-
 /** @var \Magento\Catalog\Setup\CategorySetup $installer */
-$installer = Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 $attributeSetId = $installer->getAttributeSetId('catalog_product', 'Default');
-$entityModel = Bootstrap::getObjectManager()->create(\Magento\Eav\Model\Entity::class);
-$entityTypeId = $entityModel->setType(Product::ENTITY)->getTypeId();
+$entityModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Eav\Model\Entity');
+$entityTypeId = $entityModel->setType(\Magento\Catalog\Model\Product::ENTITY)->getTypeId();
 $groupId = $installer->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
 
-$attribute = Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+$attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+    'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
 );
 $attribute->setAttributeCode(
     'fpt_for_all'
@@ -33,25 +28,21 @@ $attribute->setAttributeCode(
     1
 )->save();
 
-$product = Bootstrap::getObjectManager()->create(Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     'simple'
+)->setId(
+    101
 )->setAttributeSetId(
     $attributeSetId
 )->setStoreId(
     1
 )->setWebsiteIds(
     [1]
-)->setVisibility(
-    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
-)->setStatus(
-    \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
-)->setStockData(
-    ['qty' => 100, 'is_in_stock' => 1]
 )->setName(
     'Simple Product FPT'
 )->setSku(
-    'simple-with-ftp'
+    'simple'
 )->setPrice(
     100
 )->setFptForAll(

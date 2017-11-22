@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -26,7 +26,7 @@ class ZendClient extends \Zend_Http_Client
      */
     public function __construct($uri = null, $config = null)
     {
-        $this->config['useragent'] = \Magento\Framework\HTTP\ZendClient::class;
+        $this->config['useragent'] = 'Magento\Framework\HTTP\ZendClient';
 
         parent::__construct($uri, $config);
     }

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -28,7 +28,7 @@ $product->setTypeId(
     ['qty' => 100, 'is_in_stock' => 1]
 )->save();
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -51,23 +51,7 @@ $product->setTypeId(
     ['qty' => 100, 'is_in_stock' => 1]
 )->save();
 
-/** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink1 = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
-$productLink1->setSku('simple_with_cross');
-$productLink1->setLinkedProductSku('simple');
-$productLink1->setPosition(1);
-$productLink1->setLinkType('related');
-
-/** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink2 = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
-$productLink2->setSku('simple_with_cross');
-$productLink2->setLinkedProductSku('simple_with_cross_two');
-$productLink2->setPosition(1);
-$productLink2->setLinkType('related');
-
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -88,6 +72,6 @@ $product->setTypeId(
     [1]
 )->setStockData(
     ['qty' => 100, 'is_in_stock' => 1]
-)->setProductLinks(
-    [$productLink1, $productLink2]
+)->setRelatedLinkData(
+    [1 => ['position' => 1], 3 => ['position' => 3]]
 )->save();

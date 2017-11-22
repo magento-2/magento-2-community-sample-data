@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 /* inspired by http://github.com/requirejs/text */
@@ -86,9 +86,8 @@ define(['module'], function (module) {
      */
     function getContent(url, callback, fail, headers) {
         var xhr = createRequest(url),
-            header;
-
-        xhr.open('GET', url);
+            header,
+            errorHandler = fail || Function();
 
         /*eslint-disable max-depth */
         if ('setRequestHeader' in xhr && headers) {
@@ -99,41 +98,36 @@ define(['module'], function (module) {
             }
         }
 
-        /**
-         * @inheritdoc
-         */
-        xhr.onreadystatechange = function () {
-            var status, err;
-
-            //Do not explicitly handle errors, those should be
-            //visible via console output in the browser.
-            if (xhr.readyState === 4) {
-                status = xhr.status || 0;
-
-                if (status > 399 && status < 600) {
-                    //An http 4xx or 5xx error. Signal an error.
-                    err = new Error(url + ' HTTP status: ' + status);
-                    err.xhr = xhr;
-
-                    if (fail) {
-                        fail(err);
-                    }
-                } else {
-                    callback(xhr.responseText);
-
-                    if (defaultConfig.onXhrComplete) {
-                        defaultConfig.onXhrComplete(xhr, url);
-                    }
-                }
-            }
-        };
-
         /*eslint-enable max-depth */
 
         if (defaultConfig.onXhr) {
             defaultConfig.onXhr(xhr, url);
         }
 
+        /**
+         * onload handler
+         */
+        xhr.onload = function () {
+
+            callback(xhr.responseText);
+
+            if (defaultConfig.onXhrComplete) {
+                defaultConfig.onXhrComplete(xhr, url);
+            }
+        };
+
+        /**
+         * onerror handler
+         */
+        xhr.onerror = function (event) {
+            errorHandler(event);
+
+            if (defaultConfig.onXhrFailure) {
+                defaultConfig.onXhrFailure(xhr, url, event);
+            }
+        };
+
+        xhr.open('GET', url);
         xhr.send();
     }
 

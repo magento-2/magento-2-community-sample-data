@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -79,12 +79,12 @@ class CustomerMetadata implements CustomerMetadataInterface
         } else {
             throw new NoSuchEntityException(
                 __(
-                    'No such entity with %fieldName = %fieldValue, %field2Name = %field2Value',
+                    NoSuchEntityException::MESSAGE_DOUBLE_FIELDS,
                     [
                         'fieldName' => 'entityType',
                         'fieldValue' => self::ENTITY_TYPE_CUSTOMER,
                         'field2Name' => 'attributeCode',
-                        'field2Value' => $attributeCode
+                        'field2Value' => $attributeCode,
                     ]
                 )
             );
@@ -124,7 +124,7 @@ class CustomerMetadata implements CustomerMetadataInterface
         if (!$this->customerDataObjectMethods) {
             $dataObjectMethods = array_flip(get_class_methods($dataObjectClassName));
             $baseClassDataObjectMethods = array_flip(
-                get_class_methods(\Magento\Framework\Api\AbstractExtensibleObject::class)
+                get_class_methods('Magento\Framework\Api\AbstractExtensibleObject')
             );
             $this->customerDataObjectMethods = array_diff_key($dataObjectMethods, $baseClassDataObjectMethods);
         }

@@ -1,8 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint browser:true jquery:true expr:true*/
 define([
     'jquery',
     'Magento_Catalog/catalog/type-events',
@@ -33,7 +33,7 @@ define([
          */
         _initType: function () {
             if (
-                productType.type.init === 'bundle' &&
+                productType.type.real === 'bundle' &&
                 productType.type.current !== 'bundle' &&
                 !weight.isLocked()
             ) {

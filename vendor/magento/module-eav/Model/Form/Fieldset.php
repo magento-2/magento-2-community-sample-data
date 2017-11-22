@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Form;
@@ -8,14 +8,15 @@ namespace Magento\Eav\Model\Form;
 /**
  * Eav Form Fieldset Model
  *
- * @api
+ * @method \Magento\Eav\Model\ResourceModel\Form\Fieldset getResource()
  * @method int getTypeId()
  * @method \Magento\Eav\Model\Form\Fieldset setTypeId(int $value)
  * @method string getCode()
  * @method \Magento\Eav\Model\Form\Fieldset setCode(string $value)
  * @method int getSortOrder()
  * @method \Magento\Eav\Model\Form\Fieldset setSortOrder(int $value)
- * @since 100.0.2
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Fieldset extends \Magento\Framework\Model\AbstractModel
 {
@@ -60,7 +61,29 @@ class Fieldset extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Eav\Model\ResourceModel\Form\Fieldset::class);
+        $this->_init('Magento\Eav\Model\ResourceModel\Form\Fieldset');
+    }
+
+    /**
+     * Retrieve resource instance wrapper
+     *
+     * @return \Magento\Eav\Model\ResourceModel\Form\Fieldset
+     * @codeCoverageIgnore
+     */
+    protected function _getResource()
+    {
+        return parent::_getResource();
+    }
+
+    /**
+     * Retrieve resource collection instance wrapper
+     *
+     * @return \Magento\Eav\Model\ResourceModel\Form\Fieldset\Collection
+     * @codeCoverageIgnore
+     */
+    public function getCollection()
+    {
+        return parent::getCollection();
     }
 
     /**

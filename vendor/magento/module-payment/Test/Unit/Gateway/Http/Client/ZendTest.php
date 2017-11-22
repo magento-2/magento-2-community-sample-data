@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Gateway\Http\Client;
@@ -14,7 +14,7 @@ use Magento\Payment\Gateway\Http\TransferInterface;
 /**
  * Class ZendTest
  */
-class ZendTest extends \PHPUnit\Framework\TestCase
+class ZendTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Zend */
     protected $model;
@@ -46,23 +46,23 @@ class ZendTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->converterMock = $this->getMockBuilder(\Magento\Payment\Gateway\Http\ConverterInterface::class)
+        $this->converterMock = $this->getMockBuilder('Magento\Payment\Gateway\Http\ConverterInterface')
             ->getMockForAbstractClass();
 
-        $this->zendClientFactoryMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClientFactory::class)
+        $this->zendClientFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->clientMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClient::class)
+        $this->clientMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClient')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->loggerMock = $this->getMockBuilder(\Magento\Payment\Model\Method\Logger::class)
+        $this->loggerMock = $this->getMockBuilder('Magento\Payment\Model\Method\Logger')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->transferObjectMock = $this->getMockBuilder(\Magento\Payment\Gateway\Http\TransferInterface::class)
+        $this->transferObjectMock = $this->getMockBuilder('Magento\Payment\Gateway\Http\TransferInterface')
             ->getMockForAbstractClass();
 
         $this->model = new Zend(
@@ -77,9 +77,7 @@ class ZendTest extends \PHPUnit\Framework\TestCase
         $this->setClientTransferObjects();
         $responseBody = 'Response body content';
 
-        $zendHttpResponseMock = $this->getMockBuilder(
-            \Zend_Http_Response::class
-        )->disableOriginalConstructor()->getMock();
+        $zendHttpResponseMock = $this->getMockBuilder('Zend_Http_Response')->disableOriginalConstructor()->getMock();
         $zendHttpResponseMock->expects($this->once())->method('getBody')->willReturn($responseBody);
 
         $this->clientMock->expects($this->once())->method('request')->willReturn($zendHttpResponseMock);
@@ -123,9 +121,7 @@ class ZendTest extends \PHPUnit\Framework\TestCase
         $this->setClientTransferObjects();
         $responseBody = 'Response body content';
 
-        $zendHttpResponseMock = $this->getMockBuilder(
-            \Zend_Http_Response::class
-        )->disableOriginalConstructor()->getMock();
+        $zendHttpResponseMock = $this->getMockBuilder('Zend_Http_Response')->disableOriginalConstructor()->getMock();
         $zendHttpResponseMock->expects($this->once())->method('getBody')->willReturn($responseBody);
 
         $this->clientMock->expects($this->once())->method('request')->willReturn($zendHttpResponseMock);

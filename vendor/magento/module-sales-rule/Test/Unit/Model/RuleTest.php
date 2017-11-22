@@ -1,11 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\SalesRule\Test\Unit\Model;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+use Magento\Framework\Unserialize\SecureUnserializer;
+use Magento\Framework\ObjectManagerInterface;
+
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\Rule
@@ -18,18 +22,21 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     protected $coupon;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\SalesRule\Model\Rule\Condition\CombineFactory
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
-    protected $conditionCombineFactoryMock;
+    private $objectManager;
 
     /**
-     * @var \Magento\SalesRule\Model\Rule\Condition\Product\CombineFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SecureUnserializer
      */
-    protected $condProdCombineFactoryMock;
+    private $unserialize;
 
-    protected function setUp()
+    /**
+     * @inheritdoc
+     */
+    public function setUp()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->coupon = $this->getMockBuilder(\Magento\SalesRule\Model\Coupon::class)
             ->disableOriginalConstructor()
@@ -44,24 +51,12 @@ class RuleTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($this->coupon);
 
-        $this->conditionCombineFactoryMock = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Rule\Condition\CombineFactory::class
-        )->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
+        $this->prepareObjectManager();
 
-        $this->condProdCombineFactoryMock = $this->getMockBuilder(
-            \Magento\SalesRule\Model\Rule\Condition\Product\CombineFactory::class
-        )->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $this->model = $objectManager->getObject(
+        $this->model = $this->objectManager->getObject(
             \Magento\SalesRule\Model\Rule::class,
             [
                 'couponFactory' => $couponFactory,
-                'condCombineFactory' => $this->conditionCombineFactoryMock,
-                'condProdCombineF' => $this->condProdCombineFactoryMock,
             ]
         );
     }
@@ -94,77 +89,36 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $this->model->getUsesPerCoupon());
     }
 
-    public function testBeforeSaveResetConditionToNull()
+    /**
+     * Prepares ObjectManager mock.
+     *
+     * @return void
+     */
+    private function prepareObjectManager()
     {
-        $conditionMock = $this->setupConditionMock();
-
-        //Make sure that we reset _condition in beforeSave method
-        $this->conditionCombineFactoryMock->expects($this->exactly(2))
-            ->method('create')
-            ->willReturn($conditionMock);
-
-        $prodConditionMock = $this->setupProdConditionMock();
-        $this->condProdCombineFactoryMock->expects($this->exactly(2))
-            ->method('create')
-            ->willReturn($prodConditionMock);
-
-        $this->model->beforeSave();
-        $this->model->getConditions();
-        $this->model->getActions();
-    }
-
-    protected function setupProdConditionMock()
-    {
-        $prodConditionMock = $this->getMockBuilder(\Magento\SalesRule\Model\Rule\Condition\Product\Combine::class)
+        $objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setRule', 'setId', 'loadArray', 'getConditions'])
             ->getMock();
 
-        $prodConditionMock->expects($this->any())
-            ->method('setRule')
-            ->willReturnSelf();
-        $prodConditionMock->expects($this->any())
-            ->method('setId')
-            ->willReturnSelf();
-        $prodConditionMock->expects($this->any())
-            ->method('getConditions')
-            ->willReturn([]);
-
-        return $prodConditionMock;
-    }
-
-    protected function setupConditionMock()
-    {
-        $conditionMock = $this->getMockBuilder(\Magento\SalesRule\Model\Rule\Condition\Combine::class)
+        $this->unserialize =  $this->getMockBuilder(SecureUnserializer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setRule', 'setId', 'loadArray', 'getConditions'])
             ->getMock();
-        $conditionMock->expects($this->any())
-            ->method('setRule')
-            ->willReturnSelf();
-        $conditionMock->expects($this->any())
-            ->method('setId')
-            ->willReturnSelf();
-        $conditionMock->expects($this->any())
-            ->method('getConditions')
-            ->willReturn([]);
 
-        return $conditionMock;
+        $objectManagerMock->expects($this->any())->method('get')->willReturn(
+            [SecureUnserializer::class, $this->unserialize]
+        );
+
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
     }
 
-    public function testGetConditionsFieldSetId()
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
     {
-        $formName = 'form_name';
-        $this->model->setId(100);
-        $expectedResult = 'form_namerule_conditions_fieldset_100';
-        $this->assertEquals($expectedResult, $this->model->getConditionsFieldSetId($formName));
-    }
-
-    public function testGetActionsFieldSetId()
-    {
-        $formName = 'form_name';
-        $this->model->setId(100);
-        $expectedResult = 'form_namerule_actions_fieldset_100';
-        $this->assertEquals($expectedResult, $this->model->getActionsFieldSetId($formName));
+        $reflectionClass = new \ReflectionClass(\Magento\Framework\App\ObjectManager::class);
+        $reflectionProperty = $reflectionClass->getProperty('_instance');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue(null, null);
     }
 }

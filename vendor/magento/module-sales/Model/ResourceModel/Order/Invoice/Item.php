@@ -1,19 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\ResourceModel\Order\Invoice;
-
-use Magento\Sales\Model\ResourceModel\EntityAbstract as SalesResource;
-use Magento\Sales\Model\Spi\InvoiceItemResourceInterface;
 
 /**
  * Flat sales order invoice item resource
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Item extends SalesResource implements InvoiceItemResourceInterface
+class Item extends \Magento\Sales\Model\ResourceModel\EntityAbstract
 {
     /**
      * Event prefix

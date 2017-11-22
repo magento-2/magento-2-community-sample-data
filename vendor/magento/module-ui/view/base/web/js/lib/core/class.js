@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 define([
@@ -28,22 +28,21 @@ define([
      * initialization without usage of a 'new' operator.
      *
      * @param {Object} protoProps - Prototypal propeties of a new consturctor.
-     * @param {Function} consturctor
      * @returns {Function} Created consturctor.
      */
     function createConstructor(protoProps, consturctor) {
-        var UiClass = consturctor;
+        var constr = consturctor;
 
-        if (!UiClass) {
+        if (!constr) {
 
             /**
              * Default constructor function.
              */
-            UiClass = function () {
+            constr = function () {
                 var obj = this;
 
-                if (!_.isObject(obj) || Object.getPrototypeOf(obj) !== UiClass.prototype) {
-                    obj = Object.create(UiClass.prototype);
+                if (!_.isObject(obj) || Object.getPrototypeOf(obj) !== constr.prototype) {
+                    obj = Object.create(constr.prototype);
                 }
 
                 obj.initialize.apply(obj, arguments);
@@ -52,10 +51,10 @@ define([
             };
         }
 
-        UiClass.prototype = protoProps;
-        UiClass.prototype.constructor = UiClass;
+        constr.prototype = protoProps;
+        constr.prototype.constructor = constr;
 
-        return UiClass;
+        return constr;
     }
 
     Class = createConstructor({
@@ -137,6 +136,7 @@ define([
                 __super__:  parentProto,
                 extend:     parent.extend
             });
+
         }
     });
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\User\Controller\Adminhtml;
@@ -12,26 +12,14 @@ use Magento\TestFramework\Bootstrap;
  */
 class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
-    /**
-     * Verify that the main user page contains the user grid
-     */
     public function testIndexAction()
     {
         $this->dispatch('backend/admin/user/index');
         $response = $this->getResponse()->getBody();
         $this->assertContains('Users', $response);
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="permissionsUserGrid_table"]',
-                $response
-            )
-        );
+        $this->assertSelectCount('#permissionsUserGrid_table', 1, $response);
     }
 
-    /**
-     * Verify that attempting to save a user when no data is present redirects back to the main user page
-     */
     public function testSaveActionNoData()
     {
         $this->dispatch('backend/admin/user/save');
@@ -39,15 +27,13 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that a user cannot be saved if it no longer exists
-     *
      * @magentoDataFixture Magento/User/_files/dummy_user.php
      */
     public function testSaveActionWrongId()
     {
         /** @var $user \Magento\User\Model\User */
         $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
+            'Magento\User\Model\User'
         )->loadByUsername(
             'dummy_username'
         );
@@ -64,8 +50,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that users cannot be saved if the admin password is not correct
-     *
      * @magentoDbIsolation enabled
      */
     public function testSaveActionMissingCurrentAdminPassword()
@@ -87,8 +71,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that users can be successfully saved when data is correct
-     *
      * @magentoDbIsolation enabled
      */
     public function testSaveAction()
@@ -114,8 +96,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that users with the same username or email as an existing user cannot be created
-     *
      * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
@@ -142,10 +122,8 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify password change properly updates fields when the request is valid
-     *
      * @magentoDbIsolation enabled
-     * @dataProvider saveActionPasswordChangeDataProvider
+     * @dataProvider resetPasswordDataProvider
      */
     public function testSaveActionPasswordChange($postData, $isPasswordCorrect)
     {
@@ -154,7 +132,7 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $user \Magento\User\Model\User */
-        $user = $objectManager->create(\Magento\User\Model\User::class);
+        $user = $objectManager->create('Magento\User\Model\User');
         $user->loadByUsername($postData['username']);
         if ($isPasswordCorrect) {
             $this->assertRedirect($this->stringContains('backend/admin/user/index'));
@@ -162,7 +140,7 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
             $this->assertEquals($postData['email'], $user->getEmail());
             $this->assertEquals($postData['firstname'], $user->getFirstname());
             $this->assertEquals($postData['lastname'], $user->getLastname());
-            $encryptor = $objectManager->get(\Magento\Framework\Encryption\EncryptorInterface::class);
+            $encryptor = $objectManager->get('Magento\Framework\Encryption\EncryptorInterface');
             $this->assertTrue($encryptor->validateHash($postData['password'], $user->getPassword()));
         } else {
             $this->assertRedirect($this->stringContains('backend/admin/user/edit'));
@@ -170,12 +148,7 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         }
     }
 
-    /**
-     * Dataprovider for testSaveActionPasswordChange
-     *
-     * @return array
-     */
-    public function saveActionPasswordChangeDataProvider()
+    public function resetPasswordDataProvider()
     {
         $password = uniqid('123q');
         $passwordPairs = [
@@ -202,9 +175,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         return $data;
     }
 
-    /**
-     * Verify that the role grid is present when requested
-     */
     public function testRoleGridAction()
     {
         $this->getRequest()->setParam('ajax', true)->setParam('isAjax', true);
@@ -214,8 +184,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that the roles grid is present when requested
-     *
      * @depends testSaveAction
      */
     public function testRolesGridAction()
@@ -227,8 +195,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     }
 
     /**
-     * Verify that expected header and fieldsets are present for edit
-     *
      * @depends testSaveAction
      */
     public function testEditAction()
@@ -239,18 +205,9 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         //check "User Information" header and fieldset
         $this->assertContains('data-ui-id="adminhtml-user-edit-tabs-title"', $response);
         $this->assertContains('User Information', $response);
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="user_base_fieldset"]',
-                $response
-            )
-        );
+        $this->assertSelectCount('#user_base_fieldset', 1, $response);
     }
 
-    /**
-     * Verify that validation passes on correct data
-     */
     public function testValidateActionSuccess()
     {
         $data = [
@@ -269,37 +226,13 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         $this->assertEquals('{"error":0}', $body);
     }
 
-    /**
-     * Verify that an unknown top level domain on an email address does not fail validation
-     */
-    public function testValidateActionUnknownTldSuccess()
-    {
-        $data = [
-            'username' => 'admin2',
-            'firstname' => 'new firstname',
-            'lastname' => 'new lastname',
-            'email' => 'example@domain.unknown',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ];
-
-        $this->getRequest()->setPostValue($data);
-        $this->dispatch('backend/admin/user/validate');
-        $body = $this->getResponse()->getBody();
-
-        $this->assertEquals('{"error":0}', $body);
-    }
-
-    /**
-     * Verify that an invalid email address format fails the validation
-     */
     public function testValidateActionError()
     {
         $data = [
             'username' => 'admin2',
             'firstname' => 'new firstname',
             'lastname' => 'new lastname',
-            'email' => 'example@-domain.cim',
+            'email' => 'example@domain.cim',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ];
@@ -312,6 +245,6 @@ class UserTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         $body = $this->getResponse()->getBody();
 
         $this->assertContains('{"error":1,"html_message":', $body);
-        $this->assertContains("'-domain.cim' is not a valid hostname for email address 'example@-domain.cim", $body);
+        $this->assertContains("'domain.cim' is not a valid hostname for email address 'example@domain.cim'", $body);
     }
 }

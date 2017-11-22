@@ -87,7 +87,7 @@ class FileLocatorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Exception\FileLocatorFileNotFoundException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "foobar.xml" does not exist
      */
     public function testLocateThrowsAnExceptionIfTheFileDoesNotExists()
@@ -98,7 +98,7 @@ class FileLocatorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Exception\FileLocatorFileNotFoundException
+     * @expectedException \InvalidArgumentException
      */
     public function testLocateThrowsAnExceptionIfTheFileDoesNotExistsInAbsolutePath()
     {

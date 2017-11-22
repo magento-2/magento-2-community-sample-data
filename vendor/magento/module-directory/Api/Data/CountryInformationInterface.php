@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Directory\Api\Data;
@@ -9,7 +9,6 @@ namespace Magento\Directory\Api\Data;
  * Country Information interface.
  *
  * @api
- * @since 100.0.2
  */
 interface CountryInformationInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -68,7 +67,7 @@ interface CountryInformationInterface extends \Magento\Framework\Api\ExtensibleD
     /**
      * Set the country full name (in store locale) for the store.
      *
-     * @param string $fullNameLocale
+     * @param string $abbreviation
      * @return $this
      */
     public function setFullNameLocale($fullNameLocale);
@@ -83,7 +82,7 @@ interface CountryInformationInterface extends \Magento\Framework\Api\ExtensibleD
     /**
      * Set the country full name (in English) for the store.
      *
-     * @param string $fullNameEnglish
+     * @param string $abbreviation
      * @return $this
      */
     public function setFullNameEnglish($fullNameEnglish);

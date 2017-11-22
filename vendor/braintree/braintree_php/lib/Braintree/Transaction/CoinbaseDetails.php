@@ -1,14 +1,10 @@
 <?php
-namespace Braintree\Transaction;
-
-use Braintree\Instance;
-
 /**
  * Coinbase details from a transaction
  *
  * @package    Braintree
  * @subpackage Transaction
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -17,17 +13,18 @@ use Braintree\Instance;
  *
  * @package    Braintree
  * @subpackage Transaction
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $token
  * @property-read string $userId
  * @property-read string $userName
  * @property-read string $userEmail
  * @property-read string $imageUrl
+ * @uses Braintree_Instance inherits methods
  */
-class CoinbaseDetails extends Instance
+class Braintree_Transaction_CoinbaseDetails extends Braintree_Instance
 {
-    protected $_attributes = [];
+    protected $_attributes = array();
 
     /**
      * @ignore
@@ -37,4 +34,3 @@ class CoinbaseDetails extends Instance
         parent::__construct($attributes);
     }
 }
-class_alias('Braintree\Transaction\CoinbaseDetails', 'Braintree_Transaction_CoinbaseDetails');

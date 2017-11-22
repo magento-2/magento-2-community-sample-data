@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model;
 
 use Magento\Directory\Model\Currency;
 use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderStatusHistoryInterface;
@@ -30,7 +31,8 @@ use Magento\Sales\Model\ResourceModel\Order\Status\History\Collection as History
  *  sales_order_delete_before
  *  sales_order_delete_after
  *
- * @api
+ * @method \Magento\Sales\Model\ResourceModel\Order _getResource()
+ * @method \Magento\Sales\Model\ResourceModel\Order getResource()
  * @method int getGiftMessageId()
  * @method \Magento\Sales\Model\Order setGiftMessageId(int $value)
  * @method bool hasBillingAddressId()
@@ -47,7 +49,6 @@ use Magento\Sales\Model\ResourceModel\Order\Status\History\Collection as History
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Order extends AbstractModel implements EntityInterface, OrderInterface
 {
@@ -183,7 +184,6 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
 
     /**
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     * @deprecated 100.1.7 Remove unused dependency.
      */
     protected $productRepository;
 
@@ -364,7 +364,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order');
     }
 
     /**
@@ -617,12 +617,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
          * for this we have additional diapason for 0
          * TotalPaid - contains amount, that were not rounded.
          */
-        $totalRefunded = $this->priceCurrency->round($this->getTotalPaid()) - $this->getTotalRefunded();
-        if (abs($totalRefunded) < .0001) {
-            return false;
-        }
-        // Case when Adjustment Fee (adjustment_negative) has been used for first creditmemo
-        if (abs($totalRefunded - $this->getAdjustmentNegative()) < .0001) {
+        if (abs($this->priceCurrency->round($this->getTotalPaid()) - $this->getTotalRefunded()) < .0001) {
             return false;
         }
 
@@ -774,7 +769,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      */
     protected function _canReorder($ignoreSalable = false)
     {
-        if ($this->canUnhold() || $this->isPaymentReview()) {
+        if ($this->canUnhold() || $this->isPaymentReview() || !$this->getCustomerId()) {
             return false;
         }
 
@@ -783,24 +778,38 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
         }
 
         $products = [];
-        $itemsCollection = $this->getItemsCollection();
-        foreach ($itemsCollection as $item) {
+        foreach ($this->getItemsCollection() as $item) {
             $products[] = $item->getProductId();
         }
 
         if (!empty($products)) {
-            $productsCollection = $this->productListFactory->create()
+            /*
+             * @TODO ACPAOC: Use product collection here, but ensure that product
+             * is loaded with order store id, otherwise there'll be problems with isSalable()
+             * for composite products
+             *
+             */
+            /*
+            $productsCollection = $this->_productFactory->create()->getCollection()
                 ->setStoreId($this->getStoreId())
                 ->addIdFilter($products)
                 ->addAttributeToSelect('status')
                 ->load();
 
-            foreach ($itemsCollection as $item) {
-                $product = $productsCollection->getItemById($item->getProductId());
-                if (!$product) {
+            foreach ($productsCollection as $product) {
+                if (!$product->isSalable()) {
                     return false;
                 }
-                if (!$ignoreSalable && !$product->isSalable()) {
+            }
+            */
+
+            foreach ($products as $productId) {
+                try {
+                    $product = $this->productRepository->getById($productId, false, $this->getStoreId());
+                    if (!$ignoreSalable && !$product->isSalable()) {
+                        return false;
+                    }
+                } catch (NoSuchEntityException $noEntityException) {
                     return false;
                 }
             }
@@ -1131,7 +1140,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
             $state = self::STATE_CANCELED;
             foreach ($this->getAllItems() as $item) {
                 if ($state != self::STATE_PROCESSING && $item->getQtyToRefund()) {
-                    if ($item->isProcessingAvailable()) {
+                    if ($item->getQtyToShip() > $item->getQtyToCancel()) {
                         $state = self::STATE_PROCESSING;
                     } else {
                         $state = self::STATE_COMPLETE;
@@ -1433,18 +1442,15 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      */
     public function setPayment(\Magento\Sales\Api\Data\OrderPaymentInterface $payment = null)
     {
-        $this->setData(OrderInterface::PAYMENT, $payment);
-        if ($payment !== null) {
-            $payment->setOrder($this)->setParentId($this->getId());
-            if (!$payment->getId()) {
-                $this->setDataChanges(true);
-            }
+        $payment->setOrder($this)->setParentId($this->getId());
+        if (!$payment->getId()) {
+            $this->setData(OrderInterface::PAYMENT, $payment);
+            $this->setDataChanges(true);
         }
         return $payment;
     }
 
     /*********************** STATUSES ***************************/
-
     /**
      * Return collection of order status history items.
      *
@@ -1998,7 +2004,6 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Returns adjustment_negative
      *
@@ -4347,6 +4352,5 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     {
         return $this->setData('shipping_method', $shippingMethod);
     }
-
     //@codeCoverageIgnoreEnd
 }

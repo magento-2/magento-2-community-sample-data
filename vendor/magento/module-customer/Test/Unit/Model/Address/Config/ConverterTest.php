@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Address\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Address\Config\Converter
      */
     protected $_model;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_model = new \Magento\Customer\Model\Address\Config\Converter();
     }

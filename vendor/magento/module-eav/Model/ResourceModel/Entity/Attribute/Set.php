@@ -1,14 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\ResourceModel\Entity\Attribute;
 
+/**
+ * Eav attribute set resource model
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
+ */
 class Set extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
-     * EAV cache id
+     * EAV cache ids
      */
     const ATTRIBUTES_CACHE_ID = 'EAV_ENTITY_ATTRIBUTES_BY_SET_ID';
 
@@ -23,12 +28,11 @@ class Set extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $eavConfig;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param GroupFactory $attrGroupFactory
      * @param \Magento\Eav\Model\Config $eavConfig
-     * @param string|null $connectionName
+     * @param string $connectionName
+     * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
@@ -148,7 +152,7 @@ class Set extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $cacheKey = self::ATTRIBUTES_CACHE_ID . $setId;
 
         if ($this->eavConfig->isCacheEnabled() && ($cache = $this->eavConfig->getCache()->load($cacheKey))) {
-            $setInfoData = $this->getSerializer()->unserialize($cache);
+            $setInfoData = unserialize($cache);
         } else {
             $attributeSetData = $this->fetchAttributeSetData($setId);
 
@@ -164,7 +168,7 @@ class Set extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             if ($this->eavConfig->isCacheEnabled()) {
                 $this->eavConfig->getCache()->save(
-                    $this->getSerializer()->serialize($setInfoData),
+                    serialize($setInfoData),
                     $cacheKey,
                     [
                         \Magento\Eav\Model\Cache\Type::CACHE_TAG,

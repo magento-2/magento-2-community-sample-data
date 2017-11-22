@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,7 +22,9 @@ class Updater
     const TASK_TYPE_MAINTENANCE_MODE = 'maintenance_mode';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var Queue
+     */
     private $queue;
 
     /**

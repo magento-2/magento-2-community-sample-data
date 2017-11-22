@@ -1,18 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Backend\Block\Widget\Grid\Column\Filter;
-
 /**
  * Grid column filter block
- *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
  */
+namespace Magento\Backend\Block\Widget\Grid\Column\Filter;
+
 class AbstractFilter extends \Magento\Backend\Block\AbstractBlock implements
     \Magento\Backend\Block\Widget\Grid\Column\Filter\FilterInterface
 {

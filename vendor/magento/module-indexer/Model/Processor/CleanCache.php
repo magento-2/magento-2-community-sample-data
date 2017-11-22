@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Indexer\Model\Processor;
@@ -70,7 +70,7 @@ class CleanCache
      * Get cache interface
      *
      * @return \Magento\Framework\App\CacheInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getCache()
     {

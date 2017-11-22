@@ -1,18 +1,13 @@
 <?php
-namespace Test\Integration;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class AddOnsTest extends Setup
+class Braintree_AddOnTest extends PHPUnit_Framework_TestCase
 {
-    public function testAll_returnsAllAddOns()
+    function testAll_returnsAllAddOns()
     {
         $newId = strval(rand());
 
-        $addOnParams = [
+        $addOnParams = array (
             "amount" => "100.00",
             "description" => "some description",
             "id" => $newId,
@@ -20,13 +15,13 @@ class AddOnsTest extends Setup
             "name" => "php_add_on",
             "neverExpires" => "false",
             "numberOfBillingCycles" => "1"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
-        $http->post($path, ["modification" => $addOnParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $addOnParams));
 
-        $addOns = Braintree\AddOn::all();
+        $addOns = Braintree_AddOn::all();
 
         foreach ($addOns as $addOn)
         {
@@ -46,11 +41,11 @@ class AddOnsTest extends Setup
         $this->assertEquals($addOnParams["numberOfBillingCycles"], $actualAddOn->numberOfBillingCycles);
     }
 
-    public function testGatewayAll_returnsAllAddOns()
+    function testGatewayAll_returnsAllAddOns()
     {
         $newId = strval(rand());
 
-        $addOnParams = [
+        $addOnParams = array (
             "amount" => "100.00",
             "description" => "some description",
             "id" => $newId,
@@ -58,18 +53,18 @@ class AddOnsTest extends Setup
             "name" => "php_add_on",
             "neverExpires" => "false",
             "numberOfBillingCycles" => "1"
-        ];
+        );
 
-        $http = new Braintree\Http(Braintree\Configuration::$global);
-        $path = Braintree\Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
-        $http->post($path, ["modification" => $addOnParams]);
+        $http = new Braintree_Http(Braintree_Configuration::$global);
+        $path = Braintree_Configuration::$global->merchantPath() . "/modifications/create_modification_for_tests";
+        $http->post($path, array("modification" => $addOnParams));
 
-        $gateway = new Braintree\Gateway([
+        $gateway = new Braintree_Gateway(array(
             'environment' => 'development',
             'merchantId' => 'integration_merchant_id',
             'publicKey' => 'integration_public_key',
             'privateKey' => 'integration_private_key'
-        ]);
+        ));
         $addOns = $gateway->addOn()->all();
 
         foreach ($addOns as $addOn)

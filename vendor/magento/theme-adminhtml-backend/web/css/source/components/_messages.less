@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -27,9 +27,6 @@
 
 @alert-icon__warning__content: @icon-warning__content;
 @alert-icon__warning__color: @color-phoenix;
-
-@alert-icon__progress__content: @icon-refresh__content;
-@alert-icon__progress__color: @color-blue-dodger;
 
 @alert-icon__success__content: @icon-check-mage__content;
 @alert-icon__success__color: @color-green-apple;
@@ -73,10 +70,11 @@
         height: auto;
         left: 1.9rem;
         line-height: inherit;
+        margin-top: -1.3rem;
         position: absolute;
         speak: none;
         text-shadow: none;
-        top: 1.3rem;
+        top: 50%;
         width: auto;
     }
 }
@@ -95,22 +93,14 @@
     }
 }
 
-.message-progress {
-    &:before {
-        color: @alert-icon__progress__color;
-        content: @alert-icon__progress__content;
-    }
-}
-
 .message-error {
     background: @alert__error__background-color;
-
     &:before {
         color: @alert-icon__error__color;
         content: @alert-icon__error__content;
         font-size: @alert-icon__error__font-size;
         left: 2.2rem;
-        margin-top: 0.5rem;
+        margin-top: -1rem;
     }
 }
 
@@ -125,7 +115,6 @@
     &:before {
         display: none;
     }
-
     .spinner {
         font-size: @alert__spinner__font-size;
         left: 1.5rem;

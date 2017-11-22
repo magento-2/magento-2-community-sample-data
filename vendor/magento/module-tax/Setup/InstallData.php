@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,6 @@ namespace Magento\Tax\Setup;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Directory\Model\RegionFactory;
 
 /**
  * @codeCoverageIgnore
@@ -24,20 +23,13 @@ class InstallData implements InstallDataInterface
     private $taxSetupFactory;
 
     /**
-     * @var RegionFactory
-     */
-    private $directoryRegionFactory;
-
-    /**
+     * Init
+     *
      * @param TaxSetupFactory $taxSetupFactory
-     * @param RegionFactory $directoryRegionFactory
      */
-    public function __construct(
-        TaxSetupFactory $taxSetupFactory,
-        RegionFactory $directoryRegionFactory
-    ) {
+    public function __construct(TaxSetupFactory $taxSetupFactory)
+    {
         $this->taxSetupFactory = $taxSetupFactory;
-        $this->directoryRegionFactory = $directoryRegionFactory;
     }
 
     /**
@@ -63,7 +55,7 @@ class InstallData implements InstallDataInterface
                 'label' => 'Tax Class',
                 'input' => 'select',
                 'class' => '',
-                'source' => \Magento\Tax\Model\TaxClass\Source\Product::class,
+                'source' => 'Magento\Tax\Model\TaxClass\Source\Product',
                 'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_WEBSITE,
                 'visible' => true,
                 'required' => false,
@@ -105,13 +97,11 @@ class InstallData implements InstallDataInterface
         /**
          * install tax calculation rates
          */
-        /** @var \Magento\Directory\Model\Region $region */
-        $region = $this->directoryRegionFactory->create();
         $data = [
             [
                 'tax_calculation_rate_id' => 1,
                 'tax_country_id' => 'US',
-                'tax_region_id' => $region->loadByCode('CA', 'US')->getRegionId(),
+                'tax_region_id' => 12,
                 'tax_postcode' => '*',
                 'code' => 'US-CA-*-Rate 1',
                 'rate' => '8.2500',
@@ -119,7 +109,7 @@ class InstallData implements InstallDataInterface
             [
                 'tax_calculation_rate_id' => 2,
                 'tax_country_id' => 'US',
-                'tax_region_id' => $region->loadByCode('NY', 'US')->getRegionId(),
+                'tax_region_id' => 43,
                 'tax_postcode' => '*',
                 'code' => 'US-NY-*-Rate 1',
                 'rate' => '8.3750'

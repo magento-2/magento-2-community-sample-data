@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,10 +9,6 @@
  */
 namespace Magento\Directory\Model\Currency\Import;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractImport implements \Magento\Directory\Model\Currency\Import\ImportInterface
 {
     /**
@@ -98,7 +94,7 @@ abstract class AbstractImport implements \Magento\Directory\Model\Currency\Impor
         $data = [];
         $currencies = $this->_getCurrencyCodes();
         $defaultCurrencies = $this->_getDefaultCurrencyCodes();
-        set_time_limit(0);
+        @set_time_limit(0);
         foreach ($defaultCurrencies as $currencyFrom) {
             if (!isset($data[$currencyFrom])) {
                 $data[$currencyFrom] = [];
@@ -115,7 +111,6 @@ abstract class AbstractImport implements \Magento\Directory\Model\Currency\Impor
             }
             ksort($data[$currencyFrom]);
         }
-        ini_restore('max_execution_time');
 
         return $data;
     }

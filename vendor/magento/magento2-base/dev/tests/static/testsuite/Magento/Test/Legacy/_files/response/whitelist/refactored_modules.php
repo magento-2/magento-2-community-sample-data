@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,8 +10,8 @@
  * Modules that were refactored and use ResultInterface
  */
 return [
-    'Magento_Catalog',
-    'Magento_Backend',
-    'Magento_Sales',
-    'Magento_Customer',
+    '/app/code/Magento/Catalog',
+    '/app/code/Magento/Backend',
+    '/app/code/Magento/Sales',
+    '/app/code/Magento/Customer',
 ];

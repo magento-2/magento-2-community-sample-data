@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Backend\Test\Unit\App;
 
-class UserConfigTest extends \PHPUnit\Framework\TestCase
+class UserConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testUserRequestCreation()
     {
-        $factoryMock = $this->createPartialMock(\Magento\Config\Model\Config\Factory::class, ['create']);
-        $responseMock = $this->createMock(\Magento\Framework\App\Console\Response::class);
-        $configMock = $this->createMock(\Magento\Config\Model\Config::class);
+        $factoryMock = $this->getMock('Magento\Config\Model\Config\Factory', ['create'], [], '', false);
+        $responseMock = $this->getMock('Magento\Framework\App\Console\Response', [], [], '', false);
+        $configMock = $this->getMock('Magento\Config\Model\Config', [], [], '', false);
 
         $key = 'key';
         $value = 'value';

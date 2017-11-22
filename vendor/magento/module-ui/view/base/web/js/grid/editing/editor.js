@@ -1,11 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'underscore',
     'mageUtils',
@@ -21,12 +18,8 @@ define([
             headerButtonsTmpl: 'ui/grid/editing/header-buttons',
             successMsg: $t('You have successfully saved your edits.'),
             errorsCount: 0,
-            bulkEnabled: true,
-            multiEditingButtons: true,
-            singleEditingButtons: true,
             isMultiEditing: false,
             isSingleEditing: false,
-            permanentlyActive: false,
             rowsData: [],
             fields: {},
 
@@ -100,9 +93,7 @@ define([
                 .track([
                     'errorsCount',
                     'isMultiEditing',
-                    'isSingleEditing',
-                    'isSingleColumnEditing',
-                    'changed'
+                    'isSingleEditing'
                 ])
                 .observe({
                     canSave: true,
@@ -119,9 +110,7 @@ define([
          * @returns {Editor} Chainable.
          */
         initBulk: function () {
-            if (this.bulkEnabled) {
-                layout([this.bulkConfig]);
-            }
+            layout([this.bulkConfig]);
 
             return this;
         },
@@ -476,7 +465,7 @@ define([
          * @returns {Boolean}
          */
         hasActive: function () {
-            return !!this.activeRecords().length || this.permanentlyActive;
+            return !!this.activeRecords().length;
         },
 
         /**
@@ -489,7 +478,7 @@ define([
         },
 
         /**
-         * Counts number of invalid fields across all active records.
+         * Counts number of invalid fields accros all active records.
          *
          * @returns {Number}
          */
@@ -503,16 +492,6 @@ define([
             this.errorsCount = errorsCount;
 
             return errorsCount;
-        },
-
-        /**
-         * Translatable error message text.
-         *
-         * @returns {String}
-         */
-        countErrorsMessage: function () {
-            return $t('There are {placeholder} messages requires your attention.')
-                .replace('{placeholder}', this.countErrors());
         },
 
         /**
@@ -632,9 +611,7 @@ define([
             };
 
             this.addMessage(msg)
-                .source('reload', {
-                    refresh: true
-                });
+                .source('reload');
         },
 
         /**

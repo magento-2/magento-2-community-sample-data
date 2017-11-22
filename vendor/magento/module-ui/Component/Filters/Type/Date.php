@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Ui\Component\Filters\Type;
 
 use Magento\Ui\Component\Form\Element\DataType\Date as DataTypeDate;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Date
  */
 class Date extends AbstractFilter
 {
@@ -24,14 +22,6 @@ class Date extends AbstractFilter
      * @var DataTypeDate
      */
     protected $wrappedComponent;
-
-    /**
-     * Date format
-     *
-     * @var string
-     * @since 100.1.2
-     */
-    protected static $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * Prepare component configuration
@@ -82,29 +72,11 @@ class Date extends AbstractFilter
 
             if (is_array($value)) {
                 if (isset($value['from'])) {
-                    $this->applyFilterByType(
-                        'gteq',
-                        $this->wrappedComponent->convertDate(
-                            $value['from'],
-                            0,
-                            0,
-                            0,
-                            !$this->getData('config/skipTimeZoneConversion')
-                        )
-                    );
+                    $this->applyFilterByType('gteq', $this->wrappedComponent->convertDate($value['from']));
                 }
 
                 if (isset($value['to'])) {
-                    $this->applyFilterByType(
-                        'lteq',
-                        $this->wrappedComponent->convertDate(
-                            $value['to'],
-                            23,
-                            59,
-                            59,
-                            !$this->getData('config/skipTimeZoneConversion')
-                        )
-                    );
+                    $this->applyFilterByType('lteq', $this->wrappedComponent->convertDate($value['to'], 23, 59, 59));
                 }
             } else {
                 $this->applyFilterByType('eq', $this->wrappedComponent->convertDate($value));
@@ -124,7 +96,7 @@ class Date extends AbstractFilter
         if (!empty($value)) {
             $filter = $this->filterBuilder->setConditionType($type)
                 ->setField($this->getName())
-                ->setValue($value->format(static::$dateFormat))
+                ->setValue($value->format('Y-m-d H:i:s'))
                 ->create();
 
             $this->getContext()->getDataProvider()->addFilter($filter);

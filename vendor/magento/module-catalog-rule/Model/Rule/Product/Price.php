@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /**
  * Catalog Rule Product Aggregated Price per date Model
  *
+ * @method \Magento\CatalogRule\Model\ResourceModel\Rule\Product\Price _getResource()
+ * @method \Magento\CatalogRule\Model\ResourceModel\Rule\Product\Price getResource()
  * @method string getRuleDate()
  * @method \Magento\CatalogRule\Model\Rule\Product\Price setRuleDate(string $value)
  * @method int getCustomerGroupId()
@@ -37,7 +39,7 @@ class Price extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\CatalogRule\Model\ResourceModel\Rule\Product\Price::class);
+        $this->_init('Magento\CatalogRule\Model\ResourceModel\Rule\Product\Price');
     }
 
     /**

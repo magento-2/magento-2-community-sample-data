@@ -22,12 +22,12 @@ class Prototype
     /**
      * @var array Map parameter names to parameter index
      */
-    protected $parameterNameMap = [];
+    protected $parameterNameMap = array();
 
     /**
      * @var array Method parameters
      */
-    protected $parameters = [];
+    protected $parameters = array();
 
     /**
      * Constructor
@@ -77,9 +77,9 @@ class Prototype
                 $this->parameterNameMap[$name] = count($this->parameters) - 1;
             }
         } else {
-            $parameter = new Parameter([
+            $parameter = new Parameter(array(
                 'type' => (string) $parameter,
-            ]);
+            ));
             $this->parameters[] = $parameter;
         }
         return $this;
@@ -107,8 +107,8 @@ class Prototype
      */
     public function setParameters(array $parameters)
     {
-        $this->parameters       = [];
-        $this->parameterNameMap = [];
+        $this->parameters       = array();
+        $this->parameterNameMap = array();
         $this->addParameters($parameters);
         return $this;
     }
@@ -120,7 +120,7 @@ class Prototype
      */
     public function getParameters()
     {
-        $types = [];
+        $types = array();
         foreach ($this->parameters as $parameter) {
             $types[] = $parameter->getType();
         }
@@ -181,9 +181,9 @@ class Prototype
      */
     public function toArray()
     {
-        return [
+        return array(
             'returnType' => $this->getReturnType(),
             'parameters' => $this->getParameters(),
-        ];
+        );
     }
 }

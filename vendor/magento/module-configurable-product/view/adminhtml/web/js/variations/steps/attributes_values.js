@@ -1,8 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+// jscs:disable jsDoc
 define([
     'uiComponent',
     'jquery',
@@ -16,7 +16,6 @@ define([
 
     //connect items with observableArrays
     ko.bindingHandlers.sortableList = {
-        /** @inheritdoc */
         init: function (element, valueAccessor) {
             var list = valueAccessor();
 
@@ -24,13 +23,11 @@ define([
                 axis: 'y',
                 handle: '[data-role="draggable"]',
                 tolerance: 'pointer',
-
-                /** @inheritdoc */
                 update: function (event, ui) {
                     var item = ko.contextFor(ui.item[0]).$data,
                         position = ko.utils.arrayIndexOf(ui.item.parent().children(), ui.item[0]);
 
-                    if (ko.contextFor(ui.item[0]).$index() != position) { //eslint-disable-line eqeqeq
+                    if (ko.contextFor(ui.item[0]).$index() != position) {
                         if (position >= 0) {
                             list.remove(item);
                             list.splice(position, 0, item);
@@ -52,8 +49,6 @@ define([
             attributes: [],
             stepInitialized: false
         },
-
-        /** @inheritdoc */
         initialize: function () {
             this._super();
             this.createAttribute = _.wrap(this.createAttribute, function () {
@@ -64,31 +59,17 @@ define([
             });
             this.createAttribute = _.memoize(this.createAttribute.bind(this), _.property('id'));
         },
-
-        /** @inheritdoc */
         initObservable: function () {
             this._super().observe(['attributes']);
 
             return this;
         },
-
-        /**
-         * Create option.
-         */
         createOption: function () {
             // this - current attribute
             this.options.push({
-                value: 0,
-                label: '',
-                id: utils.uniqueid(),
-                'attribute_id': this.id,
-                'is_new': true
+                value: 0, label: '', id: utils.uniqueid(), attribute_id: this.id, is_new: true
             });
         },
-
-        /**
-         * @param {Object} option
-         */
         saveOption: function (option) {
             if (!_.isEmpty(option.label)) {
                 this.options.remove(option);
@@ -96,29 +77,15 @@ define([
                 this.chosenOptions.push(option.id);
             }
         },
-
-        /**
-         * @param {Object} option
-         */
         removeOption: function (option) {
             this.options.remove(option);
         },
-
-        /**
-         * @param {String} attribute
-         */
         removeAttribute: function (attribute) {
             this.attributes.remove(attribute);
             this.wizard.setNotificationMessage(
                 $.mage.__('An attribute has been removed. This attribute will no longer appear in your configurations.')
             );
         },
-
-        /**
-         * @param {Object} attribute
-         * @param {*} index
-         * @return {Object}
-         */
         createAttribute: function (attribute, index) {
             attribute.chosenOptions = ko.observableArray([]);
             attribute.options = ko.observableArray(_.map(attribute.options, function (option) {
@@ -131,23 +98,12 @@ define([
 
             return attribute;
         },
-
-        /**
-         * First 3 attribute panels must be open.
-         *
-         * @param {Number} index
-         * @return {Boolean}
-         */
+        //first 3 attribute panels must be open
         initialOpened: function (index) {
             return index < 3;
         },
-
-        /**
-         * Save attribute.
-         */
         saveAttribute: function () {
             var errorMessage = $.mage.__('Select options for all attributes or remove unused attributes.');
-
             this.attributes.each(function (attribute) {
                 attribute.chosen = [];
 
@@ -165,32 +121,19 @@ define([
                 throw new Error(errorMessage);
             }
         },
-
-        /**
-         * @param {Object} attribute
-         */
         selectAllAttributes: function (attribute) {
             this.chosenOptions(_.pluck(attribute.options(), 'id'));
         },
-
-        /**
-         * @param {Object} attribute
-         */
         deSelectAllAttributes: function (attribute) {
             attribute.chosenOptions.removeAll();
         },
-
-        /**
-         * @return {Boolean}
-         */
         saveOptions: function () {
             var options = [];
 
             this.attributes.each(function (attribute) {
                 attribute.chosenOptions.each(function (id) {
                     var option = attribute.options.findWhere({
-                        id: id,
-                        'is_new': true
+                        id: id, is_new: true
                     });
 
                     if (option) {
@@ -218,7 +161,7 @@ define([
 
                         if (option) {
                             attribute.options.remove(option);
-                            option['is_new'] = false;
+                            option.is_new = false;
                             option.value = newOptionId;
                             attribute.options.push(option);
                         }
@@ -227,10 +170,6 @@ define([
 
             }.bind(this));
         },
-
-        /**
-         * @param {*} attributeIds
-         */
         requestAttributes: function (attributeIds) {
             $.ajax({
                 type: 'POST',
@@ -246,11 +185,6 @@ define([
                 this.attributes(_.map(attributes, this.createAttribute));
             }.bind(this));
         },
-
-        /**
-         * @param {*} attribute
-         * @return {*}
-         */
         doInitSavedOptions: function (attribute) {
             var selectedOptions, selectedOptionsIds, selectedAttribute = _.findWhere(this.initData.attributes, {
                 id: attribute.id
@@ -267,28 +201,16 @@ define([
 
             return attribute;
         },
-
-        /**
-         * @param {Object} wizard
-         */
         render: function (wizard) {
             this.wizard = wizard;
             this.requestAttributes(wizard.data.attributesIds());
         },
-
-        /**
-         * @param {Object} wizard
-         */
         force: function (wizard) {
             this.saveOptions();
             this.saveAttribute(wizard);
 
             wizard.data.attributes = this.attributes;
         },
-
-        /**
-         * @param {Object} wizard
-         */
         back: function (wizard) {
             wizard.data.attributesIds(this.attributes().pluck('id'));
         }

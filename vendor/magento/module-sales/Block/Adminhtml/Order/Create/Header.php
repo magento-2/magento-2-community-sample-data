@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
@@ -9,9 +9,6 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Create order form header
- *
- * @api
- * @since 100.0.2
  */
 class Header extends AbstractCreate
 {
@@ -84,7 +81,7 @@ class Header extends AbstractCreate
             );
             return $out;
         } elseif (!$customerId && $storeId) {
-            $out .= __('Create New Order in %1', $this->getStore()->getName());
+            $out .= __('Create New Order for New Customer in %1', $this->getStore()->getName());
             return $out;
         } elseif ($customerId && !$storeId) {
             $out .= __('Create New Order for %1', $this->_getCustomerName($customerId));

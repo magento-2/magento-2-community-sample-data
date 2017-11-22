@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Email\Controller\Adminhtml\Email\Template;
@@ -14,26 +14,16 @@ class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template
     private $emailConfig;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Email\Model\Template\Config $emailConfig
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Registry $coreRegistry,
-        \Magento\Email\Model\Template\Config $emailConfig,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        \Magento\Email\Model\Template\Config $emailConfig
     ) {
         $this->emailConfig = $emailConfig;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         parent::__construct($context, $coreRegistry);
     }
 
@@ -41,7 +31,6 @@ class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template
      * Set template data to retrieve it in template info form
      *
      * @return void
-     * @throws \RuntimeException
      */
     public function execute()
     {
@@ -60,21 +49,16 @@ class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template
 
             $template->loadDefault($templateId);
             $template->setData('orig_template_code', $templateId);
-            $template->setData(
-                'template_variables',
-                $this->serializer->serialize($template->getVariablesOptionArray(true))
-            );
+            $template->setData('template_variables', \Zend_Json::encode($template->getVariablesOptionArray(true)));
 
-            $templateBlock = $this->_view->getLayout()->createBlock(
-                \Magento\Email\Block\Adminhtml\Template\Edit::class
-            );
+            $templateBlock = $this->_view->getLayout()->createBlock('Magento\Email\Block\Adminhtml\Template\Edit');
             $template->setData('orig_template_currently_used_for', $templateBlock->getCurrentlyUsedForPaths(false));
 
             $this->getResponse()->representJson(
-                $this->serializer->serialize($template->getData())
+                $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($template->getData())
             );
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
         }
     }
 }

@@ -1,16 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer;
 
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractFlatState
 {
     /**
@@ -33,9 +29,7 @@ abstract class AbstractFlatState
      */
     protected $isAvailable;
 
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**

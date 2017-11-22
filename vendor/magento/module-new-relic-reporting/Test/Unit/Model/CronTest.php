@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Test\Unit\Model;
@@ -10,7 +10,7 @@ use Magento\NewRelicReporting\Model\Cron;
 /**
  * Class CronTest
  */
-class CronTest extends \PHPUnit\Framework\TestCase
+class CronTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\NewRelicReporting\Model\Cron
@@ -39,23 +39,25 @@ class CronTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Config::class)
-            ->setMethods(['isCronEnabled'])
+
+
+        $this->configMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\Config')
+            ->setMethods([
+                'isCronEnabled'
+            ])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->reportModulesInfoMock = $this->getMockBuilder(
-            \Magento\NewRelicReporting\Model\Cron\ReportModulesInfo::class
-        )->disableOriginalConstructor()
-            ->getMock();
-
-        $this->reportCountsMock = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Cron\ReportCounts::class)
+        $this->reportModulesInfoMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\Cron\ReportModulesInfo')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->reportNewRelicCronMock = $this->getMockBuilder(
-            \Magento\NewRelicReporting\Model\Cron\ReportNewRelicCron::class
-        )->disableOriginalConstructor()
+        $this->reportCountsMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\Cron\ReportCounts')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->reportNewRelicCronMock = $this->getMockBuilder('Magento\NewRelicReporting\Model\Cron\ReportNewRelicCron')
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->model = new Cron(

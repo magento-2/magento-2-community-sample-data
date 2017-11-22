@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\BundleImportExport\Model\Export;
@@ -8,7 +8,7 @@ namespace Magento\BundleImportExport\Model\Export;
 /**
  * @magentoAppArea adminhtml
  */
-class RowCustomizerTest extends \PHPUnit\Framework\TestCase
+class RowCustomizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\BundleImportExport\Model\Export\RowCustomizer
@@ -43,11 +43,10 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
             ->where('sku IN(?)', ['simple', 'custom-design-simple-product', 'bundle-product']);
         $ids = $collection->getConnection()->fetchPairs($select);
         $select = (string)$collection->getSelect();
-        $this->model->prepareData($collection, array_values($ids));
+        $this->model->prepareData($collection, [1, 2, 3, 4]);
         $this->assertEquals($select, (string)$collection->getSelect());
         $result = $this->model->addData(['additional_attributes' => $allAdditionalAttributes], $ids['bundle-product']);
         $this->assertArrayHasKey('bundle_price_type', $result);
-        $this->assertArrayHasKey('bundle_shipment_type', $result);
         $this->assertArrayHasKey('bundle_sku_type', $result);
         $this->assertArrayHasKey('bundle_price_view', $result);
         $this->assertArrayHasKey('bundle_weight_type', $result);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model\Menu;
@@ -8,8 +8,6 @@ namespace Magento\Backend\Model\Menu;
 /**
  * Menu builder object. Retrieves commands (\Magento\Backend\Model\Menu\Builder\AbstractCommand)
  * to build menu (\Magento\Backend\Model\Menu)
- * @api
- * @since 100.0.2
  */
 class Builder
 {

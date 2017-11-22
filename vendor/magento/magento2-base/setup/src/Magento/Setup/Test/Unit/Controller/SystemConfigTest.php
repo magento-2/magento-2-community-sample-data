@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Controller;
 
 use \Magento\Setup\Controller\SystemConfig;
 
-class SystemConfigTest extends \PHPUnit\Framework\TestCase
+class SystemConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers \Magento\Setup\Controller\SystemConfig::indexAction
@@ -18,7 +18,7 @@ class SystemConfigTest extends \PHPUnit\Framework\TestCase
         /** @var $controller SystemConfig */
         $controller = new SystemConfig();
         $viewModel = $controller->indexAction();
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
     }
 }

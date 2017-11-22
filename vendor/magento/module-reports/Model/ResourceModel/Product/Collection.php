@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,8 +13,6 @@ namespace Magento\Reports\Model\ResourceModel\Product;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -64,7 +62,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected $quoteResource;
 
     /**
-     * Collection constructor.
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy

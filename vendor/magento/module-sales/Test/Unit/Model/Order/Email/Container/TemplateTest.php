@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Email\Container;
 
 use \Magento\Sales\Model\Order\Email\Container\Template;
 
-class TemplateTest extends \PHPUnit\Framework\TestCase
+class TemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Email\Container\Template

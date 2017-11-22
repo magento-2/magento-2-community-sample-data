@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -30,17 +30,10 @@
         <products_count />
         <cache_lifetime />
         <page_size />
-        <show_attributes>
-            <selector>
-                .control [name="parameters[show_attributes][]"]
-            </selector>
-            <input>multiselect</input>
-        </show_attributes>
-        <show_buttons>
-            <selector>
-                .control [name="parameters[show_buttons][]"]
-            </selector>
-            <input>multiselect</input>
-        </show_buttons>
+        <serialized_conditions>
+            <selector>.rule-tree</selector>
+            <strategy>css selector</strategy>
+            <input>widgetconditions</input>
+        </serialized_conditions>
     </fields>
 </mapping>

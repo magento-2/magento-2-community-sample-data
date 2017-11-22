@@ -1,12 +1,12 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Config\Source\Address;
 
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Config\Source\Address\Type

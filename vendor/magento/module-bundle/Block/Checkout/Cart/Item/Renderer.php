@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Block\Checkout\Cart\Item;
@@ -12,8 +12,7 @@ use Magento\Framework\View\Element\Message\InterpretationStrategyInterface;
 /**
  * Shopping cart item render block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Renderer extends \Magento\Checkout\Block\Cart\Item\Renderer
 {

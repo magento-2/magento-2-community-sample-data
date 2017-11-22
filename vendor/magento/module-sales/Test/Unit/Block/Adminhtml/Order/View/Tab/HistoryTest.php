@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\View\Tab;
@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\View\Tab;
 /**
  * Order History tab test
  */
-class HistoryTest extends \PHPUnit\Framework\TestCase
+class HistoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -40,12 +40,13 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $contextMock;
 
+
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->adminHelperMock = $this->createMock(\Magento\Sales\Helper\Admin::class);
+        $this->coreRegistryMock = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $this->adminHelperMock = $this->getMock('\Magento\Sales\Helper\Admin', [], [], '', false);
 
         $this->contextMock = $this->getMockBuilder(\Magento\Backend\Block\Template\Context::class)
             ->disableOriginalConstructor()
@@ -60,7 +61,7 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->commentsHistory = $this->objectManager->getObject(
-            \Magento\Sales\Block\Adminhtml\Order\View\Tab\History::class,
+            'Magento\Sales\Block\Adminhtml\Order\View\Tab\History',
             [
                 'adminHelper' => $this->adminHelperMock,
                 'registry' => $this->coreRegistryMock,

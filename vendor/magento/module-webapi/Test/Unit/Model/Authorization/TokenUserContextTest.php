@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
 /**
  * Tests \Magento\Webapi\Model\Authorization\TokenUserContext
  */
-class TokenUserContextTest extends \PHPUnit\Framework\TestCase
+class TokenUserContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -42,17 +42,17 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\Webapi\Request::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\Webapi\Request')
             ->disableOriginalConstructor()
             ->setMethods(['getHeader'])
             ->getMock();
 
-        $this->tokenFactory = $this->getMockBuilder(\Magento\Integration\Model\Oauth\TokenFactory::class)
+        $this->tokenFactory = $this->getMockBuilder('Magento\Integration\Model\Oauth\TokenFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->integrationService = $this->getMockBuilder(\Magento\Integration\Api\IntegrationServiceInterface::class)
+        $this->integrationService = $this->getMockBuilder('Magento\Integration\Api\IntegrationServiceInterface')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -69,7 +69,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->tokenUserContext = $this->objectManager->getObject(
-            \Magento\Webapi\Model\Authorization\TokenUserContext::class,
+            'Magento\Webapi\Model\Authorization\TokenUserContext',
             [
                 'request' => $this->request,
                 'tokenFactory' => $this->tokenFactory,
@@ -117,7 +117,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
             ->with('Authorization')
             ->will($this->returnValue("Bearer {$bearerToken}"));
 
-        $token = $this->getMockBuilder(\Magento\Integration\Model\Oauth\Token::class)
+        $token = $this->getMockBuilder('Magento\Integration\Model\Oauth\Token')
             ->disableOriginalConstructor()
             ->setMethods(['loadByToken', 'getId', '__wakeup'])
             ->getMock();
@@ -145,7 +145,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
             ->with('Authorization')
             ->will($this->returnValue("Bearer {$bearerToken}"));
 
-        $token = $this->getMockBuilder(\Magento\Integration\Model\Oauth\Token::class)
+        $token = $this->getMockBuilder('Magento\Integration\Model\Oauth\Token')
             ->disableOriginalConstructor()
             ->setMethods(['loadByToken', 'getId', 'getRevoked', '__wakeup'])
             ->getMock();
@@ -179,7 +179,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
             ->with('Authorization')
             ->will($this->returnValue("Bearer {$bearerToken}"));
 
-        $token = $this->getMockBuilder(\Magento\Integration\Model\Oauth\Token::class)
+        $token = $this->getMockBuilder('Magento\Integration\Model\Oauth\Token')
             ->disableOriginalConstructor()
             ->setMethods(['loadByToken', 'getId', 'getUserType', 'getCustomerId', 'getAdminId', '__wakeup'])
             ->getMock();
@@ -197,7 +197,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
             ->method('getUserType')
             ->will($this->returnValue($userType));
 
-        $integration = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integration = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->setMethods(['getId', '__wakeup'])
             ->getMock();

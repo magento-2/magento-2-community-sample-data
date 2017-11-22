@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Dynamic\Algorithm;
@@ -43,8 +43,8 @@ class Auto implements AlgorithmInterface
     ) {
         $data = [];
         $range = $this->dataProvider->getRange();
-        if ($entityStorage->getSource()) {
-            $range = !empty($range) ? $range : $this->getRange($bucket, $dimensions, $entityStorage);
+        if (!$range && $entityStorage->getSource()) {
+            $range = $this->getRange($bucket, $dimensions, $entityStorage);
             $dbRanges = $this->dataProvider->getAggregation($bucket, $dimensions, $range, $entityStorage);
             $data = $this->dataProvider->prepareData($range, $dbRanges);
         }
@@ -55,7 +55,7 @@ class Auto implements AlgorithmInterface
     /**
      * @param BucketInterface $bucket
      * @param array $dimensions
-     * @param EntityStorage $entityStorage
+     * @param int[] $entityIds
      * @return number
      */
     private function getRange($bucket, array $dimensions, EntityStorage $entityStorage)
@@ -87,6 +87,7 @@ class Auto implements AlgorithmInterface
     }
 
     /**
+     * @param DataProviderInterface $dataProvider
      * @return int
      */
     private function getMinRangePower()

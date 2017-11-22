@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -41,7 +41,7 @@ class RequestIdOverrideTest extends \Magento\Webapi\Routing\BaseService
         $this->_version = 'V1';
         $this->_restResourcePath = "/{$this->_version}/TestModule5/";
         $this->itemFactory = Bootstrap::getObjectManager()
-            ->create(\Magento\TestModule5\Service\V1\Entity\AllSoapAndRestFactory::class);
+            ->create('Magento\TestModule5\Service\V1\Entity\AllSoapAndRestFactory');
     }
 
     public function testOverride()

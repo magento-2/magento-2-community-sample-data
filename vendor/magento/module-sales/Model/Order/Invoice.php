@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order;
@@ -11,7 +11,6 @@ use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Model\EntityInterface;
 
 /**
- * @api
  * @method \Magento\Sales\Model\Order\Invoice setSendEmail(bool $value)
  * @method \Magento\Sales\Model\Order\Invoice setCustomerNote(string $value)
  * @method string getCustomerNote()
@@ -20,7 +19,6 @@ use Magento\Sales\Model\EntityInterface;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
 {
@@ -175,7 +173,7 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Invoice::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Invoice');
     }
 
     /**
@@ -362,18 +360,9 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
 
         $this->setState(self::STATE_PAID);
 
-        $order = $this->getOrder();
-        $order->getPayment()->pay($this);
-        $totalPaid = $this->getGrandTotal();
-        $baseTotalPaid = $this->getBaseGrandTotal();
-        $invoiceList = $order->getInvoiceCollection();
-        // calculate all totals
-        if (count($invoiceList->getItems()) > 1) {
-            $totalPaid += $order->getTotalPaid();
-            $baseTotalPaid += $order->getBaseTotalPaid();
-        }
-        $order->setTotalPaid($totalPaid);
-        $order->setBaseTotalPaid($baseTotalPaid);
+        $this->getOrder()->getPayment()->pay($this);
+        $this->getOrder()->setTotalPaid($this->getOrder()->getTotalPaid() + $this->getGrandTotal());
+        $this->getOrder()->setBaseTotalPaid($this->getOrder()->getBaseTotalPaid() + $this->getBaseGrandTotal());
         $this->_eventManager->dispatch('sales_order_invoice_pay', [$this->_eventObject => $this]);
         return $this;
     }
@@ -553,14 +542,14 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
      */
     public static function getStates()
     {
-        if (null === static::$_states) {
-            static::$_states = [
+        if (null === self::$_states) {
+            self::$_states = [
                 self::STATE_OPEN => __('Pending'),
                 self::STATE_PAID => __('Paid'),
                 self::STATE_CANCELED => __('Canceled'),
             ];
         }
-        return static::$_states;
+        return self::$_states;
     }
 
     /**
@@ -575,11 +564,11 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
             $stateId = $this->getState();
         }
 
-        if (null === static::$_states) {
-            static::getStates();
+        if (null === self::$_states) {
+            self::getStates();
         }
-        if (isset(static::$_states[$stateId])) {
-            return static::$_states[$stateId];
+        if (isset(self::$_states[$stateId])) {
+            return self::$_states[$stateId];
         }
         return __('Unknown State');
     }
@@ -804,7 +793,6 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Returns increment id
      *
@@ -1618,6 +1606,5 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -36,12 +36,12 @@ class Advanced extends Tab
      * @param SimpleElement|null $element
      * @return $this
      */
-    public function setFieldsData(array $fields, SimpleElement $element = null)
+    public function fillFormTab(array $fields, SimpleElement $element = null)
     {
         if (!$this->_rootElement->find($this->propertiesTabContent)->isVisible()) {
             $this->_rootElement->find($this->propertiesTab)->click();
         }
 
-        return parent::setFieldsData($fields, $element);
+        return parent::fillFormTab($fields, $element);
     }
 }

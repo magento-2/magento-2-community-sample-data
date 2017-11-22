@@ -1,20 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Email\Container;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Store;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
-/**
- * Class Container
- *
- * @api
- * @since 100.0.2
- */
 abstract class Container implements IdentityInterface
 {
     /**
@@ -55,7 +49,6 @@ abstract class Container implements IdentityInterface
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
     }
-
     /**
      * Return store configuration value
      *

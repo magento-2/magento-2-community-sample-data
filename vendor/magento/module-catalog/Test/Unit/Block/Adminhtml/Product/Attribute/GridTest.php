@@ -1,20 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Attribute;
 
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetRowUrl()
     {
-        $attribute = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
+        $attribute = $this->getMock('Magento\Catalog\Model\ResourceModel\Eav\Attribute', [], [], '', false);
         $attribute->expects($this->once())->method('getAttributeId')->will($this->returnValue(2));
 
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
 
-        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder = $this->getMock('Magento\Framework\UrlInterface', [], [], '', false);
         $urlBuilder->expects(
             $this->once()
         )->method(
@@ -26,7 +26,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
             $this->returnValue('catalog/product_attribute/edit/id/2')
         );
 
-        $context = $this->createMock(\Magento\Backend\Block\Template\Context::class);
+        $context = $this->getMock('Magento\Backend\Block\Template\Context', [], [], '', false);
         $context->expects($this->once())->method('getUrlBuilder')->will($this->returnValue($urlBuilder));
         $context->expects($this->any())->method('getFilesystem')->will($this->returnValue($filesystem));
 
@@ -34,7 +34,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         /** @var \Magento\Catalog\Block\Adminhtml\Product\Attribute\Grid $block */
-        $block = $helper->getObject(\Magento\Catalog\Block\Adminhtml\Product\Attribute\Grid::class, $data);
+        $block = $helper->getObject('Magento\Catalog\Block\Adminhtml\Product\Attribute\Grid', $data);
 
         $this->assertEquals('catalog/product_attribute/edit/id/2', $block->getRowUrl($attribute));
     }

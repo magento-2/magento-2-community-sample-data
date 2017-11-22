@@ -1,20 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Test\Unit\Model;
 
-use Magento\Framework\Exception\MailException;
+use \Magento\Sales\Model\OrderNotifier;
 
-use Magento\Sales\Model\OrderNotifier;
+use Magento\Framework\Exception\MailException;
 use Magento\Sales\Model\ResourceModel\Order\Status\History\CollectionFactory;
 
 /**
  * Class OrderNotifierTest
  */
-class OrderNotifierTest extends \PHPUnit\Framework\TestCase
+class OrderNotifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CollectionFactory |\PHPUnit_Framework_MockObject_MockObject
@@ -41,18 +41,30 @@ class OrderNotifierTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderSenderMock;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->historyCollectionFactory = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Status\History\CollectionFactory::class,
-            ['create']
+        $this->historyCollectionFactory = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Status\History\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->order = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['__wakeUp', 'getEmailSent']);
-        $this->orderSenderMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Email\Sender\OrderSender::class,
-            ['send']
+        $this->order = $this->getMock(
+            'Magento\Sales\Model\Order',
+            ['__wakeUp', 'getEmailSent'],
+            [],
+            '',
+            false
         );
-        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $this->orderSenderMock = $this->getMock(
+            'Magento\Sales\Model\Order\Email\Sender\OrderSender',
+            ['send'],
+            [],
+            '',
+            false
+        );
+        $this->loggerMock = $this->getMock('Psr\Log\LoggerInterface');
         $this->notifier = new OrderNotifier(
             $this->historyCollectionFactory,
             $this->loggerMock,
@@ -65,13 +77,19 @@ class OrderNotifierTest extends \PHPUnit\Framework\TestCase
      */
     public function testNotifySuccess()
     {
-        $historyCollection = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Status\History\Collection::class,
-            ['getUnnotifiedForInstance', 'save', 'setIsCustomerNotified']
+        $historyCollection = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Status\History\Collection',
+            ['getUnnotifiedForInstance', 'save', 'setIsCustomerNotified'],
+            [],
+            '',
+            false
         );
-        $historyItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Status\History::class,
-            ['setIsCustomerNotified', 'save', '__wakeUp']
+        $historyItem = $this->getMock(
+            'Magento\Sales\Model\Order\Status\History',
+            ['setIsCustomerNotified', 'save', '__wakeUp'],
+            [],
+            '',
+            false
         );
         $historyItem->expects($this->at(0))
             ->method('setIsCustomerNotified')

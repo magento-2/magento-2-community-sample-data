@@ -1,45 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-
-$defaultAttributeSet = $objectManager->get(Magento\Eav\Model\Config::class)
-    ->getEntityType('catalog_product')
-    ->getDefaultAttributeSetId();
-
-$productRepository = $objectManager->create(
-    \Magento\Catalog\Api\ProductRepositoryInterface::class
-);
-
-$categoryLinkRepository = $objectManager->create(
-    \Magento\Catalog\Api\CategoryLinkRepositoryInterface::class,
-    [
-        'productRepository' => $productRepository
-    ]
-);
-
-/** @var Magento\Catalog\Api\CategoryLinkManagementInterface $linkManagement */
-$categoryLinkManagement = $objectManager->create(\Magento\Catalog\Api\CategoryLinkManagementInterface::class);
-$reflectionClass = new \ReflectionClass(get_class($categoryLinkManagement));
-$properties = [
-    'productRepository' => $productRepository,
-    'categoryLinkRepository' => $categoryLinkRepository
-];
-foreach ($properties as $key => $value) {
-    if ($reflectionClass->hasProperty($key)) {
-        $reflectionProperty = $reflectionClass->getProperty($key);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($categoryLinkManagement, $value);
-    }
-}
+$defaultAttributeSet = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+    Magento\Eav\Model\Config::class
+)->getEntityType('catalog_product')->getDefaultAttributeSetId();
 
 /**
  * After installation system has two categories: root one with ID:1 and Default category with ID:2
  */
 /** @var $category \Magento\Catalog\Model\Category */
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(3)
     ->setName('Category 1')
@@ -52,7 +24,7 @@ $category->setId(3)
     ->setPosition(1)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(4)
     ->setName('Category 1.1')
@@ -66,7 +38,7 @@ $category->setId(4)
     ->setPosition(1)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(5)
     ->setName('Category 1.1.1')
@@ -81,7 +53,7 @@ $category->setId(5)
     ->setCustomDesign('Magento/blank')
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(6)
     ->setName('Category 2')
@@ -94,7 +66,7 @@ $category->setId(6)
     ->setPosition(2)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(7)
     ->setName('Movable')
@@ -107,7 +79,7 @@ $category->setId(7)
     ->setPosition(3)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(8)
     ->setName('Inactive')
@@ -119,7 +91,7 @@ $category->setId(8)
     ->setPosition(4)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(9)
     ->setName('Movable Position 1')
@@ -132,7 +104,7 @@ $category->setId(9)
     ->setPosition(5)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(10)
     ->setName('Movable Position 2')
@@ -145,7 +117,7 @@ $category->setId(10)
     ->setPosition(6)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(11)
     ->setName('Movable Position 3')
@@ -158,7 +130,7 @@ $category->setId(11)
     ->setPosition(7)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(12)
     ->setName('Category 12')
@@ -171,24 +143,11 @@ $category->setId(12)
     ->setPosition(8)
     ->save();
 
-$category = $objectManager->create(\Magento\Catalog\Model\Category::class);
-$category->isObjectNew(true);
-$category->setId(13)
-    ->setName('Category 1.2')
-    ->setParentId(3)
-    ->setPath('1/2/3/13')
-    ->setLevel(3)
-    ->setAvailableSortBy('name')
-    ->setDefaultSortBy('name')
-    ->setIsActive(true)
-    ->setIsAnchor(true)
-    ->setPosition(2)
-    ->save();
-
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(1)
     ->setAttributeSetId($defaultAttributeSet)
     ->setStoreId(1)
     ->setWebsiteIds([1])
@@ -197,18 +156,15 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setPrice(10)
     ->setWeight(18)
     ->setStockData(['use_config_manage_stock' => 0])
+    ->setCategoryIds([2, 3, 4])
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
     ->save();
 
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [2, 3, 4, 13]
-);
-
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(2)
     ->setAttributeSetId($defaultAttributeSet)
     ->setStoreId(1)
     ->setWebsiteIds([1])
@@ -217,52 +173,42 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setPrice(45.67)
     ->setWeight(56)
     ->setStockData(['use_config_manage_stock' => 0])
+    ->setCategoryIds([5])
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
     ->save();
 
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [5, 4]
-);
-
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(3)
     ->setAttributeSetId($defaultAttributeSet)
     ->setStoreId(1)
     ->setWebsiteIds([1])
     ->setName('Simple Product Not Visible On Storefront')
-    ->setSku('simple-3')
+    ->setSku('simple')
     ->setPrice(15)
     ->setWeight(2)
     ->setStockData(['use_config_manage_stock' => 0])
+    ->setCategoryIds([10, 11, 12])
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE)
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
     ->save();
 
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [10, 11, 12]
-);
-
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(4)
     ->setAttributeSetId($defaultAttributeSet)
     ->setStoreId(1)
     ->setWebsiteIds([1])
     ->setName('Simple Product Three')
-    ->setSku('simple-4')
+    ->setSku('simple')
     ->setPrice(10)
     ->setWeight(18)
     ->setStockData(['use_config_manage_stock' => 0])
+    ->setCategoryIds([10, 11, 12])
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
     ->save();
-
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [10, 11, 12, 13]
-);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Paypal\Model\Config\Structure\Reader;
@@ -10,7 +10,7 @@ use Magento\Framework\ObjectManagerInterface;
 /**
  * Class ReaderTest
  */
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     const EXPECTED = '/dev/tests/integration/testsuite/Magento/Paypal/Model/Config/Structure/Reader/_files/expected';
 
@@ -61,14 +61,14 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->fileUtility = \Magento\Framework\App\Utility\Files::init();
 
-        $this->validationStateMock = $this->getMockBuilder(\Magento\Framework\Config\ValidationStateInterface::class)
+        $this->validationStateMock = $this->getMockBuilder('Magento\Framework\Config\ValidationStateInterface')
             ->setMethods(['isValidationRequired'])
             ->getMockForAbstractClass();
-        $this->schemaLocatorMock = $this->getMockBuilder(\Magento\Config\Model\Config\SchemaLocator::class)
+        $this->schemaLocatorMock = $this->getMockBuilder('Magento\Config\Model\Config\SchemaLocator')
             ->disableOriginalConstructor()
             ->setMethods(['getPerFileSchema'])
             ->getMock();
-        $this->fileResolverMock = $this->getMockBuilder(\Magento\Framework\Config\FileResolverInterface::class)
+        $this->fileResolverMock = $this->getMockBuilder('Magento\Framework\Config\FileResolverInterface')
             ->getMockForAbstractClass();
 
         $this->validationStateMock->expects($this->atLeastOnce())
@@ -79,19 +79,17 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         /** @var \Magento\Paypal\Model\Config\Structure\Reader\ConverterStub $converter */
-        $this->converter = $this->objectManager->create(
-            \Magento\Paypal\Model\Config\Structure\Reader\ConverterStub::class
-        );
+        $this->converter = $this->objectManager->create('Magento\Paypal\Model\Config\Structure\Reader\ConverterStub');
 
         $this->reader = $this->objectManager->create(
-            \Magento\Paypal\Model\Config\Structure\Reader\ReaderStub::class,
+            'Magento\Paypal\Model\Config\Structure\Reader\ReaderStub',
             [
                 'fileResolver' => $this->fileResolverMock,
                 'converter' => $this->converter,
                 'schemaLocator' => $this->schemaLocatorMock,
                 'validationState' => $this->validationStateMock,
                 'fileName' => 'no_existing_file.xml',
-                'domDocumentClass' => \Magento\Framework\Config\Dom::class
+                'domDocumentClass' => 'Magento\Framework\Config\Dom'
             ]
         );
     }
@@ -118,7 +116,10 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getActualContent()
     {
-        $files = $this->fileUtility->getFiles([BP . static::ACTUAL], 'config.xml');
+        $files = $this->fileUtility->getFiles(
+            [$this->fileUtility->getPathToSource() . static::ACTUAL],
+            'config.xml'
+        );
 
         return file_get_contents(reset($files));
     }
@@ -128,7 +129,10 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getExpectedContent()
     {
-        $files = $this->fileUtility->getFiles([BP . static::EXPECTED], 'config.xml');
+        $files = $this->fileUtility->getFiles(
+            [$this->fileUtility->getPathToSource() . static::EXPECTED],
+            'config.xml'
+        );
 
         return file_get_contents(reset($files));
     }

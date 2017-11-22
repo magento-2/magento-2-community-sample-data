@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Translate\Inline;
@@ -46,7 +46,7 @@ class Proxy extends \Magento\Framework\Translate\Inline implements
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Translate\Inline::class,
+        $instanceName = 'Magento\Framework\Translate\Inline',
         $shared = true
     ) {
         $this->objectManager = $objectManager;

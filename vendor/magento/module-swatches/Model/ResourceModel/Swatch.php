@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,8 +9,6 @@ namespace Magento\Swatches\Model\ResourceModel;
 /**
  * @codeCoverageIgnore
  * Swatch Resource Model
- * @api
- * @since 100.0.2
  */
 class Swatch extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

@@ -1,214 +1,140 @@
 <?php
+
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteSavingObserver;
+use Magento\Framework\Event;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\UrlRewrite\Model\UrlPersistInterface;
 
 /**
- * Class ProductProcessUrlRewriteSavingObserverTest
- *
- * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Class ProductProcessUrlRewriteSavingObserver
  */
-class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\TestCase
+class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\UrlRewrite\Model\UrlPersistInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductProcessUrlRewriteSavingObserver
+     */
+    protected $productProcessUrlRewriteSavingObserver;
+
+    /**
+     * @var UrlPersistInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $urlPersist;
 
     /**
-     * @var \Magento\Framework\Event|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $event;
-
-    /**
-     * @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject
+     * @var Observer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $observer;
 
     /**
-     * @var \Magento\Catalog\Model\Product|\PHPUnit_Framework_MockObject_MockObject
+     * @var Product|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $product;
 
     /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUrlRewriteGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productUrlRewriteGenerator;
 
     /**
-     * @var ObjectManager
+     * @SuppressWarnings(PHPMD.TooManyFields)
      */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteSavingObserver
-     */
-    protected $model;
-
-    /**
-     * Set up
-     */
-    protected function setUp()
+    public function setUp()
     {
-        $this->urlPersist = $this->createMock(\Magento\UrlRewrite\Model\UrlPersistInterface::class);
-        $this->product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, [
-                'getId',
-                'dataHasChangedFor',
-                'isVisibleInSiteVisibility',
-                'getIsChangedWebsites',
-                'getIsChangedCategories',
-                'getStoreId'
-            ]);
-        $this->product->expects($this->any())->method('getId')->will($this->returnValue(3));
-        $this->event = $this->createPartialMock(\Magento\Framework\Event::class, ['getProduct']);
-        $this->event->expects($this->any())->method('getProduct')->willReturn($this->product);
-        $this->observer = $this->createPartialMock(\Magento\Framework\Event\Observer::class, ['getEvent']);
-        $this->observer->expects($this->any())->method('getEvent')->willReturn($this->event);
-        $this->productUrlRewriteGenerator = $this->createPartialMock(
-            \Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator::class,
-            ['generate']
-        );
-        $this->productUrlRewriteGenerator->expects($this->any())
-            ->method('generate')
-            ->will($this->returnValue([3 => 'rewrite']));
-        $this->objectManager = new ObjectManager($this);
-        $this->model = $this->objectManager->getObject(
-            \Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteSavingObserver::class,
+        $this->urlPersist = $this->getMockBuilder(UrlPersistInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productUrlRewriteGenerator = $this->getMockBuilder(ProductUrlRewriteGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $objectManagerHelper = new ObjectManagerHelper($this);
+        $this->productProcessUrlRewriteSavingObserver = $objectManagerHelper->getObject(
+            ProductProcessUrlRewriteSavingObserver::class,
             [
                 'productUrlRewriteGenerator' => $this->productUrlRewriteGenerator,
-                'urlPersist' => $this->urlPersist
+                'urlPersist' => $this->urlPersist,
             ]
         );
+
+        $this->product = $this->getMockBuilder(Product::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getProductCategories'
+            ])
+            ->getMock();
+
+        $event = $this->getMock(Event::class, ['getProduct'], [], '', false);
+        $event->method('getProduct')->willReturn($this->product);
+
+        $this->observer = $this->getMock(Observer::class, ['getEvent'], [], '', false);
+        $this->observer->method('getEvent')->willReturn($event);
+
     }
 
     /**
-     * Data provider
-     *
-     * @return array
+     * @dataProvider visibilityProvider
+     * @param integer $before
+     * @param integer $after
      */
-    public function urlKeyDataProvider()
+    public function testVisibility($before, $after)
+    {
+        $this->product->setOrigData('visibility', $before);
+        $this->product->setData('visibility', $after);
+
+        $this->productUrlRewriteGenerator->expects(static::once())
+            ->method('generate')
+            ->with($this->product)
+            ->willReturn(['test']);
+        $this->urlPersist->expects(static::once())
+            ->method('replace')
+            ->with(['test']);
+
+        $this->productProcessUrlRewriteSavingObserver->execute($this->observer);
+    }
+
+    public function visibilityProvider()
     {
         return [
-            'url changed' => [
-                'isChangedUrlKey'       => true,
-                'isChangedVisibility'   => false,
-                'isChangedWebsites'     => false,
-                'isChangedCategories'   => false,
-                'visibilityResult'      => true,
-                'expectedDeleteCount'   => 1,
-                'expectedReplaceCount'  => 1,
-
-            ],
-            'no chnages' => [
-                'isChangedUrlKey'       => false,
-                'isChangedVisibility'   => false,
-                'isChangedWebsites'     => false,
-                'isChangedCategories'   => false,
-                'visibilityResult'      => true,
-                'expectedDeleteCount'   => 0,
-                'expectedReplaceCount'  => 0
-            ],
-            'visibility changed' => [
-                'isChangedUrlKey'       => false,
-                'isChangedVisibility'   => true,
-                'isChangedWebsites'     => false,
-                'isChangedCategories'   => false,
-                'visibilityResult'      => true,
-                'expectedDeleteCount'   => 1,
-                'expectedReplaceCount'  => 1
-            ],
-            'websites changed' => [
-                'isChangedUrlKey'       => false,
-                'isChangedVisibility'   => false,
-                'isChangedWebsites'     => true,
-                'isChangedCategories'   => false,
-                'visibilityResult'      => true,
-                'expectedDeleteCount'   => 1,
-                'expectedReplaceCount'  => 1
-            ],
-            'categories changed' => [
-                'isChangedUrlKey'       => false,
-                'isChangedVisibility'   => false,
-                'isChangedWebsites'     => false,
-                'isChangedCategories'   => true,
-                'visibilityResult'      => true,
-                'expectedDeleteCount'   => 1,
-                'expectedReplaceCount'  => 1
-            ],
-            'url changed invisible' => [
-                'isChangedUrlKey'       => true,
-                'isChangedVisibility'   => false,
-                'isChangedWebsites'     => false,
-                'isChangedCategories'   => false,
-                'visibilityResult'      => false,
-                'expectedDeleteCount'   => 1,
-                'expectedReplaceCount'  => 0
-            ],
+            ['origData' => Visibility::VISIBILITY_NOT_VISIBLE, 'data' => Visibility::VISIBILITY_IN_CATALOG],
+            ['origData' => null, 'data' => Visibility::VISIBILITY_IN_CATALOG],
+            ['origData' => Visibility::VISIBILITY_BOTH, 'data' => Visibility::VISIBILITY_IN_SEARCH],
+            ['origData' => Visibility::VISIBILITY_IN_CATALOG, 'data' => Visibility::VISIBILITY_NOT_VISIBLE],
+            ['origData' => null, 'data' => Visibility::VISIBILITY_NOT_VISIBLE],
         ];
     }
 
     /**
-     * @param bool $isChangedUrlKey
-     * @param bool $isChangedVisibility
-     * @param bool $isChangedWebsites
-     * @param bool $isChangedCategories
-     * @param bool $visibilityResult
-     * @param int $expectedDeleteCount
-     * @param int $expectedReplaceCount
-     *
-     * @dataProvider urlKeyDataProvider
+     * @dataProvider notVisibilityProvider
+     * @param integer $before
+     * @param integer $after
      */
-    public function testExecuteUrlKey(
-        $isChangedUrlKey,
-        $isChangedVisibility,
-        $isChangedWebsites,
-        $isChangedCategories,
-        $visibilityResult,
-        $expectedDeleteCount,
-        $expectedReplaceCount
-    ) {
-        $this->product->expects($this->any())->method('getStoreId')->will($this->returnValue(12));
+    public function testNotVisibility($before, $after)
+    {
+        $this->product->setOrigData('visibility', $before);
+        $this->product->setData('visibility', $after);
 
-        $this->product->expects($this->any())
-            ->method('dataHasChangedFor')
-            ->will($this->returnValueMap(
-                [
-                    ['visibility', $isChangedVisibility],
-                    ['url_key', $isChangedUrlKey]
-                ]
-            ));
+        $this->productUrlRewriteGenerator->expects(static::never())->method('generate');
+        $this->urlPersist->expects(static::never())->method('replace');
 
-        $this->product->expects($this->any())
-            ->method('getIsChangedWebsites')
-            ->will($this->returnValue($isChangedWebsites));
+        $this->productProcessUrlRewriteSavingObserver->execute($this->observer);
+    }
 
-        $this->product->expects($this->any())
-            ->method('getIsChangedCategories')
-            ->will($this->returnValue($isChangedCategories));
-
-        $this->urlPersist->expects($this->exactly($expectedDeleteCount))->method('deleteByData')->with([
-            UrlRewrite::ENTITY_ID => $this->product->getId(),
-            UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
-            UrlRewrite::REDIRECT_TYPE => 0,
-            UrlRewrite::STORE_ID => $this->product->getStoreId()
-        ]);
-
-        $this->product->expects($this->any())
-            ->method('isVisibleInSiteVisibility')
-            ->will($this->returnValue($visibilityResult));
-
-        $this->urlPersist->expects($this->exactly($expectedReplaceCount))
-            ->method('replace')
-            ->with([3 => 'rewrite']);
-
-        $this->model->execute($this->observer);
+    public function notVisibilityProvider()
+    {
+        return [
+            ['origData' => Visibility::VISIBILITY_IN_SEARCH, 'data' => Visibility::VISIBILITY_IN_SEARCH],
+        ];
     }
 }

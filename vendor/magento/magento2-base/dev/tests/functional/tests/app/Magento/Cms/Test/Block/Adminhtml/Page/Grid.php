@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,13 +15,6 @@ use Magento\Mtf\Client\Element\SimpleElement;
  */
 class Grid extends DataGrid
 {
-    /**
-     * Action button (located above the Grid).
-     *
-     * @var string
-     */
-    protected $actionButton = 'button.action-select';
-
     /**
      * Select action toggle.
      *
@@ -80,7 +73,7 @@ class Grid extends DataGrid
      *
      * @var string
      */
-    protected $previewCmsPage = '[data-action="item-preview"]';
+    protected $previewCmsPage = "..//a[contains(@class, 'action-menu-item') and text() = 'Preview']";
 
     /**
      * Click on "Edit" link.
@@ -107,9 +100,9 @@ class Grid extends DataGrid
         $rowItem = $this->getRow([$filter['title']]);
         if ($rowItem->isVisible()) {
             $rowItem->find($this->selectAction)->click();
-            $rowItem->find($this->previewCmsPage)->click();
+            $rowItem->find($this->previewCmsPage, Locator::SELECTOR_XPATH)->click();
         } else {
-            throw new \Exception("Searched item was not found by filter\n" . print_r($filter, true));
+            throw new \Exception('Searched item was not found.');
         }
     }
 }

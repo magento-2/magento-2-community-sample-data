@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Search\Test\Unit\Dynamic;
@@ -10,7 +10,7 @@ use Magento\Framework\Search\Dynamic\IntervalInterface;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class IntervalFactoryTest extends \PHPUnit\Framework\TestCase
+class IntervalFactoryTest extends \PHPUnit_Framework_TestCase
 {
     const CONFIG_PATH = 'config_path';
     const INTERVAL = 'some_interval';
@@ -42,17 +42,17 @@ class IntervalFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->helper = new ObjectManager($this);
 
-        $this->objectManager = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManager = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->setMethods(['create', 'get', 'configure'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->setMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->interval = $this->getMockBuilder(\Magento\Framework\Search\Dynamic\IntervalInterface::class)
+        $this->interval = $this->getMockBuilder('Magento\Framework\Search\Dynamic\IntervalInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
     }
@@ -115,7 +115,7 @@ class IntervalFactoryTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Dynamic\IntervalFactory $factory */
         $factory = $this->helper->getObject(
-            \Magento\Framework\Search\Dynamic\IntervalFactory::class,
+            'Magento\Framework\Search\Dynamic\IntervalFactory',
             [
                 'objectManager' => $this->objectManager,
                 'scopeConfig' => $this->scopeConfig,

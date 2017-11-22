@@ -1,9 +1,7 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/* global RegionUpdater */
 define([
     'jquery',
     'mage/template',
@@ -13,7 +11,6 @@ define([
     'use strict';
 
     $.widget('mage.fptAttribute', {
-        /** @inheritdoc */
         _create: function () {
             var widget = this;
 
@@ -29,49 +26,28 @@ define([
                 widget.addItem(this);
             });
         },
-
-        /**
-         * @private
-         */
         _initOptionItem: function () {
             var widget = this,
                 isOriginalRequired = $(widget.element).hasClass('required');
 
             this._on({
-                /**
-                 * Add new tax item.
-                 *
-                 * @param {jQuery.Event} event
-                 */
+                //Add new tax item
                 'click [data-action=add-fpt-item]': function (event) {
                     this.addItem(event);
                 },
-
-                /**
-                 * Delete tax item.
-                 *
-                 * @param {jQuery.Event} event
-                 */
+                //Delete tax item
                 'click [data-action=delete-fpt-item]': function (event) {
                     var parent = $(event.target).closest('[data-role="fpt-item-row"]');
-
                     parent.find('[data-role="delete-fpt-item"]').val(1);
                     parent.addClass('ignore-validate').hide();
                 },
-
-                /**
-                 * Change tax item country/state.
-                 *
-                 * @param {jQuery.Event} event
-                 * @param {Object} data
-                 */
+                //Change tax item country/state
                 'change [data-role="select-country"]': function (event, data) {
                     var currentElement = event.target || event.srcElement || event.currentTarget,
-                        parentElement = $(currentElement).closest('[data-role="fpt-item-row"]'),
-                        updater;
+                        parentElement = $(currentElement).closest('[data-role="fpt-item-row"]');
 
                     data = data || {};
-                    updater = new RegionUpdater(
+                    var updater = new RegionUpdater(
                         parentElement.find('[data-role="select-country"]').attr('id'), null,
                         parentElement.find('[data-role="select-state"]').attr('id'),
                         widget.options.region, 'disable', true
@@ -81,7 +57,6 @@ define([
                     if (data.state) {
                         parentElement.find('[data-role="select-state"]').val(data.state);
                     }
-
                     if (!isOriginalRequired && $(widget.element).hasClass('required')) {
                         $(widget.element).removeClass('required');
                     }
@@ -106,19 +81,14 @@ define([
                 }
             });
         },
-
-        /**
-         * Add custom option.
-         *
-         * @param {jQuery.Event} event
-         */
+        //Add custom option
         addItem: function (event) {
             var data = {},
                 currentElement = event.target || event.srcElement || event.currentTarget,
                 tmpl;
 
             if (typeof currentElement !== 'undefined') {
-                data['website_id'] = 0;
+                data.website_id = 0;
             } else {
                 data = event;
             }
@@ -132,9 +102,9 @@ define([
             $(tmpl).appendTo(this.element.find('[data-role="fpt-item-container"]'));
 
             //set selected website_id value if set
-            if (data['website_id']) {
+            if (data.website_id) {
                 this.element.find('[data-role="select-website"][id$="_' + data.index + '_website"]')
-                    .val(data['website_id']);
+                    .val(data.website_id);
             }
 
             //set selected country value if set

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Theme\Test\Unit\Model\Layout\Source;
@@ -8,7 +8,7 @@ namespace Magento\Theme\Test\Unit\Model\Layout\Source;
 use Magento\Framework\DataObject;
 use Magento\Theme\Model\Layout\Source\Layout;
 
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Layout
@@ -20,9 +20,9 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
      */
     protected $config;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\Theme\Model\Layout\Config::class)
+        $this->config = $this->getMockBuilder('Magento\Theme\Model\Layout\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $this->_model = new Layout($this->config);

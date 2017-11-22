@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,8 +12,6 @@ use Magento\Backend\Block\Widget\Button\ContextInterface;
  * @method \Magento\Backend\Block\Widget\Button\Item getButtonItem()
  * @method ContextInterface getContext()
  * @method ContextInterface setContext(ContextInterface $context)
- * @api
- * @since 100.0.2
  */
 class Container extends \Magento\Framework\View\Element\AbstractBlock
 {
@@ -27,7 +25,7 @@ class Container extends \Magento\Framework\View\Element\AbstractBlock
     protected function createButton($blockName, $blockClassName = null)
     {
         if (null === $blockClassName) {
-            $blockClassName = \Magento\Backend\Block\Widget\Button::class;
+            $blockClassName = 'Magento\Backend\Block\Widget\Button';
         }
         return $this->getLayout()->createBlock($blockClassName, $blockName);
     }

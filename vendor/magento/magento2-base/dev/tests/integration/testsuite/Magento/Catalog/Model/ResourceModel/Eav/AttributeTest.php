@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Eav;
 
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute
@@ -15,7 +15,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
         );
     }
 
@@ -25,7 +25,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             'test'
         )->setEntityTypeId(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Eav\Model\Config::class
+                'Magento\Eav\Model\Config'
             )->getEntityType(
                 'catalog_product'
             )->getId()

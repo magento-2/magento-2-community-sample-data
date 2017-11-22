@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Block\Adminhtml;
@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @magentoAppArea adminhtml
  * @magentoDataFixture Magento/Customer/_files/customer.php
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * The edit block under test.
@@ -43,15 +43,15 @@ class EditTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\App\State::class)->setAreaCode('adminhtml');
+        $objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
 
-        $this->coreRegistry = $objectManager->get(\Magento\Framework\Registry::class);
+        $this->coreRegistry = $objectManager->get('Magento\Framework\Registry');
         $this->coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, self::$customerId);
 
         $this->block = $objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Customer\Block\Adminhtml\Edit::class,
+            'Magento\Customer\Block\Adminhtml\Edit',
             '',
             ['coreRegistry' => $this->coreRegistry]
         );

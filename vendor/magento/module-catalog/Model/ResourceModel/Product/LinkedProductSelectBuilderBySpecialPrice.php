@@ -1,19 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\ResourceModel\Product;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\Select;
 use Magento\Store\Model\Store;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBuilderInterface
 {
     /**
@@ -47,11 +43,6 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
     private $localeDate;
 
     /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    private $metadataPool;
-
-    /**
      * @var BaseSelectProcessorInterface
      */
     private $baseSelectProcessor;
@@ -63,7 +54,6 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
      * @param \Magento\Catalog\Helper\Data $catalogHelper
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
-     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      * @param BaseSelectProcessorInterface $baseSelectProcessor
      */
     public function __construct(
@@ -73,7 +63,6 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
         \Magento\Catalog\Helper\Data $catalogHelper,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         BaseSelectProcessorInterface $baseSelectProcessor = null
     ) {
         $this->storeManager = $storeManager;
@@ -82,7 +71,6 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
         $this->catalogHelper = $catalogHelper;
         $this->dateTime = $dateTime;
         $this->localeDate = $localeDate;
-        $this->metadataPool = $metadataPool;
         $this->baseSelectProcessor = (null !== $baseSelectProcessor)
             ? $baseSelectProcessor : ObjectManager::getInstance()->get(BaseSelectProcessorInterface::class);
     }
@@ -92,44 +80,37 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
      */
     public function build($productId)
     {
-        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
         $connection = $this->resource->getConnection();
         $specialPriceAttribute = $this->eavConfig->getAttribute(Product::ENTITY, 'special_price');
         $specialPriceFromDate = $this->eavConfig->getAttribute(Product::ENTITY, 'special_from_date');
         $specialPriceToDate = $this->eavConfig->getAttribute(Product::ENTITY, 'special_to_date');
         $timestamp = $this->localeDate->scopeTimeStamp($this->storeManager->getStore());
         $currentDate = $this->dateTime->formatDate($timestamp, false);
-        $productTable = $this->resource->getTableName('catalog_product_entity');
 
-        $specialPrice = $this->resource->getConnection()->select()
-            ->from(['parent' => $productTable], '')
+        $specialPrice = $connection->select()
+            ->from(['t' => $specialPriceAttribute->getBackendTable()], 'entity_id')
             ->joinInner(
-                ['link' => $this->resource->getTableName('catalog_product_relation')],
-                "link.parent_id = parent.$linkField",
+                [
+                    BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS
+                        => $this->resource->getTableName('catalog_product_relation')
+                ],
+                BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . '.child_id = t.entity_id',
                 []
             )->joinInner(
-                [BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS => $productTable],
-                sprintf('%s.entity_id = link.child_id', BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS),
-                ['entity_id']
-            )->joinInner(
-                ['t' => $specialPriceAttribute->getBackendTable()],
-                sprintf('t.%s = %s.%1$s', $linkField, BaseSelectProcessorInterface::PRODUCT_TABLE_ALIAS),
-                []
-            )->joinLeft(
                 ['special_from' => $specialPriceFromDate->getBackendTable()],
                 $connection->quoteInto(
-                    "t.{$linkField} = special_from.{$linkField} AND special_from.attribute_id = ?",
+                    't.entity_id = special_from.entity_id AND special_from.attribute_id = ?',
                     $specialPriceFromDate->getAttributeId()
                 ),
                 ''
-            )->joinLeft(
+            )->joinInner(
                 ['special_to' => $specialPriceToDate->getBackendTable()],
                 $connection->quoteInto(
-                    "t.{$linkField} = special_to.{$linkField} AND special_to.attribute_id = ?",
+                    't.entity_id = special_to.entity_id AND special_to.attribute_id = ?',
                     $specialPriceToDate->getAttributeId()
                 ),
                 ''
-            )->where('parent.entity_id = ?', $productId)
+            )->where(BaseSelectProcessorInterface::PRODUCT_RELATION_ALIAS . '.parent_id = ? ', $productId)
             ->where('t.attribute_id = ?', $specialPriceAttribute->getAttributeId())
             ->where('t.value IS NOT NULL')
             ->where(
@@ -142,15 +123,15 @@ class LinkedProductSelectBuilderBySpecialPrice implements LinkedProductSelectBui
             ->limit(1);
         $specialPrice = $this->baseSelectProcessor->process($specialPrice);
 
+        $specialPriceDefault = clone $specialPrice;
+        $specialPriceDefault->where('t.store_id = ?', Store::DEFAULT_STORE_ID);
+        $select[] = $specialPriceDefault;
+
         if (!$this->catalogHelper->isPriceGlobal()) {
-            $priceSelectStore = clone $specialPrice;
-            $priceSelectStore->where('t.store_id = ?', $this->storeManager->getStore()->getId());
-            $selects[] = $priceSelectStore;
+            $specialPrice->where('t.store_id = ?', $this->storeManager->getStore()->getId());
+            $select[] = $specialPrice;
         }
 
-        $specialPrice->where('t.store_id = ?', Store::DEFAULT_STORE_ID);
-        $selects[] = $specialPrice;
-
-        return $selects;
+        return $select;
     }
 }

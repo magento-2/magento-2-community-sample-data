@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,8 +12,6 @@ use Magento\Framework\ObjectManagerInterface;
  * A factory that knows how to create a "page" result
  * Requires an instance of controller action in order to impose page type,
  * which is by convention is determined from the controller action class
- *
- * @api
  */
 class PageFactory
 {
@@ -33,7 +31,7 @@ class PageFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\View\Result\Page::class
+        $instanceName = 'Magento\Framework\View\Result\Page'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

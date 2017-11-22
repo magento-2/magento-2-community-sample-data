@@ -2,12 +2,12 @@
 /**
  * \Magento\Payment\Model\Config\Converter
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Test\Unit\Model\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\Config\Converter
@@ -17,7 +17,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     /** @var  array */
     protected $_targetArray;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->_model = new \Magento\Payment\Model\Config\Converter();
     }

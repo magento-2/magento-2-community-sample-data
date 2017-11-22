@@ -1,56 +1,48 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\View\Test\Unit\Asset\NotationResolver;
 
-use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Asset\File\FallbackContext;
-use Magento\Framework\View\Asset\NotationResolver\Variable;
-use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\View\Asset\NotationResolver;
 
-class VariableTest extends \PHPUnit\Framework\TestCase
+class VariableTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var FallbackContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\View\Asset\File\Context|\PHPUnit_Framework_MockObject_MockObject
      */
     private $context;
 
     /**
-     * @var Repository|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\View\Asset\Repository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $assetRepo;
 
     /**
-     * @var Variable
+     * @var \Magento\Framework\View\Asset\NotationResolver\Variable
      */
     private $object;
 
     protected function setUp()
     {
-        $area = 'frontend';
-        $themePath = 'Magento/blank';
+        $baseUrl = 'http://example.com/pub/static/';
+        $path = 'frontend/Magento/blank/en_US';
 
-        $this->context = $this->getMockBuilder(FallbackContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context->expects($this->once())
-            ->method('getAreaCode')
-            ->willReturn($area);
-        $this->context->expects($this->exactly(2))
-            ->method('getThemePath')
-            ->willReturn($themePath);
+        $this->context = $this->getMock(
+            '\Magento\Framework\View\Asset\File\Context',
+            null,
+            [$baseUrl, DirectoryList::STATIC_VIEW, $path]
+        );
 
-        $this->assetRepo = $this->getMockBuilder(Repository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assetRepo = $this->getMock('Magento\Framework\View\Asset\Repository', [], [], '', false);
         $this->assetRepo->expects($this->any())
             ->method('getStaticViewFileContext')
             ->will($this->returnValue($this->context));
 
-        $this->object = new Variable($this->assetRepo);
+        $this->object = new \Magento\Framework\View\Asset\NotationResolver\Variable($this->assetRepo);
     }
 
     /**
@@ -69,7 +61,7 @@ class VariableTest extends \PHPUnit\Framework\TestCase
     public function convertVariableNotationDataProvider()
     {
         return [
-            ['{{base_url_path}}/file.ext', '{{base_url_path}}frontend/Magento/blank/{{locale}}/file.ext'],
+            ['{{base_url_path}}/file.ext', 'http://example.com/pub/static/frontend/Magento/blank/en_US/file.ext'],
         ];
     }
 }

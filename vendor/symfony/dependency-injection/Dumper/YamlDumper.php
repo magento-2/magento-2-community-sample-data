@@ -12,11 +12,7 @@
 namespace Symfony\Component\DependencyInjection\Dumper;
 
 use Symfony\Component\Yaml\Dumper as YmlDumper;
-use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
-use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Parameter;
@@ -50,7 +46,7 @@ class YamlDumper extends Dumper
             $this->dumper = new YmlDumper();
         }
 
-        return $this->container->resolveEnvPlaceholders($this->addParameters()."\n".$this->addServices());
+        return $this->addParameters()."\n".$this->addServices();
     }
 
     /**
@@ -100,6 +96,10 @@ class YamlDumper extends Dumper
             $code .= "        synthetic: true\n";
         }
 
+        if ($definition->isSynchronized(false)) {
+            $code .= "        synchronized: true\n";
+        }
+
         if ($definition->isDeprecated()) {
             $code .= sprintf("        deprecated: %s\n", $definition->getDeprecationMessage('%service_id%'));
         }
@@ -109,15 +109,15 @@ class YamlDumper extends Dumper
         }
 
         $autowiringTypesCode = '';
-        foreach ($definition->getAutowiringTypes(false) as $autowiringType) {
+        foreach ($definition->getAutowiringTypes() as $autowiringType) {
             $autowiringTypesCode .= sprintf("            - %s\n", $this->dumper->dump($autowiringType));
         }
         if ($autowiringTypesCode) {
             $code .= sprintf("        autowiring_types:\n%s", $autowiringTypesCode);
         }
 
-        if ($definition->isAutoconfigured()) {
-            $code .= "        autoconfigure: true\n";
+        if ($definition->getFactoryClass(false)) {
+            $code .= sprintf("        factory_class: %s\n", $this->dumper->dump($definition->getFactoryClass(false)));
         }
 
         if ($definition->isAbstract()) {
@@ -126,6 +126,14 @@ class YamlDumper extends Dumper
 
         if ($definition->isLazy()) {
             $code .= "        lazy: true\n";
+        }
+
+        if ($definition->getFactoryMethod(false)) {
+            $code .= sprintf("        factory_method: %s\n", $this->dumper->dump($definition->getFactoryMethod(false)));
+        }
+
+        if ($definition->getFactoryService(false)) {
+            $code .= sprintf("        factory_service: %s\n", $this->dumper->dump($definition->getFactoryService(false)));
         }
 
         if ($definition->getArguments()) {
@@ -142,6 +150,10 @@ class YamlDumper extends Dumper
 
         if (!$definition->isShared()) {
             $code .= "        shared: false\n";
+        }
+
+        if (ContainerInterface::SCOPE_CONTAINER !== $scope = $definition->getScope(false)) {
+            $code .= sprintf("        scope: %s\n", $this->dumper->dump($scope));
         }
 
         if (null !== $decorated = $definition->getDecoratedService()) {
@@ -221,7 +233,7 @@ class YamlDumper extends Dumper
             return '';
         }
 
-        $parameters = $this->prepareParameters($this->container->getParameterBag()->all(), $this->container->isCompiled());
+        $parameters = $this->prepareParameters($this->container->getParameterBag()->all(), $this->container->isFrozen());
 
         return $this->dumper->dump(array('parameters' => $parameters), 2);
     }
@@ -257,19 +269,6 @@ class YamlDumper extends Dumper
      */
     private function dumpValue($value)
     {
-        if ($value instanceof ServiceClosureArgument) {
-            $value = $value->getValues()[0];
-        }
-        if ($value instanceof ArgumentInterface) {
-            if ($value instanceof IteratorArgument) {
-                $tag = 'iterator';
-            } else {
-                throw new RuntimeException(sprintf('Unspecified Yaml tag for type "%s".', get_class($value)));
-            }
-
-            return new TaggedValue($tag, $this->dumpValue($value->getValues()));
-        }
-
         if (is_array($value)) {
             $code = array();
             foreach ($value as $k => $v) {

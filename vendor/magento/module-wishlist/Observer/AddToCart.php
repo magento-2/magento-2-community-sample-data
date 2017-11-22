@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,29 +15,20 @@ use Magento\Wishlist\Model\WishlistFactory;
 
 /**
  * Class AddToCart
- * @deprecated 100.2.0
  * @package Magento\Wishlist\Observer
  */
 class AddToCart implements ObserverInterface
 {
-    /**
-     * @var \Magento\Checkout\Model\Session
-     */
+    /** @var CheckoutSession */
     protected $checkoutSession;
 
-    /**
-     * @var \Magento\Customer\Model\Session
-     */
+    /** @var CustomerSession */
     protected $customerSession;
 
-    /**
-     * @var \Magento\Wishlist\Model\WishlistFactory
-     */
+    /** @var WishlistFactory */
     protected $wishlistFactory;
 
-    /**
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
+    /** @var ManagerInterface */
     protected $messageManager;
 
     /**

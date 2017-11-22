@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click 'Delete' button.
  * 5. Perform all assertions.
  *
- * @group Product_Attributes
+ * @group Product_Attributes_(MX)
  * @ZephyrId MAGETWO-25473
  */
 class DeleteAttributeSetTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

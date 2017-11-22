@@ -1,14 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * @api
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Mtf\Util\Generate\Factory;
 
 /**
  * Page Factory generator.
  *
- * @api
  */
 class Page extends AbstractFactory
 {
@@ -65,7 +66,7 @@ class Page extends AbstractFactory
             $this->factoryContent .= "\n";
         }
 
-        $this->factoryContent .= "        return \$this->objectManager->create({$realClass}::class);";
+        $this->factoryContent .= "        return \$this->objectManager->create('{$realClass}');";
         $this->factoryContent .= "\n    }\n";
 
         $this->cnt++;

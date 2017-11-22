@@ -1,23 +1,24 @@
 <?php
 /***
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Variable\Test\Unit\Model\Variable;
 
+
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetWysiwygPluginSettings()
     {
         $jsPluginSourceUrl = 'js-plugin-source';
         $actionUrl = 'action-url';
-        $assetRepoMock = $this->getMockBuilder(\Magento\Framework\View\Asset\Repository::class)
+        $assetRepoMock = $this->getMockBuilder('Magento\Framework\View\Asset\Repository')
             ->disableOriginalConstructor()
             ->getMock();
-        $urlMock = $this->getMockBuilder(\Magento\Backend\Model\UrlInterface::class)
+        $urlMock = $this->getMockBuilder('Magento\Backend\Model\UrlInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $assetRepoMock->expects($this->any())
@@ -32,7 +33,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'assetRepo' => $assetRepoMock,
             'url' => $urlMock
         ];
-        $model = (new ObjectManager($this))->getObject(\Magento\Variable\Model\Variable\Config::class, $args);
+        $model = (new ObjectManager($this))->getObject('Magento\Variable\Model\Variable\Config', $args);
 
         $customKey = 'key';
         $customVal = 'val';

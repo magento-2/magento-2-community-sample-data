@@ -361,10 +361,10 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function getSize()
     {
-        return [
+        return array(
             $this->getWidth(),
             $this->getHeight(),
-        ];
+        );
     }
 
     /**

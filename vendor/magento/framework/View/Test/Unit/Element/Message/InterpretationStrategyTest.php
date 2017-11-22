@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Element\Message;
@@ -11,7 +11,7 @@ use Magento\Framework\View\Element\Message\MessageConfigurationsPool;
 use Magento\Framework\View\Element\Message\Renderer\RendererInterface;
 use Magento\Framework\View\Element\Message\Renderer\RenderersPool;
 
-class InterpretationStrategyTest extends \PHPUnit\Framework\TestCase
+class InterpretationStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RenderersPool | \PHPUnit_Framework_MockObject_MockObject
@@ -38,23 +38,23 @@ class InterpretationStrategyTest extends \PHPUnit\Framework\TestCase
      */
     private $interpretationStrategy;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->renderersPool = $this->getMockBuilder(
-            \Magento\Framework\View\Element\Message\Renderer\RenderersPool::class
+            'Magento\Framework\View\Element\Message\Renderer\RenderersPool'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->messageConfigurationsPool = $this->getMockBuilder(
-            \Magento\Framework\View\Element\Message\MessageConfigurationsPool::class
+            'Magento\Framework\View\Element\Message\MessageConfigurationsPool'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageMock = $this->createMock(
-            \Magento\Framework\Message\MessageInterface::class
+        $this->messageMock = $this->getMock(
+            'Magento\Framework\Message\MessageInterface'
         );
-        $this->renderer = $this->createMock(
-            \Magento\Framework\View\Element\Message\Renderer\RendererInterface::class
+        $this->renderer = $this->getMock(
+            'Magento\Framework\View\Element\Message\Renderer\RendererInterface'
         );
 
         $this->interpretationStrategy = new InterpretationStrategy(
@@ -74,8 +74,8 @@ class InterpretationStrategyTest extends \PHPUnit\Framework\TestCase
         ];
         $renderedMessage = 'Script';
 
-        $renderer = $this->createMock(
-            \Magento\Framework\View\Element\Message\Renderer\RendererInterface::class
+        $renderer = $this->getMock(
+            'Magento\Framework\View\Element\Message\Renderer\RendererInterface'
         );
 
         $this->messageMock->expects(static::once())
@@ -116,7 +116,7 @@ class InterpretationStrategyTest extends \PHPUnit\Framework\TestCase
                 null
             );
 
-        $this->expectException('LogicException');
+        $this->setExpectedException('LogicException');
 
         $this->renderersPool->expects(static::never())
             ->method('get');
@@ -148,7 +148,7 @@ class InterpretationStrategyTest extends \PHPUnit\Framework\TestCase
             ->with($messageConfiguration['renderer'])
             ->willReturn(null);
 
-        $this->expectException('LogicException');
+        $this->setExpectedException('LogicException');
 
         $this->interpretationStrategy->interpret($this->messageMock);
     }

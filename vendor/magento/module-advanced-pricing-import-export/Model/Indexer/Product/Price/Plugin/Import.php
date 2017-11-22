@@ -1,27 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\AdvancedPricingImportExport\Model\Indexer\Product\Price\Plugin;
 
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing;
 
-class Import
+class Import extends \Magento\Catalog\Model\Indexer\Product\Price\Plugin\AbstractPlugin
 {
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
-    private $indexerRegistry;
-
-    /**
-     * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry
-     */
-    public function __construct(\Magento\Framework\Indexer\IndexerRegistry $indexerRegistry)
-    {
-        $this->indexerRegistry = $indexerRegistry;
-    }
-
     /**
      * After import handler
      *
@@ -31,7 +18,9 @@ class Import
      */
     public function afterSaveAdvancedPricing(AdvancedPricing $subject)
     {
-        $this->invalidateIndexer();
+        if (!$this->getPriceIndexer()->isScheduled()) {
+            $this->invalidateIndexer();
+        }
     }
 
     /**
@@ -43,19 +32,18 @@ class Import
      */
     public function afterDeleteAdvancedPricing(AdvancedPricing $subject)
     {
-        $this->invalidateIndexer();
+        if (!$this->getPriceIndexer()->isScheduled()) {
+            $this->invalidateIndexer();
+        }
     }
 
     /**
-     * Invalidate indexer
+     * Get price indexer
      *
-     * @return void
+     * @return \Magento\Framework\Indexer\IndexerInterface
      */
-    private function invalidateIndexer()
+    protected function getPriceIndexer()
     {
-        $priceIndexer = $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Product\Price\Processor::INDEXER_ID);
-        if (!$priceIndexer->isScheduled()) {
-            $priceIndexer->invalidate();
-        }
+        return $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Product\Price\Processor::INDEXER_ID);
     }
 }

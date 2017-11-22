@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Authorizenet\Test\Unit\Controller\Directpost\Payment;
@@ -16,7 +16,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class RedirectTest
  */
-class RedirectTest extends \PHPUnit\Framework\TestCase
+class RedirectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestInterface|MockObject

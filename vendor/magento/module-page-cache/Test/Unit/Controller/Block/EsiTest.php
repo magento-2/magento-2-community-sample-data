@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,10 +9,7 @@
 
 namespace Magento\PageCache\Test\Unit\Controller\Block;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class EsiTest extends \PHPUnit\Framework\TestCase
+class EsiTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Request\Http|\PHPUnit_Framework_MockObject_MockObject
@@ -49,35 +46,28 @@ class EsiTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()->getMock();
 
         $contextMock =
-            $this->getMockBuilder(\Magento\Framework\App\Action\Context::class)
-                ->disableOriginalConstructor()->getMock();
+            $this->getMockBuilder('Magento\Framework\App\Action\Context')->disableOriginalConstructor()->getMock();
 
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()->getMock();
-        $this->viewMock = $this->getMockBuilder(\Magento\Framework\App\View::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->viewMock = $this->getMockBuilder('Magento\Framework\App\View')->disableOriginalConstructor()->getMock();
 
         $contextMock->expects($this->any())->method('getRequest')->will($this->returnValue($this->requestMock));
         $contextMock->expects($this->any())->method('getResponse')->will($this->returnValue($this->responseMock));
         $contextMock->expects($this->any())->method('getView')->will($this->returnValue($this->viewMock));
 
-        $this->translateInline = $this->createMock(\Magento\Framework\Translate\InlineInterface::class);
+        $this->translateInline = $this->getMock('Magento\Framework\Translate\InlineInterface');
 
         $helperObjectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->action = $helperObjectManager->getObject(
-            \Magento\PageCache\Controller\Block\Esi::class,
-            [
-                'context' => $contextMock,
-                'translateInline' => $this->translateInline,
-                'jsonSerializer' => new \Magento\Framework\Serialize\Serializer\Json(),
-                'base64jsonSerializer' => new \Magento\Framework\Serialize\Serializer\Base64Json()
-            ]
+            'Magento\PageCache\Controller\Block\Esi',
+            ['context' => $contextMock, 'translateInline' => $this->translateInline]
         );
     }
 
@@ -91,9 +81,15 @@ class EsiTest extends \PHPUnit\Framework\TestCase
         $block = 'block';
         $handles = ['handle1', 'handle2'];
         $html = 'some-html';
-        $mapData = [['blocks', '', json_encode([$block])], ['handles', '', base64_encode(json_encode($handles))]];
+        $mapData = [['blocks', '', json_encode([$block])], ['handles', '', json_encode($handles)]];
 
-        $blockInstance1 = $this->createPartialMock($blockClass, ['toHtml']);
+        $blockInstance1 = $this->getMock(
+            $blockClass,
+            ['toHtml'],
+            [],
+            '',
+            false
+        );
 
         $blockInstance1->expects($this->once())->method('toHtml')->will($this->returnValue($html));
         $blockInstance1->setTtl(360);
@@ -133,8 +129,8 @@ class EsiTest extends \PHPUnit\Framework\TestCase
     public function executeDataProvider()
     {
         return [
-            [\Magento\PageCache\Test\Unit\Block\Controller\StubBlock::class, true],
-            [\Magento\Framework\View\Element\AbstractBlock::class, false],
+            ['Magento\PageCache\Test\Unit\Block\Controller\StubBlock', true],
+            ['Magento\Framework\View\Element\AbstractBlock', false],
         ];
     }
 

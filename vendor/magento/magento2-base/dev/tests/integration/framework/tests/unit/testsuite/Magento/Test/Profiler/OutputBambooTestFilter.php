@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -49,7 +49,7 @@ class OutputBambooTestFilter extends \php_user_filter
      */
     public static function assertCollectedData($expectedData)
     {
-        \PHPUnit\Framework\Assert::assertStringMatchesFormat(
+        \PHPUnit_Framework_Assert::assertStringMatchesFormat(
             $expectedData,
             self::$_collectedData,
             'Expected data went through the stream.'

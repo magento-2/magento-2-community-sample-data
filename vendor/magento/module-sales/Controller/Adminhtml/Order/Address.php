@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order;
@@ -9,9 +9,7 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
 class Address extends \Magento\Sales\Controller\Adminhtml\Order
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::actions_edit';
 
@@ -23,7 +21,7 @@ class Address extends \Magento\Sales\Controller\Adminhtml\Order
     public function execute()
     {
         $addressId = $this->getRequest()->getParam('address_id');
-        $address = $this->_objectManager->create(\Magento\Sales\Model\Order\Address::class)->load($addressId);
+        $address = $this->_objectManager->create('Magento\Sales\Model\Order\Address')->load($addressId);
         if ($address->getId()) {
             $this->_coreRegistry->register('order_address', $address);
             $resultPage = $this->resultPageFactory->create();

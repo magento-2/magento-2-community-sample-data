@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter;
 
 use \Magento\Framework\View\Layout\Argument\Interpreter\Options;
 
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,13 +26,13 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_model = new Options($this->_objectManager);
     }
 
     public function testEvaluate()
     {
-        $modelClass = \Magento\Framework\Data\OptionSourceInterface::class;
+        $modelClass = 'Magento\Framework\Data\OptionSourceInterface';
         $model = $this->getMockForAbstractClass($modelClass);
         $model->expects(
             $this->once()
@@ -67,7 +67,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testEvaluateWrongModel($input, $expectedException, $expectedExceptionMessage)
     {
-        $this->expectException($expectedException, $expectedExceptionMessage);
+        $this->setExpectedException($expectedException, $expectedExceptionMessage);
         $this->_model->evaluate($input);
     }
 
@@ -76,7 +76,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
         return [
             'no model' => [[], '\InvalidArgumentException', 'Options source model class is missing'],
             'wrong model class' => [
-                ['model' => \Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter\OptionsTest::class],
+                ['model' => 'Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter\OptionsTest'],
                 '\UnexpectedValueException',
                 'Instance of the options source model is expected',
             ]

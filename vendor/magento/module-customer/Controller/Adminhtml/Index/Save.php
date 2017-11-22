@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller\Adminhtml\Index;
@@ -9,16 +9,18 @@ use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Controller\RegistryConstants;
-use Magento\Customer\Model\EmailNotificationInterface;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Framework\Exception\LocalizedException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Save extends \Magento\Customer\Controller\Adminhtml\Index
 {
     /**
-     * @var EmailNotificationInterface
+     * @var \Magento\Customer\Model\Metadata\FormFactory
      */
-    private $emailNotification;
+    protected $_formFactory;
 
     /**
      * Reformat customer account data to be compatible with customer service interface
@@ -34,7 +36,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 CustomerInterface::DEFAULT_SHIPPING,
                 'confirmation',
                 'sendemail_store_id',
-                'extension_attributes',
             ];
 
             $customerData = $this->_extractData(
@@ -71,6 +72,8 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
         $scope = null
     ) {
         $metadataForm = $this->getMetadataForm($entityType, $formCode, $scope);
+
+        /** @var array $formData */
         $formData = $metadataForm->extractData($this->getRequest(), $scope);
         $formData = $metadataForm->compactData($formData);
 
@@ -92,10 +95,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
             ) {
                 unset($formData[$attributeCode]);
             }
-        }
-
-        if (empty($formData['extension_attributes'])) {
-            unset($formData['extension_attributes']);
         }
 
         return $formData;
@@ -187,9 +186,9 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 $addressesData = $this->_extractCustomerAddressData($customerData);
 
                 if ($customerId) {
-                    $currentCustomer = $this->_customerRepository->getById($customerId);
+                    $savedCustomerData = $this->_customerRepository->getById($customerId);
                     $customerData = array_merge(
-                        $this->customerMapper->toFlatArray($currentCustomer),
+                        $this->customerMapper->toFlatArray($savedCustomerData),
                         $customerData
                     );
                     $customerData['id'] = $customerId;
@@ -200,7 +199,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 $this->dataObjectHelper->populateWithArray(
                     $customer,
                     $customerData,
-                    \Magento\Customer\Api\Data\CustomerInterface::class
+                    '\Magento\Customer\Api\Data\CustomerInterface'
                 );
                 $addresses = [];
                 foreach ($addressesData as $addressData) {
@@ -214,7 +213,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     $this->dataObjectHelper->populateWithArray(
                         $addressDataObject,
                         $addressData,
-                        \Magento\Customer\Api\Data\AddressInterface::class
+                        '\Magento\Customer\Api\Data\AddressInterface'
                     );
                     $addresses[] = $addressDataObject;
                 }
@@ -231,8 +230,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 // Save customer
                 if ($customerId) {
                     $this->_customerRepository->save($customer);
-
-                    $this->getEmailNotification()->credentialsChanged($customer, $currentCustomer->getEmail());
                 } else {
                     $customer = $this->customerAccountManagement->createAccount($customer);
                     $customerId = $customer->getId();
@@ -243,7 +240,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     $isSubscribed = $this->getRequest()->getPost('subscription');
                 }
                 if ($isSubscribed !== null) {
-                    if ($isSubscribed !== '0') {
+                    if ($isSubscribed !== 'false') {
                         $this->_subscriberFactory->create()->subscribeCustomerById($customerId);
                     } else {
                         $this->_subscriberFactory->create()->unsubscribeCustomerById($customerId);
@@ -255,7 +252,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     'adminhtml_customer_save_after',
                     ['customer' => $customer, 'request' => $this->getRequest()]
                 );
-                $this->_getSession()->unsCustomerFormData();
+                $this->_getSession()->unsCustomerData();
                 // Done Saving customer, finish save action
                 $this->_coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, $customerId);
                 $this->messageManager->addSuccess(__('You saved the customer.'));
@@ -266,15 +263,15 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                     $messages = $exception->getMessage();
                 }
                 $this->_addSessionErrorMessages($messages);
-                $this->_getSession()->setCustomerFormData($originalRequestData);
+                $this->_getSession()->setCustomerData($originalRequestData);
                 $returnToEdit = true;
             } catch (LocalizedException $exception) {
                 $this->_addSessionErrorMessages($exception->getMessage());
-                $this->_getSession()->setCustomerFormData($originalRequestData);
+                $this->_getSession()->setCustomerData($originalRequestData);
                 $returnToEdit = true;
             } catch (\Exception $exception) {
                 $this->messageManager->addException($exception, __('Something went wrong while saving the customer.'));
-                $this->_getSession()->setCustomerFormData($originalRequestData);
+                $this->_getSession()->setCustomerData($originalRequestData);
                 $returnToEdit = true;
             }
         }
@@ -295,23 +292,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
             $resultRedirect->setPath('customer/index');
         }
         return $resultRedirect;
-    }
-
-    /**
-     * Get email notification
-     *
-     * @return EmailNotificationInterface
-     * @deprecated 100.1.0
-     */
-    private function getEmailNotification()
-    {
-        if (!($this->emailNotification instanceof EmailNotificationInterface)) {
-            return \Magento\Framework\App\ObjectManager::getInstance()->get(
-                EmailNotificationInterface::class
-            );
-        } else {
-            return $this->emailNotification;
-        }
     }
 
     /**

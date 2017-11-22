@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ThemeSampleData\Setup;
@@ -49,7 +49,7 @@ class Installer implements Setup\SampleData\InstallerInterface
     public function install()
     {
         $this->assignTheme();
-        $this->css->install(['Magento_ThemeSampleData::fixtures/styles.css' => 'styles.css']);
+        $this->css->install(['Magento_CmsSampleData::fixtures/styles.css' => 'styles.css']);
     }
 
     /**

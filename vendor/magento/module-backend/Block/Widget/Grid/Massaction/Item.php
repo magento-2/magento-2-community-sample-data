@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget\Grid\Massaction;
@@ -8,9 +8,7 @@ namespace Magento\Backend\Block\Widget\Grid\Massaction;
 /**
  * Grid widget massaction single action item
  *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Item extends \Magento\Backend\Block\Widget
 {
@@ -71,7 +69,7 @@ class Item extends \Magento\Backend\Block\Widget
         $type = isset($config['type']) ? $config['type'] : 'default';
         switch ($type) {
             default:
-                $blockClass = \Magento\Backend\Block\Widget\Grid\Massaction\Item\Additional\DefaultAdditional::class;
+                $blockClass = 'Magento\Backend\Block\Widget\Grid\Massaction\Item\Additional\DefaultAdditional';
                 break;
         }
 

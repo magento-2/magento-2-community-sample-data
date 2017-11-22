@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Bundle\Model\Plugin\Product */
     private $plugin;
@@ -21,21 +21,21 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /** @var  MockObject|\Magento\Catalog\Model\Product */
     private $product;
 
-    protected function setUp()
+    public function setUp()
     {
         $objectManager = new ObjectManager($this);
 
-        $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
-            ->setMethods(['getEntityId'])
+            ->setMethods(['getId'])
             ->getMock();
-        $this->type = $this->getMockBuilder(\Magento\Bundle\Model\Product\Type::class)
+        $this->type = $this->getMockBuilder('\Magento\Bundle\Model\Product\Type')
             ->disableOriginalConstructor()
             ->setMethods(['getParentIdsByChild'])
             ->getMock();
 
         $this->plugin = $objectManager->getObject(
-            \Magento\Bundle\Model\Plugin\Product::class,
+            'Magento\Bundle\Model\Plugin\Product',
             [
                 'type' => $this->type,
             ]
@@ -59,7 +59,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             Product::CACHE_TAG . '_' . 100500,
         ];
         $this->product->expects($this->once())
-            ->method('getEntityId')
+            ->method('getId')
             ->will($this->returnValue($id));
         $this->type->expects($this->once())
             ->method('getParentIdsByChild')

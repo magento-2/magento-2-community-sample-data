@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,11 +14,11 @@ $designChanges = [
 ];
 foreach ($designChanges as $designChangeData) {
     $storeId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
+        'Magento\Store\Model\StoreManagerInterface'
     )->getStore(
         $designChangeData['store']
     )->getId();
-    $change = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Theme\Model\Design::class);
+    $change = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Theme\Model\Design');
     $change->setStoreId(
         $storeId
     )->setDesign(

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\View\Asset;
@@ -13,7 +13,7 @@ use Magento\Framework\View\Asset\ContextInterface;
 /**
  * Class ImageTest
  */
-class ImageTest extends \PHPUnit\Framework\TestCase
+class ImageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\View\Asset\Image
@@ -88,30 +88,6 @@ class ImageTest extends \PHPUnit\Framework\TestCase
             $miscParams
         );
         $absolutePath = '/var/www/html/magento2ce/pub/media/catalog/product';
-        $hashPath = md5(implode('_', $miscParams));
-        $this->imageContext->expects($this->once())->method('getPath')->willReturn($absolutePath);
-        $this->encryptor->expects($this->once())->method('hash')->willReturn($hashPath);
-        $this->assertEquals(
-            $absolutePath . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $hashPath . $filePath,
-            $imageModel->getPath()
-        );
-    }
-
-    /**
-     * @param string $filePath
-     * @param array $miscParams
-     * @dataProvider getPathDataProvider
-     */
-    public function testGetNotUnixPath($filePath, $miscParams)
-    {
-        $imageModel = new Image(
-            $this->mediaConfig,
-            $this->imageContext,
-            $this->encryptor,
-            $filePath,
-            $miscParams
-        );
-        $absolutePath = 'C:\www\magento2ce\pub\media\catalog\product';
         $hashPath = md5(implode('_', $miscParams));
         $this->imageContext->expects($this->once())->method('getPath')->willReturn($absolutePath);
         $this->encryptor->expects($this->once())->method('hash')->willReturn($hashPath);

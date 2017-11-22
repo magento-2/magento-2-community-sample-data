@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model\DateTime;
@@ -11,7 +11,7 @@ use Magento\Setup\Model\ObjectManagerProvider;
 /**
  * Provider of Timezone instance
  */
-class TimeZoneProvider
+class TimezoneProvider
 {
     /**
      * Object Manager provider
@@ -46,7 +46,7 @@ class TimeZoneProvider
     {
         if (!$this->timezone) {
             $this->timezone = $this->objectManagerProvider->get()->create(
-                \Magento\Framework\Stdlib\DateTime\Timezone::class,
+                'Magento\Framework\Stdlib\DateTime\Timezone',
                 ['scopeType' => ScopeConfigInterface::SCOPE_TYPE_DEFAULT]
             );
         }

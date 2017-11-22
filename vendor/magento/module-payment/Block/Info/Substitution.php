@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Payment\Block\Info;
@@ -25,7 +25,7 @@ class Substitution extends \Magento\Payment\Block\Info
         $container = $parentBlock->getParentBlock();
         if ($container) {
             $block = $this->_layout->createBlock(
-                \Magento\Framework\View\Element\Template::class,
+                'Magento\Framework\View\Element\Template',
                 '',
                 ['data' => ['method' => $this->getMethod(), 'template' => 'Magento_Payment::info/substitution.phtml']]
             );

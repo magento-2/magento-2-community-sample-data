@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Model\Order\Payment\Transaction;
 
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Data\Collection;
@@ -62,19 +61,14 @@ class Repository implements TransactionRepositoryInterface
     private $entityStorage;
 
     /**
-     * @var \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
-     * Repository constructor.
+     * Repository constructor
+     *
      * @param SearchResultFactory $searchResultFactory
      * @param FilterBuilder $filterBuilder
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param SortOrderBuilder $sortOrderBuilder
      * @param Metadata $metaData
      * @param EntityStorageFactory $entityStorageFactory
-     * @param CollectionProcessorInterface|null $collectionProcessor
      */
     public function __construct(
         SearchResultFactory $searchResultFactory,
@@ -82,8 +76,7 @@ class Repository implements TransactionRepositoryInterface
         SearchCriteriaBuilder $searchCriteriaBuilder,
         SortOrderBuilder $sortOrderBuilder,
         Metadata $metaData,
-        EntityStorageFactory $entityStorageFactory,
-        CollectionProcessorInterface $collectionProcessor = null
+        EntityStorageFactory $entityStorageFactory
     ) {
         $this->searchResultFactory = $searchResultFactory;
         $this->filterBuilder = $filterBuilder;
@@ -91,7 +84,6 @@ class Repository implements TransactionRepositoryInterface
         $this->sortOrderBuilder = $sortOrderBuilder;
         $this->metaData = $metaData;
         $this->entityStorage = $entityStorageFactory->create();
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -126,11 +118,11 @@ class Repository implements TransactionRepositoryInterface
         $cacheStorage = 'txn_type';
         $entity = $this->entityStorage->getByIdentifyingFields($identityFieldsForCache, $cacheStorage);
         if (!$entity) {
-            $typeFilter = $this->filterBuilder
+            $filters[] = $this->filterBuilder
                 ->setField(TransactionInterface::TXN_TYPE)
                 ->setValue($transactionType)
                 ->create();
-            $idFilter = $this->filterBuilder
+            $filters[] = $this->filterBuilder
                 ->setField(TransactionInterface::PAYMENT_ID)
                 ->setValue($paymentId)
                 ->create();
@@ -145,8 +137,7 @@ class Repository implements TransactionRepositoryInterface
             $entity = current(
                 $this->getList(
                     $this->searchCriteriaBuilder
-                        ->addFilters([$typeFilter])
-                        ->addFilters([$idFilter])
+                        ->addFilters($filters)
                         ->addSortOrder($transactionIdSort)
                         ->addSortOrder($createdAtSort)
                         ->create()
@@ -192,12 +183,18 @@ class Repository implements TransactionRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria)
     {
         /** @var TransactionResource\Collection $collection */
         $collection = $this->searchResultFactory->create();
-        $collection->setSearchCriteria($searchCriteria);
-        $this->collectionProcessor->process($searchCriteria, $collection);
+        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
+            foreach ($filterGroup->getFilters() as $filter) {
+                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
+            }
+        }
+        $collection->setCurPage($searchCriteria->getCurrentPage());
+        $collection->setPageSize($searchCriteria->getPageSize());
         $collection->addPaymentInformation(['method']);
         $collection->addOrderInformation(['increment_id']);
         return $collection;
@@ -231,21 +228,5 @@ class Repository implements TransactionRepositoryInterface
     public function create()
     {
         return $this->metaData->getNewInstance();
-    }
-
-    /**
-     * Retrieve collection processor
-     *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
-     */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface::class
-            );
-        }
-        return $this->collectionProcessor;
     }
 }

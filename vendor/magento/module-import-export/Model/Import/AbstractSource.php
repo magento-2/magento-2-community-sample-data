@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ImportExport\Model\Import;
@@ -9,9 +9,6 @@ use Magento\ImportExport\Model\Import\AbstractEntity;
 
 /**
  * Data source with columns for Magento_ImportExport
- *
- * @api
- * @since 100.0.2
  */
 abstract class AbstractSource implements \SeekableIterator
 {
@@ -105,7 +102,7 @@ abstract class AbstractSource implements \SeekableIterator
     {
         $this->_key++;
         $row = $this->_getNextRow();
-        if (false === $row || [] === $row) {
+        if (false === $row) {
             $this->_row = [];
             $this->_key = -1;
         } else {

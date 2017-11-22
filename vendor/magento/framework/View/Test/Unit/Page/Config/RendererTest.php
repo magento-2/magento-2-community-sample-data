@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,7 +16,7 @@ use Magento\Framework\View\Page\Config\Generator;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RendererTest extends \PHPUnit\Framework\TestCase
+class RendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Renderer
@@ -75,45 +75,45 @@ class RendererTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assetMergeServiceMock = $this->getMockBuilder(\Magento\Framework\View\Asset\MergeService::class)
+        $this->assetMergeServiceMock = $this->getMockBuilder('Magento\Framework\View\Asset\MergeService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->urlBuilderMock = $this->getMockForAbstractClass(\Magento\Framework\UrlInterface::class);
+        $this->urlBuilderMock = $this->getMockForAbstractClass('Magento\Framework\UrlInterface');
 
-        $this->escaperMock = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $this->escaperMock = $this->getMockBuilder('Magento\Framework\Escaper')
             ->disableOriginalConstructor()
             ->getMock();
         $this->escaperMock->expects($this->any())
             ->method('escapeHtml')
             ->willReturnArgument(0);
 
-        $this->stringMock = $this->getMockBuilder(\Magento\Framework\Stdlib\StringUtils::class)
+        $this->stringMock = $this->getMockBuilder('Magento\Framework\Stdlib\StringUtils')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
 
-        $this->assetsCollection = $this->getMockBuilder(\Magento\Framework\View\Asset\GroupedCollection::class)
+        $this->assetsCollection = $this->getMockBuilder('Magento\Framework\View\Asset\GroupedCollection')
             ->setMethods(['getGroups'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assetInterfaceMock = $this->getMockForAbstractClass(\Magento\Framework\View\Asset\AssetInterface::class);
+        $this->assetInterfaceMock = $this->getMockForAbstractClass('Magento\Framework\View\Asset\AssetInterface');
 
-        $this->titleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->titleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->setMethods(['set', 'get'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManager($this);
         $this->renderer = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\Page\Config\Renderer::class,
+            'Magento\Framework\View\Page\Config\Renderer',
             [
                 'pageConfig' => $this->pageConfigMock,
                 'assetMergeService' => $this->assetMergeServiceMock,
@@ -147,15 +147,13 @@ class RendererTest extends \PHPUnit\Framework\TestCase
             'content_type' => 'content_type_value',
             'x_ua_compatible' => 'x_ua_compatible_value',
             'media_type' => 'media_type_value',
-            'og:video:secure_url' => 'secure_url'
         ];
         $metadataValueCharset = 'newCharsetValue';
 
         $expected = '<meta charset="newCharsetValue"/>' . "\n"
             . '<meta name="metadataName" content="metadataValue"/>' . "\n"
             . '<meta http-equiv="Content-Type" content="content_type_value"/>' . "\n"
-            . '<meta http-equiv="X-UA-Compatible" content="x_ua_compatible_value"/>' . "\n"
-            . '<meta property="og:video:secure_url" content="secure_url"/>' . "\n";
+            . '<meta http-equiv="X-UA-Compatible" content="x_ua_compatible_value"/>' . "\n";
 
         $this->stringMock->expects($this->at(0))
             ->method('upperCaseWords')
@@ -261,15 +259,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
 
         $exception = new \Magento\Framework\Exception\LocalizedException(new \Magento\Framework\Phrase('my message'));
 
-        $assetMockOne = $this->createMock(\Magento\Framework\View\Asset\AssetInterface::class);
+        $assetMockOne = $this->getMock('Magento\Framework\View\Asset\AssetInterface');
         $assetMockOne->expects($this->exactly(2))
             ->method('getUrl')
             ->willReturn($assetUrl);
-        $assetMockOne->expects($this->atLeastOnce())->method('getContentType')->willReturn($groupOne['type']);
 
         $groupAssetsOne = [$assetMockOne, $assetMockOne];
 
-        $groupMockOne = $this->getMockBuilder(\Magento\Framework\View\Asset\PropertyGroup::class)
+        $groupMockOne = $this->getMockBuilder('Magento\Framework\View\Asset\PropertyGroup')
             ->disableOriginalConstructor()
             ->getMock();
         $groupMockOne->expects($this->once())
@@ -284,15 +281,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
                 ['ie_condition', $groupOne['condition']],
             ]);
 
-        $assetMockTwo = $this->createMock(\Magento\Framework\View\Asset\AssetInterface::class);
+        $assetMockTwo = $this->getMock('Magento\Framework\View\Asset\AssetInterface');
         $assetMockTwo->expects($this->once())
             ->method('getUrl')
             ->willThrowException($exception);
-        $assetMockTwo->expects($this->atLeastOnce())->method('getContentType')->willReturn($groupTwo['type']);
 
         $groupAssetsTwo = [$assetMockTwo];
 
-        $groupMockTwo = $this->getMockBuilder(\Magento\Framework\View\Asset\PropertyGroup::class)
+        $groupMockTwo = $this->getMockBuilder('Magento\Framework\View\Asset\PropertyGroup')
             ->disableOriginalConstructor()
             ->getMock();
         $groupMockTwo->expects($this->once())

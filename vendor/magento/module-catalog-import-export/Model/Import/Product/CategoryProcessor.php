@@ -1,16 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Import\Product;
 
-/**
- * Class CategoryProcessor
- *
- * @api
- * @since 100.0.2
- */
 class CategoryProcessor
 {
     /**
@@ -43,14 +37,6 @@ class CategoryProcessor
      * @var \Magento\Catalog\Model\CategoryFactory
      */
     protected $categoryFactory;
-
-    /**
-     * Failed categories during creation
-     *
-     * @var array
-     * @since 100.1.0
-     */
-    protected $failedCategories = [];
 
     /**
      * @param \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryColFactory
@@ -86,10 +72,7 @@ class CategoryProcessor
                     for ($i = 1; $i < $pathSize; $i++) {
                         $path[] = $collection->getItemById((int)$structure[$i])->getName();
                     }
-                    /** @var string $index */
-                    $index = $this->standardizeString(
-                        implode(self::DELIMITER_CATEGORY, $path)
-                    );
+                    $index = implode(self::DELIMITER_CATEGORY, $path);
                     $this->categories[$index] = $category->getId();
                 }
             }
@@ -124,25 +107,23 @@ class CategoryProcessor
         return $category->getId();
     }
 
+
     /**
      * Returns ID of category by string path creating nonexistent ones.
      *
      * @param string $categoryPath
-     *
+     * 
      * @return int
      */
     protected function upsertCategory($categoryPath)
     {
-        /** @var string $index */
-        $index = $this->standardizeString($categoryPath);
-
-        if (!isset($this->categories[$index])) {
+        if (!isset($this->categories[$categoryPath])) {
             $pathParts = explode(self::DELIMITER_CATEGORY, $categoryPath);
             $parentId = \Magento\Catalog\Model\Category::TREE_ROOT_ID;
             $path = '';
 
             foreach ($pathParts as $pathPart) {
-                $path .= $this->standardizeString($pathPart);
+                $path .= $pathPart;
                 if (!isset($this->categories[$path])) {
                     $this->categories[$path] = $this->createCategory($pathPart, $parentId);
                 }
@@ -151,7 +132,7 @@ class CategoryProcessor
             }
         }
 
-        return $this->categories[$index];
+        return $this->categories[$categoryPath];
     }
 
     /**
@@ -168,55 +149,10 @@ class CategoryProcessor
         $categories = explode($categoriesSeparator, $categoriesString);
 
         foreach ($categories as $category) {
-            try {
-                $categoriesIds[] = $this->upsertCategory($category);
-            } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
-                $this->addFailedCategory($category, $e);
-            }
+            $categoriesIds[] = $this->upsertCategory($category);
         }
 
         return $categoriesIds;
-    }
-
-    /**
-     * Add failed category
-     *
-     * @param string $category
-     * @param \Magento\Framework\Exception\AlreadyExistsException $exception
-     *
-     * @return $this
-     */
-    private function addFailedCategory($category, $exception)
-    {
-        $this->failedCategories[] =
-            [
-                'category' => $category,
-                'exception' => $exception,
-            ];
-        return $this;
-    }
-
-    /**
-     * Return failed categories
-     *
-     * @return array
-     * @since 100.1.0
-     */
-    public function getFailedCategories()
-    {
-        return $this->failedCategories;
-    }
-
-    /**
-     * Resets failed categories' array
-     *
-     * @return $this
-     * @since 100.2.0
-     */
-    public function clearFailedCategories()
-    {
-        $this->failedCategories = [];
-        return $this;
     }
 
     /**
@@ -229,18 +165,5 @@ class CategoryProcessor
     public function getCategoryById($categoryId)
     {
         return isset($this->categoriesCache[$categoryId]) ? $this->categoriesCache[$categoryId] : null;
-    }
-
-    /**
-     * Standardize a string.
-     * For now it performs only a lowercase action, this method is here to include more complex checks in the future
-     * if needed.
-     *
-     * @param string $string
-     * @return string
-     */
-    private function standardizeString($string)
-    {
-        return mb_strtolower($string);
     }
 }

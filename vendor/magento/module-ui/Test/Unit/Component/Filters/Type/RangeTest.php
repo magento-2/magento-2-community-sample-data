@@ -1,19 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Test\Unit\Component\Filters\Type;
 
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface as UiContext;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Filters\Type\Range;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 /**
  * Class RangeTest
  */
-class RangeTest extends \PHPUnit\Framework\TestCase
+class RangeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -38,19 +39,38 @@ class RangeTest extends \PHPUnit\Framework\TestCase
     /**
      * Set up
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->contextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class,
+            'Magento\Framework\View\Element\UiComponent\ContextInterface',
             [],
             '',
             false
         );
-        $this->uiComponentFactory = $this->createMock(\Magento\Framework\View\Element\UiComponentFactory::class);
-        $this->filterBuilderMock = $this->createMock(\Magento\Framework\Api\FilterBuilder::class);
-        $this->filterModifierMock = $this->createPartialMock(
-            \Magento\Ui\Component\Filters\FilterModifier::class,
-            ['applyFilterModifier']
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->uiComponentFactory = $this->getMock(
+            'Magento\Framework\View\Element\UiComponentFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->filterBuilderMock = $this->getMock(
+            'Magento\Framework\Api\FilterBuilder',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->filterModifierMock = $this->getMock(
+            'Magento\Ui\Component\Filters\FilterModifier',
+            ['applyFilterModifier'],
+            [],
+            '',
+            false
         );
     }
 
@@ -61,7 +81,6 @@ class RangeTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetComponentName()
     {
-        $this->contextMock->expects($this->never())->method('getProcessor');
         $range = new Range(
             $this->contextMock,
             $this->uiComponentFactory,
@@ -78,30 +97,12 @@ class RangeTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $name
      * @param array $filterData
-     * @param array|null $expectedCalls
+     * @param array|null $expectedCondition
      * @dataProvider getPrepareDataProvider
      * @return void
      */
-    public function testPrepare($name, $filterData, $expectedCalls)
+    public function testPrepare($name, $filterData, $expectedCondition)
     {
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
-        $filter = $this->createMock(\Magento\Framework\Api\Filter::class);
-        $this->filterBuilderMock->expects($this->any())
-            ->method('setConditionType')
-            ->willReturnSelf();
-        $this->filterBuilderMock->expects($this->any())
-            ->method('setField')
-            ->willReturnSelf();
-        $this->filterBuilderMock->expects($this->any())
-            ->method('setValue')
-            ->willReturnSelf();
-        $this->filterBuilderMock->expects($this->any())
-            ->method('create')
-            ->willReturn($filter);
-
         $this->contextMock->expects($this->any())
             ->method('getNamespace')
             ->willReturn(Range::NAME);
@@ -109,24 +110,24 @@ class RangeTest extends \PHPUnit\Framework\TestCase
             ->method('addComponentDefinition')
             ->with(Range::NAME, ['extends' => Range::NAME]);
         $this->contextMock->expects($this->any())
-            ->method('getFiltersParams')
+            ->method('getRequestParam')
+            ->with(UiContext::FILTER_VAR)
             ->willReturn($filterData);
-
         /** @var DataProviderInterface $dataProvider */
         $dataProvider = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class,
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface',
             [],
             '',
             false
         );
-
-        $this->contextMock->expects($this->atLeastOnce())
+        $this->contextMock->expects($this->any())
             ->method('getDataProvider')
             ->willReturn($dataProvider);
-
-        $dataProvider->expects($this->exactly($expectedCalls))
-            ->method('addFilter')
-            ->with($filter);
+        if ($expectedCondition !== null) {
+            $dataProvider->expects($this->any())
+                ->method('addFilter')
+                ->with($expectedCondition, $name);
+        }
 
         $range = new Range(
             $this->contextMock,
@@ -148,67 +149,37 @@ class RangeTest extends \PHPUnit\Framework\TestCase
             [
                 'test_date',
                 ['test_date' => ['from' => 0, 'to' => 1]],
-                2
+                ['from' => null, 'orig_from' => 0, 'to' => 1],
             ],
             [
                 'test_date',
                 ['test_date' => ['from' => '', 'to' => 2]],
-                1
+                ['from' => null, 'orig_from' => '', 'to' => 2],
             ],
             [
                 'test_date',
                 ['test_date' => ['from' => 1, 'to' => '']],
-                1
+                ['from' => 1, 'orig_to' => '', 'to' => null],
             ],
             [
                 'test_date',
                 ['test_date' => ['from' => 1, 'to' => 0]],
-                2
+                ['from' => 1, 'orig_to' => 0, 'to' => null],
             ],
             [
                 'test_date',
                 ['test_date' => ['from' => 1, 'to' => 2]],
-                2
-            ],
-            [
-                'test_date',
-                ['test_date' => ['from' => 0, 'to' => 0]],
-                2
-            ],
-            [
-                'test_date',
-                ['test_date' => ['from' => '0', 'to' => '0']],
-                2
-            ],
-            [
-                'test_date',
-                ['test_date' => ['from' => '0.0', 'to' => 1]],
-                2
+                ['from' => 1, 'to' => 2],
             ],
             [
                 'test_date',
                 ['test_date' => ['from' => '', 'to' => '']],
-                0
-            ],
-            [
-                'test_date',
-                ['test_date' => ['from' => 'a', 'to' => 'b']],
-                0
-            ],
-            [
-                'test_date',
-                ['test_date' => ['from' => '1']],
-                1
-            ],
-            [
-                'test_date',
-                ['test_date' => ['to' => '1']],
-                1
+                null,
             ],
             [
                 'test_date',
                 ['test_date' => []],
-                0
+                null,
             ],
         ];
     }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GridPerPageTest extends \PHPUnit\Framework\TestCase
+class GridPerPageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\GridPerPage
@@ -18,7 +18,7 @@ class GridPerPageTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Config\Source\GridPerPage::class,
+            'Magento\Catalog\Model\Config\Source\GridPerPage',
             ['perPageValues' => 'some,values']
         );
     }

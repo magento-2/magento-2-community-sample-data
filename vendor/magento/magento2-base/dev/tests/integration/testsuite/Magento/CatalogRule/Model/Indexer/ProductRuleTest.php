@@ -1,29 +1,34 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Model\Indexer;
 
-use Magento\Catalog\Model\ProductRepository;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class ProductRuleTest extends \PHPUnit\Framework\TestCase
+class ProductRuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\ResourceModel\Rule
      */
     protected $resourceRule;
 
+    /**
+     * @var \Magento\Catalog\Model\Product
+     */
+    protected $product;
+
     protected function setUp()
     {
-        $this->resourceRule = Bootstrap::getObjectManager()->get(\Magento\CatalogRule\Model\ResourceModel\Rule::class);
+        $this->resourceRule = Bootstrap::getObjectManager()->get('Magento\CatalogRule\Model\ResourceModel\Rule');
+        $this->product = Bootstrap::getObjectManager()->get('Magento\Catalog\Model\Product');
 
-        Bootstrap::getObjectManager()->get(\Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor::class)
+        Bootstrap::getObjectManager()->get('Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor')
             ->getIndexer()->isScheduled(false);
     }
 
@@ -35,39 +40,8 @@ class ProductRuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testReindexAfterSuitableProductSaving()
     {
-        /** @var ProductRepository $productRepository */
-        $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            ProductRepository::class
-        );
-        $product = $productRepository->get('simple');
-        $product->setData('test_attribute', 'test_attribute_value')->save();
+        $this->product->load(1)->setData('test_attribute', 'test_attribute_value')->save();
 
-        $this->assertEquals(9.8, $this->resourceRule->getRulePrice(new \DateTime(), 1, 1, $product->getId()));
-    }
-
-    /**
-     * Checks whether category price rule applies to product with visibility value "Not Visibility Individually".
-     *
-     * @magentoDataFixture Magento/CatalogRule/_files/rule_by_category_ids.php
-     * @magentoDataFixture Magento/Catalog/_files/categories.php
-     */
-    public function testReindexWithProductNotVisibleIndividually()
-    {
-        /** @var ProductRepository $productRepository */
-        $productRepository = Bootstrap::getObjectManager()->create(
-            ProductRepository::class
-        );
-        $product = $productRepository->get('simple-3');
-
-        $indexBuilder = Bootstrap::getObjectManager()->get(
-            IndexBuilder::class
-        );
-        $indexBuilder->reindexById($product->getId());
-
-        $this->assertEquals(
-            7.5,
-            $this->resourceRule->getRulePrice(new \DateTime(), 1, 1, $product->getId()),
-            "Catalog price rule doesn't apply to to product with visibility value \"Not Visibility Individually\""
-        );
+        $this->assertEquals(9.8, $this->resourceRule->getRulePrice(new \DateTime(), 1, 1, 1));
     }
 }

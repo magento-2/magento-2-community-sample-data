@@ -1,34 +1,31 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
+ */
+
+/**
+ * Prepare cron jobs data
  */
 namespace Magento\Cron\Model\Config;
 
-use Magento\Framework\Serialize\SerializerInterface;
-
-/**
- * Provides cron configuration
- */
 class Data extends \Magento\Framework\Config\Data
 {
     /**
-     * Constructor
+     * Initialize parameters
      *
-     * @param Reader\Xml $reader
-     * @param \Magento\Framework\Config\CacheInterface $cache
-     * @param Reader\Db $dbReader
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param \Magento\Cron\Model\Config\Reader\Xml $reader
+     * @param \Magento\Framework\Config\CacheInterface        $cache
+     * @param \Magento\Cron\Model\Config\Reader\Db  $dbReader
+     * @param string                               $cacheId
      */
     public function __construct(
         \Magento\Cron\Model\Config\Reader\Xml $reader,
         \Magento\Framework\Config\CacheInterface $cache,
         \Magento\Cron\Model\Config\Reader\Db $dbReader,
-        $cacheId = 'crontab_config_cache',
-        SerializerInterface $serializer = null
+        $cacheId = 'crontab_config_cache'
     ) {
-        parent::__construct($reader, $cache, $cacheId, $serializer);
+        parent::__construct($reader, $cache, $cacheId);
         $this->merge($dbReader->get());
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,46 +10,35 @@ use Magento\Mtf\Block\Block;
 use Magento\Mtf\Client\Locator;
 
 /**
- * Block for text of empty cart.
+ * Class CartEmpty
+ * Block for text of empty cart
  */
 class CartEmpty extends Block
 {
     /**
-     * Selector for link "here" to main page.
+     * Selector for link "here" to main page
      *
      * @var string
      */
-    private $linkToMainPage = 'p a';
+    protected $linkToMainPage = './/a';
 
     /**
-     * CSS selector for message text.
-     *
-     * @var string
-     */
-    private $messageText = 'p';
-
-    /**
-     * Get test for empty cart.
+     * Get test for empty cart
      *
      * @return string
      */
     public function getText()
     {
-        $result = [];
-        foreach ($this->_rootElement->getElements($this->messageText) as $item) {
-            $result[] = str_replace("\n", ' ', $item->getText());
-        }
-
-        return implode(' ', $result);
+        return str_replace("\n", ' ', $this->_rootElement->getText());
     }
 
     /**
-     * Click link to main page.
+     * Click link to main page
      *
      * @return void
      */
     public function clickLinkToMainPage()
     {
-        $this->_rootElement->find($this->linkToMainPage)->click();
+        $this->_rootElement->find($this->linkToMainPage, Locator::SELECTOR_XPATH)->click();
     }
 }

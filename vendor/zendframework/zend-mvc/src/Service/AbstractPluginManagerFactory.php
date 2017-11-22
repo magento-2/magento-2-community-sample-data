@@ -31,7 +31,7 @@ abstract class AbstractPluginManagerFactory implements FactoryInterface
         /* @var $plugins AbstractPluginManager */
         $plugins = new $pluginManagerClass;
         $plugins->setServiceLocator($serviceLocator);
-        $configuration = $serviceLocator->get('config');
+        $configuration = $serviceLocator->get('Config');
 
         if (isset($configuration['di']) && $serviceLocator->has('Di')) {
             $plugins->addAbstractFactory($serviceLocator->get('DiAbstractServiceFactory'));

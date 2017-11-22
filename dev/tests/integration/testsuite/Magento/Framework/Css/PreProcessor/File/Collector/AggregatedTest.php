@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @magentoComponentsDir Magento/Framework/Css/PreProcessor/_files/code/Magento
  * @magentoDbIsolation enabled
  */
-class AggregatedTest extends \PHPUnit\Framework\TestCase
+class AggregatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Css\PreProcessor\File\Collector\Aggregated
@@ -41,17 +41,17 @@ class AggregatedTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Theme\Model\Theme\Registration $registration */
         $registration = $this->objectManager->get(
-            \Magento\Theme\Model\Theme\Registration::class
+            'Magento\Theme\Model\Theme\Registration'
         );
         $registration->register();
-        $this->objectManager->get(\Magento\Framework\App\State::class)->setAreaCode('frontend');
+        $this->objectManager->get('Magento\Framework\App\State')->setAreaCode('frontend');
 
         /** @var \Magento\Framework\Filesystem $filesystem */
         $filesystem = $this->objectManager->create(
-            \Magento\Framework\Filesystem::class,
+            'Magento\Framework\Filesystem',
             [
                 'directoryList' => $this->objectManager->create(
-                    \Magento\Framework\App\Filesystem\DirectoryList::class,
+                    'Magento\Framework\App\Filesystem\DirectoryList',
                     [
                         'root' => BP,
                     ]
@@ -61,14 +61,14 @@ class AggregatedTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\View\File\Collector\Base $sourceBase */
         $sourceBase = $this->objectManager->create(
-            \Magento\Framework\View\File\Collector\Base::class, ['filesystem' => $filesystem, 'subDir' => 'web']
+            'Magento\Framework\View\File\Collector\Base', ['filesystem' => $filesystem, 'subDir' => 'web']
         );
         /** @var \Magento\Framework\View\File\Collector\Base $sourceBase */
         $overriddenBaseFiles = $this->objectManager->create(
-            \Magento\Framework\View\File\Collector\Override\Base::class, ['filesystem' => $filesystem, 'subDir' => 'web']
+            'Magento\Framework\View\File\Collector\Override\Base', ['filesystem' => $filesystem, 'subDir' => 'web']
         );
         $this->model = $this->objectManager->create(
-            \Magento\Framework\Css\PreProcessor\File\Collector\Aggregated::class,
+            'Magento\Framework\Css\PreProcessor\File\Collector\Aggregated',
             ['baseFiles' => $sourceBase, 'overriddenBaseFiles' => $overriddenBaseFiles]
         );
     }
@@ -85,7 +85,7 @@ class AggregatedTest extends \PHPUnit\Framework\TestCase
     public function testGetFiles($path, $themeName, array $expectedFiles)
     {
         /** @var \Magento\Framework\View\Design\Theme\FlyweightFactory $themeFactory */
-        $themeFactory = $this->objectManager->get(\Magento\Framework\View\Design\Theme\FlyweightFactory::class);
+        $themeFactory = $this->objectManager->get('Magento\Framework\View\Design\Theme\FlyweightFactory');
         $theme = $themeFactory->create($themeName);
         $files = $this->model->getFiles($theme, $path);
         $actualFiles = [];

@@ -1,5 +1,5 @@
 // /**
-//  * Copyright © Magento, Inc. All rights reserved.
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
 //  * See COPYING.txt for license details.
 //  */
 
@@ -16,20 +16,18 @@
 //
 
 .admin__data-grid-pager-wrap {
-    float: right;
     text-align: right;
+    float: right;
 }
 
 .admin__data-grid-pager {
     display: inline-block;
     margin-left: @content__indent;
-
     .admin__control-text::-webkit-outer-spin-button,
     .admin__control-text::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
-
     .admin__control-text {
         -moz-appearance: textfield;
         text-align: center;
@@ -40,12 +38,10 @@
 .action-previous,
 .action-next {
     width: @data-grid-pager-action__width;
-
     &:before {
         &:extend(.abs-icon all);
         font-weight: @font-weight__bold;
     }
-
     > span {
         .hidden();
     }
@@ -54,7 +50,6 @@
 .action-previous {
     margin-right: 2.5rem;
     text-indent: -.25em;
-
     &:before {
         content: @icon-caret-left__content;
     }
@@ -63,7 +58,6 @@
 .action-next {
     margin-left: 1.5rem;
     text-indent: .1em;
-
     &:before {
         content: @icon-caret-right__content;
     }

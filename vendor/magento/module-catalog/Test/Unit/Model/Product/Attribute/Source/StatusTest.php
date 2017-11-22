@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,10 +8,9 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Source;
 
-use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Catalog\Model\Product\Attribute\Source\Status */
     protected $status;
@@ -28,15 +27,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend|\PHPUnit_Framework_MockObject_MockObject */
     protected $backendAttributeModel;
 
-    /**
-     * @var AbstractEntity|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $entity;
-
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->collection = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, [
+        $this->collection = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
+            [
                 '__wakeup',
                 'getSelect',
                 'joinLeft',
@@ -44,19 +40,28 @@ class StatusTest extends \PHPUnit\Framework\TestCase
                 'getStoreId',
                 'getConnection',
                 'getCheckSql'
-            ]);
-        $this->attributeModel = $this->createPartialMock(\Magento\Catalog\Model\Entity\Attribute::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->attributeModel = $this->getMock(
+            '\Magento\Catalog\Model\Entity\Attributee',
+            [
                 '__wakeup',
                 'getAttributeCode',
                 'getBackend',
                 'getId',
                 'isScopeGlobal',
-                'getEntity',
-                'getAttribute'
-            ]);
-        $this->backendAttributeModel = $this->createPartialMock(\Magento\Catalog\Model\Product\Attribute\Backend\Sku::class, ['__wakeup', 'getTable']);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->backendAttributeModel = $this->getMock(
+            '\Magento\Catalog\Model\Product\Attribute\Backend\Sku', ['__wakeup', 'getTable'], [], '', false);
         $this->status = $this->objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Source\Status::class
+            'Magento\Catalog\Model\Product\Attribute\Source\Status'
         );
 
         $this->attributeModel->expects($this->any())->method('getAttribute')
@@ -73,11 +78,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnSelf());
         $this->backendAttributeModel->expects($this->any())->method('getTable')
             ->will($this->returnValue('table_name'));
-
-        $this->entity = $this->getMockBuilder(AbstractEntity::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getLinkField'])
-            ->getMockForAbstractClass();
     }
 
     public function testAddValueSortToCollectionGlobal()
@@ -86,9 +86,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(true));
         $this->collection->expects($this->once())->method('order')->with('attribute_code_t.value asc')
             ->will($this->returnSelf());
-
-        $this->attributeModel->expects($this->once())->method('getEntity')->willReturn($this->entity);
-        $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);
         $this->status->addValueSortToCollection($this->collection);
@@ -107,9 +104,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnSelf());
         $this->collection->expects($this->any())->method('getCheckSql')
             ->will($this->returnValue('check_sql'));
-
-        $this->attributeModel->expects($this->any())->method('getEntity')->willReturn($this->entity);
-        $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);
         $this->status->addValueSortToCollection($this->collection);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Eav\Test\Unit\Helper;
 
 use Magento\Store\Model\ScopeInterface;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Helper\Data
@@ -42,15 +42,15 @@ class DataTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->attributeConfig = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Config::class);
-        $this->eavConfig = $this->createMock(\Magento\Eav\Model\Config::class);
-        $this->context = $this->createPartialMock(\Magento\Framework\App\Helper\Context::class, ['getScopeConfig']);
+        $this->attributeConfig = $this->getMock('\Magento\Eav\Model\Entity\Attribute\Config', [], [], '', false);
+        $this->eavConfig = $this->getMock('\Magento\Eav\Model\Config', [], [], '', false);
+        $this->context = $this->getMock('\Magento\Framework\App\Helper\Context', ['getScopeConfig'], [], '', false);
 
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
         $this->context->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfigMock);
 
         $this->helper = $objectManager->getObject(
-            \Magento\Eav\Helper\Data::class,
+            '\Magento\Eav\Helper\Data',
             [
                 'attributeConfig' => $this->attributeConfig,
                 'eavConfig' => $this->eavConfig,

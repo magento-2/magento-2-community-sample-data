@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model;
@@ -31,7 +31,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class ShipOrderTest extends \PHPUnit\Framework\TestCase
+class ShipOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject

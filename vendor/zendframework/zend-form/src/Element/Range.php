@@ -22,9 +22,9 @@ class Range extends NumberElement
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'range',
-    ];
+    );
 
     /**
      * Get validator
@@ -37,31 +37,31 @@ class Range extends NumberElement
             return $this->validators;
         }
 
-        $validators = [];
+        $validators = array();
         $validators[] = new NumberValidator();
 
         $inclusive = true;
-        if (! empty($this->attributes['inclusive'])) {
+        if (!empty($this->attributes['inclusive'])) {
             $inclusive = $this->attributes['inclusive'];
         }
 
-        $validators[] = new GreaterThanValidator([
+        $validators[] = new GreaterThanValidator(array(
             'min'       => (isset($this->attributes['min'])) ? $this->attributes['min'] : 0,
             'inclusive' => $inclusive
-        ]);
+        ));
 
-        $validators[] = new LessThanValidator([
+        $validators[] = new LessThanValidator(array(
             'max'       => (isset($this->attributes['max'])) ? $this->attributes['max'] : 100,
             'inclusive' => $inclusive
-        ]);
+        ));
 
-        if (! isset($this->attributes['step'])
+        if (!isset($this->attributes['step'])
             || 'any' !== $this->attributes['step']
         ) {
-            $validators[] = new StepValidator([
+            $validators[] = new StepValidator(array(
                 'baseValue' => (isset($this->attributes['min'])) ? $this->attributes['min'] : 0,
                 'step'      => (isset($this->attributes['step'])) ? $this->attributes['step'] : 1,
-            ]);
+            ));
         }
 
         $this->validators = $validators;

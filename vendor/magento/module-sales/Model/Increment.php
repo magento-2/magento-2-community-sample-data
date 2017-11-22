@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model;
@@ -9,7 +9,6 @@ use Magento\Eav\Model\Config as EavConfig;
 
 /**
  * Class Increment
- * @deprecated 100.2.0
  */
 class Increment
 {

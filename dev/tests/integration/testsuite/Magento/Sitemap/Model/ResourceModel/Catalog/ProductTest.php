@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sitemap\Model\ResourceModel\Catalog;
@@ -9,16 +9,11 @@ namespace Magento\Sitemap\Model\ResourceModel\Catalog;
  * Test class for \Magento\Sitemap\Model\ResourceModel\Catalog\Product.
  * - test products collection generation for sitemap
  *
- * @magentoDataFixtureBeforeTransaction Magento/Catalog/_files/enable_reindex_schedule.php
+ * @magentoDataFixtureBeforeTransaction Magento/CatalogSearch/_files/full_reindex.php
  * @magentoDataFixture Magento/Sitemap/_files/sitemap_products.php
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Base product image path
-     */
-    const BASE_IMAGE_PATH = 'http://localhost/pub/media/catalog/product/cache/c9e0b0ef589f3508e5ba515cde53c5ff';
-    
     /**
      * Test getCollection None images
      * 1) Check that image attributes were not loaded
@@ -29,7 +24,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetCollectionNone()
     {
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sitemap\Model\ResourceModel\Catalog\Product::class
+            'Magento\Sitemap\Model\ResourceModel\Catalog\Product'
         );
         $products = $model->getCollection(\Magento\Store\Model\Store::DISTRO_STORE_ID);
 
@@ -56,7 +51,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetCollectionAll()
     {
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sitemap\Model\ResourceModel\Catalog\Product::class
+            'Magento\Sitemap\Model\ResourceModel\Catalog\Product'
         );
         $products = $model->getCollection(\Magento\Store\Model\Store::DISTRO_STORE_ID);
 
@@ -77,7 +72,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($products[4]->getImages(), 'Images were not loaded');
         $this->assertEquals('Simple Images', $products[4]->getImages()->getTitle(), 'Incorrect title');
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/m/a/magento_image_sitemap.png',
+            'catalog/product/m/a/magento_image_sitemap.png',
             $products[4]->getImages()->getThumbnail(),
             'Incorrect thumbnail'
         );
@@ -85,12 +80,12 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $imagesCollection = $products[4]->getImages()->getCollection();
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/m/a/magento_image_sitemap.png',
+            'catalog/product/m/a/magento_image_sitemap.png',
             $imagesCollection[0]->getUrl(),
             'Incorrect image url'
         );
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/s/e/second_image.png',
+            'catalog/product/s/e/second_image.png',
             $imagesCollection[1]->getUrl(),
             'Incorrect image url'
         );
@@ -102,12 +97,12 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $imagesCollection = $products[5]->getImages()->getCollection();
         $this->assertCount(1, $imagesCollection);
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/s/e/second_image_1.png',
+            'catalog/product/s/e/second_image_1.png',
             $imagesCollection[0]->getUrl(),
             'Image url is incorrect'
         );
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/s/e/second_image_1.png',
+            'catalog/product/s/e/second_image_1.png',
             $products[5]->getImages()->getThumbnail(),
             'Product thumbnail is incorrect'
         );
@@ -124,7 +119,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetCollectionBase()
     {
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sitemap\Model\ResourceModel\Catalog\Product::class
+            'Magento\Sitemap\Model\ResourceModel\Catalog\Product'
         );
         $products = $model->getCollection(\Magento\Store\Model\Store::DISTRO_STORE_ID);
 
@@ -145,7 +140,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($products[4]->getImages(), 'Images were not loaded');
         $this->assertEquals('Simple Images', $products[4]->getImages()->getTitle(), 'Incorrect title');
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/s/e/second_image.png',
+            'catalog/product/s/e/second_image.png',
             $products[4]->getImages()->getThumbnail(),
             'Incorrect thumbnail'
         );
@@ -153,7 +148,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $imagesCollection = $products[4]->getImages()->getCollection();
         $this->assertEquals(
-            self::BASE_IMAGE_PATH.'/s/e/second_image.png',
+            'catalog/product/s/e/second_image.png',
             $imagesCollection[0]->getUrl(),
             'Incorrect image url'
         );

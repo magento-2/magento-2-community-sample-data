@@ -1,18 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Test\Unit\App;
 
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\App\ResourceConnection\ConfigInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Model\ResourceModel\Type\Db\ConnectionFactoryInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\App\ResourceConnection\ConfigInterface;
 
-class ResourceConnectionTest extends \PHPUnit\Framework\TestCase
+class ResourceConnectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ResourceConnection
@@ -56,7 +56,7 @@ class ResourceConnectionTest extends \PHPUnit\Framework\TestCase
             [
                 'deploymentConfig' => $this->deploymentConfigMock,
                 'connectionFactory' => $this->connectionFactoryMock,
-                'config' => $this->configMock,
+                'resourceConfig' => $this->configMock,
             ]
         );
     }
@@ -64,7 +64,7 @@ class ResourceConnectionTest extends \PHPUnit\Framework\TestCase
     public function testGetConnectionByName()
     {
         $this->deploymentConfigMock->expects(self::once())->method('get')
-            ->with(ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTIONS . '/default')
+            ->with(ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTIONS  . '/default')
             ->willReturn(['config']);
         $this->connectionFactoryMock->expects(self::once())->method('create')
             ->with(['config'])
@@ -79,9 +79,14 @@ class ResourceConnectionTest extends \PHPUnit\Framework\TestCase
             ResourceConnection::class,
             [
                 'deploymentConfig' => $this->deploymentConfigMock,
-                'connections' => ['default_process_' . getmypid() => 'existing_connection']
             ]
         );
+        $connectionProperty = new \ReflectionProperty(
+            ResourceConnection::class,
+            'connections'
+        );
+        $connectionProperty->setAccessible(true);
+        $connectionProperty->setValue($unit, ['default_process_' . getmypid() => 'existing_connection']);
         $this->deploymentConfigMock->expects(self::never())->method('get');
 
         self::assertEquals('existing_connection', $unit->getConnectionByName('default'));
@@ -92,5 +97,6 @@ class ResourceConnectionTest extends \PHPUnit\Framework\TestCase
         $this->configMock->expects(self::once())->method('getConnectionName')->with('default');
 
         $this->unit->closeConnection('default');
+
     }
 }

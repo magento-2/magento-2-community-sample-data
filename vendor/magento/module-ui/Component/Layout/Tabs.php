@@ -1,17 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Ui\Component\Layout;
 
 use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\UiComponent\BlockWrapperInterface;
 use Magento\Framework\View\Element\UiComponent\DataSourceInterface;
-use Magento\Framework\View\Element\UiComponent\LayoutInterface;
+use Magento\Ui\Component\Layout\Tabs\TabInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
-use Magento\Ui\Component\Layout\Tabs\TabInterface;
+use Magento\Framework\View\Element\UiComponent\LayoutInterface;
 
 /**
  * Class Tabs
@@ -24,6 +23,16 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
     protected $navContainerName;
 
     /**
+     * @var UiComponentInterface
+     */
+    protected $component;
+
+    /**
+     * @var string
+     */
+    protected $namespace;
+
+    /**
      * @var array
      */
     protected $structure = [];
@@ -34,16 +43,20 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
     protected $sortIncrement = 10;
 
     /**
+     * @var UiComponentFactory
+     */
+    protected $uiComponentFactory;
+
+    /**
      * Constructor
      *
      * @param UiComponentFactory $uiComponentFactory
      * @param null|string $navContainerName
-     * @param array $data
      */
-    public function __construct(UiComponentFactory $uiComponentFactory, $navContainerName = null, $data = [])
+    public function __construct(UiComponentFactory $uiComponentFactory, $navContainerName = null)
     {
         $this->navContainerName = $navContainerName;
-        parent::__construct($uiComponentFactory, $data);
+        $this->uiComponentFactory = $uiComponentFactory;
     }
 
     /**
@@ -58,6 +71,15 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         $this->namespace = $component->getContext()->getNamespace();
 
         $this->addNavigationBlock();
+
+        // Register html content element
+        $this->component->getContext()->addComponentDefinition(
+            'html_content',
+            [
+                'component' => 'Magento_Ui/js/form/components/html',
+                'extends' => $this->namespace
+            ]
+        );
 
         // Initialization of structure components
         $this->initSections();
@@ -85,7 +107,7 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
             if ($childComponent instanceof DataSourceInterface) {
                 continue;
             }
-            if ($childComponent instanceof BlockWrapperInterface) {
+            if ($childComponent instanceof \Magento\Ui\Component\Wrapper\Block) {
                 $this->addWrappedBlock($childComponent, $childrenAreas);
                 continue;
             }
@@ -144,16 +166,9 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
 
             $tabComponent = $this->createTabComponent($childComponent, $name);
 
-            if (isset($structure[$name]['dataScope']) && $structure[$name]['dataScope']) {
-                $dataScope = $structure[$name]['dataScope'];
-                unset($structure[$name]['dataScope']);
-            } else {
-                $dataScope = 'data.' . $name;
-            }
-
             $childrenAreas[$name] = [
                 'type' => $tabComponent->getComponentName(),
-                'dataScope' => $dataScope,
+                'dataScope' => 'data.' . $name,
                 'config' => $config,
                 'insertTo' => [
                     $this->namespace . '.sections' => [
@@ -171,11 +186,11 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
     /**
      * Add wrapped layout block
      *
-     * @param BlockWrapperInterface $childComponent
+     * @param \Magento\Ui\Component\Wrapper\Block $childComponent
      * @param array $areas
      * @return void
      */
-    protected function addWrappedBlock(BlockWrapperInterface $childComponent, array &$areas)
+    protected function addWrappedBlock(\Magento\Ui\Component\Wrapper\Block $childComponent, array &$areas)
     {
         $name = $childComponent->getName();
         /** @var TabInterface $block */
@@ -183,16 +198,13 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         if (!$block->canShowTab()) {
             return;
         }
-        if (!$block instanceof TabInterface) {
-            parent::addWrappedBlock($childComponent, $areas);
-        }
         $block->setData('target_form', $this->namespace);
 
         $config = [];
         if ($block->isAjaxLoaded()) {
             $config['url'] = $block->getTabUrl();
         } else {
-            $config['content'] = $childComponent->getData('config/content') ?: $block->toHtml();
+            $config['content'] = $block->toHtml();
         }
 
         $tabComponent = $this->createTabComponent($childComponent, $name);
@@ -303,7 +315,7 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         if (isset($config['dataScope'])) {
             $dataScope = $config['dataScope'];
             unset($config['dataScope']);
-        } elseif ($name !== $parentName) {
+        } else if ($name !== $parentName) {
             $dataScope = $name;
         }
 
@@ -353,12 +365,12 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         /** @var \Magento\Ui\Component\Layout\Tabs\Nav $navBlock */
         if (isset($this->navContainerName)) {
             $navBlock = $pageLayout->addBlock(
-                \Magento\Ui\Component\Layout\Tabs\Nav::class,
+                'Magento\Ui\Component\Layout\Tabs\Nav',
                 'tabs_nav',
                 $this->navContainerName
             );
         } else {
-            $navBlock = $pageLayout->addBlock(\Magento\Ui\Component\Layout\Tabs\Nav::class, 'tabs_nav', 'content');
+            $navBlock = $pageLayout->addBlock('Magento\Ui\Component\Layout\Tabs\Nav', 'tabs_nav', 'content');
         }
         $navBlock->setTemplate('Magento_Ui::layout/tabs/nav/default.phtml');
         $navBlock->setData('data_scope', $this->namespace);

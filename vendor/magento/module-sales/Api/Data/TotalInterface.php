@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Api\Data;
@@ -9,8 +9,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Interface TotalInterface
- * @api
- * @since 100.0.4
  */
 interface TotalInterface extends ExtensibleDataInterface
 {
@@ -95,7 +93,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping amount.
      *
      * @return float|null Base shipping amount.
-     * @since 100.0.4
      */
     public function getBaseShippingAmount();
 
@@ -103,7 +100,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping canceled.
      *
      * @return float|null Base shipping canceled.
-     * @since 100.0.4
      */
     public function getBaseShippingCanceled();
 
@@ -111,7 +107,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping discount amount.
      *
      * @return float|null Base shipping discount amount.
-     * @since 100.0.4
      */
     public function getBaseShippingDiscountAmount();
 
@@ -119,7 +114,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping discount tax compensation amount.
      *
      * @return float|null Base shipping discount tax compensation amount.
-     * @since 100.0.4
      */
     public function getBaseShippingDiscountTaxCompensationAmnt();
 
@@ -127,7 +121,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping including tax.
      *
      * @return float|null Base shipping including tax.
-     * @since 100.0.4
      */
     public function getBaseShippingInclTax();
 
@@ -135,7 +128,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping invoiced amount.
      *
      * @return float|null Base shipping invoiced.
-     * @since 100.0.4
      */
     public function getBaseShippingInvoiced();
 
@@ -143,7 +135,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping refunded amount.
      *
      * @return float|null Base shipping refunded.
-     * @since 100.0.4
      */
     public function getBaseShippingRefunded();
 
@@ -151,7 +142,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping tax amount.
      *
      * @return float|null Base shipping tax amount.
-     * @since 100.0.4
      */
     public function getBaseShippingTaxAmount();
 
@@ -159,7 +149,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the base shipping tax refunded amount.
      *
      * @return float|null Base shipping tax refunded.
-     * @since 100.0.4
      */
     public function getBaseShippingTaxRefunded();
 
@@ -167,7 +156,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping amount.
      *
      * @return float|null Shipping amount.
-     * @since 100.0.4
      */
     public function getShippingAmount();
 
@@ -175,7 +163,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping canceled amount.
      *
      * @return float|null Shipping canceled amount.
-     * @since 100.0.4
      */
     public function getShippingCanceled();
 
@@ -183,7 +170,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping discount amount.
      *
      * @return float|null Shipping discount amount.
-     * @since 100.0.4
      */
     public function getShippingDiscountAmount();
 
@@ -191,7 +177,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping discount tax compensation amount.
      *
      * @return float|null Shipping discount tax compensation amount.
-     * @since 100.0.4
      */
     public function getShippingDiscountTaxCompensationAmount();
 
@@ -199,7 +184,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping including tax amount.
      *
      * @return float|null Shipping including tax amount.
-     * @since 100.0.4
      */
     public function getShippingInclTax();
 
@@ -207,7 +191,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping invoiced amount.
      *
      * @return float|null Shipping invoiced amount.
-     * @since 100.0.4
      */
     public function getShippingInvoiced();
 
@@ -215,7 +198,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping refunded amount.
      *
      * @return float|null Shipping refunded amount.
-     * @since 100.0.4
      */
     public function getShippingRefunded();
 
@@ -223,7 +205,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping tax amount.
      *
      * @return float|null Shipping tax amount.
-     * @since 100.0.4
      */
     public function getShippingTaxAmount();
 
@@ -231,7 +212,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Gets the shipping tax refunded amount.
      *
      * @return float|null Shipping tax refunded amount.
-     * @since 100.0.4
      */
     public function getShippingTaxRefunded();
 
@@ -240,7 +220,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingAmount($amount);
 
@@ -249,7 +228,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $baseShippingCanceled
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingCanceled($baseShippingCanceled);
 
@@ -258,7 +236,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingDiscountAmount($amount);
 
@@ -267,7 +244,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amnt
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingDiscountTaxCompensationAmnt($amnt);
 
@@ -276,7 +252,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingInclTax($amount);
 
@@ -285,7 +260,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $baseShippingInvoiced
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingInvoiced($baseShippingInvoiced);
 
@@ -294,7 +268,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $baseShippingRefunded
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingRefunded($baseShippingRefunded);
 
@@ -303,7 +276,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingTaxAmount($amount);
 
@@ -312,7 +284,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $baseShippingTaxRefunded
      * @return $this
-     * @since 100.0.4
      */
     public function setBaseShippingTaxRefunded($baseShippingTaxRefunded);
 
@@ -321,7 +292,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingAmount($amount);
 
@@ -330,7 +300,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $shippingCanceled
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingCanceled($shippingCanceled);
 
@@ -339,7 +308,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingDiscountAmount($amount);
 
@@ -348,7 +316,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingDiscountTaxCompensationAmount($amount);
 
@@ -357,7 +324,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingInclTax($amount);
 
@@ -366,7 +332,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $shippingInvoiced
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingInvoiced($shippingInvoiced);
 
@@ -375,7 +340,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $shippingRefunded
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingRefunded($shippingRefunded);
 
@@ -384,7 +348,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $amount
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingTaxAmount($amount);
 
@@ -393,7 +356,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param float $shippingTaxRefunded
      * @return $this
-     * @since 100.0.4
      */
     public function setShippingTaxRefunded($shippingTaxRefunded);
 
@@ -401,7 +363,6 @@ interface TotalInterface extends ExtensibleDataInterface
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Magento\Sales\Api\Data\TotalExtensionInterface|null
-     * @since 100.0.4
      */
     public function getExtensionAttributes();
 
@@ -410,7 +371,6 @@ interface TotalInterface extends ExtensibleDataInterface
      *
      * @param \Magento\Sales\Api\Data\TotalExtensionInterface $extensionAttributes
      * @return $this
-     * @since 100.0.4
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\TotalExtensionInterface $extensionAttributes

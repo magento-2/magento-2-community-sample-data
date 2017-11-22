@@ -1,15 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\Locale\Test\Unit;
 
 use Magento\Framework\Locale\Currency;
 use Magento\Framework\Locale\CurrencyInterface;
 
-class CurrencyTest extends \PHPUnit\Framework\TestCase
+class CurrencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Event\Manager | \PHPUnit_Framework_MockObject_MockObject
@@ -40,24 +42,23 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
     const TEST_EXCEPTION_CURRENCY = 'ZZZ';
     const TEST_EXCEPTION_CURRENCY_LOCALE = 'es_ES';
 
-    protected function setUp()
+    public function setUp()
     {
         $this->mockEventManager = $this
-            ->getMockBuilder(\Magento\Framework\Event\Manager::class)
+            ->getMockBuilder('\Magento\Framework\Event\Manager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockLocaleResolver = $this
-            ->getMockBuilder(\Magento\Framework\Locale\Resolver::class)
+            ->getMockBuilder('\Magento\Framework\Locale\Resolver')
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockCurrencyFactory = $this
-            ->getMockBuilder(\Magento\Framework\CurrencyFactory::class)
+            ->getMockBuilder('\Magento\Framework\CurrencyFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->testCurrencyObject = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
-            ->getObject(
-                \Magento\Framework\Locale\Currency::class,
+            ->getObject('Magento\Framework\Locale\Currency',
                 [
                     'eventManager'     => $this->mockEventManager,
                     'localeResolver'   => $this->mockLocaleResolver,

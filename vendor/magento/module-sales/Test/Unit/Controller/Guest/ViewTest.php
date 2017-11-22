@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Controller\Guest;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Controller\Guest\View
@@ -54,31 +54,31 @@ class ViewTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->getMock();
-        $this->guestHelperMock = $this->getMockBuilder(\Magento\Sales\Helper\Guest::class)
+        $this->guestHelperMock = $this->getMockBuilder('Magento\Sales\Helper\Guest')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $this->resultRedirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->context = $this->objectManagerHelper->getObject(
-            \Magento\Framework\App\Action\Context::class,
+            'Magento\Framework\App\Action\Context',
             [
                 'request' => $this->requestMock
             ]
         );
         $this->viewController = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Controller\Guest\View::class,
+            'Magento\Sales\Controller\Guest\View',
             [
                 'context' => $this->context,
                 'guestHelper' => $this->guestHelperMock,

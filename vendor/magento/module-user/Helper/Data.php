@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\User\Helper;
@@ -8,15 +8,14 @@ namespace Magento\User\Helper;
 /**
  * User data helper
  *
- * @api
- * @since 100.0.2
+ * @author   Magento Core Team <core@magentocommerce.com>
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /**
      * Configuration path to expiration period of reset password link
      */
-    const XML_PATH_ADMIN_RESET_PASSWORD_LINK_EXPIRATION_PERIOD = 'admin/security/password_reset_link_expiration_period';
+    const XML_PATH_ADMIN_RESET_PASSWORD_LINK_EXPIRATION_PERIOD = 'admin/emails/password_reset_link_expiration_period';
 
     /**
      * @var \Magento\Backend\App\ConfigInterface

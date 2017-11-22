@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\OfflineShipping\Block\Adminhtml\Form\Field;
@@ -41,9 +41,7 @@ class Export extends \Magento\Framework\Data\Form\Element\AbstractElement
     public function getElementHtml()
     {
         /** @var \Magento\Backend\Block\Widget\Button $buttonBlock  */
-        $buttonBlock = $this->getForm()->getParent()->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
-        );
+        $buttonBlock = $this->getForm()->getParent()->getLayout()->createBlock('Magento\Backend\Block\Widget\Button');
 
         $params = ['website' => $buttonBlock->getRequest()->getParam('website')];
 

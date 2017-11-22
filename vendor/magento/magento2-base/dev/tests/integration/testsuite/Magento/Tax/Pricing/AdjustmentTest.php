@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@
 
 namespace Magento\Tax\Pricing;
 
-class AdjustmentTest extends \PHPUnit\Framework\TestCase
+class AdjustmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param $isShippingPriceExcludeTax
@@ -18,9 +18,9 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Tax\Model\Config $config */
-        $config = $objectManager->get(\Magento\Tax\Model\Config::class);
+        $config = $objectManager->get('Magento\Tax\Model\Config');
         /** @var \Magento\Tax\Pricing\Adjustment $model */
-        $model = $objectManager->create(\Magento\Tax\Pricing\Adjustment::class);
+        $model = $objectManager->create('Magento\Tax\Pricing\Adjustment');
         $config->setNeedUseShippingExcludeTax($isShippingPriceExcludeTax);
         // Run tested method
         $result = $model->isIncludedInBasePrice();
@@ -83,7 +83,7 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
         // Instantiate objects
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Tax\Pricing\Adjustment $model */
-        $model = $objectManager->create(\Magento\Tax\Pricing\Adjustment::class);
+        $model = $objectManager->create('Magento\Tax\Pricing\Adjustment');
         // Run tested method
         $result = $model->isIncludedInDisplayPrice();
         // Check expectations

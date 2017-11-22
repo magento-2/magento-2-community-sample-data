@@ -1,15 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSampleData\Model\Product;
 
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Gallery as GalleryResource;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Media as GalleryAttribute;
 use Magento\Framework\Setup\SampleData\Context as SampleDataContext;
-use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * Class Gallery
@@ -47,25 +45,20 @@ class Gallery
     protected $eavConfig;
 
     /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    private $metadataPool;
-
-    /**
      * @param SampleDataContext $sampleDataContext
      * @param ProductFactory $productFactory
-     * @param GalleryResource $galleryResource
+     * @param GalleryAttribute $galleryAttribute
      * @param \Magento\Eav\Model\Config $eavConfig
      */
     public function __construct(
         SampleDataContext $sampleDataContext,
         ProductFactory $productFactory,
-        GalleryResource $galleryResource,
+        GalleryAttribute $galleryAttribute,
         \Magento\Eav\Model\Config $eavConfig
     ) {
         $this->fixtureManager = $sampleDataContext->getFixtureManager();
         $this->csvReader = $sampleDataContext->getCsvReader();
-        $this->galleryResource = $galleryResource;
+        $this->galleryAttribute = $galleryAttribute;
         $this->productFactory = $productFactory;
         $this->eavConfig = $eavConfig;
     }
@@ -118,8 +111,6 @@ class Gallery
      */
     protected function storeImage($product, $images)
     {
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
-        $productId = $product->getData($linkField);
         $baseImage = '';
         $i = 1;
         $mediaAttribute = $this->eavConfig->getAttribute('catalog_product', 'media_gallery');
@@ -131,20 +122,20 @@ class Gallery
             if (strpos($image, '_main') !== false) {
                 $baseImage = $image;
             }
-
-            $id = $this->galleryResource->insertGallery([
+            $id = $this->galleryAttribute->insertGallery([
                 'attribute_id' => $mediaAttribute->getAttributeId(),
+                'entity_id' => $product->getId(),
                 'value' => $image,
             ]);
-            $this->galleryResource->insertGalleryValueInStore([
+            $this->galleryAttribute->insertGalleryValueInStore([
                 'value_id' => $id,
                 'store_id' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
-                $linkField => $productId,
+                'entity_id' => $product->getId(),
                 'label' => 'Image',
                 'position' => $i,
                 'disables' => 0,
             ]);
-            $this->galleryResource->bindValueToEntity($id, $productId);
+            $this->galleryAttribute->bindValueToEntity($id, $product->getId());
             $i++;
         }
 
@@ -161,28 +152,12 @@ class Gallery
                 $table = $imageAttribute->getBackend()->getTable();
                 /** @var \Magento\Framework\DB\Adapter\AdapterInterface $adapter*/
                 $data = [
-                    $attribute->getEntity()->getLinkField() => $productId,
+                    $attribute->getBackend()->getEntityIdField() => $product->getId(),
                     'attribute_id' => $attribute->getId(),
                     'value' => $baseImage,
                 ];
                 $adapter->insertOnDuplicate($table, $data, ['value']);
             }
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return \Magento\Framework\EntityManager\MetadataPool|mixed
-     */
-    private function getMetadataPool()
-    {
-        if (!($this->metadataPool)) {
-            return ObjectManager::getInstance()->get(
-                '\Magento\Framework\EntityManager\MetadataPool'
-            );
-        } else {
-            return $this->metadataPool;
         }
     }
 }

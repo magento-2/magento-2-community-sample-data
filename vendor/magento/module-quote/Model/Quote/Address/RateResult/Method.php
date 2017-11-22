@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Model\Quote\Address\RateResult;
@@ -13,9 +13,6 @@ namespace Magento\Quote\Model\Quote\Address\RateResult;
  * - methodTitle: method title
  * - price: cost+handling
  * - cost: cost
- *
- * @api
- * @since 100.0.2
  */
 class Method extends AbstractResult
 {

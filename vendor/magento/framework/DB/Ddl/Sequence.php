@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB\Ddl;
@@ -13,24 +13,18 @@ class Sequence
     /**
      * Return SQL for create sequence
      *
-     * @param string $name The name of table in create statement
-     * @param int $startNumber The auto increment start number
-     * @param string $columnType Type of sequence_value column
-     * @param bool|true $unsigned Flag to set sequence_value as UNSIGNED field
+     * @param string $name
+     * @param int $startNumber
      * @return string
      */
-    public function getCreateSequenceDdl(
-        $name,
-        $startNumber = 1,
-        $columnType = Table::TYPE_INTEGER,
-        $unsigned = true
-    ) {
+    public function getCreateSequenceDdl($name, $startNumber = 1)
+    {
         $format = "CREATE TABLE %s (
-                     sequence_value %s %s NOT NULL AUTO_INCREMENT,
+                     sequence_value %s UNSIGNED NOT NULL AUTO_INCREMENT,
                      PRIMARY KEY (sequence_value)
-            ) AUTO_INCREMENT = %d ENGINE = INNODB";
+            ) AUTO_INCREMENT = %d";
 
-        return sprintf($format, $name, $columnType, $unsigned ? 'UNSIGNED' : '', $startNumber);
+        return sprintf($format, $name, Table::TYPE_INTEGER, $startNumber);
     }
 
     /**

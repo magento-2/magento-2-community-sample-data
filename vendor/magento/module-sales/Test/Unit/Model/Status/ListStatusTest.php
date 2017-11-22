@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Status;
@@ -9,7 +9,7 @@ use \Magento\Sales\Model\Status\ListStatus;
 
 use Magento\CatalogInventory\Helper\Data;
 
-class ListStatusTest extends \PHPUnit\Framework\TestCase
+class ListStatusTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Sales\Model\Status\ListStatus */
     private $listStatus;
@@ -36,7 +36,7 @@ class ListStatusTest extends \PHPUnit\Framework\TestCase
         $result = $this->listStatus->addItem($origin, $code, $message, $additionalData);
         $items = $this->listStatus->getItems();
         $this->assertEquals($mockItems, $items);
-        $this->assertInstanceOf(\Magento\Sales\Model\Status\ListStatus::class, $result);
+        $this->assertInstanceOf('\Magento\Sales\Model\Status\ListStatus', $result);
     }
 
     public function testRemovePresentAndAbsentItems()
@@ -60,7 +60,7 @@ class ListStatusTest extends \PHPUnit\Framework\TestCase
         $this->addItems();
         $expected = [];
         $result = $this->listStatus->clear();
-        $this->assertInstanceOf(\Magento\Sales\Model\Status\ListStatus::class, $result);
+        $this->assertInstanceOf('\Magento\Sales\Model\Status\ListStatus', $result);
         $this->assertEquals($expected, $result->getItems());
     }
 

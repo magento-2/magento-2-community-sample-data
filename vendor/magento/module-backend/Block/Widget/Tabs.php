@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Block\Widget;
@@ -8,9 +8,8 @@ namespace Magento\Backend\Block\Widget;
 use Magento\Backend\Block\Widget\Tab\TabInterface;
 
 /**
- * @api
+ * Tabs block
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @since 100.0.2
  */
 class Tabs extends \Magento\Backend\Block\Widget
 {
@@ -35,9 +34,7 @@ class Tabs extends \Magento\Backend\Block\Widget
      */
     protected $_destElementId = 'content';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $_template = 'Magento_Backend::widget/tabs.phtml';
 
     /**
@@ -115,7 +112,7 @@ class Tabs extends \Magento\Backend\Block\Widget
     public function addTab($tabId, $tab)
     {
         if (empty($tabId)) {
-            throw new \Exception(__('Please correct the tab configuration and try again. Tab Id should be not empty'));
+            throw new \Exception(__('Please correct the tab configuration and try again. Tab Id should be not empry'));
         }
         if (is_array($tab)) {
             $this->_tabs[$tabId] = new \Magento\Framework\DataObject($tab);

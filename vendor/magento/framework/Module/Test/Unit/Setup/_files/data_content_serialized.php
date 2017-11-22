@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,16 +14,16 @@ return [
         ],
     ],
     '$tableData' => [
-        ['field' => '{"max_text_length":255,"min_text_length":1}'],
-        ['field' => '{"model":"some random text"}'],
+        ['field' => 'a:1:{s:5:"model";s:34:"catalogrule/rule_condition_combine";}'],
+        ['field' => 'a:1:{s:5:"model";s:16:"some random text";}'],
     ],
     '$expected' => [
         'updates' => [
             [
                 'table' => 'table',
                 'field' => 'field',
-                'to' => '{"model":"Magento\\CatalogRule\\Model\\Rule\\Condition\\Combine"}',
-                'from' => ['`field` = ?' => '{"model":"catalogrule\/rule_condition_combine"}'],
+                'to' => 'a:1:{s:5:"model";s:48:"Magento\CatalogRule\Model\Rule\Condition\Combine";}',
+                'from' => ['`field` = ?' => 'a:1:{s:5:"model";s:34:"catalogrule/rule_condition_combine";}'],
             ],
         ],
         'aliases_map' => [

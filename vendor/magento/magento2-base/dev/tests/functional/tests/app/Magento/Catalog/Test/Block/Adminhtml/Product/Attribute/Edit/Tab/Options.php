@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,8 @@ use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Element;
 
 /**
- * Options form.
+ * Class Options
+ * Options form
  */
 class Options extends Tab
 {
@@ -28,14 +29,13 @@ class Options extends Tab
      * @param array $fields
      * @param SimpleElement|null $element
      * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function setFieldsData(array $fields, SimpleElement $element = null)
+    public function fillFormTab(array $fields, SimpleElement $element = null)
     {
         foreach ($fields['options']['value'] as $field) {
             $this->_rootElement->find($this->addOption)->click();
             $this->blockFactory->create(
-                \Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option::class,
+                'Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option',
                 ['element' => $this->_rootElement->find('.ui-sortable tr:last-child')]
             )->fillOptions($field);
         }

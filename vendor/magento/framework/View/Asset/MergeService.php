@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Asset;
@@ -79,16 +79,15 @@ class MergeService
         $isCssMergeEnabled = $this->config->isMergeCssFiles();
         $isJsMergeEnabled = $this->config->isMergeJsFiles();
         if (($isCss && $isCssMergeEnabled) || ($isJs && $isJsMergeEnabled)) {
-            $mergeStrategyClass = \Magento\Framework\View\Asset\MergeStrategy\FileExists::class;
-
-            if ($this->state->getMode() === \Magento\Framework\App\State::MODE_DEVELOPER) {
-                $mergeStrategyClass = \Magento\Framework\View\Asset\MergeStrategy\Checksum::class;
+            if ($this->state->getMode() == \Magento\Framework\App\State::MODE_PRODUCTION) {
+                $mergeStrategyClass = 'Magento\Framework\View\Asset\MergeStrategy\FileExists';
+            } else {
+                $mergeStrategyClass = 'Magento\Framework\View\Asset\MergeStrategy\Checksum';
             }
-
             $mergeStrategy = $this->objectManager->get($mergeStrategyClass);
 
             $assets = $this->objectManager->create(
-                \Magento\Framework\View\Asset\Merged::class,
+                'Magento\Framework\View\Asset\Merged',
                 ['assets' => $assets, 'mergeStrategy' => $mergeStrategy]
             );
         }

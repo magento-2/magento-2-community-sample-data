@@ -1,19 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Data\Test\Unit\Collection\Db\FetchStrategy;
 
-class QueryTest extends \PHPUnit\Framework\TestCase
+class QueryTest extends \PHPUnit_Framework_TestCase
 {
     public function testFetchAll()
     {
         $expectedResult = new \stdClass();
         $bindParams = ['param_one' => 'value_one', 'param_two' => 'value_two'];
-        $adapter = $this->createPartialMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class, ['fetchAll']);
-        $renderer = $this->createMock(\Magento\Framework\DB\Select\SelectRenderer::class);
-        $select = new \Magento\Framework\DB\Select($adapter, $renderer);
+        $adapter = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', ['fetchAll'], [], '', false);
+        $select = new \Magento\Framework\DB\Select($adapter);
         $adapter->expects(
             $this->once()
         )->method(

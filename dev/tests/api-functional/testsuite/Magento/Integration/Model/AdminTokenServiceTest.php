@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,7 +16,6 @@ use Magento\Integration\Model\Oauth\Token\RequestLog\Config as TokenThrottlerCon
 
 /**
  * api-functional test for \Magento\Integration\Model\AdminTokenService.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AdminTokenServiceTest extends WebapiAbstract
 {
@@ -50,9 +49,9 @@ class AdminTokenServiceTest extends WebapiAbstract
     public function setUp()
     {
         $this->_markTestAsRestOnly();
-        $this->tokenService = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\AdminTokenService::class);
-        $this->tokenModel = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\Oauth\Token::class);
-        $this->userModel = Bootstrap::getObjectManager()->get(\Magento\User\Model\User::class);
+        $this->tokenService = Bootstrap::getObjectManager()->get('Magento\Integration\Model\AdminTokenService');
+        $this->tokenModel = Bootstrap::getObjectManager()->get('Magento\Integration\Model\Oauth\Token');
+        $this->userModel = Bootstrap::getObjectManager()->get('Magento\User\Model\User');
         /** @var TokenThrottlerConfig $tokenThrottlerConfig */
         $tokenThrottlerConfig = Bootstrap::getObjectManager()->get(TokenThrottlerConfig::class);
         $this->attemptsCountToLockAccount = $tokenThrottlerConfig->getMaxFailuresCount();
@@ -299,16 +298,16 @@ class AdminTokenServiceTest extends WebapiAbstract
         $this->assertEquals(HTTPExceptionCodes::HTTP_BAD_REQUEST, $exception->getCode());
         $exceptionData = $this->processRestExceptionResult($exception);
         $expectedExceptionData = [
-            'message' => 'One or more input exceptions have occurred.',
+            'message' => InputException::DEFAULT_MESSAGE,
             'errors' => [
                 [
-                    'message' => '%fieldName is a required field.',
+                    'message' => InputException::REQUIRED_FIELD,
                     'parameters' => [
                         'fieldName' => 'username',
                     ],
                 ],
                 [
-                    'message' => '%fieldName is a required field.',
+                    'message' => InputException::REQUIRED_FIELD,
                     'parameters' => [
                         'fieldName' => 'password',
                     ]

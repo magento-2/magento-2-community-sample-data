@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Api\Data;
@@ -8,7 +8,6 @@ namespace Magento\ConfigurableProduct\Api\Data;
 /**
  * Interface ConfigurableItemOptionValueInterface
  * @api
- * @since 100.0.2
  */
 interface ConfigurableItemOptionValueInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

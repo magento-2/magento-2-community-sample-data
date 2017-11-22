@@ -1,40 +1,38 @@
 <?php
-namespace Braintree;
 
-class RangeNode
+class Braintree_RangeNode
 {
-    public function __construct($name)
+    function __construct($name)
     {
         $this->name = $name;
-        $this->searchTerms = [];
+        $this->searchTerms = array();
     }
 
-    public function greaterThanOrEqualTo($value)
+    function greaterThanOrEqualTo($value)
     {
         $this->searchTerms['min'] = $value;
         return $this;
     }
 
-    public function lessThanOrEqualTo($value)
+    function lessThanOrEqualTo($value)
     {
         $this->searchTerms['max'] = $value;
         return $this;
     }
 
-    public function is($value)
+    function is($value)
     {
         $this->searchTerms['is'] = $value;
         return $this;
     }
 
-    public function between($min, $max)
+    function between($min, $max)
     {
 		return $this->greaterThanOrEqualTo($min)->lessThanOrEqualTo($max);
     }
 
-    public function toParam()
+    function toParam()
     {
         return $this->searchTerms;
     }
 }
-class_alias('Braintree\RangeNode', 'Braintree_RangeNode');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,13 +9,11 @@
  */
 namespace Magento\PageCache\Model\System\Config\Source;
 
-use Magento\Framework\Option\ArrayInterface;
-use Magento\PageCache\Model\Config;
-
 /**
  * Class Application
+ *
  */
-class Application implements ArrayInterface
+class Application implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * Options getter
@@ -26,12 +24,12 @@ class Application implements ArrayInterface
     {
         return [
             [
-                'value' => Config::BUILT_IN,
-                'label' => __('Built-in Cache')
+                'value' => \Magento\PageCache\Model\Config::BUILT_IN,
+                'label' => __('Built-in Application (Not Recommended for Production Use)')
             ],
             [
-                'value' => Config::VARNISH,
-                'label' => __('Varnish Cache (Recommended)')
+                'value' => \Magento\PageCache\Model\Config::VARNISH,
+                'label' => __('Varnish Caching')
             ]
         ];
     }
@@ -44,8 +42,9 @@ class Application implements ArrayInterface
     public function toArray()
     {
         return [
-            Config::BUILT_IN => __('Built-in Cache'),
-            Config::VARNISH => __('Varnish Cache (Recommended)')
+            \Magento\PageCache\Model\Config::BUILT_IN =>
+                __('Built-in Application (Not Recommended for Production Use)'),
+            \Magento\PageCache\Model\Config::VARNISH => __('Varnish Caching')
         ];
     }
 }

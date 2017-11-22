@@ -2,7 +2,7 @@
 /**
  * Response redirector
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\App\Response;
@@ -257,7 +257,8 @@ class Redirect implements \Magento\Framework\App\Response\RedirectInterface
     {
         $store = $this->_storeManager->getStore();
 
-        if ($store
+        if (
+            $store
             && !empty($refererQuery[StoreResolverInterface::PARAM_NAME])
             && ($refererQuery[StoreResolverInterface::PARAM_NAME] !== $store->getCode())
         ) {

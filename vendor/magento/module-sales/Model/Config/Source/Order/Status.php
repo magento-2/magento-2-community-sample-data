@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,11 +9,6 @@
  */
 namespace Magento\Sales\Model\Config\Source\Order;
 
-/**
- * Class Status
- * @api
- * @since 100.0.2
- */
 class Status implements \Magento\Framework\Option\ArrayInterface
 {
     const UNDEFINED_OPTION_LABEL = '-- Please Select --';
@@ -52,7 +47,7 @@ class Status implements \Magento\Framework\Option\ArrayInterface
             ? $this->_orderConfig->getStateStatuses($this->_stateStatuses)
             : $this->_orderConfig->getStatuses();
 
-        $options = [['value' => '', 'label' => __('-- Please Select --')]];
+        $options = [['value' => '', 'label' => __(self::UNDEFINED_OPTION_LABEL)]];
         foreach ($statuses as $code => $label) {
             $options[] = ['value' => $code, 'label' => $label];
         }

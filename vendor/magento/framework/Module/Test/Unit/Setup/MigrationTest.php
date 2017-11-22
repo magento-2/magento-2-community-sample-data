@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Module\Test\Unit\Setup;
 
-class MigrationTest extends \PHPUnit\Framework\TestCase
+class MigrationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Result of update class aliases to compare with expected.
@@ -50,7 +50,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getModelDependencies($tableRowsCount = 0, $tableData = [], $aliasesMap = [])
     {
-        $this->_selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $this->_selectMock = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $this->_selectMock->expects($this->any())->method('from')->will($this->returnSelf());
         $this->_selectMock->expects(
             $this->any()
@@ -60,9 +60,12 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
             $this->returnCallback([$this, 'whereCallback'])
         );
 
-        $connectionMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'update', 'fetchAll', 'fetchOne']
+        $connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['select', 'update', 'fetchAll', 'fetchOne'],
+            [],
+            '',
+            false
         );
         $connectionMock->expects($this->any())->method('select')->will($this->returnValue($this->_selectMock));
         $connectionMock->expects(
@@ -82,7 +85,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
             'base_dir' => 'not_used',
             'path_to_map_file' => 'not_used',
             'connection' => $connectionMock,
-            'core_helper' => $this->createMock(\Magento\Framework\Json\Helper\Data::class),
+            'core_helper' => $this->getMock('Magento\Framework\Json\Helper\Data', [], [], '', false, false),
             'aliases_map' => $aliasesMap
         ];
     }
@@ -136,9 +139,9 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
      */
     public function testAppendClassAliasReplace()
     {
-        $setupMock = $this->getMockForAbstractClass(\Magento\Framework\Setup\ModuleDataSetupInterface::class);
-        $filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $migrationData = $this->createMock(\Magento\Framework\Module\Setup\MigrationData::class);
+        $setupMock = $this->getMockForAbstractClass('\Magento\Framework\Setup\ModuleDataSetupInterface');
+        $filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $migrationData = $this->getMock('Magento\Framework\Module\Setup\MigrationData', [], [], '', false);
 
         $setupModel = new \Magento\Framework\Module\Setup\Migration(
             $setupMock,
@@ -191,9 +194,9 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
         $this->_actualUpdateResult = [];
         $tableRowsCount = count($tableData);
 
-        $setupMock = $this->getMockForAbstractClass(\Magento\Framework\Setup\ModuleDataSetupInterface::class);
-        $filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $migrationData = $this->createMock(\Magento\Framework\Module\Setup\MigrationData::class);
+        $setupMock = $this->getMockForAbstractClass('\Magento\Framework\Setup\ModuleDataSetupInterface');
+        $filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $migrationData = $this->getMock('Magento\Framework\Module\Setup\MigrationData', [], [], '', false);
 
         $setupModel = new \Magento\Framework\Module\Setup\Migration(
             $setupMock,
@@ -242,7 +245,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getFilesystemMock()
     {
-        $mock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder('Magento\Framework\Filesystem')->disableOriginalConstructor()->getMock();
         return $mock;
     }
 }

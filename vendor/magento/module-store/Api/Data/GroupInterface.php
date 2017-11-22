@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Api\Data;
@@ -9,7 +9,6 @@ namespace Magento\Store\Api\Data;
  * Group interface
  *
  * @api
- * @since 100.0.2
  */
 interface GroupInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -67,24 +66,6 @@ interface GroupInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return $this
      */
     public function setName($name);
-
-    /**
-     * Retrieves group code.
-     * Group code is a unique field.
-     *
-     * @return string
-     * @since 100.2.0
-     */
-    public function getCode();
-
-    /**
-     * Sets group code.
-     *
-     * @param string $code
-     * @return $this
-     * @since 100.2.0
-     */
-    public function setCode($code);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

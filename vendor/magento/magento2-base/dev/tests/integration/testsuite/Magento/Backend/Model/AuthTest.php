@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model;
 
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Exception\AuthenticationException;
 
 /**
@@ -13,9 +12,8 @@ use Magento\Framework\Exception\AuthenticationException;
  *
  * @magentoAppArea adminhtml
  * @magentoAppIsolation enabled
- * @magentoDbIsolation enabled
  */
-class AuthTest extends \PHPUnit\Framework\TestCase
+class AuthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth
@@ -56,7 +54,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         // by default \Magento\Backend\Model\Auth\Session class will instantiate as a Authentication Storage
         $this->assertInstanceOf(\Magento\Backend\Model\Auth\Session::class, $this->_model->getAuthStorage());
 
-        $mockStorage = $this->createMock(\Magento\Backend\Model\Auth\StorageInterface::class);
+        $mockStorage = $this->getMock(\Magento\Backend\Model\Auth\StorageInterface::class);
         $this->_model->setAuthStorage($mockStorage);
         $this->assertInstanceOf(\Magento\Backend\Model\Auth\StorageInterface::class, $this->_model->getAuthStorage());
 
@@ -89,19 +87,6 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         $this->assertGreaterThan(time() - 10, $this->_model->getAuthStorage()->getUpdatedAt());
     }
 
-    public function testLoginFlushesFormKey()
-    {
-        /** @var FormKey $dataFormKey */
-        $dataFormKey = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(FormKey::class);
-        $beforeKey = $dataFormKey->getFormKey();
-        $this->_model->login(
-            \Magento\TestFramework\Bootstrap::ADMIN_NAME,
-            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
-        );
-        $afterKey = $dataFormKey->getFormKey();
-        $this->assertNotEquals($beforeKey, $afterKey);
-    }
-
     /**
      * @magentoAppIsolation enabled
      */
@@ -117,7 +102,8 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Disabled form security in order to prevent exit from the app
+     * Disabled form security in order to prevent exit from the app.
+     *
      * @magentoAdminConfigFixture admin/security/session_lifetime 100
      */
     public function testIsLoggedIn()
@@ -126,6 +112,25 @@ class AuthTest extends \PHPUnit\Framework\TestCase
             \Magento\TestFramework\Bootstrap::ADMIN_NAME,
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
+        $this->assertTrue($this->_model->isLoggedIn());
+
+        $this->_model->getAuthStorage()->setUpdatedAt(time() - 101);
+        $this->assertFalse($this->_model->isLoggedIn());
+    }
+
+    /**
+     * Disabled form security in order to prevent exit from the app
+     * @magentoConfigFixture current_store admin/security/session_lifetime 59
+     */
+    public function testIsLoggedInWithIgnoredLifetime()
+    {
+        $this->_model->login(
+            \Magento\TestFramework\Bootstrap::ADMIN_NAME,
+            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
+        );
+        $this->assertTrue($this->_model->isLoggedIn());
+
+        $this->_model->getAuthStorage()->setUpdatedAt(time() - 101);
         $this->assertTrue($this->_model->isLoggedIn());
     }
 

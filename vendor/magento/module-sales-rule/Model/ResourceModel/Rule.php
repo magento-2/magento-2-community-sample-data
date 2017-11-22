@@ -1,30 +1,34 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\SalesRule\Model\ResourceModel;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\EntityManager\EntityManager;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Rule\Model\ResourceModel\AbstractResource;
-use Magento\SalesRule\Api\Data\RuleInterface;
 
 /**
  * Sales Rule resource model
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Rule extends AbstractResource
+class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
 {
     /**
      * Store associated with rule entities information map
      *
      * @var array
      */
-    protected $_associatedEntitiesMap = [];
+    protected $_associatedEntitiesMap = [
+        'website' => [
+            'associations_table' => 'salesrule_website',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'website_id',
+        ],
+        'customer_group' => [
+            'associations_table' => 'salesrule_customer_group',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'customer_group_id',
+        ],
+    ];
 
     /**
      * @var array
@@ -49,41 +53,19 @@ class Rule extends AbstractResource
     protected $_resourceCoupon;
 
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var MetadataPool
-     */
-    private $metadataPool;
-
-    /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Framework\Stdlib\StringUtils $string
      * @param \Magento\SalesRule\Model\ResourceModel\Coupon $resourceCoupon
      * @param string $connectionName
-     * @param \Magento\Framework\DataObject|null $associatedEntityMapInstance
-     * @param Json $serializer Optional parameter for backward compatibility
-     * @param MetadataPool $metadataPool Optional parameter for backward compatibility
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Stdlib\StringUtils $string,
         \Magento\SalesRule\Model\ResourceModel\Coupon $resourceCoupon,
-        $connectionName = null,
-        \Magento\Framework\DataObject $associatedEntityMapInstance = null,
-        Json $serializer = null,
-        MetadataPool $metadataPool = null
+        $connectionName = null
     ) {
         $this->string = $string;
         $this->_resourceCoupon = $resourceCoupon;
-        $associatedEntitiesMapInstance = $associatedEntityMapInstance ?: ObjectManager::getInstance()->get(
-            \Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap::class
-        );
-        $this->_associatedEntitiesMap = $associatedEntitiesMapInstance->getData();
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
-        $this->metadataPool = $metadataPool ?: ObjectManager::getInstance()->get(MetadataPool::class);
         parent::__construct($context, $connectionName);
     }
 
@@ -98,9 +80,23 @@ class Rule extends AbstractResource
     }
 
     /**
+     * Add customer group ids and website ids to rule data after load
+     *
+     * @param AbstractModel $object
+     * @return $this
+     */
+    protected function _afterLoad(AbstractModel $object)
+    {
+        $this->loadCustomerGroupIds($object);
+        $this->loadWebsiteIds($object);
+
+        parent::_afterLoad($object);
+        return $this;
+    }
+
+    /**
      * @param AbstractModel $object
      * @return void
-     * @deprecated 100.1.0
      */
     public function loadCustomerGroupIds(AbstractModel $object)
     {
@@ -113,7 +109,6 @@ class Rule extends AbstractResource
     /**
      * @param AbstractModel $object
      * @return void
-     * @deprecated 100.1.0
      */
     public function loadWebsiteIds(AbstractModel $object)
     {
@@ -141,21 +136,6 @@ class Rule extends AbstractResource
     }
 
     /**
-     * Load an object
-     *
-     * @param AbstractModel $object
-     * @param mixed $value
-     * @param string $field field to load by (defaults to model id)
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function load(AbstractModel $object, $value, $field = null)
-    {
-        $this->getEntityManager()->load($object, $value);
-        return $this;
-    }
-
-    /**
      * Bind sales rule to customer group(s) and website(s).
      * Save rule's associated store labels.
      * Save product attributes used in rule.
@@ -169,10 +149,26 @@ class Rule extends AbstractResource
             $this->saveStoreLabels($object->getId(), $object->getStoreLabels());
         }
 
+        if ($object->hasWebsiteIds()) {
+            $websiteIds = $object->getWebsiteIds();
+            if (!is_array($websiteIds)) {
+                $websiteIds = explode(',', (string)$websiteIds);
+            }
+            $this->bindRuleToEntity($object->getId(), $websiteIds, 'website');
+        }
+
+        if ($object->hasCustomerGroupIds()) {
+            $customerGroupIds = $object->getCustomerGroupIds();
+            if (!is_array($customerGroupIds)) {
+                $customerGroupIds = explode(',', (string)$customerGroupIds);
+            }
+            $this->bindRuleToEntity($object->getId(), $customerGroupIds, 'customer_group');
+        }
+
         // Save product attributes used in rule
         $ruleProductAttributes = array_merge(
-            $this->getProductAttributes($this->serializer->serialize($object->getConditions()->asArray())),
-            $this->getProductAttributes($this->serializer->serialize($object->getActions()->asArray()))
+            $this->getProductAttributes(serialize($object->getConditions()->asArray())),
+            $this->getProductAttributes(serialize($object->getActions()->asArray()))
         );
         if (count($ruleProductAttributes)) {
             $this->setActualProductAttributes($object, $ruleProductAttributes);
@@ -196,7 +192,7 @@ class Rule extends AbstractResource
     {
         $connection = $this->getConnection();
         $select = $connection->select()->from(
-            $this->getTable('salesrule_customer'),
+            $this->getTable('rule_customer'),
             ['cnt' => 'count(*)']
         )->where(
             'rule_id = :rule_id'
@@ -315,11 +311,7 @@ class Rule extends AbstractResource
     public function setActualProductAttributes($rule, $attributes)
     {
         $connection = $this->getConnection();
-        $metadata = $this->metadataPool->getMetadata(RuleInterface::class);
-        $connection->delete(
-            $this->getTable('salesrule_product_attribute'),
-            [$metadata->getLinkField() . '=?' => $rule->getData($metadata->getLinkField())]
-        );
+        $connection->delete($this->getTable('salesrule_product_attribute'), ['rule_id=?' => $rule->getId()]);
 
         //Getting attribute IDs for attribute codes
         $attributeIds = [];
@@ -341,7 +333,7 @@ class Rule extends AbstractResource
                 foreach ($rule->getWebsiteIds() as $websiteId) {
                     foreach ($attributeIds as $attribute) {
                         $data[] = [
-                            $metadata->getLinkField() => $rule->getData($metadata->getLinkField()),
+                            'rule_id' => $rule->getId(),
                             'website_id' => $websiteId,
                             'customer_group_id' => $customerGroupId,
                             'attribute_id' => $attribute,
@@ -363,48 +355,18 @@ class Rule extends AbstractResource
      */
     public function getProductAttributes($serializedString)
     {
-        // we need 4 backslashes to match 1 in regexp, see http://www.php.net/manual/en/regexp.reference.escape.php
-        preg_match_all(
-            '~"Magento\\\\\\\\SalesRule\\\\\\\\Model\\\\\\\\Rule\\\\\\\\Condition\\\\\\\\Product","attribute":"(.*?)"~',
+        $result = [];
+        if (preg_match_all(
+            '~s:32:"salesrule/rule_condition_product";s:9:"attribute";s:\d+:"(.*?)"~s',
             $serializedString,
             $matches
-        );
-        // we always have $matches like [[],[]]
-        return array_values($matches[1]);
-    }
-
-    /**
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @return $this
-     */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $this->getEntityManager()->save($object);
-        return $this;
-    }
-
-    /**
-     * Delete the object
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @return $this
-     */
-    public function delete(AbstractModel $object)
-    {
-        $this->getEntityManager()->delete($object);
-        return $this;
-    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\EntityManager
-     * @deprecated 100.1.0
-     */
-    private function getEntityManager()
-    {
-        if (null === $this->entityManager) {
-            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\EntityManager::class);
+        )
+        ) {
+            foreach ($matches[1] as $attributeCode) {
+                $result[] = $attributeCode;
+            }
         }
-        return $this->entityManager;
+
+        return $result;
     }
 }

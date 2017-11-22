@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\View\Test\Unit\Helper;
 
-class JsTest extends \PHPUnit\Framework\TestCase
+class JsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers \Magento\Framework\View\Helper\Js::getScript

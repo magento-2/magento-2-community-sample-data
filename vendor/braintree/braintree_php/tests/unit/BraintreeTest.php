@@ -1,24 +1,19 @@
 <?php
-namespace Test\Unit;
+require_once realpath(dirname(__FILE__)) . '/../TestHelper.php';
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Test\Setup;
-use Braintree;
-
-class BraintreeTest extends Setup
+class Braintree_BraintreeTest extends PHPUnit_Framework_TestCase
 {
-    public function testIsset()
+    function testIsset()
     {
-        $t = Braintree\Transaction::factory([
-            'creditCard' => ['expirationMonth' => '05', 'expirationYear' => '2010', 'bin' => '510510', 'last4' => '5100'],
-            'customer' => [],
-            'billing' => [],
-            'descriptor' => [],
-            'shipping' => [],
-            'subscription' => ['billingPeriodStartDate' => '1983-07-12'],
-            'statusHistory' => [],
-        ]);
+        $t = Braintree_Transaction::factory(array(
+            'creditCard' => array('expirationMonth' => '05', 'expirationYear' => '2010', 'bin' => '510510', 'last4' => '5100'),
+            'customer' => array(),
+            'billing' => array(),
+            'descriptor' => array(),
+            'shipping' => array(),
+            'subscription' => array('billingPeriodStartDate' => '1983-07-12'),
+            'statusHistory' => array()
+        ));
         $this->assertTrue(isset($t->creditCard));
         $this->assertFalse(empty($t->creditCard));
     }

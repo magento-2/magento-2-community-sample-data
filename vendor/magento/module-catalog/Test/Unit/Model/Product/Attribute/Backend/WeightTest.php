@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Backend;
 
-class WeightTest extends \PHPUnit\Framework\TestCase
+class WeightTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\Backend\Weight
@@ -17,21 +17,11 @@ class WeightTest extends \PHPUnit\Framework\TestCase
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         // we want to use an actual implementation of \Magento\Framework\Locale\FormatInterface
-        $scopeResolver = $this->getMockForAbstractClass(
-            \Magento\Framework\App\ScopeResolverInterface::class,
-            [],
-            '',
-            false
-        );
-        $localeResolver = $this->getMockForAbstractClass(
-            \Magento\Framework\Locale\ResolverInterface::class,
-            [],
-            '',
-            false
-        );
-        $currencyFactory = $this->createMock(\Magento\Directory\Model\CurrencyFactory::class);
+        $scopeResolver = $this->getMockForAbstractClass('\Magento\Framework\App\ScopeResolverInterface', [], '', false);
+        $localeResolver = $this->getMockForAbstractClass('\Magento\Framework\Locale\ResolverInterface', [], '', false);
+        $currencyFactory = $this->getMock('\Magento\Directory\Model\CurrencyFactory', [], [], '', false);
         $localeFormat = $objectHelper->getObject(
-            \Magento\Framework\Locale\Format::class,
+            'Magento\Framework\Locale\Format',
             [
                 'scopeResolver'   => $scopeResolver,
                 'localeResolver'  => $localeResolver,
@@ -41,12 +31,12 @@ class WeightTest extends \PHPUnit\Framework\TestCase
 
         // the model we are testing
         $this->model = $objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Backend\Weight::class,
+            'Magento\Catalog\Model\Product\Attribute\Backend\Weight',
             ['localeFormat' => $localeFormat]
         );
 
         $attribute = $this->getMockForAbstractClass(
-            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
+            '\Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
             [],
             '',
             false
@@ -61,7 +51,7 @@ class WeightTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate($value)
     {
-        $object = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $object = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $object->expects($this->once())->method('getData')->willReturn($value);
 
         $this->assertTrue($this->model->validate($object));
@@ -91,7 +81,7 @@ class WeightTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateForFailure($value)
     {
-        $object = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $object = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $object->expects($this->once())->method('getData')->willReturn($value);
 
         $this->model->validate($object);

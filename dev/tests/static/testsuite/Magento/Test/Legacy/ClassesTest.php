@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy;
 
 use Magento\Framework\App\Utility\Files;
 
-class ClassesTest extends \PHPUnit\Framework\TestCase
+class ClassesTest extends \PHPUnit_Framework_TestCase
 {
     public function testPhpCode()
     {
@@ -117,7 +117,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                     $this->assertFalse(false === strpos($name, '\\'));
                     $this->assertRegExp('/^([A-Z\\\\][A-Za-z\d\\\\]+)+$/', $name);
                 }
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
                 $factoryNames[] = $name;
             }
         }

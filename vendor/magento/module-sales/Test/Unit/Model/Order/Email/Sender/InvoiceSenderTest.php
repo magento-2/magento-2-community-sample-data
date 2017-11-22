@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Email\Sender;
@@ -28,22 +28,24 @@ class InvoiceSenderTest extends AbstractSenderTest
     {
         $this->stepMockSetup();
 
-        $this->invoiceResourceMock = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Invoice::class,
-            ['saveAttribute']
+        $this->invoiceResourceMock = $this->getMock(
+            '\Magento\Sales\Model\ResourceModel\Order\Invoice',
+            ['saveAttribute'],
+            [],
+            '',
+            false
         );
 
-        $this->invoiceMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Invoice::class,
+        $this->invoiceMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Invoice',
             [
-                'getStore',
-                '__wakeup',
-                'getOrder',
-                'setSendEmail',
-                'setEmailSent',
-                'getCustomerNoteNotify',
+                'getStore', '__wakeup', 'getOrder',
+                'setSendEmail', 'setEmailSent', 'getCustomerNoteNotify',
                 'getCustomerNote'
-            ]
+            ],
+            [],
+            '',
+            false
         );
         $this->invoiceMock->expects($this->any())
             ->method('getStore')
@@ -52,9 +54,12 @@ class InvoiceSenderTest extends AbstractSenderTest
             ->method('getOrder')
             ->will($this->returnValue($this->orderMock));
 
-        $this->identityContainerMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Email\Container\InvoiceIdentity::class,
-            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId']
+        $this->identityContainerMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Email\Container\InvoiceIdentity',
+            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId'],
+            [],
+            '',
+            false
         );
         $this->identityContainerMock->expects($this->any())
             ->method('getStore')
@@ -98,7 +103,13 @@ class InvoiceSenderTest extends AbstractSenderTest
             ->willReturn($configValue);
 
         if (!$configValue || $forceSyncMode) {
-            $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+            $addressMock = $this->getMock(
+                'Magento\Sales\Model\Order\Address',
+                [],
+                [],
+                '',
+                false
+            );
 
             $this->addressRenderer->expects($this->any())
                 ->method('format')
@@ -170,10 +181,7 @@ class InvoiceSenderTest extends AbstractSenderTest
                 );
             }
         } else {
-            $this->invoiceResourceMock->expects($this->at(0))
-                ->method('saveAttribute')
-                ->with($this->invoiceMock, 'email_sent');
-            $this->invoiceResourceMock->expects($this->at(1))
+            $this->invoiceResourceMock->expects($this->once())
                 ->method('saveAttribute')
                 ->with($this->invoiceMock, 'send_email');
 
@@ -219,7 +227,7 @@ class InvoiceSenderTest extends AbstractSenderTest
             ->with('sales_email/general/async_sending')
             ->willReturn(false);
 
-        $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+        $addressMock = $this->getMock('Magento\Sales\Model\Order\Address', [], [], '', false);
 
         $this->addressRenderer->expects($this->exactly($formatCallCount))
             ->method('format')
@@ -250,6 +258,7 @@ class InvoiceSenderTest extends AbstractSenderTest
         $this->identityContainerMock->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
+
 
         $this->invoiceResourceMock->expects($this->once())
             ->method('saveAttribute')

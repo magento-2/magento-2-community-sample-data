@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backup\Test\Unit\Helper;
@@ -9,7 +9,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\MaintenanceMode;
 use Magento\Framework\Filesystem;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backup\Helper\Data
@@ -21,15 +21,15 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected $filesystem;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)->disableOriginalConstructor()
+        $this->filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')->disableOriginalConstructor()
             ->getMock();
 
         $this->filesystem->expects($this->any())
             ->method('getDirectoryRead')
             ->will($this->returnCallback(function ($code) {
-                $dir = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
+                $dir = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\ReadInterface');
                 $dir->expects($this->any())
                     ->method('getAbsolutePath')
                     ->will($this->returnCallback(function ($path) use ($code) {
@@ -40,10 +40,9 @@ class DataTest extends \PHPUnit\Framework\TestCase
             }));
 
         $this->helper = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
-            ->getObject(
-                \Magento\Backup\Helper\Data::class,
-                ['filesystem' => $this->filesystem]
-            );
+            ->getObject('Magento\Backup\Helper\Data', [
+                'filesystem' => $this->filesystem,
+            ]);
     }
 
     public function testGetBackupIgnorePaths()

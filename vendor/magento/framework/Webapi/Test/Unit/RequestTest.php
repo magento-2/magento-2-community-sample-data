@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Webapi\Test\Unit;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Webapi\Request */
     protected $request;
@@ -14,7 +14,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     {
         /** Initialize SUT. */
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->request = $objectManager->getObject(\Magento\Framework\Webapi\Request::class);
+        $this->request = $objectManager->getObject('Magento\Framework\Webapi\Request');
     }
 
     protected function tearDown()

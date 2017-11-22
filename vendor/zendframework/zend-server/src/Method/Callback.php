@@ -39,7 +39,7 @@ class Callback
     /**
      * @var array Valid callback types
      */
-    protected $types = ['function', 'static', 'instance'];
+    protected $types = array('function', 'static', 'instance');
 
     /**
      * Constructor
@@ -150,11 +150,7 @@ class Callback
     public function setType($type)
     {
         if (!in_array($type, $this->types)) {
-            throw new Server\Exception\InvalidArgumentException(sprintf(
-                'Invalid method callback type "%s" passed to %s',
-                $type,
-                __METHOD__
-            ));
+            throw new Server\Exception\InvalidArgumentException('Invalid method callback type "' . $type . '" passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->type = $type;
         return $this;
@@ -178,9 +174,9 @@ class Callback
     public function toArray()
     {
         $type = $this->getType();
-        $array = [
+        $array = array(
             'type' => $type,
-        ];
+        );
         if ('function' == $type) {
             $array['function'] = $this->getFunction();
         } else {

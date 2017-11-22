@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Test\Unit\Block\Adminhtml\Order;
 
-class TrackingTest extends \PHPUnit\Framework\TestCase
+class TrackingTest extends \PHPUnit_Framework_TestCase
 {
     public function testLookup()
     {
@@ -13,7 +13,7 @@ class TrackingTest extends \PHPUnit\Framework\TestCase
 
         $shipment = new \Magento\Framework\DataObject(['store_id' => 1]);
 
-        $registry = $this->createPartialMock(\Magento\Framework\Registry::class, ['registry']);
+        $registry = $this->getMock('Magento\Framework\Registry', ['registry'], [], '', false);
         $registry->expects(
             $this->once()
         )->method(
@@ -24,9 +24,12 @@ class TrackingTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($shipment)
         );
 
-        $carrier = $this->createPartialMock(
-            \Magento\OfflineShipping\Model\Carrier\Freeshipping::class,
-            ['isTrackingAvailable', 'getConfigData']
+        $carrier = $this->getMock(
+            'Magento\OfflineShipping\Model\Carrier\Freeshipping',
+            ['isTrackingAvailable', 'getConfigData'],
+            [],
+            '',
+            false
         );
         $carrier->expects($this->once())->method('isTrackingAvailable')->will($this->returnValue(true));
         $carrier->expects(
@@ -39,7 +42,7 @@ class TrackingTest extends \PHPUnit\Framework\TestCase
             $this->returnValue('configdata')
         );
 
-        $config = $this->createPartialMock(\Magento\Shipping\Model\Config::class, ['getAllCarriers']);
+        $config = $this->getMock('Magento\Shipping\Model\Config', ['getAllCarriers'], [], '', false);
         $config->expects(
             $this->once()
         )->method(
@@ -52,7 +55,7 @@ class TrackingTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Shipping\Block\Adminhtml\Order\Tracking $model */
         $model = $helper->getObject(
-            \Magento\Shipping\Block\Adminhtml\Order\Tracking::class,
+            'Magento\Shipping\Block\Adminhtml\Order\Tracking',
             ['registry' => $registry, 'shippingConfig' => $config]
         );
 

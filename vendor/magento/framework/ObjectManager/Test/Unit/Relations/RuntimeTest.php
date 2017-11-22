@@ -1,23 +1,24 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Framework\ObjectManager\Test\Unit\Relations;
 
 require_once __DIR__ . '/../_files/Child.php';
-
-class RuntimeTest extends \PHPUnit\Framework\TestCase
+class RuntimeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManager\Relations\Runtime
      */
-    private $model;
+    protected $_model;
 
     protected function setUp()
     {
-        $this->model = new \Magento\Framework\ObjectManager\Relations\Runtime();
+        $this->_model = new \Magento\Framework\ObjectManager\Relations\Runtime();
     }
 
     /**
@@ -27,23 +28,36 @@ class RuntimeTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetParents($type, $parents)
     {
-        $this->assertEquals($parents, $this->model->getParents($type));
+        $this->assertEquals($parents, $this->_model->getParents($type));
     }
 
     public function getParentsDataProvider()
     {
         return [
-            [\Magento\Test\Di\DiInterface::class, []],
-            [\Magento\Test\Di\DiParent::class, [null, \Magento\Test\Di\DiInterface::class]],
-            [\Magento\Test\Di\Child::class, [\Magento\Test\Di\DiParent::class, \Magento\Test\Di\ChildInterface::class]]
+            ['Magento\Test\Di\DiInterface', []],
+            ['Magento\Test\Di\DiParent', [null, 'Magento\Test\Di\DiInterface']],
+            ['Magento\Test\Di\Child', ['Magento\Test\Di\DiParent', 'Magento\Test\Di\ChildInterface']]
         ];
     }
 
     /**
      * @param $entity
+     * @expectedException  \Magento\Framework\Exception\LocalizedException
+     * @dataProvider nonExistentGeneratorsDataProvider
      */
-    public function testHasIfNonExists()
+    public function testHasIfNonExists($entity)
     {
-        $this->assertFalse($this->model->has(\NonexistentClass::class));
+        $this->_model->has($entity);
+    }
+
+    public function nonExistentGeneratorsDataProvider()
+    {
+        return [
+            ['Magento\Test\Module\Model\Item\Factory'],
+            ['Magento\Test\Module\Model\Item\Proxy'],
+            ['Magento\Test\Module\Model\Item\Interceptor'],
+            ['Magento\Test\Module\Model\Item\Mapper'],
+            ['Magento\Test\Module\Model\Item\SearchResults']
+        ];
     }
 }

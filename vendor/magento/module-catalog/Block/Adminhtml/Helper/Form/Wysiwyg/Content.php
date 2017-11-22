@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,12 +14,6 @@ namespace Magento\Catalog\Block\Adminhtml\Helper\Form\Wysiwyg;
 use Magento\Backend\Block\Widget\Form;
 use Magento\Backend\Block\Widget\Form\Generic;
 
-/**
- * Class Content
- *
- * @deprecated 101.0.8
- * @see \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav
- */
 class Content extends Generic
 {
     /**

@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Ui\Component\Listing\Column;
 
 use Magento\Customer\Ui\Component\Listing\Column\Actions;
 
-class ActionsTest extends \PHPUnit\Framework\TestCase
+class ActionsTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Actions */
     protected $component;
@@ -23,15 +23,21 @@ class ActionsTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->uiComponentFactory = $this->createMock(\Magento\Framework\View\Element\UiComponentFactory::class);
+        $this->context->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->uiComponentFactory = $this->getMock(
+            'Magento\Framework\View\Element\UiComponentFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->urlBuilder = $this->getMockForAbstractClass(
-            \Magento\Framework\UrlInterface::class,
+            'Magento\Framework\UrlInterface',
             [],
             '',
             false

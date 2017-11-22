@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Shipping\Controller\Adminhtml\Order\Shipment;
@@ -16,9 +16,7 @@ use Magento\Sales\Model\Order\Shipment\Validation\QuantityValidator;
 class Save extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
+     * {@inheritdoc}
      */
     const ADMIN_RESOURCE = 'Magento_Sales::shipment';
 
@@ -70,7 +68,7 @@ class Save extends \Magento\Backend\App\Action
     {
         $shipment->getOrder()->setIsInProcess(true);
         $transaction = $this->_objectManager->create(
-            \Magento\Framework\DB\Transaction::class
+            'Magento\Framework\DB\Transaction'
         );
         $transaction->addObject(
             $shipment
@@ -104,7 +102,7 @@ class Save extends \Magento\Backend\App\Action
         $data = $this->getRequest()->getParam('shipment');
 
         if (!empty($data['comment_text'])) {
-            $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setCommentText($data['comment_text']);
+            $this->_objectManager->get('Magento\Backend\Model\Session')->setCommentText($data['comment_text']);
         }
 
         $isNeedCreateLabel = isset($data['create_shipping_label']) && $data['create_shipping_label'];
@@ -162,7 +160,7 @@ class Save extends \Magento\Backend\App\Action
             $this->messageManager->addSuccess(
                 $isNeedCreateLabel ? $shipmentCreatedMessage . ' ' . $labelCreatedMessage : $shipmentCreatedMessage
             );
-            $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getCommentText(true);
+            $this->_objectManager->get('Magento\Backend\Model\Session')->getCommentText(true);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             if ($isNeedCreateLabel) {
                 $responseAjax->setError(true);
@@ -172,7 +170,7 @@ class Save extends \Magento\Backend\App\Action
                 $this->_redirect('*/*/new', ['order_id' => $this->getRequest()->getParam('order_id')]);
             }
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             if ($isNeedCreateLabel) {
                 $responseAjax->setError(true);
                 $responseAjax->setMessage(__('An error occurred while creating shipping label.'));
@@ -190,7 +188,7 @@ class Save extends \Magento\Backend\App\Action
 
     /**
      * @return \Magento\Sales\Model\Order\Shipment\ShipmentValidatorInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getShipmentValidator()
     {

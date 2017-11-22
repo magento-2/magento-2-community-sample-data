@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\CatalogInventory\Block\Adminhtml\Form\Field;
 
 /**
  * Adminhtml catalog inventory "Minimum Qty Allowed in Shopping Cart" field
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\CatalogInventory\Block\Adminhtml\Form\Field;
+
 class Minsaleqty extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray
 {
     /**
@@ -27,7 +27,7 @@ class Minsaleqty extends \Magento\Config\Block\System\Config\Form\Field\FieldArr
     {
         if (!$this->_groupRenderer) {
             $this->_groupRenderer = $this->getLayout()->createBlock(
-                \Magento\CatalogInventory\Block\Adminhtml\Form\Field\Customergroup::class,
+                'Magento\CatalogInventory\Block\Adminhtml\Form\Field\Customergroup',
                 '',
                 ['data' => ['is_render_to_js_template' => true]]
             );

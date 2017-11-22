@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Entity\Attribute\Source;
@@ -8,10 +8,6 @@ namespace Magento\Eav\Model\Entity\Attribute\Source;
 use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
     /**
@@ -94,13 +90,14 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
      * Get StoreManager dependency
      *
      * @return StoreManagerInterface
-     * @deprecated 100.1.6
+     * @deprecated
      */
     private function getStoreManager()
     {
         if ($this->storeManager === null) {
             $this->storeManager = ObjectManager::getInstance()->get(StoreManagerInterface::class);
         }
+
         return $this->storeManager;
     }
 
@@ -180,20 +177,18 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
      */
     public function addValueSortToCollection($collection, $dir = \Magento\Framework\DB\Select::SQL_ASC)
     {
-        $attribute = $this->getAttribute();
-        $valueTable1 = $attribute->getAttributeCode() . '_t1';
-        $valueTable2 = $attribute->getAttributeCode() . '_t2';
-        $linkField = $attribute->getEntity()->getLinkField();
+        $valueTable1 = $this->getAttribute()->getAttributeCode() . '_t1';
+        $valueTable2 = $this->getAttribute()->getAttributeCode() . '_t2';
         $collection->getSelect()->joinLeft(
-            [$valueTable1 => $attribute->getBackend()->getTable()],
-            "e.{$linkField}={$valueTable1}." . $linkField .
-            " AND {$valueTable1}.attribute_id='{$attribute->getId()}'" .
+            [$valueTable1 => $this->getAttribute()->getBackend()->getTable()],
+            "e.entity_id={$valueTable1}.entity_id" .
+            " AND {$valueTable1}.attribute_id='{$this->getAttribute()->getId()}'" .
             " AND {$valueTable1}.store_id=0",
             []
         )->joinLeft(
-            [$valueTable2 => $attribute->getBackend()->getTable()],
-            "e.{$linkField}={$valueTable2}." . $linkField .
-            " AND {$valueTable2}.attribute_id='{$attribute->getId()}'" .
+            [$valueTable2 => $this->getAttribute()->getBackend()->getTable()],
+            "e.entity_id={$valueTable2}.entity_id" .
+            " AND {$valueTable2}.attribute_id='{$this->getAttribute()->getId()}'" .
             " AND {$valueTable2}.store_id='{$collection->getStoreId()}'",
             []
         );
@@ -205,11 +200,11 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 
         $this->_attrOptionFactory->create()->addOptionValueToCollection(
             $collection,
-            $attribute,
+            $this->getAttribute(),
             $valueExpr
         );
 
-        $collection->getSelect()->order("{$attribute->getAttributeCode()} {$dir}");
+        $collection->getSelect()->order("{$this->getAttribute()->getAttributeCode()} {$dir}");
 
         return $this;
     }

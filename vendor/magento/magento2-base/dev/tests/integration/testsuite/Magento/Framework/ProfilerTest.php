@@ -2,12 +2,12 @@
 /**
  * Test case for \Magento\Framework\Profiler
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework;
 
-class ProfilerTest extends \PHPUnit\Framework\TestCase
+class ProfilerTest extends \PHPUnit_Framework_TestCase
 {
     protected function tearDown()
     {
@@ -22,7 +22,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
     public function testApplyConfigWithDrivers(array $config, array $expectedDrivers)
     {
         \Magento\Framework\Profiler::applyConfig($config, '');
-        $this->assertAttributeEquals($expectedDrivers, '_drivers', \Magento\Framework\Profiler::class);
+        $this->assertAttributeEquals($expectedDrivers, '_drivers', 'Magento\Framework\Profiler');
     }
 
     /**

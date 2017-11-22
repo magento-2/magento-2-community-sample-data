@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -677,24 +677,31 @@ class Info
     {
         if (!isset($this->_labelCodesCache[self::PAYPAL_AVS_CODE])) {
             $this->_labelCodesCache[self::PAYPAL_AVS_CODE] = [
-                'A' => __('Matched Address only (no ZIP)'), // Visa, MasterCard, Discover and American Express
-                'B' => __('Matched Address only (no ZIP) International'), // international "A"
+                // Visa, MasterCard, Discover and American Express
+                'A' => __('Matched Address only (no ZIP)'),
+                // international "A"
+                'B' => __('Matched Address only (no ZIP) International'),
                 'N' => __('No Details matched'),
-                'C' => __('No Details matched. International'), // international "N"
+                // international "N"
+                'C' => __('No Details matched. International'),
                 'X' => __('Exact Match.'),
-                'D' => __('Exact Match. Address and Postal Code. International'), // international "X"
-                'F' => __('Exact Match. Address and Postal Code. UK-specific'), // UK-specific "X"
+                // international "X"
+                'D' => __('Exact Match. Address and Postal Code. International'),
+                // UK-specific "X"
+                'F' => __('Exact Match. Address and Postal Code. UK-specific'),
                 'E' => __('N/A. Not allowed for MOTO (Internet/Phone) transactions'),
                 'G' => __('N/A. Global Unavailable'),
                 'I' => __('N/A. International Unavailable'),
                 'Z' => __('Matched five-digit ZIP only (no Address)'),
-                'P' => __('Matched Postal Code only (no Address)'), // international "Z"
+                // international "Z"
+                'P' => __('Matched Postal Code only (no Address)'),
                 'R' => __('N/A. Retry'),
                 'S' => __('N/A. Service not Supported'),
                 'U' => __('N/A. Unavailable'),
-                'W' => __('Matched whole nine-digit ZIP (no Address)'),
-                'Y' => __('Yes. Matched Address and five-digit ZIP'),
-                '0' => __('All the address information matched'), // Maestro and Solo
+                'W' => __('Matched whole nine-didgit ZIP (no Address)'),
+                'Y' => __('Yes. Matched Address and five-didgit ZIP'),
+                // Maestro and Solo
+                '0' => __('All the address information matched'),
                 '1' => __('None of the address information matched'),
                 '2' => __('Part of the address information matched'),
                 '3' => __('N/A. The merchant did not provide AVS information'),

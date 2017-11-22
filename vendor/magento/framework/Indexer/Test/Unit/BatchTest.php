@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Indexer\Test\Unit;
 
-class BatchTest extends \PHPUnit\Framework\TestCase
+class BatchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Indexer\SaveHandler\Batch
@@ -27,8 +27,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     public function testGetItems(array $itemsData, $size, array $expected)
     {
         $items = new \ArrayObject($itemsData);
-        $data = $this->object->getItems($items, $size);
-        $this->assertSame($expected, iterator_to_array($data));
+        $this->assertSame($expected, $this->object->getItems($items, $size));
     }
 
     /**

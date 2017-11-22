@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Test\Unit\Reader;
 
 require_once __DIR__ . '/_files/ClassesForArgumentsReader.php';
-class ArgumentsReaderTest extends \PHPUnit\Framework\TestCase
+class ArgumentsReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Code\Reader\ArgumentsReader
@@ -39,35 +39,35 @@ class ArgumentsReaderTest extends \PHPUnit\Framework\TestCase
             'someVariable' => [
                 'name' => 'someVariable',
                 'position' => 2,
-                'type' => 'mixed',
+                'type' => null,
                 'isOptional' => false,
                 'default' => null,
             ],
             'const' => [
                 'name' => 'const',
                 'position' => 3,
-                'type' => 'string',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 'Const Value',
             ],
             'optionalNumValue' => [
                 'name' => 'optionalNumValue',
                 'position' => 4,
-                'type' => 'int',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 9807,
             ],
             'optionalStringValue' => [
                 'name' => 'optionalStringValue',
                 'position' => 5,
-                'type' => 'string',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 'optional string',
             ],
             'optionalArrayValue' => [
                 'name' => 'optionalArrayValue',
                 'position' => 6,
-                'type' => 'array',
+                'type' => null,
                 'isOptional' => true,
                 'default' => "array('optionalKey' => 'optionalValue')",
             ],
@@ -106,35 +106,35 @@ class ArgumentsReaderTest extends \PHPUnit\Framework\TestCase
             'someVariable' => [
                 'name' => 'someVariable',
                 'position' => 2,
-                'type' => 'mixed',
+                'type' => null,
                 'isOptional' => false,
                 'default' => null,
             ],
             'const' => [
                 'name' => 'const',
                 'position' => 3,
-                'type' => 'string',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 'Const Value',
             ],
             'optionalNumValue' => [
                 'name' => 'optionalNumValue',
                 'position' => 4,
-                'type' => 'int',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 9807,
             ],
             'optionalStringValue' => [
                 'name' => 'optionalStringValue',
                 'position' => 5,
-                'type' => 'string',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 'optional string',
             ],
             'optionalArrayValue' => [
                 'name' => 'optionalArrayValue',
                 'position' => 6,
-                'type' => 'array',
+                'type' => null,
                 'isOptional' => true,
                 'default' => "array('optionalKey' => 'optionalValue')",
             ],
@@ -175,14 +175,14 @@ class ArgumentsReaderTest extends \PHPUnit\Framework\TestCase
             'message' => [
                 'name' => 'message',
                 'position' => 0,
-                'type' => 'string',
+                'type' => null,
                 'isOptional' => true,
                 'default' => '',
             ],
             'code' => [
                 'name' => 'code',
                 'position' => 1,
-                'type' => 'int',
+                'type' => null,
                 'isOptional' => true,
                 'default' => 0,
             ],

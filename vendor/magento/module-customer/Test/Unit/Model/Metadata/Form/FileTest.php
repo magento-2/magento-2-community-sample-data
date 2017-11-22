@@ -1,6 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Magento\Customer\Model\Metadata\Form\File
+ *
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
@@ -9,77 +11,53 @@ use Magento\Customer\Model\Metadata\ElementFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class FileTest extends AbstractFormTestCase
 {
     const ENTITY_TYPE = 0;
+    /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\Url\EncoderInterface */
+    protected $urlEncode;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Url\EncoderInterface
-     */
-    private $urlEncode;
+    /** @var \PHPUnit_Framework_MockObject_MockObject | NotProtectedExtension */
+    protected $fileValidatorMock;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|NotProtectedExtension
-     */
-    private $fileValidatorMock;
+    /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\Filesystem */
+    protected $fileSystemMock;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Filesystem
-     */
-    private $fileSystemMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Request\Http
-     */
-    private $requestMock;
+    /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\App\Request\Http */
+    protected $requestMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\File\UploaderFactory
      */
-    private $uploaderFactoryMock;
+    protected $uploaderFactoryMock;
 
     /**
      * @var \Magento\Customer\Model\FileProcessor|\PHPUnit_Framework_MockObject_MockObject
      */
     private $fileProcessorMock;
 
-    /**
-     * @var \Magento\Customer\Model\FileProcessorFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $fileProcessorFactoryMock;
-
     protected function setUp()
     {
         parent::setUp();
-        $this->urlEncode = $this->getMockBuilder(\Magento\Framework\Url\EncoderInterface::class)
+        $this->urlEncode = $this->getMockBuilder('Magento\Framework\Url\EncoderInterface')
             ->disableOriginalConstructor()->getMock();
-        $this->fileValidatorMock = $this->getMockBuilder(NotProtectedExtension::class)
+        $this->fileValidatorMock = $this->getMockBuilder(
+            'Magento\MediaStorage\Model\File\Validator\NotProtectedExtension'
+        )->disableOriginalConstructor()->getMock();
+        $this->fileSystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
+            ->disableOriginalConstructor()->getMock();
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
+            ->disableOriginalConstructor()->getMock();
+        $this->uploaderFactoryMock = $this->getMock('Magento\Framework\File\UploaderFactory', [], [], '', false);
+
+        $this->fileProcessorMock = $this->getMockBuilder('Magento\Customer\Model\FileProcessor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fileSystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->uploaderFactoryMock = $this->createMock(\Magento\Framework\File\UploaderFactory::class);
-        $this->fileProcessorMock = $this->getMockBuilder(\Magento\Customer\Model\FileProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileProcessorFactoryMock = $this->getMockBuilder(\Magento\Customer\Model\FileProcessorFactory::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileProcessorFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->fileProcessorMock);
     }
 
     /**
      * @param array|bool $expected
      * @param string $attributeCode
-     * @param bool $isAjax
      * @param string $delete
      * @dataProvider extractValueNoRequestScopeDataProvider
      */
@@ -298,7 +276,7 @@ class FileTest extends AbstractFormTestCase
                 ['tmp_name' => 'tempName_0001.bin', 'name' => 'realFileName.bin'],
                 ['uploaded' => false],
             ],
-            'isValid' => [true, ['tmp_name' => 'tempName_0001.txt', 'name' => 'realFileName.txt']]
+            'isValid' => [true, ['tmp_name' => 'tempName_0001.txt', 'name' => 'realFileName.txt']],
         ];
     }
 
@@ -335,13 +313,10 @@ class FileTest extends AbstractFormTestCase
     {
         $this->attributeMetadataMock->expects($this->any())->method('isRequired')->will($this->returnValue(false));
 
-        $mediaDirMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
+        $mediaDirMock = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\WriteInterface');
         $mediaDirMock->expects($this->once())
             ->method('delete')
             ->with(self::ENTITY_TYPE . '/' . 'value');
-
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
@@ -361,9 +336,7 @@ class FileTest extends AbstractFormTestCase
         $value = ['tmp_name' => 'tmp.file', 'name' => 'new.file'];
         $expected = 'saved.file';
 
-        $mediaDirMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
+        $mediaDirMock = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\WriteInterface');
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
@@ -371,7 +344,7 @@ class FileTest extends AbstractFormTestCase
         $mediaDirMock->expects($this->any())
             ->method('getAbsolutePath')
             ->will($this->returnArgument(0));
-        $uploaderMock = $this->createMock(\Magento\Framework\File\Uploader::class);
+        $uploaderMock = $this->getMock('\Magento\Framework\File\Uploader', [], [], '', false);
         $this->uploaderFactoryMock->expects($this->once())
             ->method('create')
             ->with(['fileId' => $value])
@@ -466,26 +439,55 @@ class FileTest extends AbstractFormTestCase
         $this->assertSame($expected, $model->outputValue(ElementFactory::OUTPUT_FORMAT_JSON));
     }
 
-    /**
-     * @param array $data
-     * @return \Magento\Customer\Model\Metadata\Form\File
-     */
-    private function initialize(array $data)
+    public function testCompactValueNoAction()
     {
-        return new \Magento\Customer\Model\Metadata\Form\File(
-            $this->localeMock,
-            $this->loggerMock,
-            $this->attributeMetadataMock,
-            $this->localeResolverMock,
-            $data['value'],
-            $data['entityTypeCode'],
-            $data['isAjax'],
-            $this->urlEncode,
-            $this->fileValidatorMock,
-            $this->fileSystemMock,
-            $this->uploaderFactoryMock,
-            $this->fileProcessorFactoryMock
-        );
+        $value = 'value';
+
+        $model = $this->initialize([
+            'value' => $value,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->assertEquals($value, $model->compactValue($value));
+    }
+
+    public function testCompactValueUiComponent()
+    {
+        $value = [
+            'file' => 'filename',
+        ];
+
+        $model = $this->initialize([
+            'value' => null,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('moveTemporaryFile')
+            ->with($value['file'])
+            ->willReturn(true);
+
+        $this->assertTrue($model->compactValue($value));
+    }
+
+    public function testCompactValueRemoveUiComponentValue()
+    {
+        $value = 'value';
+
+        $model = $this->initialize([
+            'value' => $value,
+            'isAjax' => false,
+            'entityTypeCode' => self::ENTITY_TYPE,
+        ]);
+
+        $this->fileProcessorMock->expects($this->once())
+            ->method('removeUploadedFile')
+            ->with($value)
+            ->willReturnSelf();
+
+        $this->assertEquals([], $model->compactValue([]));
     }
 
     public function testExtractValueFileUploaderUIComponent()
@@ -521,57 +523,6 @@ class FileTest extends AbstractFormTestCase
         $this->assertEquals(['file' => $fileName], $result);
     }
 
-    public function testCompactValueRemoveUiComponentValue()
-    {
-        $value = 'value';
-
-        $model = $this->initialize([
-            'value' => $value,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('removeUploadedFile')
-            ->with($value)
-            ->willReturnSelf();
-
-        $this->assertEquals([], $model->compactValue([]));
-    }
-
-    public function testCompactValueNoAction()
-    {
-        $value = 'value';
-
-        $model = $this->initialize([
-            'value' => $value,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
-
-        $this->assertEquals($value, $model->compactValue($value));
-    }
-
-    public function testCompactValueUiComponent()
-    {
-        $value = [
-            'file' => 'filename',
-        ];
-
-        $model = $this->initialize([
-            'value' => null,
-            'isAjax' => false,
-            'entityTypeCode' => self::ENTITY_TYPE,
-        ]);
-
-        $this->fileProcessorMock->expects($this->once())
-            ->method('moveTemporaryFile')
-            ->with($value['file'])
-            ->willReturn(true);
-
-        $this->assertTrue($model->compactValue($value));
-    }
-
     public function testCompactValueInputField()
     {
         $value = [
@@ -582,9 +533,7 @@ class FileTest extends AbstractFormTestCase
         $absolutePath = 'absolute_path';
         $uploadedFilename = 'filename.ext1';
 
-        $mediaDirectoryMock = $this->getMockBuilder(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        )
+        $mediaDirectoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\WriteInterface')
             ->getMockForAbstractClass();
         $mediaDirectoryMock->expects($this->once())
             ->method('getAbsolutePath')
@@ -596,9 +545,9 @@ class FileTest extends AbstractFormTestCase
             ->with(DirectoryList::MEDIA)
             ->willReturn($mediaDirectoryMock);
 
-        $uploaderMock = $this->getMockBuilder(
-            \Magento\Framework\File\Uploader::class
-        )->disableOriginalConstructor()->getMock();
+        $uploaderMock = $this->getMockBuilder('Magento\Framework\File\Uploader')
+            ->disableOriginalConstructor()
+            ->getMock();
         $uploaderMock->expects($this->once())
             ->method('setFilesDispersion')
             ->with(true)
@@ -642,9 +591,8 @@ class FileTest extends AbstractFormTestCase
 
         $originValue = 'origin';
 
-        $mediaDirectoryMock = $this->getMockBuilder(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        )->getMockForAbstractClass();
+        $mediaDirectoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\WriteInterface')
+            ->getMockForAbstractClass();
         $mediaDirectoryMock->expects($this->once())
             ->method('delete')
             ->with(self::ENTITY_TYPE . '/' . $originValue);
@@ -673,5 +621,33 @@ class FileTest extends AbstractFormTestCase
         ]);
 
         $this->assertEquals('', $model->compactValue($value));
+    }
+
+    /**
+     * @param array $data
+     * @return \Magento\Customer\Model\Metadata\Form\File
+     */
+    private function initialize(array $data)
+    {
+        $model = new \Magento\Customer\Model\Metadata\Form\File(
+            $this->localeMock,
+            $this->loggerMock,
+            $this->attributeMetadataMock,
+            $this->localeResolverMock,
+            $data['value'],
+            $data['entityTypeCode'],
+            $data['isAjax'],
+            $this->urlEncode,
+            $this->fileValidatorMock,
+            $this->fileSystemMock,
+            $this->uploaderFactoryMock
+        );
+
+        $reflection = new \ReflectionClass(get_class($model));
+        $reflectionProperty = $reflection->getProperty('fileProcessor');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($model, $this->fileProcessorMock);
+
+        return $model;
     }
 }

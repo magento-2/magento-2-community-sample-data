@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Ui\Component\Listing;
 
 use Magento\Customer\Ui\Component\Listing\AttributeRepository;
 
-class AttributeRepositoryTest extends \PHPUnit\Framework\TestCase
+class AttributeRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Api\CustomerMetadataManagementInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $customerMetadataManagement;
@@ -33,41 +33,41 @@ class AttributeRepositoryTest extends \PHPUnit\Framework\TestCase
     /** @var AttributeRepository */
     protected $component;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->customerMetadataManagement = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\CustomerMetadataManagementInterface::class,
+            'Magento\Customer\Api\CustomerMetadataManagementInterface',
             [],
             '',
             false
         );
         $this->addressMetadataManagement = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\AddressMetadataManagementInterface::class,
+            'Magento\Customer\Api\AddressMetadataManagementInterface',
             [],
             '',
             false
         );
         $this->customerMetadata = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\CustomerMetadataInterface::class,
+            'Magento\Customer\Api\CustomerMetadataInterface',
             [],
             '',
             false
         );
         $this->addressMetadata = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\AddressMetadataInterface::class,
+            'Magento\Customer\Api\AddressMetadataInterface',
             [],
             '',
             false
         );
         $this->attribute = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class,
+            'Magento\Customer\Api\Data\AttributeMetadataInterface',
             [],
             '',
             false
         );
-        $this->option = $this->createMock(\Magento\Customer\Api\Data\OptionInterface::class);
+        $this->option = $this->getMock('Magento\Customer\Api\Data\OptionInterface', [], [], '', false);
 
-        $this->attributeFilter = $this->createMock(\Magento\Customer\Model\Indexer\Attribute\Filter::class);
+        $this->attributeFilter = $this->getMock('Magento\Customer\Model\Indexer\Attribute\Filter', [], [], '', false);
 
         $this->component = new AttributeRepository(
             $this->customerMetadataManagement,

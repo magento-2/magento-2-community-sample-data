@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,9 +11,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Email;
 
-/**
- * @deprecated 100.1.5
- */
 class Logo extends \Magento\Config\Model\Config\Backend\Image
 {
     /**
@@ -49,20 +46,6 @@ class Logo extends \Magento\Config\Model\Config\Backend\Image
     }
 
     /**
-     * @return string|null
-     */
-    protected function getTmpFileName()
-    {
-        $tmpName = null;
-        if (isset($_FILES['groups'])) {
-            $tmpName = $_FILES['groups']['tmp_name'][$this->getGroupId()]['fields'][$this->getField()]['value'];
-        } else {
-            $tmpName = is_array($this->getValue()) ? $this->getValue()['tmp_name'] : null;
-        }
-        return $tmpName;
-    }
-
-    /**
      * Save uploaded file before saving config value
      *
      * Save changes and delete file if "delete" option passed
@@ -73,7 +56,7 @@ class Logo extends \Magento\Config\Model\Config\Backend\Image
     {
         $value = $this->getValue();
         $deleteFlag = is_array($value) && !empty($value['delete']);
-        $fileTmpName = $this->getTmpFileName();
+        $fileTmpName = $_FILES['groups']['tmp_name'][$this->getGroupId()]['fields'][$this->getField()]['value'];
 
         if ($this->getOldValue() && ($fileTmpName || $deleteFlag)) {
             $this->_mediaDirectory->delete(self::UPLOAD_DIR . '/' . $this->getOldValue());

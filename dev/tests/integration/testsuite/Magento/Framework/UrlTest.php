@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework;
 
 use Zend\Stdlib\Parameters;
 
-class UrlTest extends \PHPUnit\Framework\TestCase
+class UrlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\UrlInterface
@@ -16,9 +16,7 @@ class UrlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Url::class
-        );
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Framework\Url');
     }
 
     public function testSetGetUseSession()
@@ -398,7 +396,7 @@ class UrlTest extends \PHPUnit\Framework\TestCase
     public function testSessionUrlVar()
     {
         $sessionId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Session\Generic::class
+            'Magento\Framework\Session\Generic'
         )->getSessionId();
         $sessionUrl = $this->_model->sessionUrlVar('<a href="http://example.com/?___SID=U">www.example.com</a>');
         $this->assertEquals('<a href="http://example.com/?SID=' . $sessionId . '">www.example.com</a>', $sessionUrl);
@@ -419,7 +417,7 @@ class UrlTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\Framework\App\RequestInterface::class);
+        $request = $objectManager->get('Magento\Framework\App\RequestInterface');
         $request->setServer(new Parameters(['HTTP_REFERER' => 'http://localhost/']));
         $this->assertTrue($this->_model->isOwnOriginUrl());
 

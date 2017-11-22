@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -16,8 +16,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Downlaodable Sales Order Email items renderer
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Downloadable extends \Magento\Sales\Block\Order\Email\Items\DefaultItems
 {
@@ -37,28 +36,24 @@ class Downloadable extends \Magento\Sales\Block\Order\Email\Items\DefaultItems
     protected $_itemsFactory;
 
     /**
-     * @var \Magento\Framework\Url
-     * @since 100.1.0
+     * @var \Magento\Framework\UrlInterface
      */
-    protected $frontendUrlBuilder;
+    protected $urlGenerator;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Downloadable\Model\Link\PurchasedFactory $purchasedFactory
      * @param \Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\CollectionFactory $itemsFactory
-     * @param \Magento\Framework\Url $frontendUrlBuilder
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Downloadable\Model\Link\PurchasedFactory $purchasedFactory,
         \Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\CollectionFactory $itemsFactory,
-        \Magento\Framework\Url $frontendUrlBuilder,
         array $data = []
     ) {
         $this->_purchasedFactory = $purchasedFactory;
         $this->_itemsFactory = $itemsFactory;
-        $this->frontendUrlBuilder = $frontendUrlBuilder;
         parent::__construct($context, $data);
     }
 
@@ -99,7 +94,7 @@ class Downloadable extends \Magento\Sales\Block\Order\Email\Items\DefaultItems
      */
     public function getPurchasedLinkUrl($item)
     {
-        return $this->frontendUrlBuilder->getUrl(
+        return $this->_urlBuilder->getUrl(
             'downloadable/download/link',
             [
                 'id' => $item->getLinkHash(),

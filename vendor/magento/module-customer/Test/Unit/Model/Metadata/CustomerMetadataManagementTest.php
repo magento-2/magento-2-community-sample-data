@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Test\Unit\Model\Metadata;
@@ -9,7 +9,7 @@ use Magento\Customer\Model\Attribute;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 use Magento\Customer\Model\Metadata\CustomerMetadataManagement;
 
-class CustomerMetadataManagementTest extends \PHPUnit\Framework\TestCase
+class CustomerMetadataManagementTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CustomerMetadataManagement */
     protected $model;
@@ -19,7 +19,7 @@ class CustomerMetadataManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attributeResolverMock = $this->getMockBuilder(\Magento\Customer\Model\Metadata\AttributeResolver::class)
+        $this->attributeResolverMock = $this->getMockBuilder('Magento\Customer\Model\Metadata\AttributeResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -31,11 +31,11 @@ class CustomerMetadataManagementTest extends \PHPUnit\Framework\TestCase
     public function testCanBeSearchableInGrid()
     {
         /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->getMockForAbstractClass();
 
         /** @var Attribute|\PHPUnit_Framework_MockObject_MockObject $modelMock */
-        $modelMock = $this->getMockBuilder(\Magento\Customer\Model\Attribute::class)
+        $modelMock = $this->getMockBuilder('Magento\Customer\Model\Attribute')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -54,11 +54,11 @@ class CustomerMetadataManagementTest extends \PHPUnit\Framework\TestCase
     public function testCanBeFilterableInGrid()
     {
         /** @var AttributeMetadataInterface|\PHPUnit_Framework_MockObject_MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')
             ->getMockForAbstractClass();
 
         /** @var Attribute|\PHPUnit_Framework_MockObject_MockObject $modelMock */
-        $modelMock = $this->getMockBuilder(\Magento\Customer\Model\Attribute::class)
+        $modelMock = $this->getMockBuilder('Magento\Customer\Model\Attribute')
             ->disableOriginalConstructor()
             ->getMock();
 

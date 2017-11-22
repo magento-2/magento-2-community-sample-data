@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Api\AbstractExtensibleObject;
 use Magento\Framework\Api\AttributeValue;
 
-class ExtensibleDataObjectConverterTest extends \PHPUnit\Framework\TestCase
+class ExtensibleDataObjectConverterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\Api\ExtensibleDataObjectConverter */
     protected $converter;
@@ -21,18 +21,18 @@ class ExtensibleDataObjectConverterTest extends \PHPUnit\Framework\TestCase
     /** @var  \Magento\Framework\Api\ExtensibleDataInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dataObject;
 
-    protected function setUp()
+    public function setUp()
     {
-        $this->processor = $this->getMockBuilder(\Magento\Framework\Reflection\DataObjectProcessor::class)
+        $this->processor = $this->getMockBuilder('Magento\Framework\Reflection\DataObjectProcessor')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dataObject = $this->getMockBuilder(\Magento\Framework\Api\ExtensibleDataInterface::class)
+        $this->dataObject = $this->getMockBuilder('Magento\Framework\Api\ExtensibleDataInterface')
             ->getMock();
 
         $objectManager = new ObjectManager($this);
         $this->converter = $objectManager->getObject(
-            \Magento\Framework\Api\ExtensibleDataObjectConverter::class,
+            'Magento\Framework\Api\ExtensibleDataObjectConverter',
             [
                 'dataObjectProcessor' => $this->processor,
             ]

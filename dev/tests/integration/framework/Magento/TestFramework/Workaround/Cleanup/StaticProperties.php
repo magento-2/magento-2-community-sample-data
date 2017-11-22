@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,8 +9,8 @@
  */
 namespace Magento\TestFramework\Workaround\Cleanup;
 
-use Magento\Framework\App\Utility\Files;
 use Magento\Framework\Component\ComponentRegistrar;
+use Magento\Framework\App\Utility\Files;
 
 class StaticProperties
 {
@@ -33,14 +33,19 @@ class StaticProperties
      * @var array
      */
     protected static $_classesToSkip = [
-        \Magento\Framework\App\ObjectManager::class,
-        \Magento\TestFramework\Helper\Bootstrap::class,
-        \Magento\TestFramework\Event\Magento::class,
-        \Magento\TestFramework\Event\PhpUnit::class,
-        \Magento\TestFramework\Annotation\AppIsolation::class,
-        \Magento\TestFramework\Workaround\Cleanup\StaticProperties::class,
-        \Magento\Framework\Phrase::class,
+        'Magento\Framework\App\ObjectManager',
+        'Magento\TestFramework\Helper\Bootstrap',
+        'Magento\TestFramework\Event\Magento',
+        'Magento\TestFramework\Event\PhpUnit',
+        'Magento\TestFramework\Annotation\AppIsolation',
+        'Magento\TestFramework\Workaround\Cleanup\StaticProperties',
+        'Magento\Framework\Phrase',
     ];
+
+    /**
+     * @var \ReflectionClass[]
+     */
+    static protected $classes = [];
 
     /**
      * Constructor
@@ -72,10 +77,11 @@ class StaticProperties
     {
         // do not process blacklisted classes from integration framework
         foreach (self::$_classesToSkip as $notCleanableClass) {
-            if ($reflectionClass->getName() == $notCleanableClass || is_subclass_of(
-                $reflectionClass->getName(),
-                $notCleanableClass
-            )
+            if ($reflectionClass->getName() == $notCleanableClass ||
+                is_subclass_of(
+                    $reflectionClass->getName(),
+                    $notCleanableClass
+                )
             ) {
                 return false;
             }
@@ -107,11 +113,6 @@ class StaticProperties
     }
 
     /**
-     * @var \ReflectionClass[]
-     */
-    protected static $classes = [];
-
-    /**
      * @param string $class
      * @return \ReflectionClass
      */
@@ -120,6 +121,7 @@ class StaticProperties
         if (!isset(self::$classes[$class])) {
             self::$classes[$class] = new \ReflectionClass($class);
         }
+
         return self::$classes[$class];
     }
 
@@ -148,6 +150,7 @@ class StaticProperties
         if (count(self::$backupStaticVariables) > 0) {
             return;
         }
+
         $classFiles = array_filter(
             Files::init()->getPhpFiles(
                 Files::INCLUDE_APP_CODE
@@ -156,18 +159,22 @@ class StaticProperties
             ),
             function ($classFile) {
                 return StaticProperties::_isClassInCleanableFolders($classFile)
-                && strpos(file_get_contents($classFile), ' static ')  > 0;
+                && strpos(file_get_contents($classFile), ' static ') > 0;
             }
         );
+
         $namespacePattern = '/namespace [a-zA-Z0-9\\\\]+;/';
         $classPattern = '/\nclass [a-zA-Z0-9_]+/';
+
         foreach ($classFiles as $classFile) {
             $code = file_get_contents($classFile);
             preg_match($namespacePattern, $code, $namespace);
             preg_match($classPattern, $code, $class);
+
             if (!isset($namespace[0]) || !isset($class[0])) {
                 continue;
             }
+
             // trim namespace and class name
             $namespace = substr($namespace[0], 10, strlen($namespace[0]) - 11);
             $class = substr($class[0], 7, strlen($class[0]) - 7);
@@ -178,6 +185,7 @@ class StaticProperties
             } catch (\Exception $e) {
                 continue;
             }
+
             if (self::_isClassCleanable($reflectionClass)) {
                 $staticProperties = $reflectionClass->getProperties(\ReflectionProperty::IS_STATIC);
                 foreach ($staticProperties as $staticProperty) {
@@ -203,9 +211,9 @@ class StaticProperties
     /**
      * Handler for 'endTestSuite' event
      *
-     * @param \PHPUnit\Framework\TestSuite $suite
+     * @param \PHPUnit_Framework_TestSuite $suite
      */
-    public function endTestSuite(\PHPUnit\Framework\TestSuite $suite)
+    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
         $clearStatics = false;
         foreach ($suite->tests() as $test) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click "Delete" button.
  * 5. Perform asserts.
  *
- * @group Category_Management
+ * @group Category_Management_(MX)
  * @ZephyrId MAGETWO-23303
  */
 class DeleteCategoryEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -62,7 +63,7 @@ class DeleteCategoryEntityTest extends Injectable
     }
 
     /**
-     * Delete category.
+     * Delete category
      *
      * @param Category $category
      * @return void
@@ -72,9 +73,7 @@ class DeleteCategoryEntityTest extends Injectable
         $category->persist();
         $this->catalogCategoryIndex->open();
         $this->catalogCategoryIndex->getTreeCategories()->selectCategory($category);
-        if ($this->catalogCategoryEdit->getFormPageActions()->checkDeleteButton()) {
-            $this->catalogCategoryEdit->getFormPageActions()->delete();
-            $this->catalogCategoryEdit->getModalBlock()->acceptAlert();
-        }
+        $this->catalogCategoryEdit->getFormPageActions()->delete();
+        $this->catalogCategoryEdit->getModalBlock()->acceptAlert();
     }
 }

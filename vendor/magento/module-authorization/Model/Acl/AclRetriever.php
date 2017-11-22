@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -24,24 +24,16 @@ class AclRetriever
     const PERMISSION_ANONYMOUS = 'anonymous';
     const PERMISSION_SELF = 'self';
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
+    /** @var Logger */
     protected $logger;
 
-    /**
-     * @var \Magento\Authorization\Model\ResourceModel\Rules\CollectionFactory
-     */
+    /** @var RulesCollectionFactory */
     protected $rulesCollectionFactory;
 
-    /**
-     * @var \Magento\Framework\Acl\Builder
-     */
+    /** @var AclBuilder */
     protected $aclBuilder;
 
-    /**
-     * @var \Magento\Authorization\Model\ResourceModel\Role\CollectionFactory
-     */
+    /** @var RoleCollectionFactory */
     protected $roleCollectionFactory;
 
     /**

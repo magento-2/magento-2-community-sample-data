@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml\Wysiwyg;
@@ -10,9 +10,8 @@ use Magento\Backend\App\Action;
 
 class Directive extends \Magento\Backend\App\Action
 {
-
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
@@ -62,14 +61,13 @@ class Directive extends \Magento\Backend\App\Action
             $resultRaw->setHeader('Content-Type', $image->getMimeType());
             $resultRaw->setContents($image->getImage());
         } catch (\Exception $e) {
-            $imagePath = $this->_objectManager->get(
-                \Magento\Cms\Model\Wysiwyg\Config::class
-            )->getSkinImagePlaceholderPath();
+            $imagePath = $this->_objectManager->get(\Magento\Cms\Model\Wysiwyg\Config::class)->getSkinImagePlaceholderPath();
             $image->open($imagePath);
             $resultRaw->setHeader('Content-Type', $image->getMimeType());
             $resultRaw->setContents($image->getImage());
             $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
         }
+
         return $resultRaw;
     }
 }

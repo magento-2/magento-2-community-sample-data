@@ -1,16 +1,11 @@
 <?php
-namespace Test\Integration;
 
-require_once dirname(__DIR__) . '/Setup.php';
-
-use Braintree;
-use Test;
-
-class HttpClientApi extends Braintree\Http
+class Braintree_HttpClientApi extends Braintree_Http
 {
+
     protected function _doRequest($httpVerb, $path, $requestBody = null)
     {
-        return $this->_doUrlRequest($httpVerb, $this->_config->baseUrl() . "/merchants/" . $this->_config->getMerchantId() . $path, $requestBody);
+        return $this->_doUrlRequest($httpVerb, $this->_config->baseUrl() . "/merchants/" . $this->_config->merchantId() . $path, $requestBody);
     }
 
     public function get($path)
@@ -29,10 +24,10 @@ class HttpClientApi extends Braintree\Http
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpVerb);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
-            'X-ApiVersion: ' . Braintree\Configuration::API_VERSION,
-        ]);
+            'X-ApiVersion: ' . Braintree_Configuration::API_VERSION
+        ));
         curl_setopt($curl, CURLOPT_USERPWD, $this->_config->publicKey() . ':' . $this->_config->privateKey());
 
         if(!empty($requestBody)) {
@@ -43,7 +38,7 @@ class HttpClientApi extends Braintree\Http
         $response = curl_exec($curl);
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
-        return ['status' => $httpStatus, 'body' => $response];
+        return array('status' => $httpStatus, 'body' => $response);
     }
 
     public function get_cards($options) {
@@ -57,14 +52,12 @@ class HttpClientApi extends Braintree\Http
     }
 
     public function nonce_for_new_card($options) {
-        $clientTokenOptions = [];
+        $clientTokenOptions = array();
         if (array_key_exists("customerId", $options)) {
             $clientTokenOptions["customerId"] = $options["customerId"];
             unset($options["customerId"]);
         }
-
-        $clientToken = json_decode(Test\Helper::decodedClientToken($clientTokenOptions));
-
+        $clientToken = json_decode(Braintree_TestHelper::decodedClientToken($clientTokenOptions));
         $options["authorization_fingerprint"] = $clientToken->authorizationFingerprint;
         $options["shared_customer_identifier"] = "fake_identifier_" . rand();
         $options["shared_customer_identifier_type"] = "testing";
@@ -73,44 +66,19 @@ class HttpClientApi extends Braintree\Http
             $body = json_decode($response["body"]);
             return $body->creditCards[0]->nonce;
         } else {
-            throw new Exception(print_r($response, true));
-        }
-    }
-
-    public function nonceForNewEuropeanBankAccount($options) {
-        $clientTokenOptions = [
-            'sepaMandateType' => 'business',
-            'sepaMandateAcceptanceLocation' => 'Rostock, Germany'
-        ];
-
-        if (array_key_exists("customerId", $options)) {
-            $clientTokenOptions["customerId"] = $options["customerId"];
-            unset($options["customerId"]);
-        }
-
-        $gateway = new Braintree\Gateway($this->_config);
-
-        $clientToken = json_decode(base64_decode($gateway->clientToken()->generate($clientTokenOptions)));
-        $options["authorization_fingerprint"] = $clientToken->authorizationFingerprint;
-
-        $response = $this->post('/client_api/v1/sepa_mandates/', json_encode($options));
-        if ($response["status"] == 201 || $response["status"] == 202) {
-            $body = json_decode($response["body"]);
-            return $body->europeBankAccounts[0]->nonce;
-        } else {
-            throw new Exception(print_r($response, true));
+            throw new Exception(var_dump($response));
         }
     }
 
     public function nonceForPayPalAccount($options) {
-        $clientToken = json_decode(Test\Helper::decodedClientToken());
+        $clientToken = json_decode(Braintree_TestHelper::decodedClientToken());
         $options["authorization_fingerprint"] = $clientToken->authorizationFingerprint;
         $response = $this->post('/client_api/v1/payment_methods/paypal_accounts.json', json_encode($options));
         if ($response["status"] == 201 || $response["status"] == 202) {
             $body = json_decode($response["body"], true);
             return $body["paypalAccounts"][0]["nonce"];
         } else {
-            throw new Exception(print_r($response, true));
+            throw new Exception(var_dump($response));
         }
     }
 }

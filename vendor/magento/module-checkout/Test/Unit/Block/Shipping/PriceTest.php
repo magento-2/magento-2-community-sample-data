@@ -1,11 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Test\Unit\Block\Shipping;
 
-class PriceTest extends \PHPUnit\Framework\TestCase
+
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     const SUBTOTAL = 10;
 
@@ -33,12 +34,10 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->priceCurrency = $this->getMockBuilder(
-            \Magento\Framework\Pricing\PriceCurrencyInterface::class
-        )->getMock();
+        $this->priceCurrency = $this->getMockBuilder('Magento\Framework\Pricing\PriceCurrencyInterface')->getMock();
 
         $this->priceObj = $objectManager->getObject(
-            \Magento\Checkout\Block\Shipping\Price::class,
+            'Magento\Checkout\Block\Shipping\Price',
             ['priceCurrency'   => $this->priceCurrency]
         );
     }
@@ -48,7 +47,7 @@ class PriceTest extends \PHPUnit\Framework\TestCase
         $shippingPrice = 5;
         $convertedPrice = "$5";
 
-        $shippingRateMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Address\Rate::class)
+        $shippingRateMock = $this->getMockBuilder('\Magento\Quote\Model\Quote\Address\Rate')
             ->disableOriginalConstructor()
             ->setMethods(['getPrice', '__wakeup'])
             ->getMock();

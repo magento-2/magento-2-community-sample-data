@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableProduct\Test\Constraint;
@@ -54,17 +54,18 @@ class AssertProductQtyDecreasedAfterCreditmemo extends AbstractConstraint
      * Assert form data equals fixture data
      *
      * @param OrderInjectable $order
+     * @param array $data
      * @param CatalogProductIndex $productGrid
      * @param CatalogProductEdit $productPage
      * @return void
      */
     public function processAssert(
         OrderInjectable $order,
+        array $data,
         CatalogProductIndex $productGrid,
         CatalogProductEdit $productPage
     ) {
-        $data = $order->getRefund();
-        $product = $this->getProduct($order, $data[0]);
+        $product = $this->getProduct($order, $data);
         $this->objectManager->get(\Magento\Catalog\Test\Constraint\AssertProductForm::class)->processAssert(
             $product,
             $productGrid,
@@ -97,7 +98,7 @@ class AssertProductQtyDecreasedAfterCreditmemo extends AbstractConstraint
         }
         $productKey = trim($productKey);
         $optionProduct = $productData['configurable_attributes_data']['matrix'][$productKey];
-        $optionProduct['qty'] -= ($checkoutDataQty - $data['items_data'][$index]['qty']);
+        $optionProduct['quantity_and_stock_status']['qty'] -= ($checkoutDataQty - $data['items_data'][$index]['qty']);
         $productData = $optionProduct;
 
         $productData = array_diff_key($productData, array_flip($this->skipFields));

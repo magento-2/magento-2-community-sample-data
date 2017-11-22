@@ -1,19 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App\View\Asset;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\Directory\WriteFactory;
 use Magento\Framework\View\Asset;
 
 /**
  * A publishing service for view assets
- *
- * @api
  */
 class Publisher
 {
@@ -28,23 +25,15 @@ class Publisher
     private $materializationStrategyFactory;
 
     /**
-     * @var WriteFactory
-     */
-    private $writeFactory;
-
-    /**
      * @param \Magento\Framework\Filesystem $filesystem
      * @param MaterializationStrategy\Factory $materializationStrategyFactory
-     * @param WriteFactory $writeFactory
      */
     public function __construct(
         \Magento\Framework\Filesystem $filesystem,
-        MaterializationStrategy\Factory $materializationStrategyFactory,
-        WriteFactory $writeFactory
+        MaterializationStrategy\Factory $materializationStrategyFactory
     ) {
         $this->filesystem = $filesystem;
         $this->materializationStrategyFactory = $materializationStrategyFactory;
-        $this->writeFactory = $writeFactory;
     }
 
     /**
@@ -70,11 +59,10 @@ class Publisher
     private function publishAsset(Asset\LocalInterface $asset)
     {
         $targetDir = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
-        $fullSource = $asset->getSourceFile();
-        $source = basename($fullSource);
-        $sourceDir = $this->writeFactory->create(dirname($fullSource));
+        $rootDir = $this->filesystem->getDirectoryWrite(DirectoryList::ROOT);
+        $source = $rootDir->getRelativePath($asset->getSourceFile());
         $destination = $asset->getPath();
         $strategy = $this->materializationStrategyFactory->create($asset);
-        return $strategy->publishFile($sourceDir, $targetDir, $source, $destination);
+        return $strategy->publishFile($rootDir, $targetDir, $source, $destination);
     }
 }

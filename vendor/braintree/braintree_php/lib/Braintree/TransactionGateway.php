@@ -1,8 +1,4 @@
 <?php
-namespace Braintree;
-
-use InvalidArgumentException;
-
 /**
  * Braintree TransactionGateway processor
  * Creates and manages transactions
@@ -14,10 +10,10 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
+ * @copyright  2014 Braintree, a division of PayPal, Inc.
  */
 
-class TransactionGateway
+final class Braintree_TransactionGateway
 {
     private $_gateway;
     private $_config;
@@ -28,13 +24,13 @@ class TransactionGateway
         $this->_gateway = $gateway;
         $this->_config = $gateway->config;
         $this->_config->assertHasAccessTokenOrKeys();
-        $this->_http = new Http($gateway->config);
+        $this->_http = new Braintree_Http($gateway->config);
     }
 
     public function cloneTransaction($transactionId, $attribs)
     {
-        Util::verifyKeys(self::cloneSignature(), $attribs);
-        return $this->_doCreate('/transactions/' . $transactionId . '/clone', ['transactionClone' => $attribs]);
+        Braintree_Util::verifyKeys(self::cloneSignature(), $attribs);
+        return $this->_doCreate('/transactions/' . $transactionId . '/clone', array('transactionClone' => $attribs));
     }
 
     /**
@@ -45,57 +41,56 @@ class TransactionGateway
      */
     private function create($attribs)
     {
-        Util::verifyKeys(self::createSignature(), $attribs);
-        return $this->_doCreate('/transactions', ['transaction' => $attribs]);
+        Braintree_Util::verifyKeys(self::createSignature(), $attribs);
+        return $this->_doCreate('/transactions', array('transaction' => $attribs));
     }
 
     /**
+     *
      * @ignore
      * @access private
      * @param array $attribs
      * @return object
-     * @throws Exception\ValidationError
+     * @throws Braintree_Exception_ValidationError
      */
     private function createNoValidate($attribs)
     {
         $result = $this->create($attribs);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
     /**
      *
-     * @deprecated since version 2.3.0
      * @access public
      * @param array $attribs
      * @return object
      */
     public function createFromTransparentRedirect($queryString)
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::confirm", E_USER_NOTICE);
-        $params = TransparentRedirect::parseAndValidateQueryString(
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::confirm", E_USER_NOTICE);
+        $params = Braintree_TransparentRedirect::parseAndValidateQueryString(
                 $queryString
         );
         return $this->_doCreate(
                 '/transactions/all/confirm_transparent_redirect_request',
-                ['id' => $params['id']]
+                array('id' => $params['id'])
         );
     }
     /**
      *
-     * @deprecated since version 2.3.0
      * @access public
      * @param none
      * @return string
      */
     public function createTransactionUrl()
     {
-        trigger_error("DEPRECATED: Please use TransparentRedirectRequest::url", E_USER_NOTICE);
+        trigger_error("DEPRECATED: Please use Braintree_TransparentRedirectRequest::url", E_USER_NOTICE);
         return $this->_config->baseUrl() . $this->_config->merchantPath() .
                 '/transactions/all/create_via_transparent_redirect_request';
     }
 
     public static function cloneSignature()
     {
-        return ['amount', 'channel', ['options' => ['submitForSettlement']]];
+        return array('amount', 'channel', array('options' => array('submitForSettlement')));
     }
 
     /**
@@ -104,7 +99,7 @@ class TransactionGateway
      */
     public static function createSignature()
     {
-        return [
+        return array(
             'amount',
             'billingAddressId',
             'channel',
@@ -119,50 +114,36 @@ class TransactionGateway
             'purchaseOrderNumber',
             'recurring',
             'serviceFeeAmount',
-            'sharedPaymentMethodToken',
-            'sharedCustomerId',
-            'sharedShippingAddressId',
-            'sharedBillingAddressId',
             'shippingAddressId',
             'taxAmount',
             'taxExempt',
             'threeDSecureToken',
-            'transactionSource',
             'type',
             'venmoSdkPaymentMethodCode',
-            ['riskData' =>
-                ['customerBrowser', 'customerIp', 'customer_browser', 'customer_ip']
-            ],
-            ['creditCard' =>
-                ['token', 'cardholderName', 'cvv', 'expirationDate', 'expirationMonth', 'expirationYear', 'number'],
-            ],
-            ['customer' =>
-                [
+            array('creditCard' =>
+                array('token', 'cardholderName', 'cvv', 'expirationDate', 'expirationMonth', 'expirationYear', 'number'),
+            ),
+            array('customer' =>
+                array(
                     'id', 'company', 'email', 'fax', 'firstName',
-                    'lastName', 'phone', 'website'],
-            ],
-            ['billing' =>
-                [
+                    'lastName', 'phone', 'website'),
+            ),
+            array('billing' =>
+                array(
                     'firstName', 'lastName', 'company', 'countryName',
                     'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
                     'extendedAddress', 'locality', 'postalCode', 'region',
-                    'streetAddress'],
-            ],
-            ['shipping' =>
-                [
+                    'streetAddress'),
+            ),
+            array('shipping' =>
+                array(
                     'firstName', 'lastName', 'company', 'countryName',
                     'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
                     'extendedAddress', 'locality', 'postalCode', 'region',
-                    'streetAddress'],
-            ],
-            ['threeDSecurePassThru' =>
-                [
-                    'eciFlag',
-                    'cavv',
-                    'xid'],
-            ],
-            ['options' =>
-                [
+                    'streetAddress'),
+            ),
+            array('options' =>
+                array(
                     'holdInEscrow',
                     'storeInVault',
                     'storeInVaultOnSuccess',
@@ -171,41 +152,25 @@ class TransactionGateway
                     'venmoSdkSession',
                     'storeShippingAddressInVault',
                     'payeeEmail',
-                    'skipAdvancedFraudChecking',
-                    ['threeDSecure' =>
-                        ['required']
-                    ],
-                    # Included for backwards compatiblity. Remove in the next major version
-                    ['three_d_secure' =>
-                        ['required']
-                    ],
-                    ['paypal' =>
-                        [
+                    array('three_d_secure' =>
+                        array('required')
+                    ),
+                    array('paypal' =>
+                        array(
                             'payeeEmail',
-                            'customField',
-                            'description',
-                            ['supplementaryData' => ['_anyKey_']],
-                        ]
-                    ],
-                    ['amexRewards' =>
-                        [
-                            'requestId',
-                            'points',
-                            'currencyAmount',
-                            'currencyIsoCode'
-                        ]
-                    ]
-                ],
-            ],
-            ['customFields' => ['_anyKey_']],
-            ['descriptor' => ['name', 'phone', 'url']],
-            ['paypalAccount' => ['payeeEmail']],
-            ['apple_pay_card' => ['number', 'cardholder_name', 'cryptogram', 'expiration_month', 'expiration_year']], #backwards compatibility
-            ['applePayCard' => ['number', 'cardholderName', 'cryptogram', 'expirationMonth', 'expirationYear']],
-            ['industry' =>
-                ['industryType',
-                    ['data' =>
-                        [
+                            'customField'
+                        )
+                    )
+                ),
+            ),
+            array('customFields' => array('_anyKey_')
+            ),
+            array('descriptor' => array('name', 'phone', 'url')),
+            array('paypalAccount' => array('payeeEmail')),
+            array('industry' =>
+                array('industryType',
+                    array('data' =>
+                        array(
                             'folioNumber',
                             'checkInDate',
                             'checkOutDate',
@@ -215,56 +180,41 @@ class TransactionGateway
                             'lodgingCheckOutDate',
                             'lodgingName',
                             'roomRate'
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    public static function submitForSettlementSignature()
-    {
-        return ['orderId', ['descriptor' => ['name', 'phone', 'url']]];
-    }
-
-    public static function updateDetailsSignature()
-    {
-        return ['amount', 'orderId', ['descriptor' => ['name', 'phone', 'url']]];
-    }
-
-    public static function refundSignature()
-    {
-        return ['amount', 'orderId'];
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**
      *
      * @access public
      * @param array $attribs
-     * @return Result\Successful|Result\Error
+     * @return object
      */
     public function credit($attribs)
     {
-        return $this->create(array_merge($attribs, ['type' => Transaction::CREDIT]));
+        return $this->create(array_merge($attribs, array('type' => Braintree_Transaction::CREDIT)));
     }
 
     /**
      *
      * @access public
      * @param array $attribs
-     * @return Result\Successful|Result\Error
-     * @throws Exception\ValidationError
+     * @return object
+     * @throws Braintree_Exception_ValidationError
      */
     public function creditNoValidate($attribs)
     {
         $result = $this->credit($attribs);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
+
 
     /**
      * @access public
-     * @param string id
-     * @return Transaction
+     *
      */
     public function find($id)
     {
@@ -272,12 +222,13 @@ class TransactionGateway
         try {
             $path = $this->_config->merchantPath() . '/transactions/' . $id;
             $response = $this->_http->get($path);
-            return Transaction::factory($response['transaction']);
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
+            return Braintree_Transaction::factory($response['transaction']);
+        } catch (Braintree_Exception_NotFound $e) {
+            throw new Braintree_Exception_NotFound(
             'transaction with id ' . $id . ' not found'
             );
         }
+
     }
     /**
      * new sale
@@ -286,7 +237,7 @@ class TransactionGateway
      */
     public function sale($attribs)
     {
-        return $this->create(array_merge(['type' => Transaction::SALE], $attribs));
+        return $this->create(array_merge(array('type' => Braintree_Transaction::SALE), $attribs));
     }
 
     /**
@@ -294,12 +245,12 @@ class TransactionGateway
      * @access public
      * @param array $attribs
      * @return array
-     * @throws Exception\ValidationsFailed
+     * @throws Braintree_Exception_ValidationsFailed
      */
     public function saleNoValidate($attribs)
     {
         $result = $this->sale($attribs);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
 
     /**
@@ -311,56 +262,52 @@ class TransactionGateway
      *
      * @param mixed $query search query
      * @param array $options options such as page number
-     * @return ResourceCollection
+     * @return object Braintree_ResourceCollection
      * @throws InvalidArgumentException
      */
     public function search($query)
     {
-        $criteria = [];
+        $criteria = array();
         foreach ($query as $term) {
             $criteria[$term->name] = $term->toparam();
         }
 
         $path = $this->_config->merchantPath() . '/transactions/advanced_search_ids';
-        $response = $this->_http->post($path, ['search' => $criteria]);
+        $response = $this->_http->post($path, array('search' => $criteria));
         if (array_key_exists('searchResults', $response)) {
-            $pager = [
+            $pager = array(
                 'object' => $this,
                 'method' => 'fetch',
-                'methodArgs' => [$query]
-                ];
+                'methodArgs' => array($query)
+                );
 
-            return new ResourceCollection($response, $pager);
+            return new Braintree_ResourceCollection($response, $pager);
         } else {
-            throw new Exception\DownForMaintenance();
+            throw new Braintree_Exception_DownForMaintenance();
         }
     }
 
     public function fetch($query, $ids)
     {
-        $criteria = [];
+        $criteria = array();
         foreach ($query as $term) {
             $criteria[$term->name] = $term->toparam();
         }
-        $criteria["ids"] = TransactionSearch::ids()->in($ids)->toparam();
+        $criteria["ids"] = Braintree_TransactionSearch::ids()->in($ids)->toparam();
         $path = $this->_config->merchantPath() . '/transactions/advanced_search';
-        $response = $this->_http->post($path, ['search' => $criteria]);
+        $response = $this->_http->post($path, array('search' => $criteria));
 
-        if (array_key_exists('creditCardTransactions', $response)) {
-            return Util::extractattributeasarray(
-                $response['creditCardTransactions'],
-                'transaction'
-            );
-        } else {
-            throw new Exception\DownForMaintenance();
-        }
+        return Braintree_Util::extractattributeasarray(
+            $response['creditCardTransactions'],
+            'transaction'
+        );
     }
 
     /**
      * void a transaction by id
      *
      * @param string $id transaction id
-     * @return Result\Successful|Result\Error
+     * @return object Braintree_Result_Successful|Braintree_Result_Error
      */
     public function void($transactionId)
     {
@@ -376,45 +323,22 @@ class TransactionGateway
     public function voidNoValidate($transactionId)
     {
         $result = $this->void($transactionId);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
 
-    public function submitForSettlement($transactionId, $amount = null, $attribs = [])
+    public function submitForSettlement($transactionId, $amount = null)
     {
         $this->_validateId($transactionId);
-        Util::verifyKeys(self::submitForSettlementSignature(), $attribs);
-        $attribs['amount'] = $amount;
 
         $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/submit_for_settlement';
-        $response = $this->_http->put($path, ['transaction' => $attribs]);
+        $response = $this->_http->put($path, array('transaction' => array('amount' => $amount)));
         return $this->_verifyGatewayResponse($response);
     }
 
-    public function submitForSettlementNoValidate($transactionId, $amount = null, $attribs = [])
+    public function submitForSettlementNoValidate($transactionId, $amount = null)
     {
-        $result = $this->submitForSettlement($transactionId, $amount, $attribs);
-        return Util::returnObjectOrThrowException(__CLASS__, $result);
-    }
-
-    public function updateDetails($transactionId, $attribs = [])
-    {
-        $this->_validateId($transactionId);
-        Util::verifyKeys(self::updateDetailsSignature(), $attribs);
-
-        $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/update_details';
-        $response = $this->_http->put($path, ['transaction' => $attribs]);
-        return $this->_verifyGatewayResponse($response);
-    }
-
-    public function submitForPartialSettlement($transactionId, $amount, $attribs = [])
-    {
-        $this->_validateId($transactionId);
-        Util::verifyKeys(self::submitForSettlementSignature(), $attribs);
-        $attribs['amount'] = $amount;
-
-        $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/submit_for_partial_settlement';
-        $response = $this->_http->post($path, ['transaction' => $attribs]);
-        return $this->_verifyGatewayResponse($response);
+        $result = $this->submitForSettlement($transactionId, $amount);
+        return Braintree_Util::returnObjectOrThrowException(__CLASS__, $result);
     }
 
     public function holdInEscrow($transactionId)
@@ -422,7 +346,7 @@ class TransactionGateway
         $this->_validateId($transactionId);
 
         $path = $this->_config->merchantPath() . '/transactions/' . $transactionId . '/hold_in_escrow';
-        $response = $this->_http->put($path, []);
+        $response = $this->_http->put($path, array());
         return $this->_verifyGatewayResponse($response);
     }
 
@@ -431,7 +355,7 @@ class TransactionGateway
         $this->_validateId($transactionId);
 
         $path = $this->_config->merchantPath() . '/transactions/' . $transactionId . '/release_from_escrow';
-        $response = $this->_http->put($path, []);
+        $response = $this->_http->put($path, array());
         return $this->_verifyGatewayResponse($response);
     }
 
@@ -440,24 +364,15 @@ class TransactionGateway
         $this->_validateId($transactionId);
 
         $path = $this->_config->merchantPath() . '/transactions/' . $transactionId . '/cancel_release';
-        $response = $this->_http->put($path, []);
+        $response = $this->_http->put($path, array());
         return $this->_verifyGatewayResponse($response);
     }
 
-    public function refund($transactionId, $amount_or_options = null)
+    public function refund($transactionId, $amount = null)
     {
         self::_validateId($transactionId);
 
-        if(gettype($amount_or_options) == "array") {
-            $options = $amount_or_options;
-        } else {
-            $options = [
-                "amount" => $amount_or_options
-            ];
-        }
-        Util::verifyKeys(self::refundSignature(), $options);
-
-        $params = ['transaction' => $options];
+        $params = array('transaction' => array('amount' => $amount));
         $path = $this->_config->merchantPath() . '/transactions/' . $transactionId . '/refund';
         $response = $this->_http->post($path, $params);
         return $this->_verifyGatewayResponse($response);
@@ -498,33 +413,33 @@ class TransactionGateway
         }
     }
 
+
     /**
      * generic method for validating incoming gateway responses
      *
-     * creates a new Transaction object and encapsulates
-     * it inside a Result\Successful object, or
-     * encapsulates a Errors object inside a Result\Error
+     * creates a new Braintree_Transaction object and encapsulates
+     * it inside a Braintree_Result_Successful object, or
+     * encapsulates a Braintree_Errors object inside a Result_Error
      * alternatively, throws an Unexpected exception if the response is invalid.
      *
      * @ignore
      * @param array $response gateway response values
-     * @return Result\Successful|Result\Error
-     * @throws Exception\Unexpected
+     * @return object Result_Successful or Result_Error
+     * @throws Braintree_Exception_Unexpected
      */
     private function _verifyGatewayResponse($response)
     {
         if (isset($response['transaction'])) {
-            // return a populated instance of Transaction
-            return new Result\Successful(
-                    Transaction::factory($response['transaction'])
+            // return a populated instance of Braintree_Transaction
+            return new Braintree_Result_Successful(
+                    Braintree_Transaction::factory($response['transaction'])
             );
         } else if (isset($response['apiErrorResponse'])) {
-            return new Result\Error($response['apiErrorResponse']);
+            return new Braintree_Result_Error($response['apiErrorResponse']);
         } else {
-            throw new Exception\Unexpected(
+            throw new Braintree_Exception_Unexpected(
             "Expected transaction or apiErrorResponse"
             );
         }
     }
 }
-class_alias('Braintree\TransactionGateway', 'Braintree_TransactionGateway');
