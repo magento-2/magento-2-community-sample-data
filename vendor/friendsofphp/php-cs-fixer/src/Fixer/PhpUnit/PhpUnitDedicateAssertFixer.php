@@ -13,8 +13,10 @@
 namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -23,7 +25,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author SpacePossum
  */
-final class PhpUnitDedicateAssertFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpUnitDedicateAssertFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
     private static $fixMap = array(
         'array_key_exists' => array('assertArrayNotHasKey', 'assertArrayHasKey'),
@@ -48,59 +50,6 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
         'is_scalar' => true,
         'is_string' => true,
     );
-
-    /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'array_key_exists',
-        'empty',
-        'file_exists',
-        'is_infinite',
-        'is_nan',
-        'is_null',
-        'is_array',
-        'is_bool',
-        'is_boolean',
-        'is_callable',
-        'is_double',
-        'is_float',
-        'is_int',
-        'is_integer',
-        'is_long',
-        'is_numeric',
-        'is_object',
-        'is_real',
-        'is_resource',
-        'is_scalar',
-        'is_string',
-    );
-
-    /**
-     * @var string[]
-     */
-    private $configuration;
-
-    /**
-     * @param array|null $configuration
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $this->configuration = array();
-        foreach ($configuration as $method) {
-            if (!array_key_exists($method, self::$fixMap)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration method "%s".', $method));
-            }
-
-            $this->configuration[] = $method;
-        }
-    }
 
     /**
      * {@inheritdoc}
@@ -137,13 +86,11 @@ $this->assertTrue(is_nan($a));
 $this->assertTrue(is_float( $a), "my message");
 $this->assertTrue(is_nan($a));
 ',
-                    array('is_nan')
+                    array('functions' => array('is_nan'))
                 ),
             ),
             null,
-            'List of strings which methods should be modified.',
-            self::$defaultConfiguration,
-            'Fixer could be risky if one is overwritting PHPUnit\'s native methods.'
+            'Fixer could be risky if one is overriding PHPUnit\'s native methods.'
         );
     }
 
@@ -179,6 +126,49 @@ $this->assertTrue(is_nan($a));
             ++$index;
             $candidate = $tokens->findSequence($searchSequence, $index);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $values = array(
+            'array_key_exists',
+            'empty',
+            'file_exists',
+            'is_infinite',
+            'is_nan',
+            'is_null',
+            'is_array',
+            'is_bool',
+            'is_boolean',
+            'is_callable',
+            'is_double',
+            'is_float',
+            'is_int',
+            'is_integer',
+            'is_long',
+            'is_numeric',
+            'is_object',
+            'is_real',
+            'is_resource',
+            'is_scalar',
+            'is_string',
+        );
+        $generator = new FixerOptionValidatorGenerator();
+
+        $functions = new FixerOptionBuilder('functions', 'List of assertions to fix.');
+        $functions = $functions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($values),
+            ))
+            ->setDefault($values)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('functions', array($functions));
     }
 
     /**
@@ -260,13 +250,13 @@ $this->assertTrue(is_nan($a));
         ) = $assertIndexes;
 
         $content = strtolower($tokens[$testIndex]->getContent());
-        if (!in_array($content, $this->configuration, true)) {
+        if (!in_array($content, $this->configuration['functions'], true)) {
             return $assertCallCloseIndex;
         }
 
         if (is_array(self::$fixMap[$content])) {
             if (false !== self::$fixMap[$content][$isPositive]) {
-                $tokens[$assertCallIndex]->setContent(self::$fixMap[$content][$isPositive]);
+                $tokens[$assertCallIndex] = new Token(array(T_STRING, self::$fixMap[$content][$isPositive]));
                 $this->removeFunctionCall($tokens, $testDefaultNamespaceTokenIndex, $testIndex, $testOpenIndex, $testCloseIndex);
             }
 
@@ -274,9 +264,9 @@ $this->assertTrue(is_nan($a));
         }
 
         $type = substr($content, 3);
-        $tokens[$assertCallIndex]->setContent($isPositive ? 'assertInternalType' : 'assertNotInternalType');
-        $tokens->overrideAt($testIndex, array(T_CONSTANT_ENCAPSED_STRING, "'".$type."'"));
-        $tokens->overrideAt($testOpenIndex, ',');
+        $tokens[$assertCallIndex] = new Token(array(T_STRING, $isPositive ? 'assertInternalType' : 'assertNotInternalType'));
+        $tokens[$testIndex] = new Token(array(T_CONSTANT_ENCAPSED_STRING, "'".$type."'"));
+        $tokens[$testOpenIndex] = new Token(',');
         $tokens->clearTokenAndMergeSurroundingWhitespace($testCloseIndex);
 
         if (!$tokens[$testOpenIndex + 1]->isWhitespace()) {
@@ -292,7 +282,7 @@ $this->assertTrue(is_nan($a));
 
     /**
      * @param Tokens    $tokens
-     * @param int|false $callNSIndex
+     * @param false|int $callNSIndex
      * @param int       $callIndex
      * @param int       $openIndex
      * @param int       $closeIndex

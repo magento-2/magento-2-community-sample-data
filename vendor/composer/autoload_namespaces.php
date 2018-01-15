@@ -14,6 +14,7 @@ return array(
     'MagentoHackathon\\Composer\\Magento' => array($vendorDir . '/magento/magento-composer-installer/src'),
     'Less' => array($vendorDir . '/oyejorge/less.php/lib'),
     'JShrink' => array($vendorDir . '/tedivm/jshrink/src'),
+    'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
     'Cm\\RedisSession\\' => array($vendorDir . '/colinmollenhour/php-redis-session-abstract/src'),
     'Braintree' => array($vendorDir . '/braintree/braintree_php/lib'),
     '' => array($baseDir . '/app/code'),

@@ -166,9 +166,11 @@ class CollectionInputFilter extends InputFilter
 
     /**
      * {@inheritdoc}
+     * @param mixed $context Ignored, but present to retain signature compatibility.
      */
-    public function isValid()
+    public function isValid($context = null)
     {
+        $this->collectionMessages = [];
         $inputFilter = $this->getInputFilter();
         $valid = true;
 

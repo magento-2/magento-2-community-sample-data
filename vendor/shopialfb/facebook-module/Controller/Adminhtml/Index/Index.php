@@ -2,7 +2,6 @@
 /**
  * Copyright 2017 Shopial. All rights reserved.
  */
-
 namespace Shopial\Facebook\Controller\Adminhtml\Index;
 
 /**
@@ -15,8 +14,8 @@ class Index extends \Magento\Backend\App\AbstractAction
 {
     /** @var \Magento\Framework\View\Result\PageFactory  */
     private $resultPageFactory;
-    
-     /** 
+
+     /**
       * @inheritdoc
       * @param \Magento\Backend\App\Action\Context $context
       * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
@@ -29,8 +28,8 @@ class Index extends \Magento\Backend\App\AbstractAction
         parent::__construct($context);
     }
 
-    public function execute() 
+    public function execute()
     {
         return $this->resultPageFactory->create();
-    }    
+    }
 }

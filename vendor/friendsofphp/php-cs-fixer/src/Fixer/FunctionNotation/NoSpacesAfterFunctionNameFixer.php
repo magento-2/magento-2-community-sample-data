@@ -40,6 +40,15 @@ final class NoSpacesAfterFunctionNameFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      */
+    public function getPriority()
+    {
+        // must run before FunctionToConstantFixer
+        return 2;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isAnyTokenKindsFound(array_merge($this->getFunctionyTokenKinds(), array(T_STRING)));
@@ -106,12 +115,12 @@ final class NoSpacesAfterFunctionNameFixer extends AbstractFixer
     {
         // remove space before opening brace
         if ($tokens[$index - 1]->isWhitespace()) {
-            $tokens[$index - 1]->clear();
+            $tokens->clearAt($index - 1);
         }
     }
 
     /**
-     * @return array<string|array>
+     * @return array<array|string>
      */
     private function getBraceAfterVariableKinds()
     {

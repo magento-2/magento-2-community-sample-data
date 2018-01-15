@@ -13,8 +13,9 @@
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -24,13 +25,8 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class DeclareEqualNormalizeFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class DeclareEqualNormalizeFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array<string, string>
-     */
-    private static $defaultConfiguration = array('space' => 'none');
-
     /**
      * @var string
      */
@@ -41,17 +37,9 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $configuration = self::$defaultConfiguration;
-        } elseif (
-            1 !== count($configuration)
-            || !isset($configuration['space'])
-            || ('none' !== $configuration['space'] && 'single' !== $configuration['space'])
-        ) {
-            throw new InvalidFixerConfigurationException($this->getName(), 'Configuration must define "space" being "single" or "none".');
-        }
+        parent::configure($configuration);
 
-        $this->callback = 'none' === $configuration['space'] ? 'removeWhitespaceAroundToken' : 'ensureWhitespaceAroundToken';
+        $this->callback = 'none' === $this->configuration['space'] ? 'removeWhitespaceAroundToken' : 'ensureWhitespaceAroundToken';
     }
 
     /**
@@ -61,10 +49,10 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
     {
         return new FixerDefinition(
             'Equal sign in declare statement should be surrounded by spaces or not following configuration.',
-            array(new CodeSample("<?php\ndeclare(ticks =  1);")),
-            null,
-            'Configure `[\'space\' => \'none\']` or `[\'space\' => \'single\']`.',
-            self::$defaultConfiguration
+            array(
+                new CodeSample("<?php\ndeclare(ticks =  1);"),
+                new CodeSample("<?php\ndeclare(ticks=1);", array('space' => 'single')),
+            )
         );
     }
 
@@ -89,8 +77,23 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
 
             while (!$tokens[++$index]->equals('='));
 
-            $this->$callback($tokens, $index);
+            $this->{$callback}($tokens, $index);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $space = new FixerOptionBuilder('space', 'Spacing to apply around the equal sign.');
+        $space = $space
+            ->setAllowedValues(array('single', 'none'))
+            ->setDefault('none')
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array($space));
     }
 
     /**
@@ -100,14 +103,16 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
     private function ensureWhitespaceAroundToken(Tokens $tokens, $index)
     {
         if ($tokens[$index + 1]->isWhitespace()) {
-            $tokens[$index + 1]->setContent(' ');
+            if (' ' !== $tokens[$index + 1]->getContent()) {
+                $tokens[$index + 1] = new Token(array(T_WHITESPACE, ' '));
+            }
         } else {
             $tokens->insertAt($index + 1, new Token(array(T_WHITESPACE, ' ')));
         }
 
         if ($tokens[$index - 1]->isWhitespace()) {
-            if (!$tokens[$tokens->getPrevNonWhitespace($index - 1)]->isComment()) {
-                $tokens[$index - 1]->setContent(' ');
+            if (' ' !== $tokens[$index - 1]->getContent() && !$tokens[$tokens->getPrevNonWhitespace($index - 1)]->isComment()) {
+                $tokens[$index - 1] = new Token(array(T_WHITESPACE, ' '));
             }
         } else {
             $tokens->insertAt($index, new Token(array(T_WHITESPACE, ' ')));

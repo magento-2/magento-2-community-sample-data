@@ -1,0 +1,15 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="backend_auth_user_login_success">
+        <observer name="temando_admin_login" instance="Temando\Shipping\Observer\AdminLoginObserver" />
+    </event>
+    <event name="controller_action_postdispatch_adminhtml_auth_logout">
+        <observer name="temando_admin_logout" instance="Temando\Shipping\Observer\AdminLogoutObserver" />
+    </event>
+    <event name="layout_generate_blocks_after">
+        <observer name="temando_remove_order_items" instance="Temando\Shipping\Observer\RemoveOrderItemsObserver"/>
+        <observer name="temando_replace_shipment_template" instance="Temando\Shipping\Observer\SetViewShipmentTemplateObserver"/>
+    </event>
+    <event name="admin_system_config_changed_section_carriers">
+        <observer name="temando_update_registered_flag" instance="Temando\Shipping\Observer\MerchantRegisteredFlagObserver"/>
+    </event>
+</config>

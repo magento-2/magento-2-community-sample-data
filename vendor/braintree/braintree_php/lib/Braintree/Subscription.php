@@ -11,7 +11,6 @@ namespace Braintree;
  * PHP Version 5
  *
  * @package   Braintree
- * @copyright 2015 Braintree, a division of PayPal, Inc.
  */
 class Subscription extends Base
 {
@@ -128,9 +127,9 @@ class Subscription extends Base
         return Configuration::gateway()->subscription()->update($subscriptionId, $attributes);
     }
 
-    public static function retryCharge($subscriptionId, $amount = null)
+    public static function retryCharge($subscriptionId, $amount = null, $submitForSettlement = false)
     {
-        return Configuration::gateway()->subscription()->retryCharge($subscriptionId, $amount);
+        return Configuration::gateway()->subscription()->retryCharge($subscriptionId, $amount, $submitForSettlement);
     }
 
     public static function cancel($subscriptionId)

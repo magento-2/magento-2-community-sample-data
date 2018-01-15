@@ -16,6 +16,7 @@ namespace PhpCsFixer;
  * Set of rules to be used by fixer.
  *
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ * @author SpacePossum
  *
  * @internal
  */
@@ -44,7 +45,7 @@ final class RuleSet implements RuleSetInterface
             'no_trailing_whitespace' => true,
             'no_trailing_whitespace_in_comment' => true,
             'single_blank_line_at_eof' => true,
-            'single_class_element_per_statement' => array('property'),
+            'single_class_element_per_statement' => array('elements' => array('property')),
             'single_import_per_statement' => true,
             'single_line_after_imports' => true,
             'switch_case_semicolon_to_colon' => true,
@@ -70,6 +71,7 @@ final class RuleSet implements RuleSetInterface
             'hash_to_slash_comment' => true,
             'include' => true,
             'lowercase_cast' => true,
+            'magic_constant_casing' => true,
             'method_separation' => true,
             'native_function_casing' => true,
             'new_with_braces' => true,
@@ -78,14 +80,14 @@ final class RuleSet implements RuleSetInterface
             'no_empty_comment' => true,
             'no_empty_phpdoc' => true,
             'no_empty_statement' => true,
-            'no_extra_consecutive_blank_lines' => array(
+            'no_extra_consecutive_blank_lines' => array('tokens' => array(
                 'curly_brace_block',
                 'extra',
                 'parenthesis_brace_block',
                 'square_brace_block',
                 'throw',
                 'use',
-            ),
+            )),
             'no_leading_import_slash' => true,
             'no_leading_namespace_whitespace' => true,
             'no_mixed_echo_print' => array('use' => 'echo'),
@@ -121,6 +123,7 @@ final class RuleSet implements RuleSetInterface
             'phpdoc_types' => true,
             'phpdoc_var_without_name' => true,
             'pre_increment' => true,
+            'protected_to_private' => true,
             'return_type_declaration' => true,
             'self_accessor' => true,
             'short_scalar_cast' => true,
@@ -136,29 +139,40 @@ final class RuleSet implements RuleSetInterface
             'whitespace_after_comma_in_array' => true,
         ),
         '@Symfony:risky' => array(
+            'dir_constant' => true,
+            'ereg_to_preg' => true,
+            'function_to_constant' => true,
             'is_null' => true,
+            'modernize_types_casting' => true,
             'no_alias_functions' => true,
+            'non_printable_character' => true,
             'php_unit_construct' => true,
             'php_unit_dedicate_assert' => true,
+            'psr4' => true,
             'silenced_deprecation_error' => true,
         ),
-        '@PHP56Migration' => array(
+        '@PHP56Migration' => array(),
+        '@PHP56Migration:risky' => array(
             'pow_to_exponentiation' => true,
         ),
         '@PHP70Migration' => array(
-            '@PHP56Migration' => true,
-            'random_api_migration' => array(
+            'ternary_to_null_coalescing' => true,
+        ),
+        '@PHP70Migration:risky' => array(
+            '@PHP56Migration:risky' => true,
+            'declare_strict_types' => true,
+            'random_api_migration' => array('replacements' => array(
                 'mt_rand' => 'random_int',
                 'rand' => 'random_int',
-            ),
+            )),
         ),
         '@PHP71Migration' => array(
             '@PHP70Migration' => true,
-            'visibility_required' => array(
+            'visibility_required' => array('elements' => array(
                 'const',
                 'method',
                 'property',
-            ),
+            )),
         ),
     );
 
@@ -215,7 +229,7 @@ final class RuleSet implements RuleSetInterface
             throw new \InvalidArgumentException(sprintf('Rule "%s" is not in the set.', $rule));
         }
 
-        if ($this->rules[$rule] === true) {
+        if (true === $this->rules[$rule]) {
             return null;
         }
 
@@ -262,37 +276,56 @@ final class RuleSet implements RuleSetInterface
     private function resolveSet()
     {
         $rules = $this->set;
-        $hasSet = null;
+        $resolvedRules = array();
 
         // expand sets
-        do {
-            $hasSet = false;
-
-            $tmpRules = $rules;
-            $rules = array();
-
-            foreach ($tmpRules as $name => $value) {
-                if (!$hasSet && '@' === $name[0]) {
-                    $hasSet = true;
-                    $set = $this->getSetDefinition($name);
-
-                    foreach ($set as $nestedName => $nestedValue) {
-                        // if set value is false then disable all fixers in set, if not then get value from set item
-                        $rules[$nestedName] = $value ? $nestedValue : false;
-                    }
-
-                    continue;
+        foreach ($rules as $name => $value) {
+            if ('@' === $name[0]) {
+                if (!is_bool($value)) {
+                    throw new \UnexpectedValueException(sprintf('Nested rule set "%s" configuration must be a boolean.', $name));
                 }
 
-                $rules[$name] = $value;
+                $set = $this->resolveSubset($name, $value);
+                $resolvedRules = array_merge($resolvedRules, $set);
+            } else {
+                $resolvedRules[$name] = $value;
             }
-        } while ($hasSet);
+        }
 
-        // filter out all rules that are off
-        $rules = array_filter($rules);
+        // filter out all resolvedRules that are off
+        $resolvedRules = array_filter($resolvedRules);
 
-        $this->rules = $rules;
+        $this->rules = $resolvedRules;
 
         return $this;
+    }
+
+    /**
+     * Resolve set rules as part of another set.
+     *
+     * If set value is false then disable all fixers in set,
+     * if not then get value from set item.
+     *
+     * @param string $setName
+     * @param bool   $setValue
+     *
+     * @return array
+     */
+    private function resolveSubset($setName, $setValue)
+    {
+        $rules = $this->getSetDefinition($setName);
+        foreach ($rules as $name => $value) {
+            if ('@' === $name[0]) {
+                $set = $this->resolveSubset($name, $setValue);
+                unset($rules[$name]);
+                $rules = array_merge($rules, $set);
+            } elseif (!$setValue) {
+                $rules[$name] = false;
+            } else {
+                $rules[$name] = $value;
+            }
+        }
+
+        return $rules;
     }
 }

@@ -15,6 +15,8 @@ namespace PhpCsFixer\Fixer\Alias;
 use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Analyzer\ArgumentsAnalyzer;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -66,9 +68,7 @@ $a = substr_count($a, $b);
                 ),
             ),
             null,
-            null,
-            null,
-            'Risky when the any of functions are overridden.'
+            'Risky when any of the functions are overridden.'
         );
     }
 
@@ -85,6 +85,7 @@ $a = substr_count($a, $b);
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
+        $argumentsAnalyzer = new ArgumentsAnalyzer();
         foreach (self::$functions as $functionIdentity => $functionReplacement) {
             $currIndex = 0;
             while (null !== $currIndex) {
@@ -96,7 +97,7 @@ $a = substr_count($a, $b);
                 }
 
                 list($functionName, $openParenthesis, $closeParenthesis) = $boundaries;
-                $count = $this->countArguments($tokens, $openParenthesis, $closeParenthesis);
+                $count = $argumentsAnalyzer->countArguments($tokens, $openParenthesis, $closeParenthesis);
                 if (!in_array($count, $functionReplacement['argumentCount'], true)) {
                     continue 2;
                 }
@@ -104,7 +105,7 @@ $a = substr_count($a, $b);
                 // analysing cursor shift, so nested calls could be processed
                 $currIndex = $openParenthesis;
 
-                $tokens[$functionName]->setContent($functionReplacement['alternativeName']);
+                $tokens[$functionName] = new Token(array(T_STRING, $functionReplacement['alternativeName']));
             }
         }
     }

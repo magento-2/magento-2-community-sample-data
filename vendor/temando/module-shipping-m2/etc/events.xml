@@ -1,0 +1,14 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_quote_address_save_after">
+        <observer name="temando_persist_checkout_fields" instance="Temando\Shipping\Observer\SaveCheckoutFieldsObserver"/>
+    </event>
+    <event name="sales_quote_address_load_after">
+        <observer name="temando_load_checkout_fields" instance="Temando\Shipping\Observer\LoadCheckoutFieldsObserver"/>
+    </event>
+    <event name="sales_order_save_after">
+        <observer name="temando_manifest_order" instance="Temando\Shipping\Observer\ManifestOrderObserver"/>
+    </event>
+    <event name="sales_quote_address_collect_totals_before">
+        <observer name="temando_load_checkout_fields" instance="Temando\Shipping\Observer\LoadCheckoutFieldsObserver"/>
+    </event>
+</config>

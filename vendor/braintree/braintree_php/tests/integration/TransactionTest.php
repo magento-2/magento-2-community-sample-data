@@ -243,6 +243,31 @@ class TransactionTest extends Setup
       $this->assertEquals(Braintree\Error\Codes::TRANSACTION_PAYMENT_METHOD_NONCE_UNKNOWN, $baseErrors[0]->code);
   }
 
+  public function testSaleWithIdealPaymentId()
+    {
+        $result = Braintree\Transaction::sale([
+            'amount' => '100.00',
+            'merchantAccountId' => 'ideal_merchant_account',
+            'paymentMethodNonce' => Test\Helper::generateValidIdealPaymentId(),
+            'orderId' => 'ABC123',
+            'options' => [
+                'submitForSettlement' => true,
+            ]
+        ]);
+
+        $this->assertTrue($result->success);
+        $transaction = $result->transaction;
+        $this->assertEquals(Braintree\Transaction::SETTLED, $transaction->status);
+        $this->assertEquals(Braintree\Transaction::SALE, $transaction->type);
+        $this->assertEquals(Braintree\PaymentInstrumentType::IDEAL_PAYMENT, $transaction->paymentInstrumentType);
+        $this->assertEquals('100.00', $transaction->amount);
+        $this->assertRegExp('/^idealpayment_\w{6,}$/', $transaction->idealPayment->idealPaymentId);
+        $this->assertRegExp('/^\d{16,}$/', $transaction->idealPayment->idealTransactionId);
+        $this->assertRegExp('/^https:\/\//', $transaction->idealPayment->imageUrl);
+        $this->assertNotNull($transaction->idealPayment->maskedIban);
+        $this->assertNotNull($transaction->idealPayment->bic);
+    }
+
   public function testSaleAndSkipAdvancedFraudChecking()
   {
       $result = Braintree\Transaction::sale([
@@ -258,6 +283,41 @@ class TransactionTest extends Setup
       $this->assertTrue($result->success);
       $transaction = $result->transaction;
       $this->assertNull($transaction->riskData->id);
+  }
+
+  public function testSaleAndSkipAvs()
+  {
+      $result = Braintree\Transaction::sale([
+          'amount' => Braintree\Test\TransactionAmounts::$authorize,
+          'creditCard' => [
+              'number' => Braintree\Test\CreditCardNumbers::$visa,
+              'expirationDate' => '05/2019',
+          ],
+          'options' => [
+              'skipAvs' => true
+          ]
+      ]);
+      $this->assertTrue($result->success);
+      $transaction = $result->transaction;
+      $this->assertNull($transaction->avsErrorResponseCode);
+      $this->assertEquals($transaction->avsStreetAddressResponseCode, 'B');
+  }
+
+  public function testSaleAndSkipCvv()
+  {
+      $result = Braintree\Transaction::sale([
+          'amount' => Braintree\Test\TransactionAmounts::$authorize,
+          'creditCard' => [
+              'number' => Braintree\Test\CreditCardNumbers::$visa,
+              'expirationDate' => '05/2019',
+          ],
+          'options' => [
+              'skipCvv' => true
+          ]
+      ]);
+      $this->assertTrue($result->success);
+      $transaction = $result->transaction;
+      $this->assertEquals($transaction->cvvResponseCode, 'B');
   }
 
   public function testSettleAltPayTransaction()
@@ -433,7 +493,8 @@ class TransactionTest extends Setup
                 'cardholderName' => "JANE SMITH",
                 'cryptogram' => "AAAAAAAA/COBt84dnIEcwAA3gAAGhgEDoLABAAhAgAABAAAALnNCLw==",
                 'expirationMonth' => "10",
-                'expirationYear' => "17"
+                'expirationYear' => "17",
+                'eciIndicator' => "07"
             ]
         ]);
         $this->assertTrue($result->success);
@@ -448,7 +509,8 @@ class TransactionTest extends Setup
                 'cardholder_name' => "JANE SMITH",
                 'cryptogram' => "AAAAAAAA/COBt84dnIEcwAA3gAAGhgEDoLABAAhAgAABAAAALnNCLw==",
                 'expiration_month' => "10",
-                'expiration_year' => "17"
+                'expiration_year' => "17",
+                'eci_indicator' => "07"
             ]
         ]);
         $this->assertTrue($result->success);
@@ -547,19 +609,15 @@ class TransactionTest extends Setup
         $this->assertSame("Venmo-Joe-1", $venmoAccountDetails->venmoUserId);
     }
 
-    public function testCreateTransactionUsingFakeCoinbaseNonce()
+    public function testCannotCreateTransactionUsingFakeCoinbaseNonce()
     {
         $result = Braintree\Transaction::sale([
             'amount' => '17.00',
             'paymentMethodNonce' => Braintree\Test\Nonces::$coinbase
         ]);
 
-        $this->assertTrue($result->success);
-        $transaction = $result->transaction;
-        $this->assertNotNull($transaction->coinbaseDetails);
-        $this->assertNotNull($transaction->coinbaseDetails->userId);
-        $this->assertNotNull($transaction->coinbaseDetails->userName);
-        $this->assertNotNull($transaction->coinbaseDetails->userEmail);
+        $this->assertFalse($result->success);
+        $this->assertEquals(Braintree\Error\Codes::PAYMENT_METHOD_NO_LONGER_SUPPORTED, $result->errors->forKey('transaction')->onAttribute('base')[0]->code);
     }
 
   public function testCreateTransactionReturnsPaymentInstrumentType()
@@ -962,8 +1020,8 @@ class TransactionTest extends Setup
       $transaction = $result->transaction;
 
       $this->assertNotNull($transaction->id);
-      $this->assertNotNull($transaction->createdAt);
-      $this->assertNotNull($transaction->updatedAt);
+      $this->assertInstanceOf('DateTime', $transaction->updatedAt);
+      $this->assertInstanceOf('DateTime', $transaction->createdAt);
       $this->assertNull($transaction->refundId);
 
       $this->assertEquals(Test\Helper::defaultMerchantAccountId(), $transaction->merchantAccountId);
@@ -1901,6 +1959,16 @@ class TransactionTest extends Setup
         $this->assertEquals(new DateTime('2013-04-10'), $disbursementDetails->disbursementDate);
     }
 
+  public function testFindExposesAuthorizationAdjustments()
+    {
+        $transaction = Braintree\Transaction::find("authadjustmenttransaction");
+
+        $authorizationAdjustment = $transaction->authorizationAdjustments[0];
+        $this->assertEquals('-20.00', $authorizationAdjustment->amount);
+        $this->assertInstanceOf('DateTime', $authorizationAdjustment->timestamp);
+        $this->assertEquals(true, $authorizationAdjustment->success);
+    }
+
   public function testFindExposesDisputes()
     {
         $transaction = Braintree\Transaction::find("disputedtransaction");
@@ -2402,10 +2470,6 @@ class TransactionTest extends Setup
         $this->assertEquals(
             Braintree\Error\Codes::TRANSACTION_THREE_D_SECURE_CAVV_IS_REQUIRED,
             $errors->onAttribute("cavv")[0]->code
-        );
-        $this->assertEquals(
-            Braintree\Error\Codes::TRANSACTION_THREE_D_SECURE_XID_IS_REQUIRED,
-            $errors->onAttribute("xid")[0]->code
         );
     }
 
@@ -4049,7 +4113,7 @@ class TransactionTest extends Setup
         Braintree\Transaction::submitForPartialSettlement($transaction->id, '67.00', $params);
     }
 
-    public function testFacilitatorDetailsAreReturnedOnTransactionsCreatedViaNonceGranting()
+    public function testFacilitatedAndFacilitatorDetailsAreReturnedOnTransactionsCreatedViaNonceGranting()
     {
         $partnerMerchantGateway = new Braintree\Gateway([
             'environment' => 'development',
@@ -4093,6 +4157,19 @@ class TransactionTest extends Setup
             'amount' => '100.00',
             'paymentMethodNonce' => $grantResult->paymentMethodNonce->nonce
         ]);
+
+        $this->assertEquals(
+            $result->transaction->facilitatedDetails->merchantId,
+            'integration_merchant_id'
+        );
+        $this->assertEquals(
+            $result->transaction->facilitatedDetails->merchantName,
+            '14ladders'
+        );
+        $this->assertEquals(
+            $result->transaction->facilitatedDetails->paymentMethodNonce,
+            $grantResult->paymentMethodNonce->nonce
+        );
 
         $this->assertEquals(
             $result->transaction->facilitatorDetails->oauthApplicationClientId,

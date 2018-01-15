@@ -13,83 +13,28 @@
 namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
 use PhpCsFixer\DocBlock\DocBlock;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author SpacePossum
  */
-final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    private static $defaultConfiguration = array(
-        'this' => '$this',
-        '@this' => '$this',
-        '$self' => 'self',
-        '@self' => 'self',
-        '$static' => 'static',
-        '@static' => 'static',
-    );
-
     private static $toTypes = array(
         '$this',
         'static',
         'self',
     );
-
-    /**
-     * @var array<string, string>
-     */
-    private $configuration;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $newConfig = array();
-        foreach ($configuration as $key => $value) {
-            if (is_string($key)) {
-                $key = strtolower($key);
-            }
-
-            if (!isset(self::$defaultConfiguration[$key])) {
-                throw new InvalidFixerConfigurationException(
-                    $this->getName(),
-                    sprintf(
-                        'Unknown key "%s", expected any of "%s".',
-                        is_object($key) ? get_class($key) : gettype($key).(is_resource($key) ? '' : '#'.$key),
-                        implode('", "', array_keys(self::$defaultConfiguration))
-                    )
-                );
-            }
-
-            if (!in_array($value, self::$toTypes, true)) {
-                throw new InvalidFixerConfigurationException(
-                    $this->getName(),
-                    sprintf(
-                        'Unknown value "%s", expected any of "%s".',
-                        is_object($value) ? get_class($value) : gettype($value).(is_resource($value) ? '' : '#'.$value),
-                        implode('", "', self::$toTypes)
-                    )
-                );
-            }
-
-            $newConfig[strtolower($key)] = $value;
-        }
-
-        $this->configuration = $newConfig;
-    }
 
     /**
      * {@inheritdoc}
@@ -98,26 +43,51 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
     {
         return new FixerDefinition(
             'The type of `@return` annotations of methods returning a reference to itself must the configured one.',
-            array(new CodeSample('
-<?php
+            array(
+                new CodeSample(
+'<?php
 class Sample
 {
     /**
      * @return this
      */
-    public function test()
+    public function test1()
+    {
+        return $this;
+    }
+
+    /**
+     * @return $self
+     */
+    public function test2()
     {
         return $this;
     }
 }'
-            )),
-            '',
-            sprintf(
-                'Fixer can be configured to fix any of (case insensitive) `%s` to any of `%s`.',
-                implode('`,`', array_keys(self::$defaultConfiguration)),
-                implode('`,`', self::$toTypes)
-            ),
-            self::$defaultConfiguration
+                ),
+                new CodeSample(
+'<?php
+class Sample
+{
+    /**
+     * @return this
+     */
+    public function test1()
+    {
+        return $this;
+    }
+
+    /**
+     * @return $self
+     */
+    public function test2()
+    {
+        return $this;
+    }
+}',
+                    array('replacements' => array('this' => 'self'))
+                ),
+            )
         );
     }
 
@@ -140,6 +110,59 @@ class Sample
                 $this->fixMethod($tokens, $index);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $toTypes = self::$toTypes;
+        $default = array(
+            'this' => '$this',
+            '@this' => '$this',
+            '$self' => 'self',
+            '@self' => 'self',
+            '$static' => 'static',
+            '@static' => 'static',
+        );
+
+        $replacements = new FixerOptionBuilder('replacements', 'Mapping between replaced return types with new ones.');
+        $replacements = $replacements
+            ->setAllowedTypes(array('array'))
+            ->setNormalizer(function (Options $options, $value) use ($toTypes, $default) {
+                $normalizedValue = array();
+                foreach ($value as $from => $to) {
+                    if (is_string($from)) {
+                        $from = strtolower($from);
+                    }
+
+                    if (!isset($default[$from])) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown key "%s", expected any of "%s".',
+                            is_object($from) ? get_class($from) : gettype($from).(is_resource($from) ? '' : '#'.$from),
+                            implode('", "', array_keys($default))
+                        ));
+                    }
+
+                    if (!in_array($to, $toTypes, true)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown value "%s", expected any of "%s".',
+                            is_object($to) ? get_class($to) : gettype($to).(is_resource($to) ? '' : '#'.$to),
+                            implode('", "', $toTypes)
+                        ));
+                    }
+
+                    $normalizedValue[$from] = $to;
+                }
+
+                return $normalizedValue;
+            })
+            ->setDefault($default)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('replacements', array($replacements));
     }
 
     /**
@@ -183,7 +206,7 @@ class Sample
         $newTypes = array();
         foreach ($types as $type) {
             $lower = strtolower($type);
-            $newTypes[] = isset($this->configuration[$lower]) ? $this->configuration[$lower] : $type;
+            $newTypes[] = isset($this->configuration['replacements'][$lower]) ? $this->configuration['replacements'][$lower] : $type;
         }
 
         if ($types === $newTypes) {
@@ -191,6 +214,6 @@ class Sample
         }
 
         $returnsBlock->setTypes($newTypes);
-        $tokens[$docIndex]->setContent($docBlock->getContent());
+        $tokens[$docIndex] = new Token(array(T_DOC_COMMENT, $docBlock->getContent()));
     }
 }

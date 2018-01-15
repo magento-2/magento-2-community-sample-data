@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Temando\Shipping\Rest\Authentication">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Customer\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Customer\CustomerData\SectionPool">
+        <arguments>
+            <argument name="sectionSourceMap" xsi:type="array">
+                <item name="checkout-fields" xsi:type="string">Temando\Shipping\CustomerData\CheckoutFields</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -13,58 +13,26 @@
 namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'assertAttributeEquals',
-        'assertAttributeNotEquals',
-        'assertEquals',
-        'assertNotEquals',
-    );
-
-    /**
-     * @var string[]
-     */
-    private $configuration;
-
     private static $assertionMap = array(
         'assertAttributeEquals' => 'assertAttributeSame',
         'assertAttributeNotEquals' => 'assertAttributeNotSame',
         'assertEquals' => 'assertSame',
         'assertNotEquals' => 'assertNotSame',
     );
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        foreach ($configuration as $method) {
-            if (!array_key_exists($method, self::$assertionMap)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Configured method "%s" cannot be fixed by this fixer.', $method));
-            }
-        }
-
-        $this->configuration = $configuration;
-    }
 
     /**
      * {@inheritdoc}
@@ -88,16 +56,23 @@ final class MyTest extends \PHPUnit_Framework_TestCase
 }
 '
                 ),
+                new CodeSample(
+                    '<?php
+final class MyTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSomeTest()
+    {
+        $this->assertAttributeEquals(a(), b());
+        $this->assertAttributeNotEquals(a(), b());
+        $this->assertEquals(a(), b());
+        $this->assertNotEquals(a(), b());
+    }
+}',
+                    array('assertions' => array('assertEquals'))
+                ),
             ),
             null,
-            'Configure which of the following functions should be replaced `assertAttributeEquals`, `assertAttributeNotEquals`, `assertEquals`, `assertNotEquals`',
-            array(
-                'assertAttributeEquals',
-                'assertAttributeNotEquals',
-                'assertEquals',
-                'assertNotEquals',
-            ),
-            'Risky when the any of functions are overridden.'
+            'Risky when any of the functions are overridden.'
         );
     }
 
@@ -122,7 +97,7 @@ final class MyTest extends \PHPUnit_Framework_TestCase
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        foreach ($this->configuration as $methodBefore) {
+        foreach ($this->configuration['assertions'] as $methodBefore) {
             $methodAfter = self::$assertionMap[$methodBefore];
 
             for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
@@ -141,10 +116,35 @@ final class MyTest extends \PHPUnit_Framework_TestCase
                 }
 
                 $sequenceIndexes = array_keys($sequence);
-                $tokens[$sequenceIndexes[2]]->setContent($methodAfter);
+                $tokens[$sequenceIndexes[2]] = new Token(array(T_STRING, $methodAfter));
 
                 $index = $sequenceIndexes[3];
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $assertions = new FixerOptionBuilder('assertions', 'List of assertion methods to fix.');
+        $assertions = $assertions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionMap)),
+            ))
+            ->setDefault(array(
+                'assertAttributeEquals',
+                'assertAttributeNotEquals',
+                'assertEquals',
+                'assertNotEquals',
+            ))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('assertions', array($assertions));
     }
 }

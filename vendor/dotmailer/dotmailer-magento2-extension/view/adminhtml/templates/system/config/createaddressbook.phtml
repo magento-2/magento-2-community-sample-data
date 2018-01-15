@@ -1,0 +1,17 @@
+<?php /** @var \Dotdigitalgroup\Email\Block\Adminhtml\Config\Createaddressbook $block */?>
+<div class="actions actions-create-addressbook">
+    <div id="validation_result" class="message-validation hidden"></div>
+    <button class="action-create-addressbook" type="button" id="<?= $block->getHtmlId() ?>">
+        <span><?= $block->escapeHtml($block->getButtonLabel()) ?></span>
+    </button>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Dotdigitalgroup_Email/js/addressBook":{
+                "url":"<?= $block->escapeUrl($block->getAjaxUrl()) ?>"
+            }
+        }
+    }
+</script>

@@ -13,9 +13,13 @@
 namespace PhpCsFixer\Fixer\ControlStructure;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\CT;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -23,26 +27,8 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author Gregor Harlan <gharlan@web.de>
  */
-final class NoUnneededControlParenthesesFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class NoUnneededControlParenthesesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'break',
-        'clone',
-        'continue',
-        'echo_print',
-        'return',
-        'switch_case',
-        'yield',
-    );
-
-    /**
-     * @var string[] List of statements to fix
-     */
-    private $controlStatements;
-
     private static $loops = array(
         'break' => array('lookupTokens' => T_BREAK, 'neededSuccessors' => array(';')),
         'clone' => array('lookupTokens' => T_CLONE, 'neededSuccessors' => array(';', ':', ',', ')'), 'forbiddenContents' => array('?', ':')),
@@ -68,20 +54,6 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
         if (defined('T_COALESCE')) {
             self::$loops['clone']['forbiddenContents'][] = array(T_COALESCE, '??');
         }
-    }
-
-    /**
-     * @param array $controlStatements
-     */
-    public function configure(array $controlStatements = null)
-    {
-        if (null === $controlStatements) {
-            $this->controlStatements = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $this->controlStatements = $controlStatements;
     }
 
     /**
@@ -130,12 +102,9 @@ return (1 + 2);
 switch ($a) { case($x); }
 yield(2);
 ',
-                    array('break', 'continue')
+                    array('statements' => array('break', 'continue'))
                 ),
-            ),
-            null,
-            'List of strings which control structures should be modified.',
-            self::$defaultConfiguration
+            )
         );
     }
 
@@ -155,23 +124,26 @@ yield(2);
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         // Checks if specific statements are set and uses them in this case.
-        $loops = array_intersect_key(self::$loops, array_flip($this->controlStatements));
+        $loops = array_intersect_key(self::$loops, array_flip($this->configuration['statements']));
 
         foreach ($tokens as $index => $token) {
-            if (!$token->equals('(')) {
+            if (!$token->equalsAny(array('(', array(CT::T_BRACE_CLASS_INSTANTIATION_OPEN)))) {
                 continue;
             }
 
             $blockStartIndex = $index;
             $index = $tokens->getPrevMeaningfulToken($index);
-            $token = $tokens[$index];
+            $prevToken = $tokens[$index];
 
             foreach ($loops as $loop) {
-                if (!$token->isGivenKind($loop['lookupTokens'])) {
+                if (!$prevToken->isGivenKind($loop['lookupTokens'])) {
                     continue;
                 }
 
-                $blockEndIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $blockStartIndex);
+                $blockEndIndex = $tokens->findBlockEnd(
+                    $token->equals('(') ? Tokens::BLOCK_TYPE_PARENTHESIS_BRACE : Tokens::BLOCK_TYPE_BRACE_CLASS_INSTANTIATION,
+                    $blockStartIndex
+                );
                 $blockEndNextIndex = $tokens->getNextMeaningfulToken($blockEndIndex);
 
                 if (!$tokens[$blockEndNextIndex]->equalsAny($loop['neededSuccessors'])) {
@@ -190,11 +162,34 @@ yield(2);
                     $tokens->clearTokenAndMergeSurroundingWhitespace($blockStartIndex);
                 } else {
                     // Adds a space to prevent broken code like `return2`.
-                    $tokens->overrideAt($blockStartIndex, array(T_WHITESPACE, ' '));
+                    $tokens[$blockStartIndex] = new Token(array(T_WHITESPACE, ' '));
                 }
 
                 $tokens->clearTokenAndMergeSurroundingWhitespace($blockEndIndex);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $statements = new FixerOptionBuilder('statements', 'List of control statements to fix.');
+        $statements = $statements
+            ->setAllowedTypes(array('array'))
+            ->setDefault(array(
+                'break',
+                'clone',
+                'continue',
+                'echo_print',
+                'return',
+                'switch_case',
+                'yield',
+            ))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('statements', array($statements));
     }
 }

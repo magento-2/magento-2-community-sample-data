@@ -23,34 +23,35 @@ class ProjectServiceContainer extends Container
     {
         $this->services = array();
         $this->normalizedIds = array(
-            'symfony\\component\\dependencyinjection\\tests\\fixtures\\container33\\foo' => 'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Container33\\Foo',
+            'bar\\foo' => 'Bar\\Foo',
+            'foo\\foo' => 'Foo\\Foo',
         );
         $this->methodMap = array(
-            'Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Container33\\Foo' => 'getSymfony_Component_DependencyInjection_Tests_Fixtures_Container33_FooService',
+            'Bar\\Foo' => 'getFooService',
+            'Foo\\Foo' => 'getFoo2Service',
         );
 
         $this->aliases = array();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function getRemovedIds()
+    {
+        return array(
+            'Psr\\Container\\ContainerInterface' => true,
+            'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
+        );
+    }
+
     public function compile()
     {
         throw new LogicException('You cannot compile a dumped container that was already compiled.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isCompiled()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFrozen()
     {
         @trigger_error(sprintf('The %s() method is deprecated since version 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
@@ -59,12 +60,22 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'Symfony\Component\DependencyInjection\Tests\Fixtures\Container33\Foo' shared service.
+     * Gets the public 'Bar\Foo' shared service.
      *
-     * @return \Symfony\Component\DependencyInjection\Tests\Fixtures\Container33\Foo
+     * @return \Bar\Foo
      */
-    protected function getSymfony_Component_DependencyInjection_Tests_Fixtures_Container33_FooService()
+    protected function getFooService()
     {
-        return $this->services['Symfony\Component\DependencyInjection\Tests\Fixtures\Container33\Foo'] = new \Symfony\Component\DependencyInjection\Tests\Fixtures\Container33\Foo();
+        return $this->services['Bar\Foo'] = new \Bar\Foo();
+    }
+
+    /**
+     * Gets the public 'Foo\Foo' shared service.
+     *
+     * @return \Foo\Foo
+     */
+    protected function getFoo2Service()
+    {
+        return $this->services['Foo\Foo'] = new \Foo\Foo();
     }
 }

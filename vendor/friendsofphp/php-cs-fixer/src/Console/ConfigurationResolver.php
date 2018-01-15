@@ -33,8 +33,9 @@ use PhpCsFixer\Report\ReporterFactory;
 use PhpCsFixer\Report\ReporterInterface;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
-use PhpCsFixer\ToolInfo;
+use PhpCsFixer\ToolInfoInterface;
 use PhpCsFixer\WhitespacesFixerConfig;
+use PhpCsFixer\WordMatcher;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder as SymfonyFinder;
@@ -99,19 +100,31 @@ final class ConfigurationResolver
     private $fixers;
 
     /**
+     * @var null|bool
+     */
+    private $configFinderIsOverridden;
+
+    /**
+     * @var ToolInfoInterface
+     */
+    private $toolInfo;
+
+    /**
      * @var array
      */
     private $options = array(
         'allow-risky' => null,
+        'cache-file' => null,
         'config' => null,
+        'diff' => null,
         'dry-run' => null,
         'format' => null,
         'path' => array(),
         'path-mode' => self::PATH_MODE_OVERRIDE,
-        'using-cache' => null,
-        'cache-file' => null,
         'rules' => null,
-        'diff' => null,
+        'show-progress' => null,
+        'stop-on-violation' => null,
+        'using-cache' => null,
         'verbosity' => null,
     );
 
@@ -135,17 +148,20 @@ final class ConfigurationResolver
     /**
      * ConfigurationResolver constructor.
      *
-     * @param ConfigInterface $config
-     * @param array           $options
-     * @param string          $cwd
+     * @param ConfigInterface   $config
+     * @param array             $options
+     * @param string            $cwd
+     * @param ToolInfoInterface $toolInfo
      */
     public function __construct(
         ConfigInterface $config,
         array $options,
-        $cwd
+        $cwd,
+        ToolInfoInterface $toolInfo
     ) {
         $this->cwd = $cwd;
         $this->defaultConfig = $config;
+        $this->toolInfo = $toolInfo;
 
         foreach ($options as $name => $value) {
             $this->setOption($name, $value);
@@ -153,7 +169,7 @@ final class ConfigurationResolver
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function getCacheFile()
     {
@@ -178,12 +194,12 @@ final class ConfigurationResolver
     public function getCacheManager()
     {
         if (null === $this->cacheManager) {
-            if ($this->getUsingCache() && (ToolInfo::isInstalledAsPhar() || ToolInfo::isInstalledByComposer())) {
+            if ($this->getUsingCache() && ($this->toolInfo->isInstalledAsPhar() || $this->toolInfo->isInstalledByComposer())) {
                 $this->cacheManager = new FileCacheManager(
                     new FileHandler($this->getCacheFile()),
                     new Signature(
                         PHP_VERSION,
-                        ToolInfo::getVersion(),
+                        $this->toolInfo->getVersion(),
                         $this->getRules()
                     ),
                     $this->isDryRun(),
@@ -210,7 +226,7 @@ final class ConfigurationResolver
                     continue;
                 }
 
-                $config = include $configFile;
+                $config = self::separatedContextLessInclude($configFile);
 
                 // verify that the config has an instance of Config
                 if (!$config instanceof ConfigInterface) {
@@ -361,17 +377,31 @@ final class ConfigurationResolver
     }
 
     /**
-     * Returns progress flag.
+     * @throws InvalidConfigurationException
      *
      * @return bool
      */
     public function getProgress()
     {
         if (null === $this->progress) {
-            $this->progress =
-                OutputInterface::VERBOSITY_VERBOSE <= $this->options['verbosity']
-                && 'txt' === $this->getFormat()
-                && !$this->getConfig()->getHideProgress();
+            if (OutputInterface::VERBOSITY_VERBOSE <= $this->options['verbosity'] && 'txt' === $this->getFormat()) {
+                $progressType = $this->options['show-progress'];
+                $progressTypes = array('none', 'run-in', 'estimating');
+
+                if (null === $progressType) {
+                    $progressType = $this->getConfig()->getHideProgress() ? 'none' : 'run-in';
+                } elseif (!in_array($progressType, $progressTypes, true)) {
+                    throw new InvalidConfigurationException(sprintf(
+                        'The progress type "%s" is not defined, supported are "%s".',
+                        $progressType,
+                        implode('", "', $progressTypes)
+                    ));
+                }
+
+                $this->progress = $progressType;
+            } else {
+                $this->progress = 'none';
+            }
         }
 
         return $this->progress;
@@ -394,7 +424,7 @@ final class ConfigurationResolver
                 $formats = $reporterFactory->getFormats();
                 sort($formats);
 
-                throw new InvalidConfigurationException(sprintf('The format "%s" is not defined, supported are %s.', $format, implode(', ', $formats)));
+                throw new InvalidConfigurationException(sprintf('The format "%s" is not defined, supported are "%s".', $format, implode('", "', $formats)));
             }
         }
 
@@ -407,10 +437,10 @@ final class ConfigurationResolver
     public function getRiskyAllowed()
     {
         if (null === $this->allowRisky) {
-            if (null !== $this->options['allow-risky']) {
-                $this->allowRisky = 'yes' === $this->options['allow-risky'];
-            } else {
+            if (null === $this->options['allow-risky']) {
                 $this->allowRisky = $this->getConfig()->getRiskyAllowed();
+            } else {
+                $this->allowRisky = $this->resolveOptionBooleanValue('allow-risky');
             }
         }
 
@@ -436,7 +466,7 @@ final class ConfigurationResolver
             if (null === $this->options['using-cache']) {
                 $this->usingCache = $this->getConfig()->getUsingCache();
             } else {
-                $this->usingCache = 'yes' === $this->options['using-cache'];
+                $this->usingCache = $this->resolveOptionBooleanValue('using-cache');
             }
         }
 
@@ -469,6 +499,23 @@ final class ConfigurationResolver
         }
 
         return $this->isDryRun;
+    }
+
+    public function shouldStopOnViolation()
+    {
+        return $this->options['stop-on-violation'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function configFinderIsOverridden()
+    {
+        if (null === $this->configFinderIsOverridden) {
+            $this->resolveFinder();
+        }
+
+        return $this->configFinderIsOverridden;
     }
 
     /**
@@ -536,8 +583,8 @@ final class ConfigurationResolver
     {
         if (null === $this->format) {
             $this->format = null === $this->options['format']
-                ? $format = $this->getConfig()->getFormat()
-                : $format = $this->options['format'];
+                ? $this->getConfig()->getFormat()
+                : $this->options['format'];
         }
 
         return $this->format;
@@ -589,8 +636,11 @@ final class ConfigurationResolver
         }
 
         $rules = trim($this->options['rules']);
+        if ('' === $rules) {
+            throw new InvalidConfigurationException('Empty rules value is not allowed.');
+        }
 
-        if ($rules[0] === '{') {
+        if ('{' === $rules[0]) {
             $rules = json_decode($rules, true);
             if (JSON_ERROR_NONE !== json_last_error()) {
                 throw new InvalidConfigurationException(sprintf('Invalid JSON rules input: %s.', json_last_error_msg()));
@@ -601,7 +651,8 @@ final class ConfigurationResolver
 
         $rules = array();
 
-        foreach (array_map('trim', explode(',', $this->options['rules'])) as $rule) {
+        foreach (explode(',', $this->options['rules']) as $rule) {
+            $rule = trim($rule);
             if ('' === $rule) {
                 throw new InvalidConfigurationException('Empty rule name is not allowed.');
             }
@@ -628,14 +679,20 @@ final class ConfigurationResolver
          *
          * @see RuleSet::resolveSet()
          */
-        $ruleSet = RuleSet::create(array_map(function () {
-            return true;
-        }, $rules));
+        $ruleSet = array();
+        foreach ($rules as $key => $value) {
+            if (is_int($key)) {
+                throw new InvalidConfigurationException(sprintf('Missing value for "%s" rule/set.', $value));
+            }
 
-        /* @var string[] $availableFixers */
+            $ruleSet[$key] = true;
+        }
+        $ruleSet = new RuleSet($ruleSet);
+
+        /** @var string[] $configuredFixers */
         $configuredFixers = array_keys($ruleSet->getRules());
 
-        /* @var string[] $availableFixers */
+        /** @var string[] $availableFixers */
         $availableFixers = array_map(function (FixerInterface $fixer) {
             return $fixer->getName();
         }, $this->createFixerFactory()->getFixers());
@@ -646,10 +703,19 @@ final class ConfigurationResolver
         );
 
         if (count($unknownFixers)) {
-            throw new InvalidConfigurationException(sprintf(
-                'The rules contain unknown fixers (%s).',
-                implode(', ', $unknownFixers)
-            ));
+            $matcher = new WordMatcher($availableFixers);
+
+            $message = 'The rules contain unknown fixers: ';
+            foreach ($unknownFixers as $unknownFixer) {
+                $alternative = $matcher->match($unknownFixer);
+                $message .= sprintf(
+                    '"%s"%s, ',
+                    $unknownFixer,
+                    null === $alternative ? '' : ' (did you mean "'.$alternative.'"?)'
+                );
+            }
+
+            throw new InvalidConfigurationException(substr($message, 0, -2).'.');
         }
     }
 
@@ -658,6 +724,8 @@ final class ConfigurationResolver
      */
     private function resolveFinder()
     {
+        $this->configFinderIsOverridden = false;
+
         if ($this->isStdIn()) {
             return new \ArrayIterator(array(new StdinFileInfo()));
         }
@@ -670,9 +738,9 @@ final class ConfigurationResolver
             true
         )) {
             throw new InvalidConfigurationException(sprintf(
-                'The path-mode "%s" is not defined, supported are %s.',
+                'The path-mode "%s" is not defined, supported are "%s".',
                 $this->options['path-mode'],
-                implode(', ', $modes)
+                implode('", "', $modes)
             ));
         }
 
@@ -741,6 +809,10 @@ final class ConfigurationResolver
             );
         }
 
+        if (null !== $this->getConfigFile() && null !== $nestedFinder) {
+            $this->configFinderIsOverridden = true;
+        }
+
         if ($currentFinder instanceof SymfonyFinder && null === $nestedFinder) {
             // finder from configuration Symfony finder and it is not fully defined, we may fulfill it
             return $currentFinder->in($pathsByType['dir'])->append($pathsByType['file']);
@@ -762,5 +834,42 @@ final class ConfigurationResolver
         }
 
         $this->options[$name] = $value;
+    }
+
+    /**
+     * @param string $optionName
+     *
+     * @return bool
+     */
+    private function resolveOptionBooleanValue($optionName)
+    {
+        $value = $this->options[$optionName];
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (!is_string($value)) {
+            throw new InvalidConfigurationException(sprintf('Expected boolean or string value for option "%s".', $optionName));
+        }
+
+        if ('yes' === $value) {
+            return true;
+        }
+
+        if ('no' === $value) {
+            return false;
+        }
+
+        @trigger_error(
+            sprintf('Expected "yes" or "no" for option "%s", other values are deprecated and support will be removed in 3.0. Got "%s", this implicitly set the option to "false".', $optionName, $value),
+            E_USER_DEPRECATED
+        );
+
+        return false;
+    }
+
+    private static function separatedContextLessInclude($path)
+    {
+        return include $path;
     }
 }

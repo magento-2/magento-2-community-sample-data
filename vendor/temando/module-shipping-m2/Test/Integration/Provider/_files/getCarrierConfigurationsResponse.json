@@ -1,0 +1,2731 @@
+{
+  "data": [
+    {
+      "id": "5e044c03-1ec6-4fdd-b275-81d6ee84107c",
+      "type": "carrier-configuration",
+      "attributes": {
+        "integrationId": "carrier-integration-ups-ws-v3",
+        "configuration": {
+          "client": {
+            "accountHolder": {
+              "locality": "Hanoi",
+              "addressLines": [
+                "17 Duy Tan street"
+              ],
+              "administrativeArea": "QLD",
+              "countryCode": "GB",
+              "postalCode": "BA11 2FB",
+              "contact": {
+                "organisation": {
+                  "name": "Temando"
+                },
+                "phone": {
+                  "type": "mobile",
+                  "number": "123456789",
+                  "extension": "0084"
+                },
+                "email": "hungnc5@fsoft.com.vn",
+                "person": {
+                  "last": "Peet",
+                  "title": "E-Commerce Manager",
+                  "first": "Aynsley"
+                }
+              }
+            },
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "clgt1234",
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "accountNumber": "2E180A",
+            "accessLicenseNumber": "TEST812776895CAT",
+            "username": "clgt"
+          }
+        }
+      }
+    },
+    {
+      "id": "fbfe7a98-d601-4a2f-8051-e3c5afb11be1",
+      "type": "carrier-configuration",
+      "attributes": {
+        "integrationId": "carrier-integration-ups-ws-v3",
+        "configuration": {
+          "client": {
+            "accountHolder": {
+              "locality": "Hanoi",
+              "addressLines": [
+                "17 Duy Tan street"
+              ],
+              "administrativeArea": "QLD",
+              "countryCode": "AU",
+              "postalCode": "4006",
+              "contact": {
+                "organisation": {
+                  "name": "Temando"
+                },
+                "phone": {
+                  "type": "mobile",
+                  "number": "123456789",
+                  "extension": "0084"
+                },
+                "email": "hungnc5@fsoft.com.vn",
+                "person": {
+                  "last": "Peet",
+                  "title": "E-Commerce Manager",
+                  "first": "Aynsley"
+                }
+              }
+            },
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "clgt1234",
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "accountNumber": "33A5R3",
+            "accessLicenseNumber": "TEST675040732CAT",
+            "username": "clgt"
+          }
+        }
+      }
+    },
+    {
+      "id": "cfae240a-9958-4d42-a711-135c765ff88f",
+      "type": "carrier-configuration",
+      "attributes": {
+        "configuration": {
+          "client": {
+            "accountHolder": {
+              "countryCode": "US",
+              "contact": {
+                "phone": {
+                  "number": "418555333",
+                  "extension": "0061",
+                  "type": "mobile"
+                },
+                "person": {
+                  "last": "Nguyen",
+                  "title": "Mr",
+                  "first": "Hung"
+                },
+                "organisation": {
+                  "name": "Foo Industries PTY Ltd"
+                },
+                "email": "hungnc5@fsoft.com.vn"
+              },
+              "postalCode": "75087",
+              "locality": "Johnson City",
+              "addressLines": [
+                "17 Bradey street"
+              ],
+              "administrativeArea": "NY"
+            },
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "Clgt12345",
+            "accountNumber": "X6756Y",
+            "accessLicenseNumber": "TEST191914642CAT",
+            "username": "testUser"
+          }
+        },
+        "integrationId": "carrier-integration-ups-ws-v3"
+      }
+    },
+    {
+      "id": "29fecb3d-67d4-4c66-bd31-3219cb460501",
+      "type": "carrier-configuration",
+      "attributes": {
+        "locationIds": [
+          "120147cf-ce03-4cfc-8296-f2f618ab2b06",
+          "55603ca9-f94b-4bd2-a0a6-3a2cb84fcab9"
+        ],
+        "integrationId": "carrier-integration-fedex-v1",
+        "integrationServiceIds": [
+          "FDXE_FEDEX_3_DAY_FREIGHT",
+          "FDXE_FEDEX_FIRST_FREIGHT",
+          "FXFR_FEDEX_FREIGHT_ECONOMY",
+          "FXFR_FEDEX_FREIGHT_PRIORITY",
+          "FDXE_INTERNATIONAL_PRIORITY_FREIGHT",
+          "FDXE_INTERNATIONAL_ECONOMY_FREIGHT",
+          "FXSP_SMART_POST_PRESORTED_BOUND_PRINTED_MATTER",
+          "FXSP_SMART_POST_MEDIA_MAIL",
+          "FXSP_SMART_POST_PARCEL_SELECT",
+          "FXSP_SMART_POST_PRESORTED_STANDARD",
+          "FDXE_FEDEX_NEXT_DAY_EARLY_MORNING",
+          "FDXE_FEDEX_NEXT_DAY_MID_MORNING",
+          "FDXE_FEDEX_NEXT_DAY_AFTERNOON",
+          "FDXE_FEDEX_NEXT_DAY_END_OF_DAY",
+          "FDXE_FEDEX_NEXT_DAY_FREIGHT",
+          "FDXE_FEDEX_DISTANCE_DEFERRED",
+          "FDXE_EUROPE_FIRST_INTERNATIONAL_PRIORITY",
+          "FDXE_INTERNATIONAL_FIRST",
+          "FDXE_FIRST_OVERNIGHT"
+        ],
+        "connectionName": "Test FexEx config",
+        "configuration": {
+          "client": {
+            "userContactAndAddress": {
+              "locality": "San Francisco",
+              "addressLines": [
+                "550 Montgomery Suite 750"
+              ],
+              "administrativeArea": "CA",
+              "countryCode": "US",
+              "contact": {
+                "organisation": {
+                  "name": "Temando"
+                },
+                "phone": {
+                  "number": "+91 13246789"
+                },
+                "person": {
+                  "last": "Gandhi",
+                  "first": "Romil"
+                },
+                "email": "romil.gandhi@temando.com"
+              },
+              "postalCode": "94111"
+            },
+            "password": "2UqzyLMNKcZwithqT0Cy7HI9r",
+            "endpoint": "https://wsbeta.fedex.com:443",
+            "parentKey": "g006FrZkuB7PvwXF",
+            "meterNumber": "118838920",
+            "shippingAddress": {
+              "locality": "San Francisco",
+              "addressLines": [
+                "550 Montgomery Suite 750"
+              ],
+              "administrativeArea": "CA",
+              "countryCode": "US",
+              "postalCode": "94111"
+            },
+            "accountNumber": "614311983",
+            "parentPassword": "8dcVneMbr6g2uEdPdyqOJ9mwC",
+            "username": "7ZTtzazsQckD9NNA"
+          }
+        }
+      }
+    },
+    {
+      "id": "6ef19d3e-7e3b-4ba5-b35e-b3322ca8defc",
+      "type": "carrier-configuration",
+      "attributes": {
+        "configuration": {
+          "client": {
+            "endpoint": "https://www.myparcellabel.com",
+            "password": "5Oct8765",
+            "rates": {
+              "Y310": {
+                "rates": [
+                  {
+                    "max_weight": 5,
+                    "price": 10
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 20
+                  },
+                  {
+                    "max_weight": 15,
+                    "price": 30
+                  },
+                  {
+                    "max_weight": 20,
+                    "price": 40
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "Y20": {
+                "rates": [
+                  {
+                    "max_weight": 5,
+                    "price": 11
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 21
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM220": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 4.79
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 7.38
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 8.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 9.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 11.99
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 13.19
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM210": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 4.79
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 7.38
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 8.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 9.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 11.99
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 13.19
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM4": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 11.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 13.98
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 14.99
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 16.19
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 18.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 19.79
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "H24": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 35,
+                        "height": 16
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 2.75
+                  },
+                  {
+                    "max_weight": 2,
+                    "price": 3.95
+                  },
+                  {
+                    "max_weight": 5,
+                    "price": 5.95
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 7.95
+                  },
+                  {
+                    "max_weight": 15,
+                    "price": 9.95
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "H24POD": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 35,
+                        "height": 16
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 3.75
+                  },
+                  {
+                    "max_weight": 2,
+                    "price": 4.95
+                  },
+                  {
+                    "max_weight": 5,
+                    "price": 6.95
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 8.95
+                  },
+                  {
+                    "max_weight": 15,
+                    "price": 10.95
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "H48": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 35,
+                        "height": 16
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 2.75
+                  },
+                  {
+                    "max_weight": 2,
+                    "price": 3.95
+                  },
+                  {
+                    "max_weight": 5,
+                    "price": 5.95
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 7.95
+                  },
+                  {
+                    "max_weight": 15,
+                    "price": 9.95
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "H48POD": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 35,
+                        "height": 16
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 3.75
+                  },
+                  {
+                    "max_weight": 2,
+                    "price": 4.95
+                  },
+                  {
+                    "max_weight": 5,
+                    "price": 6.95
+                  },
+                  {
+                    "max_weight": 10,
+                    "price": 8.95
+                  },
+                  {
+                    "max_weight": 15,
+                    "price": 10.95
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM1": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 6.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 9.18
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 10.19
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 11.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 13.79
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 14.99
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM225": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 9.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 12.18
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 13.19
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 14.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 16.79
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 17.99
+                  }
+                ],
+                "currency": "GBP"
+              },
+              "UKM215": {
+                "rates": [
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 33,
+                        "width": 23,
+                        "height": 5
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      }
+                    ],
+                    "max_weight": 2,
+                    "price": 9.59
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 35,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 5,
+                    "price": 12.18
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 45,
+                        "width": 45,
+                        "height": 45
+                      }
+                    ],
+                    "max_weight": 10,
+                    "price": 13.19
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 60,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ],
+                    "max_weight": 15,
+                    "price": 14.39
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 70,
+                        "width": 70,
+                        "height": 70
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 120,
+                        "width": 50,
+                        "height": 50
+                      },
+                      {
+                        "unit": "cm",
+                        "length": 140,
+                        "width": 35,
+                        "height": 35
+                      }
+                    ],
+                    "max_weight": 20,
+                    "price": 16.79
+                  },
+                  {
+                    "max_dimensions": [
+                      {
+                        "unit": "cm",
+                        "length": 80,
+                        "width": 80,
+                        "height": 80
+                      }
+                    ],
+                    "max_weight": 25,
+                    "price": 17.99
+                  }
+                ],
+                "currency": "GBP"
+              }
+            },
+            "accountNumber": "1234",
+            "username": "temandobeta"
+          }
+        },
+        "integrationId": "carrier-integration-huxloe-hermes"
+      }
+    },
+    {
+      "id": "caa47d3c-0f23-44f8-a0c4-69ca003f7c49",
+      "type": "carrier-configuration",
+      "attributes": {
+        "configuration": {
+          "client": {
+            "apis": {
+              "tracking": {
+                "endpoint": "https://apps.geopostuk.com",
+                "password": "g30tr4ck",
+                "methods": {
+                  "tracking": "/trackingcore/dpd/parcels/"
+                },
+                "username": "GEOTRACK"
+              },
+              "apiDpdUk": {
+                "endpoint": "https://api.dpd.co.uk",
+                "password": "dpdtestapi2",
+                "methods": {
+                  "geoSession": "/user/?action=login",
+                  "insertShipment": "/shipping/shipment/",
+                  "label": "/shipping/shipment/:bookingReference/label/",
+                  "network": "/shipping/network/?:queryString"
+                },
+                "username": "dpdtestapi"
+              }
+            },
+            "rates": {
+              "minimumWeight_kg": 0.1,
+              "currency": "GBP",
+              "clientNumber": "480619",
+              "services": [
+                {
+                  "serviceCode": "1^1",
+                  "serviceDescription": "Dpd Two Day",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 14.85,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 35.97,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": 18.04,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 0.96
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^2",
+                  "serviceDescription": "Dpd Next Day",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 14.85,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 46.68,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": 24.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 13.79,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 32.34,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^3",
+                  "serviceDescription": "Dpd 12:00",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 20.16,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 74.26,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": 30.13,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 16.97,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.73,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^4",
+                  "serviceDescription": "Dpd 10:30",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 26.52,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 21.22,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^6",
+                  "serviceDescription": "Saturday",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 20.16,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 65.78,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": 43.23,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.65
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 21.22,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Guernsey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Channel Isles Jersey",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Man",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Isle Of Wight",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Northern Ireland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Scilly Isles",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Highlands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 50.88,
+                          "customsClearanceCharge": null,
+                          "destination": "Scottish Islands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^7",
+                  "serviceDescription": "Saturday 12:00",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 25.46,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 23.34,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^8",
+                  "serviceDescription": "Saturday 10:30",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 31.83,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.58,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^14",
+                  "serviceDescription": "Sunday 12:00",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 25.46,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 23.34,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^16",
+                  "serviceDescription": "Sunday",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": null,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": 20.16,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": null,
+                      "b_cm": null,
+                      "maxLength_cm": 100,
+                      "sizeRestrictionKind": "L",
+                      "maxWeight_kg": 30,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 21.22,
+                          "customsClearanceCharge": null,
+                          "destination": "United Kingdom",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                },
+                {
+                  "serviceCode": "1^9",
+                  "serviceDescription": "Dpd Classic",
+                  "products": [
+                    {
+                      "productCode": "1^1",
+                      "a_cm": null,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": null,
+                          "destination": "Austria",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 2.5
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.25,
+                          "customsClearanceCharge": null,
+                          "destination": "Belgium",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.6
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Bosnia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Bulgaria",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 69.58,
+                          "customsClearanceCharge": null,
+                          "destination": "Canary Islands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 6.52
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Croatia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Czech Republic",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.4
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": null,
+                          "destination": "Denmark",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 2.5
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Estonia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Finland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.25,
+                          "customsClearanceCharge": null,
+                          "destination": "France",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.6
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.25,
+                          "customsClearanceCharge": null,
+                          "destination": "Germany",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.6
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Greece",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Hungary",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Iceland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Italy",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.4
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Latvia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Lithuania",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.25,
+                          "customsClearanceCharge": null,
+                          "destination": "Luxembourg",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.6
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 27.25,
+                          "customsClearanceCharge": null,
+                          "destination": "Netherlands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 1.6
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Norway",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Poland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Portugal",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Romania",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 69.58,
+                          "customsClearanceCharge": null,
+                          "destination": "Russian Federation",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 6.52
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Serbia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Slovakia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.4
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Slovenia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Spain",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.4
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Sweden",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 3.65
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": 25,
+                          "destination": "Switzerland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": 5,
+                          "extraRatePerKg": 2.5
+                        }
+                      ],
+                      "c_cm": null,
+                      "withGirth_cm": 300,
+                      "b_cm": null,
+                      "maxLength_cm": 175,
+                      "sizeRestrictionKind": "G",
+                      "maxWeight_kg": 31.5,
+                      "productDescription": "Parcel"
+                    },
+                    {
+                      "productCode": "1^3",
+                      "a_cm": 30,
+                      "rates": [
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": null,
+                          "destination": "Austria",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 19.1,
+                          "customsClearanceCharge": null,
+                          "destination": "Belgium",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Bosnia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Bulgaria",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Croatia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Czech Republic",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": null,
+                          "destination": "Denmark",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Estonia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Finland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 19.1,
+                          "customsClearanceCharge": null,
+                          "destination": "France",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 19.1,
+                          "customsClearanceCharge": null,
+                          "destination": "Germany",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Greece",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Hungary",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Iceland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Italy",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Latvia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Lithuania",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 19.1,
+                          "customsClearanceCharge": null,
+                          "destination": "Luxembourg",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 19.1,
+                          "customsClearanceCharge": null,
+                          "destination": "Netherlands",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Norway",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Poland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Portugal",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Romania",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": 25,
+                          "destination": "Serbia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Slovakia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Slovenia",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 38.85,
+                          "customsClearanceCharge": null,
+                          "destination": "Spain",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 43.55,
+                          "customsClearanceCharge": null,
+                          "destination": "Sweden",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        },
+                        {
+                          "weightLimit_kg": null,
+                          "baseRate": 33.65,
+                          "customsClearanceCharge": 25,
+                          "destination": "Switzerland",
+                          "minChargePerParcel": null,
+                          "breakWeight_kg": null,
+                          "extraRatePerKg": null
+                        }
+                      ],
+                      "c_cm": 10,
+                      "withGirth_cm": 70,
+                      "b_cm": 30,
+                      "maxLength_cm": null,
+                      "sizeRestrictionKind": "C",
+                      "maxWeight_kg": 5,
+                      "productDescription": "Expresspak"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "integrationId": "carrier-integration-dpd-uk"
+      }
+    },
+    {
+      "id": "faade546-dc23-4f33-ba59-706df2d5f4ba",
+      "type": "carrier-configuration",
+      "attributes": {
+        "integrationId": "carrier-integration-ups-ws-v3",
+        "configuration": {
+          "client": {
+            "accountHolder": {
+              "locality": "Hanoi",
+              "addressLines": [
+                "17 Duy Tan street"
+              ],
+              "administrativeArea": "QLD",
+              "countryCode": "GB",
+              "postalCode": "BA11 2FB",
+              "contact": {
+                "organisation": {
+                  "name": "Temando"
+                },
+                "phone": {
+                  "type": "mobile",
+                  "number": "123456789",
+                  "extension": "0084"
+                },
+                "email": "hungnc5@fsoft.com.vn",
+                "person": {
+                  "last": "Peet",
+                  "title": "E-Commerce Manager",
+                  "first": "Aynsley"
+                }
+              }
+            },
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "clgt1234",
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "accountNumber": "2E180A",
+            "accessLicenseNumber": "TEST016572551CAT",
+            "username": "clgt"
+          }
+        }
+      }
+    },
+    {
+      "id": "316bb8d5-3021-4d7a-b20a-a263277b838f",
+      "type": "carrier-configuration",
+      "attributes": {
+        "configuration": {
+          "carrier": {
+            "developerLicenseNumber": "1234567890123455"
+          },
+          "client": {
+            "accountHolder": {
+              "countryCode": "US",
+              "contact": {
+                "phone": {
+                  "number": "418555333",
+                  "extension": "0061",
+                  "type": "mobile"
+                },
+                "person": {
+                  "last": "Nguyen",
+                  "title": "Mr",
+                  "first": "Hung"
+                },
+                "organisation": {
+                  "name": "Foo Industries PTY Ltd"
+                },
+                "email": "hungnc5@fsoft.com.vn"
+              },
+              "postalCode": "75087",
+              "locality": "Johnson City",
+              "addressLines": [
+                "17 Bradey street"
+              ],
+              "administrativeArea": "NY"
+            },
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "Clgt12345",
+            "accountNumber": "X6756Y",
+            "accessLicenseNumber": "TEST316663863CAT",
+            "username": "testUser"
+          }
+        },
+        "integrationId": "carrier-integration-ups-ws-v3"
+      }
+    },
+    {
+      "id": "b5f2e757-4258-4ed9-880b-9623ed49a91f",
+      "type": "carrier-configuration",
+      "attributes": {
+        "integrationId": "carrier-integration-ups-ws-v3",
+        "configuration": {
+          "client": {
+            "accountHolder": {
+              "locality": "Hanoi",
+              "addressLines": [
+                "17 Duy Tan street"
+              ],
+              "administrativeArea": "QLD",
+              "countryCode": "GB",
+              "postalCode": "BA11 2FB",
+              "contact": {
+                "organisation": {
+                  "name": "Temando"
+                },
+                "phone": {
+                  "type": "mobile",
+                  "number": "123456789",
+                  "extension": "0084"
+                },
+                "email": "hungnc5@fsoft.com.vn",
+                "person": {
+                  "last": "Peet",
+                  "title": "E-Commerce Manager",
+                  "first": "Aynsley"
+                }
+              }
+            },
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "clgt1234",
+            "endpoint": "https://wwwcie.ups.com/webservices/Void",
+            "accountNumber": "2E180A",
+            "accessLicenseNumber": "TEST241314450CAT",
+            "username": "clgt"
+          }
+        }
+      }
+    },
+    {
+      "id": "459a54ba-86f5-4e86-92d8-ddfd56940fd7",
+      "type": "carrier-configuration",
+      "attributes": {
+        "configuration": {
+          "carrier": {
+            "developerLicenseNumber": "1234567890123455"
+          },
+          "client": {
+            "accountHolder": {
+              "addressType": "business",
+              "countryCode": "GB",
+              "contact": {
+                "phone": {
+                  "number": "01234521223"
+                },
+                "person": {
+                  "last": "Levy",
+                  "first": "John"
+                }
+              },
+              "postalCode": "EC1N2NQ",
+              "locality": "London",
+              "addressLines": [
+                "1 Waterhouse Square"
+              ],
+              "administrativeArea": "London"
+            },
+            "endpoints": {
+              "completion": "https://wwwcie.ups.com/webservices/Pickup",
+              "license": "https://wwwcie.ups.com/webservices/License",
+              "void": "https://wwwcie.ups.com/webservices/Void",
+              "rate": "https://wwwcie.ups.com/webservices/Rate",
+              "ship": "https://wwwcie.ups.com/webservices/Ship",
+              "paperless": "https://wwwcie.ups.com/webservices/PaperlessDocumentAPI",
+              "registration": "https://wwwcie.ups.com/webservices/Registration",
+              "track": "https://wwwcie.ups.com/json/Track"
+            },
+            "password": "Odnamet321",
+            "accountNumber": "25X603",
+            "accessLicenseNumber": "FCFFF5723DE32F78",
+            "username": "temandouk"
+          }
+        },
+        "integrationId": "carrier-integration-ups-ws-v3"
+      }
+    }
+  ]
+}

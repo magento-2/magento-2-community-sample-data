@@ -1,0 +1,33 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Dispatch\Listing $block */ ?>
+<div id="temando-componentry"
+     data-bind="scope:'temando-componentry'"
+     data-component-init='[
+     {
+        "entrypoint": "DispatchList",
+        "assetsUrl": "<?php echo $block->escapeUrl($block->getAssetsUrl()); ?>",
+        "data": {
+            "ipAddress": "<?php echo $block->escapeHtml($block->getIpAddress()); ?>",
+            "lang": "<?php echo $block->escapeHtml($block->getLanguage()) ?>",
+            "locale": "<?php echo $block->escapeHtml($block->getLocale()) ?>",
+            "dispatchCreatePageUrl": "<?php echo $block->escapeUrl($block->getDispatchCreatePageUrl()); ?>",
+            "dispatchDetailPageUrlTpl": "<?php echo $block->escapeUrl($block->getDispatchDetailPageUrl()); ?>",
+            "temandoApiEndpoint": "<?php echo $block->escapeUrl($block->getApiEndpoint()); ?>",
+            "temandoApiToken": "<?php echo $block->escapeHtml($block->getApiToken()); ?>",
+            "temandoApiTokenTtl": "<?php echo $block->escapeHtml($block->getApiTokenExpiry()); ?>"
+        }
+     }]'
+>
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#temando-componentry": {
+            "Magento_Ui/js/core/app":  <?php /* @noEscape */ echo $block->getJsLayout(); ?>
+        }
+    }
+    </script>
+</div>

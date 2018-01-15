@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -23,9 +24,7 @@ use PhpCsFixer\Tokenizer\Tokens;
  */
 final class PhpdocAnnotationWithoutDotFixer extends AbstractFixer
 {
-    private $configuration = array(
-        'tags' => array('throws', 'return', 'param', 'internal', 'deprecated', 'var', 'type'),
-    );
+    private $tags = array('throws', 'return', 'param', 'internal', 'deprecated', 'var', 'type');
 
     /**
      * {@inheritdoc}
@@ -56,7 +55,7 @@ function foo ($bar) {}
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        foreach ($tokens as $token) {
+        foreach ($tokens as $index => $token) {
             if (!$token->isGivenKind(T_DOC_COMMENT)) {
                 continue;
             }
@@ -70,8 +69,7 @@ function foo ($bar) {}
 
             foreach ($annotations as $annotation) {
                 if (
-                    !$annotation->getTag()->valid()
-                    || !in_array($annotation->getTag()->getName(), $this->configuration['tags'], true)
+                    !$annotation->getTag()->valid() || !in_array($annotation->getTag()->getName(), $this->tags, true)
                 ) {
                     continue;
                 }
@@ -92,13 +90,18 @@ function foo ($bar) {}
                 $optionalTypeRegEx = $annotation->supportTypes()
                     ? sprintf('(?:%s\s+(?:\$\w+\s+)?)?', preg_quote(implode('|', $annotation->getTypes())))
                     : '';
-                $content = preg_replace_callback('/^(\s*\*\s*@\w+\s+'.$optionalTypeRegEx.')(.*)$/', function (array $matches) {
-                    return $matches[1].lcfirst($matches[2]);
-                }, $startLine->getContent(), 1);
+                $content = preg_replace_callback(
+                    '/^(\s*\*\s*@\w+\s+'.$optionalTypeRegEx.')(\p{Lu}?(?=\p{Ll}|\p{Zs}))(.*)$/',
+                    function (array $matches) {
+                        return $matches[1].strtolower($matches[2]).$matches[3];
+                    },
+                    $startLine->getContent(),
+                    1
+                );
                 $startLine->setContent($content);
             }
 
-            $token->setContent($doc->getContent());
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $doc->getContent()));
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Braintree\Error;
  * @package    Braintree
  * @subpackage Errors
  * @category   Validation
- * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class Codes
 {
@@ -167,6 +166,17 @@ class Codes
     const DESCRIPTOR_INTERNATIONAL_PHONE_FORMAT_IS_INVALID = '92205';
     const DESCRIPTOR_URL_FORMAT_IS_INVALID                 = '92206';
 
+    const DISPUTE_CAN_ONLY_ADD_EVIDENCE_TO_OPEN_DISPUTE      = '95701';
+    const DISPUTE_CAN_ONLY_REMOVE_EVIDENCE_FROM_OPEN_DISPUTE = '95702';
+    const DISPUTE_CAN_ONLY_ADD_EVIDENCE_TO_DISPUTE           = '95703';
+    const DISPUTE_CAN_ONLY_ACCEPT_OPEN_DISPUTE               = '95704';
+    const DISPUTE_CAN_ONLY_FINALIZE_OPEN_DISPUTE             = '95705';
+
+    const DOCUMENT_UPLOAD_KIND_IS_INVALID                = '84901';
+    const DOCUMENT_UPLOAD_FILE_IS_TOO_LARGE              = '84902';
+    const DOCUMENT_UPLOAD_FILE_TYPE_IS_INVALID           = '84903';
+    const DOCUMENT_UPLOAD_FILE_IS_MALFORMED_OR_ENCRYPTED = '84904';
+
     const INDUSTRY_DATA_INDUSTRY_TYPE_IS_INVALID                         = '93401';
     const INDUSTRY_DATA_LODGING_EMPTY_DATA                               = '93402';
     const INDUSTRY_DATA_LODGING_FOLIO_NUMBER_IS_INVALID                  = '93403';
@@ -310,6 +320,7 @@ class Codes
     const PAYMENT_METHOD_PAYMENT_METHOD_NONCE_UNKNOWN       = '93108';
     const PAYMENT_METHOD_PAYMENT_METHOD_NONCE_LOCKED        = '93109';
     const PAYMENT_METHOD_PAYMENT_METHOD_PARAMS_ARE_REQUIRED = '93101';
+    const PAYMENT_METHOD_NO_LONGER_SUPPORTED                = '93117';
 
     const PAYPAL_ACCOUNT_AUTH_EXPIRED                                            = '92911';
     const PAYPAL_ACCOUNT_CANNOT_HAVE_BOTH_ACCESS_TOKEN_AND_CONSENT_CODE          = '82903';
@@ -414,6 +425,7 @@ class Codes
 
     const TRANSACTION_AMOUNT_CANNOT_BE_NEGATIVE                                       = '81501';
     const TRANSACTION_AMOUNT_DOES_NOT_MATCH3_D_SECURE_AMOUNT                          = '91585';
+    const TRANSACTION_AMOUNT_DOES_NOT_MATCH_IDEAL_PAYMENT_AMOUNT                      = '915144';
     const TRANSACTION_AMOUNT_FORMAT_IS_INVALID                                        = '81503';
     const TRANSACTION_AMOUNT_IS_INVALID                                               = '81503';
     const TRANSACTION_AMOUNT_IS_REQUIRED                                              = '81502';
@@ -448,7 +460,10 @@ class Codes
     const TRANSACTION_CUSTOM_FIELD_IS_INVALID                                         = '91526';
     const TRANSACTION_CUSTOM_FIELD_IS_TOO_LONG                                        = '81527';
     const TRANSACTION_HAS_ALREADY_BEEN_REFUNDED                                       = '91512';
+    const TRANSACTION_IDEAL_PAYMENT_NOT_COMPLETE                                      = '815141';
+    const TRANSACTION_IDEAL_PAYMENTS_CANNOT_BE_VAULTED                                = '915150';
     const TRANSACTION_MERCHANT_ACCOUNT_DOES_NOT_MATCH3_D_SECURE_MERCHANT_ACCOUNT      = '91584';
+    const TRANSACTION_MERCHANT_ACCOUNT_DOES_NOT_MATCH_IDEAL_PAYMENT_MERCHANT_ACCOUNT  = '915143';
     const TRANSACTION_MERCHANT_ACCOUNT_DOES_NOT_SUPPORT_MOTO                          = '91558';
     const TRANSACTION_MERCHANT_ACCOUNT_DOES_NOT_SUPPORT_REFUNDS                       = '91547';
     const TRANSACTION_MERCHANT_ACCOUNT_ID_IS_INVALID                                  = '91513';
@@ -459,6 +474,8 @@ class Codes
     const TRANSACTION_OPTIONS_SUBMIT_FOR_SETTLEMENT_IS_REQUIRED_FOR_PAYPAL_UNILATERAL = '91582';
     const TRANSACTION_OPTIONS_USE_BILLING_FOR_SHIPPING_DISABLED                       = '91572';
     const TRANSACTION_OPTIONS_VAULT_IS_DISABLED                                       = '91525';
+    const TRANSACTION_ORDER_ID_DOES_NOT_MATCH_IDEAL_PAYMENT_ORDER_ID                  = '91503';
+    const TRANSACTION_ORDER_ID_IS_REQUIRED_WITH_IDEAL_PAYMENT                         = '91502';
     const TRANSACTION_ORDER_ID_IS_TOO_LONG                                            = '91501';
     const TRANSACTION_PAYMENT_INSTRUMENT_NOT_SUPPORTED_BY_MERCHANT_ACCOUNT            = '91577';
     const TRANSACTION_PAYMENT_INSTRUMENT_TYPE_IS_NOT_ACCEPTED                         = '915101';

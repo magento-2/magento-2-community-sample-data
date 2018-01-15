@@ -1,0 +1,99 @@
+{
+  "data": [
+    {
+      "id": "6d12c473-26f6-4587-84ac-60ca0007f5d5",
+      "type": "completion",
+      "attributes": {
+        "readyAt": "2017-05-11T15:49:47+02:00",
+        "createdAt": "2017-05-11T13:49:58.882Z",
+        "groups": [
+          {
+            "carrierReference": "1ZX6756Y6699434410",
+            "carrierName": "UPS Web Services",
+            "integrationId": "carrier-integration-ups-ws-v3"
+          }
+        ],
+        "shipments": [
+          {
+            "id": "f27b43e7-a132-436e-be97-e4da3ef6b8f2",
+            "status": "processed"
+          }
+        ],
+        "totalShipments": 1,
+        "customAttributes": {
+          "carrierName": "United Parcel Services (UPS)"
+        },
+        "status": "processed",
+        "modifiedAt": "2017-05-11T13:50:06.000Z"
+      }
+    },
+    {
+      "id": "181f571b-8d79-4a6c-8233-8113a4327299",
+      "type": "completion",
+      "attributes": {
+        "readyAt": "2017-05-11T19:01:09+10:00",
+        "createdAt": "2017-05-11T09:02:02.553Z",
+        "groups": [
+          {
+            "carrierReference": "1ZX6756Y6696207395",
+            "carrierName": "UPS Web Services",
+            "integrationId": "carrier-integration-ups-ws-v3"
+          }
+        ],
+        "shipments": [
+          {
+            "id": "4b71fb1d-9248-4c13-a88f-76cc86203707",
+            "status": "processed"
+          },
+          {
+            "id": "5ba33c12-a27a-4f4a-a042-af126f6d9aad",
+            "status": "processed"
+          },
+          {
+            "id": "f1fad34c-3ea6-4c6b-a7fe-4345da01258b",
+            "status": "processed"
+          },
+          {
+            "id": "700ce4dc-df2d-4b61-baea-161191f2fe59",
+            "status": "processed"
+          }
+        ],
+        "totalShipments": 4,
+        "customAttributes": {
+          "carrierName": "United Parcel Services (UPS)"
+        },
+        "status": "processed",
+        "modifiedAt": "2017-05-11T09:02:08.000Z"
+      }
+    },
+    {
+      "id": "6c1961b9-cd9f-403d-bf82-21428eca5aef",
+      "type": "completion",
+      "attributes": {
+        "readyAt": "2017-01-01T00:00:01Z",
+        "createdAt": "2017-05-10T13:26:59.677Z",
+        "$schema": "http://completions.temando.com/schema/api/completionAttributes+v1#",
+        "shipments": [
+          {
+            "id": "410a2ba0-126b-4cbb-bfec-24d88c4f000b",
+            "status": "fetched"
+          },
+          {
+            "id": "752a4b23-f62f-4063-b28d-f772ad5cb4c8",
+            "status": "fetched"
+          },
+          {
+            "id": "b6458c32-67cc-435d-b24f-aa019fca5439",
+            "status": "fetched"
+          }
+        ],
+        "totalShipments": 3,
+        "customAttributes": {
+          "carrierName": "UPS TEST"
+        },
+        "status": "fetched",
+        "modifiedAt": "2017-05-10T13:27:03.000Z"
+      }
+    }
+  ]
+}

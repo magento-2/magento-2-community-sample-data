@@ -1,4 +1,39 @@
-## 3.21.2
+## 3.25.0
+* Add `submitForSettlement` option to `Subscription::retryCharge`
+* Support `eci_indicator` for Transaction sale with raw Apple Pay parameters
+* Add `accept` method for the Dispute API
+* Add `addTextEvidence` method for the Dispute API
+* Add `addFileEvidence` method for the Dispute API
+* Add `finalize` method for the Dispute API
+* Add `find` method for the Dispute API
+* Add `removeEvidence` method for the Dispute API
+* Add `search` method for the Dispute API
+* Add DocumentUpload
+
+## 3.24.0
+* Add AuthorizationAdjustment class and `authorizationAdjustments` to Transaction
+* Add iDEAL webhook support
+* Add `IDEAL_PAYMENT` to `PaymentInstrumentType`
+* Create Braintree class to be PSR compliant
+* Coinbase is no longer a supported payment method. `PAYMENT_METHOD_NO_LONGER_SUPPORTED` will be returned for Coinbase operations.
+* Add `ApplePay` for web domain registration.
+* Add facilitated details to Transaction if present
+* Update link to transaction api documentation (thanks @qoheleth-tech!).
+* Fix TransactionGateway return types (thanks @jjok!).
+* Update return type for client token (thanks @jlaswell!).
+
+## 3.23.1
+* Fix token generator return type - thanks @jjok!
+* Improve error reporting for connection issues - thanks @montymxb!
+* Add support for additional PayPal options when vaulting a PayPal Order
+
+## 3.23.0
+* Add Visa Checkout support
+* Add ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
+* Add new properties to `CreditCardVerification` and `Customer`
+* Add SDK support for skip AVS and skip CVV
+
+## 3.22.0
 * Add option to disable Accept-Encoding: gzip header for Google App Engine
 * Fix a bug where `merchantAccount->all` would attempt to fetch too many pages of merchant accounts
 

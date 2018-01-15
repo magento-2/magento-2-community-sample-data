@@ -13,8 +13,9 @@
 namespace PhpCsFixer\Fixer\Operator;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -24,45 +25,21 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array(
-        'spacing' => 'none',
-    );
-
     private $fixCallback;
 
     /**
-     * Configuration must have one element 'spacing' with value 'none' (default) or 'one'.
-     *
-     * @param null|array $configuration
+     * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
+        parent::configure($configuration);
+
+        if ('one' === $this->configuration['spacing']) {
+            $this->fixCallback = 'fixConcatenationToSingleSpace';
+        } else {
             $this->fixCallback = 'fixConcatenationToNoSpace';
-
-            return;
-        }
-
-        if (!array_key_exists('spacing', $configuration)) {
-            throw new InvalidFixerConfigurationException($this->getName(), 'Missing "spacing" configuration.');
-        }
-
-        switch ($configuration['spacing']) {
-            case 'one':
-                $this->fixCallback = 'fixConcatenationToSingleSpace';
-
-                break;
-            case 'none':
-                $this->fixCallback = 'fixConcatenationToNoSpace';
-
-                break;
-            default:
-                throw new InvalidFixerConfigurationException($this->getName(), '"spacing" configuration must be "one" or "none".');
         }
     }
 
@@ -75,8 +52,7 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
             'Concatenation should be spaced according configuration.',
             array(
                 new CodeSample(
-                    "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
-                    null
+                    "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';"
                 ),
                 new CodeSample(
                     "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
@@ -86,10 +62,7 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
                     "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
                     array('spacing' => 'one')
                 ),
-            ),
-            null,
-            "Configuration must have one element 'spacing' with value 'none' (default) or 'one'.",
-            array('spacing' => 'none')
+            )
         );
     }
 
@@ -109,9 +82,24 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
         $callBack = $this->fixCallback;
         for ($index = $tokens->count() - 1; $index >= 0; --$index) {
             if ($tokens[$index]->equals('.')) {
-                $this->$callBack($tokens, $index);
+                $this->{$callBack}($tokens, $index);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $spacing = new FixerOptionBuilder('spacing', 'Spacing to apply around concatenation operator.');
+        $spacing = $spacing
+            ->setAllowedValues(array('one', 'none'))
+            ->setDefault('none')
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array($spacing));
     }
 
     /**
@@ -162,6 +150,6 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
             return;
         }
 
-        $tokens[$offsetIndex]->setContent(' ');
+        $tokens[$offsetIndex] = new Token(array(T_WHITESPACE, ' '));
     }
 }

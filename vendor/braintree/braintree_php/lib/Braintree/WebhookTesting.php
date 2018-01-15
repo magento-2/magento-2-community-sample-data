@@ -47,6 +47,12 @@ class WebhookTesting
             case WebhookNotification::PARTNER_MERCHANT_DECLINED:
                 $subjectXml = self::_partnerMerchantDeclinedSampleXml($id);
                 break;
+            case WebhookNotification::CONNECTED_MERCHANT_STATUS_TRANSITIONED:
+                $subjectXml = self::_connectedMerchantStatusTransitionedSampleXml($id);
+                break;
+            case WebhookNotification::CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED:
+                $subjectXml = self::_connectedMerchantPayPalStatusChangedSampleXml($id);
+                break;
             case WebhookNotification::DISPUTE_OPENED:
                 $subjectXml = self::_disputeOpenedSampleXml($id);
                 break;
@@ -64,6 +70,12 @@ class WebhookTesting
                 break;
             case WebhookNotification::ACCOUNT_UPDATER_DAILY_REPORT:
                 $subjectXml = self::_accountUpdaterDailyReportSampleXml($id);
+                break;
+            case WebhookNotification::IDEAL_PAYMENT_COMPLETE:
+                $subjectXml = self::_idealPaymentCompleteSampleXml($id);
+                break;
+            case WebhookNotification::IDEAL_PAYMENT_FAILED:
+                $subjectXml = self::_idealPaymentFailedSampleXml($id);
                 break;
             default:
                 $subjectXml = self::_subscriptionSampleXml($id);
@@ -373,6 +385,62 @@ class WebhookTesting
             <report-date type=\"date\">2016-01-14</report-date>
             <report-url>link-to-csv-report</report-url>
         </account-updater-daily-report>
+        ";
+    }
+
+    private static function _connectedMerchantStatusTransitionedSampleXml($id)
+    {
+        return "
+        <connected-merchant-status-transitioned>
+          <merchant-public-id>{$id}</merchant-public-id>
+          <status>new_status</status>
+          <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+        </connected-merchant-status-transitioned>
+        ";
+    }
+
+    private static function _connectedMerchantPayPalStatusChangedSampleXml($id)
+    {
+        return "
+        <connected-merchant-paypal-status-changed>
+          <merchant-public-id>{$id}</merchant-public-id>
+          <action>link</action>
+          <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+        </connected-merchant-paypal-status-changed>
+        ";
+    }
+
+    private static function _idealPaymentCompleteSampleXml($id)
+    {
+        return "
+        <ideal-payment>
+          <id>{$id}</id>
+          <status>COMPLETE</status>
+          <issuer>ABCISSUER</issuer>
+          <order-id>ORDERABC</order-id>
+          <currency>EUR</currency>
+          <amount>10.00</amount>
+          <created-at>2016-11-29T23:27:34.547Z</created-at>
+          <approval-url>https://example.com</approval-url>
+          <ideal-transaction-id>1234567890</ideal-transaction-id>
+        </ideal-payment>
+        ";
+    }
+
+    private static function _idealPaymentFailedSampleXml($id)
+    {
+        return "
+        <ideal-payment>
+          <id>{$id}</id>
+          <status>FAILED</status>
+          <issuer>ABCISSUER</issuer>
+          <order-id>ORDERABC</order-id>
+          <currency>EUR</currency>
+          <amount>10.00</amount>
+          <created-at>2016-11-29T23:27:34.547Z</created-at>
+          <approval-url>https://example.com</approval-url>
+          <ideal-transaction-id>1234567890</ideal-transaction-id>
+        </ideal-payment>
         ";
     }
 

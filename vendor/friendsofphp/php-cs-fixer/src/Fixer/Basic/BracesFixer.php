@@ -13,9 +13,10 @@
 namespace PhpCsFixer\Fixer\Basic;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -28,40 +29,17 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  *
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class BracesFixer extends AbstractFixer implements ConfigurableFixerInterface, WhitespacesAwareFixerInterface
+final class BracesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
 {
     /**
-     * @var array
+     * @internal
      */
-    private $configuration;
-
-    private static $defaultConfiguration = array(
-        'allow_single_line_closure' => false,
-    );
+    const LINE_NEXT = 'next';
 
     /**
-     * @param array<string, bool>|null $configuration
+     * @internal
      */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        foreach ($configuration as $functionName => $replacement) {
-            if (!array_key_exists($functionName, self::$defaultConfiguration)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('"%s" is not handled by the fixer.', $functionName));
-            }
-
-            if (!is_bool($replacement)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected bool got "%s".', is_object($replacement) ? get_class($replacement) : gettype($replacement)));
-            }
-        }
-
-        $this->configuration = $configuration;
-    }
+    const LINE_SAME = 'same';
 
     /**
      * {@inheritdoc}
@@ -107,10 +85,38 @@ $negative = function ($item) {
 ',
                     array('allow_single_line_closure' => true)
                 ),
-            ),
-            null,
-            'The `allow_single_line_closure` key could be set to `true` to allow for single line lambda notation.',
-            self::$defaultConfiguration
+                new CodeSample(
+'<?php
+
+class Foo
+{
+    public function bar($baz)
+    {
+        if ($baz = 900) echo "Hello!";
+
+        if ($baz = 9000)
+            echo "Wait!";
+
+        if ($baz == true)
+        {
+            echo "Why?";
+        }
+        else
+        {
+            echo "Ha?";
+        }
+
+        if (is_array($baz))
+            foreach ($baz as $b)
+            {
+                echo $b;
+            }
+    }
+}
+',
+                    array('position_after_functions_and_oop_constructs' => self::LINE_SAME)
+                ),
+            )
         );
     }
 
@@ -142,6 +148,31 @@ $negative = function ($item) {
         $this->fixControlContinuationBraces($tokens);
         $this->fixSpaceAroundToken($tokens);
         $this->fixDoWhile($tokens);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $allowSingleLineClosure = new FixerOptionBuilder('allow_single_line_closure', 'Whether single line lambda notation should be allowed.');
+        $allowSingleLineClosure = $allowSingleLineClosure
+            ->setAllowedTypes(array('bool'))
+            ->setDefault(false)
+            ->getOption()
+        ;
+
+        $positionAfterFunctionsAndOopConstructs = new FixerOptionBuilder('position_after_functions_and_oop_constructs', 'whether the opening brace should be placed on "next" or "same" line after classy constructs (non-anonymous classes, interfaces, traits, methods and non-lambda functions).');
+        $positionAfterFunctionsAndOopConstructs = $positionAfterFunctionsAndOopConstructs
+            ->setAllowedValues(array(self::LINE_NEXT, self::LINE_SAME))
+            ->setDefault(self::LINE_NEXT)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array(
+            $allowSingleLineClosure,
+            $positionAfterFunctionsAndOopConstructs,
+        ));
     }
 
     private function fixCommentBeforeBrace(Tokens $tokens)
@@ -185,8 +216,8 @@ $negative = function ($item) {
                 // we might be moving one white space next to another, these have to be merged
                 $tokens[$i] = $tokens[$i - 1];
                 if ($tokens[$i]->isWhitespace() && $tokens[$i + 1]->isWhitespace()) {
-                    $tokens[$i]->setContent($tokens[$i]->getContent().$tokens[$i + 1]->getContent());
-                    $tokens[$i + 1]->clear();
+                    $tokens[$i] = new Token(array(T_WHITESPACE, $tokens[$i]->getContent().$tokens[$i + 1]->getContent()));
+                    $tokens->clearAt($i + 1);
                 }
             }
 
@@ -194,7 +225,7 @@ $negative = function ($item) {
             $c = $tokens[$braceIndex]->getContent();
             if (substr_count($c, "\n") > 1) {
                 // left trim till last line break
-                $tokens[$braceIndex]->setContent(substr($c, strrpos($c, "\n")));
+                $tokens[$braceIndex] = new Token(array(T_WHITESPACE, substr($c, strrpos($c, "\n"))));
             }
         }
     }
@@ -318,18 +349,57 @@ $negative = function ($item) {
             for ($nestIndex = $lastCommaIndex; $nestIndex >= $startBraceIndex; --$nestIndex) {
                 $nestToken = $tokens[$nestIndex];
 
-                if ($nestToken->equals(')')) {
-                    $nestIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $nestIndex, false);
+                if ($nestToken->equalsAny(array(')', array(CT::T_BRACE_CLASS_INSTANTIATION_CLOSE)))) {
+                    $nestIndex = $tokens->findBlockEnd(
+                        $nestToken->equals(')') ? Tokens::BLOCK_TYPE_PARENTHESIS_BRACE : Tokens::BLOCK_TYPE_BRACE_CLASS_INSTANTIATION,
+                        $nestIndex,
+                        false
+                    );
+
                     continue;
                 }
 
-                if (1 === $nestLevel && $nestToken->equalsAny(array(';', '}'))) {
+                if (1 === $nestLevel) {
+                    // Next token is the beginning of a line that can be indented when
+                    // the current token is a `;`, a `}` or the opening `{` of current
+                    // scope. Current token may also be a comment that follows `;` or
+                    // `}`, in which case indentation will only be fixed if this
+                    // comment is followed by a newline.
+                    $nextLineCanBeIndented = false;
+                    if ($nestToken->equalsAny(array(';', '}'))) {
+                        $nextLineCanBeIndented = true;
+                    } elseif ($this->isCommentWithFixableIndentation($tokens, $nestIndex)) {
+                        for ($i = $nestIndex; $i > $startBraceIndex; --$i) {
+                            if ($tokens[$i]->equalsAny(array(';', '}'))) {
+                                $nextLineCanBeIndented = true;
+
+                                break;
+                            }
+
+                            if (!$tokens[$i]->isWhitespace() && !$tokens[$i]->isComment()) {
+                                break;
+                            }
+                        }
+
+                        if ($nextLineCanBeIndented || $i === $startBraceIndex) {
+                            $nextToken = $tokens[$nestIndex + 1];
+                            $nextLineCanBeIndented = $nextToken->isWhitespace() && 1 === preg_match('/\R/', $nextToken->getContent());
+                        }
+                    }
+
+                    if (!$nextLineCanBeIndented) {
+                        continue;
+                    }
+
                     $nextNonWhitespaceNestIndex = $tokens->getNextNonWhitespace($nestIndex);
                     $nextNonWhitespaceNestToken = $tokens[$nextNonWhitespaceNestIndex];
 
                     if (
-                        // next Token is not a comment
-                        !$nextNonWhitespaceNestToken->isComment() &&
+                        // next Token is not a comment on its own line
+                        !($nextNonWhitespaceNestToken->isComment() && (
+                            !$tokens[$nextNonWhitespaceNestIndex - 1]->isWhitespace()
+                            || !preg_match('/\R/', $tokens[$nextNonWhitespaceNestIndex - 1]->getContent())
+                        )) &&
                         // and it is not a `$foo = function () {};` situation
                         !($nestToken->equals('}') && $nextNonWhitespaceNestToken->equalsAny(array(';', ',', ']', array(CT::T_ARRAY_SQUARE_BRACE_CLOSE)))) &&
                         // and it is not a `Foo::{bar}()` situation
@@ -338,7 +408,10 @@ $negative = function ($item) {
                         !($nestToken->equals('}') && $tokens[$nestIndex - 1]->equalsAny(array('"', "'", array(T_CONSTANT_ENCAPSED_STRING))))
                     ) {
                         if (
-                            $nextNonWhitespaceNestToken->isGivenKind($this->getControlContinuationTokens())
+                            (
+                                $nextNonWhitespaceNestToken->isGivenKind($this->getControlContinuationTokens())
+                                && !$tokens[$tokens->getPrevNonWhitespace($nextNonWhitespaceNestIndex)]->isComment()
+                            )
                             || $nextNonWhitespaceNestToken->isGivenKind(T_CLOSE_TAG)
                             || (
                                 $nextNonWhitespaceNestToken->isGivenKind(T_WHILE) &&
@@ -370,17 +443,19 @@ $negative = function ($item) {
                             }
                         }
 
-                        $tokens->ensureWhitespaceAtIndex($nestIndex + 1, 0, $whitespace);
+                        $this->ensureWhitespaceAtIndexAndIndentMultilineComment($tokens, $nestIndex + 1, $whitespace);
                     }
                 }
 
                 if ($nestToken->equals('}')) {
                     ++$nestLevel;
+
                     continue;
                 }
 
                 if ($nestToken->equals('{')) {
                     --$nestLevel;
+
                     continue;
                 }
             }
@@ -392,18 +467,27 @@ $negative = function ($item) {
                 $nextToken = $tokens[$startBraceIndex + 1];
                 $nextNonWhitespaceToken = $tokens[$tokens->getNextNonWhitespace($startBraceIndex)];
 
-                // set indent only if it is not a case, when comment is following { in same line
+                // set indent only if it is not a case, when comment is following { on same line
                 if (
                     !$nextNonWhitespaceToken->isComment()
-                    || !($nextToken->isWhitespace() && $nextToken->isWhitespace(" \t"))
-                    && 1 === substr_count($nextToken->getContent(), "\n") // preserve blank lines
+                    || ($nextToken->isWhitespace() && 1 === substr_count($nextToken->getContent(), "\n")) // preserve blank lines
                 ) {
-                    $tokens->ensureWhitespaceAtIndex($startBraceIndex + 1, 0, $this->whitespacesConfig->getLineEnding().$indent.$this->whitespacesConfig->getIndent());
+                    $this->ensureWhitespaceAtIndexAndIndentMultilineComment(
+                        $tokens,
+                        $startBraceIndex + 1,
+                        $this->whitespacesConfig->getLineEnding().$indent.$this->whitespacesConfig->getIndent()
+                    );
                 }
             }
 
             if ($token->isGivenKind($classyTokens) && !$tokensAnalyzer->isAnonymousClass($index)) {
-                $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, $this->whitespacesConfig->getLineEnding().$indent);
+                if (self::LINE_SAME === $this->configuration['position_after_functions_and_oop_constructs'] && !$tokens[$tokens->getPrevNonWhitespace($startBraceIndex)]->isComment()) {
+                    $ensuredWhitespace = ' ';
+                } else {
+                    $ensuredWhitespace = $this->whitespacesConfig->getLineEnding().$indent;
+                }
+
+                $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, $ensuredWhitespace);
             } elseif ($token->isGivenKind(T_FUNCTION) && !$tokensAnalyzer->isLambda($index)) {
                 $closingParenthesisIndex = $tokens->getPrevTokenOfKind($startBraceIndex, array(')'));
                 if (null === $closingParenthesisIndex) {
@@ -416,7 +500,13 @@ $negative = function ($item) {
                         $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, ' ');
                     }
                 } else {
-                    $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, $this->whitespacesConfig->getLineEnding().$indent);
+                    if (self::LINE_SAME === $this->configuration['position_after_functions_and_oop_constructs'] && !$tokens[$tokens->getPrevNonWhitespace($startBraceIndex)]->isComment()) {
+                        $ensuredWhitespace = ' ';
+                    } else {
+                        $ensuredWhitespace = $this->whitespacesConfig->getLineEnding().$indent;
+                    }
+
+                    $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, $ensuredWhitespace);
                 }
             } else {
                 $tokens->ensureWhitespaceAtIndex($startBraceIndex - 1, 1, ' ');
@@ -551,6 +641,12 @@ $negative = function ($item) {
         return $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $nextIndex);
     }
 
+    /**
+     * @param Tokens $tokens
+     * @param int    $parenthesisEndIndex
+     *
+     * @return int
+     */
     private function findStatementEnd(Tokens $tokens, $parenthesisEndIndex)
     {
         $nextIndex = $tokens->getNextMeaningfulToken($parenthesisEndIndex);
@@ -600,6 +696,7 @@ $negative = function ($item) {
             // if there is some block in statement (eg lambda function) we need to skip it
             if ($token->equals('{')) {
                 $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $index);
+
                 continue;
             }
 
@@ -663,18 +760,18 @@ $negative = function ($item) {
 
     private function getControlContinuationTokensForOpeningToken($openingTokenKind)
     {
-        if ($openingTokenKind === T_IF) {
+        if (T_IF === $openingTokenKind) {
             return array(
                 T_ELSE,
                 T_ELSEIF,
             );
         }
 
-        if ($openingTokenKind === T_DO) {
+        if (T_DO === $openingTokenKind) {
             return array(T_WHILE);
         }
 
-        if ($openingTokenKind === T_TRY) {
+        if (T_TRY === $openingTokenKind) {
             $tokens = array(T_CATCH);
             if (defined('T_FINALLY')) {
                 $tokens[] = T_FINALLY;
@@ -688,11 +785,11 @@ $negative = function ($item) {
 
     private function getFinalControlContinuationTokensForOpeningToken($openingTokenKind)
     {
-        if ($openingTokenKind === T_IF) {
+        if (T_IF === $openingTokenKind) {
             return array(T_ELSE);
         }
 
-        if ($openingTokenKind === T_TRY && defined('T_FINALLY')) {
+        if (T_TRY === $openingTokenKind && defined('T_FINALLY')) {
             return array(T_FINALLY);
         }
 
@@ -740,6 +837,42 @@ $negative = function ($item) {
 
     /**
      * @param Tokens $tokens
+     * @param int    $index
+     * @param string $whitespace
+     */
+    private function ensureWhitespaceAtIndexAndIndentMultilineComment(Tokens $tokens, $index, $whitespace)
+    {
+        if ($tokens[$index]->isWhitespace()) {
+            $nextTokenIndex = $tokens->getNextNonWhitespace($index);
+        } else {
+            $nextTokenIndex = $index;
+        }
+
+        $nextToken = $tokens[$nextTokenIndex];
+        if ($nextToken->isComment()) {
+            $previousToken = $tokens[$nextTokenIndex - 1];
+            // do not indent inline comments used to comment out unused code
+            if (
+                (0 === strpos($nextToken->getContent(), '//'.$this->whitespacesConfig->getIndent()) || '//' === $nextToken->getContent())
+                && $previousToken->isWhitespace() && 1 === preg_match('/\R$/', $previousToken->getContent())
+            ) {
+                return;
+            }
+            $tokens[$nextTokenIndex] = new Token(array(
+                $nextToken->getId(),
+                preg_replace(
+                    '/(\R)'.$this->detectIndent($tokens, $nextTokenIndex).'/',
+                    '$1'.preg_replace('/^.*\R([ \t]*)$/s', '$1', $whitespace),
+                    $nextToken->getContent()
+                ),
+            ));
+        }
+
+        $tokens->ensureWhitespaceAtIndex($index, 0, $whitespace);
+    }
+
+    /**
+     * @param Tokens $tokens
      * @param int    $startParenthesisIndex
      * @param int    $endParenthesisIndex
      *
@@ -754,5 +887,97 @@ $negative = function ($item) {
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the token at given index is a comment whose indentation
+     * can be fixed.
+     *
+     * Indentation of a comment is not changed when the comment is part of a
+     * multi-line message whose lines are all single-line comments and at least
+     * one line has meaningful content.
+     *
+     * @param Tokens $tokens
+     * @param int    $index
+     *
+     * @return bool
+     */
+    private function isCommentWithFixableIndentation(Tokens $tokens, $index)
+    {
+        if (!$tokens[$index]->isComment()) {
+            return false;
+        }
+
+        if (0 === strpos($tokens[$index]->getContent(), '/*')) {
+            return true;
+        }
+
+        $firstCommentIndex = $index;
+        while (true) {
+            $i = $this->getSiblingContinuousSingleLineComment($tokens, $firstCommentIndex, false);
+            if (null === $i) {
+                break;
+            }
+
+            $firstCommentIndex = $i;
+        }
+
+        $lastCommentIndex = $index;
+        while (true) {
+            $i = $this->getSiblingContinuousSingleLineComment($tokens, $lastCommentIndex, true);
+            if (null === $i) {
+                break;
+            }
+
+            $lastCommentIndex = $i;
+        }
+
+        if ($firstCommentIndex === $lastCommentIndex) {
+            return true;
+        }
+
+        for ($i = $firstCommentIndex + 1; $i < $lastCommentIndex; ++$i) {
+            if (!$tokens[$i]->isWhitespace() && !$tokens[$i]->isComment()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Tokens $tokens
+     * @param int    $index
+     * @param bool   $after
+     *
+     * @return null|int
+     */
+    private function getSiblingContinuousSingleLineComment(Tokens $tokens, $index, $after)
+    {
+        $siblingIndex = $index;
+        do {
+            if ($after) {
+                $siblingIndex = $tokens->getNextTokenOfKind($siblingIndex, array(array(T_COMMENT)));
+            } else {
+                $siblingIndex = $tokens->getPrevTokenOfKind($siblingIndex, array(array(T_COMMENT)));
+            }
+
+            if (null === $siblingIndex) {
+                return null;
+            }
+        } while (0 === strpos($tokens[$siblingIndex]->getContent(), '/*'));
+
+        $newLines = 0;
+        for ($i = min($siblingIndex, $index) + 1, $max = max($siblingIndex, $index); $i < $max; ++$i) {
+            if ($tokens[$i]->isWhitespace() && preg_match('/\R/', $tokens[$i]->getContent())) {
+                if (1 === $newLines || preg_match('/\R.*\R/', $tokens[$i]->getContent())) {
+                    return null;
+                }
+
+                ++$newLines;
+            }
+        }
+
+        return $siblingIndex;
     }
 }

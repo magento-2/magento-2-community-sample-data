@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader">
+        <plugin name="registerShipment" type="Temando\Shipping\Plugin\Shipping\Order\ShipmentLoaderPlugin" />
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Invoice\Create\Form">
+        <plugin name="disableCreateShipment" type="Temando\Shipping\Plugin\Sales\Order\Invoice\Create\FormPlugin" />
+    </type>
+
+    <type name="Temando\Shipping\Rest\Authentication">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Backend\Model\Session</argument>
+        </arguments>
+    </type>
+</config>

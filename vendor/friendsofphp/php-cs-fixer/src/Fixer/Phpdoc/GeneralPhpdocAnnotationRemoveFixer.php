@@ -14,41 +14,20 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    protected $configuration;
-
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array();
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $this->configuration = $configuration;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -64,12 +43,9 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
  * @author someone
  */
 function foo() {}',
-                    array('author')
+                    array('annotations' => array('author'))
                 ),
-            ),
-            null,
-            'Array of not wanted annotations could be configured, eg `[\'@author\']`.',
-            self::$defaultConfiguration
+            )
         );
     }
 
@@ -96,17 +72,17 @@ function foo() {}',
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        if (!count($this->configuration)) {
+        if (!count($this->configuration['annotations'])) {
             return;
         }
 
-        foreach ($tokens as $token) {
+        foreach ($tokens as $index => $token) {
             if (!$token->isGivenKind(T_DOC_COMMENT)) {
                 continue;
             }
 
             $doc = new DocBlock($token->getContent());
-            $annotations = $doc->getAnnotationsOfType($this->configuration);
+            $annotations = $doc->getAnnotationsOfType($this->configuration['annotations']);
 
             // nothing to do if there are no annotations
             if (empty($annotations)) {
@@ -117,7 +93,22 @@ function foo() {}',
                 $annotation->remove();
             }
 
-            $token->setContent($doc->getContent());
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $doc->getContent()));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $annotations = new FixerOptionBuilder('annotations', 'List of annotations to remove, e.g. `["author"]`.');
+        $annotations = $annotations
+            ->setAllowedTypes(array('array'))
+            ->setDefault(array())
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('annotations', array($annotations));
     }
 }

@@ -22,6 +22,8 @@ use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Config\Resource\GlobResource;
+use Symfony\Component\DependencyInjection\Tests\Fixtures\Bar;
+use Symfony\Component\DependencyInjection\Tests\Fixtures\BarInterface;
 use Symfony\Component\DependencyInjection\Tests\Fixtures\CaseSensitiveClass;
 use Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype;
 use Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy;
@@ -230,6 +232,28 @@ class XmlFileLoaderTest extends TestCase
         $this->assertSame($fooArgs[0], $barArgs[0]);
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Top-level anonymous services are deprecated since Symfony 3.4, the "id" attribute will be required in version 4.0 in %sservices_without_id.xml at line 5.
+     */
+    public function testLoadAnonymousServicesWithoutId()
+    {
+        $container = new ContainerBuilder();
+        $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'));
+        $loader->load('services_without_id.xml');
+    }
+
+    public function testLoadAnonymousNestedServices()
+    {
+        $container = new ContainerBuilder();
+        $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'));
+        $loader->load('nested_service_without_id.xml');
+
+        $this->assertTrue($container->hasDefinition('FooClass'));
+        $arguments = $container->getDefinition('FooClass')->getArguments();
+        $this->assertInstanceOf(Reference::class, array_shift($arguments));
+    }
+
     public function testLoadServices()
     {
         $container = new ContainerBuilder();
@@ -433,6 +457,9 @@ class XmlFileLoaderTest extends TestCase
     {
         if (extension_loaded('suhosin') && false === strpos(ini_get('suhosin.executor.include.whitelist'), 'phar')) {
             $this->markTestSkipped('To run this test, add "phar" to the "suhosin.executor.include.whitelist" settings in your php.ini file.');
+        }
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM makes this test conflict with those run in separate processes.');
         }
 
         require_once self::$fixturesPath.'/includes/ProjectWithXsdExtensionInPhar.phar';
@@ -667,9 +694,8 @@ class XmlFileLoaderTest extends TestCase
         $this->assertSame('service_container', key($definitions));
 
         array_shift($definitions);
-        $this->assertStringStartsWith('1_', key($definitions));
-
         $anonymous = current($definitions);
+        $this->assertSame('bar', key($definitions));
         $this->assertTrue($anonymous->isPublic());
         $this->assertTrue($anonymous->isAutowired());
         $this->assertSame(array('foo' => array(array())), $anonymous->getTags());
@@ -681,7 +707,7 @@ class XmlFileLoaderTest extends TestCase
         $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'));
         $loader->load('services_named_args.xml');
 
-        $this->assertEquals(array(null, '$apiKey' => 'ABCD'), $container->getDefinition(NamedArgumentsDummy::class)->getArguments());
+        $this->assertEquals(array('$apiKey' => 'ABCD', CaseSensitiveClass::class => null), $container->getDefinition(NamedArgumentsDummy::class)->getArguments());
 
         $container->compile();
 
@@ -747,12 +773,38 @@ class XmlFileLoaderTest extends TestCase
         $this->assertTrue($container->getDefinition('use_defaults_settings')->isAutoconfigured());
         $this->assertFalse($container->getDefinition('override_defaults_settings_to_false')->isAutoconfigured());
     }
-}
 
-interface BarInterface
-{
-}
+    public function testBindings()
+    {
+        $container = new ContainerBuilder();
+        $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'));
+        $loader->load('services_bindings.xml');
+        $container->compile();
 
-class Bar implements BarInterface
-{
+        $definition = $container->getDefinition('bar');
+        $this->assertEquals(array(
+            'NonExistent' => null,
+            BarInterface::class => new Reference(Bar::class),
+            '$foo' => array(null),
+            '$quz' => 'quz',
+            '$factory' => 'factory',
+        ), array_map(function ($v) { return $v->getValues()[0]; }, $definition->getBindings()));
+        $this->assertEquals(array(
+            'quz',
+            null,
+            new Reference(Bar::class),
+            array(null),
+        ), $definition->getArguments());
+
+        $definition = $container->getDefinition(Bar::class);
+        $this->assertEquals(array(
+            null,
+            'factory',
+        ), $definition->getArguments());
+        $this->assertEquals(array(
+            'NonExistent' => null,
+            '$quz' => 'quz',
+            '$factory' => 'factory',
+        ), array_map(function ($v) { return $v->getValues()[0]; }, $definition->getBindings()));
+    }
 }

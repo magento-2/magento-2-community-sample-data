@@ -60,7 +60,7 @@ EOT;
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'prepareExceptionViewModel']);
         $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'prepareExceptionViewModel']);
@@ -184,7 +184,10 @@ EOT;
                 if (is_callable($this->message)) {
                     $callback = $this->message;
                     $message = (string) $callback($exception, $this->displayExceptions);
-                } elseif ($this->displayExceptions && $exception instanceof \Exception) {
+                } elseif ($this->displayExceptions
+                    // @TODO clean up once PHP 7 requirement is enforced
+                    && ($exception instanceof \Exception || $exception instanceof \Throwable)
+                ) {
                     $previous = '';
                     $previousException = $exception->getPrevious();
                     while ($previousException) {
@@ -220,7 +223,8 @@ EOT;
                             ':line',
                             ':stack',
                             ':previous',
-                        ], [
+                        ],
+                        [
                             get_class($exception),
                             $exception->getMessage(),
                             $exception->getCode(),
@@ -241,7 +245,8 @@ EOT;
                             ':line',
                             ':stack',
                             ':previous',
-                        ], [
+                        ],
+                        [
                             '',
                             '',
                             '',

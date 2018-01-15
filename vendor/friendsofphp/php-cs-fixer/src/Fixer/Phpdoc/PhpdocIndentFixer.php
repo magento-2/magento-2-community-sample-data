@@ -15,6 +15,7 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Utils;
 
@@ -84,13 +85,14 @@ class DocBlocks
                 continue;
             }
 
-            $prevToken = $tokens[$index - 1];
+            $prevIndex = $index - 1;
+            $prevToken = $tokens[$prevIndex];
 
             // ignore inline docblocks
             if (
                 $prevToken->isGivenKind(T_OPEN_TAG)
                 || ($prevToken->isWhitespace(" \t") && !$tokens[$index - 2]->isGivenKind(T_OPEN_TAG))
-                || $prevToken->equalsAny(array(';', '{'))
+                || $prevToken->equalsAny(array(';', ',', '{', '('))
             ) {
                 continue;
             }
@@ -100,8 +102,14 @@ class DocBlocks
                 $indent = Utils::calculateTrailingWhitespaceIndent($tokens[$nextIndex - 1]);
             }
 
-            $prevToken->setContent($this->fixWhitespaceBefore($prevToken->getContent(), $indent));
-            $token->setContent($this->fixDocBlock($token->getContent(), $indent));
+            $newPrevContent = $this->fixWhitespaceBefore($prevToken->getContent(), $indent);
+            if ($newPrevContent) {
+                $tokens[$prevIndex] = new Token(array($prevToken->getId(), $newPrevContent));
+            } else {
+                $tokens->clearAt($prevIndex);
+            }
+
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $this->fixDocBlock($token->getContent(), $indent)));
         }
     }
 
@@ -115,7 +123,7 @@ class DocBlocks
      */
     private function fixDocBlock($content, $indent)
     {
-        return ltrim(preg_replace('/^[ \t]*/m', $indent.' ', $content));
+        return ltrim(preg_replace('/^[ \t]*\*/m', $indent.' *', $content));
     }
 
     /**

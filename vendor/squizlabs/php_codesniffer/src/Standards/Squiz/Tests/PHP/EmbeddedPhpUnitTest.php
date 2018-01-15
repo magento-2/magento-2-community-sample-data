@@ -51,6 +51,10 @@ class EmbeddedPhpUnitTest extends AbstractSniffUnitTest
                 94  => 2,
                 100 => 1,
                 102 => 1,
+                112 => 1,
+                113 => 1,
+                116 => 1,
+                117 => 1,
                );
 
     }//end getErrorList()

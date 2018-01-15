@@ -2,7 +2,7 @@
 	"name" : "shopialfb/facebook-module",
 	"description" : "Connect your shop to Facebook page",
 	"type" : "magento2-module",
-	"version" : "2.0.0",
+	"version" : "2.2.1",
 	"license" : [
 		"OSL-3.0",
 		"AFL-3.0"

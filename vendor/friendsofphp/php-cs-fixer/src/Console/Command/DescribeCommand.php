@@ -15,6 +15,7 @@ namespace PhpCsFixer\Console\Command;
 use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Differ\SebastianBergmannDiffer;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSampleInterface;
@@ -26,6 +27,7 @@ use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tokenizer\Tokens;
+use PhpCsFixer\WordMatcher;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,6 +41,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class DescribeCommand extends Command
 {
+    const COMMAND_NAME = 'describe';
+
     /**
      * @var string[]
      */
@@ -55,7 +59,7 @@ final class DescribeCommand extends Command
     private $fixers;
 
     /**
-     * @param FixerFactory|null $fixerFactory
+     * @param null|FixerFactory $fixerFactory
      */
     public function __construct(FixerFactory $fixerFactory = null)
     {
@@ -75,7 +79,7 @@ final class DescribeCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('describe')
+            ->setName(self::COMMAND_NAME)
             ->setDefinition(
                 array(
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of rule / set.'),
@@ -91,6 +95,7 @@ final class DescribeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
+
         try {
             if ('@' === $name[0]) {
                 $this->describeSet($output, $name);
@@ -100,12 +105,19 @@ final class DescribeCommand extends Command
 
             $this->describeRule($output, $name);
         } catch (DescribeNameNotFoundException $e) {
-            $alternative = $this->getAlternative($e->getType(), $name);
+            $matcher = new WordMatcher(
+                'set' === $e->getType() ? $this->getSetNames() : array_keys($this->getFixers())
+            );
+
+            $alternative = $matcher->match($name);
+
             $this->describeList($output, $e->getType());
 
             throw new \InvalidArgumentException(sprintf(
-                '%s %s not found.%s',
-                ucfirst($e->getType()), $name, null === $alternative ? '' : ' Did you mean "'.$alternative.'"?'
+                '%s "%s" not found.%s',
+                ucfirst($e->getType()),
+                $name,
+                null === $alternative ? '' : ' Did you mean "'.$alternative.'"?'
             ));
         }
     }
@@ -147,7 +159,44 @@ final class DescribeCommand extends Command
             $output->writeln('');
         }
 
-        if ($fixer instanceof ConfigurableFixerInterface) {
+        if ($fixer instanceof ConfigurationDefinitionFixerInterface) {
+            $configurationDefinition = $fixer->getConfigurationDefinition();
+            $options = $configurationDefinition->getOptions();
+
+            $output->writeln(sprintf('Fixer is configurable using following option%s:', 1 === count($options) ? '' : 's'));
+
+            foreach ($options as $option) {
+                $line = '* <info>'.$option->getName().'</info>';
+
+                $allowed = HelpCommand::getDisplayableAllowedValues($option);
+                if (null !== $allowed) {
+                    foreach ($allowed as &$value) {
+                        $value = HelpCommand::toString($value);
+                    }
+                } else {
+                    $allowed = $option->getAllowedTypes();
+                }
+
+                if (null !== $allowed) {
+                    $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
+                }
+
+                $description = preg_replace('/(`.+?`)/', '<info>$1</info>', $option->getDescription());
+                $line .= ': '.lcfirst(preg_replace('/\.$/', '', $description)).'; ';
+                if ($option->hasDefault()) {
+                    $line .= sprintf(
+                        'defaults to <comment>%s</comment>',
+                        HelpCommand::toString($option->getDefault())
+                    );
+                } else {
+                    $line .= '<comment>required</comment>';
+                }
+
+                $output->writeln($line);
+            }
+
+            $output->writeln('');
+        } elseif ($fixer instanceof ConfigurableFixerInterface) {
             $output->writeln('<comment>Fixer is configurable.</comment>');
 
             if ($definition->getConfigurationDescription()) {
@@ -155,7 +204,7 @@ final class DescribeCommand extends Command
             }
 
             if ($definition->getDefaultConfiguration()) {
-                $output->writeln(sprintf('Default configuration: <comment>%s</comment>.', $this->arrayToText($definition->getDefaultConfiguration())));
+                $output->writeln(sprintf('Default configuration: <comment>%s</comment>.', HelpCommand::toString($definition->getDefaultConfiguration())));
             }
 
             $output->writeln('');
@@ -187,22 +236,30 @@ final class DescribeCommand extends Command
             foreach ($codeSamples as $index => $codeSample) {
                 $old = $codeSample->getCode();
                 $tokens = Tokens::fromCode($old);
+
                 if ($fixer instanceof ConfigurableFixerInterface) {
-                    $fixer->configure($codeSample->getConfiguration());
+                    $configuration = $codeSample->getConfiguration();
+                    $fixer->configure(null === $configuration ? array() : $configuration);
                 }
 
                 $file = $codeSample instanceof FileSpecificCodeSampleInterface
                     ? $codeSample->getSplFileInfo()
                     : new StdinFileInfo();
-                $fixer->fix($file, $tokens);
-                $new = $tokens->generateCode();
-                $diff = $differ->diff($old, $new);
 
-                if (null === $codeSample->getConfiguration()) {
-                    $output->writeln(sprintf(' * Example #%d.', $index + 1));
+                $fixer->fix($file, $tokens);
+
+                $diff = $differ->diff($old, $tokens->generateCode());
+
+                if ($fixer instanceof ConfigurableFixerInterface) {
+                    if (null === $configuration) {
+                        $output->writeln(sprintf(' * Example #%d. Fixing with the <comment>default</comment> configuration.', $index + 1));
+                    } else {
+                        $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, HelpCommand::toString($codeSample->getConfiguration())));
+                    }
                 } else {
-                    $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, $this->arrayToText($codeSample->getConfiguration())));
+                    $output->writeln(sprintf(' * Example #%d.', $index + 1));
                 }
+
                 $output->writeln($diffFormatter->format($diff, '   %s'));
                 $output->writeln('');
             }
@@ -238,37 +295,11 @@ final class DescribeCommand extends Command
                 $rule,
                 $fixers[$rule]->isRisky() ? ' <error>risky</error>' : '',
                 $definition->getSummary(),
-                true !== $config ? sprintf("   <comment>| Configuration: %s</comment>\n", $this->arrayToText($config)) : ''
+                true !== $config ? sprintf("   <comment>| Configuration: %s</comment>\n", HelpCommand::toString($config)) : ''
             );
         }
 
         $output->write($help);
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function arrayToText(array $data)
-    {
-        // Output modifications:
-        // - remove new-lines
-        // - combine multiple whitespaces
-        // - switch array-syntax to short array-syntax
-        // - remove whitespace at array opening
-        // - remove trailing array comma and whitespace at array closing
-        // - remove numeric array indexes
-        static $replaces = array(
-            array('#\r|\n#', '#\s{1,}#', '#array\s*\((.*)\)#s', '#\[\s+#', '#,\s*\]#', '#\d+\s*=>\s*#'),
-            array('', ' ', '[$1]', '[', ']', ''),
-        );
-
-        return preg_replace(
-            $replaces[0],
-            $replaces[1],
-            var_export($data, true)
-        );
     }
 
     /**
@@ -305,29 +336,6 @@ final class DescribeCommand extends Command
         sort($this->setNames);
 
         return $this->setNames;
-    }
-
-    /**
-     * @param string $type 'rule'|'set'
-     * @param string $name
-     *
-     * @return null|string
-     */
-    private function getAlternative($type, $name)
-    {
-        $other = null;
-        $alternatives = 'set' === $type ? $this->getSetNames() : array_keys($this->getFixers());
-
-        foreach ($alternatives as $alternative) {
-            $distance = levenshtein($name, $alternative);
-            if (3 > $distance) {
-                $other = $alternative;
-
-                break;
-            }
-        }
-
-        return $other;
     }
 
     /**

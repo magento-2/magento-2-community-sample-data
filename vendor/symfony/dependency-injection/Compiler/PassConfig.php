@@ -43,29 +43,39 @@ class PassConfig
             100 => array(
                 $resolveClassPass = new ResolveClassPass(),
                 new ResolveInstanceofConditionalsPass(),
+                new RegisterEnvVarProcessorsPass(),
             ),
+            -1000 => array(new ExtensionCompilerPass()),
         );
 
         $this->optimizationPasses = array(array(
-            new ExtensionCompilerPass(),
-            new ResolveDefinitionTemplatesPass(),
+            new ResolveChildDefinitionsPass(),
             new ServiceLocatorTagPass(),
             new DecoratorServicePass(),
-            new ResolveParameterPlaceHoldersPass(),
+            new ResolveParameterPlaceHoldersPass(false),
             new ResolveFactoryClassPass(),
             new FactoryReturnTypePass($resolveClassPass),
             new CheckDefinitionValidityPass(),
             new RegisterServiceSubscribersPass(),
             new ResolveNamedArgumentsPass(),
-            $autowirePass = new AutowirePass(false),
+            new AutowireRequiredMethodsPass(),
+            new ResolveBindingsPass(),
+            new AutowirePass(false),
+            new ResolveTaggedIteratorArgumentPass(),
             new ResolveServiceSubscribersPass(),
             new ResolveReferencesToAliasesPass(),
             new ResolveInvalidReferencesPass(),
             new AnalyzeServiceReferencesPass(true),
             new CheckCircularReferencesPass(),
             new CheckReferenceValidityPass(),
-            new CheckArgumentsValidityPass(),
+            new CheckArgumentsValidityPass(false),
         ));
+
+        $this->beforeRemovingPasses = array(
+            -100 => array(
+                new ResolvePrivatesPass(),
+            ),
+        );
 
         $this->removingPasses = array(array(
             new RemovePrivateAliasesPass(),
@@ -73,12 +83,13 @@ class PassConfig
             new RemoveAbstractDefinitionsPass(),
             new RepeatedPass(array(
                 new AnalyzeServiceReferencesPass(),
-                $inlinedServicePass = new InlineServiceDefinitionsPass(),
+                new InlineServiceDefinitionsPass(),
                 new AnalyzeServiceReferencesPass(),
                 new RemoveUnusedDefinitionsPass(),
             )),
-            new AutowireExceptionPass($autowirePass, $inlinedServicePass),
+            new DefinitionErrorExceptionPass(),
             new CheckExceptionOnInvalidReferenceBehaviorPass(),
+            new ResolveHotPathPass(),
         ));
     }
 
@@ -196,11 +207,6 @@ class PassConfig
         return $this->mergePass;
     }
 
-    /**
-     * Sets the Merge Pass.
-     *
-     * @param CompilerPassInterface $pass The merge pass
-     */
     public function setMergePass(CompilerPassInterface $pass)
     {
         $this->mergePass = $pass;

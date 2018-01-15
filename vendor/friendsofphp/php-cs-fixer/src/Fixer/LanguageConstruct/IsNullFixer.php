@@ -13,8 +13,9 @@
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -24,46 +25,8 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Vladimir Reznichenko <kalessil@gmail.com>
  */
-final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class IsNullFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    private static $configurableOptions = array('use_yoda_style');
-    private static $defaultConfiguration = array('use_yoda_style' => true);
-
-    /**
-     * @var array<string, bool>
-     */
-    private $configuration;
-
-    /**
-     * 'use_yoda_style' can be configured with a boolean value.
-     *
-     * @param string[]|null $configuration
-     *
-     * @throws InvalidFixerConfigurationException
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $this->configuration = array();
-        /** @var $option string */
-        foreach ($configuration as $option => $value) {
-            if (!in_array($option, self::$configurableOptions, true)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration item "%s", expected any of "%s".', $option, implode('", "', self::$configurableOptions)));
-            }
-
-            if (!is_bool($value)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected boolean got "%s".', is_object($value) ? get_class($value) : gettype($value)));
-            }
-
-            $this->configuration[$option] = $value;
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -76,8 +39,6 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
                 new CodeSample("<?php\n\$a = is_null(\$b);", array('use_yoda_style' => false)),
             ),
             null,
-            'The following can be configured: `use_yoda_style => boolean`',
-            self::$defaultConfiguration,
             'Risky when the function `is_null()` is overridden.'
         );
     }
@@ -143,7 +104,7 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
 
                 // get rid of the root namespace when it used and check if the inversion operator provided
                 $tokens->removeTrailingWhitespace($prevTokenIndex);
-                $tokens[$prevTokenIndex]->clear();
+                $tokens->clearAt($prevTokenIndex);
             }
 
             // check if inversion being used, text comparison is due to not existing constant
@@ -153,10 +114,10 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
 
                 // get rid of inverting for proper transformations
                 $tokens->removeTrailingWhitespace($inversionCandidateIndex);
-                $tokens[$inversionCandidateIndex]->clear();
+                $tokens->clearAt($inversionCandidateIndex);
             }
 
-            /* before getting rind of `()` around a parameter, ensure it's not assignment/ternary invariant */
+            // before getting rind of `()` around a parameter, ensure it's not assignment/ternary invariant
             $referenceEnd = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $matches[1]);
             $isContainingDangerousConstructs = false;
             for ($paramTokenIndex = $matches[1]; $paramTokenIndex <= $referenceEnd; ++$paramTokenIndex) {
@@ -167,7 +128,7 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
                 }
             }
 
-            /* edge cases: is_null() followed/preceded by ==, ===, !=, !==, <> */
+            // edge cases: is_null() followed/preceded by ==, ===, !=, !==, <>
             $parentLeftToken = $tokens[$tokens->getPrevMeaningfulToken($isNullIndex)];
             $parentRightToken = $tokens[$tokens->getNextMeaningfulToken($referenceEnd)];
             $parentOperations = array(T_IS_EQUAL, T_IS_NOT_EQUAL, T_IS_IDENTICAL, T_IS_NOT_IDENTICAL);
@@ -177,13 +138,13 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
                 if (!$wrapIntoParentheses) {
                     // closing parenthesis removed with leading spaces
                     $tokens->removeLeadingWhitespace($referenceEnd);
-                    $tokens[$referenceEnd]->clear();
+                    $tokens->clearAt($referenceEnd);
                 }
 
                 // opening parenthesis removed with trailing spaces
                 $tokens->removeLeadingWhitespace($matches[1]);
                 $tokens->removeTrailingWhitespace($matches[1]);
-                $tokens[$matches[1]]->clear();
+                $tokens->clearAt($matches[1]);
             }
 
             // sequence which we'll use as a replacement
@@ -203,15 +164,14 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
             } else {
                 $replacement = array_reverse($replacement);
                 if ($isContainingDangerousConstructs) {
-                    array_unshift($replacement, new Token(array(')')));
+                    array_unshift($replacement, new Token(')'));
                 }
 
                 if ($wrapIntoParentheses) {
                     $replacement[] = new Token(')');
-                    $tokens[$isNullIndex]->setContent('(');
+                    $tokens[$isNullIndex] = new Token('(');
                 } else {
-                    $tokens[$isNullIndex]->clear();
-                    $tokens->removeTrailingWhitespace($referenceEnd);
+                    $tokens->clearAt($isNullIndex);
                 }
 
                 $tokens->overrideRange($referenceEnd, $referenceEnd, $replacement);
@@ -220,5 +180,20 @@ final class IsNullFixer extends AbstractFixer implements ConfigurableFixerInterf
             // nested is_null calls support
             $currIndex = $isNullIndex;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $yoda = new FixerOptionBuilder('use_yoda_style', 'Whether Yoda style conditions should be used.');
+        $yoda = $yoda
+            ->setAllowedTypes(array('bool'))
+            ->setDefault(true)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array($yoda));
     }
 }

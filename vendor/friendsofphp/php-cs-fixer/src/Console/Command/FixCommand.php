@@ -15,12 +15,13 @@ namespace PhpCsFixer\Console\Command;
 use PhpCsFixer\Config;
 use PhpCsFixer\ConfigInterface;
 use PhpCsFixer\Console\ConfigurationResolver;
+use PhpCsFixer\Console\Output\ErrorOutput;
 use PhpCsFixer\Console\Output\NullOutput;
 use PhpCsFixer\Console\Output\ProcessOutput;
-use PhpCsFixer\Error\Error;
 use PhpCsFixer\Error\ErrorsManager;
 use PhpCsFixer\Report\ReportSummary;
 use PhpCsFixer\Runner\Runner;
+use PhpCsFixer\ToolInfoInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,12 +39,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 final class FixCommand extends Command
 {
-    // Exit status 1 is reserved for environment constraints not matched.
-    const EXIT_STATUS_FLAG_HAS_INVALID_FILES = 4;
-    const EXIT_STATUS_FLAG_HAS_CHANGED_FILES = 8;
-    const EXIT_STATUS_FLAG_HAS_INVALID_CONFIG = 16;
-    const EXIT_STATUS_FLAG_HAS_INVALID_FIXER_CONFIG = 32;
-    const EXIT_STATUS_FLAG_EXCEPTION_IN_APP = 64;
+    const COMMAND_NAME = 'fix';
 
     /**
      * EventDispatcher instance.
@@ -73,7 +69,12 @@ final class FixCommand extends Command
      */
     private $defaultConfig;
 
-    public function __construct()
+    /**
+     * @var ToolInfoInterface
+     */
+    private $toolInfo;
+
+    public function __construct(ToolInfoInterface $toolInfo)
     {
         parent::__construct();
 
@@ -81,6 +82,17 @@ final class FixCommand extends Command
         $this->errorsManager = new ErrorsManager();
         $this->eventDispatcher = new EventDispatcher();
         $this->stopwatch = new Stopwatch();
+        $this->toolInfo = $toolInfo;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Override here to only generate the help copy when used.
+     */
+    public function getHelp()
+    {
+        return HelpCommand::getHelpCopy();
     }
 
     /**
@@ -89,7 +101,7 @@ final class FixCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('fix')
+            ->setName(self::COMMAND_NAME)
             ->setDefinition(
                 array(
                     new InputArgument('path', InputArgument::IS_ARRAY, 'The path.'),
@@ -102,10 +114,11 @@ final class FixCommand extends Command
                     new InputOption('cache-file', '', InputOption::VALUE_REQUIRED, 'The path to the cache file.'),
                     new InputOption('diff', '', InputOption::VALUE_NONE, 'Also produce diff for each file.'),
                     new InputOption('format', '', InputOption::VALUE_REQUIRED, 'To output results in other formats.'),
+                    new InputOption('stop-on-violation', '', InputOption::VALUE_NONE, 'Stop execution on first violation.'),
+                    new InputOption('show-progress', '', InputOption::VALUE_REQUIRED, 'Type of progress indicator (none, run-in, or estimating).'),
                 )
             )
             ->setDescription('Fixes a directory or a file.')
-            ->setHelp(FixCommandHelp::getHelpCopy())
         ;
     }
 
@@ -132,9 +145,12 @@ final class FixCommand extends Command
                 'cache-file' => $input->getOption('cache-file'),
                 'format' => $input->getOption('format'),
                 'diff' => $input->getOption('diff'),
+                'stop-on-violation' => $input->getOption('stop-on-violation'),
                 'verbosity' => $verbosity,
+                'show-progress' => $input->getOption('show-progress'),
             ),
-            getcwd()
+            getcwd(),
+            $this->toolInfo
         );
 
         $reporter = $resolver->getReporter();
@@ -145,14 +161,10 @@ final class FixCommand extends Command
         ;
 
         if (null !== $stdErr) {
-            if (extension_loaded('xdebug')) {
-                $stdErr->writeln(sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'You are running php-cs-fixer with xdebug enabled. This has a major impact on runtime performance.'));
-            }
-
             if (null !== $passedConfig && null !== $passedRules) {
                 $stdErr->writeln(array(
                     sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'When passing both "--config" and "--rules" the rules within the configuration file are not used.'),
-                    sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'Passing both options is deprecated; version v3.0 PHP-CS-Fixer will exit with an configuration error code.'),
+                    sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'Passing both options is deprecated; version v3.0 PHP-CS-Fixer will exit with a configuration error code.'),
                 ));
             }
 
@@ -167,23 +179,36 @@ final class FixCommand extends Command
             }
         }
 
-        $showProgress = $resolver->getProgress();
+        $progressType = $resolver->getProgress();
+        $finder = $resolver->getFinder();
+
+        if (null !== $stdErr && $resolver->configFinderIsOverridden()) {
+            $stdErr->writeln(
+                sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'Paths from configuration file have been overridden by paths provided as command arguments.')
+            );
+        }
+
+        if ('none' === $progressType || null === $stdErr) {
+            $progressOutput = new NullOutput();
+        } elseif ('run-in' === $progressType) {
+            $progressOutput = new ProcessOutput($stdErr, $this->eventDispatcher, null);
+        } else {
+            $finder = new \ArrayIterator(iterator_to_array($finder));
+            $progressOutput = new ProcessOutput($stdErr, $this->eventDispatcher, count($finder));
+        }
+
         $runner = new Runner(
-            $resolver->getFinder(),
+            $finder,
             $resolver->getFixers(),
             $resolver->getDiffer(),
-            $showProgress ? $this->eventDispatcher : null,
+            'none' !== $progressType ? $this->eventDispatcher : null,
             $this->errorsManager,
             $resolver->getLinter(),
             $resolver->isDryRun(),
             $resolver->getCacheManager(),
-            $resolver->getDirectory()
+            $resolver->getDirectory(),
+            $resolver->shouldStopOnViolation()
         );
-
-        $progressOutput = $showProgress && $stdErr
-            ? new ProcessOutput($stdErr, $this->eventDispatcher)
-            : new NullOutput()
-        ;
 
         $this->stopwatch->start('fixFiles');
         $changed = $runner->fix();
@@ -212,70 +237,28 @@ final class FixCommand extends Command
         $lintErrors = $this->errorsManager->getLintErrors();
 
         if (null !== $stdErr) {
+            $errorOutput = new ErrorOutput($stdErr);
+
             if (count($invalidErrors) > 0) {
-                $this->listErrors($stdErr, 'linting before fixing', $invalidErrors);
+                $errorOutput->listErrors('linting before fixing', $invalidErrors);
             }
 
             if (count($exceptionErrors) > 0) {
-                $this->listErrors($stdErr, 'fixing', $exceptionErrors);
+                $errorOutput->listErrors('fixing', $exceptionErrors);
             }
 
             if (count($lintErrors) > 0) {
-                $this->listErrors($stdErr, 'linting after fixing', $lintErrors);
+                $errorOutput->listErrors('linting after fixing', $lintErrors);
             }
         }
 
-        return $this->calculateExitStatus(
+        $exitStatusCalculator = new FixCommandExitStatusCalculator();
+
+        return $exitStatusCalculator->calculate(
             $resolver->isDryRun(),
             count($changed) > 0,
             count($invalidErrors) > 0,
             count($exceptionErrors) > 0
         );
-    }
-
-    /**
-     * @param bool $isDryRun
-     * @param bool $hasChangedFiles
-     * @param bool $hasInvalidErrors
-     * @param bool $hasExceptionErrors
-     *
-     * @return int
-     */
-    private function calculateExitStatus($isDryRun, $hasChangedFiles, $hasInvalidErrors, $hasExceptionErrors)
-    {
-        $exitStatus = 0;
-
-        if ($isDryRun) {
-            if ($hasChangedFiles) {
-                $exitStatus |= self::EXIT_STATUS_FLAG_HAS_CHANGED_FILES;
-            }
-
-            if ($hasInvalidErrors) {
-                $exitStatus |= self::EXIT_STATUS_FLAG_HAS_INVALID_FILES;
-            }
-        }
-
-        if ($hasExceptionErrors) {
-            $exitStatus |= self::EXIT_STATUS_FLAG_EXCEPTION_IN_APP;
-        }
-
-        return $exitStatus;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param string          $process
-     * @param Error[]         $errors
-     */
-    private function listErrors(OutputInterface $output, $process, array $errors)
-    {
-        $output->writeln(array('', sprintf(
-            'Files that were not fixed due to errors reported during %s:',
-            $process
-        )));
-
-        foreach ($errors as $i => $error) {
-            $output->writeln(sprintf('%4d) %s', $i + 1, $error->getFilePath()));
-        }
     }
 }

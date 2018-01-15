@@ -1,0 +1,46 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Documentation $block */ ?>
+<?php $documents = $block->getDocumentation(); ?>
+<div class="admin__table-wrapper shipment-documentation">
+    <?php if (!empty($documents) && !empty($documents->getArrayCopy())) : ?>
+        <?php if ($block->isPaperless()) : ?>
+            <div class="paperless">
+                <span class="tooltip"><span class="help"><span></span></span></span>
+                <span class="paperless-info">
+                    <?php echo $block->escapeHtml(__('Paperless Shipment - Customs documentation has been submitted electronically and is not required to be physically attached to the shipment.')); ?>
+                </span>
+            </div>
+        <?php endif; ?>
+        <table class="data-table admin__table-primary">
+            <thead>
+            <tr class="headings">
+                <th class="col-name"><span><?php echo $block->escapeHtml(__('Document Name')); ?></span></th>
+                <th class="col-size"><span><?php echo $block->escapeHtml(__('Size')); ?></span></th>
+                <th class="col-file-type"><span><?php echo $block->escapeHtml(__('File Type')); ?></span></th>
+                <th class="col-action last"><span><?php echo $block->escapeHtml(__('Action')); ?></span></th>
+            </tr>
+            </thead>
+                <tbody>
+                    <?php foreach ($documents as $documentId => $document) : ?>
+                        <?php $documentName = $block->getDisplayName($document); ?>
+                        <tr>
+                            <td><?php echo $block->escapeHtml($documentName); ?></td>
+                            <td><?php echo $block->escapeHtml($document->getSize()); ?></td>
+                            <td><?php echo $block->escapeHtml($document->getMimeType()); ?></td>
+                            <td>
+                                <a href="<?php echo $block->escapeUrl($document->getUrl()); ?>" target="_blank" rel="noopener noreferrer">
+                                    <?php echo $block->escapeHtml(__('Download')); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+        </table>
+    <?php else : ?>
+        <?php echo $block->escapeHtml(__('Documentation is not available.')) ?>
+    <?php endif; ?>
+</div>

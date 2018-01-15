@@ -308,7 +308,7 @@ class EmbeddedPhpSniff implements Sniff
         }
 
         // Check that there is one, and only one space at the start of the statement.
-        $firstContent = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), ($closeTag - 1), true);
+        $firstContent = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), $closeTag, true);
 
         if ($firstContent === false) {
             $error = 'Empty embedded PHP tag found';
@@ -341,35 +341,41 @@ class EmbeddedPhpSniff implements Sniff
         }
 
         $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($closeTag - 1), $stackPtr, true);
-        if ((isset($tokens[$prev]['scope_opener']) === false
-            || $tokens[$prev]['scope_opener'] !== $prev)
-            && (isset($tokens[$prev]['scope_closer']) === false
-            || $tokens[$prev]['scope_closer'] !== $prev)
-            && $tokens[$prev]['code'] !== T_SEMICOLON
-        ) {
-            $error = 'Inline PHP statement must end with a semicolon';
-            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'NoSemicolon');
-            if ($fix === true) {
-                $phpcsFile->fixer->addContent($prev, ';');
-            }
-        } else if ($tokens[$prev]['code'] === T_SEMICOLON) {
-            $statementCount = 1;
-            for ($i = ($stackPtr + 1); $i < $prev; $i++) {
-                if ($tokens[$i]['code'] === T_SEMICOLON) {
-                    $statementCount++;
+        if ($prev !== $stackPtr) {
+            if ((isset($tokens[$prev]['scope_opener']) === false
+                || $tokens[$prev]['scope_opener'] !== $prev)
+                && (isset($tokens[$prev]['scope_closer']) === false
+                || $tokens[$prev]['scope_closer'] !== $prev)
+                && $tokens[$prev]['code'] !== T_SEMICOLON
+            ) {
+                $error = 'Inline PHP statement must end with a semicolon';
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'NoSemicolon');
+                if ($fix === true) {
+                    $phpcsFile->fixer->addContent($prev, ';');
+                }
+            } else if ($tokens[$prev]['code'] === T_SEMICOLON) {
+                $statementCount = 1;
+                for ($i = ($stackPtr + 1); $i < $prev; $i++) {
+                    if ($tokens[$i]['code'] === T_SEMICOLON) {
+                        $statementCount++;
+                    }
+                }
+
+                if ($statementCount > 1) {
+                    $error = 'Inline PHP statement must contain a single statement; %s found';
+                    $data  = array($statementCount);
+                    $phpcsFile->addError($error, $stackPtr, 'MultipleStatements', $data);
                 }
             }
-
-            if ($statementCount > 1) {
-                $error = 'Inline PHP statement must contain a single statement; %s found';
-                $data  = array($statementCount);
-                $phpcsFile->addError($error, $stackPtr, 'MultipleStatements', $data);
-            }
-        }
+        }//end if
 
         $trailingSpace = 0;
         if ($tokens[($closeTag - 1)]['code'] === T_WHITESPACE) {
             $trailingSpace = strlen($tokens[($closeTag - 1)]['content']);
+        } else if ($tokens[($closeTag - 1)]['code'] === T_COMMENT
+            && substr($tokens[($closeTag - 1)]['content'], -1) === ' '
+        ) {
+            $trailingSpace = (strlen($tokens[($closeTag - 1)]['content']) - strlen(rtrim($tokens[($closeTag - 1)]['content'])));
         }
 
         if ($trailingSpace !== 1) {
@@ -379,6 +385,8 @@ class EmbeddedPhpSniff implements Sniff
             if ($fix === true) {
                 if ($trailingSpace === 0) {
                     $phpcsFile->fixer->addContentBefore($closeTag, ' ');
+                } else if ($tokens[($closeTag - 1)]['code'] === T_COMMENT) {
+                    $phpcsFile->fixer->replaceToken(($closeTag - 1), rtrim($tokens[($closeTag - 1)]['content']).' ');
                 } else {
                     $phpcsFile->fixer->replaceToken(($closeTag - 1), ' ');
                 }

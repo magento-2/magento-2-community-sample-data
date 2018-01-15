@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.10 - 2017-12-05
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#210](https://github.com/zendframework/zend-servicemanager/pull/210) fixes a
+  regression whereby factories accepting creation options were receiving an
+  empty array versus a `null` value when no options were present for a
+  particular invocation; they now correctly receive a `null` value.
+
+## 2.7.9 - 2017-11-27
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#205](https://github.com/zendframework/zend-servicemanager/pull/205) fixes
+  how the `AbstractPluginManager` handles repeated retrievals of the same
+  service when instance options are provided and the service is marked as
+  "shared".  Previously, it incorrectly would return the first instance
+  retrieved; with this release, no instance created with instance options is
+  ever shared.
+
 ## 2.7.8 - 2016-12-19
 
 ### Added

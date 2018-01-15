@@ -1,23 +1,21 @@
-# Magento_ShopialFacebook module
-
+# Magento_ShopialFacebook Module
+ 
 ## Overview
+ 
+The Shopial_Facebook module enables you to sell and promote products on Facebook.  The integration is easy to use and upon completion allows customers to buy products on your Facebook page.  Updating products in your original store automatically updates products in your Facebook store. 
+ 
+## Installation Details
+ 
+The Shopial_Facebook module creates a new user integration called Magento Social, which has permissions to the Magento catalog of products.  To complete the integration, follow directions in the user’s guide to allow popups from your store, activate Magento Social and launch your Facebook store.
+  
+### UI Components
+ 
+On the Marketing tab, you will see a new menu item called Magento Social. The Magento Social page contains abilities to redirect you to the Integration tab where you can continue the installation process outside of the Magento environment. Creating ads, upgrading your account and additional activation information will be available after the integration.
 
-Shopial_Facebook module enable you to sell and promote their products in Facebook. 
-The integration is very simple and it enable your customers to purchase your products through Facebook while the module is taking care for the synchronization between your original store and you Facebook store.
-You will be able to create 
+ 
+#### Extension Points
+ 
+The Magento Social module does not provide extension points.
 
 
-
-## Installation details
-
-The Shopial_Facebook module create a new user integration that called Magento Social which has permission to the Magento_Catalog::products. 
-In order to complete the integration the user need to manually enter to the Integration tab under System and Activate this user. 
-After then, there is a new tab that called Magento Social under Marketing that continue the installation on the Facebook business page side.
-
-
-
-### UI components
-
-The Shopial_Facebook module provide UI component under Marketing which called Magento Social and enable the abilities to redirect to the Integration tab and continue the installation process outside of the Magento environment. 
-It also contain some information about how to activate the integration user as well.
 

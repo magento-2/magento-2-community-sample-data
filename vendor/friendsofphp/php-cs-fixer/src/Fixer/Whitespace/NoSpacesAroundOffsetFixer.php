@@ -13,54 +13,20 @@
 namespace PhpCsFixer\Fixer\Whitespace;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
-use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Javier Spagnoletti <phansys@gmail.com>
  */
-final class NoSpacesAroundOffsetFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class NoSpacesAroundOffsetFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private $configuration = array();
-
-    /**
-     * Default target/configuration.
-     *
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'inside',
-        'outside',
-    );
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        foreach ($configuration as $name) {
-            if (!in_array($name, self::$defaultConfiguration, true)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration option "%s".', $name));
-            }
-        }
-
-        $this->configuration = $configuration;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -70,12 +36,9 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
             'There MUST NOT be spaces around offset braces.',
             array(
                 new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];"),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('inside')),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('outside')),
-            ),
-            null,
-            'Configure if the fixer must fix spaces inside or outside the offset braces or both (default).',
-            self::$defaultConfiguration
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('inside'))),
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('outside'))),
+            )
         );
     }
 
@@ -97,7 +60,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 continue;
             }
 
-            if (in_array('inside', $this->configuration, true)) {
+            if (in_array('inside', $this->configuration['positions'], true)) {
                 if ($token->equals('[')) {
                     $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $index);
                 } else {
@@ -105,13 +68,17 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 }
 
                 // remove space after opening `[` or `{`
-                $this->removeWhitespaceToken($tokens[$index + 1]);
+                if ($tokens[$index + 1]->isWhitespace(" \t")) {
+                    $tokens->clearAt($index + 1);
+                }
 
                 // remove space before closing `]` or `}`
-                $this->removeWhitespaceToken($tokens[$endIndex - 1]);
+                if ($tokens[$endIndex - 1]->isWhitespace(" \t")) {
+                    $tokens->clearAt($endIndex - 1);
+                }
             }
 
-            if (in_array('outside', $this->configuration, true)) {
+            if (in_array('outside', $this->configuration['positions'], true)) {
                 $prevNonWhitespaceIndex = $tokens->getPrevNonWhitespace($index);
                 if ($tokens[$prevNonWhitespaceIndex]->isComment()) {
                     continue;
@@ -123,14 +90,23 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
     }
 
     /**
-     * Removes the token if it is single line whitespace.
-     *
-     * @param Token $token
+     * {@inheritdoc}
      */
-    private function removeWhitespaceToken(Token $token)
+    protected function createConfigurationDefinition()
     {
-        if ($token->isWhitespace(" \t")) {
-            $token->clear();
-        }
+        $generator = new FixerOptionValidatorGenerator();
+        $values = array('inside', 'outside');
+
+        $positions = new FixerOptionBuilder('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
+        $positions = $positions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($values),
+            ))
+            ->setDefault($values)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('positions', array($positions));
     }
 }

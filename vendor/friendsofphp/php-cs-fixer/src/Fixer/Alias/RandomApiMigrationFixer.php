@@ -13,56 +13,44 @@
 namespace PhpCsFixer\Fixer\Alias;
 
 use PhpCsFixer\AbstractFunctionReferenceFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Analyzer\ArgumentsAnalyzer;
+use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 /**
  * @author Vladimir Reznichenko <kalessil@gmail.com>
  */
-final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer implements ConfigurableFixerInterface
+final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer implements ConfigurationDefinitionFixerInterface
 {
     /**
      * @var array
      */
-    private $configuration;
-
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array(
-        'getrandmax' => array('alternativeName' => 'mt_getrandmax', 'argumentCount' => array(0)),
-        'mt_rand' => array('alternativeName' => 'mt_rand', 'argumentCount' => array(1, 2)),
-        'rand' => array('alternativeName' => 'mt_rand', 'argumentCount' => array(0, 2)),
-        'srand' => array('alternativeName' => 'mt_srand', 'argumentCount' => array(0, 1)),
+    private static $argumentCounts = array(
+        'getrandmax' => array(0),
+        'mt_rand' => array(1, 2),
+        'rand' => array(0, 2),
+        'srand' => array(0, 1),
     );
 
     /**
-     * @param string[]|null $configuration
+     * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        parent::configure($configuration);
 
-            return;
+        foreach ($this->configuration['replacements'] as $functionName => $replacement) {
+            $this->configuration['replacements'][$functionName] = array(
+                'alternativeName' => $replacement,
+                'argumentCount' => self::$argumentCounts[$functionName],
+            );
         }
-
-        foreach ($configuration as $functionName => $replacement) {
-            if (!array_key_exists($functionName, self::$defaultConfiguration)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('"%s" is not handled by the fixer.', $functionName));
-            }
-
-            if (!is_string($replacement)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected string got "%s".', is_object($replacement) ? get_class($replacement) : gettype($replacement)));
-            }
-
-            $configuration[$functionName] = array('alternativeName' => $replacement, 'argumentCount' => self::$defaultConfiguration[$functionName]['argumentCount']);
-        }
-
-        $this->configuration = $configuration;
     }
 
     /**
@@ -71,19 +59,15 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
     public function getDefinition()
     {
         return new FixerDefinition(
-            'Replaces `rand`, `mt_rand`, `srand`, `getrandmax` functions calls with their `mt_*` analogs.',
+            'Replaces `rand`, `srand`, `getrandmax` functions calls with their `mt_*` analogs.',
             array(
                 new CodeSample("<?php\n\$a = getrandmax();\n\$a = rand(\$b, \$c);\n\$a = srand();"),
-                new CodeSample("<?php\n\$a = getrandmax();\n\$a = rand(\$b, \$c);\n\$a = srand();", array('getrandmax' => 'mt_getrandmax')),
+                new CodeSample(
+                    "<?php\n\$a = getrandmax();\n\$a = rand(\$b, \$c);\n\$a = srand();",
+                    array('replacements' => array('getrandmax' => 'mt_getrandmax'))
+                ),
             ),
             null,
-            'Configure any of the functions `getrandmax`, `rand` and `srand` to be replaced with modern versions.',
-            array(
-                'getrandmax' => 'mt_getrandmax',
-                'rand' => 'mt_rand',
-                'mt_rand' => 'mt_rand',
-                'srand' => 'mt_srand',
-            ),
             'Risky when the configured functions are overridden.'
         );
     }
@@ -101,7 +85,9 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        foreach ($this->configuration as $functionIdentity => $functionReplacement) {
+        $argumentsAnalyzer = new ArgumentsAnalyzer();
+
+        foreach ($this->configuration['replacements'] as $functionIdentity => $functionReplacement) {
             if ($functionIdentity === $functionReplacement['alternativeName']) {
                 continue;
             }
@@ -116,7 +102,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 }
 
                 list($functionName, $openParenthesis, $closeParenthesis) = $boundaries;
-                $count = $this->countArguments($tokens, $openParenthesis, $closeParenthesis);
+                $count = $argumentsAnalyzer->countArguments($tokens, $openParenthesis, $closeParenthesis);
                 if (!in_array($count, $functionReplacement['argumentCount'], true)) {
                     continue 2;
                 }
@@ -124,8 +110,62 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 // analysing cursor shift, so nested calls could be processed
                 $currIndex = $openParenthesis;
 
-                $tokens[$functionName]->setContent($functionReplacement['alternativeName']);
+                $tokens[$functionName] = new Token(array(T_STRING, $functionReplacement['alternativeName']));
+
+                if (0 === $count && 'random_int' === $functionReplacement['alternativeName']) {
+                    $tokens->insertAt($currIndex + 1, array(
+                        new Token(array(T_LNUMBER, '0')),
+                        new Token(','),
+                        new Token(array(T_WHITESPACE, ' ')),
+                        new Token(array(T_STRING, 'getrandmax')),
+                        new Token('('),
+                        new Token(')'),
+                    ));
+
+                    $currIndex += 6;
+                }
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $argumentCounts = self::$argumentCounts;
+
+        $replacements = new FixerOptionBuilder('replacements', 'Mapping between replaced functions with the new ones.');
+        $replacements = $replacements
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(function ($value) use ($argumentCounts) {
+                foreach ($value as $functionName => $replacement) {
+                    if (!array_key_exists($functionName, $argumentCounts)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Function "%s" is not handled by the fixer.',
+                            $functionName
+                        ));
+                    }
+
+                    if (!is_string($replacement)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Replacement for function "%s" must be a string, "%s" given.',
+                            $functionName,
+                            is_object($replacement) ? get_class($replacement) : gettype($replacement)
+                        ));
+                    }
+                }
+
+                return true;
+            }))
+            ->setDefault(array(
+                'getrandmax' => 'mt_getrandmax',
+                'rand' => 'mt_rand',
+                'srand' => 'mt_srand',
+            ))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('replacements', array($replacements));
     }
 }

@@ -529,7 +529,44 @@ final class Tokens
                                          T_ISSET        => T_ISSET,
                                          T_UNSET        => T_UNSET,
                                          T_EMPTY        => T_EMPTY,
+                                         T_SELF         => T_SELF,
+                                         T_STATIC       => T_STATIC,
                                         );
+
+    /**
+     * Tokens that are open class and object scopes.
+     *
+     * @var array<int, int>
+     */
+    public static $ooScopeTokens = array(
+                                    T_CLASS      => T_CLASS,
+                                    T_ANON_CLASS => T_ANON_CLASS,
+                                    T_INTERFACE  => T_INTERFACE,
+                                    T_TRAIT      => T_TRAIT,
+                                   );
+
+
+    /**
+     * Given a token, returns the name of the token.
+     *
+     * If passed an integer, the token name is sourced from PHP's token_name()
+     * function. If passed a string, it is assumed to be a PHPCS-supplied token
+     * that begins with PHPCS_T_, so the name is sourced from the token value itself.
+     *
+     * @param int|string $token The token to get the name for.
+     *
+     * @return string
+     */
+    public static function tokenName($token)
+    {
+        if (is_string($token) === false) {
+            // PHP-supplied token name.
+            return token_name($token);
+        }
+
+        return substr($token, 6);
+
+    }//end tokenName()
 
 
     /**

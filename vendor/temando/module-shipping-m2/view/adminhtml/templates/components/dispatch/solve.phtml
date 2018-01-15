@@ -1,0 +1,45 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Dispatch\Solve $block */ ?>
+<?php $failedShipments = $block->getFailedShipments() ?>
+
+<section class="admin__page-section">
+    <h2><?php echo $block->escapeHtml(__('%1 Shipment(s) were not included in this dispatch', count($failedShipments))) ?></h2>
+    <h3><?php echo $block->escapeHtml(__('Steps to find a solution')) ?></h3>
+
+    <ol>
+        <li><?php echo $block->escapeHtml(__('Review the errors below. If there is an issue which can be resolved with the carrier, please contact them directly.')) ?></li>
+        <li><?php echo /* @noEscape */ __('Try <a href="%1">Create Dispatch</a> with the same Carrier and Location to re-attempt to dispatch these.', $block->escapeUrl($block->getNewUrl())) ?></li>
+        <li><a href="<?php echo $block->escapeUrl($block->getShippingPortalUrl()) ?>"
+               target="_blank" rel="noopener noreferrer"><?php echo $block->escapeHtml(__('Contact Magento Shipping Support')) ?></a>
+        </li>
+    </ol>
+
+    <div class="admin__data-grid-wrap">
+        <table class="data-grid">
+            <thead>
+            <tr>
+                <th class="data-grid-th"><?php echo $block->escapeHtml(__('Magento Shipping ID'))?></th>
+                <th class="data-grid-th"><?php echo $block->escapeHtml(__('Reason'))?></th>
+                <th class="data-grid-th"><?php echo $block->escapeHtml(__('Action'))?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php /** @var \Magento\Sales\Model\Order\Shipment $failedShipment */ ?>
+            <?php foreach ($failedShipments as $failedShipment) : ?>
+                <tr class="data-row">
+                    <td><?php echo $block->escapeHtml($failedShipment->getData('shipment_id')) ?></td>
+                    <td><?php echo $block->escapeHtml($failedShipment->getData('message')) ?></td>
+                    <td>
+                        <?php $shipmentUrl = $block->getShipmentUrl($failedShipment->getEntityId()) ?>
+                        <a href="<?php echo $block->escapeUrl($shipmentUrl) ?>"><?php echo $block->escapeHtml(__('View Shipment #%1', $failedShipment->getData('increment_id'))) ?></a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>

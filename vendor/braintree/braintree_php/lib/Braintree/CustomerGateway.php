@@ -13,7 +13,6 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class CustomerGateway
 {
@@ -144,9 +143,9 @@ class CustomerGateway
      */
     public static function createSignature()
     {
-
         $creditCardSignature = CreditCardGateway::createSignature();
         unset($creditCardSignature[array_search('customerId', $creditCardSignature)]);
+
         $signature = [
             'id', 'company', 'email', 'fax', 'firstName',
             'lastName', 'phone', 'website', 'deviceData',
@@ -156,7 +155,16 @@ class CustomerGateway
             ],
             ['creditCard' => $creditCardSignature],
             ['customFields' => ['_anyKey_']],
-            ];
+            ['options' => [
+                ['paypal' => [
+                    'payee_email',
+                    'order_id',
+                    'custom_field',
+                    'description',
+                    'amount',
+                ]]
+            ]],
+        ];
         return $signature;
     }
 
@@ -180,7 +188,10 @@ class CustomerGateway
             'deviceSessionId', 'fraudMerchantId', 'paymentMethodNonce', 'defaultPaymentMethodToken',
             ['creditCard' => $creditCardSignature],
             ['customFields' => ['_anyKey_']],
-            ];
+            ['options' => [
+                ['paypal' => ['payee_email']],
+            ]],
+        ];
         return $signature;
     }
 

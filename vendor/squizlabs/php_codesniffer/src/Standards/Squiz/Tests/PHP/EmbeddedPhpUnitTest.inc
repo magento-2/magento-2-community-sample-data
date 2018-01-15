@@ -107,3 +107,11 @@ function foo()
 
 <?php if ($foo) { ?>
 <?php } ?>
+
+<?php echo 'oops'; // Something. ?>
+<?php echo 'oops'; // Something.      ?>
+<?php echo 'oops'; // Something.?>
+
+<?php /* translators: My sites label */ ?>
+<?php /* translators: My sites label */?>
+<?php /* translators: My sites label */      ?>

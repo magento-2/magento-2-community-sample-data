@@ -877,3 +877,96 @@ function yieldFromTest()
 {
     yield from foo();
 }
+
+/**
+ * Audio
+ *
+ * Generates an audio element to embed sounds
+ *
+ * @param  mixed $src                Either a source string or
+ * an array of sources.
+ * @param  mixed $unsupportedMessage The message to display
+ * if the media tag is not supported by the browser.
+ * @param  mixed $attributes         HTML attributes.
+ * @return string
+ */
+function audio(
+    $src,
+    $unsupportedMessage = '',
+    $attributes = '',
+)
+{
+    return 'test';
+}
+
+/**
+ * Test function
+ *
+ * @return array
+ */
+function returnArrayWithClosure()
+{
+    function () {
+        return;
+    };
+
+    return [];
+}
+
+/**
+ * Test function
+ *
+ * @return array
+ */
+function returnArrayWithAnonymousClass()
+{
+    new class {
+        /**
+         * @return void
+         */
+        public function test() {
+            return;
+        }
+    };
+
+    return [];
+}
+
+/**
+ * @return void
+ */
+function returnVoidWithClosure()
+{
+    function () {
+        return 1;
+    };
+}
+
+/**
+ * @return void
+ */
+function returnVoidWithAnonymousClass()
+{
+    new class {
+        /**
+         * @return integer
+         */
+        public function test()
+        {
+            return 1;
+        }
+    };
+}
+
+class TestReturnVoid
+{
+    /**
+     * @return void
+     */
+    public function test()
+    {
+        function () {
+            return 4;
+        };
+    }
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="form">
+            <block class="Temando\Shipping\Block\Adminhtml\Sales\Order\View\Info" name="order_info" template="Temando_Shipping::sales/order/view/info.phtml">
+                <container name="extra_customer_info"/>
+            </block>
+            <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\OriginLocation" name="origin_location"
+                   template="Temando_Shipping::sales/order/view/info/location.phtml"/>
+            <block class="Temando\Shipping\Block\Adminhtml\Documentation" name="documentation_listing"
+                   template="Temando_Shipping::documentation.phtml"/>
+            <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\Package" name="package_listing"
+                   template="Temando_Shipping::shipping/view/form/packages.phtml"/>
+        </referenceBlock>
+    </body>
+</page>

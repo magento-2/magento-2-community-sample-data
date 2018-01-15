@@ -13,8 +13,10 @@
 namespace PhpCsFixer\Fixer\ClassNotation;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -24,7 +26,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Gregor Harlan <gharlan@web.de>
  */
-final class OrderedClassElementsFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class OrderedClassElementsFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
     /**
      * @var array Array containing all class element base types (keys) and their parent types (values)
@@ -67,26 +69,6 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
     );
 
     /**
-     * @var string[] Default order/configuration
-     */
-    private static $defaultConfiguration = array(
-        'use_trait',
-        'constant_public',
-        'constant_protected',
-        'constant_private',
-        'property_public',
-        'property_protected',
-        'property_private',
-        'construct',
-        'destruct',
-        'magic',
-        'phpunit',
-        'method_public',
-        'method_protected',
-        'method_private',
-    );
-
-    /**
      * @var array Resolved configuration array (type => position)
      */
     private $typePosition;
@@ -96,17 +78,11 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $configuration = self::$defaultConfiguration;
-        }
+        parent::configure($configuration);
 
         $this->typePosition = array();
         $pos = 0;
-        foreach ($configuration as $type) {
-            if (!array_key_exists($type, self::$typeHierarchy) && !array_key_exists($type, self::$specialTypes)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown class element type "%s".', $type));
-            }
-
+        foreach ($this->configuration['order'] as $type) {
             $this->typePosition[$type] = $pos++;
         }
 
@@ -117,12 +93,14 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
 
             if (!$parents) {
                 $this->typePosition[$type] = null;
+
                 continue;
             }
 
             foreach ($parents as $parent) {
                 if (isset($this->typePosition[$parent])) {
                     $this->typePosition[$type] = $this->typePosition[$parent];
+
                     continue 2;
                 }
             }
@@ -130,7 +108,7 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
             $this->typePosition[$type] = null;
         }
 
-        $lastPosition = count($configuration);
+        $lastPosition = count($this->configuration['order']);
         foreach ($this->typePosition as &$pos) {
             if (null === $pos) {
                 $pos = $lastPosition;
@@ -153,9 +131,6 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function getDefinition()
     {
-        $types = array_merge(array_keys(self::$typeHierarchy), array_keys(self::$specialTypes));
-        sort($types);
-
         return new FixerDefinition(
             'Orders the elements of classes/interfaces/traits.',
             array(
@@ -192,10 +167,16 @@ final class Example
 }
 '
                 ),
-            ),
-            null,
-            sprintf('List of strings defining order of elements. Possible values: %s.', implode(', ', $types)),
-            self::$defaultConfiguration
+                new CodeSample(
+                    '<?php
+class Example
+{
+    public function A(){}
+    private function B(){}
+}',
+array('order' => array('method_private', 'method_public'))
+                ),
+            )
         );
     }
 
@@ -238,6 +219,41 @@ final class Example
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $order = new FixerOptionBuilder('order', 'List of strings defining order of elements.');
+        $order = $order
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(array_merge(self::$typeHierarchy, self::$specialTypes))),
+            ))
+            ->setDefault(array(
+                'use_trait',
+                'constant_public',
+                'constant_protected',
+                'constant_private',
+                'property_public',
+                'property_protected',
+                'property_private',
+                'construct',
+                'destruct',
+                'magic',
+                'phpunit',
+                'method_public',
+                'method_protected',
+                'method_private',
+            ))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('order', array($order));
+    }
+
+    /**
      * @param Tokens $tokens
      * @param int    $startIndex
      *
@@ -267,11 +283,13 @@ final class Example
 
                 if ($token->isGivenKind(T_STATIC)) {
                     $element['static'] = true;
+
                     continue;
                 }
 
                 if ($token->isGivenKind(array(T_PROTECTED, T_PRIVATE))) {
                     $element['visibility'] = strtolower($token->getContent());
+
                     continue;
                 }
 
@@ -288,6 +306,7 @@ final class Example
                 }
 
                 $element['end'] = $this->findElementEnd($tokens, $i);
+
                 break;
             }
 
@@ -300,7 +319,7 @@ final class Example
      * @param Tokens $tokens
      * @param int    $index
      *
-     * @return string|array type or array of type and name
+     * @return array|string type or array of type and name
      */
     private function detectElementType(Tokens $tokens, $index)
     {
@@ -390,6 +409,7 @@ final class Example
                     if ('phpunit' === $type) {
                         $element['position'] += $phpunitPositions[$element['name']];
                     }
+
                     continue;
                 }
 

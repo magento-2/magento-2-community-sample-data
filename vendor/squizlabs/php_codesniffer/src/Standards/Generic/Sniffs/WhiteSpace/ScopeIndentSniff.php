@@ -439,7 +439,7 @@ class ScopeIndentSniff implements Sniff
                         $first--;
                     }
 
-                    $prev = $phpcsFile->findStartOfStatement($first, T_COMMA);
+                    $prev = $phpcsFile->findStartOfStatement($first, array(T_COMMA, T_DOUBLE_ARROW));
                     if ($prev !== $first) {
                         // This is not the start of the statement.
                         if ($this->debug === true) {
@@ -449,7 +449,7 @@ class ScopeIndentSniff implements Sniff
                         }
 
                         $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $prev, true);
-                        $prev  = $phpcsFile->findStartOfStatement($first, T_COMMA);
+                        $prev  = $phpcsFile->findStartOfStatement($first, array(T_COMMA, T_DOUBLE_ARROW));
                         $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $prev, true);
                         if ($this->debug === true) {
                             $line = $tokens[$first]['line'];
@@ -529,11 +529,13 @@ class ScopeIndentSniff implements Sniff
                         $padding = '';
                     }
 
-                    if ($checkToken === $i) {
-                        $phpcsFile->fixer->replaceToken($checkToken, $padding.$trimmed);
-                    } else {
-                        // Easier to just replace the entire indent.
-                        $phpcsFile->fixer->replaceToken(($checkToken - 1), $padding);
+                    if ($phpcsFile->fixer->enabled === true) {
+                        if ($checkToken === $i) {
+                            $phpcsFile->fixer->replaceToken($checkToken, $padding.$trimmed);
+                        } else {
+                            // Easier to just replace the entire indent.
+                            $phpcsFile->fixer->replaceToken(($checkToken - 1), $padding);
+                        }
                     }
 
                     if ($this->debug === true) {
@@ -588,6 +590,22 @@ class ScopeIndentSniff implements Sniff
 
                 if (isset($tokens[$scopeCloser]['scope_condition']) === true) {
                     $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $tokens[$scopeCloser]['scope_condition'], true);
+                    if ($this->debug === true) {
+                        $line = $tokens[$first]['line'];
+                        $type = $tokens[$first]['type'];
+                        echo "\t* first token is $first ($type) on line $line *".PHP_EOL;
+                    }
+
+                    while ($tokens[$first]['code'] === T_CONSTANT_ENCAPSED_STRING
+                        && $tokens[($first - 1)]['code'] === T_CONSTANT_ENCAPSED_STRING
+                    ) {
+                        $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, ($first - 1), true);
+                        if ($this->debug === true) {
+                            $line = $tokens[$first]['line'];
+                            $type = $tokens[$first]['type'];
+                            echo "\t* found multi-line string; amended first token is $first ($type) on line $line *".PHP_EOL;
+                        }
+                    }
 
                     $currentIndent = ($tokens[$first]['column'] - 1);
                     if (isset($adjustments[$first]) === true) {
@@ -1001,8 +1019,26 @@ class ScopeIndentSniff implements Sniff
                     echo "Open $type on line $line".PHP_EOL;
                 }
 
-                $first         = $phpcsFile->findFirstOnLine(T_WHITESPACE, $i, true);
+                $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $i, true);
+                if ($this->debug === true) {
+                    $line = $tokens[$first]['line'];
+                    $type = $tokens[$first]['type'];
+                    echo "\t* first token is $first ($type) on line $line *".PHP_EOL;
+                }
+
+                while ($tokens[$first]['code'] === T_CONSTANT_ENCAPSED_STRING
+                    && $tokens[($first - 1)]['code'] === T_CONSTANT_ENCAPSED_STRING
+                ) {
+                    $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, ($first - 1), true);
+                    if ($this->debug === true) {
+                        $line = $tokens[$first]['line'];
+                        $type = $tokens[$first]['type'];
+                        echo "\t* found multi-line string; amended first token is $first ($type) on line $line *".PHP_EOL;
+                    }
+                }
+
                 $currentIndent = (($tokens[$first]['column'] - 1) + $this->indent);
+                $openScopes[$tokens[$i]['scope_closer']] = $tokens[$i]['scope_condition'];
 
                 if (isset($adjustments[$first]) === true) {
                     $currentIndent += $adjustments[$first];

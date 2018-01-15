@@ -233,6 +233,63 @@ class PaymentMethodTest extends Setup
         $this->assertSame($customer->id, $result->paymentMethod->customerId);
     }
 
+    public function testCreate_fromOrderPaymentPaypalAccountNonce()
+    {
+        $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
+        $customer = Braintree\Customer::createNoValidate();
+        $http = new HttpClientApi(Braintree\Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount([
+            'paypal_account' => [
+                'intent' => 'order',
+                'payment_token' => 'paypal-payment-token',
+                'payer_id' => 'paypal-payer-id',
+                'token' => $paymentMethodToken,
+            ]
+        ]);
+
+        $result = Braintree\PaymentMethod::create([
+            'customerId' => $customer->id,
+            'paymentMethodNonce' => $nonce
+        ]);
+
+        $this->assertSame('bt_buyer_us@paypal.com', $result->paymentMethod->email);
+        $this->assertSame($paymentMethodToken, $result->paymentMethod->token);
+        $this->assertSame($customer->id, $result->paymentMethod->customerId);
+    }
+
+    public function testCreate_fromOrderPaymentPaypalAccountNonceWithPayPalOptions()
+    {
+        $paymentMethodToken = 'PAYPAL_TOKEN-' . strval(rand());
+        $customer = Braintree\Customer::createNoValidate();
+        $http = new HttpClientApi(Braintree\Configuration::$global);
+        $nonce = $http->nonceForPayPalAccount([
+            'paypal_account' => [
+                'intent' => 'order',
+                'payment_token' => 'paypal-payment-token',
+                'payer_id' => 'paypal-payer-id',
+                'token' => $paymentMethodToken,
+            ]
+        ]);
+
+        $result = Braintree\PaymentMethod::create([
+            'customerId' => $customer->id,
+            'paymentMethodNonce' => $nonce,
+            'options' => [
+                'paypal' => [
+                    'payee_email' => 'payee@example.com',
+                    'order_id' => 'merchant-order-id',
+                    'custom_field' => 'custom merchant field',
+                    'description' => 'merchant description',
+                    'amount' => '1.23',
+                ]
+            ],
+        ]);
+
+        $this->assertSame('bt_buyer_us@paypal.com', $result->paymentMethod->email);
+        $this->assertSame($paymentMethodToken, $result->paymentMethod->token);
+        $this->assertSame($customer->id, $result->paymentMethod->customerId);
+    }
+
     public function testCreate_fromUsBankAccountNonce()
     {
         $customer = Braintree\Customer::createNoValidate();
@@ -815,26 +872,6 @@ class PaymentMethodTest extends Setup
         $this->assertTrue(intval($foundAndroidPayCard->expirationYear) > 0);
     }
 
-    public function testFind_returnsCoinbaseAccounts()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$coinbase
-        ]);
-
-        $this->assertTrue($result->success);
-        $coinbaseAccount = $result->paymentMethod;
-        $this->assertNotNull($coinbaseAccount->token);
-        $foundCoinbaseAccount = Braintree\PaymentMethod::find($coinbaseAccount->token);
-        $this->assertInstanceOf('Braintree\CoinbaseAccount', $foundCoinbaseAccount);
-        $this->assertNotNull($foundCoinbaseAccount->userId);
-        $this->assertNotNull($foundCoinbaseAccount->userName);
-        $this->assertNotNull($foundCoinbaseAccount->userEmail);
-        $this->assertNotNull($foundCoinbaseAccount->customerId);
-    }
-
-
     public function testFind_returnsAbstractPaymentMethods()
     {
         $paymentMethodToken = 'ABSTRACT-' . strval(rand());
@@ -884,36 +921,6 @@ class PaymentMethodTest extends Setup
         $this->assertSame(substr(Braintree\Test\CreditCardNumbers::$masterCard, 0, 6), $updatedCreditCard->bin);
         $this->assertSame(substr(Braintree\Test\CreditCardNumbers::$masterCard, -4), $updatedCreditCard->last4);
         $this->assertSame("06/2013", $updatedCreditCard->expirationDate);
-    }
-
-    public function testUpdate_updatesTheCoinbaseAccount()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$venmoAccount
-        ]);
-        $this->assertTrue($result->success);
-        $this->assertTrue($result->paymentMethod->isDefault());
-
-        $result = Braintree\PaymentMethod::create([
-            'customerId' => $customer->id,
-            'paymentMethodNonce' => Braintree\Test\Nonces::$coinbase
-        ]);
-        $this->assertTrue($result->success);
-        $coinbaseAccount = $result->paymentMethod;
-
-        $updateResult = Braintree\PaymentMethod::update($coinbaseAccount->token, [
-            'options' => [
-                'makeDefault' => 'true'
-            ]
-        ]);
-
-        $this->assertTrue($updateResult->success);
-        $this->assertSame($updateResult->paymentMethod->token, $coinbaseAccount->token);
-        $updatedCoinbaseAccount = $updateResult->paymentMethod;
-        $this->assertTrue($updatedCoinbaseAccount->isDefault());
     }
 
     public function testUpdate_createsANewBillingAddressByDefault()
@@ -1227,7 +1234,6 @@ class PaymentMethodTest extends Setup
 
         $this->setExpectedException('Braintree\Exception\NotFound', 'payment method with token ' . $originalToken . ' not found');
         Braintree\PaymentMethod::find($originalToken);
-
     }
 
     public function testUpdate_canMakeAPaypalAccountTheDefaultPaymentMethod()

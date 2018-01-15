@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
+use PhpCsFixer\Tokenizer\Analyzer\ArgumentsAnalyzer;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -48,8 +49,6 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
                 ),
             ),
             null,
-            null,
-            null,
             'Risky when the function `pow()` is overridden.'
         );
     }
@@ -60,7 +59,7 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
     public function getPriority()
     {
         // must be run before BinaryOperatorSpacesFixer
-        return 1;
+        return 3;
     }
 
     /**
@@ -69,6 +68,7 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         $candidates = $this->findPowCalls($tokens);
+        $argumentsAnalyzer = new ArgumentsAnalyzer();
 
         $numberOfTokensAdded = 0;
         $previousCloseParenthesisIndex = count($tokens);
@@ -84,7 +84,7 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
                 $numberOfTokensAdded = 0;
             }
 
-            $arguments = $this->getArguments($tokens, $candidate[1], $candidate[2]);
+            $arguments = $argumentsAnalyzer->getArguments($tokens, $candidate[1], $candidate[2]);
             if (2 !== count($arguments)) {
                 continue;
             }
@@ -138,13 +138,10 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
     {
         // find the argument separator ',' directly after the last token of the first argument;
         // replace it with T_POW '**'
-        $tokens->overrideAt(
-            $tokens->getNextTokenOfKind(reset($arguments), array(',')),
-            new Token(array(T_POW, '**'))
-        );
+        $tokens[$tokens->getNextTokenOfKind(reset($arguments), array(','))] = new Token(array(T_POW, '**'));
 
         // clean up the function call tokens prt. I
-        $tokens[$closeParenthesisIndex]->clear();
+        $tokens->clearAt($closeParenthesisIndex);
 
         $added = 0;
         // check if the arguments need to be wrapped in parenthesis
@@ -157,12 +154,12 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
         }
 
         // clean up the function call tokens prt. II
-        $tokens[$openParenthesisIndex]->clear();
-        $tokens[$functionNameIndex]->clear();
+        $tokens->clearAt($openParenthesisIndex);
+        $tokens->clearAt($functionNameIndex);
 
         $prev = $tokens->getPrevMeaningfulToken($functionNameIndex);
         if ($tokens[$prev]->isGivenKind(T_NS_SEPARATOR)) {
-            $tokens[$prev]->clear();
+            $tokens->clearAt($prev);
         }
 
         return $added;
@@ -184,7 +181,7 @@ final class PowToExponentiationFixer extends AbstractFunctionReferenceFixer
         );
 
         for ($i = $argumentStartIndex; $i <= $argumentEndIndex; ++$i) {
-            if ($tokens[$i]->isGivenKind($allowedKinds) || $tokens[$i]->isEmpty()) {
+            if ($tokens[$i]->isGivenKind($allowedKinds) || $tokens->isEmptyAt($i)) {
                 continue;
             }
 

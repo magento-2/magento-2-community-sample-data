@@ -133,8 +133,6 @@ class Compiler
 
     /**
      * Run the Compiler and process all Passes.
-     *
-     * @param ContainerBuilder $container
      */
     public function compile(ContainerBuilder $container)
     {
@@ -161,6 +159,8 @@ class Compiler
             }
 
             throw $e;
+        } finally {
+            $this->getServiceReferenceGraph()->clear();
         }
     }
 }

@@ -13,8 +13,11 @@
 namespace PhpCsFixer\Fixer\ClassNotation;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
+use PhpCsFixer\FixerConfiguration\InvalidOptionsForEnvException;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
@@ -22,6 +25,7 @@ use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * Fixer for rules defined in PSR2 ¶4.3, ¶4.5.
@@ -29,46 +33,8 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class VisibilityRequiredFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class VisibilityRequiredFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    private static $options = array('property', 'method', 'const');
-    private static $defaultConfiguration = array('property', 'method');
-    private $configuration;
-
-    /**
-     * Any of the class elements 'property', 'method' or 'const' can be configured.
-     *
-     * Note: the 'const' configuration is only valid when running on PHP >= 7.1
-     * Use 'null' for default configuration ('property', 'method').
-     *
-     * @param string[]|null $configuration
-     */
-    public function configure(array $configuration = null)
-    {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
-
-            return;
-        }
-
-        $this->configuration = array();
-        foreach ($configuration as $item) {
-            if (!is_string($item)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected string got "%s".', is_object($item) ? get_class($item) : gettype($item)));
-            }
-
-            if (!in_array($item, self::$options, true)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration item "%s", expected any of "%s".', $item, implode('", "', self::$options)));
-            }
-
-            if ('const' === $item && PHP_VERSION_ID < 70100) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Invalid configuration item "%s" for PHP "%s".', $item, phpversion()));
-            }
-
-            $this->configuration[] = $item;
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -98,12 +64,9 @@ class Sample
 }
 ',
                     new VersionSpecification(70100),
-                    array('const')
+                    array('elements' => array('const'))
                 ),
-            ),
-            null,
-            'The following type of properties can be configured to fix `property`, `method` and `const`. For `const` PHP >= 7.1 is required.',
-            array('property', 'method')
+            )
         );
     }
 
@@ -124,7 +87,7 @@ class Sample
         $elements = $tokensAnalyzer->getClassyElements();
 
         foreach (array_reverse($elements, true) as $index => $element) {
-            if (!in_array($element['type'], $this->configuration, true)) {
+            if (!in_array($element['type'], $this->configuration['elements'], true)) {
                 continue;
             }
 
@@ -146,6 +109,33 @@ class Sample
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $elements = new FixerOptionBuilder('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
+        $elements = $elements
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array('property', 'method', 'const')),
+            ))
+            ->setNormalizer(function (Options $options, $value) {
+                if (PHP_VERSION_ID < 70100 && in_array('const', $value, true)) {
+                    throw new InvalidOptionsForEnvException('"const" option can only be enabled with PHP 7.1+.');
+                }
+
+                return $value;
+            })
+            ->setDefault(array('property', 'method'))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('elements', array($elements));
+    }
+
+    /**
      * @param Tokens $tokens
      * @param int    $index
      */
@@ -154,9 +144,8 @@ class Sample
         $this->overrideAttribs($tokens, $index, $this->grabAttribsBeforeMethodToken($tokens, $index));
 
         // force whitespace between function keyword and function name to be single space char
-        $afterToken = $tokens[++$index];
-        if ($afterToken->isWhitespace()) {
-            $afterToken->setContent(' ');
+        if ($tokens[$index + 1]->isWhitespace()) {
+            $tokens[$index + 1] = new Token(array(T_WHITESPACE, ' '));
         }
     }
 
@@ -196,7 +185,7 @@ class Sample
      * @param Tokens $tokens Tokens collection
      * @param int    $index  token index
      *
-     * @return array map of grabbed attributes, key is attribute name and value is array of index and clone of Token
+     * @return array<string, null|Token> map of grabbed attributes, key is attribute name and value is array of index and clone of Token
      */
     private function grabAttribsBeforeMethodToken(Tokens $tokens, $index)
     {
@@ -227,9 +216,9 @@ class Sample
      *
      * Token at given index is prepended by attributes.
      *
-     * @param Tokens $tokens      Tokens collection
-     * @param int    $memberIndex token index
-     * @param array  $attribs     map of grabbed attributes, key is attribute name and value is array of index and clone of Token
+     * @param Tokens                    $tokens      Tokens collection
+     * @param int                       $memberIndex token index
+     * @param array<string, null|Token> $attribs     map of grabbed attributes, key is attribute name and value is array of index and clone of Token
      */
     private function overrideAttribs(Tokens $tokens, $memberIndex, array $attribs)
     {
@@ -264,7 +253,7 @@ class Sample
      * @param Tokens $tokens Tokens collection
      * @param int    $index  token index
      *
-     * @return array map of grabbed attributes, key is attribute name and value is array of index and clone of Token
+     * @return array<string, null|Token> map of grabbed attributes, key is attribute name and value is array of index and clone of Token
      */
     private function grabAttribsBeforePropertyToken(Tokens $tokens, $index)
     {
@@ -290,12 +279,12 @@ class Sample
     /**
      * Grab info about attributes before token at given index.
      *
-     * @param Tokens $tokens          Tokens collection
-     * @param int    $index           token index
-     * @param array  $tokenAttribsMap token to attribute name map
-     * @param array  $attribs         array of token attributes
+     * @param Tokens                    $tokens          Tokens collection
+     * @param int                       $index           token index
+     * @param array<int, null|string>   $tokenAttribsMap token to attribute name map
+     * @param array<string, null|Token> $attribs         array of token attributes
      *
-     * @return array map of grabbed attributes, key is attribute name and value is array of index and clone of Token
+     * @return array<string, null|Token> map of grabbed attributes, key is attribute name and value is array of index and clone of Token
      */
     private function grabAttribsBeforeToken(Tokens $tokens, $index, array $tokenAttribsMap, array $attribs)
     {

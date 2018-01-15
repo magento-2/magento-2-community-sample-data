@@ -1,0 +1,33 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\System\Config\Form\Field\GettingStarted $block */ ?>
+<p class="getting-started">
+    <span class="tooltip"><span class="help"><span></span></span></span>
+    <span class="hint"><?php echo $block->escapeHtml(__('Once you have activated Magento Shipping, configure these sections to get up and running:')) ?></span>
+</p>
+
+<ol class="getting-started-actions">
+    <li>
+        <?php echo $block->escapeHtml(__('Locations')) ?>
+        <a class="button action-default <?php echo /* @noEscape */ ($block->isMerchantRegistered() ? "" : "disabled"); ?>"
+           href="<?php echo $block->escapeUrl($block->getLocationsUrl()) ?>"><?php echo $block->escapeHtml(__('Configure')) ?></a>
+    </li>
+    <li>
+        <?php echo $block->escapeHtml(__('Carriers')) ?>
+        <a class="button action-default <?php echo /* @noEscape */ ($block->isMerchantRegistered() ? "" : "disabled"); ?>"
+           href="<?php echo $block->escapeUrl($block->getCarriersUrl()) ?>"><?php echo $block->escapeHtml(__('Configure')) ?></a>
+    </li>
+    <li>
+        <?php echo $block->escapeHtml(__('Packaging')) ?>
+        <a class="button action-default <?php echo /* @noEscape */ ($block->isMerchantRegistered() ? "" : "disabled"); ?>"
+           href="<?php echo $block->escapeUrl($block->getPackagesUrl()) ?>"><?php echo $block->escapeHtml(__('Configure')) ?></a>
+    </li>
+    <li>
+        <?php echo $block->escapeHtml(__('Shipping Experiences via %1 portal', $block->getShippingPortalUrl())) ?>
+        <a class="button action-default <?php echo /* @noEscape */ ($block->isMerchantRegistered() ? "" : "disabled"); ?>"
+           href="<?php echo $block->escapeUrl($block->getShippingPortalUrl()) ?>"><?php echo $block->escapeHtml(__('Configure')) ?></a>
+    </li>
+</ol>
