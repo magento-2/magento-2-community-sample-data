@@ -39,10 +39,10 @@ class OpeningFunctionBraceKernighanRitchieSniff implements Sniff
      */
     public function register()
     {
-        return array(
-                T_FUNCTION,
-                T_CLOSURE,
-               );
+        return [
+            T_FUNCTION,
+            T_CLOSURE,
+        ];
 
     }//end register()
 
@@ -121,7 +121,9 @@ class OpeningFunctionBraceKernighanRitchieSniff implements Sniff
 
         $next = $phpcsFile->findNext(T_WHITESPACE, ($openingBrace + 1), null, true);
         if ($tokens[$next]['line'] === $tokens[$openingBrace]['line']) {
-            if ($next === $tokens[$stackPtr]['scope_closer']) {
+            if ($next === $tokens[$stackPtr]['scope_closer']
+                || $tokens[$next]['code'] === T_CLOSE_TAG
+            ) {
                 // Ignore empty functions.
                 return;
             }
@@ -141,7 +143,7 @@ class OpeningFunctionBraceKernighanRitchieSniff implements Sniff
         // We are looking for tabs, even if they have been replaced, because
         // we enforce a space here.
         if (isset($tokens[($openingBrace - 1)]['orig_content']) === true) {
-            $spacing = $tokens[($openingBrace - 1)]['content'];
+            $spacing = $tokens[($openingBrace - 1)]['orig_content'];
         } else {
             $spacing = $tokens[($openingBrace - 1)]['content'];
         }
@@ -156,7 +158,7 @@ class OpeningFunctionBraceKernighanRitchieSniff implements Sniff
 
         if ($length !== 1) {
             $error = 'Expected 1 space before opening brace; found %s';
-            $data  = array($length);
+            $data  = [$length];
             $fix   = $phpcsFile->addFixableError($error, $closeBracket, 'SpaceBeforeBrace', $data);
             if ($fix === true) {
                 if ($length === 0 || $length === '\t') {

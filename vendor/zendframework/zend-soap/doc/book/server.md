@@ -22,9 +22,15 @@ options mechanism.
 Instantiation of `Server` instances varies based on whether or not you are using
 WSDL mode.
 
+### Options available in either mode
+
+- `parse_huge` (since 2.7.0): when set to a boolean true, ensures the
+  `LIBXML_PARSEHUGE` flag is passed to `DOMDocument::loadXML()` when handling an
+  incoming request. This can resolve issues with receiving large payloads.
+
 ### Instantiation for WSDL mode
 
-When in WSDL mode, the constructor expects two optional paramters:
+When in WSDL mode, the constructor expects two optional parameters:
 
 - `$wsdl`: the URI of a WSDL file. This may be set after-the-fact using
   `$server->setWsdl($wsdl)`.

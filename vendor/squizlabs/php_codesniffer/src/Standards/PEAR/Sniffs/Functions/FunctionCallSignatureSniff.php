@@ -21,10 +21,10 @@ class FunctionCallSignatureSniff implements Sniff
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * The number of spaces code should be indented.
@@ -235,10 +235,10 @@ class FunctionCallSignatureSniff implements Sniff
 
             if ($spaceAfterOpen !== $requiredSpacesAfterOpen) {
                 $error = 'Expected %s spaces after opening bracket; %s found';
-                $data  = array(
-                          $requiredSpacesAfterOpen,
-                          $spaceAfterOpen,
-                         );
+                $data  = [
+                    $requiredSpacesAfterOpen,
+                    $spaceAfterOpen,
+                ];
                 $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'SpaceAfterOpenBracket', $data);
                 if ($fix === true) {
                     $padding = str_repeat(' ', $requiredSpacesAfterOpen);
@@ -267,10 +267,10 @@ class FunctionCallSignatureSniff implements Sniff
 
         if ($spaceBeforeClose !== $requiredSpacesBeforeClose) {
             $error = 'Expected %s spaces before closing bracket; %s found';
-            $data  = array(
-                      $requiredSpacesBeforeClose,
-                      $spaceBeforeClose,
-                     );
+            $data  = [
+                $requiredSpacesBeforeClose,
+                $spaceBeforeClose,
+            ];
             $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'SpaceBeforeCloseBracket', $data);
             if ($fix === true) {
                 $padding = str_repeat(' ', $requiredSpacesBeforeClose);
@@ -338,40 +338,53 @@ class FunctionCallSignatureSniff implements Sniff
         // We need to work out how far indented the function
         // call itself is, so we can work out how far to
         // indent the arguments.
-        $start = $phpcsFile->findStartOfStatement($stackPtr);
-        foreach (array('stackPtr', 'start') as $checkToken) {
-            $x = $$checkToken;
-            for ($i = ($x - 1); $i >= 0; $i--) {
-                if ($tokens[$i]['line'] !== $tokens[$x]['line']) {
-                    $i++;
-                    break;
-                }
-            }
+        $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $stackPtr, true);
+        if ($tokens[$first]['code'] === T_CONSTANT_ENCAPSED_STRING
+            && $tokens[($first - 1)]['code'] === T_CONSTANT_ENCAPSED_STRING
+        ) {
+            // We are in a multi-line string, so find the start and use
+            // the indent from there.
+            $prev  = $phpcsFile->findPrevious(T_CONSTANT_ENCAPSED_STRING, ($first - 2), null, true);
+            $first = $phpcsFile->findFirstOnLine(Tokens::$emptyTokens, $prev, true);
+        }
 
-            if ($i <= 0) {
-                $functionIndent = 0;
-            } else if ($tokens[$i]['code'] === T_WHITESPACE) {
-                $functionIndent = strlen($tokens[$i]['content']);
-            } else if ($tokens[$i]['code'] === T_CONSTANT_ENCAPSED_STRING) {
-                $functionIndent = 0;
-            } else {
-                $trimmed = ltrim($tokens[$i]['content']);
+        $foundIndent = 0;
+        if ($first !== false) {
+            if ($tokens[$first]['code'] === T_INLINE_HTML) {
+                $trimmed = ltrim($tokens[$first]['content']);
                 if ($trimmed === '') {
-                    if ($tokens[$i]['code'] === T_INLINE_HTML) {
-                        $functionIndent = strlen($tokens[$i]['content']);
-                    } else {
-                        $functionIndent = ($tokens[$i]['column'] - 1);
-                    }
+                    $foundIndent = strlen($tokens[$first]['content']);
                 } else {
-                    $functionIndent = (strlen($tokens[$i]['content']) - strlen($trimmed));
+                    $foundIndent = (strlen($tokens[$first]['content']) - strlen($trimmed));
+                }
+            } else {
+                $foundIndent = ($tokens[$first]['column'] - 1);
+            }
+        }
+
+        // Make sure the function indent is divisible by the indent size.
+        // We round down here because this accounts for times when the
+        // surrounding code is indented a little too far in, and not correctly
+        // at a tab stop. Without this, the function will be indented a further
+        // $indent spaces to the right.
+        $functionIndent = (int) (floor($foundIndent / $this->indent) * $this->indent);
+        if ($foundIndent !== $functionIndent) {
+            $error = 'Opening statement of multi-line function call not indented correctly; expected %s spaces but found %s';
+            $data  = [
+                $functionIndent,
+                $foundIndent,
+            ];
+
+            $fix = $phpcsFile->addFixableError($error, $first, 'OpeningIndent', $data);
+            if ($fix === true) {
+                $padding = str_repeat(' ', $functionIndent);
+                if ($foundIndent === 0) {
+                    $phpcsFile->fixer->addContentBefore($first, $padding);
+                } else {
+                    $phpcsFile->fixer->replaceToken(($first - 1), $padding);
                 }
             }
-
-            $varName  = $checkToken.'Indent';
-            $$varName = $functionIndent;
-        }//end foreach
-
-        $functionIndent = max($startIndent, $stackPtrIndent);
+        }
 
         $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($openBracket + 1), null, true);
         if ($tokens[$next]['line'] === $tokens[$openBracket]['line']) {
@@ -402,7 +415,6 @@ class FunctionCallSignatureSniff implements Sniff
         $lastLine = ($tokens[$openBracket]['line'] - 1);
         $argStart = null;
         $argEnd   = null;
-        $inArg    = false;
 
         // Start processing at the first argument.
         $i = $phpcsFile->findNext(T_WHITESPACE, ($openBracket + 1), null, true);
@@ -498,10 +510,10 @@ class FunctionCallSignatureSniff implements Sniff
                         && $expectedIndent !== $foundIndent)
                     ) {
                         $error = 'Multi-line function call not indented correctly; expected %s spaces but found %s';
-                        $data  = array(
-                                  $expectedIndent,
-                                  $foundIndent,
-                                 );
+                        $data  = [
+                            $expectedIndent,
+                            $foundIndent,
+                        ];
 
                         $fix = $phpcsFile->addFixableError($error, $i, 'Indent', $data);
                         if ($fix === true) {
@@ -531,7 +543,7 @@ class FunctionCallSignatureSniff implements Sniff
             // If we are within an argument we should be ignoring commas
             // as these are not signaling the end of an argument.
             if ($inArg === false && $tokens[$i]['code'] === T_COMMA) {
-                $next = $phpcsFile->findNext(array(T_WHITESPACE, T_COMMENT), ($i + 1), $closeBracket, true);
+                $next = $phpcsFile->findNext([T_WHITESPACE, T_COMMENT], ($i + 1), $closeBracket, true);
                 if ($next === false) {
                     continue;
                 }

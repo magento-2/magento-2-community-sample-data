@@ -15,7 +15,6 @@ use MagentoHackathon\Composer\Magento\Deploystrategy\Copy;
 
 class DeployManager
 {
-
     /**
      * @var Entry[]
      */
@@ -33,11 +32,22 @@ class DeployManager
      */
     protected $sortPriority = array();
 
+    /**
+     * High priority
+     *
+     * An array of packages that must have high priority for deployment
+     * For packages that need to be deployed before all other packages
+     *
+     * @var array
+     */
+    private $highPriority = [
+        'magento/magento2-base' => 10
+    ];
+
     public function __construct(IOInterface $io)
     {
         $this->io = $io;
     }
-
 
     public function addPackage(Entry $package)
     {
@@ -50,35 +60,28 @@ class DeployManager
     }
 
     /**
-     * uses the sortPriority Array to sort the packages.
+     * Uses the sortPriority Array to sort the packages.
+     *
      * Highest priority first.
      * Copy gets per default higher priority then others
+     *
+     * @return array
      */
     protected function sortPackages()
     {
-        $sortPriority = $this->sortPriority;
-        $getPriorityValue = function (Entry $object) use ($sortPriority) {
-            $result = 100;
-            if (isset($sortPriority[$object->getPackageName()])) {
-                $result = $sortPriority[$object->getPackageName()];
-            } elseif ($object->getDeployStrategy() instanceof Copy) {
-                $result = 101;
-            }
-            return $result;
-        };
         usort(
             $this->packages,
-            function ($a, $b) use ($getPriorityValue) {
-                /** @var Entry $a */
-                /** @var Entry $b */
-                $aVal = $getPriorityValue($a);
-                $bVal = $getPriorityValue($b);
-                if ($aVal == $bVal) {
+            function ($a, $b) {
+                $aPriority = $this->getPackagePriority($a);
+                $bPriority = $this->getPackagePriority($b);
+                if ($aPriority == $bPriority) {
                     return 0;
                 }
-                return ($aVal > $bVal) ? -1 : 1;
+                return ($aPriority > $bPriority) ? -1 : 1;
             }
         );
+
+        return $this->packages;
     }
 
     public function doDeploy()
@@ -97,7 +100,30 @@ class DeployManager
                     $this->io->write($e->getMessage());
                 }
             }
-
         }
     }
+
+    /**
+     * Determine the priority in which the package should be deployed
+     *
+     * @param Entry $package
+     * @return int
+     */
+    private function getPackagePriority(Entry $package)
+    {
+        $result = 100;
+        $maxPriority = max(array_merge($this->sortPriority, [100, 101]));
+
+        if (isset($this->highPriority[$package->getPackageName()])) {
+            $packagePriority = $this->highPriority[$package->getPackageName()];
+            $result = intval($maxPriority) + intval($packagePriority);
+        } elseif (isset($this->sortPriority[$package->getPackageName()])) {
+            $result = $this->sortPriority[$package->getPackageName()];
+        } elseif ($package->getDeployStrategy() instanceof Copy) {
+            $result = 101;
+        }
+
+        return $result;
+    }
+
 }

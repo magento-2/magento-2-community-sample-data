@@ -45,7 +45,6 @@ namespace PDepend\Metrics\Analyzer;
 use PDepend\Metrics\AbstractAnalyzer;
 use PDepend\Source\AST\AbstractASTArtifact;
 use PDepend\Source\AST\AbstractASTClassOrInterface;
-use PDepend\Source\AST\ASTArtifactList;
 use PDepend\Source\AST\ASTClass;
 use PDepend\Source\AST\ASTInterface;
 use PDepend\Source\AST\ASTMethod;
@@ -457,7 +456,7 @@ class DependencyAnalyzer extends AbstractAnalyzer
      * that are part of the cylce are stored in the given <b>$list</b> array.
      *
      * @param  \PDepend\Source\AST\ASTNamespace[] &$list
-     * @param  \PDepend\Source\AST\ASTNamespace   $namespace
+     * @param  \PDepend\Source\AST\ASTNamespace $namespace
      * @return boolean If this method detects a cycle the return value is <b>true</b>
      *                 otherwise this method will return <b>false</b>.
      */

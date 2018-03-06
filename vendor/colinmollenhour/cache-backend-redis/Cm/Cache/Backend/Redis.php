@@ -68,10 +68,10 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     /** @var int */
     protected $_lifetimelimit = self::MAX_LIFETIME; /* Redis backend limit */
 
-    /** @var int */
+    /** @var int|bool */
     protected $_compressTags = 1;
 
-    /** @var int */
+    /** @var int|bool */
     protected $_compressData = 1;
 
     /** @var int */
@@ -232,6 +232,10 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
             unset($sentinel);
         }
 
+        elseif (class_exists('Credis_Cluster') && array_key_exists('cluster', $options) && !empty($options['cluster'])) {
+            $this->_setupReadWriteCluster($options);
+        }
+
         // Direct connection to single Redis server
         else {
             $this->_redis = new Credis_Client($options['server'], $port, $this->_clientOptions->timeout, $this->_clientOptions->persistent);
@@ -294,6 +298,12 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
             $this->_compressionLib = 'snappy';
         }
         else if ( function_exists('lz4_compress')) {
+            $version = phpversion("lz4");
+            if (version_compare($version, "0.3.0") < 0)
+            {
+                $this->_compressTags = $this->_compressTags > 1 ? true : false;
+                $this->_compressData = $this->_compressData > 1 ? true : false;
+            }
             $this->_compressionLib = 'l4z';
         }
         else if ( function_exists('lzf_compress') ) {
@@ -357,6 +367,53 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
         // Always select database when persistent is used in case connection is re-used by other clients
         if ($forceSelect || $clientOptions->database || $client->getPersistence()) {
             $client->select($clientOptions->database) or Zend_Cache::throwException('The redis database could not be selected.');
+        }
+    }
+
+    protected function _setupReadWriteCluster($options) {
+        $clusterNodes = array();
+
+        if (array_key_exists('master', $options['cluster']) && !empty($options['cluster']['master'])) {
+            foreach ($options['cluster']['master'] as $masterNode) {
+                if (empty($masterNode['server']) || empty($masterNode['port'])) {
+                    continue;
+                }
+
+                $clusterNodes[] = array(
+                    'host'       => $masterNode['server'],
+                    'port'       => $masterNode['port'],
+                    'alias'      => 'master',
+                    'master'     => true,
+                    'write_only' => true,
+                    'timeout'    => $this->_clientOptions->timeout,
+                    'persistent' => $this->_clientOptions->persistent,
+                    'db'         => (int) $options['database'],
+                );
+
+                break; // limit to 1
+            }
+        }
+
+        if (!empty($clusterNodes) && array_key_exists('slave', $options['cluster']) && !empty($options['cluster']['slave'])) {
+            foreach ($options['cluster']['slave'] as $slaveNodes) {
+                if (empty($masterNode['server']) || empty($masterNode['port'])) {
+                    continue;
+                }
+
+                $clusterNodes[] = array(
+                    'host'       => $slaveNodes['server'],
+                    'port'       => $slaveNodes['port'],
+                    'alias'      => 'slave' . count($clusterNodes),
+                    'timeout'    => $this->_clientOptions->timeout,
+                    'persistent' => $this->_clientOptions->persistent,
+                    'db'         => (int) $options['database'],
+                    'password'   => $options['password'],
+                );
+            }
+        }
+
+        if (!empty($clusterNodes)) {
+            $this->_redis = new Credis_Cluster($clusterNodes);
         }
     }
 
@@ -1039,7 +1096,9 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function getMetadatas($id)
     {
-        list($tags, $mtime, $inf) = $this->_redis->hMGet(self::PREFIX_KEY.$id, array(self::FIELD_TAGS, self::FIELD_MTIME, self::FIELD_INF));
+        list($tags, $mtime, $inf) = array_values(
+            $this->_redis->hMGet(self::PREFIX_KEY.$id, array(self::FIELD_TAGS, self::FIELD_MTIME, self::FIELD_INF))
+        );
         if( ! $mtime) {
           return FALSE;
         }
@@ -1104,11 +1163,11 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     protected function _encodeData($data, $level)
     {
-        if ($this->_compressionLib && $level && strlen($data) >= $this->_compressThreshold) {
+        if ($this->_compressionLib && $level !== 0 && strlen($data) >= $this->_compressThreshold) {
             switch($this->_compressionLib) {
                 case 'snappy': $data = snappy_compress($data); break;
                 case 'lzf':    $data = lzf_compress($data); break;
-                case 'l4z':    $data = lz4_compress($data,($level > 1 ? true : false)); break;
+                case 'l4z':    $data = lz4_compress($data, $level); break;
                 case 'gzip':   $data = gzcompress($data, $level); break;
                 default:       throw new CredisException("Unrecognized 'compression_lib'.");
             }

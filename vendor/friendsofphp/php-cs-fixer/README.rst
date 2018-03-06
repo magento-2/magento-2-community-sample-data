@@ -6,7 +6,7 @@ whether you want to follow PHP coding standards as defined in the PSR-1, PSR-2, 
 or other community driven ones like the Symfony one.
 You can **also** define your (teams) style through configuration.
 
-It can modernize your code (like converting the `pow` function to the `**` operator on PHP 5.6)
+It can modernize your code (like converting the ``pow`` function to the ``**`` operator on PHP 5.6)
 and (micro) optimize it.
 
 If you are already using a linter to identify coding standards problems in your
@@ -46,7 +46,7 @@ or with specified version:
 
 .. code-block:: bash
 
-    $ wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.13/php-cs-fixer.phar -O php-cs-fixer
+    $ wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.16/php-cs-fixer.phar -O php-cs-fixer
 
 or with curl:
 
@@ -321,7 +321,7 @@ Choose from the list of available rules:
   Replaces ``dirname(__FILE__)`` expression with equivalent ``__DIR__``
   constant.
 
-  *Risky rule: risky when the function ``dirname()`` is overridden.*
+  *Risky rule: risky when the function ``dirname`` is overridden.*
 
 * **doctrine_annotation_braces**
 
@@ -500,9 +500,9 @@ Choose from the list of available rules:
 
 * **is_null** [@Symfony:risky]
 
-  Replaces is_null(parameter) expression with ``null === parameter``.
+  Replaces ``is_null($var)`` expression with ``null === $var``.
 
-  *Risky rule: risky when the function ``is_null()`` is overridden.*
+  *Risky rule: risky when the function ``is_null`` is overridden.*
 
   Configuration options:
 
@@ -808,10 +808,9 @@ Choose from the list of available rules:
 
   - ``functions`` (``array``): list of assertions to fix; defaults to
     ``['array_key_exists', 'empty', 'file_exists', 'is_infinite', 'is_nan',
-    'is_null', 'is_array', 'is_bool', 'is_boolean', 'is_callable',
-    'is_double', 'is_float', 'is_int', 'is_integer', 'is_long',
-    'is_numeric', 'is_object', 'is_real', 'is_resource', 'is_scalar',
-    'is_string']``
+    'is_null', 'is_array', 'is_bool', 'is_callable', 'is_double',
+    'is_float', 'is_int', 'is_integer', 'is_long', 'is_numeric',
+    'is_object', 'is_real', 'is_resource', 'is_scalar', 'is_string']``
 
 * **php_unit_fqcn_annotation** [@Symfony]
 
@@ -939,9 +938,9 @@ Choose from the list of available rules:
 
 * **pow_to_exponentiation** [@PHP56Migration:risky, @PHP70Migration:risky]
 
-  Converts ``pow()`` to the ``**`` operator. Requires PHP >= 5.6.
+  Converts ``pow`` to the ``**`` operator. Requires PHP >= 5.6.
 
-  *Risky rule: risky when the function ``pow()`` is overridden.*
+  *Risky rule: risky when the function ``pow`` is overridden.*
 
 * **pre_increment** [@Symfony]
 
@@ -1125,7 +1124,7 @@ Config file
 
 Instead of using command line options to customize the rule, you can save the
 project configuration in a ``.php_cs.dist`` file in the root directory of your project.
-The file must return an instance of `PhpCsFixer\\ConfigInterface <https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v2.2.13/src/ConfigInterface.php>`_
+The file must return an instance of `PhpCsFixer\\ConfigInterface <https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v2.2.16/src/ConfigInterface.php>`_
 which lets you configure the rules, the files and directories that
 need to be analyzed. You may also create ``.php_cs`` file, which is
 the local configuration that will be used instead of the project configuration. It
