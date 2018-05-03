@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -118,7 +119,7 @@ final class Sample
                 $methodEnd = $tokens->getNextTokenOfKind($index, array(';'));
             } else {
                 $methodStart = $tokens->getNextTokenOfKind($index, array('{'));
-                $methodEnd = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $methodStart, true);
+                $methodEnd = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $methodStart);
             }
 
             $this->fixSpaceBelowMethod($tokens, $classEnd, $methodEnd);
@@ -267,7 +268,7 @@ final class Sample
         if (1 === $numbOfWhiteTokens) {
             $tokens[$startIndex] = new Token(array(
                 T_WHITESPACE,
-                preg_replace('/\r\n|\n/', '', $tokens[$startIndex]->getContent(), $lineBreakCount - $reqLineCount),
+                Preg::replace('/\r\n|\n/', '', $tokens[$startIndex]->getContent(), $lineBreakCount - $reqLineCount),
             ));
 
             return;
@@ -280,7 +281,7 @@ final class Sample
             if ($tokenLineCount > 0) {
                 $tokens[$i] = new Token(array(
                     T_WHITESPACE,
-                    preg_replace('/\r\n|\n/', '', $tokens[$i]->getContent(), min($toReplaceCount, $tokenLineCount)),
+                    Preg::replace('/\r\n|\n/', '', $tokens[$i]->getContent(), min($toReplaceCount, $tokenLineCount)),
                 ));
                 $toReplaceCount -= $tokenLineCount;
             }

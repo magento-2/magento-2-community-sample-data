@@ -8,6 +8,11 @@ namespace Dotdigitalgroup\Email\Model;
 class Cron
 {
     /**
+     * @var Email\TemplateFactory
+     */
+    private $templateFactory;
+
+    /**
      * @var Apiconnector\ContactFactory
      */
     private $contactFactory;
@@ -125,6 +130,7 @@ class Cron
         \Dotdigitalgroup\Email\Helper\Data $helper,
         \Dotdigitalgroup\Email\Helper\File $fileHelper,
         \Dotdigitalgroup\Email\Model\ResourceModel\Importer $importerResource,
+        \Dotdigitalgroup\Email\Model\Email\TemplateFactory $templateFactory,
         \Dotdigitalgroup\Email\Model\ResourceModel\Cron\CollectionFactory $cronCollection
     ) {
         $this->campaignFactory   = $campaignFactory;
@@ -143,6 +149,7 @@ class Cron
         $this->fileHelper        = $fileHelper;
         $this->importerResource  = $importerResource;
         $this->cronCollection    = $cronCollection;
+        $this->templateFactory   = $templateFactory;
     }
 
     /**
@@ -153,8 +160,9 @@ class Cron
     public function contactSync()
     {
         if ($this->jobHasAlreadyBeenRun('ddg_automation_customer_subscriber_guest_sync')) {
-            $this->helper->log('Skipping ddg_automation_customer_subscriber_guest_sync job run');
-            return;
+            $message = 'Skipping ddg_automation_customer_subscriber_guest_sync job run';
+            $this->helper->log($message);
+            return ['message' => $message];
         }
 
         //run the sync for contacts
@@ -199,8 +207,9 @@ class Cron
     public function catalogSync()
     {
         if ($this->jobHasAlreadyBeenRun('ddg_automation_catalog_sync')) {
-            $this->helper->log('Skipping ddg_automation_catalog_sync job run');
-            return;
+            $message = 'Skipping ddg_automation_catalog_sync job run';
+            $this->helper->log($message);
+            return ['message' => $message];
         }
 
         $result = $this->catalogFactory->create()
@@ -272,7 +281,7 @@ class Cron
             return;
         }
 
-        $this->quoteFactory->create()->proccessAbandonedCarts();
+        $this->quoteFactory->create()->processAbandonedCarts();
     }
 
     /**
@@ -315,8 +324,9 @@ class Cron
     public function orderSync()
     {
         if ($this->jobHasAlreadyBeenRun('ddg_automation_order_sync')) {
-            $this->helper->log('Skipping ddg_automation_order_sync job run');
-            return;
+            $message = 'Skipping ddg_automation_order_sync job run';
+            $this->helper->log($message);
+            return ['message' => $message];
         }
 
         // send order
@@ -334,8 +344,9 @@ class Cron
     public function cleaning()
     {
         if ($this->jobHasAlreadyBeenRun('ddg_automation_cleaner')) {
-            $this->helper->log('Skipping ddg_automation_cleaner job run');
-            return;
+            $message = 'Skipping ddg_automation_cleaner job run';
+            $this->helper->log($message);
+            return $message;
         }
 
         //Clean tables
@@ -359,19 +370,42 @@ class Cron
     }
 
     /**
+     * Check if already ran for same time
+     *
      * @param $jobCode
      * @return bool
      */
     private function jobHasAlreadyBeenRun($jobCode)
     {
         $currentRunningJob = $this->cronCollection->create()
-            ->getRunningJobByCode($jobCode);
+            ->addFieldToFilter('job_code', $jobCode)
+            ->addFieldToFilter('status', 'running')
+            ->setPageSize(1);
 
-        if (!$currentRunningJob) {
-            return false;
+        if ($currentRunningJob->getSize()) {
+            $jobOfSameTypeAndScheduledAtDateAlreadyExecuted =  $this->cronCollection->create()
+                ->addFieldToFilter('job_code', $jobCode)
+                ->addFieldToFilter('scheduled_at', $currentRunningJob->getFirstItem()->getScheduledAt())
+                ->addFieldToFilter('status', ['in' => ['success', 'failed']]);
+
+            return ($jobOfSameTypeAndScheduledAtDateAlreadyExecuted->getSize()) ? true : false;
         }
 
-        return $this->cronCollection->create()
-            ->jobOfSameTypeAndScheduledAtDateAlreadyExecuted($jobCode, $currentRunningJob->getScheduledAt());
+        return false;
+    }
+
+    /**
+     * Sync the email templates from dotmailer.
+     */
+    public function syncEmailTemplates()
+    {
+        if ($this->jobHasAlreadyBeenRun('ddg_automation_email_templates')) {
+            $message = 'Skipping ddg_automation_email_templates job run';
+            $this->helper->log($message);
+            return $message;
+        }
+
+        return $this->templateFactory->create()
+            ->sync();
     }
 }

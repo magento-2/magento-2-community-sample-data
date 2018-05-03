@@ -5,6 +5,7 @@
 namespace Temando\Shipping\Model\Config;
 
 use Magento\Framework\DataObjectFactory;
+use Magento\Framework\Module\ModuleList;
 use Temando\Shipping\Webservice\Config\WsConfigInterface;
 
 /**
@@ -39,6 +40,8 @@ class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
     const CONFIG_XML_PATH_REGISTER_ACCOUNT_URL = 'carriers/temando/register_account_url';
     const CONFIG_XML_PATH_SHIPPING_PORTAL_URL = 'carriers/temando/shipping_portal_url';
 
+    const CONFIG_XML_PATH_TEMANDO_RETURNS_ACTIVE = 'carriers/temando/rma_enabled';
+
     /**
      * @var DataObjectFactory
      */
@@ -50,27 +53,37 @@ class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
     private $configAccessor;
 
     /**
+     * @var ModuleList
+     */
+    private $moduleList;
+
+    /**
      * ModuleConfig constructor.
      *
      * @param DataObjectFactory $dataObjectFactory
      * @param ConfigAccessor $configAccessor
+     * @param ModuleList $moduleList
      */
     public function __construct(
         DataObjectFactory $dataObjectFactory,
-        ConfigAccessor $configAccessor
+        ConfigAccessor $configAccessor,
+        ModuleList $moduleList
     ) {
         $this->dataObjectFactory = $dataObjectFactory;
         $this->configAccessor = $configAccessor;
+        $this->moduleList = $moduleList;
     }
 
     /**
      * Check if shipping module is enabled in checkout.
      *
+     * @param int $storeId
+     *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled($storeId = null)
     {
-        return (bool) $this->configAccessor->getConfigValue(self::CONFIG_XML_PATH_CHECKOUT_ENABLED);
+        return (bool) $this->configAccessor->getConfigValue(self::CONFIG_XML_PATH_CHECKOUT_ENABLED, $storeId);
     }
 
     /**
@@ -342,6 +355,26 @@ class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
         }
 
         return $checkoutFields;
+    }
+
+    /**
+     * Check if RMA Feature is enabled.
+     *
+     * @return bool
+     */
+    public function isRmaEnabled()
+    {
+        return (bool) $this->configAccessor->getConfigValue(self::CONFIG_XML_PATH_TEMANDO_RETURNS_ACTIVE);
+    }
+
+    /**
+     * Check if RMA module is installed
+     *
+     * @return bool
+     */
+    public function isRmaAvailable()
+    {
+        return (bool) $this->moduleList->has('Magento_Rma');
     }
 
     /**

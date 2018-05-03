@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
 -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -17,5 +16,13 @@
         <data>
             <parameter name="cartId" force="true">%cart_id%</parameter>
         </data>
+    </route>
+
+    <!-- Managing Temando RMA Return Shipments -->
+    <route url="/V1/temando/rma/:rmaId/shipments" method="PUT">
+        <service class="Temando\Shipping\Api\Rma\RmaShipmentManagementInterface" method="assignShipmentIds"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
     </route>
 </routes>

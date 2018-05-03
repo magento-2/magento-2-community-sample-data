@@ -23,6 +23,11 @@ use Temando\Shipping\Model\ResourceModel\Order\OrderRepository;
 class Info extends SalesOrderInfo
 {
     /**
+     * @var \Temando\Shipping\Model\ShipmentInterface
+     */
+    private $extShipment;
+
+    /**
      * @var ShipmentProviderInterface
      */
     private $shipmentProvider;
@@ -82,6 +87,24 @@ class Info extends SalesOrderInfo
     }
 
     /**
+     * Declare External Shipment instance
+     *
+     * @return  \Temando\Shipping\Model\ShipmentInterface
+     */
+    public function getExtShipment()
+    {
+        /** @var \Temando\Shipping\Model\ShipmentInterface $shipment */
+        if ($this->extShipment === null) {
+            if ($extShipment = $this->shipmentProvider->getShipment()) {
+                $this->extShipment = $extShipment;
+            } else {
+                $this->extShipment = $this->_coreRegistry->registry('ext_shipment');
+            }
+        }
+        return $this->extShipment;
+    }
+
+    /**
      * Check if the current order has a shipment at the Temando platform.
      * If so, it qualifies for some additional data to be displayed.
      *
@@ -90,7 +113,7 @@ class Info extends SalesOrderInfo
     public function hasExtShipment()
     {
         /** @var \Temando\Shipping\Model\ShipmentInterface $shipment */
-        $shipment = $this->shipmentProvider->getShipment();
+        $shipment = $this->getExtShipment();
         return isset($shipment);
     }
 
@@ -100,7 +123,7 @@ class Info extends SalesOrderInfo
     public function getExtShipmentId()
     {
         /** @var \Temando\Shipping\Model\ShipmentInterface $shipment */
-        if ($shipment = $this->shipmentProvider->getShipment()) {
+        if ($shipment = $this->getExtShipment()) {
             return $shipment->getShipmentId();
         }
 
@@ -128,7 +151,7 @@ class Info extends SalesOrderInfo
     public function getFormattedDestinationAddress()
     {
         /** @var \Temando\Shipping\Model\ShipmentInterface $shipment */
-        $shipment = $this->shipmentProvider->getShipment();
+        $shipment = $this->getExtShipment();
         if (!$shipment) {
             return '';
         }

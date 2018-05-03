@@ -202,4 +202,12 @@ class PackageItem extends DataObject implements PackageItemInterface
     {
         return $this->getData(PackageItemInterface::HS_CODE);
     }
+
+    /**
+     * @return string
+     */
+    public function getMonetaryValue()
+    {
+        return $this->getData(PackageItemInterface::MONETARY_VALUE);
+    }
 }

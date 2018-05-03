@@ -5,6 +5,7 @@
 namespace Temando\Shipping\CustomerData;
 
 use Magento\Customer\CustomerData\SectionSourceInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutField;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutFieldsSchema;
 use Temando\Shipping\Model\Config\ModuleConfigInterface;
@@ -30,13 +31,23 @@ class CheckoutFields implements SectionSourceInterface
     private $schema;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ModuleConfigInterface $moduleConfig
      * @param CheckoutFieldsSchema $schema
+     * @param StoreManagerInterface $storeManager
      */
-    public function __construct(ModuleConfigInterface $moduleConfig, CheckoutFieldsSchema $schema)
-    {
+    public function __construct(
+        ModuleConfigInterface $moduleConfig,
+        CheckoutFieldsSchema $schema,
+        StoreManagerInterface $storeManager
+    ) {
         $this->moduleConfig = $moduleConfig;
         $this->schema = $schema;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -46,7 +57,7 @@ class CheckoutFields implements SectionSourceInterface
      */
     public function getSectionData()
     {
-        if (!$this->moduleConfig->isEnabled()) {
+        if (!$this->moduleConfig->isEnabled($this->storeManager->getStore()->getId())) {
             return ['fields' => []];
         }
 

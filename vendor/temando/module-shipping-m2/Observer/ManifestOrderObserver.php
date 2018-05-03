@@ -86,9 +86,8 @@ class ManifestOrderObserver implements ObserverInterface
         /** @var \Magento\Sales\Model\Order $salesOrder */
         $salesOrder = $observer->getData('order');
 
-        if ($salesOrder->hasShipments() || !$salesOrder->getData('shipping_method')) {
-            // shipped orders cannot be updated at Temando platform
-            // incomplete or wrong shipments can also not be updated
+        if (!$salesOrder->getData('shipping_method')) {
+            // incomplete or wrong shipments can not be updated
             return;
         }
 
@@ -96,6 +95,12 @@ class ManifestOrderObserver implements ObserverInterface
         $carrierCode = $shippingMethod->getData('carrier_code');
 
         if ($carrierCode !== Carrier::CODE) {
+            // not interested in other carriers
+            return;
+        }
+
+        if ($salesOrder->hasShipments()) {
+            // shipped orders cannot be updated at Temando platform
             return;
         }
 

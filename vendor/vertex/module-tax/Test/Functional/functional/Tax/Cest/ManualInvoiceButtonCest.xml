@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <cest name="ManualInvoiceButtonCest">
+        <annotations>
+            <features value="Vertex Cloud manual invoice button"/>
+            <stories value="Show manual invoice button on Order View"/>
+            <stories value="Hide manual invoice button on Order View"/>
+            <stories value="Show manual invoice button that issues a warning on Order View"/>
+            <env value="chrome"/>
+            <env value="firefox"/>
+        </annotations>
+        <before>
+            <amOnPage stepKey="logoutOfAdmin" url="/admin/admin/auth/logout"/>
+            <createData entity="VertexConfigEnabled" stepKey="turnVertexOn"/>
+        </before>
+        <test name="AdminHideVertexManualInvoiceButton">
+            <annotations>
+                <title value="Don't show the manual invoice button"/>
+                <description
+                        value="When the manual invoice button is off, do not show on the Order View page in the admin"/>
+                <severity value="NORMAL"/>
+            </annotations>
+            <loginAsAdmin stepKey="loginAsAdmin"/>
+
+            <createData entity="VertexConfigManualInvoiceOff" stepKey="config"/>
+            <createData entity="SampleOrder" stepKey="order"/>
+
+            <amOnPage url="{{AdminOrderDetailsPage.url($order.entity_id$)}}" stepKey="navigateToOrderPage"/>
+            <seeInCurrentUrl stepKey="checkOnOrderPage" url="{{AdminOrderDetailsPage.url($order.entity_id$)}}"/>
+            <waitForPageLoad stepKey="waitForPageLoad" time="30"/>
+            <dontSeeElement selector="{{AdminOrderDetailsMainActionsSection.vertexInvoice}}"
+                            stepKey="assertVertexInvoiceButtonHidden"/>
+        </test>
+        <test name="AdminHideVertexManualInvoiceButtonWhenVertexDisabled">
+            <annotations>
+                <title value="Don't show the manual invoice button when Vertex is disabled"/>
+                <description
+                        value="When the manual invoice button is on but Vertex is off, do not show on the Order View page in the admin"/>
+                <severity value="NORMAL"/>
+            </annotations>
+            <loginAsAdmin stepKey="loginAsAdmin"/>
+
+            <createData entity="VertexConfigManualInvoiceOn" stepKey="turnManualInvoiceOn"/>
+            <createData entity="VertexConfigDisabled" stepKey="turnVertexOff"/>
+            <createData entity="SampleOrder" stepKey="order"/>
+
+            <amOnPage url="{{AdminOrderDetailsPage.url($order.entity_id$)}}" stepKey="navigateToOrderPage"/>
+            <seeInCurrentUrl stepKey="checkOnOrderPage" url="{{AdminOrderDetailsPage.url($order.entity_id$)}}"/>
+            <waitForPageLoad stepKey="waitForPageLoad" time="30"/>
+            <dontSeeElement selector="{{AdminOrderDetailsMainActionsSection.vertexInvoice}}"
+                            stepKey="assertVertexInvoiceButtonHidden"/>
+        </test>
+        <test name="AdminShowVertexManualInvoiceButtonWithErrorWhenUnableToInvoice">
+            <annotations>
+                <title value="Show a warning button when Vertex is unable to invoice an order"/>
+                <description
+                        value="When the manual invoice button is on but the Order is for an unsupported country, show a button that displays a warning"/>
+                <severity value="NORMAL"/>
+            </annotations>
+            <loginAsAdmin stepKey="loginAsAdmin"/>
+
+            <createData entity="VertexConfigManualInvoiceOn" stepKey="turnManualInvoiceOn"/>
+            <createData entity="MexicoOrder" stepKey="order"/>
+
+            <amOnPage url="{{AdminOrderDetailsPage.url($order.entity_id$)}}" stepKey="navigateToOrderPage"/>
+            <seeInCurrentUrl stepKey="checkOnOrderPage" url="{{AdminOrderDetailsPage.url($order.entity_id$)}}"/>
+            <waitForPageLoad stepKey="waitForPageLoad" time="30"/>
+            <seeElement selector="{{AdminOrderDetailsMainActionsSection.vertexCantInvoice}}"
+                            stepKey="assertVertexInvoiceButtonHidden"/>
+        </test>
+        <test name="AdminShowVertexManualInvoiceButton">
+            <annotations>
+                <title value="Show the manual invoice button"/>
+                <description
+                        value="When the manual invoice button is on, ensure it apepars on the Order View page in the admin"/>
+                <severity value="NORMAL"/>
+            </annotations>
+            <loginAsAdmin stepKey="loginAsAdmin"/>
+
+            <createData entity="VertexConfigManualInvoiceOn" stepKey="config"/>
+            <createData entity="SampleOrder" stepKey="order"/>
+
+            <amOnPage url="{{AdminOrderDetailsPage.url($order.entity_id$)}}" stepKey="navigateToOrderPage"/>
+            <seeInCurrentUrl stepKey="checkOnOrderPage" url="{{AdminOrderDetailsPage.url($order.entity_id$)}}"/>
+            <waitForPageLoad stepKey="waitForPageLoad" time="30"/>
+            <seeElement selector="{{AdminOrderDetailsMainActionsSection.vertexInvoice}}"
+                        stepKey="assertVertexInvoiceButtonShown"/>
+        </test>
+    </cest>
+</config>

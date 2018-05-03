@@ -43,6 +43,12 @@ interface PackageItemInterface
     const SCHEDULE_B_INFO = 'schedule_b_info';
     const HS_CODE = 'hs_code';
 
+    const MANUFACTURE = 'manufacture';
+    const UNIT = 'unit';
+    const ORIGIN = 'origin';
+    const MONETARY_VALUE = 'monetary_value';
+    const CLASSIFICATION_CODES = 'classification_codes';
+
     /**
      * @return int
      */
@@ -157,4 +163,9 @@ interface PackageItemInterface
      * @return string
      */
     public function getHsCode();
+
+    /**
+     * @return string
+     */
+    public function getMonetaryValue();
 }

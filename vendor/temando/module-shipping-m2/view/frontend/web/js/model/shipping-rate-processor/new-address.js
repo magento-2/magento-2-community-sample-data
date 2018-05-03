@@ -1,6 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
 define([
     'underscore',

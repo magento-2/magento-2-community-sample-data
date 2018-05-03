@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#295](https://github.com/zendframework/zend-db/pull/295) fix error when datasource passed to `AbstractResultSet::initialize()` is empty array at php 7.2 environment.
+
 ## 2.9.2 - 2017-12-11
 
 ### Added

@@ -16,6 +16,20 @@
                    template="Temando_Shipping::documentation.phtml"/>
             <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\Package" name="package_listing"
                    template="Temando_Shipping::shipping/view/form/packages.phtml"/>
+            <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\AddOns" name="addon_listing"
+                   template="Temando_Shipping::shipping/view/form/addons.phtml">
+                <arguments>
+                    <argument name="templates" xsi:type="array">
+                        <item name="default" xsi:type="string">Temando_Shipping::shipping/view/form/addon/default.phtml</item>
+                        <item name="signature" xsi:type="string">Temando_Shipping::shipping/view/form/addon/signature.phtml</item>
+                        <item name="authorityToLeave" xsi:type="string">Temando_Shipping::shipping/view/form/addon/authority_to_leave.phtml</item>
+                        <item name="addressType" xsi:type="string">Temando_Shipping::shipping/view/form/addon/address_type.phtml</item>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Template" name="addon_item"/>
+            </block>
+            <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\ExportDetails" name="export_details"
+                   template="Temando_Shipping::shipping/view/form/export.phtml"/>
         </referenceBlock>
     </body>
 </page>

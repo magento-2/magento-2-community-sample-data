@@ -122,24 +122,29 @@ class OrderResponseMapper
      */
     private function extractShippingCost(array $cost)
     {
-        // (1) no rates available in response
-        if (empty($cost)) {
-            return 0;
-        }
-
         /** @var \Magento\Store\Model\Store $currentStore */
         $currentStore = $this->storeManager->getStore();
-        $currency     = $currentStore->getBaseCurrencyCode();
+        $baseCurrency = $currentStore->getBaseCurrencyCode();
 
-        // (2) exact match found in response
-        foreach ($cost as $item) {
-            if ($item->getCurrency() === $currency) {
-                return $item->getAmount();
+        $warningTemplate = "%1 is not a valid shipping method currency. Use %2 when configuring rates.";
+
+        $applicableCosts = array_filter($cost, function (Cost $item) use ($baseCurrency, $warningTemplate) {
+            if ($item->getCurrency() !== $baseCurrency) {
+                $message = __($warningTemplate, $item->getCurrency(), $baseCurrency);
+                $this->logger->warning($message->render());
+
+                return false;
             }
+
+            return true;
+        });
+
+        if (empty($applicableCosts)) {
+            throw new LocalizedException(__('No applicable shipping cost found in webservice response.'));
         }
 
-        // (3) return first available cost
-        $item = current($cost);
+        // return first available cost
+        $item = current($applicableCosts);
         return $item->getAmount();
     }
 
@@ -158,17 +163,25 @@ class OrderResponseMapper
 
         /** @var ShippingExperienceInterface[] $shippingExperiences */
         $apiExperiences = $included[0]->getAttributes()->getExperiences();
-        $shippingExperiences = array_map(function (Experience $apiExperience) {
-            $description = $this->getLocalizedDescription($apiExperience->getDescription());
-            $cost = $this->extractShippingCost($apiExperience->getCost());
+        $shippingExperiences = [];
 
+        foreach ($apiExperiences as $apiExperience) {
+            try {
+                $cost = $this->extractShippingCost($apiExperience->getCost());
+            } catch (LocalizedException $e) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                continue;
+            }
+
+            $description = $this->getLocalizedDescription($apiExperience->getDescription());
             $shippingExperience = $this->shippingExperienceFactory->create([
                 ShippingExperienceInterface::LABEL => $description,
                 ShippingExperienceInterface::CODE => $apiExperience->getCode(),
                 ShippingExperienceInterface::COST => $cost,
             ]);
-            return $shippingExperience;
-        }, $apiExperiences);
+
+            $shippingExperiences[]= $shippingExperience;
+        }
 
         /** @var \Temando\Shipping\Model\Order\OrderReference $orderReference */
         $orderReference = $this->orderReferenceFactory->create(['data' => [

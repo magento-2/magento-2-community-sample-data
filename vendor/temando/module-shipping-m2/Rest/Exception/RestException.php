@@ -9,7 +9,7 @@ use Temando\Shipping\Webservice\Exception\HttpException;
 /**
  * Temando Rest Webservice Exception
  *
- * @package  Temando\Shipping\Webservice
+ * @package  Temando\Shipping\Rest
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link     http://www.temando.com/

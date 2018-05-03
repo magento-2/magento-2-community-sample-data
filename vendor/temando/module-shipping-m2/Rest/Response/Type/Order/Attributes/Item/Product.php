@@ -4,6 +4,12 @@
  */
 namespace Temando\Shipping\Rest\Response\Type\Order\Attributes\Item;
 
+use Temando\Shipping\Rest\Response\Type\Generic\Attribute;
+use Temando\Shipping\Rest\Response\Type\Generic\Dimensions;
+use Temando\Shipping\Rest\Response\Type\Generic\MonetaryValue;
+use Temando\Shipping\Rest\Response\Type\Generic\Weight;
+use Temando\Shipping\Rest\Response\Type\Order\Attributes\Item\Product\ClassificationCodes;
+
 /**
  * Temando API Order Attributes Item Product Response Type
  *
@@ -213,7 +219,7 @@ class Product
      * @param \Temando\Shipping\Rest\Response\Type\Generic\Dimensions $dimensions
      * @return void
      */
-    public function setDimensions(\Temando\Shipping\Rest\Response\Type\Generic\Dimensions $dimensions)
+    public function setDimensions(Dimensions $dimensions)
     {
         $this->dimensions = $dimensions;
     }
@@ -230,7 +236,7 @@ class Product
      * @param \Temando\Shipping\Rest\Response\Type\Generic\Weight $weight
      * @return void
      */
-    public function setWeight(\Temando\Shipping\Rest\Response\Type\Generic\Weight $weight)
+    public function setWeight(Weight $weight)
     {
         $this->weight = $weight;
     }
@@ -247,7 +253,7 @@ class Product
      * @param \Temando\Shipping\Rest\Response\Type\Generic\MonetaryValue $monetaryValue
      * @return void
      */
-    public function setMonetaryValue(\Temando\Shipping\Rest\Response\Type\Generic\MonetaryValue $monetaryValue)
+    public function setMonetaryValue(MonetaryValue $monetaryValue)
     {
         $this->monetaryValue = $monetaryValue;
     }
@@ -332,7 +338,7 @@ class Product
      * @param string $countryOfOrigin
      * @return void
      */
-    public function setCountryOfOrigin(string $countryOfOrigin)
+    public function setCountryOfOrigin($countryOfOrigin)
     {
         $this->countryOfOrigin = $countryOfOrigin;
     }
@@ -363,10 +369,11 @@ class Product
     }
 
     /**
+     * @codingStandardsIgnoreLine
      * @param \Temando\Shipping\Rest\Response\Type\Order\Attributes\Item\Product\ClassificationCodes $classificationCodes
      * @return void
      */
-    public function setClassificationCodes(\Temando\Shipping\Rest\Response\Type\Order\Attributes\Item\Product\ClassificationCodes $classificationCodes)
+    public function setClassificationCodes(ClassificationCodes $classificationCodes)
     {
         $this->classificationCodes = $classificationCodes;
     }
@@ -383,7 +390,7 @@ class Product
      * @param \Temando\Shipping\Rest\Response\Type\Generic\Attribute $customAttributes
      * @return void
      */
-    public function setCustomAttributes(\Temando\Shipping\Rest\Response\Type\Generic\Attribute $customAttributes)
+    public function setCustomAttributes(Attribute $customAttributes)
     {
         $this->customAttributes = $customAttributes;
     }

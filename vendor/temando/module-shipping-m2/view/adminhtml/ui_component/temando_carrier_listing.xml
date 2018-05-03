@@ -34,7 +34,8 @@
             </storageConfig>
             <updateUrl path="mui/index/render"/>
         </settings>
-        <dataProvider class="Magento\Cms\Ui\Component\DataProvider" name="temando_carrier_listing_data_source">
+        <aclResource>Temando_Shipping::carriers</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="temando_carrier_listing_data_source">
             <settings>
                 <requestFieldName>id</requestFieldName>
                 <primaryFieldName>configuration_id</primaryFieldName>
@@ -96,7 +97,7 @@
                 <sorting>asc</sorting>
             </settings>
         </column>
-        <column name="connection_name" sortOrder="40">
+        <column name="connection_name" sortOrder="40" component="Temando_Shipping/js/grid/columns/carrier-connection-name">
             <settings>
                 <filter>textRange</filter>
                 <label translate="true">Connection Name</label>

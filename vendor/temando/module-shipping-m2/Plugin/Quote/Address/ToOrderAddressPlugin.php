@@ -10,6 +10,8 @@ use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionInterfaceFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Temando\Shipping\Model\Config\ModuleConfigInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
 
 /**
@@ -21,6 +23,11 @@ use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
 class ToOrderAddressPlugin
 {
     /**
+     * @var ModuleConfigInterface
+     */
+    private $config;
+
+    /**
      * @var AddressRepositoryInterface
      */
     private $addressRepository;
@@ -31,23 +38,35 @@ class ToOrderAddressPlugin
     private $addressExtensionFactory;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * ToOrderAddressPlugin constructor.
-     * @param AddressRepositoryInterface $addressRepository
+     *
+     * @param ModuleConfigInterface                 $config
+     * @param AddressRepositoryInterface            $addressRepository
      * @param OrderAddressExtensionInterfaceFactory $addressExtensionFactory
+     * @param StoreManagerInterface                 $storeManager
      */
     public function __construct(
+        ModuleConfigInterface $config,
         AddressRepositoryInterface $addressRepository,
-        OrderAddressExtensionInterfaceFactory $addressExtensionFactory
+        OrderAddressExtensionInterfaceFactory $addressExtensionFactory,
+        StoreManagerInterface $storeManager
     ) {
-        $this->addressRepository = $addressRepository;
+        $this->config                  = $config;
+        $this->addressRepository       = $addressRepository;
         $this->addressExtensionFactory = $addressExtensionFactory;
+        $this->storeManager            = $storeManager;
     }
 
     /**
      * Copy extension attributes (dynamic fields selected in checkout) to order
      * shipping address. When the order gets placed in Magento, these checkout
      * fields must be transmitted to the API. There is no need to persist them
-     * locally with the order address.
+     * to data storage though.
      *
      * @see \Temando\Shipping\Observer\ManifestOrderObserver::execute
      *
@@ -61,6 +80,10 @@ class ToOrderAddressPlugin
         OrderAddressInterface $orderAddress,
         Address $quoteAddress
     ) {
+        if (!$this->config->isEnabled($this->storeManager->getStore()->getId())) {
+            return $orderAddress;
+        }
+
         if ($quoteAddress->getAddressType() !== Address::ADDRESS_TYPE_SHIPPING) {
             // no need to handle billing addresses
             return $orderAddress;

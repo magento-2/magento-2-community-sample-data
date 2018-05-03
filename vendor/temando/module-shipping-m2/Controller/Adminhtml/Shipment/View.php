@@ -12,6 +12,8 @@ use Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface;
 /**
  * Temando Redirect Shipment Page
  *
+ * Query a Shipment ID based on given Platform ID and redirect to native shipment page.
+ *
  * @package  Temando\Shipping\Controller
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>

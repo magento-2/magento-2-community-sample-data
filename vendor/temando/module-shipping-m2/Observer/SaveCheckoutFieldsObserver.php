@@ -60,6 +60,11 @@ class SaveCheckoutFieldsObserver implements ObserverInterface
             return;
         }
 
+        $checkoutFields = $quoteAddress->getExtensionAttributes()->getCheckoutFields();
+        if (!is_array($checkoutFields) || empty($checkoutFields)) {
+            return;
+        }
+
         // persist checkout fields
         try {
             $checkoutAddress = $this->addressRepository->getByQuoteAddressId($quoteAddress->getId());
@@ -69,8 +74,7 @@ class SaveCheckoutFieldsObserver implements ObserverInterface
             ]]);
         }
 
-        $extensionAttributes = $quoteAddress->getExtensionAttributes();
-        $checkoutAddress->setServiceSelection($extensionAttributes->getCheckoutFields());
+        $checkoutAddress->setServiceSelection($checkoutFields);
         $this->addressRepository->save($checkoutAddress);
     }
 }

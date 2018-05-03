@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Temando\Shipping\Block\Adminhtml\Rma\RmaShipment\View" name="form" template="Temando_Shipping::rma/view/form.phtml">
+                <block class="Temando\Shipping\Block\Adminhtml\Rma\RmaShipment\View\Info" name="rma_shipment_info" template="Temando_Shipping::rma/view/info.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaView</argument>
+                    </arguments>
+                    <container name="extra_customer_info"/>
+                </block>
+
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_location" template="Temando_Shipping::rma/view/location.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaShipment\Location</argument>
+                    </arguments>
+                </block>
+
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_items" template="Temando_Shipping::rma/view/items.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaShipment\Items</argument>
+                    </arguments>
+                </block>
+
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_tracking" template="Temando_Shipping::rma/view/tracking.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaShipment\Tracking</argument>
+
+                    </arguments>
+                </block>
+
+                <block class="Temando\Shipping\Block\Adminhtml\Documentation" name="documentation_listing"
+                       template="Temando_Shipping::documentation.phtml"/>
+                <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\Package" name="package_listing"
+                       template="Temando_Shipping::shipping/view/form/packages.phtml"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

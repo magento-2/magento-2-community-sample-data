@@ -1,0 +1,25 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Shipping\View\AddOns $block */ ?>
+<?php $addOns = $block->getCapabilities() ?>
+<?php $addressType = $block->getAddressType() ?>
+<?php if (!empty($addOns)) : ?>
+    <div class="admin__page-section-item order-shipping-addons">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Add-Ons')) ?></span>
+        </div>
+        <table class="data-table admin__table-secondary order-shipping-addons-table">
+            <?php /** @var \Temando\Shipping\Model\Shipment\CapabilityInterface $addOn */ ?>
+            <?php foreach ($addOns as $addOn) : ?>
+                <?= /* @noEscape */ $block->renderCapability($addOn) ?>
+            <?php endforeach; ?>
+            <?php if ($addressType) : ?>
+                <?= /* @noEscape */ $block->renderAddressType($addressType) ?>
+            <?php endif;?>
+        </table>
+    </div>
+<?php endif; ?>

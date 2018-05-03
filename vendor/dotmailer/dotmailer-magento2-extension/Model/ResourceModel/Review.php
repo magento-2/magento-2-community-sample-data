@@ -65,8 +65,8 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Review constructor.
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      * @param \Magento\Quote\Model\QuoteFactory $quoteFactory
      * @param \Magento\Review\Model\ReviewFactory $reviewFactory
      * @param \Dotdigitalgroup\Email\Helper\Data $data
@@ -77,8 +77,8 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param null $connectionName
      */
     public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Quote\Model\QuoteFactory $quoteFactory,
         \Magento\Review\Model\ReviewFactory $reviewFactory,
         \Dotdigitalgroup\Email\Helper\Data $data,
@@ -126,7 +126,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         }
         $num = $conn->update(
-            $conn->getTableName('email_review'),
+            $this->getTable('email_review'),
             ['review_imported' => new \Zend_Db_Expr('null')],
             $where
         );
@@ -201,7 +201,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         try {
             $coreResource = $this->getConnection();
-            $tableName = $coreResource->getTableName('email_review');
+            $tableName = $this->getTable('email_review');
             $coreResource->update(
                 $tableName,
                 ['review_imported' => 1, 'updated_at' => $nowDate],
@@ -230,7 +230,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $reviews->getSelect()
             ->joinLeft(
-                ['c' => $this->getConnection()->getTableName('customer_entity')],
+                ['c' => $this->getTable('customer_entity')],
                 'c.entity_id = customer_id',
                 ['email', 'store_id']
             );

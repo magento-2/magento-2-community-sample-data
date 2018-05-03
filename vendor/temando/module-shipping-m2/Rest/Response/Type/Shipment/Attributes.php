@@ -4,6 +4,11 @@
  */
 namespace Temando\Shipping\Rest\Response\Type\Shipment;
 
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Destination;
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\ExportDeclaration;
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Origin;
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\SelectedServices;
+
 /**
  * Temando API Shipment Attributes Response Type
  *
@@ -16,9 +21,36 @@ namespace Temando\Shipping\Rest\Response\Type\Shipment;
 class Attributes
 {
     /**
-     * @var string
+     * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\ExportDeclaration
      */
-    private $pickupAt;
+    private $exportDeclaration;
+
+    /**
+     * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\SelectedServices
+     */
+    private $selectedServices;
+
+    /**
+     * Anonymous list of capabilities.
+     *
+     * $format = [
+     *   'capabilityCodeX' => [
+     *     'propertyOne' => 'valueOne',
+     *     'propertyTwo' => 'valueTwo',
+     *   ],
+     *   'capabilityCodeY' => [
+     *     'propertyOne' => 'valueOne',
+     *   ],
+     * ]
+     *
+     * @var mixed[][]
+     */
+    private $capabilities = [];
+
+    /**
+     * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill
+     */
+    private $fulfill;
 
     /**
      * @var string
@@ -28,22 +60,22 @@ class Attributes
     /**
      * @var string
      */
-    private $originId;
-
-    /**
-     * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill
-     */
-    private $fulfill;
-
-    /**
-     * @var \Temando\Shipping\Rest\Response\Type\Generic\Documentation[]
-     */
-    private $documentation = [];
+    private $modifiedAt;
 
     /**
      * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Origin
      */
     private $origin;
+
+    /**
+     * @var bool
+     */
+    private $isDutiable;
+
+    /**
+     * @var \Temando\Shipping\Rest\Response\Type\Generic\Documentation[]
+     */
+    private $documentation = [];
 
     /**
      * @var \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Destination
@@ -56,59 +88,76 @@ class Attributes
     private $packages = [];
 
     /**
+     * @var string
+     */
+    private $pickupAt;
+
+    /**
+     * @var string
+     */
+    private $originId;
+
+    /**
+     * @var string
+     */
+    private $status;
+
+    /**
+     * @var string
+     */
+    private $createdAt;
+
+    /**
      * @var bool
      */
     private $isPaperless;
 
     /**
-     * @return string
+     * @return \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\ExportDeclaration
      */
-    public function getPickupAt()
+    public function getExportDeclaration()
     {
-        return $this->pickupAt;
+        return $this->exportDeclaration;
     }
 
     /**
-     * @param string $pickupAt
-     * @return void
+     * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\ExportDeclaration $exportDeclaration
      */
-    public function setPickupAt($pickupAt)
+    public function setExportDeclaration(ExportDeclaration $exportDeclaration)
     {
-        $this->pickupAt = $pickupAt;
+        $this->exportDeclaration = $exportDeclaration;
     }
 
     /**
-     * @return string
+     * @return \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\SelectedServices
      */
-    public function getOrderId()
+    public function getSelectedServices()
     {
-        return $this->orderId;
+        return $this->selectedServices;
     }
 
     /**
-     * @param string $orderId
-     * @return void
+     * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\SelectedServices $selectedServices
      */
-    public function setOrderId($orderId)
+    public function setSelectedServices(SelectedServices $selectedServices)
     {
-        $this->orderId = $orderId;
+        $this->selectedServices = $selectedServices;
     }
 
     /**
-     * @return string
+     * @return mixed[][]
      */
-    public function getOriginId()
+    public function getCapabilities()
     {
-        return $this->originId;
+        return $this->capabilities;
     }
 
     /**
-     * @param string $originId
-     * @return void
+     * @param mixed[][] $capabilities
      */
-    public function setOriginId($originId)
+    public function setCapabilities(array $capabilities)
     {
-        $this->originId = $originId;
+        $this->capabilities = $capabilities;
     }
 
     /**
@@ -121,28 +170,42 @@ class Attributes
 
     /**
      * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill $fulfill
-     * @return void
      */
-    public function setFulfill(\Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill $fulfill)
+    public function setFulfill($fulfill)
     {
         $this->fulfill = $fulfill;
     }
 
     /**
-     * @return \Temando\Shipping\Rest\Response\Type\Generic\Documentation[]
+     * @return string
      */
-    public function getDocumentation()
+    public function getOrderId()
     {
-        return $this->documentation;
+        return $this->orderId;
     }
 
     /**
-     * @param \Temando\Shipping\Rest\Response\Type\Generic\Documentation[] $documentation
-     * @return void
+     * @param string $orderId
      */
-    public function setDocumentation(array $documentation)
+    public function setOrderId($orderId)
     {
-        $this->documentation = $documentation;
+        $this->orderId = $orderId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModifiedAt()
+    {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * @param string $modifiedAt
+     */
+    public function setModifiedAt($modifiedAt)
+    {
+        $this->modifiedAt = $modifiedAt;
     }
 
     /**
@@ -155,11 +218,42 @@ class Attributes
 
     /**
      * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Origin $origin
-     * @return void
      */
-    public function setOrigin(\Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Origin $origin)
+    public function setOrigin(Origin $origin)
     {
         $this->origin = $origin;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDutiable()
+    {
+        return $this->isDutiable;
+    }
+
+    /**
+     * @param boolean $isDutiable
+     */
+    public function setIsDutiable($isDutiable)
+    {
+        $this->isDutiable = $isDutiable;
+    }
+
+    /**
+     * @return \Temando\Shipping\Rest\Response\Type\Generic\Documentation[]
+     */
+    public function getDocumentation()
+    {
+        return $this->documentation;
+    }
+
+    /**
+     * @param \Temando\Shipping\Rest\Response\Type\Generic\Documentation[] $documentation
+     */
+    public function setDocumentation($documentation)
+    {
+        $this->documentation = $documentation;
     }
 
     /**
@@ -172,15 +266,14 @@ class Attributes
 
     /**
      * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Destination $destination
-     * @return void
      */
-    public function setDestination(\Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Destination $destination)
+    public function setDestination(Destination $destination)
     {
         $this->destination = $destination;
     }
 
     /**
-     * @return \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Package[]
+     * @return Attributes\Package[]
      */
     public function getPackages()
     {
@@ -188,16 +281,79 @@ class Attributes
     }
 
     /**
-     * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Package[] $packages
-     * @return void
+     * @param Attributes\Package[] $packages
      */
-    public function setPackages(array $packages)
+    public function setPackages($packages)
     {
         $this->packages = $packages;
     }
 
     /**
-     * @return bool
+     * @return string
+     */
+    public function getPickupAt()
+    {
+        return $this->pickupAt;
+    }
+
+    /**
+     * @param string $pickupAt
+     */
+    public function setPickupAt($pickupAt)
+    {
+        $this->pickupAt = $pickupAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginId()
+    {
+        return $this->originId;
+    }
+
+    /**
+     * @param string $originId
+     */
+    public function setOriginId($originId)
+    {
+        $this->originId = $originId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param string $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return boolean
      */
     public function getIsPaperless()
     {
@@ -205,8 +361,7 @@ class Attributes
     }
 
     /**
-     * @param bool $isPaperless
-     * @return void
+     * @param boolean $isPaperless
      */
     public function setIsPaperless($isPaperless)
     {

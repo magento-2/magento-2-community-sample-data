@@ -24,6 +24,7 @@ interface ShipmentDestinationInterface
     const POSTAL_CODE = 'postal_code';
     const REGION_CODE = 'region_code';
     const COUNTRY_CODE = 'country_code';
+    const TYPE = 'type';
 
     /**
      * Get organisation name.
@@ -92,4 +93,10 @@ interface ShipmentDestinationInterface
      * @return string
      */
     public function getCountryCode();
+
+    /**
+     * Get destination address type.
+     * @return string
+     */
+    public function getType();
 }

@@ -16,13 +16,14 @@ namespace Temando\Shipping\Model\Config;
  */
 interface ModuleConfigInterface
 {
-
     /**
      * Check if shipping module is enabled in checkout.
      *
+     * @param int $storeId
+     *
      * @return bool
      */
-    public function isEnabled();
+    public function isEnabled($storeId = null);
 
     /**
      * Check if merchant registered an account at Temando.
@@ -133,4 +134,18 @@ interface ModuleConfigInterface
      * @return void
      */
     public function saveCheckoutFieldsDefinition($fieldsDefinition);
+
+    /**
+     * Check if RMA Feature is enabled.
+     *
+     * @return bool
+     */
+    public function isRmaEnabled();
+
+    /**
+     * Check if RMA module is installed.
+     *
+     * @return bool
+     */
+    public function isRmaAvailable();
 }

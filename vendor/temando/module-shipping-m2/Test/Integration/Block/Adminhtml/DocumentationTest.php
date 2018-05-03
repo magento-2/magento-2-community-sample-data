@@ -6,6 +6,7 @@ namespace Temando\Shipping\Block\Adminhtml;
 
 use Magento\Framework\View\LayoutInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Temando\Shipping\Model\Dispatch;
 use Temando\Shipping\Model\DocumentationInterface;
 
 /**

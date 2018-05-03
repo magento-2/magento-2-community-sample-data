@@ -132,38 +132,39 @@ class Importer extends \Magento\Framework\Model\AbstractModel
 
     /**
      * Importer constructor.
+     *
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
      * @param \Dotdigitalgroup\Email\Helper\Data $helper
      * @param ResourceModel\Contact $contact
      * @param ResourceModel\Importer $importerResource
      * @param \Dotdigitalgroup\Email\Helper\File $fileHelper
      * @param Config\Json $serializer
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\Filesystem\Io\File $file
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
+     * @param array $data
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
         \Dotdigitalgroup\Email\Helper\Data $helper,
         \Dotdigitalgroup\Email\Model\ResourceModel\Contact $contact,
         \Dotdigitalgroup\Email\Model\ResourceModel\Importer $importerResource,
         \Dotdigitalgroup\Email\Helper\File $fileHelper,
         \Dotdigitalgroup\Email\Model\Config\Json $serializer,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\Filesystem\Io\File $file,
         \Magento\Framework\Stdlib\DateTime $dateTime,
+        array $data = [],
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null
     ) {
         $this->file          = $file;
         $this->helper        = $helper;
@@ -242,8 +243,8 @@ class Importer extends \Magento\Framework\Model\AbstractModel
             $this->helper->debug((string)$e, []);
         }
 
-        if (json_last_error_msg() != "No error") {
-            $jle = json_last_error_msg();
+        if ($this->serializer->jsonError) {
+            $jle = $this->serializer->jsonError;
             $format = "Json error ($jle) for Import type ($importType) / mode ($importMode) for website ($websiteId)";
             $this->helper->log($format);
         }
@@ -492,14 +493,16 @@ class Importer extends \Magento\Framework\Model\AbstractModel
      */
     private function processResponse($response, $item, $websiteId)
     {
-        if ($response) {
+        if (isset($response->message)) {
+            $item->setImportStatus(self::FAILED)
+                ->setMessage($response->message);
+        } else {
             if ($response->status == 'Finished') {
                 $now = gmdate('Y-m-d H:i:s');
 
                 $item->setImportStatus(self::IMPORTED)
                     ->setImportFinished($now)
                     ->setMessage('');
-                $this->saveItem($item);
 
                 if ($item->getImportType()
                     == self::IMPORT_TYPE_CONTACT or
@@ -529,12 +532,13 @@ class Importer extends \Magento\Framework\Model\AbstractModel
                         'Import failed with status '
                         . $response->status
                     );
-                $this->saveItem($item);
             } else {
                 //Not finished
                 $this->totalItems += 1;
             }
         }
+        //Save item
+        $this->saveItem($item);
     }
 
     /**

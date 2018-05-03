@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SampleOrder" type="order">
+        <data key="base_grand_total">10.00</data>
+        <data key="customer_email">someone@example.org</data>
+        <data key="grand_total">10.00</data>
+        <required-entity type="orderAddress">SampleOrderBillingAddress</required-entity>
+        <required-entity type="orderItem">SampleOrderItem</required-entity>
+        <required-entity type="orderPayment">SampleOrderPayment</required-entity>
+        <required-entity type="orderExtension">SampleOrderExtension</required-entity>
+    </entity>
+    <entity name="SampleOrderItem" type="orderItem">
+        <data key="sku">SIMPLE</data>
+        <data key="qty_ordered">1</data>
+    </entity>
+    <entity name="SampleOrderPayment" type="orderPayment">
+        <data key="method">checkmo</data>
+    </entity>
+    <entity name="SampleOrderExtension" type="orderExtension">
+        <required-entity type="orderShippingAssignment">SampleOrderShippingAssignment</required-entity>
+    </entity>
+    <entity name="SampleOrderShippingAssignment" type="orderShippingAssignment">
+        <required-entity type="orderShipping">SampleOrderShipping</required-entity>
+        <required-entity type="orderItem">SampleOrderItem</required-entity>
+    </entity>
+    <entity name="SampleOrderShipping" type="orderShipping">
+        <required-entity type="orderAddress">SampleOrderShippingAddress</required-entity>
+    </entity>
+    <entity name="SampleOrderShippingAddress" type="orderAddress">
+        <data key="address_type">shipping</data>
+        <data key="city">Louisville</data>
+        <data key="country_id">US</data>
+        <data key="firstname">Joel</data>
+        <data key="lastname">Hart</data>
+        <data key="postcode">80027</data>
+        <data key="telephone">3033350932</data>
+        <array key="street">
+            <item>1500 Cherry St</item>
+            <item>Suite M</item>
+        </array>
+    </entity>
+    <entity name="SampleOrderBillingAddress" type="orderAddress">
+        <data key="address_type">billing</data>
+        <data key="city">Louisville</data>
+        <data key="country_id">US</data>
+        <data key="firstname">Joel</data>
+        <data key="lastname">Hart</data>
+        <data key="postcode">80027</data>
+        <data key="telephone">3033350932</data>
+        <array key="street">
+            <item>1500 Cherry St</item>
+            <item>Suite M</item>
+        </array>
+    </entity>
+    <entity name="MexicoOrder" type="order">
+        <data key="base_grand_total">10.00</data>
+        <data key="customer_email">someone@example.org</data>
+        <data key="grand_total">10.00</data>
+        <required-entity type="orderAddress">MexicoOrderBillingAddress</required-entity>
+        <required-entity type="orderItem">SampleOrderItem</required-entity>
+        <required-entity type="orderPayment">SampleOrderPayment</required-entity>
+        <required-entity type="orderExtension">MexicoOrderExtension</required-entity>
+    </entity>
+    <entity name="MexicoOrderExtension" type="orderExtension">
+        <required-entity type="orderShippingAssignment">MexicoOrderShippingAssignment</required-entity>
+    </entity>
+    <entity name="MexicoOrderShippingAssignment" type="orderShippingAssignment">
+        <required-entity type="orderShipping">MexicoOrderShipping</required-entity>
+        <required-entity type="orderItem">SampleOrderItem</required-entity>
+    </entity>
+    <entity name="MexicoOrderShipping" type="orderShipping">
+        <required-entity type="orderAddress">MexicoOrderShippingAddress</required-entity>
+    </entity>
+    <entity name="MexicoOrderShippingAddress" type="orderAddress">
+        <data key="address_type">shipping</data>
+        <data key="city">Louisville</data>
+        <data key="country_id">MX</data>
+        <data key="firstname">Joel</data>
+        <data key="lastname">Hart</data>
+        <data key="postcode">80027</data>
+        <data key="telephone">3033350932</data>
+        <array key="street">
+            <item>1500 Cherry St</item>
+            <item>Suite M</item>
+        </array>
+    </entity>
+    <entity name="MexicoOrderBillingAddress" type="orderAddress">
+        <data key="address_type">billing</data>
+        <data key="city">Louisville</data>
+        <data key="country_id">MX</data>
+        <data key="firstname">Joel</data>
+        <data key="lastname">Hart</data>
+        <data key="postcode">80027</data>
+        <data key="telephone">3033350932</data>
+        <array key="street">
+            <item>1500 Cherry St</item>
+            <item>Suite M</item>
+        </array>
+    </entity>
+</config>

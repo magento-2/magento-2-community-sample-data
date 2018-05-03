@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- API Preferences -->
+    <preference for="Vertex\Tax\Api\Data\LogEntryInterface" type="Vertex\Tax\Model\Data\LogEntry"/>
+    <preference for="Vertex\Tax\Api\Data\LogEntrySearchResultsInterface"
+                type="Magento\Framework\Api\SearchResultsInterface"/>
+    <preference for="Vertex\Tax\Api\LogEntryRepositoryInterface" type="Vertex\Tax\Model\Repository\LogEntryRepository"/>
+    <preference for="Vertex\Tax\Api\ClientInterface" type="Vertex\Tax\Model\ApiClient"/>
+    <preference for="Vertex\Tax\Model\QuoteProviderInterface" type="Vertex\Tax\Model\QuoteProvider\GenericQuoteProvider" />
+
+    <!-- Plugins -->
+    <type name="Magento\Customer\Api\CustomerRepositoryInterface">
+        <plugin name="extensionAttributeVertexCustomerCode" type="Vertex\Tax\Model\Plugin\CustomerRepositoryPlugin" />
+    </type>
+    <type name="Magento\Tax\Model\Calculation\CalculatorFactory">
+        <plugin name="addVertexSMCalculation" type="Vertex\Tax\Model\Plugin\CalculatorFactoryPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\Tax\Model\System\Config\Source\Algorithm">
+        <plugin name="addVertexCalculationMethod" type="Vertex\Tax\Model\Plugin\AlgorithmPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\Tax\Model\Sales\Total\Quote\Subtotal">
+        <plugin name="addVertexCalculationItemSku" type="Vertex\Tax\Model\Plugin\SubtotalPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\GiftWrapping\Model\Total\Quote\Tax\Giftwrapping">
+        <plugin name="mapGiftWrapItem" type="Vertex\Tax\Model\Plugin\TotalPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\GiftWrapping\Model\Total\Quote\Tax\GiftwrappingAfterTax">
+        <plugin name="GiftWrapTax" type="Vertex\Tax\Model\Plugin\GiftWrappingTaxPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Form">
+        <plugin name="PrepareVertexResponseMessages" type="Vertex\Tax\Block\Plugin\OrderCreateFormPlugin" sortOrder="1" />
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Totals">
+        <plugin name="PrepareVertexResponseMessages" type="Vertex\Tax\Block\Plugin\OrderCreateTotalsPlugin" sortOrder="1" />
+    </type>
+
+    <!-- Load quote for Vertex during calls to APIs -->
+    <type name="Magento\Quote\Api\BillingAddressManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\BillingAddressManagementPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\PaymentInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\ShippingInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\TotalsInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\TotalsInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\CouponManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\CouponManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\CartTotalManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\CartTotalManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\ShipmentEstimationInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\ShipmentEstimationPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\GuestPaymentInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestPaymentInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\GuestShippingInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestShippingInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\GuestTotalsInformationManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestTotalsInformationManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\GuestCouponManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestCouponManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\GuestCartTotalManagementInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestCartTotalManagementPlugin" />
+    </type>
+    <type name="Magento\Quote\Api\GuestShipmentEstimationInterface">
+        <plugin name="PrepareQuoteForVertex" type="Vertex\Tax\Model\Plugin\ApiQuoteRetrieval\GuestShipmentEstimationPlugin" />
+    </type>
+</config>

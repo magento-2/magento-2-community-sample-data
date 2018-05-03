@@ -192,15 +192,18 @@ final class ShippedOrderFixture
         ]]);
 
         foreach ($order->getItems() as $orderItem) {
-            $shipmentItem = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order\Shipment\Item::class, ['data' => [
-                'price' => $orderItem->getPrice(),
-                'weight' => $orderItem->getWeight(),
-                'qty' => $orderItem->getQtyOrdered(),
-                'product_id' => $orderItem->getProductId(),
-                'order_item_id' => $orderItem->getItemId(),
-                'name' => $orderItem->getName(),
-                'sku' => $orderItem->getSku(),
-            ]]);
+            $shipmentItem = Bootstrap::getObjectManager()->create(
+                \Magento\Sales\Model\Order\Shipment\Item::class,
+                ['data' => [
+                    'price' => $orderItem->getPrice(),
+                    'weight' => $orderItem->getWeight(),
+                    'qty' => $orderItem->getQtyOrdered(),
+                    'product_id' => $orderItem->getProductId(),
+                    'order_item_id' => $orderItem->getItemId(),
+                    'name' => $orderItem->getName(),
+                    'sku' => $orderItem->getSku(),
+                ]]
+            );
             $shipment->addItem($shipmentItem);
         }
 

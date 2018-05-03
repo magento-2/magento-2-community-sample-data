@@ -116,4 +116,13 @@ class ShipmentDestination extends DataObject implements ShipmentDestinationInter
     {
         return $this->getData(ShipmentDestinationInterface::COUNTRY_CODE);
     }
+
+    /**
+     * Get destination address type.
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->getData(ShipmentDestinationInterface::TYPE);
+    }
 }

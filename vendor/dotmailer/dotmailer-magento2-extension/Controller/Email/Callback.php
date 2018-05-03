@@ -40,6 +40,11 @@ class Callback extends \Magento\Framework\App\Action\Action
     private $userResource;
 
     /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
+    private $resultPageFactory;
+
+    /**
      * Callback constructor.
      *
      * @param \Magento\User\Model\ResourceModel\User $userResource
@@ -59,7 +64,8 @@ class Callback extends \Magento\Framework\App\Action\Action
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\User\Model\UserFactory $adminUser,
         \Magento\Framework\App\Action\Context $context,
-        \Dotdigitalgroup\Email\Helper\Data $helper
+        \Dotdigitalgroup\Email\Helper\Data $helper,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {
         $this->adminHelper      = $backendData;
         $this->config           = $config;
@@ -68,6 +74,7 @@ class Callback extends \Magento\Framework\App\Action\Action
         $this->adminUser        = $adminUser;
         $this->userResource     = $userResource;
         $this->helper           = $helper;
+        $this->resultPageFactory = $resultPageFactory;
 
         parent::__construct($context);
     }
@@ -124,12 +131,19 @@ class Callback extends \Magento\Framework\App\Action\Action
                 $this->helper->error('OAUTH failed ' . $response->error, []);
             } elseif (isset($response->refresh_token)) {
                 //save the refresh token to the admin user
-                $adminUser->setRefreshToken($response->refresh_token);
+                $adminUser->setRefreshToken(
+                    $this->helper->encryptor->encrypt($response->refresh_token)
+                );
 
                 $this->userResource->save($adminUser);
             }
+
+            //redirect to automation index page
+            return $this->_redirect($this->adminHelper->getUrl('dotdigitalgroup_email/studio'));
         }
-        //redirect to automation index page
-        $this->_redirect($this->adminHelper->getUrl('dotdigitalgroup_email/studio'));
+
+        return $this->resultPageFactory->create()
+            ->setStatusHeader(404, '1.1', 'Not Found')
+            ->setHeader('Status', '404 File not found');
     }
 }

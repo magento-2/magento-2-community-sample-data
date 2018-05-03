@@ -4,10 +4,10 @@
         <div class="admin__page-section-item">
             <?php /* Billing Address */?>
             <div class="admin__page-section-item-title">
-                <span class="title"><?php echo $block->escapeHtml(__('Origin Location')); ?></span>
+                <span class="title"><?= $block->escapeHtml(__('Origin Location')); ?></span>
             </div>
             <address class="admin__page-section-item-content">
-                <?php /* @noEscape */ echo $block->getFormattedAddress(); ?>
+                <?= /* @noEscape */ $block->getFormattedAddress(); ?>
             </address>
         </div>
     </div>

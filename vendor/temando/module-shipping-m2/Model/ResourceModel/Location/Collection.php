@@ -4,6 +4,9 @@
  */
 namespace Temando\Shipping\Model\ResourceModel\Location;
 
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Temando\Shipping\Model\LocationInterface;
@@ -31,23 +34,32 @@ class Collection extends ApiCollection
      * @param EntityFactoryInterface $entityFactory
      * @param ManagerInterface $messageManager
      * @param LocationRepositoryInterface $locationRepository
+     * @param FilterBuilder $filterBuilder
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         ManagerInterface $messageManager,
+        FilterBuilder $filterBuilder,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         LocationRepositoryInterface $locationRepository
     ) {
         $this->locationRepository = $locationRepository;
 
-        parent::__construct($entityFactory, $messageManager);
+        parent::__construct($entityFactory, $messageManager, $filterBuilder, $searchCriteriaBuilder);
     }
 
     /**
+     * @param SearchCriteriaInterface $criteria
      * @return LocationInterface[]
      */
-    public function fetchData()
+    public function fetchData(SearchCriteriaInterface $criteria)
     {
-        $locations = $this->locationRepository->getList();
+        $locations = $this->locationRepository->getList(
+            $criteria->getCurrentPage(),
+            $criteria->getPageSize()
+        );
+
         return $locations;
     }
 }

@@ -52,11 +52,60 @@ class PackageResponseMapper
         $packageItems = [];
 
         foreach ($apiPackageItems as $apiPackageItem) {
+            $apiProduct = $apiPackageItem->getProduct();
+
+            $weight = $apiProduct->getWeight();
+            $monetaryValue = $apiProduct->getMonetaryValue();
+
+            $packageItemData = [
+                PackageItemInterface::SKU => $apiProduct->getSku(),
+                PackageItemInterface::DESCRIPTION => $apiProduct->getDescription(),
+                PackageItemInterface::QTY => $apiPackageItem->getQuantity(),
+                PackageItemInterface::UNIT => $apiProduct->getUnit(),
+            ];
+
+            if ($classificationCodes = $apiProduct->getClassificationCodes()) {
+                if ($hsCode = $classificationCodes->getHsCode()) {
+                    $packageItemData[PackageItemInterface::HS_CODE] = $hsCode;
+                }
+            }
+
+            if ($manufacture = $apiProduct->getManufacture()) {
+                if ($manufactureAddress = $manufacture->getAddress()) {
+                    if ($manufactureCountryCode = $manufactureAddress->getCountryCode()) {
+                        $packageItemData[PackageItemInterface::COUNTRY_OF_MANUFACTURE] = $manufactureCountryCode;
+                    }
+                }
+            }
+
+            if ($origin = $apiProduct->getOrigin()) {
+                if ($originAddress = $origin->getAddress()) {
+                    if ($originCountryCode = $originAddress->getCountryCode()) {
+                        $packageItemData[PackageItemInterface::COUNTRY_OF_ORIGIN] = $originCountryCode;
+                    }
+                }
+            }
+
+            if ($weight) {
+                $packageItemData[PackageItemInterface::WEIGHT] = sprintf(
+                    '%s %s',
+                    $weight->getValue(),
+                    $weight->getUnitOfMeasurement()
+                );
+            }
+
+            if ($monetaryValue) {
+                $packageItemData[PackageItemInterface::MONETARY_VALUE] = sprintf(
+                    '%s %s',
+                    $monetaryValue->getAmount(),
+                    $monetaryValue->getCurrency()
+                );
+            }
+
+            $packageItemFactoryData = ['data' => $packageItemData];
+
             /** @var \Temando\Shipping\Model\Shipment\PackageItem $packageItem */
-            $packageItem = $this->packageItemFactory->create(['data' => [
-                PackageItemInterface::DESCRIPTION => $apiPackageItem->getProduct()->getDescription(),
-                PackageItemInterface::QTY => $apiPackageItem->getQuantity()
-            ]]);
+            $packageItem = $this->packageItemFactory->create($packageItemFactoryData);
             $packageItems[]= $packageItem;
         }
 

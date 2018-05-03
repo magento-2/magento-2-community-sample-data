@@ -27,6 +27,10 @@ interface ShipmentInterface
     const PACKAGES = 'packages';
     const DOCUMENTATION = 'documentation';
     const IS_PAPERLESS = 'is_paperless';
+    const EXPORT_DECLARATION = 'export_declaration';
+    const STATUS = 'status';
+    const CAPABILITIES = 'capabilities';
+    const CREATED_AT = 'created_at';
 
     /**
      * @return string
@@ -72,4 +76,24 @@ interface ShipmentInterface
      * @return bool
      */
     public function isPaperless();
+
+    /**
+     * @return \Temando\Shipping\Model\Shipment\ExportDeclarationInterface
+     */
+    public function getExportDeclaration();
+
+    /**
+     * @return string
+     */
+    public function getStatus();
+
+    /**
+     * @return \Temando\Shipping\Model\Shipment\CapabilityInterface[]
+     */
+    public function getCapabilities();
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt();
 }

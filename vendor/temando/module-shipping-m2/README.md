@@ -35,6 +35,48 @@ Once this configuration is complete, enable Magento Shipping for checkout using 
 Stores → Configuration → Sales → Shipping Methods → Magento Shipping → Enabled: Yes
 ```
 
+## Technical Information
+
+The Magento Shipping extension introduces a custom REST API endpoint and public API
+interfaces.
+
+### REST Endpoints
+
+In order to include additional attributes (e.g. value-added services) in the
+shipping estimation process, the Magento Shipping extension replaces the default
+estimation endpoint.
+
+```
+/V1/carts/mine/estimate-shipping-methods-by-address-id
+```
+
+### Public API
+
+The aforementioned estimation endpoint accepts an additional argument to the
+`Magento_Quote` module's implementation: address extension attributes.
+
+```
+\Temando\Shipping\Api\Quote\ShippingMethodManagementInterface::estimateByAddressId
+```
+
+To preserve the selected values during checkout, the additional attributes are
+persisted in the `temando_checkout_address` database table. The entities are
+represented by a public API data model.
+
+```
+\Temando\Shipping\Api\Data\Checkout\AddressInterface
+```
+
+In order to fulfill shipments with Magento Shipping, order and shipment details
+are sent to the Temando Shipping platform. To establish a link between local and
+remote entities, the database tables `temando_order` and `temando_shipment` are
+created. The entities are represented by public API data models.
+
+```
+\Temando\Shipping\Api\Data\Order\OrderReferenceInterface
+\Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+```
+
 ## Support
 
 For Magento Shipping extension support, go to the Magento Shipping [Help Centre](https://magentoshipping.temando.com).

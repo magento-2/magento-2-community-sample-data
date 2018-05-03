@@ -92,13 +92,6 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_CONNECTOR_CUSTOMER_BILLING_COMPANY_NAME = 'connector_data_mapping/customer_data/billing_company';
     const XML_PATH_CONNECTOR_CUSTOMER_DELIVERY_COMPANY_NAME = 'connector_data_mapping/customer_data/delivery_company';
 
-    const XML_PATH_CONNECTOR_ENTERPRISE_CURRENT_BALANCE = 'connector_data_mapping/enterprise_data/reward_points';
-    const XML_PATH_CONNECTOR_ENTERPRISE_REWARD_AMOUNT = 'connector_data_mapping/enterprise_data/reward_amount';
-    const XML_PATH_CONNECTOR_ENTERPRISE_CREATED_DATE = 'connector_data_mapping/enterprise_data/created_date';
-    const XML_PATH_CONNECTOR_ENTERPRISE_EXPIRATION_DATE = 'connector_data_mapping/enterprise_data/expiration_date';
-    const XML_PATH_CONNECTOR_ENTERPIRSE_LAST_USED_DATE = 'connector_data_mapping/enterprise_data/last_used_date';
-    const XML_PATH_CONNECTOR_ENTERPRISE_CUSTOMER_SEGMENTS = 'connector_data_mapping/enterprise_data/customer_segment';
-
     /**
      * Dynamic Content.
      */
@@ -234,10 +227,12 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_CONNECTOR_CLIENT_SECRET_ID = 'connector_developer_settings/oauth/client_key';
     const XML_PATH_CONNECTOR_CUSTOM_AUTHORIZATION = 'connector_developer_settings/oauth/custom_authorization';
     const XML_PATH_CONNECTOR_ADVANCED_DEBUG_ENABLED = 'connector_developer_settings/debug/debug_enabled';
-    const XML_PATH_CONNECTOR_DEBUG_API_REQUEST_LIMIT = 'connector_developer_settings/debug/api_request_time_limit';
+    const XML_PATH_CONNECTOR_DEBUG_API_REQUEST_LIMIT = 'connector_developer_settings/debug/api_log_time';
     const XML_PATH_CONNECTOR_TRANSACTIONAL_DATA_SYNC_LIMIT =
         'connector_developer_settings/import_settings/transactional_data';
     const XML_PATH_CONNECTOR_IP_RESTRICTION_ADDRESSES = 'connector_developer_settings/ip_restriction/ip_addresses';
+    const XML_PATH_CONNECTOR_ENABLE_SUBSCRIBER_SALES_DATA =
+        'connector_developer_settings/import_settings/subscriber_sales_data_enabled';
 
     /**
      * API endpoint.
@@ -386,5 +381,19 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $logUserUrl;
+    }
+
+    /**
+     * @param $store
+     * @return string
+     */
+    public function getOptInType($store)
+    {
+        $needToConfirm = $store->getConfig(
+            \Magento\Newsletter\Model\Subscriber::XML_PATH_CONFIRMATION_FLAG
+        );
+        $optInType = ($needToConfirm)? 'Double' : 'Single';
+
+        return $optInType;
     }
 }

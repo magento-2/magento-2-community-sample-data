@@ -123,7 +123,7 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
             $sourceReference = '';
         }
 
-        $currencyCode = $rateRequest->getPackageCurrency();
+        $currencyCode = $rateRequest->getBaseCurrency();
         if ($currencyCode instanceof Currency) {
             $currencyCode = $currencyCode->getCurrencyCode();
         }

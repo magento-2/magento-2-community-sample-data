@@ -1,0 +1,21 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php $capability = $block->getData('capability'); ?>
+<?php if ($capability instanceof \Temando\Shipping\Model\Shipment\CapabilityInterface) : ?>
+    <tr>
+        <th><?= $block->escapeHtml($capability->getCapabilityId()) ?></th>
+        <td>
+            <?php foreach ($capability->getProperties() as $key => $value) : ?>
+                <?php if (is_bool($value)) : ?>
+                    <?php $value = $value ? __('Yes') : __('No') ?>
+                <?php endif; ?>
+                <?= $block->escapeHtml($key) ?>: <?= $block->escapeHtml($value) ?>
+            <?php endforeach; ?>
+        </td>
+    </tr>
+<?php endif; ?>

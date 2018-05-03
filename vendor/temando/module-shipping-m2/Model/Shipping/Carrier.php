@@ -137,6 +137,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         $result = $this->rateResultFactory->create();
 
+        $activeFlag = $this->getData('active_flag');
+        if ($activeFlag && !$this->getConfigFlag($activeFlag)) {
+            return $result;
+        }
+
         try {
             // init empty reference to remote order entity
             $orderReference = $this->orderReferenceFactory->create();

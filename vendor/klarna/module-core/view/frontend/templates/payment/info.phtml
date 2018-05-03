@@ -1,0 +1,39 @@
+<?php
+/**
+ * This file is part of the Klarna Core module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+
+/**
+ * Klarna payment type template
+ */
+
+/** @var $block Klarna\Core\Block\Info\Klarna */
+$logo_locale = strtolower($block->escapeHtml($block->getLocale()));
+$logo_url = 'https://cdn.klarna.com/1.0/shared/image/generic/logo/' . $logo_locale . '/basic/logo_black.png?width=300';
+?>
+<p><img width="150"
+        src="<?= /* @noEscape */ $logo_url ?>"
+        alt="<?= $block->escapeHtml($block->getMethod()->getTitle()) ?>"/></p>
+
+<?php if ($_specificInfo = $block->getSpecificInformation()) : ?>
+    <table>
+        <tbody>
+        <?php /* @noEscape */ foreach ($_specificInfo as $_label => $_value) : ?>
+        <?php $implodedValue = implode("\n", $block->getValueAsArray($_value, true)); ?>
+            <tr>
+                <th><strong><?= $block->escapeHtml($_label) ?>:</strong></th>
+            </tr>
+            <tr>
+                <td><?= nl2br($block->escapeHtml($implodedValue)) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<?= $block->getChildHtml() ?>

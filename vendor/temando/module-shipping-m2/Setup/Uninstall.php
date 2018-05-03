@@ -34,6 +34,7 @@ class Uninstall implements UninstallInterface
         $uninstaller->getConnection()->dropTable(SetupSchema::TABLE_SHIPMENT);
         $uninstaller->getConnection()->dropTable(SetupSchema::TABLE_ORDER);
         $uninstaller->getConnection()->dropTable(SetupSchema::TABLE_CHECKOUT_ADDRESS);
+        $uninstaller->getConnection()->dropTable(RmaSetupSchema::TABLE_RMA_SHIPMENT);
         $uninstaller->getConnection()->delete($configTable, "`path` LIKE 'carriers/temando/%'");
     }
 }

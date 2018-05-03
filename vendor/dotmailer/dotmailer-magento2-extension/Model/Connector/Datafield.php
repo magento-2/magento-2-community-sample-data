@@ -281,6 +281,22 @@ class Datafield
         ];
 
     /**
+     * @var \Dotdigitalgroup\Email\Helper\Data
+     */
+    private $helper;
+
+    /**
+     * Datafield constructor.
+     *
+     * @param \Dotdigitalgroup\Email\Helper\Data $helper
+     */
+    public function __construct(
+        \Dotdigitalgroup\Email\Helper\Data $helper
+    ) {
+        $this->helper = $helper;
+    }
+
+    /**
      * Set contact datafields.
      *
      * @param array $contactDatafields
@@ -299,7 +315,15 @@ class Datafield
      */
     public function getContactDatafields()
     {
-        return $this->contactDatafields;
+        $contactDataFields = $this->contactDatafields;
+
+        //If enterprise merge enterprise data fields
+        $enterpriseDataFields = $this->getEnterpriseDataFields();
+        if (! empty($enterpriseDataFields)) {
+            $contactDataFields = array_merge($enterpriseDataFields, $contactDataFields);
+        }
+
+        return $contactDataFields;
     }
 
     /**
@@ -326,5 +350,13 @@ class Datafield
         ];
 
         return $this->datafields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnterpriseDataFields()
+    {
+        return [];
     }
 }

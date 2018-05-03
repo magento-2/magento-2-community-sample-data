@@ -95,10 +95,10 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $request->setParam('dispatch_id', 'f00');
 
         // prepare api response (dispatch not found)
-        $responseBody = '{"errors":[{"status":"404","title":"Completion with id \'f00\' not found.","code":"NotFoundError"}]}';
+        $body = '{"errors":[{"status":"404","title":"Completion with id \'f00\' not found.","code":"NotFoundError"}]}';
         $testResponse = new \Zend\Http\Response();
         $testResponse->setStatusCode(\Zend\Http\Response::STATUS_CODE_404);
-        $testResponse->setContent($responseBody);
+        $testResponse->setContent($body);
 
         $testAdapter = new \Zend\Http\Client\Adapter\Test();
         $testAdapter->setResponse($testResponse);

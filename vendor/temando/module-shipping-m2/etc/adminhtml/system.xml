@@ -32,7 +32,11 @@
                     <label>API Token</label>
                     <backend_model>Temando\Shipping\Model\Config\Backend\TrimmedValue</backend_model>
                 </field>
-
+                <field id="rma_enabled" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled for RMA</label>
+                    <frontend_model>Temando\Shipping\Block\Adminhtml\System\Config\Form\Field\Rma</frontend_model>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="sallowspecific" translate="label" type="select" sortOrder="101" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Ship to Applicable Countries</label>
                     <frontend_class>shipping-applicable-country</frontend_class>

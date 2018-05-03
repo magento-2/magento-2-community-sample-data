@@ -40,13 +40,19 @@ class Reflection implements ReflectionInterface
     {
         try {
             $reflectionClass = new \Zend\Code\Reflection\ClassReflection($type);
-            /** @var \Zend\Code\Reflection\DocBlock\Tag\GenericTag $tag */
             $tag = $reflectionClass->getProperty($property)->getDocBlock()->getTag('var');
         } catch (\ReflectionException $e) {
-            return null;
+            return '';
         }
 
-        return $tag->getContent();
+        if ($tag instanceof \Zend\Code\Generator\DocBlock\Tag\AbstractTypeableTag) {
+            $propertyTypes = $tag->getTypes();
+            return current($propertyTypes);
+        } elseif ($tag instanceof \Zend\Code\Reflection\DocBlock\Tag\GenericTag) {
+            return $tag->getContent();
+        }
+
+        return '';
     }
 
     /**

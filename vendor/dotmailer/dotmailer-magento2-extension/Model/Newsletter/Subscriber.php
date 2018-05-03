@@ -135,6 +135,11 @@ class Subscriber
      */
     public function exportSubscribersPerWebsite($website)
     {
+        $isSubscriberSalesDataEnabled = $this->helper->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_ENABLE_SUBSCRIBER_SALES_DATA,
+            $website
+        );
+
         $updated = 0;
         $limit = $this->helper->getSyncLimit($website->getId());
         //subscriber collection to import
@@ -145,9 +150,12 @@ class Subscriber
         $subscribersAreGuest = $emailContactModel->getSubscribersToImport($website, $limit, false);
         $subscribersGuestEmails = $subscribersAreGuest->getColumnValues('email');
         $existInSales = [];
-        if (! empty($subscribersGuestEmails)) {
+
+        //Only if subscriber with sales data enabled
+        if ($isSubscriberSalesDataEnabled && ! empty($subscribersGuestEmails)) {
             $existInSales = $this->checkInSales($subscribersGuestEmails);
         }
+
         $emailsNotInSales = array_diff($subscribersGuestEmails, $existInSales);
         $customerSubscribers = $subscribersAreCustomers->getColumnValues('email');
         $emailsWithNoSaleData = array_merge($emailsNotInSales, $customerSubscribers);
@@ -215,15 +223,16 @@ class Subscriber
          * Sync all suppressed for each store
          */
         $websites = $this->helper->getWebsites(true);
-        foreach ($websites as $website) {
-            $client = $this->helper->getWebsiteApiClient($website);
-            $skip = $i = 0;
-            $contacts = [];
 
-            // Not enabled and valid credentials
-            if (! $client) {
+        foreach ($websites as $website) {
+            //not enabled
+            if (! $this->helper->isEnabled($website)) {
                 continue;
             }
+
+            $skip = $i = 0;
+            $contacts = [];
+            $client = $this->helper->getWebsiteApiClient($website);
 
             //there is a maximum of request we need to loop to get more suppressed contacts
             for ($i=0; $i<= $limit; $i++) {
@@ -240,8 +249,10 @@ class Subscriber
             // Contacts to un-subscribe
             foreach ($contacts as $apiContact) {
                 if (isset($apiContact->suppressedContact)) {
-                    $suppressedContact = $apiContact->suppressedContact;
-                    $suppressedEmails[] = $suppressedContact->email;
+                    $suppressedContactEmail = $apiContact->suppressedContact->email;
+                    if (!in_array($suppressedContactEmail, $suppressedEmails, true)) {
+                        $suppressedEmails[] = $suppressedContactEmail;
+                    }
                 }
             }
         }

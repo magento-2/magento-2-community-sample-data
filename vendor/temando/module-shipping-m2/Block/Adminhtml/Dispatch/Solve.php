@@ -115,9 +115,14 @@ class Solve extends Container
      */
     public function getBackUrl()
     {
-        return $this->_urlBuilder->getUrl('temando/dispatch/view', [
-            'dispatch_id' => $this->getDispatch()->getDispatchId()
-        ]);
+        $dispatch = $this->getDispatch();
+
+        return $dispatch
+            ? $this->_urlBuilder->getUrl(
+                'temando/dispatch/view',
+                ['dispatch_id' => $dispatch->getDispatchId()]
+            )
+            : $this->_urlBuilder->getUrl('temando/dispatch/index');
     }
 
     /**

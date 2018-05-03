@@ -1,5 +1,34 @@
+## [1.1.3] - 2018-03-27
+### Fixed
+
+- Hide RMA return shipments tab when order was not shipped with _Magento Shipping_.
+
+## [1.1.2] - 2018-03-08
+### Fixed
+
+- Remove selection column from return shipments grid with no mass action.
+
+## [1.1.1] - 2018-03-02
+### Added
+
+- Server-side pagination for Dispatch grid
+
+## [1.1.0] - 2018-02-28
+### Added
+
+- Create *Ad-hoc Return* labels with return shipment tracking (builds upon `Magento_Rma`)
+- Validate that package weight is less than packaging max weight on order ship page
+- Display additional details on shipment view page
+
+### Fixed
+
+- [`#12921`](https://github.com/magento/magento2/issues/12921) Perform type check on extension attributes during quote address updates
+- Enable componentry loading in IE 11
+- Use base currency in order qualification requests
+- Remove duplicate navigation bar from carrier registration page
+
 ## [1.0.4] - 2017-12-06
-### Fix
+### Fixed
 
 - Complete error in previous release reverting zend-code v3.2.0 compatibility
 

@@ -2,8 +2,11 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
+
 namespace Temando\Shipping\Setup;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Temando\Shipping\Api\Data\Checkout\AddressInterface;
 use Temando\Shipping\Api\Data\Order\OrderReferenceInterface;
@@ -14,18 +17,21 @@ use Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface;
  *
  * @package  Temando\Shipping\Setup
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Benjamin Heuer <benjamin.heuer@netresearch.de>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link     http://www.temando.com/
  */
 class SetupSchema
 {
-    const TABLE_SHIPMENT = 'temando_shipment';
-    const TABLE_ORDER = 'temando_order';
+    const TABLE_SHIPMENT         = 'temando_shipment';
+    const TABLE_ORDER            = 'temando_order';
     const TABLE_CHECKOUT_ADDRESS = 'temando_checkout_address';
 
     /**
      * @param SchemaSetupInterface $installer
+     *
      * @return void
+     * @throws \Zend_Db_Exception
      */
     public function createShipmentTable(SchemaSetupInterface $installer)
     {
@@ -35,7 +41,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::ENTITY_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
             'Entity Id'
@@ -43,7 +49,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::SHIPMENT_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'nullable' => false],
             'Magento Shipment Id'
@@ -51,7 +57,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::EXT_SHIPMENT_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             64,
             ['nullable' => false],
             'External Shipment Id'
@@ -59,7 +65,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::EXT_LOCATION_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             64,
             ['nullable' => false],
             'External Location Id'
@@ -67,7 +73,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::EXT_TRACKING_URL,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             255,
             [],
             'External Tracking Url'
@@ -75,7 +81,7 @@ class SetupSchema
 
         $table->addColumn(
             ShipmentReferenceInterface::EXT_TRACKING_REFERENCE,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             255,
             [],
             'External Tracking Reference'
@@ -91,17 +97,17 @@ class SetupSchema
             ShipmentReferenceInterface::SHIPMENT_ID,
             $installer->getTable('sales_shipment'),
             'entity_id',
-            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            Table::ACTION_CASCADE
         );
 
         $table->addIndex(
             $installer->getIdxName(
                 self::TABLE_SHIPMENT,
                 [ShipmentReferenceInterface::SHIPMENT_ID, ShipmentReferenceInterface::EXT_SHIPMENT_ID],
-                \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
+                AdapterInterface::INDEX_TYPE_UNIQUE
             ),
             [ShipmentReferenceInterface::SHIPMENT_ID, ShipmentReferenceInterface::EXT_SHIPMENT_ID],
-            ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+            ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
         );
 
         $table->setComment(
@@ -113,7 +119,9 @@ class SetupSchema
 
     /**
      * @param SchemaSetupInterface $installer
+     *
      * @return void
+     * @throws \Zend_Db_Exception
      */
     public function createOrderTable(SchemaSetupInterface $installer)
     {
@@ -123,7 +131,7 @@ class SetupSchema
 
         $table->addColumn(
             OrderReferenceInterface::ENTITY_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
             'Entity Id'
@@ -131,7 +139,7 @@ class SetupSchema
 
         $table->addColumn(
             OrderReferenceInterface::ORDER_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'nullable' => false],
             'Magento Order Id'
@@ -139,7 +147,7 @@ class SetupSchema
 
         $table->addColumn(
             OrderReferenceInterface::EXT_ORDER_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             64,
             ['nullable' => false],
             'Temando Order Id'
@@ -155,7 +163,7 @@ class SetupSchema
             OrderReferenceInterface::ORDER_ID,
             $installer->getTable('sales_order'),
             'entity_id',
-            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            Table::ACTION_CASCADE
         );
 
         $table->setComment(
@@ -167,7 +175,9 @@ class SetupSchema
 
     /**
      * @param SchemaSetupInterface $installer
+     *
      * @return void
+     * @throws \Zend_Db_Exception
      */
     public function createAddressTable(SchemaSetupInterface $installer)
     {
@@ -177,7 +187,7 @@ class SetupSchema
 
         $table->addColumn(
             AddressInterface::ENTITY_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
             'Entity Id'
@@ -185,7 +195,7 @@ class SetupSchema
 
         $table->addColumn(
             AddressInterface::SHIPPING_ADDRESS_ID,
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'nullable' => false],
             'Magento Quote Address Id'
@@ -193,7 +203,7 @@ class SetupSchema
 
         $table->addColumn(
             AddressInterface::SERVICE_SELECTION,
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             null,
             [],
             'Value Added Services'
@@ -209,7 +219,7 @@ class SetupSchema
             AddressInterface::SHIPPING_ADDRESS_ID,
             $installer->getTable('quote_address'),
             'address_id',
-            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            Table::ACTION_CASCADE
         );
 
         $table->setComment(
@@ -221,6 +231,7 @@ class SetupSchema
 
     /**
      * @param SchemaSetupInterface $installer
+     *
      * @return void
      */
     public function setShipmentOriginLocationNullable(SchemaSetupInterface $installer)
@@ -230,8 +241,8 @@ class SetupSchema
             $tableName,
             ShipmentReferenceInterface::EXT_LOCATION_ID,
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                'length' => 64,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 64,
                 'nullable' => true,
             ]
         );

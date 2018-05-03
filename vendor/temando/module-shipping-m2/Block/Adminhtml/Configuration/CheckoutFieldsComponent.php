@@ -25,6 +25,8 @@ use Temando\Shipping\Webservice\Config\WsConfigInterface;
  * @link     http://www.temando.com/
  *
  * @api
+ * @deprecated since 1.0.5 | Specific Block class will now handled by abstract block
+ * @see \Temando\Shipping\Block\Adminhtml\ComponentContainer
  */
 class CheckoutFieldsComponent extends AbstractComponent
 {
@@ -42,8 +44,8 @@ class CheckoutFieldsComponent extends AbstractComponent
      * @param Token $token
      * @param DateTime $dateTime
      * @param RemoteAddress $remoteAddress
-     * @param ModuleConfigInterface $moduleConfig
      * @param Config $securityConfig
+     * @param ModuleConfigInterface $moduleConfig
      * @param mixed[] $data
      */
     public function __construct(
@@ -54,8 +56,8 @@ class CheckoutFieldsComponent extends AbstractComponent
         Token $token,
         DateTime $dateTime,
         RemoteAddress $remoteAddress,
-        ModuleConfigInterface $moduleConfig,
         Config $securityConfig,
+        ModuleConfigInterface $moduleConfig,
         array $data = []
     ) {
         $this->moduleConfig = $moduleConfig;

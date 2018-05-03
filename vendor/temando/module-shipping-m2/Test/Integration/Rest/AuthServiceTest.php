@@ -51,7 +51,10 @@ class AuthServiceTest extends \PHPUnit\Framework\TestCase
         $this->storageMock = $this->getMockBuilder(Storage::class)
             ->setMethods(['getData', 'setData'])
             ->getMock();
-        $this->sessionManager = Bootstrap::getObjectManager()->create(SessionManagerInterface::class, ['storage' => $this->storageMock]);
+        $this->sessionManager = Bootstrap::getObjectManager()->create(
+            SessionManagerInterface::class,
+            ['storage' => $this->storageMock]
+        );
     }
 
     /**

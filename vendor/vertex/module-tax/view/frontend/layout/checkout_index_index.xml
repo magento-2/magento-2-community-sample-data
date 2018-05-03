@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" ifconfig="tax/vertex_settings/enable_vertex" name="checkout.message.manager" template="Vertex_Tax::checkout/message-manager.phtml" />
+        </referenceContainer>
+    </body>
+</page>

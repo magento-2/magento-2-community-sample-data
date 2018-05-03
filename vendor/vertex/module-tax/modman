@@ -1,0 +1,9 @@
+composer.json       app/code/Vertex/Tax/composer.json
+registration.php    app/code/Vertex/Tax/registration.php
+Api/                app/code/Vertex/Tax/Api
+Block/              app/code/Vertex/Tax/Block
+etc/                app/code/Vertex/Tax/etc
+Model/              app/code/Vertex/Tax/Model
+Observer/           app/code/Vertex/Tax/Observer
+Setup/              app/code/Vertex/Tax/Setup
+Test/               app/code/Vertex/Tax/Test

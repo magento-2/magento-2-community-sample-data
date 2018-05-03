@@ -1,0 +1,50 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/DataGenerator/etc/dataOperation.xsd">
+    <operation dataType="order" type="create" name="CreateOrder" auth="adminOauth" url="/V1/orders" method="POST">
+        <contentType>application/json</contentType>
+        <object key="entity" dataType="order">
+            <field key="base_grand_total">number</field>
+            <field key="customer_email">string</field>
+            <field key="grand_total">number</field>
+            <field key="payment">orderPayment</field>
+            <field key="billing_address">orderAddress</field>
+            <field key="extension_attributes">orderExtension</field>
+            <array key="items">
+                <value>orderItem</value>
+            </array>
+        </object>
+    </operation>
+    <operation dataType="orderItem" name="CreateOrderItem" type="create">
+        <field key="sku">string</field>
+        <field key="qty_ordered">number</field>
+    </operation>
+    <operation dataType="orderPayment" name="CreateOrderPayment" type="create">
+        <field key="method">string</field>
+    </operation>
+    <operation dataType="orderExtension" name="CreateOrderExtension" type="create">
+        <array key="shipping_assignments">
+            <value>orderShippingAssignment</value>
+        </array>
+    </operation>
+    <operation dataType="orderShippingAssignment" name="CreateOrderShippingAssignment" type="create">
+        <field key="shipping">orderShipping</field>
+        <array key="items">
+            <value>orderItem</value>
+        </array>
+    </operation>
+    <operation dataType="orderShipping" name="CreateOrderShipping" type="create">
+        <field key="address">orderAddress</field>
+    </operation>
+    <operation dataType="orderAddress" type="create" name="CreateOrderAddress">
+        <field key="address_type">string</field>
+        <array key="street">
+            <value>string</value>
+        </array>
+        <field key="city">string</field>
+        <field key="country_id">string</field>
+        <field key="firstname">string</field>
+        <field key="lastname">string</field>
+        <field key="postcode">string</field>
+        <field key="telephone">string</field>
+    </operation>
+</config>

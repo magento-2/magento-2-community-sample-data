@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <cest name="EstimateTaxCest">
+        <annotations>
+            <features value="Estimate tax for a product"/>
+            <stories value="Estimate tax for a product"/>
+            <env value="chrome"/>
+            <env value="firefox"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="SimpleProduct" stepKey="product">
+                <required-entity createDataKey="category"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="product" stepKey="deleteProduct"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+        <test name="StorefrontEstimateProductTax">
+            <annotations>
+                <title value="Estimate tax for a product"/>
+                <description value="Estimate tax for a product"/>
+                <severity value="CRITICAL"/>
+            </annotations>
+            <!-- Add product to Cart -->
+            <amOnPage url="{{StorefrontCategoryProductPage.url($$category.name$$, $$product.name$$)}}"
+                      stepKey="navigateToProductPage"/>
+            <waitForPageLoad stepKey="waitForProductLoad"/>
+            <fillField stepKey="setQty" selector="{{StorefrontProductSection.QtyInput}}" userInput="1"/>
+            <click selector="{{StorefrontProductSection.AddToCartBtn}}" stepKey="addToCart"/>
+            <waitForAjaxLoad stepKey="waitForAddToCart" />
+
+            <!-- Estimate Tax -->
+            <amOnPage stepKey="viewCart" url="checkout/cart"/>
+            <click stepKey="expandEstimateSection" selector="{{StorefrontCartEstimateSection.EstimateTitleExpandable}}" />
+            <waitForPageLoad stepKey="waitForCartLoad"/>
+            <selectOption selector="{{StorefrontCartEstimateSection.EstimateCountrySelect}}" stepKey="setCountry" userInput="US"/>
+            <selectOption selector="{{StorefrontCartEstimateSection.EstimateRegionSelect}}" stepKey="setRegion" userInput="51"/>
+            <fillField stepKey="setPostcode" selector="{{StorefrontCartEstimateSection.EstimatePostcodeInput}}" userInput="19382"/>
+            <wait stepKey="waitForEstimateLoadTrigger" time="3" />
+            <waitForLoadingMaskToDisappear stepKey="waitForShippingSelectAvailable" />
+            <click stepKey="setShippingMethod" selector="{{StorefrontCartEstimateSection.EstimateFlatrateRadio}}" />
+            <waitForLoadingMaskToDisappear stepKey="waitForShippingSelect" />
+
+            <!-- Sanity Assertions -->
+            <see userInput="$295.00" stepKey="sanityCheckSubtotal" selector="{{StorefrontCartEstimateSection.CartTotalsSubtotal}}"/>
+            <see userInput="$5.00" stepKey="sanityCheckShipping" selector="{{StorefrontCartEstimateSection.CartTotalsShipping}}"/>
+
+            <!-- The real beef -->
+            <see userInput="$24.00" stepKey="checkTaxApplied" selector="{{StorefrontCartEstimateSection.CartTotalsTax}}"/>
+        </test>
+    </cest>
+</config>

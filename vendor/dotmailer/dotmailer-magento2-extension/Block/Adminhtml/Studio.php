@@ -4,6 +4,11 @@ namespace Dotdigitalgroup\Email\Block\Adminhtml;
 
 use Dotdigitalgroup\Email\Model\Apiconnector\Client;
 
+/**
+ * Automation studio block
+ *
+ * @api
+ */
 class Studio extends \Magento\Backend\Block\Widget\Form
 {
 
@@ -151,7 +156,9 @@ class Studio extends \Magento\Backend\Block\Widget\Form
         if ($refreshToken) {
             $accessToken = $this->client->getAccessToken(
                 $this->configFactory->getTokenUrl(),
-                $this->buildUrlParams($refreshToken)
+                $this->buildUrlParams(
+                    $this->helper->encryptor->decrypt($refreshToken)
+                )
             );
 
             if (is_string($accessToken)) {

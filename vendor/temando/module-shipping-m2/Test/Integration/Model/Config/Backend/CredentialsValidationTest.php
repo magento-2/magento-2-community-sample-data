@@ -142,7 +142,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 
@@ -164,7 +164,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 
@@ -186,7 +186,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 
@@ -208,7 +208,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_EMPTY);
+        $this->expectExceptionMessage('Please set API credentials before enabling Magento Shipping.');
         $backendModel->validateBeforeSave();
     }
 
@@ -230,7 +230,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 
@@ -252,7 +252,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 
@@ -274,7 +274,7 @@ class CredentialsValidationTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->expectException(\Magento\Framework\Validator\Exception::class);
-        $this->expectExceptionMessage(CredentialsValidator::MSG_CREDENTIALS_INVALID);
+        $this->expectExceptionMessage('Magento Shipping authentication failed. Please check your credentials.');
         $backendModel->validateBeforeSave();
     }
 }

@@ -51,8 +51,6 @@ class Token
     private $changed = false;
 
     /**
-     * Constructor.
-     *
      * @param array|string $token token prototype
      */
     public function __construct($token)
@@ -91,8 +89,6 @@ class Token
     }
 
     /**
-     * Get cast token kinds.
-     *
      * @return int[]
      */
     public static function getCastTokenKinds()
@@ -223,8 +219,6 @@ class Token
     }
 
     /**
-     * Get token prototype.
-     *
      * @return array|string token prototype
      */
     public function getPrototype()
@@ -320,7 +314,7 @@ class Token
     /**
      * Generate array containing all predefined constants that exists in PHP version in use.
      *
-     * @see http://php.net/manual/en/language.constants.predefined.php
+     * @see https://php.net/manual/en/language.constants.predefined.php
      *
      * @return array<int, int>
      */
@@ -436,7 +430,7 @@ class Token
     /**
      * Returns if the token is of a Magic constants type.
      *
-     * @see http://php.net/manual/en/language.constants.predefined.php
+     * @see https://php.net/manual/en/language.constants.predefined.php
      *
      * @return bool
      */
@@ -498,8 +492,6 @@ class Token
     }
 
     /**
-     * Set token's content.
-     *
      * @param string $content
      */
     public function setContent($content)

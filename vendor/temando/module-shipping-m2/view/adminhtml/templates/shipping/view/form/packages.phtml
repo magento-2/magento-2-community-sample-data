@@ -12,33 +12,33 @@
             <table class="data-table admin__table-primary packages">
                 <thead>
                     <tr class="headings">
-                        <th class="col-length"><span><?php echo $block->escapeHtml(__('Length')) ?></span></th>
-                        <th class="col-width"><span><?php echo $block->escapeHtml(__('Width')) ?></span></th>
-                        <th class="col-height"><span><?php echo $block->escapeHtml(__('Height')) ?></span></th>
-                        <th class="col-weight"><span><?php echo $block->escapeHtml(__('Weight')) ?></span></th>
+                        <th class="col-length"><span><?= $block->escapeHtml(__('Length')) ?></span></th>
+                        <th class="col-width"><span><?= $block->escapeHtml(__('Width')) ?></span></th>
+                        <th class="col-height"><span><?= $block->escapeHtml(__('Height')) ?></span></th>
+                        <th class="col-weight"><span><?= $block->escapeHtml(__('Weight')) ?></span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($packages as $packageId => $package) : ?>
                         <tr class="package-head">
-                            <td><?php echo $block->escapeHtml($package->getLength()) ?></td>
-                            <td><?php echo $block->escapeHtml($package->getWidth()) ?></td>
-                            <td><?php echo $block->escapeHtml($package->getHeight()) ?></td>
-                            <td><?php echo $block->escapeHtml($package->getWeight()) ?></td>
+                            <td><?= $block->escapeHtml($package->getLength()) ?></td>
+                            <td><?= $block->escapeHtml($package->getWidth()) ?></td>
+                            <td><?= $block->escapeHtml($package->getHeight()) ?></td>
+                            <td><?= $block->escapeHtml($package->getWeight()) ?></td>
                         </tr>
                         <?php if (!empty($package->getItems())) : ?>
                             <tr class="package-items">
-                                <th><?php echo $block->escapeHtml(__('Contents:')) ?></th>
+                                <th><?= $block->escapeHtml(__('Contents:')) ?></th>
                                 <td colspan="3">
                                     <?php foreach ($package->getItems() as $packageItem) : ?>
                                         <div class="package-item">
                                             <?php if ($packageItem->getDescription()) : ?>
-                                                <?php echo $block->escapeHtml($packageItem->getDescription()) ?>
+                                                <?= $block->escapeHtml($packageItem->getDescription()) ?>
                                             <?php else : ?>
-                                                <?php echo $block->escapeHtml(__('No Description')) ?>
+                                                <?= $block->escapeHtml(__('No Description')) ?>
                                             <?php endif; ?>
-                                            <?php echo $block->escapeHtml(' x ');?>
-                                            <?php echo $block->escapeHtml($packageItem->getQty());?>
+                                            <?= $block->escapeHtml(' x ');?>
+                                            <?= $block->escapeHtml($packageItem->getQty());?>
                                         </div>
                                     <?php endforeach; ?>
                                 </td>
@@ -51,7 +51,7 @@
                 </tbody>
             </table>
         <?php else : ?>
-            <?php echo $block->escapeHtml(__('No packages found.')) ?>
+            <?= $block->escapeHtml(__('No packages found.')) ?>
         <?php endif; ?>
     </div>
 </section>

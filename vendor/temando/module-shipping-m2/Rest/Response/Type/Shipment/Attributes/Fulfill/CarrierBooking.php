@@ -51,6 +51,27 @@ class CarrierBooking
     private $serviceName;
 
     /**
+     * @var string
+     */
+    private $configurationId;
+
+    /**
+     * @return string
+     */
+    public function getConfigurationId()
+    {
+        return $this->configurationId;
+    }
+
+    /**
+     * @param string $configurationId
+     */
+    public function setConfigurationId($configurationId)
+    {
+        $this->configurationId = $configurationId;
+    }
+
+    /**
      * @return \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill\CarrierBooking\ShippingTaxInclusiveCharge
      */
     public function getShippingTaxInclusiveCharge()
@@ -59,6 +80,7 @@ class CarrierBooking
     }
 
     /**
+     * @codingStandardsIgnoreLine
      * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill\CarrierBooking\ShippingTaxInclusiveCharge $shippingTaxInclusiveCharge
      * @return void
      */

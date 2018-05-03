@@ -3,6 +3,8 @@
     <!-- global interface preferences -->
     <preference for="Temando\Shipping\Api\Quote\ShippingMethodManagementInterface"
                 type="Temando\Shipping\Model\Quote\ShippingMethodManagement" />
+    <preference for="Temando\Shipping\Api\Rma\RmaShipmentManagementInterface"
+                type="Temando\Shipping\Model\Rma\RmaShipmentManagement" />
 
     <preference for="Temando\Shipping\Model\CarrierInterface"
                 type="Temando\Shipping\Model\Carrier" />
@@ -14,6 +16,10 @@
                 type="Temando\Shipping\Model\Shipment" />
     <preference for="Temando\Shipping\Model\Shipment\FulfillmentInterface"
                 type="Temando\Shipping\Model\Shipment\Fulfillment" />
+    <preference for="Temando\Shipping\Model\Shipment\ExportDeclarationInterface"
+                type="Temando\Shipping\Model\Shipment\ExportDeclaration" />
+    <preference for="Temando\Shipping\Model\Shipment\CapabilityInterface"
+                type="Temando\Shipping\Model\Shipment\Capability" />
     <preference for="Temando\Shipping\Model\Shipment\ShipmentDestinationInterface"
                 type="Temando\Shipping\Model\Shipment\ShipmentDestination" />
     <preference for="Temando\Shipping\Model\Shipment\ShipmentOriginInterface"
@@ -74,6 +80,8 @@
                 type="Temando\Shipping\Model\ResourceModel\EventStream\EventRepository" />
     <preference for="Temando\Shipping\Rest\Adapter\EventStreamApiInterface"
                 type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\RmaShipmentRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Rma\RmaShipmentRepository" />
 
     <preference for="Temando\Shipping\Rest\Request\StreamCreateRequestInterface"
                 type="Temando\Shipping\Rest\Request\StreamCreateRequest"/>
@@ -229,6 +237,7 @@
                 <item name="temando_location_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Location\Grid\Collection</item>
                 <item name="temando_carrier_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Carrier\Grid\Collection</item>
                 <item name="temando_dispatch_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Dispatch\Grid\Collection</item>
+                <item name="temando_rma_shipment_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Rma\RmaShipment\Grid\Collection</item>
             </argument>
         </arguments>
     </type>

@@ -5,6 +5,13 @@ namespace Dotdigitalgroup\Email\Controller\Adminhtml\Run;
 class Automapdatafields extends \Magento\Backend\App\AbstractAction
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    const ADMIN_RESOURCE = 'Dotdigitalgroup_Email::config';
+
+    /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
     protected $messageManager;
@@ -77,6 +84,7 @@ class Automapdatafields extends \Magento\Backend\App\AbstractAction
         } else {
             // get all possible datatifileds
             $datafields = $this->datafield->getContactDatafields();
+            $eeFields = $this->datafield->getEnterpriseDataFields();
             foreach ($datafields as $key => $datafield) {
                 $response = $client->postDataFields($datafield);
 
@@ -94,11 +102,14 @@ class Automapdatafields extends \Magento\Backend\App\AbstractAction
                         $scope = 'default';
                         $scopeId = '0';
                     }
-                    /*
-                     * map the succesful created datafield
-                     */
+
+                    //Config path depends on EE or CE
+                    $configPath = isset($eeFields[$key]) ? 'connector_data_mapping/enterprise_data/' :
+                        'connector_data_mapping/customer_data/';
+
+                    //map the successfully created datafield
                     $this->data->saveConfigData(
-                        'connector_data_mapping/customer_data/' . $key,
+                        $configPath . $key,
                         strtoupper($datafield['name']),
                         $scope,
                         $scopeId
@@ -117,13 +128,5 @@ class Automapdatafields extends \Magento\Backend\App\AbstractAction
         }
 
         $this->_redirect($redirectUrl);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Dotdigitalgroup_Email::config');
     }
 }

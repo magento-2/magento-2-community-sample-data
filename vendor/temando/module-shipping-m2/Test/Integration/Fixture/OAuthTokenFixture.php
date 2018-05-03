@@ -106,5 +106,3 @@ final class OAuthTokenFixture
         $self->rollbackOAuthToken();
     }
 }
-
-

@@ -2,29 +2,30 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\EventStream\Edit $block */ ?>
 
-/** @var \Temando\Shipping\Block\Adminhtml\EventStream\Edit $block */ ?>
-
-<p><?php echo $block->escapeHtml(__('Choose entities to sync into Magento created by other systems in your stack (e.g. WMS)')); ?></p>
-<form id="sync_form" method="post" action="<?php echo $block->escapeUrl($block->getSaveUrl()); ?>">
+<p><?= $block->escapeHtml(__('Choose entities to sync into Magento created by other systems in your stack (e.g. WMS)')); ?></p>
+<form id="sync_form" method="post" action="<?= $block->escapeUrl($block->getSaveUrl()); ?>">
 
     <div id="sync-input" data-bind="scope: 'syncSettings'">
 
-        <input name="form_key" type="hidden" value="<?php echo $block->escapeHtmlAttr($block->getFormKey()) ?>">
+        <input name="form_key" type="hidden" value="<?= $block->escapeHtmlAttr($block->getFormKey()) ?>">
         <?php $enableInput = $block->getInputEnable();?>
         <fieldset class="admin__fieldset">
             <div class="admin__field">
-                <span class="admin__field-label"><?php echo $block->escapeHtml($enableInput['label']); ?></span>
+                <span class="admin__field-label"><?= $block->escapeHtml($enableInput['label']); ?></span>
                 <div class="admin__field-control">
                     <div class="admin__actions-switch" data-role="switcher">
                         <input type="checkbox"
                                class="admin__actions-switch-checkbox"
-                               id="<?php echo $block->escapeHtmlAttr($enableInput['id']) ?>"
-                               name="<?php echo $block->escapeHtmlAttr($enableInput['name']) ?>"
+                               id="<?= $block->escapeHtmlAttr($enableInput['id']) ?>"
+                               name="<?= $block->escapeHtmlAttr($enableInput['name']) ?>"
                                value="1" data-bind="checked: sync.checked">
-                        <label class="admin__actions-switch-label" for="<?php echo $block->escapeHtmlAttr($enableInput['id']) ?>">
-                            <span class="admin__actions-switch-text" data-text-on="<?php echo $block->escapeHtmlAttr(__('Yes')); ?>"
-                                  data-text-off="<?php echo $block->escapeHtmlAttr(__('No')); ?>"></span>
+                        <label class="admin__actions-switch-label" for="<?= $block->escapeHtmlAttr($enableInput['id']) ?>">
+                            <span class="admin__actions-switch-text" data-text-on="<?= $block->escapeHtmlAttr(__('Yes')); ?>"
+                                  data-text-off="<?= $block->escapeHtmlAttr(__('No')); ?>"></span>
                         </label>
                     </div>
                 </div>
@@ -71,8 +72,8 @@
             "components": {
                 "syncSettings": {
                     "component": "Temando_Shipping/js/view/components/configuration/sync/edit",
-                    "elements":  <?php echo /* @noEscape */ json_encode($block->getInputs()); ?>,
-                    "sync": <?php echo /* @noEscape */ json_encode($block->getInputEnable()); ?>
+                    "elements":  <?= /* @noEscape */ json_encode($block->getInputs()); ?>,
+                    "sync": <?= /* @noEscape */ json_encode($block->getInputEnable()); ?>
                 }
             }
         }

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna Order Management module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="klarna_push_notification_order_not_found">
+        <observer name="klarna_push_notification_order_not_found" instance="Klarna\Ordermanagement\Observer\CancelOrder"/>
+    </event>
+    <event name="klarna_cancel_order">
+        <observer name="klarna_cancel_order" instance="Klarna\Ordermanagement\Observer\CancelOrder"/>
+    </event>
+    <event name="sales_order_payment_capture">
+        <observer name="klarna_set_capture_item_list" instance="Klarna\Ordermanagement\Observer\PrepareCapture"/>
+    </event>
+    <event name="klarna_prepare_merchant_urls">
+        <observer name="klarna_set_merchant_urls" instance="Klarna\Ordermanagement\Observer\PrepareMerchantUrls"/>
+    </event>
+</config>

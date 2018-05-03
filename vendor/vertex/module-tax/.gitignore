@@ -1,0 +1,7 @@
+.idea/
+composer.lock
+vendor/
+Test/tmp
+Test/.env
+Test/codeception.yml
+Test/Functional/functional/_generated

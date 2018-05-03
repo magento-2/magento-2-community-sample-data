@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.6 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.8.5 - 2018-02-22
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+
+- [#108](https://github.com/zendframework/zend-session/pull/108) fixes a dependency
+  conflict in `composer.json` which prevented `phpunit/phpunit` 6.5 or newer from 
+  being installed together with `zendframework/zend-session`.
+
 ## 2.8.4 - 2018-01-31
 
 ### Added

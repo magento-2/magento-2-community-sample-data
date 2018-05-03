@@ -4,6 +4,8 @@
  */
 namespace Temando\Shipping\Sync\Exception;
 
+use Magento\Framework\Exception\LocalizedException;
+
 /**
  * Temando Event Processing Exception.
  *
@@ -14,7 +16,7 @@ namespace Temando\Shipping\Sync\Exception;
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link     http://www.temando.com/
  */
-class EventProcessorException extends \Exception
+class EventProcessorException extends LocalizedException
 {
     /**
      * @param string $entityType
@@ -24,6 +26,8 @@ class EventProcessorException extends \Exception
      */
     public static function processingFailed($entityType, $entityId, \Exception $previous = null)
     {
-        return new static("Entity '$entityId' of type '$entityType' could not be processed.", 0, $previous);
+        $phrase = __("Entity '%1' of type '%2' could not be processed.", $entityId, $entityType);
+
+        return new static($phrase, $previous);
     }
 }

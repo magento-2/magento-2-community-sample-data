@@ -28,7 +28,6 @@ class DocumentationTest extends \PHPUnit\Framework\TestCase
         $this->documentation->setData(DocumentationInterface::URL, 'URL');
     }
 
-
     /**
      * @test
      */

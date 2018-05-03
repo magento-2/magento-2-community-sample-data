@@ -30,6 +30,8 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
     const REST_PROGRAM = '/v2/programs/';
     const REST_PROGRAM_ENROLMENTS = '/v2/programs/enrolments';
     const REST_TEMPLATES = '/v2/templates';
+    const REST_SEND_TRANSACTIONAL_EMAIL = '/v2/email';
+    const REST_CAMPAIGNS_WITH_PREPARED_CONTENT = 'prepared-for-transactional-email';
 
     //rest error responces
     const API_ERROR_API_EXCEEDED = 'Your account has generated excess API activity and is being temporarily capped. 
@@ -110,7 +112,8 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
     }
 
     /**
-     * @return void
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getApiEndpoint()
     {
@@ -267,12 +270,15 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
      */
     public function deleteAddressBookContact($addressBookId, $contactId)
     {
-        $url = $this->getApiEndpoint() . self::REST_ADDRESS_BOOKS . $addressBookId
-            . '/contacts/' . $contactId;
-        $this->setUrl($url)
-            ->setVerb('DELETE');
-        $this->execute();
-        $this->helper->log(sprintf('Delete-contact %s from addressbook %s', $contactId, $addressBookId));
+        //Only if there is a contact id and address book id
+        if ($addressBookId && $contactId) {
+            $url = $this->getApiEndpoint() . self::REST_ADDRESS_BOOKS . $addressBookId
+                . '/contacts/' . $contactId;
+            $this->setUrl($url)
+                ->setVerb('DELETE');
+            $this->execute();
+            $this->helper->log(sprintf('Delete-contact %s from addressbook %s', $contactId, $addressBookId));
+        }
     }
 
     /**
@@ -425,6 +431,49 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
     }
 
     /**
+     * @param $campaignId
+     * @return mixed
+     */
+    public function getCampaignById($campaignId)
+    {
+        $url = $this->getApiEndpoint() . self::REST_DATA_FIELDS_CAMPAIGNS . '/' . $campaignId;
+        $this->setUrl($url)
+            ->setVerb('GET');
+
+        $response = $this->execute();
+
+        if (isset($response->message)) {
+            $message = 'GET CAMPAIGN BY ID ' . $response->message;
+            $this->helper->log($message);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param $campaignId
+     * @return mixed
+     */
+    public function getCampaignByIdWithPreparedContent($campaignId)
+    {
+        $url = $this->getApiEndpoint() . self::REST_DATA_FIELDS_CAMPAIGNS
+            . '/' . $campaignId
+            . '/' . self::REST_CAMPAIGNS_WITH_PREPARED_CONTENT
+            . '/' . 'anonymouscontact@emailsim.io';
+        $this->setUrl($url)
+            ->setVerb('GET');
+
+        $response = $this->execute();
+
+        if (isset($response->message)) {
+            $message = 'GET CAMPAIGN BY ID WITH PREPARED CONTENT' . $response->message;
+            $this->helper->log($message);
+        }
+
+        return $response;
+    }
+
+    /**
      * Creates a data field within the account.
      *
      * @param        $data         string/array
@@ -528,18 +577,20 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
      */
     public function deleteContact($contactId)
     {
-        $url = $this->getApiEndpoint() . self::REST_CONTACTS . $contactId;
-        $this->setUrl($url)
-            ->setVerb('DELETE');
+        if ($contactId) {
+            $url = $this->getApiEndpoint() . self::REST_CONTACTS . $contactId;
+            $this->setUrl($url)
+                ->setVerb('DELETE');
 
-        $response = $this->execute();
+            $response = $this->execute();
 
-        if (isset($response->message)) {
-            $message = ' url : ' . $url . ', ' . $response->message;
-            $this->helper->debug('deleteContact', [$message]);
+            if (isset($response->message)) {
+                $message = ' url : ' . $url . ', ' . $response->message;
+                $this->helper->debug('deleteContact', [$message]);
+            }
+
+            return $response;
         }
-
-        return $response;
     }
 
     /**
@@ -841,12 +892,14 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
         $email,
         $collectionName = 'Orders'
     ) {
-        $url = $this->getApiEndpoint() . '/v2/contacts/' . $email
-            . '/transactional-data/' . $collectionName;
-        $this->setUrl($url)
-            ->setVerb('DELETE');
+        if ($email && $collectionName) {
+            $url = $this->getApiEndpoint() . '/v2/contacts/' . $email
+                . '/transactional-data/' . $collectionName;
+            $this->setUrl($url)
+                ->setVerb('DELETE');
 
-        return $this->execute();
+            return $this->execute();
+        }
     }
 
     /**
@@ -873,39 +926,11 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
     }
 
     /**
-     * Deletes multiple contacts from an address book.
-     *
-     * @param string $addressBookId
-     * @param mixed $contactIds
-     *
-     * @return object
-     */
-    public function deleteAddressBookContactsInbulk($addressBookId, $contactIds)
-    {
-        $url = $this->getApiEndpoint() . '/v2/address-books/' . $addressBookId
-            . '/contacts/inbulk';
-        $data = ['ContactIds' => [$contactIds[0]]];
-        $this->setUrl($url)
-            ->setVerb('DELETE')
-            ->buildPostBody($data);
-
-        $response = $this->execute();
-
-        if (isset($response->message)) {
-            $message = 'deleteAddressBookContactsInbulk ' . $response->message
-                . ' address book ' . $addressBookId;
-            $this->helper->debug('deleteAddressBookContactsInbulk', [$message]);
-        }
-
-        return $response;
-    }
-
-    /**
      * Resubscribes a previously unsubscribed contact.
      *
      * @param mixed $apiContact
      *
-     * @return null
+     * @return object
      *
      * @throws \Exception
      */
@@ -926,6 +951,8 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
             $this->helper->debug('postContactsResubscribe', [$message]);
             $this->helper->debug('postContactsResubscriber', $data);
         }
+
+        return $response;
     }
 
     /**
@@ -1089,22 +1116,24 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
         $key,
         $collectionName = 'Orders'
     ) {
-        $url = $this->getApiEndpoint() . '/v2/contacts/transactional-data/'
-            . $collectionName . '/' . $key;
-        $this->setUrl($url)
-            ->setVerb('DELETE');
+        if ($key && $collectionName) {
+            $url = $this->getApiEndpoint() . '/v2/contacts/transactional-data/'
+                . $collectionName . '/' . $key;
+            $this->setUrl($url)
+                ->setVerb('DELETE');
 
-        $response = $this->execute();
+            $response = $this->execute();
 
-        if (isset($response->message)) {
-            $this->helper->debug(
-                'deleteContactsTransactionalData',
-                ['DELETE CONTACTS TRANSACTIONAL DATA : ' . $url
-                    . ' ' . $response->message]
-            );
+            if (isset($response->message)) {
+                $this->helper->debug(
+                    'deleteContactsTransactionalData',
+                    ['DELETE CONTACTS TRANSACTIONAL DATA : ' . $url
+                        . ' ' . $response->message]
+                );
+            }
+
+            return $response;
         }
-
-        return $response;
     }
 
     /**
@@ -1384,6 +1413,50 @@ class Client extends \Dotdigitalgroup\Email\Model\Apiconnector\Rest
             }
         } elseif (isset($response->access_token)) {
             return $response->access_token;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Sends a transactional email.
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function sendApiTransactionalEmail($content)
+    {
+        $url = $this->getApiEndpoint() . self::REST_SEND_TRANSACTIONAL_EMAIL;
+
+        $this->setUrl($url)
+            ->setVerb('POST')
+            ->buildPostBody($content);
+
+        $this->execute();
+    }
+
+    /**
+     * Gets transactional email reporting statistics for a specified time period.
+     *
+     * @param $date string
+     * @param null $endDate
+     * @param null $aggregatedBy 'AllTime', 'Month', 'Week', 'Day'
+     *
+     * @return mixed
+     */
+    public function getEmailStats($date, $endDate = null, $aggregatedBy = null)
+    {
+        $url = $this->getApiEndpoint() . '/v2/email/stats/since-date/' . $date;
+        if ($endDate && $aggregatedBy) {
+            $url .= '?endDate=' . $endDate . '&aggregatedBy=' . $aggregatedBy;
+        }
+
+        $response = $this->setUrl($url)
+            ->setVerb('GET')
+            ->execute();
+
+        if (isset($response->message)) {
+            $this->helper->log('GET EMAIL STATS : ' . $response->message);
         }
 
         return $response;

@@ -7,8 +7,9 @@ namespace Temando\Shipping\Block\Adminhtml;
 use Magento\Backend\Block\Template as BackendTemplate;
 use Magento\Backend\Block\Template\Context;
 use Temando\Shipping\Model\DispatchProviderInterface;
-use Temando\Shipping\Model\DocumentationInterface;
 use Temando\Shipping\Model\DocumentationCollection;
+use Temando\Shipping\Model\DocumentationInterface;
+use Temando\Shipping\Model\ResourceModel\Rma\RmaAccess;
 use Temando\Shipping\Model\Shipment\ShipmentProviderInterface;
 
 /**
@@ -16,6 +17,7 @@ use Temando\Shipping\Model\Shipment\ShipmentProviderInterface;
  *
  * @package  Temando\Shipping\Block
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Rhodri Davies <rhodri.davies@temando.com>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link     http://www.temando.com/
  *
@@ -34,25 +36,36 @@ class Documentation extends BackendTemplate
     private $dispatchProvider;
 
     /**
+     * @var RmaAccess
+     */
+    private $rmaAccess;
+
+    /**
      * @param Context $context
      * @param ShipmentProviderInterface $shipmentProvider
      * @param DispatchProviderInterface $dispatchProvider
+     * @param RmaAccess $rmaAccess
      * @param mixed[] $data
      */
     public function __construct(
         Context $context,
         ShipmentProviderInterface $shipmentProvider,
         DispatchProviderInterface $dispatchProvider,
+        RmaAccess $rmaAccess,
         array $data = []
     ) {
         $this->shipmentProvider = $shipmentProvider;
         $this->dispatchProvider = $dispatchProvider;
+        $this->rmaAccess = $rmaAccess;
 
         parent::__construct($context, $data);
     }
 
     /**
-     * Set documentation from dispatch or shipment to block
+     * Set documentation from
+     * - dispatch
+     * - shipment or
+     * - rma shipment
      *
      * @return BackendTemplate
      */
@@ -64,6 +77,9 @@ class Documentation extends BackendTemplate
                 $this->setData('documentation', $dispatch->getDocumentation());
             } elseif ($this->shipmentProvider->getShipment()) {
                 $shipment = $this->shipmentProvider->getShipment();
+                $this->setData('documentation', $shipment->getDocumentation());
+            } elseif ($this->rmaAccess->getCurrentRmaShipment()) {
+                $shipment = $this->rmaAccess->getCurrentRmaShipment();
                 $this->setData('documentation', $shipment->getDocumentation());
             }
         }

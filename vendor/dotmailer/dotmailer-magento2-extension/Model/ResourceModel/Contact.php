@@ -20,6 +20,11 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     private $schelduleFactory;
 
     /**
+     * @var \Dotdigitalgroup\Email\Model\Sql\ExpressionFactory
+     */
+    private $expressionFactory;
+
+    /**
      * Initialize resource.
      *
      * @return null
@@ -36,6 +41,7 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory $subscriberCollection
      * @param \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerCollectionFactory
      * @param \Magento\Cron\Model\ScheduleFactory $schedule
+     * @param \Dotdigitalgroup\Email\Model\Sql\ExpressionFactory $expressionFactory
      * @param null $connectionName
      */
     public function __construct(
@@ -43,8 +49,10 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory $subscriberCollection,
         \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerCollectionFactory,
         \Magento\Cron\Model\ScheduleFactory $schedule,
+        \Dotdigitalgroup\Email\Model\Sql\ExpressionFactory $expressionFactory,
         $connectionName = null
     ) {
+        $this->expressionFactory = $expressionFactory;
         $this->schelduleFactory = $schedule;
         $this->customerCollection = $customerCollectionFactory;
         $this->subscribersCollection = $subscriberCollection;
@@ -62,10 +70,10 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $conn = $this->getConnection();
         $num = $conn->update(
             $this->getTable('email_contact'),
-            ['contact_id' => new \Zend_Db_Expr('null')],
+            ['contact_id' => $this->expressionFactory->create(["expression" => 'null'])],
             $conn->quoteInto(
                 'contact_id is ?',
-                new \Zend_Db_Expr('not null')
+                $this->expressionFactory->create(["expression" => 'not null'])
             )
         );
 
@@ -82,11 +90,11 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $conn = $this->getConnection();
         $num = $conn->update(
-            $conn->getTableName('email_contact'),
-            ['email_imported' => new \Zend_Db_Expr('null')],
+            $this->getTable('email_contact'),
+            ['email_imported' => $this->expressionFactory->create(["expression" => 'null'])],
             $conn->quoteInto(
                 'email_imported is ?',
-                new \Zend_Db_Expr('not null')
+                $this->expressionFactory->create(["expression" => 'not null'])
             )
         );
 
@@ -104,11 +112,11 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $conn = $this->getConnection();
 
         $num = $conn->update(
-            $conn->getTableName('email_contact'),
-            ['subscriber_imported' => new \Zend_Db_Expr('null')],
+            $this->getTable('email_contact'),
+            ['subscriber_imported' => $this->expressionFactory->create(["expression" => 'null'])],
             $conn->quoteInto(
                 'subscriber_imported is ?',
-                new \Zend_Db_Expr('not null')
+                $this->expressionFactory->create(["expression" => 'not null'])
             )
         );
 
@@ -118,36 +126,36 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Unsubscribe a contact from email_contact/newsletter table.
      *
-     * @param array $data
+     * @param array $emails
      * @return int
      */
-    public function unsubscribe($data)
+    public function unsubscribe($emails)
     {
-        if (empty($data)) {
-            return 0;
+        if (! empty($emails) && is_array($emails)) {
+            $write = $this->getConnection();
+
+            //un-subscribe from the email contact table.
+            $updated = $write->update(
+                $this->getMainTable(),
+                [
+                    'is_subscriber' => $this->expressionFactory->create(["expression" => 'null']),
+                    'subscriber_status' => \Magento\Newsletter\Model\Subscriber::STATUS_UNSUBSCRIBED,
+                    'suppressed' => '1',
+                ],
+                ["email IN (?)" => $emails]
+            );
+
+            // un-subscribe newsletter subscribers
+            $write->update(
+                $this->getTable('newsletter_subscriber'),
+                ['subscriber_status' => \Magento\Newsletter\Model\Subscriber::STATUS_UNSUBSCRIBED],
+                ["subscriber_email IN (?)" => $emails]
+            );
+
+            return $updated;
         }
-        $write = $this->getConnection();
-        $emails = '"' . implode('","', $data) . '"';
 
-        //un-subscribe from the email contact table.
-        $updated = $write->update(
-            $this->getMainTable(),
-            [
-                'is_subscriber' => new \Zend_Db_Expr('null'),
-                'subscriber_status' => \Magento\Newsletter\Model\Subscriber::STATUS_UNSUBSCRIBED,
-                'suppressed' => '1',
-            ],
-            ["email IN (?)" => $emails]
-        );
-
-        // un-subscribe newsletter subscribers
-        $write->update(
-            $this->getTable('newsletter_subscriber'),
-            ['subscriber_status' => \Magento\Newsletter\Model\Subscriber::STATUS_UNSUBSCRIBED],
-            ["subscriber_email IN (?)" => $emails]
-        );
-
-        return $updated;
+        return 0;
     }
 
     /**
@@ -213,7 +221,6 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             return 0;
         }
         $write = $this->getConnection();
-        $ids = implode(', ', $ids);
         //update subscribers imported
         $updated = $write->update(
             $this->getMainTable(),
@@ -229,17 +236,18 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param array $emails
      * @param array $statuses
+     * @param string|boolean $brand
      *
      * @return \Magento\Newsletter\Model\ResourceModel\Subscriber\Collection
      */
-    public function getCollectionForSubscribersByEmails($emails, $statuses)
+    public function getCollectionForSubscribersByEmails($emails, $statuses, $brand)
     {
-        $salesOrder = $this->getConnection()->getTableName('sales_order');
-        $salesOrderItem = $this->getConnection()->getTableName('sales_order_item');
-        $catalogProductEntityInt = $this->getConnection()->getTableName('catalog_product_entity_int');
-        $eavAttribute = $this->getConnection()->getTableName('eav_attribute');
-        $eavAttributeOptionValue = $this->getConnection()->getTableName('eav_attribute_option_value');
-        $catalogCategoryProductIndex = $this->getConnection()->getTableName('catalog_category_product');
+        $salesOrder = $this->getTable('sales_order');
+        $salesOrderItem = $this->getTable('sales_order_item');
+        $catalogProductEntityInt = $this->getTable('catalog_product_entity_int');
+        $eavAttribute = $this->getTable('eav_attribute');
+        $eavAttributeOptionValue = $this->getTable('eav_attribute_option_value');
+        $catalogCategoryProductIndex = $this->getTable('catalog_category_product');
 
         $collection = $this->subscribersCollection->create()
             ->addFieldToSelect([
@@ -273,45 +281,15 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $columns = $this->buildCollectionColumns($salesOrder, $salesOrderItem, $catalogCategoryProductIndex);
 
-        /**
-         * CatalogStaging fix.
-         * @todo this will fix https://github.com/magento/magento2/issues/6478
-         */
-        $rowIdExists = $this->isRowIdExistsInCatalogProductEntityId();
-
-        if ($rowIdExists) {
-            $mostData = new \Zend_Db_Expr(
-                "(
-                    SELECT eaov.value from $salesOrder sfo
-                    LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                    LEFT JOIN $catalogProductEntityInt pei on pei.row_id = sfoi.product_id
-                    LEFT JOIN $eavAttribute ea ON pei.attribute_id = ea.attribute_id
-                    LEFT JOIN $eavAttributeOptionValue as eaov on pei.value = eaov.option_id
-                    WHERE sfo.customer_email = main_table.subscriber_email
-                    AND ea.attribute_code = 'manufacturer' AND eaov.value is not null
-                    GROUP BY eaov.value
-                    HAVING count(*) > 0
-                    ORDER BY count(*) DESC
-                    LIMIT 1
-                )"
-            );
-        } else {
-            $mostData = new \Zend_Db_Expr(
-                "(
-                    SELECT eaov.value from $salesOrder sfo
-                    LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                    LEFT JOIN $catalogProductEntityInt pei on pei.entity_id = sfoi.product_id
-                    LEFT JOIN $eavAttribute ea ON pei.attribute_id = ea.attribute_id
-                    LEFT JOIN $eavAttributeOptionValue as eaov on pei.value = eaov.option_id
-                    WHERE sfo.customer_email = main_table.subscriber_email
-                    AND ea.attribute_code = 'manufacturer' AND eaov.value is not null
-                    GROUP BY eaov.value
-                    HAVING count(*) > 0
-                    ORDER BY count(*) DESC
-                    LIMIT 1
-                )"
-            );
-        }
+        $mostData = $this->buildMostData(
+            $salesOrder,
+            $salesOrderItem,
+            $catalogProductEntityInt,
+            $eavAttribute,
+            $eavAttributeOptionValue,
+            $brand,
+            true
+        );
 
         $columns['most_brand'] = $mostData;
         $collection->getSelect()->columns(
@@ -370,13 +348,13 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createLastOrderDataColumn($salesOrder)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT created_at FROM $salesOrder 
                 WHERE customer_email = main_table.subscriber_email 
                 ORDER BY created_at DESC 
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -387,13 +365,13 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createLastOrderIdColumn($salesOrder)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT entity_id FROM $salesOrder
                 WHERE customer_email = main_table.subscriber_email 
                 ORDER BY created_at DESC 
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -404,13 +382,13 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createLastIncrementIdColumn($salesOrder)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT increment_id FROM $salesOrder
                 WHERE customer_email = main_table.subscriber_email 
                 ORDER BY created_at DESC 
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -423,15 +401,15 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createFirstCategoryIdColumn($salesOrder, $salesOrderItem, $catalogCategoryProductIndex)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT ccpi.category_id FROM $salesOrder as sfo
                 left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
                 left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
                 WHERE sfo.customer_email = main_table.subscriber_email
                 ORDER BY sfo.created_at ASC, sfoi.price DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -444,15 +422,15 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createLastCategoryIdColumn($salesOrder, $salesOrderItem, $catalogCategoryProductIndex)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT ccpi.category_id FROM $salesOrder as sfo
                 left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
                 left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
                 WHERE sfo.customer_email = main_table.subscriber_email
                 ORDER BY sfo.created_at DESC, sfoi.price DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -464,14 +442,14 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createProductIdForFirstBrandColumn($salesOrder, $salesOrderItem)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT sfoi.product_id FROM $salesOrder as sfo
                 left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
                 WHERE sfo.customer_email = main_table.subscriber_email and sfoi.product_type = 'simple'
                 ORDER BY sfo.created_at ASC, sfoi.price DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -483,14 +461,14 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createProductIdForLastBrandColumn($salesOrder, $salesOrderItem)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT sfoi.product_id FROM $salesOrder as sfo
                 left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
                 WHERE sfo.customer_email = main_table.subscriber_email and sfoi.product_type = 'simple'
                 ORDER BY sfo.created_at DESC, sfoi.price DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -501,8 +479,8 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createWeekDayColumn($salesOrder)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT dayname(created_at) as week_day
                 FROM $salesOrder
                 WHERE customer_email = main_table.subscriber_email
@@ -510,7 +488,7 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 HAVING COUNT(*) > 0
                 ORDER BY (COUNT(*)) DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -521,8 +499,8 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createMonthDayColumn($salesOrder)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT monthname(created_at) as month_day
                 FROM $salesOrder
                 WHERE customer_email = main_table.subscriber_email
@@ -530,7 +508,7 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 HAVING COUNT(*) > 0
                 ORDER BY (COUNT(*)) DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -543,8 +521,8 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function createMostCategoryIdColumn($salesOrder, $salesOrderItem, $catalogCategoryProductIndex)
     {
-        return new \Zend_Db_Expr(
-            "(
+        return $this->expressionFactory->create(
+            ["expression" => "(
                 SELECT ccpi.category_id FROM $salesOrder as sfo
                 LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
                 LEFT JOIN $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
@@ -553,7 +531,7 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 HAVING COUNT(sfoi.product_id) > 0
                 ORDER BY COUNT(sfoi.product_id) DESC
                 LIMIT 1
-            )"
+            )"]
         );
     }
 
@@ -565,7 +543,7 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connection = $this->getConnection();
 
         return $connection->tableColumnExists(
-            $connection->getTableName('catalog_product_entity_int'),
+            $this->getTable('catalog_product_entity_int'),
             'row_id'
         );
     }
@@ -575,58 +553,59 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param  array $customerIds
      * @param  array $statuses
+     * @param string|boolean $brand
      *
      * @return $this
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getCustomerCollectionByIds($customerIds, $statuses)
+    public function getCustomerCollectionByIds($customerIds, $statuses, $brand)
     {
         $customerCollection = $this->buildCustomerCollection($customerIds);
 
-        $quote = $this->getConnection()->getTableName(
+        $quote = $this->getTable(
             'quote'
         );
-        $salesOrder = $this->getConnection()->getTableName(
+        $salesOrder = $this->getTable(
             'sales_order'
         );
-        $customerLog = $this->getConnection()->getTableName(
+        $customerLog = $this->getTable(
             'customer_log'
         );
-        $eavAttribute = $this->getConnection()->getTableName(
+        $eavAttribute = $this->getTable(
             'eav_attribute'
         );
-        $salesOrderGrid = $this->getConnection()->getTableName(
+        $salesOrderGrid = $this->getTable(
             'sales_order_grid'
         );
-        $salesOrderItem = $this->getConnection()->getTableName(
+        $salesOrderItem = $this->getTable(
             'sales_order_item'
         );
-        $catalogCategoryProductIndex = $this->getConnection()->getTableName(
+        $catalogCategoryProductIndex = $this->getTable(
             'catalog_category_product'
         );
-        $eavAttributeOptionValue = $this->getConnection()->getTableName(
+        $eavAttributeOptionValue = $this->getTable(
             'eav_attribute_option_value'
         );
-        $catalogProductEntityInt = $this->getConnection()->getTableName(
+        $catalogProductEntityInt = $this->getTable(
             'catalog_product_entity_int'
         );
 
         // get the last login date from the log_customer table
         $customerCollection->getSelect()->columns([
-            'last_logged_date' => new \Zend_Db_Expr(
-                "(
+            'last_logged_date' => $this->expressionFactory->create(
+                ["expression" => "(
                     SELECT last_login_at 
                     FROM  $customerLog 
                     WHERE customer_id =e.entity_id ORDER BY log_id DESC LIMIT 1
-                )"
+                )"]
             ),
         ]);
 
         // customer order information
         $alias = 'subselect';
 
-        $orderTable = $this->getConnection()->getTableName('sales_order');
+        $orderTable = $this->getTable('sales_order');
         $connection = $this->getConnection();
         $subselect = $connection->select()
             ->from(
@@ -656,7 +635,8 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $salesOrderItem,
             $catalogProductEntityInt,
             $eavAttribute,
-            $eavAttributeOptionValue
+            $eavAttributeOptionValue,
+            $brand
         );
 
         $columnData['most_brand'] = $mostData;
@@ -708,104 +688,105 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $catalogCategoryProductIndex
     ) {
         $columnData = [
-            'last_order_date' => new \Zend_Db_Expr(
-                "(
+            'last_order_date' => $this->expressionFactory->create(
+                ["expression" => "(
                     SELECT created_at
                     FROM $salesOrderGrid
                     WHERE customer_id =e.entity_id ORDER BY created_at DESC LIMIT 1
-                )"
+                )"]
             ),
-            'last_order_id' => new \Zend_Db_Expr(
-                "(
+            'last_order_id' => $this->expressionFactory->create(
+                ["expression" => "(
                     SELECT entity_id
                     FROM $salesOrderGrid
                     WHERE customer_id =e.entity_id ORDER BY created_at DESC LIMIT 1
-                )"
+                )"]
             ),
-            'last_increment_id' => new \Zend_Db_Expr(
-                "(
+            'last_increment_id' => $this->expressionFactory->create(
+                ["expression" => "(
                     SELECT increment_id
                     FROM $salesOrderGrid
                     WHERE customer_id =e.entity_id ORDER BY created_at DESC LIMIT 1
-                )"
+                )"]
             ),
-            'last_quote_id' => new \Zend_Db_Expr(
-                "(
+            'last_quote_id' => $this->expressionFactory->create(
+                ["expression" => "(
                     SELECT entity_id
                     FROM $quote
-                    WHERE customer_id = e.entity_id ORDER BY created_at DESC LIMIT 1)"
+                    WHERE customer_id = e.entity_id ORDER BY created_at DESC LIMIT 1
+                )"]
             ),
-            'first_category_id' => new \Zend_Db_Expr(
-                "(
-                        SELECT ccpi.category_id FROM $salesOrder as sfo
-                        left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                        left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
-                        WHERE sfo.customer_id = e.entity_id
-                        ORDER BY sfo.created_at ASC, sfoi.price DESC
-                        LIMIT 1
-                    )"
+            'first_category_id' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT ccpi.category_id FROM $salesOrder as sfo
+                    left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                    left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
+                    WHERE sfo.customer_id = e.entity_id
+                    ORDER BY sfo.created_at ASC, sfoi.price DESC
+                    LIMIT 1
+                )"]
             ),
-            'last_category_id' => new \Zend_Db_Expr(
-                "(
-                        SELECT ccpi.category_id FROM $salesOrder as sfo
-                        left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                        left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
-                        WHERE sfo.customer_id = e.entity_id
-                        ORDER BY sfo.created_at DESC, sfoi.price DESC
-                        LIMIT 1
-                    )"
+            'last_category_id' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT ccpi.category_id FROM $salesOrder as sfo
+                    left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                    left join $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
+                    WHERE sfo.customer_id = e.entity_id
+                    ORDER BY sfo.created_at DESC, sfoi.price DESC
+                    LIMIT 1
+                )"]
             ),
-            'product_id_for_first_brand' => new \Zend_Db_Expr(
-                "(
-                        SELECT sfoi.product_id FROM $salesOrder as sfo
-                        left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                        WHERE sfo.customer_id = e.entity_id and sfoi.product_type = 'simple'
-                        ORDER BY sfo.created_at ASC, sfoi.price DESC
-                        LIMIT 1
-                    )"
+            'product_id_for_first_brand' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT sfoi.product_id FROM $salesOrder as sfo
+                    left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                    WHERE sfo.customer_id = e.entity_id and sfoi.product_type = 'simple'
+                    ORDER BY sfo.created_at ASC, sfoi.price DESC
+                    LIMIT 1
+                )"]
             ),
-            'product_id_for_last_brand' => new \Zend_Db_Expr(
-                "(
-                        SELECT sfoi.product_id FROM $salesOrder as sfo
-                        left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                        WHERE sfo.customer_id = e.entity_id and sfoi.product_type = 'simple'
-                        ORDER BY sfo.created_at DESC, sfoi.price DESC
-                        LIMIT 1
-                    )"
+            'product_id_for_last_brand' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT sfoi.product_id FROM $salesOrder as sfo
+                    left join $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                    WHERE sfo.customer_id = e.entity_id and sfoi.product_type = 'simple'
+                    ORDER BY sfo.created_at DESC, sfoi.price DESC
+                    LIMIT 1
+                )"]
             ),
-            'week_day' => new \Zend_Db_Expr(
-                "(
-                        SELECT dayname(created_at) as week_day
-                        FROM $salesOrder
-                        WHERE customer_id = e.entity_id
-                        GROUP BY week_day
-                        HAVING COUNT(*) > 0
-                        ORDER BY (COUNT(*)) DESC
-                        LIMIT 1
-                    )"
+            'week_day' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT dayname(created_at) as week_day
+                    FROM $salesOrder
+                    WHERE customer_id = e.entity_id
+                    GROUP BY week_day
+                    HAVING COUNT(*) > 0
+                    ORDER BY (COUNT(*)) DESC
+                    LIMIT 1
+                )"]
             ),
-            'month_day' => new \Zend_Db_Expr(
-                "(
-                        SELECT monthname(created_at) as month_day
-                        FROM $salesOrder
-                        WHERE customer_id = e.entity_id
-                        GROUP BY month_day
-                        HAVING COUNT(*) > 0
-                        ORDER BY (COUNT(*)) DESC
-                        LIMIT 1
-                    )"
+            'month_day' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT monthname(created_at) as month_day
+                    FROM $salesOrder
+                    WHERE customer_id = e.entity_id
+                    GROUP BY month_day
+                    HAVING COUNT(*) > 0
+                    ORDER BY (COUNT(*)) DESC
+                    LIMIT 1
+                )"]
             ),
-            'most_category_id' => new \Zend_Db_Expr(
-                "(
-                        SELECT ccpi.category_id FROM $salesOrder as sfo
-                        LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                        LEFT JOIN $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
-                        WHERE sfo.customer_id = e.entity_id AND ccpi.category_id is not null
-                        GROUP BY category_id
-                        HAVING COUNT(sfoi.product_id) > 0
-                        ORDER BY COUNT(sfoi.product_id) DESC
-                        LIMIT 1
-                    )"
+            'most_category_id' => $this->expressionFactory->create(
+                ["expression" => "(
+                    SELECT ccpi.category_id FROM $salesOrder as sfo
+                    LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                    LEFT JOIN $catalogCategoryProductIndex as ccpi on ccpi.product_id = sfoi.product_id
+                    WHERE sfo.customer_id = e.entity_id AND ccpi.category_id is not null
+                    GROUP BY category_id
+                    HAVING COUNT(sfoi.product_id) > 0
+                    ORDER BY COUNT(sfoi.product_id) DESC
+                    LIMIT 1
+                )"]
             )
         ];
 
@@ -818,58 +799,52 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param string $catalogProductEntityInt
      * @param string $eavAttribute
      * @param string $eavAttributeOptionValue
+     * @param string|boolean $brand
+     * @param boolean $forSubscriber
      *
-     * @return \Zend_Db_Expr
+     * @return string|\Zend_Db_Expr
      */
     private function buildMostData(
         $salesOrder,
         $salesOrderItem,
         $catalogProductEntityInt,
         $eavAttribute,
-        $eavAttributeOptionValue
+        $eavAttributeOptionValue,
+        $brand,
+        $forSubscriber = false
     ) {
+        if (! $brand) {
+            return $this->expressionFactory->create(["expression" => 'NULL']);
+        }
+
+        $where = $forSubscriber == true ?
+            'WHERE sfo.customer_email = main_table.subscriber_email' : 'WHERE sfo.customer_id = e.entity_id ';
+
         /**
          * CatalogStaging fix.
          * @todo this will fix https://github.com/magento/magento2/issues/6478
          */
-        $rowIdExists = $this->isRowIdExistsInCatalogProductEntityId();
+        $leftJoinOnSfoiProductId = $this->isRowIdExistsInCatalogProductEntityId() ?
+            'pei.row_id' : 'pei.entity_id';
 
-        if ($rowIdExists) {
-            $mostData = new \Zend_Db_Expr(
-                "(
-                    SELECT eaov.value from $salesOrder sfo
-                    LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                    LEFT JOIN $catalogProductEntityInt pei on pei.row_id = sfoi.product_id
-                    LEFT JOIN $eavAttribute ea ON pei.attribute_id = ea.attribute_id
-                    LEFT JOIN $eavAttributeOptionValue as eaov on pei.value = eaov.option_id
-                    WHERE sfo.customer_id = e.entity_id 
-                    AND ea.attribute_code = 'manufacturer'
-                    AND eaov.value is not null
-                    GROUP BY eaov.value
-                    HAVING count(*) > 0
-                    ORDER BY count(*) DESC
-                    LIMIT 1
-                )"
-            );
-        } else {
-            $mostData = new \Zend_Db_Expr(
-                "(
-                    SELECT eaov.value from $salesOrder sfo
-                    LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
-                    LEFT JOIN $catalogProductEntityInt pei on pei.entity_id = sfoi.product_id
-                    LEFT JOIN $eavAttribute ea ON pei.attribute_id = ea.attribute_id
-                    LEFT JOIN $eavAttributeOptionValue as eaov on pei.value = eaov.option_id
-                    WHERE sfo.customer_id = e.entity_id
-                    AND ea.attribute_code = 'manufacturer'
-                    AND eaov.value is not null
-                    GROUP BY eaov.value
-                    HAVING count(*) > 0
-                    ORDER BY count(*) DESC
-                    LIMIT 1
-                )"
-            );
-        }
-        return $mostData;
+        $brand = $this->getConnection()->quote($brand);
+
+        return $mostData = $this->expressionFactory->create(
+            ["expression" => "(
+                SELECT eaov.option_id from $salesOrder sfo
+                LEFT JOIN $salesOrderItem as sfoi on sfoi.order_id = sfo.entity_id
+                LEFT JOIN $catalogProductEntityInt pei on $leftJoinOnSfoiProductId = sfoi.product_id
+                LEFT JOIN $eavAttribute ea ON pei.attribute_id = ea.attribute_id
+                LEFT JOIN $eavAttributeOptionValue as eaov on pei.value = eaov.option_id
+                $where
+                AND ea.attribute_code = $brand
+                AND eaov.value is not null
+                GROUP BY eaov.option_id
+                HAVING count(*) > 0
+                ORDER BY count(*) DESC
+                LIMIT 1
+            )"]
+        );
     }
 
     /**
@@ -1032,5 +1007,19 @@ class Contact extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $executedAt = $collection->getFirstItem()->getExecutedAt();
 
         return $executedAt;
+    }
+
+    /**
+     * Update contacts to re-import by customer ids
+     *
+     * @param $customerIds
+     */
+    public function updateNotImportedByCustomerIds($customerIds)
+    {
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            ['email_imported' => $this->expressionFactory->create(["expression" => 'null'])],
+            ["customer_id IN (?)" => $customerIds]
+        );
     }
 }

@@ -12,6 +12,8 @@ use Temando\Shipping\Model\Shipment\ShipmentOriginInterface;
 /**
  * Temando Shipment Model Test
  *
+ * @codingStandardsIgnoreFile
+ *
  * @package  Temando\Shipping\Test\Integration
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)

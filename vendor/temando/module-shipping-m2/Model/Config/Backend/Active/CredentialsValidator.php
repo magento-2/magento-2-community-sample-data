@@ -14,9 +14,6 @@ namespace Temando\Shipping\Model\Config\Backend\Active;
  */
 class CredentialsValidator
 {
-    const MSG_CREDENTIALS_EMPTY = 'Please set API credentials before enabling Magento Shipping.';
-    const MSG_CREDENTIALS_INVALID = 'Magento Shipping authentication failed. Please check your credentials.';
-
     /**
      * @var ApiConnection
      */
@@ -61,7 +58,7 @@ class CredentialsValidator
         };
 
         $validator = new \Zend_Validate_Callback($callback);
-        $message = __(self::MSG_CREDENTIALS_EMPTY);
+        $message = __('Please set API credentials before enabling Magento Shipping.');
         $validator->setMessage($message);
 
         return $validator;
@@ -97,7 +94,7 @@ class CredentialsValidator
         };
 
         $validator = new \Zend_Validate_Callback($callback);
-        $message = __(self::MSG_CREDENTIALS_INVALID);
+        $message = __('Magento Shipping authentication failed. Please check your credentials.');
         $validator->setMessage($message);
 
         return $validator;

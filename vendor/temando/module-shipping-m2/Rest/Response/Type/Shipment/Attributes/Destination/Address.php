@@ -46,6 +46,11 @@ class Address
     private $administrativeArea;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
      * @return bool
      */
     public function getIsOrganisation()
@@ -145,5 +150,21 @@ class Address
     public function setAdministrativeArea($administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 }

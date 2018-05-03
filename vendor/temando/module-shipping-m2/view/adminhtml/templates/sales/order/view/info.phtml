@@ -7,8 +7,6 @@
  * @var \Temando\Shipping\Block\Adminhtml\Sales\Order\View\Info $block
  */
 
-// @codingStandardsIgnoreFile
-
 $order = $block->getOrder();
 
 $orderAdminDate = $block->formatDate(
@@ -24,6 +22,7 @@ $orderStoreDate = $block->formatDate(
     $block->getTimezoneForStore($order->getStore())
 );
 ?>
+<?php // @codingStandardsIgnoreStart ?>
 
 <section class="admin__page-section order-view-account-information">
     <div class="admin__page-section-title">
@@ -32,12 +31,16 @@ $orderStoreDate = $block->formatDate(
     <div class="admin__page-section-content">
         <div class="admin__page-section-item order-information">
             <?php /* Order Information */ ?>
-            <?php $confirmationEmailStatusMessage = $order->getEmailSent() ? __('The order confirmation email was sent') : __('The order confirmation email is not sent'); ?>
+            <?php
+            $confirmationEmailStatusMessage = $order->getEmailSent()
+                ? __('The order confirmation email was sent')
+                : __('The order confirmation email is not sent');
+            ?>
             <div class="admin__page-section-item-title">
                 <span class="title">
-                    <?php if ($block->getNoUseOrderLink()): ?>
+                    <?php if ($block->getNoUseOrderLink()) : ?>
                         <?= $block->escapeHtml(__('Order # %1', $order->getRealOrderId())) ?> (<span><?= $block->escapeHtml($confirmationEmailStatusMessage) ?></span>)
-                    <?php else: ?>
+                    <?php else : ?>
                         <a href="<?= $block->escapeHtml($block->getViewUrl($order->getId())) ?>"><?= $block->escapeHtml(__('Order # %1', $order->getRealOrderId())) ?></a>
                         <span>(<?= $block->escapeHtml($confirmationEmailStatusMessage) ?>)</span>
                     <?php endif; ?>
@@ -49,7 +52,7 @@ $orderStoreDate = $block->formatDate(
                     <th><?= $block->escapeHtml(__('Order Date')) ?></th>
                     <td><?= $block->escapeHtml($orderAdminDate) ?></td>
                 </tr>
-                <?php if ($orderAdminDate != $orderStoreDate):?>
+                <?php if ($orderAdminDate != $orderStoreDate) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Order Date (%1)', $block->getTimezoneForStore($order->getStore()))) ?></th>
                         <td><?= $block->escapeHtml($orderStoreDate) ?></td>
@@ -60,13 +63,13 @@ $orderStoreDate = $block->formatDate(
                     <td><span id="order_status"><?= $block->escapeHtml($order->getStatusLabel()) ?></span></td>
                 </tr>
                 <?= /* @noEscape */ $block->getChildHtml() ?>
-                <?php if ($block->isSingleStoreMode() == false):?>
+                <?php if ($block->isSingleStoreMode() == false) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Purchased From')) ?></th>
                         <td><?= $block->escapeHtml($block->getOrderStoreName(), ['br']) ?></td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($order->getRelationChildId()): ?>
+                <?php if ($order->getRelationChildId()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Link to the New Order')) ?></th>
                         <td>
@@ -76,7 +79,7 @@ $orderStoreDate = $block->formatDate(
                         </td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($order->getRelationParentId()): ?>
+                <?php if ($order->getRelationParentId()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Link to the Previous Order')) ?></th>
                         <td>
@@ -86,31 +89,36 @@ $orderStoreDate = $block->formatDate(
                         </td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($order->getRemoteIp() && $block->shouldDisplayCustomerIp()): ?>
+                <?php if ($order->getRemoteIp() && $block->shouldDisplayCustomerIp()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Placed from IP')) ?></th>
-                        <td><?= $block->escapeHtml($order->getRemoteIp()); echo $order->getXForwardedFor() ? ' (' . $block->escapeHtml($order->getXForwardedFor()) . ')' : ''; ?></td>
+                        <td>
+                            <?= $block->escapeHtml($order->getRemoteIp()); ?>
+                            <?php if ($order->getXForwardedFor()) : ?>
+                                (<?= $block->escapeHtml($order->getXForwardedFor()) ?>)
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($order->getGlobalCurrencyCode() != $order->getBaseCurrencyCode()): ?>
+                <?php if ($order->getGlobalCurrencyCode() != $order->getBaseCurrencyCode()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('%1 / %2 rate:', $order->getGlobalCurrencyCode(), $order->getBaseCurrencyCode())) ?></th>
                         <td><?= $block->escapeHtml($order->getBaseToGlobalRate()) ?></td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($order->getBaseCurrencyCode() != $order->getOrderCurrencyCode()): ?>
+                <?php if ($order->getBaseCurrencyCode() != $order->getOrderCurrencyCode()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('%1 / %2 rate:', $order->getOrderCurrencyCode(), $order->getBaseCurrencyCode())) ?></th>
                         <td><?= $block->escapeHtml($order->getBaseToOrderRate()) ?></td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($extOrderId = $block->getExtOrderId()): ?>
+                <?php if ($extOrderId = $block->getExtOrderId()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Magento Shipping Order ID')) ?></th>
                         <td><?= $block->escapeHtml($extOrderId) ?></td>
                     </tr>
                 <?php endif; ?>
-                <?php if ($block->hasExtShipment()): ?>
+                <?php if ($block->hasExtShipment()) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Magento Shipping Shipment ID')) ?></th>
                         <td><?= $block->escapeHtml($block->getExtShipmentId()) ?></td>
@@ -137,18 +145,18 @@ $orderStoreDate = $block->formatDate(
                     <tr>
                         <th><?= $block->escapeHtml(__('Customer Name')) ?></th>
                         <td>
-                            <?php if ($customerUrl = $block->getCustomerViewUrl()): ?>
+                            <?php if ($customerUrl = $block->getCustomerViewUrl()) : ?>
                                 <a href="<?= $block->escapeUrl($customerUrl) ?>" target="_blank">
                                     <span><?= $block->escapeHtml($order->getCustomerName()) ?></span>
                                 </a>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <?= $block->escapeHtml($order->getCustomerName()) ?>
                             <?php endif; ?>
                         </td>
                     </tr>
                     <tr>
                         <th><?= $block->escapeHtml(__('Email')) ?></th>
-                        <td><a href="mailto:<?php echo $block->escapeHtml($order->getCustomerEmail()) ?>"><?php echo $block->escapeHtml($order->getCustomerEmail()) ?></a></td>
+                        <td><a href="mailto:<?= $block->escapeHtml($order->getCustomerEmail()) ?>"><?= $block->escapeHtml($order->getCustomerEmail()) ?></a></td>
                     </tr>
                     <?php if ($groupName = $block->getCustomerGroupName()) : ?>
                         <tr>
@@ -156,7 +164,7 @@ $orderStoreDate = $block->formatDate(
                             <td><?= $block->escapeHtml($groupName) ?></td>
                         </tr>
                     <?php endif; ?>
-                    <?php foreach ($block->getCustomerAccountData() as $data):?>
+                    <?php foreach ($block->getCustomerAccountData() as $data) : ?>
                         <tr>
                             <th><?= $block->escapeHtml($data['label']) ?></th>
                             <td><?= $block->escapeHtml($data['value'], ['br']) ?></td>
@@ -182,7 +190,7 @@ $orderStoreDate = $block->formatDate(
             </div>
             <address class="admin__page-section-item-content"><?= /* @noEscape */ $block->getFormattedAddress($order->getBillingAddress()); ?></address>
         </div>
-        <?php if (!$block->getOrder()->getIsVirtual()): ?>
+        <?php if (!$block->getOrder()->getIsVirtual()) : ?>
             <div class="admin__page-section-item order-shipping-address">
                 <?php /* Shipping Address */ ?>
                 <div class="admin__page-section-item-title">

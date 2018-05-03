@@ -15,6 +15,7 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Utils;
@@ -102,7 +103,7 @@ class DocBlocks
                 $indent = Utils::calculateTrailingWhitespaceIndent($tokens[$nextIndex - 1]);
             }
 
-            $newPrevContent = $this->fixWhitespaceBefore($prevToken->getContent(), $indent);
+            $newPrevContent = $this->fixWhitespaceBeforeDocblock($prevToken->getContent(), $indent);
             if ($newPrevContent) {
                 $tokens[$prevIndex] = new Token(array($prevToken->getId(), $newPrevContent));
             } else {
@@ -123,18 +124,16 @@ class DocBlocks
      */
     private function fixDocBlock($content, $indent)
     {
-        return ltrim(preg_replace('/^[ \t]*\*/m', $indent.' *', $content));
+        return ltrim(Preg::replace('/^[ \t]*\*/m', $indent.' *', $content));
     }
 
     /**
-     * Fix whitespace before the Docblock.
-     *
      * @param string $content Whitespace before Docblock
      * @param string $indent  Indentation of the documented subject
      *
      * @return string Whitespace including correct indentation for Dockblock after this whitespace
      */
-    private function fixWhitespaceBefore($content, $indent)
+    private function fixWhitespaceBeforeDocblock($content, $indent)
     {
         return rtrim($content, " \t").$indent;
     }

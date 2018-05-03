@@ -51,7 +51,7 @@ class OrderItemInterfaceBuilder extends AbstractSimpleObjectBuilder
      */
     public function setRateRequest(RateRequest $rateRequest)
     {
-        $currencyCode = $rateRequest->getPackageCurrency();
+        $currencyCode = $rateRequest->getBaseCurrency();
         if ($currencyCode instanceof Currency) {
             $currencyCode = $currencyCode->getCurrencyCode();
         }

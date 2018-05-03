@@ -34,6 +34,7 @@ class DispatchActions extends Column
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item[$key])) {
                     if ($item['status'] !== 'processed') {
+                        // @codingStandardsIgnoreLine
                         $linkTemplate = '<a href="#" onClick="require(\'uiRegistry\').get(\'%s.%s\').set(\'params.t\', Date.now()); return false;">%s</a>';
                         $cellHtml = sprintf(
                             $linkTemplate,

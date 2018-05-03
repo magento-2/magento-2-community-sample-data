@@ -17,10 +17,8 @@ use PhpCsFixer\AbstractDoctrineAnnotationFixer;
 use PhpCsFixer\Doctrine\Annotation\Tokens;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 
-/**
- * Fixes Doctrine annotations indentation.
- */
 final class DoctrineAnnotationIndentationFixer extends AbstractDoctrineAnnotationFixer
 {
     /**
@@ -78,7 +76,7 @@ final class DoctrineAnnotationIndentationFixer extends AbstractDoctrineAnnotatio
 
             $previousLineBracesDelta = $currentLineDelta;
 
-            $token->setContent(preg_replace(
+            $token->setContent(Preg::replace(
                 '/(\n( +\*)?) *$/',
                 '$1'.str_repeat(' ', 4 * $indentLevel + 1),
                 $token->getContent()

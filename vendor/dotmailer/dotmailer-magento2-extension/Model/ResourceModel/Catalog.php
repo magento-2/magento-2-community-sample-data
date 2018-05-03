@@ -8,6 +8,20 @@ namespace Dotdigitalgroup\Email\Model\ResourceModel;
 class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
+     * @var \Magento\Reports\Model\ResourceModel\Product\Index\Collection\AbstractCollection
+     */
+    private $productIndexcollection;
+
+    /**
+     * @var \Magento\Catalog\Model\Product\Visibility
+     */
+    private $productVisibility;
+
+    /**
+     * @var \Magento\Catalog\Model\Config
+     */
+    private $config;
+    /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
     private $productFactory;
@@ -55,9 +69,12 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Catalog constructor.
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Category $categoryResource
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Catalog\Model\ResourceModel\Category $categoryResource
      * @param \Dotdigitalgroup\Email\Helper\Data $helper
+     * @param \Dotdigitalgroup\Email\Model\Product\Index\Collection $productIndexCollection
+     * @param \Magento\Catalog\Model\Config $config
+     * @param \Magento\Catalog\Model\Product\Visibility $productVisibility
      * @param \Magento\Catalog\Model\CategoryFactory $categoryFactory
      * @param \Magento\Reports\Model\ResourceModel\Product\CollectionFactory $reportProductCollection
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
@@ -65,9 +82,12 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param null $connectionName
      */
     public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Category $categoryResource,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Catalog\Model\ResourceModel\Category $categoryResource,
         \Dotdigitalgroup\Email\Helper\Data $helper,
+        \Dotdigitalgroup\Email\Model\Product\Index\Collection $productIndexCollection,
+        \Magento\Catalog\Model\Config $config,
+        \Magento\Catalog\Model\Product\Visibility $productVisibility,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         \Magento\Reports\Model\ResourceModel\Product\CollectionFactory $reportProductCollection,
         \Magento\Catalog\Model\ProductFactory $productFactory,
@@ -76,6 +96,9 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     ) {
     
         $this->helper                   = $helper;
+        $this->productIndexcollection = $productIndexCollection;
+        $this->config = $config;
+        $this->productVisibility = $productVisibility;
         $this->productFactory           = $productFactory;
         $this->categoryFactory          = $categoryFactory;
         $this->reportProductCollection  = $reportProductCollection;
@@ -111,7 +134,7 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             if ($category->getId()) {
                 $reportProductCollection->getSelect()
                     ->joinLeft(
-                        ['ccpi' => $this->_resources->getTableName('catalog_category_product_index')],
+                        ['ccpi' => $this->getTable('catalog_category_product_index')],
                         'e.entity_id = ccpi.product_id',
                         ['category_id']
                     )
@@ -131,7 +154,7 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             if ($category->getId()) {
                 $reportProductCollection->getSelect()
                     ->joinLeft(
-                        ['ccpi' => $this->_resources->getTableName('catalog_category_product_index')],
+                        ['ccpi' => $this->getTable('catalog_category_product_index')],
                         'e.entity_id  = ccpi.product_id',
                         ['category_id']
                     )
@@ -150,17 +173,30 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get recently viewed.
      *
+     * @param int $customerId
      * @param int $limit
      *
      * @return array
      */
-    public function getRecentlyViewed($limit)
+    public function getRecentlyViewed($customerId, $limit)
     {
-        $collection = $this->viewed;
-        $productItems = $collection->getItemsCollection()
-            ->setPageSize($limit);
+        $attributes = $this->config->getProductAttributes();
 
-        return $productItems->getColumnValues('product_id');
+        $this->productIndexcollection->addAttributeToSelect($attributes);
+        $this->productIndexcollection->setCustomerId($customerId);
+        $this->productIndexcollection->addUrlRewrite()->setPageSize(
+            $limit
+        )->setCurPage(
+            1
+        );
+
+        /* Price data is added to consider item stock status using price index */
+        $collection = $this->productIndexcollection->addPriceData()
+            ->addIndexFilter()
+            ->setAddedAtOrder()
+            ->setVisibility($this->productVisibility->getVisibleInSiteIds());
+
+        return $collection->getColumnValues('product_id');
     }
 
     /**
@@ -311,7 +347,7 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         }
         $num = $conn->update(
-            $conn->getTableName('email_catalog'),
+            $this->getTable('email_catalog'),
             [
                 'imported' => new \Zend_Db_Expr('null'),
                 'modified' => new \Zend_Db_Expr('null'),
@@ -334,13 +370,13 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         try {
             $coreResource = $this->getConnection();
-            $tableName = $coreResource->getTableName('email_catalog');
+            $tableName = $this->getTable('email_catalog');
 
             if ($modified) {
                 $coreResource->update(
                     $tableName,
                     [
-                        'modified' => 'null',
+                        'modified' => new \Zend_Db_Expr('null'),
                         'updated_at' => gmdate('Y-m-d H:i:s'),
                     ],
                     ["product_id IN (?)" => $ids]
@@ -370,7 +406,7 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function removeOrphanProducts()
     {
         $write = $this->getConnection();
-        $catalogTable = $write->getTableName('email_catalog');
+        $catalogTable = $this->getTable('email_catalog');
         $select = $write->select();
         $select->reset()
             ->from(
@@ -379,7 +415,7 @@ class Catalog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             )
             ->joinLeft(
                 [
-                    'e' => $write->getTableName(
+                    'e' => $this->getTable(
                         'catalog_product_entity'
                     ),
                 ],

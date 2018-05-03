@@ -5,6 +5,7 @@
 namespace Temando\Shipping\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
+
 /**
  * Temando Documentation Collection Test
  *

@@ -10,7 +10,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\AddressExtensionInterface;
 use Magento\Quote\Api\Data\AddressExtensionInterfaceFactory;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Api\Data\Checkout\AddressInterfaceFactory;
+use Temando\Shipping\Model\Config\ModuleConfigInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
 
 /**
@@ -23,6 +25,11 @@ use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
  */
 class LoadCheckoutFieldsObserver implements ObserverInterface
 {
+    /**
+     * @var ModuleConfigInterface
+     */
+    private $config;
+
     /**
      * @var AddressRepositoryInterface
      */
@@ -39,19 +46,31 @@ class LoadCheckoutFieldsObserver implements ObserverInterface
     private $addressExtensionFactory;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * SaveCheckoutFieldsObserver constructor.
-     * @param AddressRepositoryInterface $addressRepository
-     * @param AddressInterfaceFactory $addressFactory
+     *
+     * @param ModuleConfigInterface            $config
+     * @param AddressRepositoryInterface       $addressRepository
+     * @param AddressInterfaceFactory          $addressFactory
      * @param AddressExtensionInterfaceFactory $addressExtensionFactory
+     * @param StoreManagerInterface            $storeManager
      */
     public function __construct(
+        ModuleConfigInterface $config,
         AddressRepositoryInterface $addressRepository,
         AddressInterfaceFactory $addressFactory,
-        AddressExtensionInterfaceFactory $addressExtensionFactory
+        AddressExtensionInterfaceFactory $addressExtensionFactory,
+        StoreManagerInterface $storeManager
     ) {
-        $this->addressRepository = $addressRepository;
-        $this->addressFactory = $addressFactory;
+        $this->config                  = $config;
+        $this->addressRepository       = $addressRepository;
+        $this->addressFactory          = $addressFactory;
         $this->addressExtensionFactory = $addressExtensionFactory;
+        $this->storeManager            = $storeManager;
     }
 
     /**
@@ -60,6 +79,10 @@ class LoadCheckoutFieldsObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if (!$this->config->isEnabled($this->storeManager->getStore()->getId())) {
+            return;
+        }
+
         $quoteAddress = null;
 
         if ($observer->hasData('shipping_assignment')) {

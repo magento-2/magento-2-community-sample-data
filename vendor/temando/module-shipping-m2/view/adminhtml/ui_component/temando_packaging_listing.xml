@@ -34,6 +34,7 @@
             </storageConfig>
             <updateUrl path="mui/index/render"/>
         </settings>
+        <aclResource>Temando_Shipping::packaging</aclResource>
         <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="temando_packaging_listing_data_source">
             <settings>
                 <requestFieldName>id</requestFieldName>

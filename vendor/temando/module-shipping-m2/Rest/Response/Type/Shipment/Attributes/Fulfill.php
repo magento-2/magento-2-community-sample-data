@@ -4,6 +4,8 @@
  */
 namespace Temando\Shipping\Rest\Response\Type\Shipment\Attributes;
 
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill\CarrierBooking;
+
 /**
  * Temando API Shipment Fulfill Response Type
  *
@@ -32,7 +34,7 @@ class Fulfill
      * @param \Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill\CarrierBooking $carrierBooking
      * @return void
      */
-    public function setCarrierBooking(\Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill\CarrierBooking $carrierBooking)
+    public function setCarrierBooking(CarrierBooking $carrierBooking)
     {
         $this->carrierBooking = $carrierBooking;
     }

@@ -4,6 +4,8 @@
  */
 namespace Temando\Shipping\Sync\Exception;
 
+use Magento\Framework\Exception\LocalizedException;
+
 /**
  * Temando General Event Exception
  *
@@ -14,26 +16,32 @@ namespace Temando\Shipping\Sync\Exception;
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link     http://www.temando.com/
  */
-class EventException extends \Exception
+class EventException extends LocalizedException
 {
     /**
-     * @param string $entityType
+     * @param string          $entityType
      * @param \Exception|null $previous
+     *
      * @return static
      */
     public static function unknownEntityType($entityType, \Exception $previous = null)
     {
-        return new static("Entity type '$entityType' cannot be processed.", 0, $previous);
+        $phrase = __("Entity type '%1' cannot be processed.", $entityType);
+
+        return new static($phrase, $previous);
     }
 
     /**
      * @param string $entityType
      * @param string $eventType
+     *
      * @return static
      */
     public static function unknownOperation($entityType, $eventType)
     {
-        return new static("The '$eventType' operation is not supported for '$entityType' entities.");
+        $phrase = __("The '%1' operation is not supported for '%2' entities.", $eventType, $entityType);
+
+        return new static($phrase);
     }
 
     /**
@@ -41,17 +49,19 @@ class EventException extends \Exception
      * @param string $eventType
      * @param string $entityId
      * @param string $reason
+     *
      * @return static
      */
     public static function operationSkipped($entityType, $eventType, $entityId, $reason = '')
     {
-        $message = "The '$eventType' operation was skipped for {$entityType} {$entityId}";
-        if ($reason) {
-            $message.= ": $reason";
-        } else {
-            $message.= '.';
-        }
+        $phrase = __(
+            "The '%1' operation was skipped for %2 %3%4",
+            $eventType,
+            $entityType,
+            $entityId,
+            $reason ? ": $reason" : '.'
+        );
 
-        return new static($message);
+        return new static($phrase);
     }
 }

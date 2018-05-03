@@ -4,13 +4,15 @@
 ?>
 <?php $helper = $this->helper(\Dotdigitalgroup\Email\Helper\Data::class); ?>
 
-<script type="text/x-magento-init">
-    {
-        "*": {
-            "trackingCode": {
-                "isEnabled": "<?= /* @noEscape */ $helper->isPageTrackingEnabled(); ?>"
+<?php if ($helper->isPageTrackingEnabled()) : ?>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "dmpt": {
+                    "regionPrefix": "<?= /* @noEscape */ $helper->getRegionPrefix(); ?>"
+                }
             }
         }
-    }
-</script>
+    </script>
+<?php endif; ?>
 

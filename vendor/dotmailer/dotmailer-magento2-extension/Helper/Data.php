@@ -19,6 +19,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
 
     const MODULE_NAME = 'Dotdigitalgroup_Email';
+    const DM_FIELD_LIMIT = 250;
 
     /**
      * @var \Magento\Config\Model\ResourceModel\Config
@@ -53,7 +54,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @var \Magento\Framework\Module\ModuleListInterface
      */
-    public $moduleInterface;
+    public $fullModuleList;
 
     /**
      * @var \Magento\Customer\Model\CustomerFactory
@@ -111,6 +112,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $userResource;
 
     /**
+     * @var \Magento\Framework\Encryption\EncryptorInterface
+     */
+    public $encryptor;
+
+    /**
      * Data constructor.
      * @param \Magento\Framework\App\ProductMetadata $productMetadata
      * @param \Dotdigitalgroup\Email\Model\ContactFactory $contactFactory
@@ -131,6 +137,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Quote\Model\ResourceModel\Quote $quoteResource
      * @param \Magento\Quote\Model\QuoteFactory $quoteFactory
      * @param \Magento\User\Model\ResourceModel\User $userResource
+     * @var \Magento\Framework\Encryption\EncryptorInterface $encryptor
      */
     public function __construct(
         \Magento\Framework\App\ProductMetadata $productMetadata,
@@ -151,7 +158,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Quote\Model\ResourceModel\Quote $quoteResource,
         \Magento\Quote\Model\QuoteFactory $quoteFactory,
-        \Magento\User\Model\ResourceModel\User $userResource
+        \Magento\User\Model\ResourceModel\User $userResource,
+        \Magento\Framework\Encryption\EncryptorInterface $encryptor
     ) {
         $this->serializer       = $serilizer;
         $this->adapter          = $adapter;
@@ -160,7 +168,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->resourceConfig   = $resourceConfig;
         $this->storeManager     = $storeManager;
         $this->customerFactory  = $customerFactory;
-        $this->moduleInterface  = $moduleListInterface;
+        $this->fullModuleList   = $moduleListInterface;
         $this->store            = $store;
         $this->writer = $writer;
         $this->clientFactory = $clientFactory;
@@ -170,6 +178,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->quoteFactory = $quoteFactory;
         $this->userResource = $userResource;
         $this->contactResource = $contactResource;
+        $this->encryptor = $encryptor;
 
         parent::__construct($context);
         $this->fileHelper = $fileHelper;
@@ -249,7 +258,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return bool
      */
-    public function authIpAddress()
+    public function isAllowed()
     {
         if ($ipString = $this->getConfigValue(
             \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_IP_RESTRICTION_ADDRESSES,
@@ -345,6 +354,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get website for selected scope in admin
+     *
+     * @return \Magento\Store\Api\Data\WebsiteInterface
+     */
+    public function getWebsiteForSelectedScopeInAdmin()
+    {
+        //If website param does not exist then default value returned 0 "default scope"
+        //This is because there is no website param in default scope
+        $websiteId = $this->_request->getParam('website', 0);
+        return $this->storeManager->getWebsite($websiteId);
+    }
+
+    /**
      * Get passcode from config.
      *
      * @return string
@@ -384,6 +406,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->resourceConfig->saveConfig(
             $path,
             $value,
+            $scope,
+            $scopeId
+        );
+    }
+
+    /**
+     * @param $path
+     * @param $scope
+     * @param $scopeId
+     */
+    public function deleteConfigData($path, $scope, $scopeId)
+    {
+        $this->resourceConfig->deleteConfig(
+            $path,
             $scope,
             $scopeId
         );
@@ -558,7 +594,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string $username
      * @param string $password
      *
-     * @throws \Magento\Framework\Exception\LocalizedException
      *
      * @return \Dotdigitalgroup\Email\Model\Apiconnector\Client
      */
@@ -702,10 +737,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getApiPassword($website = 0)
     {
-        return $this->getWebsiteConfig(
+        $value = $this->getWebsiteConfig(
             \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_API_PASSWORD,
             $website
         );
+        return $this->encryptor->decrypt($value);
     }
 
     /**
@@ -1237,7 +1273,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
+
         unset($mappedData['custom_attributes'], $mappedData['abandoned_prod_name']);
+
         //skip non mapped customer datafields
         foreach ($mappedData as $key => $value) {
             if (!$value) {
@@ -1334,25 +1372,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->storeManager->getStore()->getUrl(
             'connector/ajax/emailcapture',
-            ['_secure' => $this->isWebsiteSecure()]
+            ['_secure' => $this->storeManager->getStore()->isCurrentlySecure()]
         );
-    }
-
-    /**
-     * Check if website is secure.
-     *
-     * @return bool
-     */
-    public function isWebsiteSecure()
-    {
-        $isFrontendSecure  = $this->storeManager->getStore()->isFrontUrlSecure();
-        $isCurrentlySecure = $this->storeManager->getStore()->isCurrentlySecure();
-
-        if ($isFrontendSecure && $isCurrentlySecure) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -1570,7 +1591,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getConnectorVersion()
     {
-        return $this->moduleInterface->getOne(self::MODULE_NAME)['setup_version'];
+        return $this->fullModuleList->getOne(self::MODULE_NAME)['setup_version'];
     }
 
     /**
@@ -1766,5 +1787,75 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $response = $client->postDataFields($datafield, $type, $visibility, $default);
 
         return $response;
+    }
+
+    /**
+     * Can show additional books?
+     *
+     * @param $website
+     * @return mixed
+     */
+    public function getCanShowAdditionalSubscriptions($website)
+    {
+        return $this->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_ADDRESSBOOK_PREF_CAN_CHANGE_BOOKS,
+            $website
+        );
+    }
+
+    /**
+     * Can show data fields?
+     *
+     * @param $website
+     * @return mixed
+     */
+    public function getCanShowDataFields($website)
+    {
+        return $this->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_ADDRESSBOOK_PREF_CAN_SHOW_FIELDS,
+            $website
+        );
+    }
+
+    /**
+     * Address book ids to display
+     *
+     * @param $website
+     * @return array
+     */
+    public function getAddressBookIdsToShow($website)
+    {
+        $bookIds = $this->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_ADDRESSBOOK_PREF_SHOW_BOOKS,
+            $website
+        );
+
+        if (empty($bookIds)) {
+            return [];
+        }
+
+        $additionalFromConfig = explode(',', $bookIds);
+        //unset the default option - for multi select
+        if ($additionalFromConfig[0] == '0') {
+            unset($additionalFromConfig[0]);
+        }
+
+        return $additionalFromConfig;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegionPrefix()
+    {
+        $websiteId = $this->getWebsite()->getId();
+        $apiEndpoint = $this->getApiEndPointFromConfig($websiteId);
+
+        if (empty($apiEndpoint)) {
+            return '';
+        }
+
+        preg_match("/https:\/\/(.*)api.dotmailer.com/", $apiEndpoint, $matches);
+        return $matches[1];
     }
 }

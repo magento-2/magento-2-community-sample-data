@@ -7,7 +7,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Temando\Shipping\Block\Adminhtml\Activation\Notice" name="temando_shipping_activation_notice" template="activation/notice.phtml"/>
+            <block class="Temando\Shipping\Block\Adminhtml\Activation\Notice" name="temando_shipping_activation_notice" template="Temando_Shipping::activation/notice.phtml"/>
         </referenceContainer>
     </body>
 </page>

@@ -29,6 +29,8 @@ use Temando\Shipping\Webservice\Config\WsConfigInterface;
  * @link     http://www.temando.com/
  *
  * @api
+ * @deprecated since 1.0.5 | Specific Block class will now handled by abstract block
+ * @see \Temando\Shipping\Block\Adminhtml\ComponentContainer
  */
 class Component extends AbstractComponent
 {
@@ -52,9 +54,9 @@ class Component extends AbstractComponent
      * @param Token                     $token
      * @param DateTime                  $dateTime
      * @param RemoteAddress             $remoteAddress
+     * @param Config                    $securityConfig
      * @param OrderRepositoryInterface  $orderRepository
      * @param ShipmentProviderInterface $shipmentProvider
-     * @param Config                    $securityConfig
      * @param mixed[]                   $data
      */
     public function __construct(
@@ -65,9 +67,9 @@ class Component extends AbstractComponent
         Token $token,
         DateTime $dateTime,
         RemoteAddress $remoteAddress,
+        Config $securityConfig,
         OrderRepositoryInterface $orderRepository,
         ShipmentProviderInterface $shipmentProvider,
-        Config $securityConfig,
         array $data = []
     ) {
         $this->orderRepository = $orderRepository;

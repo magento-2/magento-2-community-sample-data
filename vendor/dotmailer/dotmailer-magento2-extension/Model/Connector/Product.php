@@ -105,6 +105,11 @@ class Product
     public $itemFactory;
 
     /**
+     * @var \Magento\Framework\Stdlib\StringUtils
+     */
+    private $stringUtils;
+
+    /**
      * Product constructor.
      *
      * @param \Magento\Store\Model\StoreManagerInterface                    $storeManagerInterface
@@ -113,6 +118,7 @@ class Product
      * @param \Magento\Catalog\Model\Product\Media\ConfigFactory            $mediaConfigFactory
      * @param \Magento\Catalog\Model\Product\Attribute\Source\StatusFactory $statusFactory
      * @param \Magento\Catalog\Model\Product\VisibilityFactory              $visibilityFactory
+     * @param \Magento\Framework\Stdlib\StringUtils                         $stringUtils
      */
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManagerInterface,
@@ -120,7 +126,8 @@ class Product
         \Magento\CatalogInventory\Model\Stock\ItemFactory $itemFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $mediaConfigFactory,
         \Magento\Catalog\Model\Product\Attribute\Source\StatusFactory $statusFactory,
-        \Magento\Catalog\Model\Product\VisibilityFactory $visibilityFactory
+        \Magento\Catalog\Model\Product\VisibilityFactory $visibilityFactory,
+        \Magento\Framework\Stdlib\StringUtils $stringUtils
     ) {
         $this->itemFactory        = $itemFactory;
         $this->mediaConfigFactory = $mediaConfigFactory;
@@ -128,6 +135,7 @@ class Product
         $this->statusFactory      = $statusFactory;
         $this->helper             = $helper;
         $this->storeManager       = $storeManagerInterface;
+        $this->stringUtils        = $stringUtils;
     }
 
     /**
@@ -175,8 +183,8 @@ class Product
 
         $shortDescription = $product->getShortDescription();
         //limit short description
-        if (mb_strlen($shortDescription) > 250) {
-            $shortDescription = mb_substr($shortDescription, 0, 250);
+        if ($this->stringUtils->strlen($shortDescription) > \Dotdigitalgroup\Email\Helper\Data::DM_FIELD_LIMIT) {
+            $shortDescription = mb_substr($shortDescription, 0, \Dotdigitalgroup\Email\Helper\Data::DM_FIELD_LIMIT);
         }
 
         $this->shortDescription = $shortDescription;
@@ -266,9 +274,7 @@ class Product
 
             foreach ($productAttributeOptions as $productAttribute) {
                 $count = 0;
-                $label = strtolower(
-                    str_replace(' ', '', $productAttribute['label'])
-                );
+                $label = $this->transformProductLabel($productAttribute);
                 $options = [];
                 foreach ($productAttribute['values'] as $attribute) {
                     $options[$count]['option'] = $attribute['default_label'];
@@ -337,5 +343,21 @@ class Product
      */
     public function __wakeup()
     {
+    }
+
+    /**
+     * Transform attribute label to acceptable format
+     *
+     * @param $productAttribute array
+     * @return string
+     */
+    private function transformProductLabel($productAttribute)
+    {
+         $label = strtolower(str_replace(' ', '', $productAttribute['label']));
+
+         $regex = '/([a-zA-Z0-9_\-]+)$/';
+         preg_match($regex, $label, $matches);
+
+         return $matches[1];
     }
 }

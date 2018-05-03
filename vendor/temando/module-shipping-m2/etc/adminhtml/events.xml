@@ -7,7 +7,7 @@
     </event>
     <event name="layout_generate_blocks_after">
         <observer name="temando_remove_order_items" instance="Temando\Shipping\Observer\RemoveOrderItemsObserver"/>
-        <observer name="temando_replace_shipment_template" instance="Temando\Shipping\Observer\SetViewShipmentTemplateObserver"/>
+        <observer name="temando_replace_shipment_template" instance="Temando\Shipping\Observer\PrepareShipmentViewObserver"/>
     </event>
     <event name="admin_system_config_changed_section_carriers">
         <observer name="temando_update_registered_flag" instance="Temando\Shipping\Observer\MerchantRegisteredFlagObserver"/>

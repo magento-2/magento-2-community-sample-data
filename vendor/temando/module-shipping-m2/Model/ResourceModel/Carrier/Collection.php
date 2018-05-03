@@ -4,6 +4,9 @@
  */
 namespace Temando\Shipping\Model\ResourceModel\Carrier;
 
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Temando\Shipping\Model\CarrierInterface;
@@ -31,23 +34,33 @@ class Collection extends ApiCollection
      * @param EntityFactoryInterface $entityFactory
      * @param ManagerInterface $messageManager
      * @param CarrierRepositoryInterface $carrierRepository
+     * @param FilterBuilder $filterBuilder
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         ManagerInterface $messageManager,
+        FilterBuilder $filterBuilder,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         CarrierRepositoryInterface $carrierRepository
     ) {
         $this->carrierRepository = $carrierRepository;
 
-        parent::__construct($entityFactory, $messageManager);
+        parent::__construct($entityFactory, $messageManager, $filterBuilder, $searchCriteriaBuilder);
     }
 
     /**
+     * @param SearchCriteriaInterface $criteria
+     *
      * @return CarrierInterface[]
      */
-    public function fetchData()
+    public function fetchData(SearchCriteriaInterface $criteria)
     {
-        $carriers = $this->carrierRepository->getList();
+        $carriers = $this->carrierRepository->getList(
+            $criteria->getCurrentPage(),
+            $criteria->getPageSize()
+        );
+
         return $carriers;
     }
 }

@@ -15,6 +15,8 @@ use Temando\Shipping\Block\Adminhtml\Template\AbstractComponent;
  * @link     http://www.temando.com/
  *
  * @api
+ * @deprecated since 1.0.5 | Specific Block class will now handled by abstract block
+ * @see \Temando\Shipping\Block\Adminhtml\ComponentContainer
  */
 class Create extends AbstractComponent
 {

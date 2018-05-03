@@ -4,11 +4,15 @@
  */
 namespace Temando\Shipping\Model\ResourceModel\Webservice;
 
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\View\Element\UiComponent\DataProvider\Document;
+use Magento\Framework\Api\Filter;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Data\Collection as DataCollection;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\View\Element\UiComponent\DataProvider\Document;
 
 /**
  * Temando API Resource Collection
@@ -32,24 +36,67 @@ abstract class Collection extends DataCollection
     private $messageManager;
 
     /**
+     * @var FilterBuilder
+     */
+    private $filterBuilder;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+
+    /**
+     * @var Filter[]
+     */
+    private $filters = [];
+
+    /**
      * Collection constructor.
      * @param EntityFactoryInterface $entityFactory
      * @param ManagerInterface $messageManager
+     * @param FilterBuilder $filterBuilder
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        ManagerInterface $messageManager
+        ManagerInterface $messageManager,
+        FilterBuilder $filterBuilder,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->messageManager = $messageManager;
+        $this->filterBuilder = $filterBuilder;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
 
         parent::__construct($entityFactory);
     }
 
     /**
+     * @param string|array $field
+     * @param string|int|array $condition
+     * @throws \Magento\Framework\Exception\LocalizedException if some error in the input could be detected.
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function addFieldToFilter($field, $condition)
+    {
+        foreach ($condition as $type => $value) {
+            $this->filters[]= $this->filterBuilder
+                ->setField($field)
+                ->setValue($value)
+                ->setConditionType($type)
+                ->create();
+        }
+
+        return $this;
+    }
+
+    /**
      * Perform API call
+     *
+     * @param SearchCriteriaInterface $criteria
      * @return \Magento\Framework\DataObject[]
      */
-    abstract public function fetchData();
+    abstract public function fetchData(SearchCriteriaInterface $criteria);
 
     /**
      * Sort documents
@@ -101,7 +148,10 @@ abstract class Collection extends DataCollection
 
         try {
             // load list from webservice
-            $data = $this->fetchData();
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilters($this->filters)
+                ->create();
+            $data = $this->fetchData($searchCriteria);
 
             // shift response items to document class
             foreach ($data as $apiItem) {

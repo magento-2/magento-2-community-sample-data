@@ -7,6 +7,7 @@ namespace Temando\Shipping\Plugin\Multishipping\Checkout;
 use Magento\Checkout\Model\Session;
 use Magento\Multishipping\Block\Checkout\Addresses;
 use Magento\Quote\Model\Quote\Address\Item;
+use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutField;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutFieldsSchema;
 use Temando\Shipping\Model\Config\ModuleConfigInterface;
@@ -35,19 +36,28 @@ class GetAddressesHtmlSelectPlugin
     private $checkoutSession;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * GetAddressesHtmlSelectPlugin constructor.
+     *
      * @param ModuleConfigInterface $moduleConfig
-     * @param CheckoutFieldsSchema $schema
-     * @param Session $checkoutSession
+     * @param CheckoutFieldsSchema  $schema
+     * @param Session               $checkoutSession
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ModuleConfigInterface $moduleConfig,
         CheckoutFieldsSchema $schema,
-        Session $checkoutSession
+        Session $checkoutSession,
+        StoreManagerInterface $storeManager
     ) {
-        $this->moduleConfig = $moduleConfig;
-        $this->schema = $schema;
+        $this->moduleConfig    = $moduleConfig;
+        $this->schema          = $schema;
         $this->checkoutSession = $checkoutSession;
+        $this->storeManager    = $storeManager;
     }
 
     /**
@@ -181,7 +191,7 @@ class GetAddressesHtmlSelectPlugin
      */
     public function afterGetAddressesHtmlSelect(Addresses $subject, $result, Item $item, $index)
     {
-        if (!$this->moduleConfig->isEnabled()) {
+        if (!$this->moduleConfig->isEnabled($this->storeManager->getStore()->getId())) {
             return $result;
         }
 

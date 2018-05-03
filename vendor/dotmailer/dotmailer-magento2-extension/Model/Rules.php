@@ -61,26 +61,27 @@ class Rules extends \Magento\Framework\Model\AbstractModel
 
     /**
      * Rules constructor.
-     * @param Adminhtml\Source\Rules\Type $rulesType
+     *
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
+     * @param Adminhtml\Source\Rules\Type $rulesType
      * @param \Magento\Eav\Model\Config $config
      * @param Json $serializer
-     * @param \Dotdigitalgroup\Email\Model\ResourceModel\Rules $rulesResource
+     * @param ResourceModel\Rules $rulesResource
+     * @param array $data
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
      */
     public function __construct(
-        \Dotdigitalgroup\Email\Model\Adminhtml\Source\Rules\Type $rulesType,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Dotdigitalgroup\Email\Model\Adminhtml\Source\Rules\Type $rulesType,
         \Magento\Eav\Model\Config $config,
         \Dotdigitalgroup\Email\Model\Config\Json $serializer,
         \Dotdigitalgroup\Email\Model\ResourceModel\Rules $rulesResource,
+        array $data = [],
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null
     ) {
         $this->serializer = $serializer;
         $this->config       = $config;
@@ -157,20 +158,6 @@ class Rules extends \Magento\Framework\Model\AbstractModel
         }
         $this->setConditions($this->serializer->serialize($this->getConditions()));
         $this->setWebsiteIds(implode(',', $this->getWebsiteIds()));
-        return $this;
-    }
-
-    /**
-     * After load.
-     *
-     * @return $this
-     */
-    public function _afterLoad()
-    {
-        parent::_afterLoad();
-
-        $this->setCondition($this->serializer->unserialize($this->getConditions()));
-
         return $this;
     }
 

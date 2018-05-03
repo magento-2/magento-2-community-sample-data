@@ -1,4 +1,5 @@
 <?php
+
 namespace Pelago\Tests\Unit;
 
 use Pelago\Emogrifier;
@@ -6,7 +7,8 @@ use Pelago\Emogrifier;
 /**
  * Test case.
  *
- * @author Oliver Klee <typo3-coding@oliverklee.de>
+ * @author Oliver Klee <github@oliverklee.de>
+ * @author Zoli Szabó <zoli.szabo+github@gmail.com>
  */
 class EmogrifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,16 +16,6 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     const LF = "\n";
-
-    /**
-     * @var string
-     */
-    private $html4TransitionalDocumentType = '';
-
-    /**
-     * @var string
-     */
-    private $xhtml1StrictDocumentType = '';
 
     /**
      * @var string
@@ -42,12 +34,8 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->html4TransitionalDocumentType = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" ' .
-            '"http://www.w3.org/TR/REC-html40/loose.dtd">';
-        $this->xhtml1StrictDocumentType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' .
-            '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-
         $this->subject = new Emogrifier();
+        $this->subject->setDebug(true);
     }
 
     /**
@@ -55,7 +43,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \BadMethodCallException
      */
-    public function emogrifyForNoDataSetReturnsThrowsException()
+    public function emogrifyForNoDataSetThrowsException()
     {
         $this->subject->emogrify();
     }
@@ -78,7 +66,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \BadMethodCallException
      */
-    public function emogrifyBodyContentForNoDataSetReturnsThrowsException()
+    public function emogrifyBodyContentForNoDataSetThrowsException()
     {
         $this->subject->emogrifyBodyContent();
     }
@@ -97,11 +85,27 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
+     * @return string[][]
      */
-    public function emogrifyAddsHtmlTagIfNoHtmlTagAndNoHeadTagAreProvided()
+    public function contentWithoutHtmlTagDataProvider()
     {
-        $this->subject->setHtml('<p>Hello</p>');
+        return [
+            'doctype only' => ['<!DOCTYPE html>'],
+            'body content only' => ['<p>Hello</p>'],
+            'HEAD element' => ['<head></head>'],
+            'BODY element' => ['<body></body>'],
+            'HEAD AND BODY element' => ['<head></head><body></body>'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $html
+     * @dataProvider contentWithoutHtmlTagDataProvider
+     */
+    public function emogrifyAddsMissingHtmlTag($html)
+    {
+        $this->subject->setHtml($html);
 
         $result = $this->subject->emogrify();
 
@@ -109,239 +113,148 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
+     * @return string[][]
      */
-    public function emogrifyAddsHtmlTagIfHeadTagIsProvidedButNoHtmlTaqg()
+    public function contentWithoutHeadTagDataProvider()
     {
-        $this->subject->setHtml('<head><title>Hello</title></head><p>World</p>');
+        return [
+            'doctype only' => ['<!DOCTYPE html>'],
+            'body content only' => ['<p>Hello</p>'],
+            'BODY element' => ['<body></body>'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $html
+     * @dataProvider contentWithoutHeadTagDataProvider
+     */
+    public function emogrifyAddsMissingHeadTag($html)
+    {
+        $this->subject->setHtml($html);
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<html>', $result);
+        self::assertContains('<head>', $result);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function contentWithoutBodyTagDataProvider()
+    {
+        return [
+            'doctype only' => ['<!DOCTYPE html>'],
+            'HEAD element' => ['<head></head>'],
+            'body content only' => ['<p>Hello</p>'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $html
+     * @dataProvider contentWithoutBodyTagDataProvider
+     */
+    public function emogrifyAddsMissingBodyTag($html)
+    {
+        $this->subject->setHtml($html);
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<body>', $result);
     }
 
     /**
      * @test
      */
-    public function emogrifyAddsHeadTagIfNoHtmlTagAndNoHeadTagAreProvided()
+    public function emogrifyPutsMissingBodyElementAroundBodyContent()
     {
         $this->subject->setHtml('<p>Hello</p>');
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<head>', $result);
+        self::assertContains('<body><p>Hello</p></body>', $result);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function specialCharactersDataProvider()
+    {
+        return [
+            'template markers with dollar signs & square brackets' => ['$[USER:NAME]$'],
+            'UTF-8 umlauts' => ['Küss die Hand, schöne Frau.'],
+            'HTML entities' => ['a &amp; b &gt; c'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $codeNotToBeChanged
+     * @dataProvider specialCharactersDataProvider
+     */
+    public function emogrifyKeepsSpecialCharacters($codeNotToBeChanged)
+    {
+        $html = '<html><p>' . $codeNotToBeChanged . '</p></html>';
+        $this->subject->setHtml($html);
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains($codeNotToBeChanged, $result);
+    }
+
+    /**
+     * @test
+     * @param string $codeNotToBeChanged
+     * @dataProvider specialCharactersDataProvider
+     */
+    public function emogrifyBodyContentKeepsSpecialCharacters($codeNotToBeChanged)
+    {
+        $html = '<html><p>' . $codeNotToBeChanged . '</p></html>';
+        $this->subject->setHtml($html);
+
+        $result = $this->subject->emogrifyBodyContent();
+
+        self::assertContains($codeNotToBeChanged, $result);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function documentTypeDataProvider()
+    {
+        return [
+            'HTML5' => ['<!DOCTYPE html>'],
+            'XHTML 1 strict' => [
+                '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' .
+                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+            ],
+            'HTML 4 transitional' => [
+                '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" ' .
+                '"http://www.w3.org/TR/REC-html40/loose.dtd">'
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $documentType
+     * @dataProvider documentTypeDataProvider
+     */
+    public function emogrifyForHtmlWithDocumentTypeKeepsDocumentType($documentType)
+    {
+        $html = $documentType . '<html></html>';
+        $this->subject->setHtml($html);
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains($documentType, $result);
     }
 
     /**
      * @test
      */
-    public function emogrifyAddsHtmlTagIfHtmlTagIsProvidedButNoHeadTaqg()
-    {
-        $this->subject->setHtml('<html></head><p>World</p></html>');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains('<head>', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsDollarSignsAndSquareBrackets()
-    {
-        $templateMarker = '$[USER:NAME]$';
-        $html = '<html><p>' . $templateMarker . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($templateMarker, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsUtf8UmlautsInHtml5()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $html = $this->html5DocumentType . '<html><p>' . $umlautString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsUtf8UmlautsInXhtml()
-    {
-        $umlautString = 'Öösel läks õunu täis ämber uhkelt ümber.';
-        $html = $this->xhtml1StrictDocumentType . '<html<p>' . $umlautString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsUtf8UmlautsInHtml4()
-    {
-        $umlautString = 'Öösel läks õunu täis ämber uhkelt ümber.';
-        $html = $this->html4TransitionalDocumentType . '<html><p>' . $umlautString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsHtmlEntities()
-    {
-        $entityString = 'a &amp; b &gt; c';
-        $html = '<html><p>' . $entityString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($entityString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsHtmlEntitiesInXhtml()
-    {
-        $entityString = 'a &amp; b &gt; c';
-        $html = $this->xhtml1StrictDocumentType . '<html<p>' . $entityString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($entityString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsHtmlEntitiesInHtml4()
-    {
-        $entityString = 'a &amp; b &gt; c';
-        $html = $this->html5DocumentType . '<html><p>' . $entityString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($entityString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyKeepsUtf8UmlautsWithoutDocumentType()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $html = '<html><head></head><p>' . $umlautString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-   /**
-    * @test
-    */
-    public function emogrifyKeepsUtf8UmlautsWithoutDocumentTypeAndWithoutHtmlAndWithoutHead()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $html = '<p>' . $umlautString . '</p>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-   /**
-    * @test
-    */
-    public function emogrifyKeepsUtf8UmlautsWithoutDocumentTypeAndWithHtmlAndWithoutHead()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $html = '<html><p>' . $umlautString . '</p></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-   /**
-    * @test
-    */
-    public function emogrifyKeepsUtf8UmlautsWithoutDocumentTypeAndWithoutHtmlAndWithHead()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $html = '<head></head><p>' . $umlautString . '</p>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($umlautString, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyForHtmlTagOnlyAndEmptyCssByDefaultAddsHtml5DocumentType()
-    {
-        $html = '<html></html>';
-        $this->subject->setHtml($html);
-        $this->subject->setCss('');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($this->html5DocumentType, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyForHtmlTagWithXhtml1StrictDocumentTypeKeepsDocumentType()
-    {
-        $html = $this->xhtml1StrictDocumentType . '<html></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($this->xhtml1StrictDocumentType, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyForHtmlTagWithXhtml5DocumentTypeKeepsDocumentType()
-    {
-        $html = $this->html5DocumentType . '<html></html>';
-        $this->subject->setHtml($html);
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains($this->html5DocumentType, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyAddsContentTypeMetaTag()
+    public function emogrifyAddsMissingContentTypeMetaTag()
     {
         $this->subject->setHtml('<p>Hello</p>');
 
@@ -353,14 +266,14 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function emogrifyForExistingContentTypeMetaTagNotAddsSecondContentTypeMetaTag()
+    public function emogrifyNotAddsSecondContentTypeMetaTag()
     {
-        $html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>' .
-            '<body><p>Hello</p></body></html>';
+        $html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>';
         $this->subject->setHtml($html);
 
-        $numberOfContentTypeMetaTags = substr_count($this->subject->emogrify(), 'Content-Type');
+        $result = $this->subject->emogrify();
 
+        $numberOfContentTypeMetaTags = substr_count($result, 'Content-Type');
         self::assertSame(1, $numberOfContentTypeMetaTags);
     }
 
@@ -374,13 +287,13 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('foobar', $result);
+        self::assertNotContains('<wbr', $result);
     }
 
     /**
      * @test
      */
-    public function addUnprocessableTagCausesGivenEmptyTagToBeRemoved()
+    public function addUnprocessableTagRemovesEmptyTag()
     {
         $this->subject->setHtml('<html><p></p></html>');
 
@@ -393,7 +306,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function addUnprocessableTagNotRemovesGivenTagWithContent()
+    public function addUnprocessableTagNotRemovesNonEmptyTag()
     {
         $this->subject->setHtml('<html><p>foobar</p></html>');
 
@@ -406,9 +319,9 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function removeUnprocessableHtmlTagCausesTagToStayAgain()
+    public function removeUnprocessableHtmlTagKeepsTagAgainAgain()
     {
-        $this->subject->setHtml('<html><p>foo<br/><span>bar</span></p></html>');
+        $this->subject->setHtml('<html><p></p></html>');
 
         $this->subject->addUnprocessableHtmlTag('p');
         $this->subject->removeUnprocessableHtmlTag('p');
@@ -418,285 +331,365 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
-     */
-    public function emogrifyCanAddMatchingElementRuleOnHtmlElementFromCss()
-    {
-        $this->subject->setHtml('<html></html>');
-        $styleRule = 'color: #000;';
-        $this->subject->setCss('html {' . $styleRule . '}');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains(
-            '<html style="' . $styleRule . '">',
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyNotAddsNotMatchingElementRuleOnHtmlElementFromCss()
-    {
-        $this->subject->setHtml('<html></html>');
-        $this->subject->setCss('p {color:#000;}');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains('<html>', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyCanMatchTwoElements()
-    {
-        $this->subject->setHtml('<html><p></p><p></p></html>');
-        $styleRule = 'color: #000;';
-        $this->subject->setCss('p {' . $styleRule . '}');
-
-        $result = $this->subject->emogrify();
-
-        self::assertSame(
-            2,
-            substr_count($result, '<p style="' . $styleRule . '">')
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyCanAssignTwoStyleRulesFromSameMatcherToElement()
-    {
-        $this->subject->setHtml('<html><p></p></html>');
-        $styleRulesIn = 'color:#000; text-align:left;';
-        $this->subject->setCss('p {' . $styleRulesIn . '}');
-
-        $result = $this->subject->emogrify();
-
-        $styleRulesOut = 'color: #000; text-align: left;';
-        self::assertContains(
-            '<p style="' . $styleRulesOut . '">',
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyCanMatchAttributeOnlySelector()
-    {
-        $this->subject->setHtml('<html><p hidden="hidden"></p></html>');
-        $this->subject->setCss('[hidden] { color:red; }');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains('<p hidden="hidden" style="color: red;">', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyCanAssignStyleRulesFromTwoIdenticalMatchersToElement()
-    {
-        $this->subject->setHtml('<html><p></p></html>');
-        $styleRule1 = 'color: #000;';
-        $styleRule2 = 'text-align: left;';
-        $this->subject->setCss('p {' . $styleRule1 . '}  p {' . $styleRule2 . '}');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains(
-            '<p style="' . $styleRule1 . ' ' . $styleRule2 . '">',
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyCanAssignStyleRulesFromTwoDifferentMatchersToElement()
-    {
-        $this->subject->setHtml('<html><p class="x"></p></html>');
-        $styleRule1 = 'color: #000;';
-        $styleRule2 = 'text-align: left;';
-        $this->subject->setCss('p {' . $styleRule1 . '} .x {' . $styleRule2 . '}');
-
-        $result = $this->subject->emogrify();
-
-        self::assertContains(
-            '<p class="x" style="' . $styleRule1 . ' ' . $styleRule2 . '">',
-            $result
-        );
-    }
-
-    /**
-     * Data provide for selectors.
-     *
      * @return string[][]
      */
-    public function selectorDataProvider()
+    public function matchedCssDataProvider()
     {
-        $styleRule = 'color: red;';
-        $styleAttribute = 'style="' . $styleRule . '"';
-
+        // The sprintf placeholders %1$s and %2$s will automatically be replaced with CSS declarations
+        // like 'color: red;' or 'text-align: left;'.
         return [
-            'universal selector HTML'
-                => ['* {' . $styleRule . '} ', '#<html id="html" ' . $styleAttribute . '>#'],
-            'universal selector BODY'
-                => ['* {' . $styleRule . '} ', '#<body ' . $styleAttribute . '>#'],
-            'universal selector P'
-                => ['* {' . $styleRule . '} ', '#<p[^>]*' . $styleAttribute . '>#'],
-            'type selector matches first P'
-                => ['p {' . $styleRule . '} ', '#<p class="p-1" ' . $styleAttribute . '>#'],
-            'type selector matches second P'
-                => ['p {' . $styleRule . '} ', '#<p class="p-2" ' . $styleAttribute . '>#'],
-            'descendant selector P SPAN'
-                => ['p span {' . $styleRule . '} ', '#<span ' . $styleAttribute . '>#'],
-            'descendant selector BODY SPAN'
-                => ['body span {' . $styleRule . '} ', '#<span ' . $styleAttribute . '>#'],
-            'child selector P > SPAN matches direct child'
-                => ['p > span {' . $styleRule . '} ', '#<span ' . $styleAttribute . '>#'],
-            'child selector P > SPAN matches direct child without space after >'
-                => ['p >span {' . $styleRule . '} ', '#<span ' . $styleAttribute . '>#'],
-            'child selector P > SPAN matches direct child without space before >'
-                => ['p> span {' . $styleRule . '} ', '#<span ' . $styleAttribute . '>#'],
-            'child selector BODY > SPAN does not match grandchild'
-                => ['body > span {' . $styleRule . '} ', '#<span>#'],
-            'adjacent selector P + P does not match first P' => ['p + p {' . $styleRule . '} ', '#<p class="p-1">#'],
-            'adjacent selector P + P matches second P'
-                => ['p + p {' . $styleRule . '} ', '#<p class="p-2" style="' . $styleRule . '">#'],
-            'adjacent selector P + P matches third P'
-                => ['p + p {' . $styleRule . '} ', '#<p class="p-3" style="' . $styleRule . '">#'],
-            'ID selector #HTML' => ['#html {' . $styleRule . '} ', '#<html id="html" ' . $styleAttribute . '>#'],
-            'type and ID selector HTML#HTML'
-                => ['html#html {' . $styleRule . '} ', '#<html id="html" ' . $styleAttribute . '>#'],
-            'class selector .P-1' => ['.p-1 {' . $styleRule . '} ', '#<p class="p-1" ' . $styleAttribute . '>#'],
-            'type and class selector P.P-1'
-                => ['p.p-1 {' . $styleRule . '} ', '#<p class="p-1" ' . $styleAttribute . '>#'],
-            'attribute presence selector SPAN[title] matches element with matching attribute'
-                => ['span[title] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'],
-            'attribute presence selector SPAN[title] does not match element without any attributes'
-                => ['span[title] {' . $styleRule . '} ', '#<span>#'],
-            'attribute value selector [id="html"] matches element with matching attribute value' => [
-                '[id="html"] {' . $styleRule . '} ', '#<html id="html" ' . $styleAttribute . '>#'
+            'two declarations from one rule can apply to the same element' => [
+                'html { %1$s %2$s }',
+                '<html style="%1$s %2$s">',
             ],
-            'attribute value selector SPAN[title] matches element with matching attribute value' => [
-                'span[title="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'two identical matchers with different rules get combined' => [
+                'p { %1$s } p { %2$s }',
+                '<p class="p-1" style="%1$s %2$s">',
             ],
-            'attribute value selector SPAN[title] matches element with matching attribute value two words' => [
-                'span[title="buenas dias"] {' . $styleRule . '} ', '#<span title="buenas dias" '
-                    . $styleAttribute . '>#'
+            'two different matchers rules matching the same element get combined' => [
+                'p { %1$s } .p-1 { %2$s }',
+                '<p class="p-1" style="%1$s %2$s">',
             ],
-            'attribute value selector SPAN[title] matches element with matching attribute value four words' => [
-                'span[title="buenas dias bom dia"] {' . $styleRule . '} ', '#<span title="buenas dias bom dia" '
-                    . $styleAttribute . '>#'
+            'type => one element' => ['html { %1$s }', '<html style="%1$s">'],
+            'type => first matching element' => ['p { %1$s }', '<p class="p-1" style="%1$s">'],
+            'type => second matching element' => ['p { %1$s }', '<p class="p-2" style="%1$s">'],
+            'class => with class' => ['.p-2 { %1$s }', '<p class="p-2" style="%1$s">'],
+            'two classes s=> with both classes' => [
+                '.p-5.additional-class { %1$s }',
+                '<p class="p-5 additional-class" style="%1$s">'
             ],
-            'attribute value selector SPAN[title~] matches element with an attribute value with just that word' => [
-                'span[title~="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & class => type with class' => ['p.p-2 { %1$s }', '<p class="p-2" style="%1$s">'],
+            'ID => with ID' => ['#p4 { %1$s }', '<p class="p-4" id="p4" style="%1$s">'],
+            'type & ID => type with ID' => ['p#p4 { %1$s }', '<p class="p-4" id="p4" style="%1$s">'],
+            'universal => HTML' => ['* { %1$s }', '<html style="%1$s">'],
+            'attribute presence => with attribute' => ['[title] { %1$s }', '<span title="bonjour" style="%1$s">'],
+            'attribute exact value, double quotes => with exact attribute match' => [
+                '[title="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title~] matches element with attribute value with that word as 2nd of 2' => [
-                'span[title~="dias"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            'attribute exact value, single quotes => with exact match' => [
+                '[title=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title~] matches element with attribute value with that word as 1st of 2' => [
-                'span[title~="buenas"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            // broken: attribute exact value without quotes => with exact match
+            // broken: attribute exact two-word value, double quotes => with exact attribute value match
+            // broken: attribute exact two-word value, single quotes => with exact attribute value match
+            // broken: attribute exact value with ~, double quotes => exact attribute match
+            // broken: attribute exact value with ~, single quotes => exact attribute match
+            // broken: attribute exact value with ~, no quotes => exact attribute match
+            // broken: attribute value with |, double quotes => with exact match
+            // broken: attribute value with |, single quotes => with exact match
+            // broken: attribute value with |, no quotes => with exact match
+            // broken: attribute value with ^, double quotes => with exact match
+            // broken: attribute value with ^, single quotes => with exact match
+            // broken: attribute value with ^, no quotes => with exact match
+            // broken: attribute value with $, double quotes => with exact match
+            // broken: attribute value with $, single quotes => with exact match
+            // broken: attribute value with $, no quotes => with exact match
+            // broken: attribute value with *, double quotes => with exact match
+            // broken: attribute value with *, single quotes => with exact match
+            // broken: attribute value with *, no quotes => with exact match
+            'type & attribute exact value, double quotes => with type & exact attribute value match' => [
+                'span[title="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title*] matches element with an attribute value with just that word' => [
-                'span[title*="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute exact value, single quotes => with type & exact attribute value match' => [
+                'span[title=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title*] matches element with attribute value with that word as 2nd of 2' => [
-                'span[title*="dias"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            'type & attribute exact value without quotes => with type & exact attribute value match' => [
+                'span[title=bonjour] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title*] matches element with an attribute value with parts two words' => [
-                'span[title*="enas di"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            'type & attribute exact two-word value, double quotes => with type & exact attribute value match' => [
+                'span[title="buenas dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
             ],
-            'attribute value selector SPAN[title*] matches element with an attribute value with odd characters' => [
-                'span[title*=": subtitle; author"] {' . $styleRule . '} ', '#<span title="title: subtitle; author" '
-                    . $styleAttribute . '>#'
+            'type & attribute exact four-word value, double quotes => with type & exact attribute value match' => [
+                'span[title="buenas dias bom dia"] { %1$s }',
+                '<span title="buenas dias bom dia" style="%1$s">',
             ],
-            'attribute value selector SPAN[title^] matches element with attribute value that is exactly that word' => [
-                'span[title^="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute exact two-word value, single quotes => with type & exact attribute value match' => [
+                'span[title=\'buenas dias\'] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
             ],
-            'attribute value selector SPAN[title^] matches element with an attribute value that begins that word' => [
-                'span[title^="bonj"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute exact four-word value, single quotes => with type & exact attribute value match' => [
+                'span[title=\'buenas dias bom dia\'] { %1$s }',
+                '<span title="buenas dias bom dia" style="%1$s">',
             ],
-            'attribute value selector SPAN[title^] matches element with an attribute value that begins that word '
-            . 'and contains other words' => [
-                'span[title^="buenas"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & exact attribute match' => [
+                'span[title~="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title$] matches element with attribute value that is exactly that word' => [
-                'span[title$="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, single quotes => with type & exact attribute match' => [
+                'span[title~=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title$] matches element with an attribute value with two words' => [
-                'span[title$="buenas dias"] {' . $styleRule . '} ', '#<span title="buenas dias" '
-                    . $styleAttribute . '>#'
+            'type & attribute value with ~, no quotes => with type & exact attribute match' => [
+                'span[title~=bonjour] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
             ],
-            'attribute value selector SPAN[title$] matches element with an attribute value that end that word' => [
-                'span[title$="jour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & word as 1st of 2 in attribute' => [
+                'span[title~="buenas"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
             ],
-            'attribute value selector SPAN[title$] matches element with an attribute value that end that word '
-            . 'and contains other words' => [
-                'span[title$="dias"] {' . $styleRule . '} ', '#<span title="buenas dias" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & word as 2nd of 2 in attribute' => [
+                'span[title~="dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
             ],
-            'attribute value selector SPAN[title|] matches element with attribute value that is exactly that word' => [
-                'span[title|="bonjour"] {' . $styleRule . '} ', '#<span title="bonjour" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & word as 1st of 4 in attribute' => [
+                'span[title~="buenas"] { %1$s }',
+                '<span title="buenas dias bom dia" style="%1$s">',
             ],
-            'attribute value selector SPAN[title|] matches element with an attribute value with two words' => [
-                'span[title|="buenas dias"] {' . $styleRule . '} ', '#<span title="buenas dias" '
-                    . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & word as 2nd of 4 in attribute' => [
+                'span[title~="dias"] { %1$s }',
+                '<span title="buenas dias bom dia" style="%1$s">',
             ],
-            'attribute value selector SPAN[title|] matches element with an attribute value with 2 words with hypen' => [
-                'span[title|="avez"] {' . $styleRule . '} ', '#<span title="avez-vous" ' . $styleAttribute . '>#'
+            'type & attribute value with ~, double quotes => with type & word as last of 4 in attribute' => [
+                'span[title~="dia"] { %1$s }',
+                '<span title="buenas dias bom dia" style="%1$s">',
             ],
-            'attribute value selector SPAN[title] does not match element with other attribute value'
-                => ['span[title="bonjour"] {' . $styleRule . '} ', '#<span title="buenas dias">#'],
-            'attribute value selector SPAN[title] does not match element without any attributes'
-                => ['span[title="bonjour"] {' . $styleRule . '} ', '#<span>#'],
-            'P:first-child matches first child with matching tag'
-                => ['p:first-child {' . $styleRule . '} ', '#<p class="p-1" style="' . $styleRule . '">#'],
-            'DIV:first-child does not match first child with mismatching tag'
-                => ['div:first-child {' . $styleRule . '} ', '#<p class="p-1">#'],
-            'P:first-child does not match middle child'
-                => ['p:first-child {' . $styleRule . '} ', '#<p class="p-2">#'],
-            'P:first-child does not match last child'
-                => ['p:first-child {' . $styleRule . '} ', '#<p class="p-6">#'],
-            'P:last-child does not match first child' => ['p:last-child {' . $styleRule . '} ', '#<p class="p-1">#'],
-            'P:last-child does not match middle child'
-                => ['p:last-child {' . $styleRule . '} ', '#<p class="p-3">#'],
-            'P:last-child matches last child'
-                => ['p:last-child {' . $styleRule . '} ', '#<p class="p-6" style="' . $styleRule . '">#'],
-            'DIV:last-child does not match last child with mismatching tag'
-                => ['div:last-child {' . $styleRule . '} ', '#<p class="p-6">#'],
+            'type & attribute value with |, double quotes => with exact match' => [
+                'span[title|="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with |, single quotes => with exact match' => [
+                'span[title|=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with |, no quotes => with exact match' => [
+                'span[title|=bonjour] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & two-word attribute value with |, double quotes => with exact match' => [
+                'span[title|="buenas dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & attribute value with |, double quotes => with match before hyphen & another word' => [
+                'span[title|="avez"] { %1$s }',
+                '<span title="avez-vous" style="%1$s">',
+            ],
+            'type & attribute value with ^, double quotes => with exact match' => [
+                'span[title^="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with ^, single quotes => with exact match' => [
+                'span[title^=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with ^, no quotes => with exact match' => [
+                'span[title^=bonjour] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            // broken: type & two-word attribute value with ^, double quotes => with exact match
+            'type & attribute value with ^, double quotes => with prefix math' => [
+                'span[title^="bon"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with ^, double quotes => with match before another word' => [
+                'span[title^="buenas"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & attribute value with $, double quotes => with exact match' => [
+                'span[title$="bonjour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with $, single quotes => with exact match' => [
+                'span[title$=\'bonjour\'] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with $, no quotes => with exact match' => [
+                'span[title$=bonjour] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & two-word attribute value with $, double quotes => with exact match' => [
+                'span[title$="buenas dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & attribute value with $, double quotes => with suffix math' => [
+                'span[title$="jour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with $, double quotes => with match after another word' => [
+                'span[title$="dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & two-word attribute value with *, double quotes => with exact match' => [
+                'span[title*="buenas dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & attribute value with *, double quotes => with prefix math' => [
+                'span[title*="bon"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with *, double quotes => with suffix math' => [
+                'span[title*="jour"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with *, double quotes => with substring math' => [
+                'span[title*="njo"] { %1$s }',
+                '<span title="bonjour" style="%1$s">',
+            ],
+            'type & attribute value with *, double quotes => with match before another word' => [
+                'span[title*="buenas"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & attribute value with *, double quotes => with match after another word' => [
+                'span[title*="dias"] { %1$s }',
+                '<span title="buenas dias" style="%1$s">',
+            ],
+            'type & special characters attribute value with *, double quotes => with substring match' => [
+                'span[title*=": subtitle; author"] { %1$s }',
+                '<span title="title: subtitle; author" style="%1$s">',
+            ],
+            'adjacent => 2nd of many' => ['p + p { %1$s }', '<p class="p-2" style="%1$s">'],
+            'adjacent => last of many' => ['p + p { %1$s }', '<p class="p-6" style="%1$s">'],
+            'child (with spaces around >) => direct child' => ['p > span { %1$s }', '<span style="%1$s">'],
+            'child (without space after >) => direct child' => ['p >span { %1$s }', '<span style="%1$s">'],
+            'child (without space before >) => direct child' => ['p> span { %1$s }', '<span style="%1$s">'],
+            'child (without space before or after >) => direct child' => ['p>span { %1$s }', '<span style="%1$s">'],
+            'descendant => child' => ['p span { %1$s }', '<span style="%1$s">'],
+            'descendant => grandchild' => ['body span { %1$s }', '<span style="%1$s">'],
+            // broken: first-child => 1st of many
+            'type & :first-child => 1st of many' => ['p:first-child { %1$s }', '<p class="p-1" style="%1$s">'],
+            // broken: last-child => last of many
+            'type & :last-child => last of many' => ['p:last-child { %1$s }', '<p class="p-6" style="%1$s">'],
+            // broken: :not with type => other type
+            // broken: :not with class => no class
+            // broken: :not with class => other class
+            'type & :not with class => without class' => ['span:not(.foo) { %1$s }', '<span style="%1$s">'],
+            'type & :not with class => with other class' => ['p:not(.foo) { %1$s }', '<p class="p-1" style="%1$s">'],
         ];
     }
 
     /**
      * @test
-     *
-     * @param string $css the complete CSS
-     * @param string $htmlRegularExpression regular expression for the the HTML that needs to be contained in the HTML
-     *
-     * @dataProvider selectorDataProvider
+     * @param string $css CSS statements, potentially with %1$s and $2$s placeholders for a CSS declaration
+     * @param string $expectedHtml HTML, potentially with %1$s and $2$s placeholders for a CSS declaration
+     * @dataProvider matchedCssDataProvider
      */
-    public function emogrifierMatchesSelectors($css, $htmlRegularExpression)
+    public function emogrifyAppliesCssToMatchingElements($css, $expectedHtml)
     {
-        $html = '<html id="html">' .
-            '  <body>' .
-            '    <p class="p-1"><span>some text</span></p>' .
-            '    <p class="p-2"><span title="bonjour">some</span> text</p>' .
-            '    <p class="p-3"><span title="buenas dias">some</span> more text</p>' .
-            '    <p class="p-4"><span title="avez-vous">some</span> more text</p>' .
-            '    <p class="p-5"><span title="buenas dias bom dia">some</span> more text</p>' .
-            '    <p class="p-6"><span title="title: subtitle; author">some</span> more text</p>' .
-            '  </body>' .
-            '</html>';
+        $cssDeclaration1 = 'color: red;';
+        $cssDeclaration2 = 'text-align: left;';
+        $html = '
+            <html>
+                <body>
+                    <p class="p-1"><span>some text</span></p>
+                    <p class="p-2"><span title="bonjour">some</span> text</p>
+                    <p class="p-3"><span title="buenas dias">some</span> more text</p>
+                    <p class="p-4" id="p4"><span title="avez-vous">some</span> more text</p>
+                    <p class="p-5 additional-class"><span title="buenas dias bom dia">some</span> more text</p>
+                    <p class="p-6"><span title="title: subtitle; author">some</span> more text</p>
+                </body>
+            </html>
+            ';
         $this->subject->setHtml($html);
-        $this->subject->setCss($css);
+        $this->subject->setCss(sprintf($css, $cssDeclaration1, $cssDeclaration2));
 
         $result = $this->subject->emogrify();
 
-        self::assertRegExp($htmlRegularExpression, $result);
+        self::assertContains(sprintf($expectedHtml, $cssDeclaration1, $cssDeclaration2), $result);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function nonMatchedCssDataProvider()
+    {
+        // The sprintf placeholders %1$s and %2$s will automatically be replaced with CSS declarations
+        // like 'color: red;' or 'text-align: left;'.
+        return [
+            'type => not other type' => ['html { %1$s }', '<body>'],
+            'class => not other class' => ['.p-2 { %1$s }', '<p class="p-1">'],
+            'class => not without class' => ['.p-2 { %1$s }', '<body>'],
+            'two classes => not only first class' => ['.p-1.another-class { %1$s }', '<p class="p-1">'],
+            'two classes => not only second class' => ['.another-class.p-1 { %1$s }', '<p class="p-1">'],
+            'type & class => not only type' => ['html.p-1 { %1$s }', '<html>'],
+            'type & class => not only class' => ['html.p-1 { %1$s }', '<p class="p-1">'],
+            'ID => not other ID' => ['#yeah { %1$s }', '<p class="p-4" id="p4">'],
+            'ID => not without ID' => ['#yeah { %1$s }', '<span>'],
+            'type & ID => not other type with that ID' => ['html#p4 { %1$s }', '<p class="p-4" id="p4">'],
+            'type & ID => not that type with other ID' => ['p#p5 { %1$s }', '<p class="p-4" id="p4">'],
+            'attribute presence => not element without that attribute' => ['[title] { %1$s }', '<span>'],
+            'attribute exact value => not element without that attribute' => ['[title="bonjour"] { %1$s }', '<span>'],
+            'attribute exact value => not element with different attribute value' => [
+                '[title="hi"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'attribute exact value => not element with only substring match in attribute value' => [
+                '[title="njo"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with ~ => not element with only prefix match in attribute value' => [
+                'span[title~="bon"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with |, double quotes => not element with match after another word & hyphen' => [
+                'span[title|="vous"] { %1$s }',
+                '<span title="avez-vous">',
+            ],
+            'type & attribute value with ^ => not element with only substring match in attribute value' => [
+                'span[title^="njo"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with ^, double quotes => not element with only suffix match in attribute value' => [
+                'span[title^="jour"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with $ => not element with only substring match in attribute value' => [
+                'span[title$="njo"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with $, double quotes => not element with only prefix match in attribute value' => [
+                'span[title$="bon"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'type & attribute value with * => not element with different attribute value' => [
+                'span[title*="hi"] { %1$s }',
+                '<span title="bonjour">',
+            ],
+            'adjacent => not 1st of many' => ['p + p { %1$s }', '<p class="p-1">'],
+            'child => not grandchild' => ['html > span { %1$s }', '<span>'],
+            'child => not parent' => ['span > html { %1$s }', '<html>'],
+            'descendant => not sibling' => ['span span { %1$s }', '<span>'],
+            'descendant => not parent' => ['p body { %1$s }', '<body>'],
+            'type & :first-child => not 2nd of many' => ['p:first-child { %1$s }', '<p class="p-2">'],
+            'type & :first-child => not last of many' => ['p:first-child { %1$s }', '<p class="p-6">'],
+            'type & :last-child => not 1st of many' => ['p:last-child { %1$s }', '<p class="p-1">'],
+            'type & :last-child => not 2nd of many' => ['p:last-child { %1$s }', '<p class="p-2">'],
+            'type & :not with class => not with class' => ['p:not(.p-1) { %1$s }', '<p class="p-1">'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $css CSS statements, potentially with %1$s and $2$s placeholders for a CSS declaration
+     * @param string $expectedHtml HTML, potentially with %1$s and $2$s placeholders for a CSS declaration
+     * @dataProvider nonMatchedCssDataProvider
+     */
+    public function emogrifyNotAppliesCssToNonMatchingElements($css, $expectedHtml)
+    {
+        $cssDeclaration1 = 'color: red;';
+        $cssDeclaration2 = 'text-align: left;';
+        $html = '
+            <html>
+                <body>
+                    <p class="p-1"><span>some text</span></p>
+                    <p class="p-2"><span title="bonjour">some</span> text</p>
+                    <p class="p-3"><span title="buenas dias">some</span> more text</p>
+                    <p class="p-4" id="p4"><span title="avez-vous">some</span> more text</p>
+                    <p class="p-5 additional-class"><span title="buenas dias bom dia">some</span> more text</p>
+                    <p class="p-6"><span title="title: subtitle; author">some</span> more text</p>
+                </body>
+            </html>
+            ';
+        $this->subject->setHtml($html);
+        $this->subject->setCss(sprintf($css, $cssDeclaration1, $cssDeclaration2));
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains(sprintf($expectedHtml, $cssDeclaration1, $cssDeclaration2), $result);
     }
 
     /**
@@ -759,16 +752,19 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
             'one declaration with dash in property name' => ['font-weight: bold;', 'font-weight: bold;'],
             'one declaration with space in property value' => ['margin: 0 4px;', 'margin: 0 4px;'],
             'two declarations separated by semicolon' => ['color: #000;width: 3px;', 'color: #000; width: 3px;'],
-            'two declarations separated by semicolon and space'
-                => ['color: #000; width: 3px;', 'color: #000; width: 3px;'],
-            'two declarations separated by semicolon and linefeed' => [
-                'color: #000;' . self::LF . 'width: 3px;', 'color: #000; width: 3px;'
+            'two declarations separated by semicolon & space'
+            => ['color: #000; width: 3px;', 'color: #000; width: 3px;'],
+            'two declarations separated by semicolon & linefeed' => [
+                'color: #000;' . self::LF . 'width: 3px;',
+                'color: #000; width: 3px;'
             ],
-            'two declarations separated by semicolon and Windows line ending' => [
-                "color: #000;\r\nwidth: 3px;", 'color: #000; width: 3px;'
+            'two declarations separated by semicolon & Windows line ending' => [
+                "color: #000;\r\nwidth: 3px;",
+                'color: #000; width: 3px;'
             ],
             'one declaration with leading dash in property name' => [
-                '-webkit-text-size-adjust:none;', '-webkit-text-size-adjust: none;'
+                '-webkit-text-size-adjust:none;',
+                '-webkit-text-size-adjust: none;'
             ],
         ];
     }
@@ -842,7 +838,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function emogrifyAddsCssAfterExistingStyle()
+    public function emogrifyAddsCssBeforeExistingStyle()
     {
         $styleAttributeValue = 'color: #ccc;';
         $this->subject->setHtml('<html style="' . $styleAttributeValue . '"></html>');
@@ -853,7 +849,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->emogrify();
 
         self::assertContains(
-            'style="' . $styleAttributeValue . ' ' . $cssDeclarations . '"',
+            'style="' . $cssDeclarations . ' ' . $styleAttributeValue . '"',
             $result
         );
     }
@@ -948,19 +944,50 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \InvalidArgumentException
      */
-    public function emogrifyForInvalidCssSelectorThrowsException()
+    public function emogrifyInDebugModeForInvalidCssSelectorThrowsException()
     {
-        // HHVM ignores custom error handler settings for libxml.
-        // @see https://github.com/facebook/hhvm/issues/5790
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped('HHVM ignore custom error handler');
-        }
+        $this->subject->setDebug(true);
 
         $this->subject->setHtml(
             '<html><style type="text/css">p{color:red;} <style data-x="1">html{cursor:text;}</style></html>'
         );
 
         $this->subject->emogrify();
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyNotInDebugModeIgnoresInvalidCssSelectors()
+    {
+        $this->subject->setDebug(false);
+
+        $html = '<html><style type="text/css">' .
+            'p{color:red;} <style data-x="1">html{cursor:text;} p{background-color:blue;}</style> ' .
+            '<body><p></p></body></html>';
+        $this->subject->setHtml($html);
+
+        $html = $this->subject->emogrify();
+
+        self::assertContains('color: red', $html);
+        self::assertContains('background-color: blue', $html);
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyByDefaultIgnoresInvalidCssSelectors()
+    {
+        $subject = new Emogrifier();
+
+        $html = '<html><style type="text/css">' .
+            'p{color:red;} <style data-x="1">html{cursor:text;} p{background-color:blue;}</style> ' .
+            '<body><p></p></body></html>';
+        $subject->setHtml($html);
+
+        $html = $subject->emogrify();
+        self::assertContains('color: red', $html);
+        self::assertContains('background-color: blue', $html);
     }
 
     /**
@@ -1096,7 +1123,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function emogrifyKeepExistingHeadElementAddStyleElement()
+    public function emogrifyAddsStyleElementToBody()
     {
         $html = $this->html5DocumentType . '<html><head><!-- original content --></head></html>';
         $this->subject->setHtml($html);
@@ -1104,7 +1131,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<style type="text/css">', $result);
+        self::assertContains('<body><style type="text/css">', $result);
     }
 
     /**
@@ -1134,7 +1161,15 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
             'style in "only screen" media type rule' => ['@media only screen { h1 { color:red; } }'],
             'style in "only all" media type rule' => ['@media only all { h1 { color:red; } }'],
             'style in "screen" media type rule' => ['@media screen { h1 { color:red; } }'],
+            'style in "print" media type rule' => ['@media print { * { color:#000 !important; } }'],
             'style in media type rule without specification' => ['@media { h1 { color:red; } }'],
+            'style with multiple media type rules' => [
+                '@media all { p { color: #000; } }' .
+                '@media only screen { h1 { color:red; } }' .
+                '@media only all { h1 { color:red; } }' .
+                '@media print { * { color:#000 !important; } }' .
+                '@media { h1 { color:red; } }'
+            ],
         ];
     }
 
@@ -1152,7 +1187,29 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains($css, $result);
+        self::assertContains('<style type="text/css">' . $css . '</style>', $result);
+    }
+
+    /**
+     * @test
+     *
+     * @param string $css
+     *
+     * @dataProvider validMediaPreserveDataProvider
+     */
+    public function emogrifyWithValidMinifiedMediaQueryContainsInnerCss($css)
+    {
+        // Minify CSS by removing unnecessary whitespace.
+        $css = preg_replace('/\\s*{\\s*/', '{', $css);
+        $css = preg_replace('/;?\\s*}\\s*/', '}', $css);
+        $css = preg_replace('/@media{/', '@media {', $css);
+
+        $this->subject->setHtml('<html><h1></h1><p></p></html>');
+        $this->subject->setCss($css);
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<style type="text/css">' . $css . '</style>', $result);
     }
 
     /**
@@ -1168,7 +1225,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains($css, $result);
+        self::assertContains('<style type="text/css">' . $css . '</style>', $result);
     }
 
     /**
@@ -1230,7 +1287,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider invalidMediaPreserveDataProvider
      */
-    public function emogrifyWithInValidMediaQueryNotContainsInlineCss($css)
+    public function emogrifyWithInvalidMediaQueryNotContainsInlineCss($css)
     {
         $this->subject->setHtml('<html><h1></h1></html>');
         $this->subject->setCss($css);
@@ -1247,7 +1304,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider invalidMediaPreserveDataProvider
      */
-    public function emogrifyFromHtmlWithInValidMediaQueryNotContainsInnerCss($css)
+    public function emogrifyFromHtmlWithInvalidMediaQueryNotContainsInnerCss($css)
     {
         $this->subject->setHtml('<html><style type="text/css">' . $css . '</style><h1></h1></html>');
 
@@ -1263,7 +1320,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider invalidMediaPreserveDataProvider
      */
-    public function emogrifyFromHtmlWithInValidMediaQueryNotContainsInlineCss($css)
+    public function emogrifyFromHtmlWithInvalidMediaQueryNotContainsInlineCss($css)
     {
         $this->subject->setHtml('<html><style type="text/css">' . $css . '</style><h1></h1></html>');
 
@@ -1402,6 +1459,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Emogrify was handling case differently for passed in CSS vs CSS parsed from style blocks.
+     *
      * @test
      */
     public function emogrifyAppliesCssWithMixedCaseAttributesInStyleBlock()
@@ -1413,11 +1471,12 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<p style="text-align: center; padding-bottom: 1px; padding-top: 0;">', $result);
+        self::assertContains('<p style="padding-bottom: 1px; padding-top: 0; text-align: center;">', $result);
     }
 
     /**
      * Passed in CSS sets the order, but style block CSS overrides values.
+     *
      * @test
      */
     public function emogrifyMergesCssWithMixedCaseAttribute()
@@ -1431,7 +1490,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->emogrify();
 
         self::assertContains(
-            '<p style="text-align: center; margin: 0; padding-top: 1px; padding-bottom: 3px;">',
+            '<p style="margin: 0; padding-top: 1px; padding-bottom: 3px; text-align: center;">',
             $result
         );
     }
@@ -1449,7 +1508,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<p style="text-align: center; margin: 0; padding-bottom: 1px;">', $result);
+        self::assertContains('<p style="margin: 0; padding-bottom: 1px; text-align: center;">', $result);
     }
 
     /**
@@ -1514,7 +1573,11 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
      */
     public function emogrifyForXhtmlDocumentTypeConvertsXmlSelfClosingTagsToNonXmlSelfClosingTag()
     {
-        $this->subject->setHtml($this->xhtml1StrictDocumentType . '<html><body><br/></body></html>');
+        $this->subject->setHtml(
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' .
+            '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' .
+            '<html><body><br/></body></html>'
+        );
 
         $result = $this->subject->emogrify();
 
@@ -1585,10 +1648,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrifyBodyContent();
 
-        self::assertSame(
-            '<p></p>' . self::LF,
-            $result
-        );
+        self::assertSame('<p></p>', $result);
     }
 
     /**
@@ -1600,23 +1660,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrifyBodyContent();
 
-        self::assertSame(
-            '<p></p>' . self::LF,
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function emogrifyBodyContentKeepsUtf8Umlauts()
-    {
-        $umlautString = 'Küss die Hand, schöne Frau.';
-        $this->subject->setHtml('<p>' . $umlautString . '</p>');
-
-        $result = $this->subject->emogrifyBodyContent();
-
-        self::assertContains($umlautString, $result);
+        self::assertSame('<p></p>', $result);
     }
 
     /**
@@ -1629,7 +1673,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<p style="margin: 1px !important;">', $result);
+        self::assertContains('<p style="margin: 1px;">', $result);
     }
 
     /**
@@ -1644,7 +1688,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<p style="margin: 1px !important; text-align: center;">', $result);
+        self::assertContains('<p style="text-align: center; margin: 1px;">', $result);
     }
 
     /**
@@ -1671,7 +1715,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->emogrify();
 
         self::assertContains(
-            '<p style="margin: 2px !important;">',
+            '<p style="margin: 2px;">',
             $result
         );
     }
@@ -1703,7 +1747,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->emogrify();
 
         self::assertContains(
-            '<p style="margin: 1px !important;">',
+            '<p style="margin: 1px;">',
             $result
         );
     }
@@ -1750,7 +1794,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->subject->emogrify();
 
-        self::assertContains('<p style="margin: 2px !important; text-align: center; padding: 1px;">', $result);
+        self::assertContains('<p style="padding: 1px; text-align: center; margin: 2px;">', $result);
     }
 
     /**
@@ -1809,6 +1853,56 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $result = $this->subject->emogrify();
 
         self::assertContains('<p class="x" style="margin: 0;"></p>', $result);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function emogrifyInDebugModeThrowsInvalidArgumentExceptionForInvalidExcludedSelector()
+    {
+        $this->subject->setDebug(true);
+
+        $this->subject->setHtml('<html></html>');
+        $this->subject->addExcludedSelector('..p');
+
+        $this->subject->emogrify();
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyNotInDebugModeIgnoresInvalidExcludedSelector()
+    {
+        $this->subject->setDebug(false);
+
+        $this->subject->setHtml('<html><p class="x"></p></html>');
+        $this->subject->addExcludedSelector('..p');
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<p class="x"></p>', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyNotInDebugModeIgnoresOnlyInvalidExcludedSelector()
+    {
+        $this->subject->setDebug(false);
+
+        $this->subject->setHtml('<html><p class="x"></p><p class="y"></p><p class="z"></p></html>');
+        $this->subject->setCss('p { color: red };');
+        $this->subject->addExcludedSelector('p.x');
+        $this->subject->addExcludedSelector('..p');
+        $this->subject->addExcludedSelector('p.z');
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<p class="x"></p>', $result);
+        self::assertContains('<p class="y" style="color: red;"></p>', $result);
+        self::assertContains('<p class="z"></p>', $result);
     }
 
     /**
@@ -1951,72 +2045,72 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'background-color => bgcolor'
-                => ['<p>hi</p>', 'p {background-color: red;}', 'p', 'bgcolor="red"'],
+            => ['<p>hi</p>', 'p {background-color: red;}', 'p', 'bgcolor="red"'],
             'background-color (with !important) => bgcolor'
-                => ['<p>hi</p>', 'p {background-color: red !important;}', 'p', 'bgcolor="red"'],
+            => ['<p>hi</p>', 'p {background-color: red !important;}', 'p', 'bgcolor="red"'],
             'p.text-align => align'
-                => ['<p>hi</p>', 'p {text-align: justify;}', 'p', 'align="'],
+            => ['<p>hi</p>', 'p {text-align: justify;}', 'p', 'align="'],
             'div.text-align => align'
-                => ['<div>hi</div>', 'div {text-align: justify;}', 'div', 'align="'],
+            => ['<div>hi</div>', 'div {text-align: justify;}', 'div', 'align="'],
             'td.text-align => align'
-                => ['<table><tr><td>hi</td></tr></table>', 'td {text-align: justify;}', 'td', 'align="'],
+            => ['<table><tr><td>hi</td></tr></table>', 'td {text-align: justify;}', 'td', 'align="'],
             'text-align: left => align=left'
-                => ['<p>hi</p>', 'p {text-align: left;}', 'p', 'align="left"'],
+            => ['<p>hi</p>', 'p {text-align: left;}', 'p', 'align="left"'],
             'text-align: right => align=right'
-                => ['<p>hi</p>', 'p {text-align: right;}', 'p', 'align="right"'],
+            => ['<p>hi</p>', 'p {text-align: right;}', 'p', 'align="right"'],
             'text-align: center => align=center'
-                => ['<p>hi</p>', 'p {text-align: center;}', 'p', 'align="center"'],
+            => ['<p>hi</p>', 'p {text-align: center;}', 'p', 'align="center"'],
             'text-align: justify => align:justify'
-                => ['<p>hi</p>', 'p {text-align: justify;}', 'p', 'align="justify"'],
+            => ['<p>hi</p>', 'p {text-align: justify;}', 'p', 'align="justify"'],
             'img.float: right => align=right'
-                => ['<img>', 'img {float: right;}', 'img', 'align="right"'],
+            => ['<img>', 'img {float: right;}', 'img', 'align="right"'],
             'img.float: left => align=left'
-                => ['<img>', 'img {float: left;}', 'img', 'align="left"'],
+            => ['<img>', 'img {float: left;}', 'img', 'align="left"'],
             'table.float: right => align=right'
-                => ['<table></table>', 'table {float: right;}', 'table', 'align="right"'],
+            => ['<table></table>', 'table {float: right;}', 'table', 'align="right"'],
             'table.float: left => align=left'
-                => ['<table></table>', 'table {float: left;}', 'table', 'align="left"'],
+            => ['<table></table>', 'table {float: left;}', 'table', 'align="left"'],
             'table.border-spacing: 0 => cellspacing=0'
-                => ['<table><tr><td></td></tr></table>', 'table {border-spacing: 0;}', 'table', 'cellspacing="0"'],
+            => ['<table><tr><td></td></tr></table>', 'table {border-spacing: 0;}', 'table', 'cellspacing="0"'],
             'background => bgcolor'
-                => ['<p>Bonjour</p>', 'p {background: red top;}', 'p', 'bgcolor="red"'],
+            => ['<p>Bonjour</p>', 'p {background: red top;}', 'p', 'bgcolor="red"'],
             'width with px'
-                => ['<p>Hello</p>', 'p {width: 100px;}', 'p', 'width="100"'],
+            => ['<p>Hello</p>', 'p {width: 100px;}', 'p', 'width="100"'],
             'width with %'
-                => ['<p>Hello</p>', 'p {width: 50%;}', 'p', 'width="50%"'],
+            => ['<p>Hello</p>', 'p {width: 50%;}', 'p', 'width="50%"'],
             'height with px'
-                => ['<p>Hello</p>', 'p {height: 100px;}', 'p', 'height="100"'],
+            => ['<p>Hello</p>', 'p {height: 100px;}', 'p', 'height="100"'],
             'height with %'
-                => ['<p>Hello</p>', 'p {height: 50%;}', 'p', 'height="50%"'],
+            => ['<p>Hello</p>', 'p {height: 50%;}', 'p', 'height="50%"'],
             'img.margin: 0 auto (= horizontal centering) => align=center'
-                => ['<img>', 'img {margin: 0 auto;}', 'img', 'align="center"'],
+            => ['<img>', 'img {margin: 0 auto;}', 'img', 'align="center"'],
             'img.margin: auto (= horizontal centering) => align=center'
-                => ['<img>', 'img {margin: auto;}', 'img', 'align="center"'],
+            => ['<img>', 'img {margin: auto;}', 'img', 'align="center"'],
             'img.margin: 10 auto 30 auto (= horizontal centering) => align=center'
-                => ['<img>', 'img {margin: 10 auto 30 auto;}', 'img', 'align="center"'],
+            => ['<img>', 'img {margin: 10 auto 30 auto;}', 'img', 'align="center"'],
             'table.margin: 0 auto (= horizontal centering) => align=center'
-                => ['<table></table>', 'table {margin: 0 auto;}', 'table', 'align="center"'],
+            => ['<table></table>', 'table {margin: 0 auto;}', 'table', 'align="center"'],
             'table.margin: auto (= horizontal centering) => align=center'
-                => ['<table></table>', 'table {margin: auto;}', 'table', 'align="center"'],
+            => ['<table></table>', 'table {margin: auto;}', 'table', 'align="center"'],
             'table.margin: 10 auto 30 auto (= horizontal centering) => align=center'
-                => ['<table></table>', 'table {margin: 10 auto 30 auto;}', 'table', 'align="center"'],
+            => ['<table></table>', 'table {margin: 10 auto 30 auto;}', 'table', 'align="center"'],
             'img.border: none => border=0'
-                => ['<img>', 'img {border: none;}', 'img', 'border="0"'],
+            => ['<img>', 'img {border: none;}', 'img', 'border="0"'],
             'img.border: 0 => border=0'
-                => ['<img>', 'img {border: none;}', 'img', 'border="0"'],
+            => ['<img>', 'img {border: none;}', 'img', 'border="0"'],
             'table.border: none => border=0'
-                => ['<table></table>', 'table {border: none;}', 'table', 'border="0"'],
+            => ['<table></table>', 'table {border: none;}', 'table', 'border="0"'],
             'table.border: 0 => border=0'
-                => ['<table></table>', 'table {border: none;}', 'table', 'border="0"'],
+            => ['<table></table>', 'table {border: none;}', 'table', 'border="0"'],
         ];
     }
 
     /**
      * @test
-     * @param string $body          The HTML
-     * @param string $css           The complete CSS
-     * @param string $tagName       The name of the tag that should be modified
-     * @param string $attributes    The attributes that are expected on the element
+     * @param string $body The HTML
+     * @param string $css The complete CSS
+     * @param string $tagName The name of the tag that should be modified
+     * @param string $attributes The attributes that are expected on the element
      *
      * @dataProvider matchingCssToHtmlMappingDataProvider
      */
@@ -2028,10 +2122,7 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $this->subject->enableCssToHtmlMapping();
         $html = $this->subject->emogrify();
 
-        self::assertContains(
-            '<' . $tagName . ' ' . $attributes,
-            $html
-        );
+        self::assertRegExp('/<' . preg_quote($tagName, '/') . '[^>]+' . preg_quote($attributes, '/') . '/', $html);
     }
 
     /**
@@ -2043,38 +2134,38 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'background URL'
-                => ['<p>Hello</p>', 'p {background: url(bg.png);}', 'bgcolor'],
+            => ['<p>Hello</p>', 'p {background: url(bg.png);}', 'bgcolor'],
             'background URL with position'
-                => ['<p>Hello</p>', 'p {background: url(bg.png) top;}', 'bgcolor'],
+            => ['<p>Hello</p>', 'p {background: url(bg.png) top;}', 'bgcolor'],
             'img.margin: 10 5 30 auto (= no horizontal centering)'
-                => ['<img>', 'img {margin: 10 5 30 auto;}', 'align'],
+            => ['<img>', 'img {margin: 10 5 30 auto;}', 'align'],
             'p.margin: auto'
-                => ['<p>Bonjour</p>', 'p {margin: auto;}', 'align'],
+            => ['<p>Bonjour</p>', 'p {margin: auto;}', 'align'],
             'p.border: none'
-                => ['<p>Bonjour</p>', 'p {border: none;}', 'border'],
+            => ['<p>Bonjour</p>', 'p {border: none;}', 'border'],
             'img.border: 1px solid black'
-                => ['<p>Bonjour</p>', 'p {border: 1px solid black;}', 'border'],
+            => ['<p>Bonjour</p>', 'p {border: 1px solid black;}', 'border'],
             'span.text-align'
-                => ['<span>hi</span>', 'span {text-align: justify;}', 'align'],
+            => ['<span>hi</span>', 'span {text-align: justify;}', 'align'],
             'text-align: inherit'
-                => ['<p>hi</p>', 'p {text-align: inherit;}', 'align'],
+            => ['<p>hi</p>', 'p {text-align: inherit;}', 'align'],
             'span.float'
-                => ['<span>hi</span>', 'span {float: right;}', 'align'],
+            => ['<span>hi</span>', 'span {float: right;}', 'align'],
             'float: none'
-                => ['<table></table>', 'table {float: none;}', 'align'],
+            => ['<table></table>', 'table {float: none;}', 'align'],
             'p.border-spacing'
-                => ['<p>Hello</p>', 'p {border-spacing: 5px;}', 'cellspacing'],
+            => ['<p>Hello</p>', 'p {border-spacing: 5px;}', 'cellspacing'],
             'height: auto'
-                => ['<img src="logo.png" alt="">', 'img {width: 110px; height: auto;}', 'height'],
+            => ['<img src="logo.png" alt="">', 'img {width: 110px; height: auto;}', 'height'],
             'width: auto'
-                => ['<img src="logo.png" alt="">', 'img {width: auto; height: 110px;}', 'width'],
+            => ['<img src="logo.png" alt="">', 'img {width: auto; height: 110px;}', 'width'],
         ];
     }
 
     /**
      * @test
-     * @param string $body      the HTML
-     * @param string $css       the complete CSS
+     * @param string $body the HTML
+     * @param string $css the complete CSS
      * @param string $attribute the attribute that must not be present on this element
      *
      * @dataProvider notMatchingCssToHtmlMappingDataProvider
@@ -2120,5 +2211,180 @@ class EmogrifierTest extends \PHPUnit_Framework_TestCase
         $html = $this->subject->emogrify();
 
         self::assertContains('<div></div>', $html);
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyKeepsInlineStylePriorityVersusStyleBlockRules()
+    {
+        $this->subject->setHtml(
+            '<html><head><style>p {padding:10px};</style></head><body><p style="padding-left:20px;"></p></body></html>'
+        );
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<p style="padding: 10px; padding-left: 20px;">', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyMovesStyleElementFromHeadToBody()
+    {
+        $style = '<style type="text/css">@media all { html {  color: red; } }</style>';
+        $html = '<html><head>' . $style . '</head></html>';
+        $this->subject->setHtml($html);
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains(
+            '<body>' . $style . '</body>',
+            $result
+        );
+    }
+
+    /**
+     * Asserts that $html contains a $tagName tag with the $attribute attribute.
+     *
+     * @param string $html the HTML string we are searching in
+     * @param string $tagName the HTML tag we are looking for
+     * @param string $attribute the attribute we are looking for (with or even without a value)
+     */
+    private function assertHtmlStringContainsTagWithAttribute($html, $tagName, $attribute)
+    {
+        self::assertTrue(
+            preg_match('/<' . preg_quote($tagName, '/') . '[^>]+' . preg_quote($attribute, '/') . '/', $html) > 0
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyPrefersInlineStyleOverCssBlockStyleForHtmlAttributesMapping()
+    {
+        $this->subject->setHtml(
+            '<html><head><style>p {width:1px}</style></head><body><p style="width:2px"></p></body></html>'
+        );
+        $this->subject->enableCssToHtmlMapping();
+
+        $result = $this->subject->emogrify();
+
+        $this->assertHtmlStringContainsTagWithAttribute($result, 'p', 'width="2"');
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyCorrectsHtmlAttributesMappingWhenMultipleMatchingRulesAndLastRuleIsAuto()
+    {
+        $this->subject->setHtml(
+            '<html><head><style>p {width:1px}</style></head><body><p class="autoWidth"></p></body></html>'
+        );
+        $this->subject->setCss('p.autoWidth {width:auto}');
+        $this->subject->enableCssToHtmlMapping();
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<p class="autoWidth" style="width: auto;">', $result);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function cssForImportantRuleRemovalDataProvider()
+    {
+        return [
+            'one !important rule only' => [
+                'width: 1px !important',
+                'width: 1px;'
+            ],
+            'multiple !important rules only' => [
+                'width: 1px !important; height: 1px !important',
+                'width: 1px; height: 1px;'
+            ],
+            'multiple declarations, one !important rule at the beginning' => [
+                'width: 1px !important; height: 1px; color: red',
+                'height: 1px; color: red; width: 1px;'
+            ],
+            'multiple declarations, one !important rule somewhere in the middle' => [
+                'height: 1px; width: 1px !important; color: red',
+                'height: 1px; color: red; width: 1px;'
+            ],
+            'multiple declarations, one !important rule at the end' => [
+                'height: 1px; color: red; width: 1px !important',
+                'height: 1px; color: red; width: 1px;'
+            ],
+            'multiple declarations, multiple !important rules at the beginning' => [
+                'width: 1px !important; height: 1px !important; color: red; float: left',
+                'color: red; float: left; width: 1px; height: 1px;'
+            ],
+            'multiple declarations, multiple consecutive !important rules somewhere in the middle (#1)' => [
+                'color: red; width: 1px !important; height: 1px !important; float: left',
+                'color: red; float: left; width: 1px; height: 1px;'
+            ],
+            'multiple declarations, multiple consecutive !important rules somewhere in the middle (#2)' => [
+                'color: red; width: 1px !important; height: 1px !important; float: left; clear: both',
+                'color: red; float: left; clear: both; width: 1px; height: 1px;'
+            ],
+            'multiple declarations, multiple not consecutive !important rules somewhere in the middle' => [
+                'color: red; width: 1px !important; clear: both; height: 1px !important; float: left',
+                'color: red; clear: both; float: left; width: 1px; height: 1px;'
+            ],
+            'multiple declarations, multiple !important rules at the end' => [
+                'color: red; float: left; width: 1px !important; height: 1px !important',
+                'color: red; float: left; width: 1px; height: 1px;'
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @param string $originalStyleAttributeContent
+     * @param string $expectedStyleAttributeContent
+     *
+     * @dataProvider cssForImportantRuleRemovalDataProvider
+     */
+    public function emogrifyRemovesImportantRule($originalStyleAttributeContent, $expectedStyleAttributeContent)
+    {
+        $this->subject->setHtml(
+            '<html><head><body><p style="' . $originalStyleAttributeContent . '"></p></body></html>'
+        );
+
+        $result = $this->subject->emogrify();
+
+        self::assertContains('<p style="' . $expectedStyleAttributeContent . '">', $result);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function emogrifyInDebugModeThrowsInvalidArgumentExceptionForInvalidSelectorsInMediaQueryBlocks()
+    {
+        $this->subject->setDebug(true);
+
+        $this->subject->setHtml('<html></html>');
+        $this->subject->setCss('@media screen {p^^ {color: red;}}');
+
+        $this->subject->emogrify();
+    }
+
+    /**
+     * @test
+     */
+    public function emogrifyNotInDebugModeKeepsInvalidOrUnrecognizedSelectorsInMediaQueryBlocks()
+    {
+        $this->subject->setDebug(false);
+
+        $this->subject->setHtml('<html></html>');
+        $css = '@media screen {p^^ {color: red;}}';
+        $this->subject->setCss($css);
+
+        $result = $this->subject->emogrify();
+
+        $this->assertContains($css, $result);
     }
 }

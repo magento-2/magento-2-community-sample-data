@@ -39,4 +39,12 @@ class Fulfillment extends DataObject implements FulfillmentInterface
     {
         return $this->getData(FulfillmentInterface::TRACKING_REFERENCE);
     }
+
+    /**
+     * @return string
+     */
+    public function getCarrierName()
+    {
+        return $this->getData(FulfillmentInterface::CARRIER_NAME);
+    }
 }

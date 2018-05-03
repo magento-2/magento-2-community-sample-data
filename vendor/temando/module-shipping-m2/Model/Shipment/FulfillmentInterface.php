@@ -18,8 +18,9 @@ namespace Temando\Shipping\Model\Shipment;
  */
 interface FulfillmentInterface
 {
-    const SERVICE_NAME       = 'service_name';
+    const SERVICE_NAME = 'service_name';
     const TRACKING_REFERENCE = 'tracking_reference';
+    const CARRIER_NAME = 'carrier_name';
 
     /**
      * Get readable label for shipment method.
@@ -34,4 +35,11 @@ interface FulfillmentInterface
      * @return string
      */
     public function getTrackingReference();
+
+    /**
+     * Get carrier name.
+     *
+     * @return string
+     */
+    public function getCarrierName();
 }

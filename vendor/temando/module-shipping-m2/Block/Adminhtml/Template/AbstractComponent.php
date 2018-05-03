@@ -28,6 +28,8 @@ use Temando\Shipping\Webservice\Config\WsConfigInterface;
  * @link     http://www.temando.com/
  *
  * @api
+ * @deprecated since 1.0.3 | Child blocks will be migrated one after the other.
+ * @see \Temando\Shipping\Block\Adminhtml\ComponentContainer
  */
 abstract class AbstractComponent extends WidgetContainer
 {

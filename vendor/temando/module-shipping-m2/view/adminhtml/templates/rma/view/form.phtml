@@ -1,0 +1,50 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var Temando\Shipping\Block\Adminhtml\Rma\RmaShipment\View $block */ ?>
+
+<?= /* @noEscape */ $block->getChildHtml('rma_shipment_info') ?>
+<?= /* @noEscape */ $block->getChildHtml('rma_shipment_location') ?>
+<section class="admin__page-section order-shipment-billing-shipping">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Payment &amp; Shipping Method')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item-content">
+            <div><?= $block->escapeHtml(__('No additional payment applicable for this RMA')) ?></div>
+        </div>
+        <div class="admin__page-section-item order-shipping-address">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= $block->escapeHtml(__('Shipping and Tracking Information')) ?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+                <?=  /* @noEscape */ $block->getChildHtml('rma_shipment_tracking') ?>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Documentation')) ?></span>
+    </div>
+    <?= /* @noEscape */ $block->getChildHtml('documentation_listing') ?>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Packages')) ?></span>
+    </div>
+    <?= /* @noEscape */ $block->getChildHtml('package_listing') ?>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Items Shipped')) ?></span>
+    </div>
+    <?= /* @noEscape */ $block->getChildHtml('rma_shipment_items') ?>
+</section>

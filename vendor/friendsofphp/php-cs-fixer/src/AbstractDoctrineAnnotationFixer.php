@@ -21,8 +21,6 @@ use PhpCsFixer\Tokenizer\Tokens as PhpTokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
 
 /**
- * Base class for Doctrine annotation fixers.
- *
  * @internal
  */
 abstract class AbstractDoctrineAnnotationFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
@@ -209,6 +207,10 @@ abstract class AbstractDoctrineAnnotationFixer extends AbstractFixer implements 
     {
         do {
             $index = $tokens->getNextMeaningfulToken($index);
+
+            if (null === $index) {
+                return false;
+            }
         } while ($tokens[$index]->isGivenKind(array(T_ABSTRACT, T_FINAL)));
 
         if ($tokens[$index]->isClassy()) {

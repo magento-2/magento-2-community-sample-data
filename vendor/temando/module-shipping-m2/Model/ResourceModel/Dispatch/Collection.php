@@ -4,6 +4,9 @@
  */
 namespace Temando\Shipping\Model\ResourceModel\Dispatch;
 
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Temando\Shipping\Model\DispatchInterface;
@@ -31,24 +34,33 @@ class Collection extends ApiCollection
      * @param EntityFactoryInterface $entityFactory
      * @param ManagerInterface $messageManager
      * @param DispatchRepositoryInterface $dispatchRepository
+     * @param FilterBuilder $filterBuilder
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         ManagerInterface $messageManager,
+        FilterBuilder $filterBuilder,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         DispatchRepositoryInterface $dispatchRepository
     ) {
         $this->dispatchRepository = $dispatchRepository;
 
-        parent::__construct($entityFactory, $messageManager);
+        parent::__construct($entityFactory, $messageManager, $filterBuilder, $searchCriteriaBuilder);
     }
 
     /**
      * Perform API call
+     * @param SearchCriteriaInterface $criteria
      * @return DispatchInterface[]
      */
-    public function fetchData()
+    public function fetchData(SearchCriteriaInterface $criteria)
     {
-        $dispatches = $this->dispatchRepository->getList();
+        $dispatches = $this->dispatchRepository->getList(
+            $criteria->getCurrentPage(),
+            $criteria->getPageSize()
+        );
+
         return $dispatches;
     }
 }

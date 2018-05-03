@@ -91,4 +91,36 @@ class Shipment extends DataObject implements ShipmentInterface
     {
         return $this->getData(ShipmentInterface::IS_PAPERLESS);
     }
+
+    /**
+     * @return \Temando\Shipping\Model\Shipment\ExportDeclarationInterface
+     */
+    public function getExportDeclaration()
+    {
+        return $this->getData(ShipmentInterface::EXPORT_DECLARATION);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->getData(ShipmentInterface::STATUS);
+    }
+
+    /**
+     * @return \Temando\Shipping\Model\Shipment\CapabilityInterface[]
+     */
+    public function getCapabilities()
+    {
+        return $this->getData(ShipmentInterface::CAPABILITIES);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->getData(ShipmentInterface::CREATED_AT);
+    }
 }

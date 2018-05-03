@@ -25,7 +25,7 @@ class StreamEventItemRequest implements StreamEventItemRequestInterface
     private $entityId;
 
     /**
-     * ItemRequest constructor.
+     * StreamEventItemRequest constructor.
      * @param string $streamId
      * @param string $entityId
      */
