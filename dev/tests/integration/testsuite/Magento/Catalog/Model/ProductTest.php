@@ -18,7 +18,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @magentoAppIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
@@ -106,8 +106,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             \Magento\Framework\App\CacheInterface::class
         )->save(
             'test',
-            'cat_p_999',
-            ['cat_p_999']
+            'catalog_product_999',
+            ['catalog_product_999']
         );
         // potential bug: it cleans by cache tags, generated from its ID, which doesn't make much sense
         $this->_model->setId(999)->cleanCache();
@@ -115,7 +115,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
                 \Magento\Framework\App\CacheInterface::class
             )->load(
-                'cat_p_999'
+                'catalog_product_999'
             )
         );
     }
@@ -290,18 +290,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool)$this->_model->isSaleable());
         $this->assertTrue((bool)$this->_model->isAvailable());
         $this->assertTrue($this->_model->isInStock());
-    }
-
-    /**
-     * @covers \Magento\Catalog\Model\Product::isSalable
-     * @covers \Magento\Catalog\Model\Product::isSaleable
-     * @covers \Magento\Catalog\Model\Product::isAvailable
-     * @covers \Magento\Catalog\Model\Product::isInStock
-     */
-    public function testIsNotSalableWhenStatusDisabled()
-    {
-        $this->_model = $this->productRepository->get('simple');
-
         $this->_model->setStatus(0);
         $this->assertFalse((bool)$this->_model->isSalable());
         $this->assertFalse((bool)$this->_model->isSaleable());
@@ -488,47 +476,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
-     * @magentoDataFixture Magento/Catalog/_files/products_with_unique_input_attribute.php
-     */
-    public function testValidateUniqueInputAttributeOnTheSameProduct()
-    {
-        /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute */
-        $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
-            ->loadByCode(\Magento\Catalog\Model\Product::ENTITY, 'unique_input_attribute');
-        $this->_model = $this->_model->loadByAttribute(
-            'sku',
-            'simple product with unique input attribute'
-        );
-        $this->_model->setTypeId(
-            'simple'
-        )->setAttributeSetId(
-            4
-        )->setName(
-            'Simple Product with non-unique value'
-        )->setSku(
-            'some product SKU'
-        )->setPrice(
-            10
-        )->setMetaTitle(
-            'meta title'
-        )->setData(
-            $attribute->getAttributeCode(),
-            'unique value'
-        )->setVisibility(
-            \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
-        )->setStatus(
-            \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
-        )->setCollectExceptionMessages(
-            true
-        );
-
-        $validationResult = $this->_model->validate();
-        $this->assertTrue($validationResult);
-    }
-
-    /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple_with_custom_options.php
      * @magentoAppIsolation enabled
      */
@@ -548,42 +495,5 @@ class ProductTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($expectedValue[$value->getSku()], floatval($value->getPrice()));
             }
         }
-    }
-
-    /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple_out_of_stock.php
-     */
-    public function testSaveWithDifferentQty()
-    {
-        //if save (out of stock product with qty 0) with new qty > 0 it should become in stock.
-        //if set out of stock for product with qty > 0 it should become out of stock
-        $product = $this->productRepository->get('simple-out-of-stock', true, null, true);
-        $stockItem = $product->getExtensionAttributes()->getStockItem();
-        $this->assertEquals(false, $stockItem->getIsInStock());
-        $stockData = [
-            'qty'                       => 5,
-            'is_in_stock'               => 0,
-        ];
-        $product->setStockData($stockData);
-        $product->save();
-
-        /** @var \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage */
-        $stockRegistryStorage = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
-        $stockRegistryStorage->removeStockItem($product->getId());
-        $product = $this->productRepository->get('simple-out-of-stock', true, null, true);
-        $stockItem = $product->getExtensionAttributes()->getStockItem();
-        $this->assertEquals(true, $stockItem->getIsInStock());
-        $stockData = [
-            'qty'                       => 3,
-            'is_in_stock'               => 0,
-        ];
-        $product->setStockData($stockData);
-        $product->save();
-
-        $stockRegistryStorage->removeStockItem($product->getId());
-        $product = $this->productRepository->get('simple-out-of-stock', true, null, true);
-        $stockItem = $product->getExtensionAttributes()->getStockItem();
-        $this->assertEquals(false, $stockItem->getIsInStock());
     }
 }

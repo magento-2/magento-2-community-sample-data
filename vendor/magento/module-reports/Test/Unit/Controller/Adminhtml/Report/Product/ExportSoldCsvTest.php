@@ -27,13 +27,13 @@ class ExportSoldCsvTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->exportSoldCsv = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\ExportSoldCsv::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\ExportSoldCsv',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,

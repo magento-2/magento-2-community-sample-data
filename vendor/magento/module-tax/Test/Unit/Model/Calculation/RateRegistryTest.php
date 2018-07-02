@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test for RateRegistry
  *
  */
-class RateRegistryTest extends \PHPUnit\Framework\TestCase
+class RateRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Model\Calculation\RateRegistry
@@ -35,15 +35,15 @@ class RateRegistryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->rateModelFactoryMock = $this->getMockBuilder(\Magento\Tax\Model\Calculation\RateFactory::class)
+        $this->rateModelFactoryMock = $this->getMockBuilder('Magento\Tax\Model\Calculation\RateFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->rateRegistry = $objectManager->getObject(
-            \Magento\Tax\Model\Calculation\RateRegistry::class,
+            'Magento\Tax\Model\Calculation\RateRegistry',
             ['taxModelRateFactory' => $this->rateModelFactoryMock]
         );
-        $this->rateModelMock = $this->getMockBuilder(\Magento\Tax\Model\Calculation\Rate::class)
+        $this->rateModelMock = $this->getMockBuilder('Magento\Tax\Model\Calculation\Rate')
             ->disableOriginalConstructor()
             ->getMock();
     }

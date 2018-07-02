@@ -27,11 +27,11 @@ class Collection extends AbstractCollection implements SearchResultInterface
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param null|\Zend_Db_Adapter_Abstract $mainTable
-     * @param string $eventPrefix
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $eventPrefix
      * @param string $eventObject
      * @param string $resourceModel
      * @param string $model
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|string|null $connection
+     * @param string|null $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -45,7 +45,7 @@ class Collection extends AbstractCollection implements SearchResultInterface
         $eventPrefix,
         $eventObject,
         $resourceModel,
-        $model = \Magento\Sales\Model\ResourceModel\Grid\Document::class,
+        $model = 'Magento\Sales\Model\ResourceModel\Grid\Document',
         $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
@@ -79,6 +79,7 @@ class Collection extends AbstractCollection implements SearchResultInterface
     {
         $this->aggregations = $aggregations;
     }
+
 
     /**
      * Retrieve all ids for collection

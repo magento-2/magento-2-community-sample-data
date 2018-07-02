@@ -5,7 +5,7 @@
  */
 namespace Magento\Variable\Model;
 
-class VariableTest extends \PHPUnit\Framework\TestCase
+class VariableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Variable\Model\Variable
@@ -15,7 +15,7 @@ class VariableTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Variable\Model\Variable::class
+            'Magento\Variable\Model\Variable'
         );
     }
 
@@ -31,7 +31,7 @@ class VariableTest extends \PHPUnit\Framework\TestCase
         $this->_model->save();
 
         $variable = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Variable\Model\Variable::class
+            'Magento\Variable\Model\Variable'
         );
         $variable->loadByCode('test_code');
         $this->assertEquals($this->_model->getName(), $variable->getName());

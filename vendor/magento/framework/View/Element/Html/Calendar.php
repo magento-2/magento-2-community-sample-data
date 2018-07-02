@@ -11,8 +11,6 @@ use Magento\Framework\Locale\Bundle\DataBundle;
  * Calendar block for page header
  *
  * Prepares localization data for calendar
- *
- * @api
  */
 class Calendar extends \Magento\Framework\View\Element\Template
 {

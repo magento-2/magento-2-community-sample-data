@@ -176,7 +176,7 @@ class CompletePackage extends Package implements CompletePackageInterface
      */
     public function isAbandoned()
     {
-        return (bool) $this->abandoned;
+        return (boolean) $this->abandoned;
     }
 
     /**

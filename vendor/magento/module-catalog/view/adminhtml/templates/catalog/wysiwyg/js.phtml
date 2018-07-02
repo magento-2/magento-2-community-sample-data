@@ -28,7 +28,7 @@ var catalogWysiwygEditor = {
                 url: editorUrl,
                 data: {
                     element_id: elementId + '_editor',
-                    store_id: '<?= /* @escapeNotVerified */ $block->getStoreId() ?>'
+                    store_id: '<?php /* @escapeNotVerified */ echo $block->getStoreId() ?>'
                 },
                 showLoader: true,
                 dataType: 'html',
@@ -45,7 +45,7 @@ var catalogWysiwygEditor = {
             this.modal.html(jQuery(data).html());
         } else {
             this.modal = jQuery(data).modal({
-                title: '<?= /* @escapeNotVerified */ __('WYSIWYG Editor') ?>',
+                title: '<?php /* @escapeNotVerified */ echo __('WYSIWYG Editor'); ?>',
                 modalClass: 'magento',
                 type: 'slide',
                 firedElementId: elementId,
@@ -81,6 +81,7 @@ var catalogWysiwygEditor = {
             } else {
                 $firedElement.val($editorElement.val()).change();
             }
+
             if (tinyMCE.get(firedElementId)) {
                 tinyMCE.get(firedElementId).load();
             }

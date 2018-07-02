@@ -5,7 +5,7 @@
  */
 namespace Magento\Tax\Model\ResourceModel\Calculation\Rule;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\ObjectManager
@@ -28,9 +28,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetClassTypeFilter($classType, $elementId, $expected)
     {
-        $collection = $this->_objectManager->create(
-            \Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection::class
-        );
+        $collection = $this->_objectManager->create('Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection');
         $collection->setClassTypeFilter($classType, $elementId);
         $this->assertRegExp($expected, (string)$collection->getSelect());
     }
@@ -58,9 +56,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetClassTypeFilterWithWrongType()
     {
-        $collection = $this->_objectManager->create(
-            \Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection::class
-        );
+        $collection = $this->_objectManager->create('Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection');
         $collection->setClassTypeFilter('WrongType', 1);
     }
 }

@@ -7,7 +7,7 @@ namespace Magento\ProductVideo\Test\Unit\Helper;
 
 use Magento\ProductVideo\Helper\Media;
 
-class MediaTest extends \PHPUnit\Framework\TestCase
+class MediaTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $scopeConfigMock;
@@ -27,9 +27,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMock();
-        $this->contextMock = $this->createMock(\Magento\Framework\App\Helper\Context::class);
+        $this->contextMock = $this->getMock('Magento\Framework\App\Helper\Context', [], [], '', false);
         $this->contextMock->expects($this->any())->method('getScopeConfig')->willReturn($this->scopeConfigMock);
         $this->helper = new \Magento\ProductVideo\Helper\Media(
             $this->contextMock

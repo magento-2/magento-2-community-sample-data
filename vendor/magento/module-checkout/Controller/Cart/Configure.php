@@ -9,9 +9,6 @@ namespace Magento\Checkout\Controller\Cart;
 use Magento\Framework;
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Configure extends \Magento\Checkout\Controller\Cart
 {
     /**
@@ -73,7 +70,7 @@ class Configure extends \Magento\Checkout\Controller\Cart
             $params->setBuyRequest($quoteItem->getBuyRequest());
 
             $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-            $this->_objectManager->get(\Magento\Catalog\Helper\Product\View::class)
+            $this->_objectManager->get('Magento\Catalog\Helper\Product\View')
                 ->prepareAndRender(
                     $resultPage,
                     $quoteItem->getProduct()->getId(),
@@ -83,7 +80,7 @@ class Configure extends \Magento\Checkout\Controller\Cart
             return $resultPage;
         } catch (\Exception $e) {
             $this->messageManager->addError(__('We cannot configure the product.'));
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             return $this->_goBack();
         }
     }

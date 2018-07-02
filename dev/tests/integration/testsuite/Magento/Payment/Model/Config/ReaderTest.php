@@ -7,27 +7,27 @@
  */
 namespace Magento\Payment\Model\Config;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\Config\Reader
      */
     protected $_model;
 
-    /** @var  \Magento\Framework\Config\FileResolverInterface/PHPUnit\Framework\MockObject_MockObject */
+    /** @var  \Magento\Framework\Config\FileResolverInterface/PHPUnit_Framework_MockObject_MockObject */
     protected $_fileResolverMock;
 
     public function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = $objectManager->create(\Magento\Framework\App\Cache::class);
+        $cache = $objectManager->create('Magento\Framework\App\Cache');
         $cache->clean();
         $this->_fileResolverMock = $this->getMockBuilder(
-            \Magento\Framework\Config\FileResolverInterface::class
+            'Magento\Framework\Config\FileResolverInterface'
         )->disableOriginalConstructor()->getMock();
         $this->_model = $objectManager->create(
-            \Magento\Payment\Model\Config\Reader::class,
+            'Magento\Payment\Model\Config\Reader',
             ['fileResolver' => $this->_fileResolverMock]
         );
     }

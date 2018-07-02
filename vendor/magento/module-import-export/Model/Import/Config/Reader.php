@@ -35,7 +35,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         \Magento\Framework\Config\ValidationStateInterface $validationState,
         $fileName = 'import.xml',
         $idAttributes = [],
-        $domDocumentClass = \Magento\Framework\Config\Dom::class,
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
         $defaultScope = 'global'
     ) {
         parent::__construct(

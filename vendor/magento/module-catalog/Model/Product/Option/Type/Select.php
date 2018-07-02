@@ -302,8 +302,8 @@ class Select extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
     protected function _isSingleSelection()
     {
         $single = [
-            \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_DROP_DOWN,
-            \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_RADIO,
+            \Magento\Catalog\Model\Product\Option::OPTION_TYPE_DROP_DOWN,
+            \Magento\Catalog\Model\Product\Option::OPTION_TYPE_RADIO,
         ];
         return in_array($this->getOption()->getType(), $single);
     }

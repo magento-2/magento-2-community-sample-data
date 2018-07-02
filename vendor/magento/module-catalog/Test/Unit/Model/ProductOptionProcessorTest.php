@@ -12,10 +12,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
+class ProductOptionProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductOptionProcessor
@@ -44,14 +41,14 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->dataObject = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $this->dataObject = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods([
-                'getOptions', 'addData',
+                'getOptions',
             ])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dataObjectFactory = $this->getMockBuilder(\Magento\Framework\DataObject\Factory::class)
+        $this->dataObjectFactory = $this->getMockBuilder('Magento\Framework\DataObject\Factory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -60,7 +57,7 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->dataObject);
 
         $this->customOption = $this->getMockBuilder(
-            \Magento\Catalog\Api\Data\CustomOptionInterface::class
+            'Magento\Catalog\Api\Data\CustomOptionInterface'
         )
             ->setMethods([
                 'getDownloadableLinks',
@@ -68,7 +65,7 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
 
         $this->customOptionFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\CustomOptions\CustomOptionFactory::class
+            'Magento\Catalog\Model\CustomOptions\CustomOptionFactory'
         )
             ->setMethods(['create'])
             ->disableOriginalConstructor()
@@ -82,7 +79,7 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
             $this->customOptionFactory
         );
 
-        $urlBuilder = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option\UrlBuilder::class)
+        $urlBuilder = $this->getMockBuilder('\Magento\Catalog\Model\Product\Option\UrlBuilder')
             ->disableOriginalConstructor()
             ->setMethods(['getUrl'])
             ->getMock();
@@ -103,12 +100,10 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
         $options,
         $requestData
     ) {
-        $productOptionMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductOptionInterface::class)
+        $productOptionMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductOptionInterface')
             ->getMockForAbstractClass();
 
-        $productOptionExtensionMock = $this->getMockBuilder(
-            \Magento\Catalog\Api\Data\ProductOptionExtensionInterface::class
-        )
+        $productOptionExtensionMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductOptionExtensionInterface')
             ->setMethods([
                 'getCustomOptions',
             ])
@@ -138,7 +133,7 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
         $objectManager = new ObjectManager($this);
 
         /** @var \Magento\Catalog\Model\CustomOptions\CustomOption $option */
-        $option = $objectManager->getObject(\Magento\Catalog\Model\CustomOptions\CustomOption::class);
+        $option = $objectManager->getObject('Magento\Catalog\Model\CustomOptions\CustomOption');
         $option->setOptionId(1);
         $option->setOptionValue(1);
 
@@ -190,8 +185,6 @@ class ProductOptionProcessorTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey($expected, $result);
             $this->assertTrue(is_array($result));
             $this->assertSame($this->customOption, $result['custom_options'][0]);
-        } else {
-            $this->assertEmpty($result);
         }
     }
 

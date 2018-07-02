@@ -10,7 +10,7 @@ namespace Magento\Catalog\Block\Product;
  *
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  */
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\View
@@ -25,14 +25,14 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_block = $objectManager->create(\Magento\Catalog\Block\Product\View::class);
+        $this->_block = $objectManager->create('Magento\Catalog\Block\Product\View');
 
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
         $this->_product = $productRepository->get('simple');
 
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('product');
-        $objectManager->get(\Magento\Framework\Registry::class)->register('product', $this->_product);
+        $objectManager->get('Magento\Framework\Registry')->unregister('product');
+        $objectManager->get('Magento\Framework\Registry')->register('product', $this->_product);
     }
 
     public function testSetLayout()
@@ -40,11 +40,16 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var $layout \Magento\Framework\View\Layout */
-        $layout = $objectManager->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = $objectManager->get('Magento\Framework\View\LayoutInterface');
+        /** @var $pageConfig \Magento\Framework\View\Page\Config */
+        $pageConfig = $objectManager->get('Magento\Framework\View\Page\Config');
 
-        $productView = $layout->createBlock(\Magento\Catalog\Block\Product\View::class);
+        $layout->createBlock('Magento\Catalog\Block\Product\View');
 
-        $this->assertInstanceOf(\Magento\Framework\View\LayoutInterface::class, $productView->getLayout());
+        $this->assertNotEmpty($pageConfig->getTitle()->get());
+        $this->assertEquals($this->_product->getMetaTitle(), $pageConfig->getTitle()->get());
+        $this->assertEquals($this->_product->getMetaKeyword(), $pageConfig->getKeywords());
+        $this->assertEquals($this->_product->getMetaDescription(), $pageConfig->getDescription());
     }
 
     public function testGetProduct()
@@ -54,7 +59,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('product');
+        $objectManager->get('Magento\Framework\Registry')->unregister('product');
         $this->_block->setProductId($this->_product->getId());
         $this->assertEquals($this->_product->getId(), $this->_block->getProduct()->getId());
     }

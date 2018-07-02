@@ -14,7 +14,7 @@ use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestCase\Injectable;
 
 /**
- * Test Creation for Update DownloadableProductEntity.
+ * Test Creation for Update DownloadableProductEntity
  *
  * Test Flow:
  *
@@ -30,46 +30,39 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click "Save".
  * 6. Perform asserts.
  *
- * @group Downloadable_Product
+ * @group Downloadable_Product_(MX)
  * @ZephyrId MAGETWO-24775
  */
 class UpdateDownloadableProductEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
-     * Downloadable product fixture.
+     * Downloadable product fixture
      *
      * @var DownloadableProduct
      */
-    private $product;
+    protected $product;
 
     /**
-     * Product page with a grid.
+     * Product page with a grid
      *
      * @var CatalogProductIndex
      */
-    private $catalogProductIndex;
+    protected $catalogProductIndex;
 
     /**
-     * Edit product page on backend.
+     * Edit product page on backend
      *
      * @var CatalogProductEdit
      */
-    private $catalogProductEdit;
+    protected $catalogProductEdit;
 
     /**
-     * Fixture factory.
-     *
-     * @var FixtureFactory
-     */
-    private $fixtureFactory;
-
-    /**
-     * Persist category.
+     * Persist category
      *
      * @param Category $category
      * @return array
@@ -83,12 +76,12 @@ class UpdateDownloadableProductEntityTest extends Injectable
     }
 
     /**
-     * Filling objects of the class.
+     * Filling objects of the class
      *
      * @param CatalogProductIndex $catalogProductIndexNewPage
      * @param CatalogProductEdit $catalogProductEditPage
      * @param FixtureFactory $fixtureFactory
-     * @return array
+     * @return void
      */
     public function __inject(
         CatalogProductIndex $catalogProductIndexNewPage,
@@ -100,50 +93,24 @@ class UpdateDownloadableProductEntityTest extends Injectable
             ['dataset' => 'default']
         );
         $this->product->persist();
-        $this->fixtureFactory = $fixtureFactory;
         $this->catalogProductIndex = $catalogProductIndexNewPage;
         $this->catalogProductEdit = $catalogProductEditPage;
     }
 
     /**
-     * Test update downloadable product.
+     * Test update downloadable product
      *
      * @param DownloadableProduct $product
      * @param Category $category
-     * @param string $storeDataset [optional]
-     * @param int $storesCount [optional]
-     * @param int|null $storeIndexToUpdate [optional]
-     * @return array
+     * @return void
      */
-    public function test(
-        DownloadableProduct $product,
-        Category $category,
-        $storeDataset = '',
-        $storesCount = 0,
-        $storeIndexToUpdate = null
-    ) {
-        // Preconditions
-        $stores = [];
-        if ($storeDataset) {
-            for ($i = 0; $i < $storesCount; $i++) {
-                $stores[$i] = $this->fixtureFactory->createByCode('store', ['dataset' => $storeDataset]);
-                $stores[$i]->persist();
-            }
-        }
-
-        // Test steps
+    public function test(DownloadableProduct $product, Category $category)
+    {
+        // Steps
         $filter = ['sku' => $this->product->getSku()];
         $this->catalogProductIndex->open()->getProductGrid()->searchAndOpen($filter);
-        if ($storeDataset && $storeIndexToUpdate !== null) {
-            $this->catalogProductEdit->getFormPageActions()->changeStoreViewScope($stores[$storeIndexToUpdate]);
-        }
         $productBlockForm = $this->catalogProductEdit->getProductForm();
         $productBlockForm->fill($product, null, $category);
         $this->catalogProductEdit->getFormPageActions()->save();
-
-        return [
-            'store' => $storeDataset ? $stores[$storeIndexToUpdate] : '',
-            'initialProduct' => $this->product
-        ];
     }
 }

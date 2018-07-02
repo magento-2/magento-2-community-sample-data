@@ -5,18 +5,17 @@
  */
 namespace Magento\Eav\Model\Entity;
 
-use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * EAV Entity attribute model
  *
- * @api
  * @method \Magento\Eav\Model\Entity\Attribute setOption($value)
  * @method \Magento\Eav\Api\Data\AttributeExtensionInterface getExtensionAttributes()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute implements
     \Magento\Framework\DataObject\IdentityInterface
@@ -25,11 +24,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
      * Attribute code max length
      */
     const ATTRIBUTE_CODE_MAX_LENGTH = 30;
-
-    /**
-     * Attribute code min length.
-     */
-    const ATTRIBUTE_CODE_MIN_LENGTH = 1;
 
     /**
      * Cache tag
@@ -42,6 +36,11 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
      * @var string
      */
     protected $_eventPrefix = 'eav_entity_attribute';
+
+    /**
+     * @var AttributeCache
+     */
+    private $attributeCache;
 
     /**
      * Parameter name in event
@@ -76,6 +75,11 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
      * @var DateTimeFormatterInterface
      */
     protected $dateTimeFormatter;
+
+    /**
+     * @var \Magento\Framework\Intl\NumberFormatterFactory
+     */
+    private $numberFormatterFactory;
 
     /**
      * @param \Magento\Framework\Model\Context $context
@@ -153,16 +157,16 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
     {
         switch ($this->getAttributeCode()) {
             case 'created_at':
-                return \Magento\Eav\Model\Entity\Attribute\Backend\Time\Created::class;
+                return 'Magento\Eav\Model\Entity\Attribute\Backend\Time\Created';
 
             case 'updated_at':
-                return \Magento\Eav\Model\Entity\Attribute\Backend\Time\Updated::class;
+                return 'Magento\Eav\Model\Entity\Attribute\Backend\Time\Updated';
 
             case 'store_id':
-                return \Magento\Eav\Model\Entity\Attribute\Backend\Store::class;
+                return 'Magento\Eav\Model\Entity\Attribute\Backend\Store';
 
             case 'increment_id':
-                return \Magento\Eav\Model\Entity\Attribute\Backend\Increment::class;
+                return 'Magento\Eav\Model\Entity\Attribute\Backend\Increment';
 
             default:
                 break;
@@ -179,7 +183,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
     protected function _getDefaultSourceModel()
     {
         if ($this->getAttributeCode() == 'store_id') {
-            return \Magento\Eav\Model\Entity\Attribute\Source\Store::class;
+            return 'Magento\Eav\Model\Entity\Attribute\Source\Store';
         }
         return parent::_getDefaultSourceModel();
     }
@@ -215,6 +219,23 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
             $this->setEntityAttributeId($filteredAttributes->getFirstItem()->getEntityAttributeId());
         }
         return $this;
+    }
+
+    /**
+     * Get number formatter factory
+     *
+     * @return \Magento\Framework\Intl\NumberFormatterFactory
+     *
+     * @deprecated
+     */
+    private function getNumberFormatterFactory()
+    {
+        if ($this->numberFormatterFactory === null) {
+            $this->numberFormatterFactory = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Intl\NumberFormatterFactory::class
+            );
+        }
+        return $this->numberFormatterFactory;
     }
 
     /**
@@ -257,7 +278,8 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
         $hasDefaultValue = (string)$defaultValue != '';
 
         if ($this->getBackendType() == 'decimal' && $hasDefaultValue) {
-            $numberFormatter = new \NumberFormatter($this->_localeResolver->getLocale(), \NumberFormatter::DECIMAL);
+            $numberFormatter = $this->getNumberFormatterFactory()
+                ->create($this->_localeResolver->getLocale(), \NumberFormatter::DECIMAL);
             $defaultValue = $numberFormatter->parse($defaultValue);
             if ($defaultValue === false) {
                 throw new LocalizedException(__('Invalid default decimal value'));
@@ -267,11 +289,11 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
 
         if ($this->getBackendType() == 'datetime') {
             if (!$this->getBackendModel()) {
-                $this->setBackendModel(\Magento\Eav\Model\Entity\Attribute\Backend\Datetime::class);
+                $this->setBackendModel('Magento\Eav\Model\Entity\Attribute\Backend\Datetime');
             }
 
             if (!$this->getFrontendModel()) {
-                $this->setFrontendModel(\Magento\Eav\Model\Entity\Attribute\Frontend\Datetime::class);
+                $this->setFrontendModel('Magento\Eav\Model\Entity\Attribute\Frontend\Datetime');
             }
 
             // save default date value as timestamp
@@ -290,7 +312,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
 
         if ($this->getBackendType() == 'gallery') {
             if (!$this->getBackendModel()) {
-                $this->setBackendModel(\Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend::class);
+                $this->setBackendModel('Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend');
             }
         }
 
@@ -305,16 +327,30 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
     public function afterSave()
     {
         $this->_getResource()->saveInSetIncluding($this);
+        $this->getAttributeCache()->clear();
         return parent::afterSave();
     }
 
     /**
      * @return $this
-     * @since 100.0.7
      */
     public function afterDelete()
     {
+        $this->getAttributeCache()->clear();
         return parent::afterDelete();
+    }
+
+    /**
+     * Attribute cache
+     *
+     * @return AttributeCache
+     */
+    private function getAttributeCache()
+    {
+        if (!$this->attributeCache) {
+            $this->attributeCache = ObjectManager::getInstance()->get(AttributeCache::class);
+        }
+        return $this->attributeCache;
     }
 
     /**
@@ -482,7 +518,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
 
     /**
      * @inheritdoc
-     * @since 100.0.7
      */
     public function __sleep()
     {
@@ -495,7 +530,6 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute im
 
     /**
      * @inheritdoc
-     * @since 100.0.7
      */
     public function __wakeup()
     {

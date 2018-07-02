@@ -4,264 +4,92 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Mview\Test\Unit\View;
 
-use Magento\Framework\Data\Collection\EntityFactoryInterface;
-use Magento\Framework\Indexer\ConfigInterface as IndexerConfigInterface;
-use Magento\Framework\Indexer\IndexerInterface;
-use Magento\Framework\Mview\ConfigInterface as MviewConfigInterface;
-use Magento\Framework\Mview\View\Collection;
-use Magento\Framework\Mview\View\State\CollectionFactory;
-use Magento\Framework\Mview\View\State\CollectionInterface as StateCollectionInterface;
-use Magento\Framework\Mview\View\StateInterface;
-use Magento\Framework\Mview\ViewInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
-     * @var IndexerConfigInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $indexerConfigMock;
-
-    /**
-     * @var EntityFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $entityFactoryMock;
-
-    /**
-     * @var MviewConfigInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mviewConfigMock;
-
-    /**
-     * @var CollectionFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $statesFactoryMock;
-
-    /**
-     * @var Collection
-     */
-    private $collection;
-
-    public function setUp()
+    public function testLoadDataAndGetViewsByStateMode()
     {
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
+        $indexerIdOne = 'first_indexer_id';
+        $indexerIdSecond = 'second_indexer_id';
 
-        $this->indexerConfigMock = $this->getMockBuilder(IndexerConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $entityFactory = $this->getMockBuilder(
+            'Magento\Framework\Data\Collection\EntityFactoryInterface'
+        )->disableOriginalConstructor()->setMethods(
+            ['create']
+        )->getMock();
 
-        $this->entityFactoryMock = $this->getMockBuilder(EntityFactoryInterface::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $config = $this->getMockBuilder('Magento\Framework\Mview\ConfigInterface')->getMock();
 
-        $this->mviewConfigMock = $this->getMockBuilder(MviewConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $statesFactory = $this->getMockBuilder(
+            'Magento\Framework\Mview\View\State\CollectionFactory'
+        )->disableOriginalConstructor()->setMethods(
+            ['create']
+        )->getMock();
 
-        $this->statesFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $states = $this->getMockBuilder(
+            'Magento\Framework\Mview\View\State\Collection'
+        )->setMethods(
+            ['getItems']
+        )->disableOriginalConstructor()->getMock();
 
-        $this->collection = $this->objectManagerHelper->getObject(
-            Collection::class,
-            [
-                'entityFactory' => $this->entityFactoryMock,
-                'config' => $this->mviewConfigMock,
-                'statesFactory' => $this->statesFactoryMock,
-                'indexerConfig' => $this->indexerConfigMock,
-            ]
+        $state = $this->getMockForAbstractClass(
+            'Magento\Framework\Mview\View\StateInterface', [], '', false, false, true,
+            ['getViewId', 'getMode', '__wakeup']
         );
-    }
 
-    /**
-     * @param array $indexers
-     * @param array $views
-     * @param array $stateMode
-     * @param int $numDisabledViews
-     * @param int $numEnabledViews
-     * @dataProvider loadDataAndGetViewsByStateModeDataProvider
-     */
-    public function testLoadDataAndGetViewsByStateMode(
-        array $indexers,
-        array $views,
-        array $stateMode,
-        $numDisabledViews,
-        $numEnabledViews
-    ) {
-        $this->indexerConfigMock
-            ->method('getIndexers')
-            ->willReturn($indexers);
+        $state->expects($this->any())->method('getViewId')->will($this->returnValue('second_indexer_id'));
 
-        $this->mviewConfigMock
-            ->expects($this->once())
-            ->method('getViews')
-            ->willReturn(array_flip($views));
+        $state->expects(
+            $this->any()
+        )->method(
+            'getMode'
+        )->will(
+            $this->returnValue(\Magento\Framework\Mview\View\StateInterface::MODE_DISABLED)
+        );
 
-        $orderedViews = [];
-        foreach ($indexers as $indexerData) {
-            $state =  $this->getStateMock(['getMode'], $indexerData);
-            $state->method('getMode')
-                ->willReturn($stateMode[$indexerData['indexer_id']]);
-            $view = $this->getViewMock(['setState', 'getState']);
-            $view->expects($this->once())
-                ->method('setState');
-            $view->method('getState')
-                ->willReturn($state);
-            $orderedViews[$indexerData['view_id']] = $view;
-        }
+        $view = $this->getMockForAbstractClass(
+            'Magento\Framework\Mview\ViewInterface', [], '', false, false, true,
+            ['load', 'setState', 'getState', '__wakeup']
+        );
 
-        $emptyView = $this->getViewMock();
-        $emptyView->method('load')
-            ->withConsecutive(
-                ...array_map(
-                    function ($elem) {
-                        return [$elem];
-                    },
-                    array_keys($orderedViews)
-                )
-            )
-            ->willReturnOnConsecutiveCalls(...array_values($orderedViews));
+        $view->expects($this->once())->method('setState')->with($state);
+        $view->expects($this->any())->method('getState')->will($this->returnValue($state));
+        $view->expects($this->any())->method('load')->with($this->logicalOr($indexerIdOne, $indexerIdSecond));
 
-        $indexer = $this->getIndexerMock();
-        $indexer->method('load')
-            ->willReturnMap(array_map(
-                function ($elem) {
-                    return [$elem['indexer_id'], $this->getIndexerMock([], $elem)];
-                },
-                $indexers
-            ));
+        $entityFactory->expects(
+            $this->any()
+        )->method(
+            'create'
+        )->with(
+            'Magento\Framework\Mview\ViewInterface'
+        )->will(
+            $this->returnValue($view)
+        );
 
-        $this->entityFactoryMock
-            ->method('create')
-            ->willReturnMap([
-                [IndexerInterface::class, [], $indexer],
-                [ViewInterface::class, [], $emptyView]
-            ]);
+        $statesFactory->expects($this->once())->method('create')->will($this->returnValue($states));
 
-        $states = $this->getMockBuilder(StateCollectionInterface::class)
-            ->getMockForAbstractClass();
-        $states->method('getItems')
-            ->willReturn(array_map(
-                function ($elem) {
-                    return $this->getStateMock([], ['view_id' => $elem]);
-                },
-                $views
-            ));
+        $config->expects(
+            $this->once()
+        )->method(
+            'getViews'
+        )->will(
+            $this->returnValue([$indexerIdOne => 1, $indexerIdSecond => 2])
+        );
 
-        $this->statesFactoryMock
-            ->expects($this->once())
-            ->method('create')
-            ->willReturn($states);
+        $states->expects($this->any())->method('getItems')->will($this->returnValue([$state]));
 
-        $this->assertInstanceOf(\Magento\Framework\Mview\View\Collection::class, $this->collection->loadData());
+        $collection = new \Magento\Framework\Mview\View\Collection($entityFactory, $config, $statesFactory);
+        $this->assertInstanceOf('Magento\Framework\Mview\View\Collection', $collection->loadData());
 
-        $views = $this->collection->getViewsByStateMode(StateInterface::MODE_DISABLED);
-        $this->assertCount($numDisabledViews, $views);
-        foreach ($views as $view) {
-            $this->assertInstanceOf(ViewInterface::class, $view);
-        }
+        $views = $collection->getViewsByStateMode(\Magento\Framework\Mview\View\StateInterface::MODE_DISABLED);
+        $this->assertCount(2, $views);
+        $this->assertInstanceOf('Magento\Framework\Mview\ViewInterface', $views[0]);
+        $this->assertInstanceOf('Magento\Framework\Mview\ViewInterface', $views[1]);
 
-        $views = $this->collection->getViewsByStateMode(StateInterface::MODE_ENABLED);
-        $this->assertCount($numEnabledViews, $views);
-    }
-
-    /**
-     * @param array $methods
-     * @param array $data
-     * @return StateInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getStateMock(array $methods = [], array $data = [])
-    {
-        $state = $this->getMockBuilder(StateInterface::class)
-            ->setMethods(array_merge($methods, ['getViewId']))
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $state->method('getViewId')
-            ->willReturn($data['view_id'] ?? '');
-        return $state;
-    }
-
-    /**
-     * @param array $methods
-     * @return ViewInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getViewMock(array $methods = [])
-    {
-        $view = $this->getMockBuilder(ViewInterface::class)
-            ->setMethods(array_merge($methods, ['load']))
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        return $view;
-    }
-
-    /**
-     * @param array $methods
-     * @param array $data
-     * @return \PHPUnit_Framework_MockObject_MockObject|IndexerInterface
-     */
-    private function getIndexerMock(array $methods = [], array $data = [])
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|IndexerInterface $indexer */
-        $indexer = $this->getMockBuilder(IndexerInterface::class)
-            ->setMethods(array_merge($methods, ['getId', 'getViewId']))
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $indexer->method('getId')
-            ->willReturn($data['indexer_id'] ?? '');
-        $indexer->method('getViewId')
-            ->willReturn($data['view_id'] ?? []);
-        return $indexer;
-    }
-
-    /**
-     * @return array
-     */
-    public function loadDataAndGetViewsByStateModeDataProvider()
-    {
-        return [
-            'Indexers with sequence' => [
-                'indexers' => [
-                    'indexer_4' => [
-                        'indexer_id' => 'indexer_4',
-                        'view_id' => 'view_4',
-                    ],
-                    'indexer_2' => [
-                        'indexer_id' => 'indexer_2',
-                        'view_id' => 'view_2',
-                    ],
-                    'indexer_1' => [
-                        'indexer_id' => 'indexer_1',
-                        'view_id' => 'view_1',
-                    ],
-                    'indexer_3' => [
-                        'indexer_id' => 'indexer_3',
-                        'view_id' => 'view_3',
-                    ],
-                ],
-                'views' => [
-                    'view_1',
-                    'view_2',
-                    'view_3',
-                    'view_4',
-                ],
-                'state_mode' => [
-                    'indexer_1' => StateInterface::MODE_DISABLED,
-                    'indexer_2' => StateInterface::MODE_DISABLED,
-                    'indexer_3' => StateInterface::MODE_DISABLED,
-                    'indexer_4' => StateInterface::MODE_ENABLED,
-                ],
-                'num_disabled_views' => 3,
-                'num_enabled_views' => 1,
-            ],
-        ];
+        $views = $collection->getViewsByStateMode(\Magento\Framework\Mview\View\StateInterface::MODE_ENABLED);
+        $this->assertCount(0, $views);
     }
 }

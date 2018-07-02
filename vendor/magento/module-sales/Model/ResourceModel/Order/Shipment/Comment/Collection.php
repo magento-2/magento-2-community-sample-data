@@ -11,9 +11,7 @@ use Magento\Sales\Model\ResourceModel\Order\Comment\Collection\AbstractCollectio
 /**
  * Flat sales order shipment comments collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends AbstractCollection implements ShipmentCommentSearchResultInterface
 {
@@ -39,8 +37,8 @@ class Collection extends AbstractCollection implements ShipmentCommentSearchResu
     protected function _construct()
     {
         $this->_init(
-            \Magento\Sales\Model\Order\Shipment\Comment::class,
-            \Magento\Sales\Model\ResourceModel\Order\Shipment\Comment::class
+            'Magento\Sales\Model\Order\Shipment\Comment',
+            'Magento\Sales\Model\ResourceModel\Order\Shipment\Comment'
         );
     }
 

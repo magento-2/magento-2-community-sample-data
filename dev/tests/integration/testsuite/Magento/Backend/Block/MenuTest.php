@@ -10,10 +10,10 @@ use Magento\Framework\Component\ComponentRegistrar;
 
 /**
  * Test class for \Magento\Backend\Block\Menu
- * @magentoAppArea adminhtml
+ * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MenuTest extends \PHPUnit\Framework\TestCase
+class MenuTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Menu $blockMenu
@@ -29,9 +29,11 @@ class MenuTest extends \PHPUnit\Framework\TestCase
     protected $backupRegistrar;
 
     /**
-     * @var \Magento\Backend\Model\Menu\Config
+     * Backend Auth model.
+     * 
+     * @var \Magento\Backend\Model\Auth
      */
-    private $menuConfig;
+    private $auth;
 
     protected function setUp()
     {
@@ -40,18 +42,17 @@ class MenuTest extends \PHPUnit\Framework\TestCase
         );
         $this->configCacheType->save('', \Magento\Backend\Model\Menu\Config::CACHE_MENU_OBJECT);
 
+        $this->blockMenu = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Backend\Block\Menu::class
+        );
+        $this->auth = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+            ->get(\Magento\Backend\Model\Auth::class);
+
         $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $this->backupRegistrar = $paths->getValue();
         $paths->setAccessible(false);
-
-        $this->menuConfig = $this->prepareMenuConfig();
-
-        $this->blockMenu = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Block\Menu::class,
-            ['menuConfig' => $this->menuConfig]
-        );
     }
 
     /**
@@ -59,7 +60,8 @@ class MenuTest extends \PHPUnit\Framework\TestCase
      */
     public function testRenderNavigation()
     {
-        $menuHtml = $this->blockMenu->renderNavigation($this->menuConfig->getMenu());
+        $menuConfig = $this->prepareMenuConfig();
+        $menuHtml = $this->blockMenu->renderNavigation($menuConfig->getMenu());
         $menu = new \SimpleXMLElement($menuHtml);
 
         $item = $menu->xpath('/ul/li/a/span')[0];
@@ -154,6 +156,7 @@ class MenuTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         $this->configCacheType->save('', \Magento\Backend\Model\Menu\Config::CACHE_MENU_OBJECT);
+        $this->auth = null;
         $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);

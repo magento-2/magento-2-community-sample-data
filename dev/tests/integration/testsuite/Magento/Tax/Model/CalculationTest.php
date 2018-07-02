@@ -15,7 +15,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
  * @magentoDataFixture Magento/Customer/_files/customer.php
  * @magentoDataFixture Magento/Customer/_files/customer_address.php
  */
-class CalculationTest extends \PHPUnit\Framework\TestCase
+class CalculationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\ObjectManager
@@ -50,14 +50,12 @@ class CalculationTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_model = $this->_objectManager->create(\Magento\Tax\Model\Calculation::class);
+        $this->_model = $this->_objectManager->create('Magento\Tax\Model\Calculation');
         $this->customerRepository = $this->_objectManager->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
-        $this->addressRepository = $this->_objectManager->create(
-            \Magento\Customer\Api\AddressRepositoryInterface::class
-        );
-        $this->groupRepository = $this->_objectManager->create(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $this->addressRepository = $this->_objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
+        $this->groupRepository = $this->_objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
     }
 
     public function testDefaultCustomerTaxClass()

@@ -6,7 +6,6 @@
 namespace Magento\Checkout\Test\Block\Onepage;
 
 use Magento\Checkout\Test\Fixture\Checkout;
-use Magento\Customer\Test\Fixture\Customer;
 use Magento\Mtf\Block\Form;
 use Magento\Mtf\Fixture\FixtureInterface;
 
@@ -49,6 +48,13 @@ class Login extends Form
      * @var string
      */
     protected $loadingMask = '.loading-mask';
+
+    /**
+     * Selector for checkout email input.
+     *
+     * @var string
+     */
+    private $emailSelector = '[name="username"]';
 
     /**
      * Select how to perform checkout whether guest or registered customer.
@@ -94,15 +100,13 @@ class Login extends Form
     /**
      * Fill required fields for guest checkout.
      *
-     * @param Customer $customer
+     * @param FixtureInterface $customer
      * @return void
      */
-    public function fillGuestFields(Customer $customer)
+    public function fillGuestFields(FixtureInterface $customer)
     {
-        $mapping = $this->dataMapping();
-        $this->_rootElement->find($mapping['email']['selector'], $mapping['email']['strategy'])
+        $this->_rootElement->find($this->emailSelector)
             ->setValue($customer->getEmail());
-        $this->waitForElementNotVisible($this->loadingMask);
     }
 
     /**

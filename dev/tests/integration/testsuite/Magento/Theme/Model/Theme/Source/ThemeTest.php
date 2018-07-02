@@ -11,16 +11,16 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Theme Test
  *
  */
-class ThemeTest extends \PHPUnit\Framework\TestCase
+class ThemeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetAllOptions()
     {
         /** @var $model \Magento\Theme\Model\Theme\Source\Theme */
-        $model = Bootstrap::getObjectManager()->create(\Magento\Theme\Model\Theme\Source\Theme::class);
+        $model = Bootstrap::getObjectManager()->create('Magento\Theme\Model\Theme\Source\Theme');
 
         /** @var $expectedCollection \Magento\Theme\Model\Theme\Collection */
         $expectedCollection = Bootstrap::getObjectManager()
-            ->create(\Magento\Theme\Model\ResourceModel\Theme\Collection::class);
+            ->create('Magento\Theme\Model\ResourceModel\Theme\Collection');
         $expectedCollection->addFilter('area', 'frontend');
 
         $expectedItemsCount = count($expectedCollection);

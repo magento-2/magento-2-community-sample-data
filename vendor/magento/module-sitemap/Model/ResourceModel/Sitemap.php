@@ -8,8 +8,7 @@ namespace Magento\Sitemap\Model\ResourceModel;
 /**
  * Sitemap resource model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Sitemap extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

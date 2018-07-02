@@ -3,20 +3,18 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product;
 
-use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitationFactory;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
+ * Class CollectionTest
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    private $objectManager;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -53,17 +51,11 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     private $galleryReadHandlerMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $storeManager;
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $entityFactory = $this->createMock(\Magento\Framework\Data\Collection\EntityFactory::class);
+        $entityFactory = $this->getMock(\Magento\Framework\Data\Collection\EntityFactory::class, [], [], '', false);
         $logger = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -88,9 +80,9 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $universalFactory = $this->getMockBuilder(\Magento\Framework\Validator\UniversalFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getStore', 'getId', 'getWebsiteId'])
+            ->setMethods(['getStore', 'getId'])
             ->getMockForAbstractClass();
         $moduleManager = $this->getMockBuilder(\Magento\Framework\Module\Manager::class)
             ->disableOriginalConstructor()
@@ -121,7 +113,6 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
 
         $this->connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
-            ->setMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -145,8 +136,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             \Magento\Catalog\Model\Product\Gallery\ReadHandler::class
         )->disableOriginalConstructor()->getMock();
 
-        $this->storeManager->expects($this->any())->method('getId')->willReturn(1);
-        $this->storeManager->expects($this->any())->method('getStore')->willReturnSelf();
+        $storeManager->expects($this->any())->method('getId')->willReturn(1);
+        $storeManager->expects($this->any())->method('getStore')->willReturnSelf();
         $universalFactory->expects($this->exactly(1))->method('create')->willReturnOnConsecutiveCalls(
             $this->entityMock
         );
@@ -154,17 +145,27 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->entityMock->expects($this->once())->method('getDefaultAttributes')->willReturn([]);
         $this->entityMock->expects($this->any())->method('getTable')->willReturnArgument(0);
         $this->connectionMock->expects($this->atLeastOnce())->method('select')->willReturn($this->selectMock);
+        $helper = new ObjectManager($this);
 
-        $productLimitationMock = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation::class
-        );
-        $productLimitationFactoryMock = $this->getMockBuilder(
-            ProductLimitationFactory::class
-        )->disableOriginalConstructor()->setMethods(['create'])->getMock();
-
-        $productLimitationFactoryMock->method('create')
-            ->willReturn($productLimitationMock);
-        $this->collection = $this->objectManager->getObject(
+        $this->prepareObjectManager([
+            [
+                \Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation::class,
+                $this->getMock(\Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation::class)
+            ],
+            [
+                \Magento\Catalog\Model\ResourceModel\Product\Gallery::class,
+                $this->galleryResourceMock
+            ],
+            [
+                \Magento\Framework\EntityManager\MetadataPool::class,
+                $this->metadataPoolMock
+            ],
+            [
+                \Magento\Catalog\Model\Product\Gallery\ReadHandler::class,
+                $this->galleryReadHandlerMock
+            ]
+        ]);
+        $this->collection = $helper->getObject(
             \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
             [
                 'entityFactory' => $entityFactory,
@@ -176,7 +177,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 'eavEntityFactory' => $eavEntityFactory,
                 'resourceHelper' => $resourceHelper,
                 'universalFactory' => $universalFactory,
-                'storeManager' => $this->storeManager,
+                'storeManager' => $storeManager,
                 'moduleManager' => $moduleManager,
                 'catalogProductFlatState' => $catalogProductFlatState,
                 'scopeConfig' => $scopeConfig,
@@ -186,29 +187,16 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 'customerSession' => $customerSession,
                 'dateTime' => $dateTime,
                 'groupManagement' => $groupManagement,
-                'connection' => $this->connectionMock,
-                'productLimitationFactory' => $productLimitationFactoryMock,
-                'metadataPool' => $this->metadataPoolMock,
-                '_isCollectionLoaded' => true
+                'connection' => $this->connectionMock
             ]
         );
         $this->collection->setConnection($this->connectionMock);
-        $this->objectManager->setBackwardCompatibleProperty(
-            $this->collection,
-            'mediaGalleryResource',
-            $this->galleryResourceMock
-        );
-        $this->objectManager->setBackwardCompatibleProperty(
-            $this->collection,
-            'productGalleryReadHandler',
-            $this->galleryReadHandlerMock
-        );
     }
 
     public function testAddProductCategoriesFilter()
     {
-        $condition = ['in' => [1, 2]];
-        $values = [1, 2];
+        $condition = ['in' => [1,2]];
+        $values = [1,2];
         $conditionType = 'nin';
         $preparedSql = "category_id IN(1,2)";
         $tableName = "catalog_category_product";
@@ -231,12 +219,16 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->collection->addCategoriesFilter([$conditionType => $values]);
     }
 
-    public function testAddMediaGalleryData()
+    /**
+     * @dataProvider addMediaGalleryDataDataProvider
+     * @param string $linkField
+     * @param int $linkFieldId
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function testAddMediaGalleryData($linkField, $linkFieldId)
     {
         $attributeId = 42;
-        $rowId = 4;
-        $linkField = 'row_id';
-        $mediaGalleriesMock = [[$linkField => $rowId]];
+        $mediaGalleriesMock = [[$linkField => $linkFieldId]];
         $itemMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
             ->disableOriginalConstructor()
             ->setMethods(['getData'])
@@ -251,17 +243,21 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->collection->addItem($itemMock);
+        $reflection = new \ReflectionClass(get_class($this->collection));
+        $reflectionProperty = $reflection->getProperty('_isCollectionLoaded');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($this->collection, true);
+
         $this->galleryResourceMock->expects($this->once())->method('createBatchBaseSelect')->willReturn($selectMock);
         $attributeMock->expects($this->once())->method('getAttributeId')->willReturn($attributeId);
         $this->entityMock->expects($this->once())->method('getAttribute')->willReturn($attributeMock);
-        $itemMock->expects($this->atLeastOnce())->method('getData')->willReturn($rowId);
-        $selectMock->expects($this->once())->method('where')->with('entity.' . $linkField . ' IN (?)', [$rowId]);
+        $itemMock->expects($this->atLeastOnce())->method('getData')->willReturn($linkFieldId);
+        $selectMock->expects($this->once())->method('where')->with('entity.' . $linkField . ' IN (?)', [$linkFieldId]);
         $this->metadataPoolMock->expects($this->once())->method('getMetadata')->willReturn($metadataMock);
         $metadataMock->expects($this->once())->method('getLinkField')->willReturn($linkField);
 
-        $this->connectionMock->expects($this->once())->method('fetchOne')->with($selectMock)->willReturn(42);
         $this->connectionMock->expects($this->once())->method('fetchAll')->with($selectMock)->willReturn(
-            [['row_id' => $rowId]]
+            [[$linkField => $linkFieldId]]
         );
         $this->galleryReadHandlerMock->expects($this->once())->method('addMediaDataToProduct')
             ->with($itemMock, $mediaGalleriesMock);
@@ -270,110 +266,29 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test addTierPriceDataByGroupId method.
-     *
-     * @return void
+     * @return array
      */
-    public function testAddTierPriceDataByGroupId()
+    public function addMediaGalleryDataDataProvider()
     {
-        $customerGroupId = 2;
-        $itemMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getData'])
-            ->getMock();
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['isScopeGlobal', 'getBackend'])
-            ->getMock();
-        $backend = $this->getMockBuilder(\Magento\Catalog\Model\Product\Attribute\Backend\Tierprice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resource = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\GroupPrice\AbstractGroupPrice::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connectionMock->expects($this->once())->method('getAutoIncrementField')->willReturn('entity_id');
-        $this->collection->addItem($itemMock);
-        $itemMock->expects($this->atLeastOnce())->method('getData')->with('entity_id')->willReturn(1);
-        $this->entityMock->expects($this->atLeastOnce())
-            ->method('getAttribute')
-            ->with('tier_price')
-            ->willReturn($attributeMock);
-        $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
-        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
-        $backend->expects($this->once())->method('getResource')->willReturn($resource);
-        $resource->expects($this->once())->method('getSelect')->willReturn($select);
-        $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();
-        $select->expects($this->exactly(2))->method('where')
-            ->withConsecutive(
-                ['entity_id IN(?)', [1]],
-                [ '(customer_group_id=? AND all_groups=0) OR all_groups=1', $customerGroupId]
-            )
-            ->willReturnSelf();
-        $select->expects($this->once())->method('order')->with('entity_id')->willReturnSelf();
-        $this->connectionMock->expects($this->once())
-            ->method('fetchAll')
-            ->with($select)
-            ->willReturn([['product_id' => 1]]);
-        $backend->expects($this->once())->method('setPriceData')->with($itemMock, [['product_id' => 1]]);
-
-        $this->assertSame($this->collection, $this->collection->addTierPriceDataByGroupId($customerGroupId));
+        return [
+            ['entity_id', 4242],
+            ['row_id', 4]
+        ];
     }
 
     /**
-     * Test testAddTierPriceData method.
-     *
-     * @return void
+     * @param $map
      */
-    public function testAddTierPriceData()
+    private function prepareObjectManager($map)
     {
-        $itemMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getData'])
-            ->getMock();
-        $attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['isScopeGlobal', 'getBackend'])
-            ->getMock();
-        $backend = $this->getMockBuilder(\Magento\Catalog\Model\Product\Attribute\Backend\Tierprice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resource = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\GroupPrice\AbstractGroupPrice::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connectionMock->expects($this->once())->method('getAutoIncrementField')->willReturn('entity_id');
-        $this->collection->addItem($itemMock);
-        $itemMock->expects($this->atLeastOnce())->method('getData')->with('entity_id')->willReturn(1);
-        $this->entityMock->expects($this->atLeastOnce())
-            ->method('getAttribute')
-            ->with('tier_price')
-            ->willReturn($attributeMock);
-        $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
-        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
-        $backend->expects($this->once())->method('getResource')->willReturn($resource);
-        $resource->expects($this->once())->method('getSelect')->willReturn($select);
-        $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();
-        $select->expects($this->exactly(1))->method('where')
-            ->with('entity_id IN(?)', [1])
-            ->willReturnSelf();
-        $select->expects($this->once())->method('order')->with('entity_id')->willReturnSelf();
-        $this->connectionMock->expects($this->once())
-            ->method('fetchAll')
-            ->with($select)
-            ->willReturn([['product_id' => 1]]);
-        $backend->expects($this->once())->method('setPriceData')->with($itemMock, [['product_id' => 1]]);
-
-        $this->assertSame($this->collection, $this->collection->addTierPriceData());
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManagerMock->expects($this->any())->method('getInstance')->willReturnSelf();
+        $objectManagerMock->expects($this->any())
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $reflectionClass = new \ReflectionClass(\Magento\Framework\App\ObjectManager::class);
+        $reflectionProperty = $reflectionClass->getProperty('_instance');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($objectManagerMock);
     }
 }

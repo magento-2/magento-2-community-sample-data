@@ -5,6 +5,7 @@
  */
 namespace Magento\Authorizenet\Test\Unit\Model;
 
+use Magento\Sales\Api\PaymentFailuresInterface;
 use Magento\Framework\Simplexml\Element;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Authorizenet\Model\Directpost;
@@ -18,7 +19,7 @@ use Magento\Sales\Model\Order\Payment\Transaction\Repository as TransactionRepos
  * Class DirectpostTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DirectpostTest extends \PHPUnit\Framework\TestCase
+class DirectpostTest extends \PHPUnit_Framework_TestCase
 {
     const TOTAL_AMOUNT = 100.02;
     const INVOICE_NUM = '00000001';
@@ -74,11 +75,16 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
      */
     protected $requestFactory;
 
+    /**
+     * @var PaymentFailuresInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $paymentFailures;
+
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMock();
-        $this->paymentMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
+        $this->paymentMock = $this->getMockBuilder('Magento\Sales\Model\Order\Payment')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getOrder', 'getId', 'setAdditionalInformation', 'getAdditionalInformation',
@@ -86,22 +92,28 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
                 'getParentTransactionId', 'getPoNumber'
             ])
             ->getMock();
-        $this->dataHelperMock = $this->getMockBuilder(\Magento\Authorizenet\Helper\Data::class)
+        $this->dataHelperMock = $this->getMockBuilder('Magento\Authorizenet\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->initResponseFactoryMock();
 
         $this->transactionRepositoryMock = $this->getMockBuilder(
-            \Magento\Sales\Model\Order\Payment\Transaction\Repository::class
+            'Magento\Sales\Model\Order\Payment\Transaction\Repository'
         )
             ->disableOriginalConstructor()
             ->setMethods(['getByTransactionId'])
             ->getMock();
 
-        $this->transactionServiceMock = $this->getMockBuilder(\Magento\Authorizenet\Model\TransactionService::class)
+        $this->transactionServiceMock = $this->getMockBuilder('Magento\Authorizenet\Model\TransactionService')
             ->disableOriginalConstructor()
             ->setMethods(['getTransactionDetails'])
+            ->getMock();
+
+        $this->paymentFailures = $this->getMockBuilder(
+            PaymentFailuresInterface::class
+        )
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->requestFactory = $this->getRequestFactoryMock();
@@ -109,7 +121,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
 
         $helper = new ObjectManagerHelper($this);
         $this->directpost = $helper->getObject(
-            \Magento\Authorizenet\Model\Directpost::class,
+            'Magento\Authorizenet\Model\Directpost',
             [
                 'scopeConfig' => $this->scopeConfigMock,
                 'dataHelper' => $this->dataHelperMock,
@@ -117,7 +129,8 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
                 'responseFactory' => $this->responseFactoryMock,
                 'transactionRepository' => $this->transactionRepositoryMock,
                 'transactionService' => $this->transactionServiceMock,
-                'httpClientFactory' => $httpClientFactoryMock
+                'httpClientFactory' => $httpClientFactoryMock,
+                'paymentFailures' => $this->paymentFailures
             ]
         );
     }
@@ -125,7 +138,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
     public function testGetConfigInterface()
     {
         $this->assertInstanceOf(
-            \Magento\Payment\Model\Method\ConfigInterface::class,
+            'Magento\Payment\Model\Method\ConfigInterface',
             $this->directpost->getConfigInterface()
         );
     }
@@ -146,7 +159,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
         $storeId = 'store-id';
         $expectedResult = 'relay-url';
 
-        $helperDataMock = $this->getMockBuilder(\Magento\Authorizenet\Helper\Backend\Data::class)
+        $helperDataMock = $this->getMockBuilder('Magento\Authorizenet\Helper\Backend\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -313,12 +326,15 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Checks response failures behaviour.
+     *
      * @param bool $responseCode
+     * @param int $failuresHandlerCalls
      *
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @dataProvider checkResponseCodeFailureDataProvider
      */
-    public function testCheckResponseCodeFailure($responseCode)
+    public function testCheckResponseCodeFailure($responseCode, $failuresHandlerCalls)
     {
         $reasonText = 'reason text';
 
@@ -333,6 +349,23 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
             ->with($reasonText)
             ->willReturn(__('Gateway error: %1', $reasonText));
 
+        $orderMock = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $orderMock->expects($this->exactly($failuresHandlerCalls))
+            ->method('getQuoteId')
+            ->willReturn(1);
+
+        $this->paymentFailures->expects($this->exactly($failuresHandlerCalls))
+            ->method('handle')
+            ->with(1);
+
+        $reflection = new \ReflectionClass($this->directpost);
+        $order = $reflection->getProperty('order');
+        $order->setAccessible(true);
+        $order->setValue($this->directpost, $orderMock);
+
         $this->directpost->checkResponseCode();
     }
 
@@ -342,9 +375,9 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
     public function checkResponseCodeFailureDataProvider()
     {
         return [
-            ['responseCode' => Directpost::RESPONSE_CODE_DECLINED],
-            ['responseCode' => Directpost::RESPONSE_CODE_ERROR],
-            ['responseCode' => 999999]
+            ['responseCode' => Directpost::RESPONSE_CODE_DECLINED, 1],
+            ['responseCode' => Directpost::RESPONSE_CODE_ERROR, 1],
+            ['responseCode' => 999999, 0]
         ];
     }
 
@@ -419,7 +452,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn($paymentId);
 
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->setMethods(['getId', '__wakeup'])
             ->getMock();
@@ -431,7 +464,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
             ->method('getOrder')
             ->willReturn($orderMock);
 
-        $transactionMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment\Transaction::class)
+        $transactionMock = $this->getMockBuilder('Magento\Sales\Model\Order\Payment\Transaction')
             ->disableOriginalConstructor()
             ->getMock();
         $this->transactionRepositoryMock->expects(static::once())
@@ -552,10 +585,10 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
      */
     private function initResponseFactoryMock()
     {
-        $this->responseFactoryMock = $this->getMockBuilder(
-            \Magento\Authorizenet\Model\Directpost\Response\Factory::class
-        )->disableOriginalConstructor()->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost\Response::class)
+        $this->responseFactoryMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost\Response\Factory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->responseMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost\Response')
             ->setMethods(
                 [
                     'isValidHash',
@@ -657,7 +690,7 @@ class DirectpostTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Get mock for authorize.net request factory
-     * @return \PHPUnit\Framework\MockObject_MockBuilder
+     * @return \PHPUnit_Framework_MockObject_MockBuilder
      */
     private function getRequestFactoryMock()
     {

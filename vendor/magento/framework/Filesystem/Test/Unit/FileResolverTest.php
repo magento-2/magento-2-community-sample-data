@@ -11,7 +11,7 @@ namespace Magento\Framework\Filesystem\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class FileResolverTest extends \PHPUnit\Framework\TestCase
+class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem\FileResolver
@@ -20,7 +20,7 @@ class FileResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->model = (new ObjectManager($this))->getObject(\Magento\Framework\Filesystem\FileResolver::class);
+        $this->model = (new ObjectManager($this))->getObject('Magento\Framework\Filesystem\FileResolver');
     }
 
     public function testGetFilePath()

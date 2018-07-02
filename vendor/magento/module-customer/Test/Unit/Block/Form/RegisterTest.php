@@ -10,10 +10,8 @@ use Magento\Customer\Model\AccountManagement;
 
 /**
  * Test class for \Magento\Customer\Block\Form\Register.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RegisterTest extends \PHPUnit\Framework\TestCase
+class RegisterTest extends \PHPUnit_Framework_TestCase
 {
     /** Constants used by the various unit tests */
     const POST_ACTION_URL = 'http://localhost/index.php/customer/account/createpost';
@@ -50,24 +48,27 @@ class RegisterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->_moduleManager = $this->createMock(\Magento\Framework\Module\Manager::class);
-        $this->directoryHelperMock = $this->createMock(\Magento\Directory\Helper\Data::class);
-        $this->_customerUrl = $this->createMock(\Magento\Customer\Model\Url::class);
-        $this->_customerSession = $this->createPartialMock(
-            \Magento\Customer\Model\Session::class,
-            ['getCustomerFormData']
+        $this->_scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->_moduleManager = $this->getMock('Magento\Framework\Module\Manager', [], [], '', false);
+        $this->directoryHelperMock = $this->getMock('Magento\Directory\Helper\Data', [], [], '', false);
+        $this->_customerUrl = $this->getMock('Magento\Customer\Model\Url', [], [], '', false);
+        $this->_customerSession = $this->getMock(
+            'Magento\Customer\Model\Session',
+            ['getCustomerFormData'],
+            [],
+            '',
+            false
         );
-        $context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
         $context->expects($this->any())->method('getScopeConfig')->will($this->returnValue($this->_scopeConfig));
 
         $this->_block = new \Magento\Customer\Block\Form\Register(
             $context,
             $this->directoryHelperMock,
-            $this->getMockForAbstractClass(\Magento\Framework\Json\EncoderInterface::class, [], '', false),
-            $this->createMock(\Magento\Framework\App\Cache\Type\Config::class),
-            $this->createMock(\Magento\Directory\Model\ResourceModel\Region\CollectionFactory::class),
-            $this->createMock(\Magento\Directory\Model\ResourceModel\Country\CollectionFactory::class),
+            $this->getMockForAbstractClass('Magento\Framework\Json\EncoderInterface', [], '', false),
+            $this->getMock('Magento\Framework\App\Cache\Type\Config', [], [], '', false),
+            $this->getMock('Magento\Directory\Model\ResourceModel\Region\CollectionFactory', [], [], '', false),
+            $this->getMock('Magento\Directory\Model\ResourceModel\Country\CollectionFactory', [], [], '', false),
             $this->_moduleManager,
             $this->_customerSession,
             $this->_customerUrl
@@ -319,8 +320,8 @@ class RegisterTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue($customerFormData)
         );
-        $form = $this->createMock(\Magento\Customer\Model\Metadata\Form::class);
-        $request = $this->getMockForAbstractClass(\Magento\Framework\App\RequestInterface::class, [], '', false);
+        $form = $this->getMock('Magento\Customer\Model\Metadata\Form', [], [], '', false);
+        $request = $this->getMockForAbstractClass('Magento\Framework\App\RequestInterface', [], '', false);
         $formData = $this->_block->getFormData();
         $form->expects(
             $this->once()

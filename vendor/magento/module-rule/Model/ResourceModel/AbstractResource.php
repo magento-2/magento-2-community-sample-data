@@ -4,14 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Rule\Model\ResourceModel;
-
 /**
  * Abstract Rule entity resource model
  *
- * @api
- * @since 100.0.2
+ * @author Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Rule\Model\ResourceModel;
+
 abstract class AbstractResource extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -58,7 +57,7 @@ abstract class AbstractResource extends \Magento\Framework\Model\ResourceModel\D
     private function resolveDate(\Magento\Framework\Model\AbstractModel $object, $dateIdentifier)
     {
         $date = $object->getData($dateIdentifier);
-        if ($date instanceof \DateTimeInterface) {
+        if ($date instanceof \DateTime) {
             $object->setData($dateIdentifier, $date->format('Y-m-d H:i:s'));
         } elseif (!is_string($date) || empty($date)) {
             $object->setData($dateIdentifier, null);
@@ -81,7 +80,7 @@ abstract class AbstractResource extends \Magento\Framework\Model\ResourceModel\D
         try {
             $this->_multiplyBunchInsert($ruleIds, $entityIds, $entityType);
         } catch (\Exception $e) {
-            $this->getConnection()->rollBack();
+            $this->getConnection()->rollback();
             throw $e;
         }
 

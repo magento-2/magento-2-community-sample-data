@@ -8,8 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\View\Tab;
 /**
  * Order transactions tab
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Transactions extends \Magento\Framework\View\Element\Text\ListText implements
     \Magento\Backend\Block\Widget\Tab\TabInterface

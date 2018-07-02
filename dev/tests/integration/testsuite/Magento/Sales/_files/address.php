@@ -4,9 +4,7 @@
  * See COPYING.txt for license details.
  */
 /** @var $address \Magento\Sales\Model\Order\Address */
-$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Address::class
-);
+$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order\Address');
 $address->setRegion(
     'CA'
 )->setPostcode(

@@ -1,19 +1,11 @@
 <?php
 namespace Braintree;
 
-class Merchant extends Base
+final class Merchant extends Base
 {
     protected function _initialize($attribs)
     {
         $this->_attributes = $attribs;
-
-        $merchantAccountArray = [];
-        if (isset($attribs['merchantAccounts'])) {
-            foreach ($attribs['merchantAccounts'] AS $merchantAccount) {
-                $merchantAccountArray[] = MerchantAccount::factory($merchantAccount);
-            }
-        }
-        $this->_set('merchantAccounts', $merchantAccountArray);
     }
 
     public static function factory($attributes)

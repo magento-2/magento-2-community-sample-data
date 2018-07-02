@@ -66,6 +66,7 @@ interface RequestInterface
      */
     public function getParams();
 
+
     /**
      * Retrieve cookie value
      *

@@ -5,10 +5,10 @@
  */
 namespace Magento\Sniffs\Arrays;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
-class ShortArraySyntaxSniff implements Sniff
+class ShortArraySyntaxSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * {@inheritdoc}
@@ -21,12 +21,8 @@ class ShortArraySyntaxSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $sourceFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
-        $sourceFile->addError(
-            'Short array syntax must be used; expected "[]" but found "array()"',
-            $stackPtr,
-            'ShortArraySyntax'
-        );
+        $sourceFile->addError('Short array syntax must be used; expected "[]" but found "array()"', $stackPtr);
     }
 }

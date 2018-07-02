@@ -7,7 +7,7 @@ namespace Magento\Sales\Test\Unit\Model;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class DownloadTest extends \PHPUnit\Framework\TestCase
+class DownloadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Download
@@ -46,10 +46,10 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->writeDirectoryMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\Write::class)
+        $this->writeDirectoryMock = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\Write')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->filesystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
         $this->filesystemMock->expects($this->any())
@@ -57,16 +57,15 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
             ->with(DirectoryList::MEDIA)
             ->will($this->returnValue($this->writeDirectoryMock));
 
-        $this->driverMock = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\DriverInterface::class);
-        $this->storageMock = $this->getMockBuilder(\Magento\MediaStorage\Helper\File\Storage\Database::class)
+        $this->driverMock = $this->getMockForAbstractClass('Magento\Framework\Filesystem\DriverInterface');
+        $this->storageMock = $this->getMockBuilder('Magento\MediaStorage\Helper\File\Storage\Database')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storageFactoryMock = $this->getMockBuilder(
-            \Magento\MediaStorage\Model\File\Storage\DatabaseFactory::class
-        )->disableOriginalConstructor()
-            ->setMethods(['create', 'checkDbUsage'])
+        $this->storageFactoryMock = $this->getMockBuilder('Magento\MediaStorage\Model\File\Storage\DatabaseFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
             ->getMock();
-        $this->httpFileFactoryMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http\FileFactory::class)
+        $this->httpFileFactoryMock = $this->getMockBuilder('Magento\Framework\App\Response\Http\FileFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -86,7 +85,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
             $this->storageFactoryMock,
             $this->httpFileFactoryMock
         );
-        $this->assertInstanceOf(\Magento\Sales\Model\Download::class, $model);
+        $this->assertInstanceOf('Magento\Sales\Model\Download', $model);
     }
 
     /**
@@ -162,7 +161,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
             ->method('checkDbUsage')
             ->will($this->returnValue(true));
 
-        $storageDatabaseMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Storage\Database::class)
+        $storageDatabaseMock = $this->getMockBuilder('Magento\MediaStorage\Model\File\Storage\Database')
             ->disableOriginalConstructor()
             ->getMock();
         $storageDatabaseMock->expects($this->at(0))
@@ -192,7 +191,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
         $isFile = true;
         $isReadable = false;
 
-        $writeMock = $this->getMockBuilder(\Magento\Framework\Filesystem\File\Write::class)
+        $writeMock = $this->getMockBuilder('Magento\Framework\Filesystem\File\Write')
             ->disableOriginalConstructor()
             ->getMock();
         $writeMock->expects($this->any())
@@ -230,7 +229,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
             ->method('checkDbUsage')
             ->will($this->returnValue(true));
 
-        $storageDatabaseMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Storage\Database::class)
+        $storageDatabaseMock = $this->getMockBuilder('Magento\MediaStorage\Model\File\Storage\Database')
             ->disableOriginalConstructor()
             ->setMethods(['loadByFilename', 'getId', '__wakeup'])
             ->getMock();

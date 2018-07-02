@@ -10,7 +10,6 @@ use Magento\Catalog\Model\Layer\Filter\FilterInterface;
 /**
  * Interface FilterRendererInterface
  * @api
- * @since 100.0.2
  */
 interface FilterRendererInterface
 {

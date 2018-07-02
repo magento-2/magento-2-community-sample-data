@@ -26,27 +26,22 @@ class GridTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     public function testAclHasAccess()
     {
         /** @var $session \Magento\Backend\Model\Session */
-        Bootstrap::getObjectManager()->create(\Magento\Backend\Model\Session::class);
+        Bootstrap::getObjectManager()->create('Magento\Backend\Model\Session');
 
         parent::testAclHasAccess();
 
         $response = $this->getResponse();
-
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'button[type="button"][title="Reset Filter"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//button[@type="button" and @title="Reset Filter"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             "Response for billing agreement grid doesn't contain 'Reset Filter' button"
         );
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '[id="billing_agreements"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="billing_agreements"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             "Response for billing agreement grid doesn't contain grid"
         );
     }

@@ -8,7 +8,7 @@ namespace Magento\Framework\Backup\Filesystem\Rollback;
 /**
  * Filesystem rollback workers abstract class
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractRollback
 {

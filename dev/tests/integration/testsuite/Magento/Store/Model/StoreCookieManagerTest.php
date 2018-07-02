@@ -7,7 +7,7 @@ namespace Magento\Store\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class StoreCookieManagerTest extends \PHPUnit\Framework\TestCase
+class StoreCookieManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\StoreCookieManager
@@ -21,9 +21,7 @@ class StoreCookieManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeCookieManager = Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\StoreCookieManager::class
-        );
+        $this->storeCookieManager = Bootstrap::getObjectManager()->create('Magento\Store\Model\StoreCookieManager');
         $this->existingCookies = $_COOKIE;
     }
 
@@ -35,7 +33,7 @@ class StoreCookieManagerTest extends \PHPUnit\Framework\TestCase
     public function testSetCookie()
     {
         $storeCode = 'store code';
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getStorePath', 'getCode']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getStorePath', 'getCode'], [], '', false);
         $store->expects($this->once())->method('getStorePath')->willReturn('/');
         $store->expects($this->once())->method('getCode')->willReturn($storeCode);
 

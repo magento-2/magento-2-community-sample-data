@@ -28,22 +28,24 @@ class CreditmemoSenderTest extends AbstractSenderTest
     {
         $this->stepMockSetup();
 
-        $this->creditmemoResourceMock = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Creditmemo::class,
-            ['saveAttribute']
+        $this->creditmemoResourceMock = $this->getMock(
+            '\Magento\Sales\Model\ResourceModel\Order\Creditmemo',
+            ['saveAttribute'],
+            [],
+            '',
+            false
         );
 
-        $this->creditmemoMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Creditmemo::class,
+        $this->creditmemoMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Creditmemo',
             [
-                'getStore',
-                '__wakeup',
-                'getOrder',
-                'setSendEmail',
-                'setEmailSent',
-                'getCustomerNoteNotify',
+                'getStore', '__wakeup', 'getOrder',
+                'setSendEmail', 'setEmailSent', 'getCustomerNoteNotify',
                 'getCustomerNote'
-            ]
+            ],
+            [],
+            '',
+            false
         );
         $this->creditmemoMock->expects($this->any())
             ->method('getStore')
@@ -52,9 +54,12 @@ class CreditmemoSenderTest extends AbstractSenderTest
             ->method('getOrder')
             ->will($this->returnValue($this->orderMock));
 
-        $this->identityContainerMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Email\Container\CreditmemoIdentity::class,
-            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId']
+        $this->identityContainerMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Email\Container\CreditmemoIdentity',
+            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId'],
+            [],
+            '',
+            false
         );
         $this->identityContainerMock->expects($this->any())
             ->method('getStore')
@@ -98,12 +103,19 @@ class CreditmemoSenderTest extends AbstractSenderTest
             ->willReturn($configValue);
 
         if (!$configValue || $forceSyncMode) {
-            $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+            $addressMock = $this->getMock(
+                'Magento\Sales\Model\Order\Address',
+                [],
+                [],
+                '',
+                false
+            );
 
             $this->addressRenderer->expects($this->exactly(2))
                 ->method('format')
                 ->with($addressMock, 'html')
                 ->willReturn($address);
+
 
             $this->stepAddressFormat($addressMock);
 
@@ -164,10 +176,7 @@ class CreditmemoSenderTest extends AbstractSenderTest
                 );
             }
         } else {
-            $this->creditmemoResourceMock->expects($this->at(0))
-                ->method('saveAttribute')
-                ->with($this->creditmemoMock, 'email_sent');
-            $this->creditmemoResourceMock->expects($this->at(1))
+            $this->creditmemoResourceMock->expects($this->once())
                 ->method('saveAttribute')
                 ->with($this->creditmemoMock, 'send_email');
 
@@ -214,7 +223,7 @@ class CreditmemoSenderTest extends AbstractSenderTest
             ->with('sales_email/general/async_sending')
             ->willReturn(false);
 
-        $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+        $addressMock = $this->getMock('Magento\Sales\Model\Order\Address', [], [], '', false);
 
         $this->addressRenderer->expects($this->exactly($formatCallCount))
             ->method('format')

@@ -9,7 +9,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model;
 use Magento\ConfigurableProduct\Model\ConfigurableProductManagement;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\CollectionFactory;
 
-class ConfigurableProductManagementTest extends \PHPUnit\Framework\TestCase
+class ConfigurableProductManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigurableProductManagement
@@ -43,17 +43,28 @@ class ConfigurableProductManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attributeRepository = $this->createMock(\Magento\Catalog\Api\ProductAttributeRepositoryInterface::class);
-        $this->product = $this->createMock(\Magento\Catalog\Api\Data\ProductInterface::class);
-        $this->option = $this->createMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class
+        $this->attributeRepository = $this->getMock('\Magento\Catalog\Api\ProductAttributeRepositoryInterface');
+        $this->product = $this->getMock('\Magento\Catalog\Api\Data\ProductInterface');
+        $this->option = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute',
+            [],
+            [],
+            '',
+            false
         );
-        $this->productVariationBuilder = $this->createMock(
-            \Magento\ConfigurableProduct\Model\ProductVariationsBuilder::class
+        $this->productVariationBuilder = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\ProductVariationsBuilder',
+            [],
+            [],
+            '',
+            false
         );
-        $this->productsFactoryMock = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\CollectionFactory::class,
-            ['create']
+        $this->productsFactoryMock = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $this->model = new ConfigurableProductManagement(
@@ -66,10 +77,10 @@ class ConfigurableProductManagementTest extends \PHPUnit\Framework\TestCase
     public function testGenerateVariation()
     {
         $data = ['someKey' => 'someValue'];
-        $attributeOption = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Option::class);
+        $attributeOption = $this->getMock('\Magento\Eav\Model\Entity\Attribute\Option', [], [], '', false);
         $attributeOption->expects($this->once())->method('getData')->willReturn(['key' => 'value']);
 
-        $attribute = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
+        $attribute = $this->getMock('\Magento\Catalog\Model\ResourceModel\Eav\Attribute', [], [], '', false);
         $attribute->expects($this->any())->method('getOptions')->willReturn([$attributeOption]);
         $attribute->expects($this->once())->method('getAttributeCode')->willReturn(10);
 
@@ -98,8 +109,12 @@ class ConfigurableProductManagementTest extends \PHPUnit\Framework\TestCase
     public function testGetEnabledCount()
     {
         $statusEnabled = 1;
-        $productsMock = $this->createMock(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\Collection::class
+        $productsMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\Collection',
+            [],
+            [],
+            '',
+            false
         );
 
         $this->productsFactoryMock
@@ -125,8 +140,12 @@ class ConfigurableProductManagementTest extends \PHPUnit\Framework\TestCase
     public function testGetDisabledCount()
     {
         $statusDisabled = 2;
-        $productsMock = $this->createMock(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\Collection::class
+        $productsMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\Collection',
+            [],
+            [],
+            '',
+            false
         );
 
         $this->productsFactoryMock

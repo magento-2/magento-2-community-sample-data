@@ -20,7 +20,7 @@ class Factory extends AuthorizenetResponseFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Authorizenet\Model\Directpost\Response::class
+        $instanceName = 'Magento\Authorizenet\Model\Directpost\Response'
     ) {
         parent::__construct($objectManager, $instanceName);
     }

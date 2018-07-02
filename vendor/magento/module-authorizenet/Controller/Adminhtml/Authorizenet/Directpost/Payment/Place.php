@@ -14,8 +14,6 @@ use Magento\Authorizenet\Helper\Backend\Data as DataHelper;
 
 /**
  * Class Place
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Place extends \Magento\Sales\Controller\Adminhtml\Order\Create
 {
@@ -91,11 +89,11 @@ class Place extends \Magento\Sales\Controller\Adminhtml\Order\Create
 
                 $payment = $order->getPayment();
                 if ($payment && $payment->getMethod() == $this->_objectManager->create(
-                    \Magento\Authorizenet\Model\Directpost::class
+                    'Magento\Authorizenet\Model\Directpost'
                 )->getCode()
                 ) {
                     //return json with data.
-                    $session = $this->_objectManager->get(\Magento\Authorizenet\Model\Directpost\Session::class);
+                    $session = $this->_objectManager->get('Magento\Authorizenet\Model\Directpost\Session');
                     $session->addCheckoutOrderIncrementId($order->getIncrementId());
                     $session->setLastOrderIncrementId($order->getIncrementId());
 
@@ -107,7 +105,7 @@ class Place extends \Magento\Sales\Controller\Adminhtml\Order\Create
                     $requestToAuthorizenet->setOrderSendConfirmation($sendConfirmationFlag);
                     $requestToAuthorizenet->setStoreId($this->_getOrderCreateModel()->getQuote()->getStoreId());
 
-                    $adminUrl = $this->_objectManager->get(\Magento\Backend\Model\UrlInterface::class);
+                    $adminUrl = $this->_objectManager->get('Magento\Backend\Model\UrlInterface');
                     if ($adminUrl->useSecretKey()) {
                         $requestToAuthorizenet->setKey(
                             $adminUrl->getSecretKey('adminhtml', 'authorizenet_directpost_payment', 'redirect')
@@ -133,19 +131,19 @@ class Place extends \Magento\Sales\Controller\Adminhtml\Order\Create
                 $result['success'] = 0;
                 $result['error'] = 1;
                 $result['redirect'] = $this->_objectManager->get(
-                    \Magento\Backend\Model\UrlInterface::class
+                    'Magento\Backend\Model\UrlInterface'
                 )->getUrl(
                     'sales/order_create/'
                 );
             }
 
             $this->getResponse()->representJson(
-                $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($result)
+                $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($result)
             );
         } else {
             $result = ['error_messages' => __('Please choose a payment method.')];
             $this->getResponse()->representJson(
-                $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($result)
+                $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($result)
             );
         }
     }

@@ -8,10 +8,6 @@ namespace Magento\Customer\Block\Account;
 use Magento\Customer\Model\Form;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class AuthenticationPopup extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -20,25 +16,15 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     protected $jsLayout;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        array $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        array $data = []
     ) {
         parent::__construct($context, $data);
         $this->jsLayout = isset($data['jsLayout']) && is_array($data['jsLayout']) ? $data['jsLayout'] : [];
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -46,7 +32,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
      */
     public function getJsLayout()
     {
-        return $this->serializer->serialize($this->jsLayout);
+        return \Zend_Json::encode($this->jsLayout);
     }
 
     /**
@@ -65,20 +51,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Returns popup config in JSON format.
-     *
-     * Added in scope of https://github.com/magento/magento2/pull/8617
-     *
-     * @return bool|string
-     * @since 100.2.0
-     */
-    public function getSerializedConfig()
-    {
-        return $this->serializer->serialize($this->getConfig());
-    }
-
-    /**
-     * Is autocomplete enabled for storefront
+     * Is autocomplete enabled for storefront.
      *
      * @return string
      */
@@ -86,7 +59,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     {
         return $this->_scopeConfig->getValue(
             Form::XML_PATH_ENABLE_AUTOCOMPLETE,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         ) ? 'on' : 'off';
     }
 

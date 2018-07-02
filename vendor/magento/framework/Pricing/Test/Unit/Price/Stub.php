@@ -6,8 +6,7 @@
 
 namespace Magento\Framework\Pricing\Test\Unit\Price;
 
-use Magento\Framework\Pricing\Price\AbstractPrice;
-
+use  Magento\Framework\Pricing\Price\AbstractPrice;
 /**
  * Class Stub for testing abstract class AbstractPrice
  *

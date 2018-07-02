@@ -43,12 +43,10 @@ define([
         closeButton: false,
         showed: false,
         strict: true,
-        center: false,
-        closeOnScroll: true
+        center: false
     };
 
     tooltipData = {
-        tooltipClasses: '',
         trigger: false,
         timeout: 0,
         element: false,
@@ -580,12 +578,9 @@ define([
                 $('.' + config.closeButtonClass).on('click.closeButton', tooltip.destroy.bind(null, id));
             }
 
-            if (config.closeOnScroll) {
-                document.addEventListener('scroll', tooltip.destroy, true);
-                $(window).on('scroll.tooltip', tooltip.outerClick.bind(null, id));
-            }
-
+            document.addEventListener('scroll', tooltip.destroy, true);
             $(window).on('keydown.tooltip', tooltip.keydownHandler);
+            $(window).on('scroll.tooltip', tooltip.outerClick.bind(null, id));
             $(window).on('resize.outerClick', tooltip.outerClick.bind(null, id));
         },
 
@@ -604,8 +599,6 @@ define([
             }
 
             tooltip.setContent.apply(null, arguments);
-
-            return false;
         },
 
         /**
@@ -671,7 +664,6 @@ define([
             $('.' + defaults.closeButtonClass).off('click.closeButton');
             tooltipData.trigger.off('mousemove.track');
             document.removeEventListener('scroll', tooltip.destroy, true);
-            $(window).off('scroll.tooltip');
             $(window).off(CLICK_EVENT + '.outerClick');
             $(window).off('keydown.tooltip');
             $(window).off('resize.outerClick');

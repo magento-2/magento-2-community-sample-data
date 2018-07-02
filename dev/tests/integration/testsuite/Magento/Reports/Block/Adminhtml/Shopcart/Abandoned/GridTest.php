@@ -23,9 +23,9 @@ class GridTest extends \Magento\Reports\Block\Adminhtml\Shopcart\GridTestAbstrac
     public function testGridContent()
     {
         /** @var \Magento\Framework\View\LayoutInterface $layout */
-        $layout = Bootstrap::getObjectManager()->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = Bootstrap::getObjectManager()->get('Magento\Framework\View\LayoutInterface');
         /** @var Grid $grid */
-        $grid = $layout->createBlock(\Magento\Reports\Block\Adminhtml\Shopcart\Abandoned\Grid::class);
+        $grid = $layout->createBlock('Magento\Reports\Block\Adminhtml\Shopcart\Abandoned\Grid');
         $grid->getRequest()->setParams(['filter' => base64_encode(urlencode('email=customer@example.com'))]);
         $result = $grid->getPreparedCollection();
 

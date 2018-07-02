@@ -5,12 +5,14 @@
  */
 namespace Magento\Framework\View\Test\Unit\Asset\MergeStrategy;
 
+use Magento\Framework\View\Asset\MergeStrategy\Direct;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
-use \Magento\Framework\View\Asset\MergeStrategy\Direct;
-
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class DirectTest extends \PHPUnit\Framework\TestCase
+/**
+ * Direct merge strategy test.
+ */
+class DirectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Asset\MergeStrategy\Direct
@@ -39,8 +41,8 @@ class DirectTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->cssUrlResolver = $this->createMock(\Magento\Framework\View\Url\CssResolver::class);
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->cssUrlResolver = $this->getMock(\Magento\Framework\View\Url\CssResolver::class);
+        $filesystem = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $this->staticDir = $this->getMockBuilder(WriteInterface::class)->getMockForAbstractClass();
         $this->tmpDir = $this->getMockBuilder(WriteInterface::class)->getMockForAbstractClass();
         $filesystem->expects($this->any())
@@ -49,7 +51,7 @@ class DirectTest extends \PHPUnit\Framework\TestCase
                 [DirectoryList::STATIC_VIEW, \Magento\Framework\Filesystem\DriverPool::FILE, $this->staticDir],
                 [DirectoryList::TMP, \Magento\Framework\Filesystem\DriverPool::FILE, $this->tmpDir],
             ]);
-        $this->resultAsset = $this->createMock(\Magento\Framework\View\Asset\File::class);
+        $this->resultAsset = $this->getMock(\Magento\Framework\View\Asset\File::class, [], [], '', false);
         $this->object = new Direct($filesystem, $this->cssUrlResolver);
     }
 

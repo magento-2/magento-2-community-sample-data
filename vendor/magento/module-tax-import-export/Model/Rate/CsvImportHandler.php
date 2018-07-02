@@ -7,9 +7,6 @@ namespace Magento\TaxImportExport\Model\Rate;
 
 /**
  * Tax Rate CSV Import Handler
- *
- * @api
- * @since 100.0.2
  */
 class CsvImportHandler
 {

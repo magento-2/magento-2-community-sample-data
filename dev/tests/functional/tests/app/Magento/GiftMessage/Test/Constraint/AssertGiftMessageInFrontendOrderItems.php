@@ -41,7 +41,7 @@ class AssertGiftMessageInFrontendOrderItems extends AbstractConstraint
         $products = []
     ) {
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
 

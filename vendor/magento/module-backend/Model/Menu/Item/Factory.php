@@ -5,10 +5,6 @@
  */
 namespace Magento\Backend\Model\Menu\Item;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Factory
 {
     /**
@@ -32,6 +28,6 @@ class Factory
      */
     public function create(array $data = [])
     {
-        return $this->_objectManager->create(\Magento\Backend\Model\Menu\Item::class, ['data' => $data]);
+        return $this->_objectManager->create('Magento\Backend\Model\Menu\Item', ['data' => $data]);
     }
 }

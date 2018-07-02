@@ -63,10 +63,5 @@ class SubscriptionSearch
     {
         return new MultipleValueNode('ids');
     }
-
-    public static function createdAt()
-    {
-        return new RangeNode('created_at');
-    }
 }
 class_alias('Braintree\SubscriptionSearch', 'Braintree_SubscriptionSearch');

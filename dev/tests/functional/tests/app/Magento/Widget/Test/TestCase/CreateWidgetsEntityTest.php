@@ -7,7 +7,7 @@
 namespace Magento\Widget\Test\TestCase;
 
 use Magento\Mtf\Fixture\FixtureFactory;
-use \Magento\Mtf\TestCase\Injectable;
+use Magento\Mtf\TestCase\Injectable;
 use Magento\Widget\Test\Fixture\Widget;
 
 /**
@@ -16,7 +16,7 @@ use Magento\Widget\Test\Fixture\Widget;
  * 2. Perform all assertions.
  *
  * @group Widget
- * @ZephyrId MAGETWO-60672
+ * @ZephyrId MAGETWO-61801
  */
 class CreateWidgetsEntityTest extends Injectable
 {

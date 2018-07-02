@@ -8,7 +8,7 @@ namespace Magento\Cms\Test\Unit\Block;
 /**
  * Class PageTest
  */
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Block\Page
@@ -23,8 +23,8 @@ class PageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->block = $objectManager->getObject(\Magento\Cms\Block\Page::class);
-        $this->page = $objectManager->getObject(\Magento\Cms\Model\Page::class);
+        $this->block = $objectManager->getObject('Magento\Cms\Block\Page');
+        $this->page = $objectManager->getObject('Magento\Cms\Model\Page');
         $reflection = new \ReflectionClass($this->page);
         $reflectionProperty = $reflection->getProperty('_idFieldName');
         $reflectionProperty->setAccessible(true);

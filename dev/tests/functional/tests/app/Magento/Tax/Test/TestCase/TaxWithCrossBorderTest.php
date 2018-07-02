@@ -30,14 +30,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 13. Register two customers on front end that will match two different rates
  * 14. Login with each customer and verify prices
  *
- * @group Tax
+ * @group Tax_(CS)
  * @ZephyrId MAGETWO-29052
  */
 class TaxWithCrossBorderTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const STABLE = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -128,7 +128,7 @@ class TaxWithCrossBorderTest extends Injectable
             $this->catalogRule = $catalogRule;
         }
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => $configData]
         )->run();
         $product->persist();
@@ -142,18 +142,18 @@ class TaxWithCrossBorderTest extends Injectable
     public function tearDown()
     {
         if (isset($this->salesRule)) {
-            $this->objectManager->create(\Magento\SalesRule\Test\TestStep\DeleteAllSalesRuleStep::class)->run();
+            $this->objectManager->create('Magento\SalesRule\Test\TestStep\DeleteAllSalesRuleStep')->run();
             $this->salesRule = null;
         }
         if (isset($this->catalogRule)) {
-            $this->objectManager->create(\Magento\CatalogRule\Test\TestStep\DeleteAllCatalogRulesStep::class)->run();
+            $this->objectManager->create('\Magento\CatalogRule\Test\TestStep\DeleteAllCatalogRulesStep')->run();
             $this->catalogRule = null;
         }
 
         // TODO: Move set default configuration to "tearDownAfterClass" method after fix bug MAGETWO-29331
-        $this->objectManager->create(\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep::class)->run();
+        $this->objectManager->create('Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep')->run();
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => 'default_tax_configuration']
         )->run();
     }

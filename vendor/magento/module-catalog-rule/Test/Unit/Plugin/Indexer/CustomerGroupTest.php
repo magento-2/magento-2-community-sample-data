@@ -8,7 +8,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Indexer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CustomerGroupTest extends \PHPUnit\Framework\TestCase
+class CustomerGroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Rule processor mock
@@ -33,13 +33,23 @@ class CustomerGroupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ruleProductProcessor = $this->createMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class
+        $this->ruleProductProcessor = $this->getMock(
+            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            [],
+            [],
+            '',
+            false
         );
-        $this->subject = $this->createMock(\Magento\Customer\Model\Group::class);
+        $this->subject = $this->getMock(
+            'Magento\Customer\Model\Group',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->plugin = (new ObjectManager($this))->getObject(
-            \Magento\CatalogRule\Plugin\Indexer\CustomerGroup::class,
+            'Magento\CatalogRule\Plugin\Indexer\CustomerGroup',
             [
                 'ruleProductProcessor' => $this->ruleProductProcessor,
             ]

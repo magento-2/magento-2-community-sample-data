@@ -9,7 +9,6 @@ namespace Magento\Catalog\Pricing\Price;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Configured price model
@@ -27,28 +26,20 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
     protected $item;
 
     /**
-     * @var ConfiguredOptions
-     */
-    private $configuredOptions;
-
-    /**
      * @param Product $saleableItem
      * @param float $quantity
      * @param CalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
-     * @param ItemInterface|null $item
-     * @param ConfiguredOptions|null $configuredOptions
+     * @param ItemInterface $item
      */
     public function __construct(
         Product $saleableItem,
         $quantity,
         CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        ItemInterface $item = null,
-        ConfiguredOptions $configuredOptions = null
+        ItemInterface $item = null
     ) {
         $this->item = $item;
-        $this->configuredOptions = $configuredOptions ?: ObjectManager::getInstance()->get(ConfiguredOptions::class);
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
     }
 
@@ -65,10 +56,9 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
     /**
      * Get value of configured options
      *
-     * @deprecated ConfiguredOptions::getItemOptionsValue is used instead
-     * @return float
+     * @return array
      */
-    protected function getOptionsValue(): float
+    protected function getOptionsValue()
     {
         $product = $this->item->getProduct();
         $value = 0.;
@@ -98,9 +88,6 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
      */
     public function getValue()
     {
-        $basePrice = parent::getValue();
-        return $this->item
-            ? $basePrice + $this->configuredOptions->getItemOptionsValue($basePrice, $this->item)
-            : $basePrice;
+        return $this->item ? parent::getValue() + $this->getOptionsValue() : parent::getValue();
     }
 }

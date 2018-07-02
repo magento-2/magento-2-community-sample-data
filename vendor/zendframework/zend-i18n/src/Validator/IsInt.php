@@ -22,16 +22,14 @@ class IsInt extends AbstractValidator
 {
     const INVALID = 'intInvalid';
     const NOT_INT = 'notInt';
-    const NOT_INT_STRICT = 'notIntStrict';
 
     /**
      * @var array
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::INVALID => "Invalid type given. String or integer expected",
         self::NOT_INT => "The input does not appear to be an integer",
-        self::NOT_INT_STRICT => "The input is not strictly an integer",
-    ];
+    );
 
     /**
      * Optional locale
@@ -41,22 +39,14 @@ class IsInt extends AbstractValidator
     protected $locale;
 
     /**
-     * Data type is not enforced by default, so the string '123' is considered an integer.
-     * Setting strict to true will enforce the integer data type.
-     *
-     * @var bool
-     */
-    protected $strict = false;
-
-    /**
      * Constructor for the integer validator
      *
      * @param  array|Traversable $options
      * @throws Exception\ExtensionNotLoadedException if ext/intl is not present
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
-        if (! extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new I18nException\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -69,10 +59,6 @@ class IsInt extends AbstractValidator
 
         if (array_key_exists('locale', $options)) {
             $this->setLocale($options['locale']);
-        }
-
-        if (array_key_exists('strict', $options)) {
-            $this->setStrict($options['strict']);
         }
 
         parent::__construct($options);
@@ -102,33 +88,6 @@ class IsInt extends AbstractValidator
     }
 
     /**
-     * Returns the strict option
-     *
-     * @return bool
-     */
-    public function getStrict()
-    {
-        return $this->strict;
-    }
-
-    /**
-     * Sets the strict option mode
-     *
-     * @param bool $strict
-     * @return self
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setStrict($strict)
-    {
-        if (! is_bool($strict)) {
-            throw new Exception\InvalidArgumentException('Strict option must be a boolean');
-        }
-
-        $this->strict = $strict;
-        return $this;
-    }
-
-    /**
      * Returns true if and only if $value is a valid integer
      *
      * @param  string|int $value
@@ -137,18 +96,13 @@ class IsInt extends AbstractValidator
      */
     public function isValid($value)
     {
-        if (! is_string($value) && ! is_int($value) && ! is_float($value)) {
+        if (!is_string($value) && !is_int($value) && !is_float($value)) {
             $this->error(self::INVALID);
             return false;
         }
 
         if (is_int($value)) {
             return true;
-        }
-
-        if ($this->strict) {
-            $this->error(self::NOT_INT_STRICT);
-            return false;
         }
 
         $this->setValue($value);

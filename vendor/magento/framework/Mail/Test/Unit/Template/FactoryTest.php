@@ -7,7 +7,7 @@ namespace Magento\Framework\Mail\Test\Unit\Template;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -30,8 +30,8 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->templateMock = $this->createMock(\Magento\Framework\Mail\TemplateInterface::class);
+        $this->objectManagerMock = $this->getMock('\Magento\Framework\ObjectManagerInterface');
+        $this->templateMock = $this->getMock('\Magento\Framework\Mail\TemplateInterface');
     }
 
     /**
@@ -43,7 +43,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function testGet($expectedArgument, $namespace)
     {
         $factory = $this->objectManagerHelper->getObject(
-            \Magento\Framework\Mail\Template\Factory::class,
+            'Magento\Framework\Mail\Template\Factory',
             ['objectManager' => $this->objectManagerMock]
         );
 
@@ -52,10 +52,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             ->with($expectedArgument, ['data' => ['template_id' => 'identifier']])
             ->willReturn($this->templateMock);
 
-        $this->assertInstanceOf(
-            \Magento\Framework\Mail\TemplateInterface::class,
-            $factory->get('identifier', $namespace)
-        );
+        $this->assertInstanceOf('\Magento\Framework\Mail\TemplateInterface', $factory->get('identifier', $namespace));
     }
 
     /**
@@ -65,7 +62,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                'expectedArgument' => \Magento\Framework\Mail\TemplateInterface::class,
+                'expectedArgument' => 'Magento\Framework\Mail\TemplateInterface',
                 'namespace' => null
             ],
             [

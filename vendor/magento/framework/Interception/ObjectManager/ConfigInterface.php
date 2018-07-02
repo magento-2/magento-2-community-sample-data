@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Interception\ObjectManager;
 
-/**
- * Interface \Magento\Framework\Interception\ObjectManager\ConfigInterface
- *
- */
 interface ConfigInterface extends \Magento\Framework\ObjectManager\ConfigInterface
 {
     /**

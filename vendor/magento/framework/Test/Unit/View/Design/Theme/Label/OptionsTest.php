@@ -8,7 +8,7 @@ namespace Magento\Framework\Test\Unit\View\Design\Theme\Label;
 use Magento\Framework\View\Design\Theme\Label\ListInterface;
 use Magento\Framework\View\Design\Theme\Label\Options;
 
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Options */
     protected $model;
@@ -18,7 +18,7 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->listMock = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\Label\ListInterface::class)
+        $this->listMock = $this->getMockBuilder('Magento\Framework\View\Design\Theme\Label\ListInterface')
             ->getMockForAbstractClass();
 
         $this->model = new Options($this->listMock);

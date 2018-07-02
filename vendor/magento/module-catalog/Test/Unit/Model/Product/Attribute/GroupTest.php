@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Attribute;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GroupTest extends \PHPUnit\Framework\TestCase
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\Group
@@ -25,7 +25,7 @@ class GroupTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Group::class,
+            '\Magento\Catalog\Model\Product\Attribute\Group',
             [
                 'attributeCollectionFactory' => $this->getMockedCollectionFactory()
             ]
@@ -40,7 +40,7 @@ class GroupTest extends \PHPUnit\Framework\TestCase
         $mockedCollection = $this->getMockedCollection();
 
         $mockBuilder = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory::class
+            '\Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory'
         );
         $mock = $mockBuilder->setMethods(['create'])
             ->disableOriginalConstructor()
@@ -58,7 +58,7 @@ class GroupTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedCollection()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection::class);
+        $mockBuilder = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection');
         $mock = $mockBuilder->disableOriginalConstructor()
             ->getMock();
 

@@ -5,7 +5,7 @@
  */
 namespace Magento\TestFramework\Utility;
 
-class XssOutputValidatorTest extends \PHPUnit\Framework\TestCase
+class XssOutputValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $file

@@ -50,33 +50,39 @@ class SaveTest extends \Magento\Theme\Test\Unit\Controller\Adminhtml\System\Desi
 
         $this->_request->expects($this->once(5))->method('getPostValue')->will($this->returnValue(true));
 
-        $themeMock = $this->createPartialMock(
-            \Magento\Theme\Model\Theme::class,
-            ['save', 'load', 'setCustomization', 'getThemeImage', '__wakeup']
+        $themeMock = $this->getMock(
+            'Magento\Theme\Model\Theme',
+            ['save', 'load', 'setCustomization', 'getThemeImage', '__wakeup'],
+            [],
+            '',
+            false
         );
 
-        $themeImage = $this->createMock(\Magento\Theme\Model\Theme\Data::class);
+        $themeImage = $this->getMock('Magento\Theme\Model\Theme\Image', [], [], '', false);
         $themeMock->expects($this->any())->method('getThemeImage')->will($this->returnValue($themeImage));
 
-        $themeFactory = $this->createPartialMock(
-            \Magento\Framework\View\Design\Theme\FlyweightFactory::class,
-            ['create']
+        $themeFactory = $this->getMock(
+            'Magento\Framework\View\Design\Theme\FlyweightFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $themeFactory->expects($this->once())->method('create')->will($this->returnValue($themeMock));
 
         $this->_objectManagerMock->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Framework\View\Design\Theme\FlyweightFactory::class)
+            ->with('Magento\Framework\View\Design\Theme\FlyweightFactory')
             ->will($this->returnValue($themeFactory));
 
         $this->_objectManagerMock->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Theme\Model\Theme\Customization\File\CustomCss::class)
+            ->with('Magento\Theme\Model\Theme\Customization\File\CustomCss')
             ->will($this->returnValue(null));
 
         $this->_objectManagerMock->expects($this->at(2))
             ->method('create')
-            ->with(\Magento\Theme\Model\Theme\SingleFile::class)
+            ->with('Magento\Theme\Model\Theme\SingleFile')
             ->will($this->returnValue(null));
 
         $this->_model->execute();

@@ -7,8 +7,6 @@ namespace Magento\Ui\Component\Listing;
 
 /**
  * Interface RowInterface
- * @api
- * @since 100.0.2
  */
 interface RowInterface
 {

@@ -5,16 +5,8 @@
  */
 namespace Magento\Framework\App;
 
-/**
- * @api
- */
 interface ScopeInterface
 {
-    /**
-     * Default scope reference code
-     */
-    const SCOPE_DEFAULT = 'default';
-
     /**
      * Retrieve scope code
      *
@@ -33,7 +25,6 @@ interface ScopeInterface
      * Get scope type
      *
      * @return string
-     * @since 100.1.0
      */
     public function getScopeType();
 
@@ -41,7 +32,6 @@ interface ScopeInterface
      * Get scope type name
      *
      * @return string
-     * @since 100.1.0
      */
     public function getScopeTypeName();
 
@@ -49,7 +39,6 @@ interface ScopeInterface
      * Get scope name
      *
      * @return string
-     * @since 100.1.0
      */
     public function getName();
 }

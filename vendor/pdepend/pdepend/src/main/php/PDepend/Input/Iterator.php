@@ -87,9 +87,6 @@ class Iterator extends \FilterIterator
      */
     public function accept()
     {
-        if ($this->getInnerIterator()->current()->isDir()) {
-            return false;
-        }
         return $this->filter->accept($this->getLocalPath(), $this->getFullPath());
     }
 

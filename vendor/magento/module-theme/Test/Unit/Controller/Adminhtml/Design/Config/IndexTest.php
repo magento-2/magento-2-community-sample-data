@@ -7,7 +7,7 @@ namespace Magento\Theme\Test\Unit\Controller\Adminhtml\Design\Config;
 
 use Magento\Theme\Controller\Adminhtml\Design\Config\Index;
 
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Index
@@ -26,7 +26,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -40,11 +40,11 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     protected function initResultPage()
     {
-        $this->resultPage = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Page::class)
+        $this->resultPage = $this->getMockBuilder('Magento\Backend\Model\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resultPageFactory = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $resultPageFactory = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $resultPageFactory->expects($this->any())
@@ -55,7 +55,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute()
     {
-        $pageTitle = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $pageTitle = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $pageTitle->expects($this->once())
@@ -63,7 +63,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ->with(__('Design Configuration'))
             ->willReturnSelf();
 
-        $pageConfig = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $pageConfig = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $pageConfig->expects($this->once())

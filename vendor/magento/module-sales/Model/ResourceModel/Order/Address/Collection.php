@@ -5,15 +5,12 @@
  */
 namespace Magento\Sales\Model\ResourceModel\Order\Address;
 
-use Magento\Sales\Api\Data\OrderAddressSearchResultInterface;
-use \Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection;
-
 /**
  * Flat sales order payment collection
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Collection extends AbstractCollection implements OrderAddressSearchResultInterface
+class Collection extends \Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection
 {
     /**
      * Event prefix
@@ -36,10 +33,7 @@ class Collection extends AbstractCollection implements OrderAddressSearchResultI
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Sales\Model\Order\Address::class,
-            \Magento\Sales\Model\ResourceModel\Order\Address::class
-        );
+        $this->_init('Magento\Sales\Model\Order\Address', 'Magento\Sales\Model\ResourceModel\Order\Address');
     }
 
     /**

@@ -49,8 +49,8 @@ class Samples extends Block
         $links = $this->_rootElement->getElements($this->linkTitle);
         $linksData = [];
 
-        foreach ($links as $key => $link) {
-            $linksData[$key + 1] = [
+        foreach ($links as $link) {
+            $linksData[] = [
                 'title' => $link->getText(),
             ];
         }

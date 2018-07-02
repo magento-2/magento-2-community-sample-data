@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleAdwords\Test\Unit\Model\Filter;
 
-class UppercaseTitleTest extends \PHPUnit\Framework\TestCase
+class UppercaseTitleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GoogleAdwords\Model\Filter\UppercaseTitle

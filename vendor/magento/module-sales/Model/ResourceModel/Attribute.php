@@ -22,7 +22,6 @@ class Attribute
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
     protected $connection;
-
     /**
      * @var \Magento\Framework\Event\ManagerInterface
      */

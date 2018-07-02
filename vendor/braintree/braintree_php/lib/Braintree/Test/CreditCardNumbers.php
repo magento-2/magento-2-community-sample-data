@@ -10,6 +10,7 @@ namespace Braintree\Test;
  *
  * @package    Braintree
  * @subpackage Test
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class CreditCardNumbers
 {
@@ -61,10 +62,6 @@ class CreditCardNumbers
         'IneligibleCard' => "378267515471109",
         'InsufficientPoints' => "371544868764018",
         ];
-
-    public static $disputes = [
-        'Chargeback' => '4023898493988028',
-    ];
 
     public static function getAll()
     {

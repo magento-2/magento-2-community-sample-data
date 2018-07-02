@@ -7,12 +7,12 @@
 namespace Magento\Authorizenet\Test\Block\Form;
 
 use Magento\Mtf\Client\Locator;
-use Magento\Payment\Test\Block\Form\PaymentCc;
+use Magento\Payment\Test\Block\Form\Cc as PaymentFormCc;
 
 /**
  * Form for credit card data for Authorize.net payment method.
  */
-class AuthorizenetCc extends PaymentCc
+class AuthorizenetCc extends PaymentFormCc
 {
     /**
      * Authorizenet form locators.

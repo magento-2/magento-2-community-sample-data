@@ -7,7 +7,7 @@
  */
 namespace Magento\Cookie\Model\Config\Backend;
 
-class PathTest extends \PHPUnit\Framework\TestCase
+class PathTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Method is not publicly accessible, so it must be called through parent
@@ -20,7 +20,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
         $invalidPath = 'invalid path';
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Cookie\Model\Config\Backend\Lifetime $model */
-        $model = $objectManager->create(\Magento\Cookie\Model\Config\Backend\Path::class);
+        $model = $objectManager->create('Magento\Cookie\Model\Config\Backend\Path');
         $model->setValue($invalidPath);
         $model->save();
     }

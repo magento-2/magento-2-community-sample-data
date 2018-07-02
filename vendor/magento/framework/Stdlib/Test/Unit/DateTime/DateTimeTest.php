@@ -5,56 +5,28 @@
  */
 namespace Magento\Framework\Stdlib\Test\Unit\DateTime;
 
-use Magento\Framework\Stdlib\DateTime\DateTime;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use \Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
  * Magento\Framework\Stdlib\DateTimeTest test case
  */
-class DateTimeTest extends \PHPUnit\Framework\TestCase
+class DateTimeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var string
+     * @test
      */
-    private $testDate = '2015-04-02 21:03:00';
-
-    /**
-     * @param int|string|\DateTimeInterface $input
-     * @dataProvider dateTimeInputDataProvider
-     */
-    public function testGmtTimestamp($input)
+    public function testGmtTimestamp()
     {
-        /** @var TimezoneInterface|\PHPUnit_Framework_MockObject_MockObject $timezone */
-        $timezone = $this->getMockBuilder(TimezoneInterface::class)->getMock();
-        $timezone->method('date')->willReturn(new \DateTime($this->testDate));
+        $timezone = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')->getMock();
+        $timezone->expects($this->any())
+            ->method('date')
+            ->willReturn(new \DateTime('2015-04-02 21:03:00'));
+        /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone */
 
-        $expected = gmdate('U', strtotime($this->testDate));
-        $this->assertEquals($expected, (new DateTime($timezone))->gmtTimestamp($input));
-    }
-
-    /**
-     * @param int|string|\DateTimeInterface $input
-     * @dataProvider dateTimeInputDataProvider
-     */
-    public function testTimestamp($input)
-    {
-        /** @var TimezoneInterface|\PHPUnit_Framework_MockObject_MockObject $timezone */
-        $timezone = $this->getMockBuilder(TimezoneInterface::class)->getMock();
-        $timezone->method('date')->willReturn(new \DateTime($this->testDate));
-
-        $expected = gmdate('U', strtotime($this->testDate));
-        $this->assertEquals($expected, (new DateTime($timezone))->timestamp($input));
-    }
-
-    /**
-     * @return array
-     */
-    public function dateTimeInputDataProvider()
-    {
-        return [
-            'string' => [$this->testDate],
-            'int' => [strtotime($this->testDate)],
-            \DateTimeInterface::class => [new \DateTimeImmutable($this->testDate)],
-        ];
+        $dateTime = new DateTime($timezone);
+        $this->assertEquals(
+            gmdate('U', strtotime('2015-04-02 21:03:00')),
+            $dateTime->gmtTimestamp('2015-04-02 21:03:00')
+        );
     }
 }

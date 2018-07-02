@@ -18,9 +18,7 @@ class GetPriceConfigurationObserver implements ObserverInterface
      */
     protected $taxData;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
+    /** @var \Magento\Framework\Registry */
     protected $registry;
 
     /**

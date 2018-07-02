@@ -58,7 +58,6 @@ class StockItem
         \Magento\Quote\Model\Quote\Item $quoteItem,
         $qty
     ) {
-        $product = $quoteItem->getProduct();
         /**
          * When we work with subitem
          */
@@ -68,19 +67,19 @@ class StockItem
              * we are using 0 because original qty was processed
              */
             $qtyForCheck = $this->quoteItemQtyList
-                ->getQty($product->getId(), $quoteItem->getId(), $quoteItem->getQuoteId(), 0);
+                ->getQty($quoteItem->getProduct()->getId(), $quoteItem->getId(), $quoteItem->getQuoteId(), 0);
         } else {
             $increaseQty = $quoteItem->getQtyToAdd() ? $quoteItem->getQtyToAdd() : $qty;
             $rowQty = $qty;
             $qtyForCheck = $this->quoteItemQtyList->getQty(
-                $product->getId(),
+                $quoteItem->getProduct()->getId(),
                 $quoteItem->getId(),
                 $quoteItem->getQuoteId(),
                 $increaseQty
             );
         }
 
-        $productTypeCustomOption = $product->getCustomOption('product_type');
+        $productTypeCustomOption = $quoteItem->getProduct()->getCustomOption('product_type');
         if ($productTypeCustomOption !== null) {
             // Check if product related to current item is a part of product that represents product set
             if ($this->typeConfig->isProductSet($productTypeCustomOption->getValue())) {
@@ -88,14 +87,14 @@ class StockItem
             }
         }
 
-        $stockItem->setProductName($product->getName());
+        $stockItem->setProductName($quoteItem->getProduct()->getName());
 
         $result = $this->stockState->checkQuoteItemQty(
-            $product->getId(),
+            $quoteItem->getProduct()->getId(),
             $rowQty,
             $qtyForCheck,
             $qty,
-            $product->getStore()->getWebsiteId()
+            $quoteItem->getProduct()->getStore()->getWebsiteId()
         );
 
         if ($stockItem->hasIsChildItem()) {

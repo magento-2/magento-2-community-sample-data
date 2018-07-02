@@ -144,7 +144,7 @@ class ActionPool implements ActionPoolInterface
     protected function createContainer($key, UiComponentInterface $view)
     {
         $container = $this->context->getPageLayout()->createBlock(
-            \Magento\Ui\Component\Control\Container::class,
+            'Magento\Ui\Component\Control\Container',
             'container-' . $view->getName() . '-' . $key,
             [
                 'data' => [

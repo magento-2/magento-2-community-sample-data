@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\EntityManager\Operation;
 
+use Magento\Framework\EntityManager\Operation\ReadInterface;
 use Magento\Framework\EntityManager\Operation\Read\ReadMain;
 use Magento\Framework\EntityManager\Operation\Read\ReadAttributes;
 use Magento\Framework\EntityManager\Operation\Read\ReadExtensions;
@@ -12,6 +13,7 @@ use Magento\Framework\EntityManager\HydratorPool;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EventManager;
 use Magento\Framework\EntityManager\TypeResolver;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Class Read
@@ -81,7 +83,11 @@ class Read implements ReadInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param object $entity
+     * @param string $identifier
+     * @param array $arguments
+     * @return object
+     * @throws \Exception
      */
     public function execute($entity, $identifier, $arguments = [])
     {
@@ -101,7 +107,6 @@ class Read implements ReadInterface
             'load_before',
             [
                 'identifier' => $identifier,
-                'entity' => $entity,
                 'arguments' => $arguments
             ]
         );

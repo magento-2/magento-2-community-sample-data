@@ -27,7 +27,8 @@
 
 & when (@media-common = true) {
 
-    .checkout-index-index {
+    .checkout-index-index,
+    .checkout-onepage-success {
         .page-title-wrapper {
             &:extend(.abs-visually-hidden all);
         }
@@ -65,14 +66,6 @@
             margin-left: 0;
         }
     }
-
-    .checkout-onepage-success {
-        &:extend(.abs-add-clearfix all);
-
-        .print {
-            display: none;
-        }
-    }
 }
 
 //
@@ -102,13 +95,5 @@
         &:extend(.abs-add-box-sizing-desktop-m all);
         .lib-layout-column(2, 1, @checkout-wrapper__columns);
         padding-right: @indent__l;
-    }
-
-    .checkout-onepage-success {
-        .print {
-            display: block;
-            float: right;
-            margin: 23px 0 0;
-        }
     }
 }

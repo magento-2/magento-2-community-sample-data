@@ -11,13 +11,11 @@ use Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver;
 use Magento\Customer\Model\Customer;
 
 /**
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Grid
 {
-    /**
-     * @var resource
-     */
+    /** @var Resource */
     protected $resource;
 
     /**
@@ -25,9 +23,7 @@ class Grid
      */
     protected $indexerRegistry;
 
-    /**
-     * @var \Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver
-     */
+    /** @var FlatScopeResolver  */
     protected $flatScopeResolver;
 
     /**
@@ -50,7 +46,7 @@ class Grid
      *
      * @return void
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function syncCustomerGrid()
     {
@@ -66,7 +62,7 @@ class Grid
      *
      * @return array
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function getCustomerIdsForReindex()
     {

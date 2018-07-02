@@ -7,7 +7,7 @@ namespace Magento\Config\Test\Unit\Model\Config\Structure\Element;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GroupTest extends \PHPUnit\Framework\TestCase
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Element\Group
@@ -27,13 +27,23 @@ class GroupTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->_cloneFactoryMock = $this->createMock(\Magento\Config\Model\Config\BackendClone\Factory::class);
-        $this->_depMapperMock = $this->createMock(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\Mapper::class
+        $this->_cloneFactoryMock = $this->getMock(
+            'Magento\Config\Model\Config\BackendClone\Factory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_depMapperMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Dependency\Mapper',
+            [],
+            [],
+            '',
+            false
         );
 
         $this->_model = $objectManager->getObject(
-            \Magento\Config\Model\Config\Structure\Element\Group::class,
+            'Magento\Config\Model\Config\Structure\Element\Group',
             [
                 'cloneModelFactory' => $this->_cloneFactoryMock,
                 'dependencyMapper' => $this->_depMapperMock,
@@ -69,9 +79,13 @@ class GroupTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCloneModelCreatesCloneModel()
     {
-        $cloneModel = $this->createMock(\Magento\Framework\App\Config\ValueInterface::class);
-        $this->_depMapperMock = $this->createMock(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\Mapper::class
+        $cloneModel = $this->getMock('Magento\Framework\App\Config\ValueInterface', [], [], '', false);
+        $this->_depMapperMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Dependency\Mapper',
+            [],
+            [],
+            '',
+            false
         );
         $this->_cloneFactoryMock->expects(
             $this->once()
@@ -88,9 +102,12 @@ class GroupTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFieldsetSetsOnlyNonArrayValuesToFieldset()
     {
-        $fieldsetMock = $this->createPartialMock(
-            \Magento\Framework\Data\Form\Element\Fieldset::class,
-            ['setOriginalData']
+        $fieldsetMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\Fieldset',
+            ['setOriginalData'],
+            [],
+            '',
+            false
         );
         $fieldsetMock->expects(
             $this->once()

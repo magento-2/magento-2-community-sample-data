@@ -3,179 +3,155 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Paypal\Test\Unit\Model\Method\Checks;
 
-use Magento\Paypal\Model\Method\Checks\SpecificationPlugin;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Paypal\Model\Billing\AgreementFactory as BillingAgreementFactory;
-use Magento\Payment\Model\Checks\SpecificationInterface;
 use Magento\Payment\Model\MethodInterface;
+use Magento\Paypal\Model\Billing\AgreementFactory;
 use Magento\Quote\Model\Quote;
-use Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection as BillingAgreementCollection;
-use Magento\Paypal\Model\Billing\Agreement as BillingAgreement;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class SpecificationPluginTest extends \PHPUnit\Framework\TestCase
+class SpecificationPluginTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var SpecificationPlugin
-     */
-    private $plugin;
+    /** @var SpecificationPlugin */
+    protected $model;
 
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
-     * @var BillingAgreementFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $billingAgreementFactoryMock;
-
-    /**
-     * @var SpecificationInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $specificationMock;
-
-    /**
-     * @var MethodInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentMethodMock;
-
-    /**
-     * @var Quote|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $quoteMock;
-
-    /**
-     * @var BillingAgreementCollection|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $billingAgreementCollectionMock;
-
-    /**
-     * @var BillingAgreement|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $billingAgreementMock;
+    /** @var AgreementFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $agreementFactory;
 
     protected function setUp()
     {
-        $this->billingAgreementFactoryMock = $this->getMockBuilder(BillingAgreementFactory::class)
+        $this->agreementFactory = $this->getMockBuilder('Magento\Paypal\Model\Billing\AgreementFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->specificationMock = $this->getMockBuilder(SpecificationInterface::class)
-            ->getMockForAbstractClass();
-        $this->paymentMethodMock = $this->getMockBuilder(MethodInterface::class)
-            ->getMockForAbstractClass();
-        $this->quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCustomerId'])
-            ->getMock();
-        $this->billingAgreementCollectionMock = $this->getMockBuilder(BillingAgreementCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->billingAgreementMock = $this->getMockBuilder(BillingAgreement::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->plugin = $this->objectManagerHelper->getObject(
-            SpecificationPlugin::class,
+        $objectManagerHelper = new ObjectManagerHelper($this);
+        $this->model = $objectManagerHelper->getObject(
+            'Magento\Paypal\Model\Method\Checks\SpecificationPlugin',
             [
-                'agreementFactory' => $this->billingAgreementFactoryMock
+                'agreementFactory' => $this->agreementFactory
             ]
         );
     }
 
-    public function testAfterIsApplicableNotOriginallyApplicable()
+    public function testAroundIsApplicableNotOriginallyApplicable()
     {
-        $this->setExpectations('any', 'any');
-
-        $this->assertFalse(
-            $this->plugin->afterIsApplicable(
-                $this->specificationMock,
-                false,
-                $this->paymentMethodMock,
-                $this->quoteMock
-            )
-        );
+        $paymentMethod = $this->getPaymentMethod('any');
+        $quote = $this->getQuote('any');
+        $proceed = $this->getProceedClosure(false, $paymentMethod, $quote);
+        $this->assertFalse($this->callAroundIsApplicable($proceed, $paymentMethod, $quote));
     }
 
-    public function testAfterIsApplicableNotAgreement()
+    public function testAroundIsApplicableNotAgreement()
     {
-        $this->setExpectations('not_agreement', 'any');
-
-        $this->assertTrue(
-            $this->plugin->afterIsApplicable(
-                $this->specificationMock,
-                true,
-                $this->paymentMethodMock,
-                $this->quoteMock
-            )
-        );
+        $paymentMethod = $this->getPaymentMethod('not_agreement');
+        $quote = $this->getQuote('any');
+        $proceed = $this->getProceedClosure(true, $paymentMethod, $quote);
+        $this->assertTrue($this->callAroundIsApplicable($proceed, $paymentMethod, $quote));
     }
 
-    public function testAfterIsApplicableNoCustomerId()
+    public function testAroundIsApplicableNoCustomerId()
     {
-        $this->setExpectations('paypal_billing_agreement', null);
-
-        $this->assertFalse(
-            $this->plugin->afterIsApplicable(
-                $this->specificationMock,
-                true,
-                $this->paymentMethodMock,
-                $this->quoteMock
-            )
-        );
+        $paymentMethod = $this->getPaymentMethod('paypal_billing_agreement');
+        $quote = $this->getQuote(null);
+        $proceed = $this->getProceedClosure(true, $paymentMethod, $quote);
+        $this->assertFalse($this->callAroundIsApplicable($proceed, $paymentMethod, $quote));
     }
 
     /**
      * @param int $count
-     *
-     * @dataProvider afterIsApplicableDataProvider
+     * @dataProvider aroundIsApplicableDataProvider
      */
-    public function testAfterIsApplicable($count)
+    public function testAroundIsApplicable($count)
     {
-        $this->setExpectations('paypal_billing_agreement', 1);
-
-        $this->billingAgreementFactoryMock->expects(static::once())
-            ->method('create')
-            ->willReturn($this->billingAgreementMock);
-        $this->billingAgreementMock->expects(static::once())
+        $paymentMethod = $this->getPaymentMethod('paypal_billing_agreement');
+        $quote = $this->getQuote(1);
+        $proceed = $this->getProceedClosure(true, $paymentMethod, $quote);
+        $agreementCollection = $this->getMock(
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection',
+            [],
+            [],
+            '',
+            false
+        );
+        $agreementCollection->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue($count));
+        $agreement = $this->getMock('Magento\Paypal\Model\Billing\Agreement', [], [], '', false);
+        $agreement->expects($this->once())
             ->method('getAvailableCustomerBillingAgreements')
             ->with(1)
-            ->willReturn($this->billingAgreementCollectionMock);
-        $this->billingAgreementCollectionMock->expects(static::once())
-            ->method('count')
-            ->willReturn($count);
-
-        $this->assertEquals(
-            $count > 0,
-            $this->plugin->afterIsApplicable($this->specificationMock, true, $this->paymentMethodMock, $this->quoteMock)
-        );
+            ->will($this->returnValue($agreementCollection));
+        $this->agreementFactory->expects($this->once())
+            ->method('create')
+            ->will($this->returnValue($agreement));
+        $this->assertEquals($count > 0, $this->callAroundIsApplicable($proceed, $paymentMethod, $quote));
     }
 
-    /**
-     * @return array
-     */
-    public function afterIsApplicableDataProvider()
+    public function aroundIsApplicableDataProvider()
     {
         return [[0], [1], [2]];
     }
 
     /**
-     * Set expectations
-     *
-     * @param mixed $paymentMethodCode
-     * @param mixed $customerId
-     * @return void
+     * @param bool $result
+     * @param MethodInterface $paymentMethod
+     * @param Quote $quote
+     * @return \Closure
      */
-    private function setExpectations($paymentMethodCode, $customerId)
+    private function getProceedClosure($result, MethodInterface $paymentMethod, Quote $quote)
     {
-        $this->paymentMethodMock->expects(static::any())
+        $self = $this;
+        return function ($parameter1, $parameter2) use ($result, $paymentMethod, $quote, $self) {
+            $self->assertSame($paymentMethod, $parameter1);
+            $self->assertSame($quote, $parameter2);
+            return $result;
+        };
+    }
+
+    /**
+     * Get payment method parameter
+     *
+     * @param string $code
+     * @return MethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getPaymentMethod($code)
+    {
+        $paymentMethod = $this->getMockForAbstractClass('Magento\Payment\Model\MethodInterface');
+        $paymentMethod->expects($this->any())
             ->method('getCode')
-            ->willReturn($paymentMethodCode);
-        $this->quoteMock->expects(static::any())
-            ->method('getCustomerId')
-            ->willReturn($customerId);
+            ->will($this->returnValue($code));
+        return $paymentMethod;
+    }
+
+    /**
+     * Get quote parameter
+     *
+     * @param mixed $customerId
+     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getQuote($customerId)
+    {
+        $quote = $this->getMock('Magento\Quote\Model\Quote', ['__wakeup'], [], '', false);
+        $quote->setCustomerId($customerId);
+        return $quote;
+    }
+
+    /**
+     * Call aroundIsApplicable method
+     *
+     * @param \Closure $proceed
+     * @param MethodInterface $paymentMethod
+     * @param Quote $quote
+     * @return bool
+     */
+    private function callAroundIsApplicable(
+        \Closure $proceed,
+        MethodInterface $paymentMethod,
+        Quote $quote
+    ) {
+        $specification = $this->getMockForAbstractClass('Magento\Payment\Model\Checks\SpecificationInterface');
+        return $this->model->aroundIsApplicable($specification, $proceed, $paymentMethod, $quote);
     }
 }

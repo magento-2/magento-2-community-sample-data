@@ -15,7 +15,7 @@ use Magento\Framework\Phrase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ActivityTest extends \PHPUnit\Framework\TestCase
+class ActivityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var  \Magento\Security\Controller\Adminhtml\Session\Activity
@@ -44,16 +44,16 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->contextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->contextMock = $this->getMockBuilder('\Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->viewMock = $this->createMock(\Magento\Framework\App\ViewInterface::class);
+        $this->viewMock = $this->getMock('\Magento\Framework\App\ViewInterface');
         $this->contextMock->expects($this->any())
             ->method('getView')
             ->will($this->returnValue($this->viewMock));
 
         $this->controller = $this->objectManager->getObject(
-            \Magento\Security\Controller\Adminhtml\Session\Activity::class,
+            '\Magento\Security\Controller\Adminhtml\Session\Activity',
             [
                 'context' => $this->contextMock
             ]
@@ -65,7 +65,7 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        $titleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $titleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $titleMock

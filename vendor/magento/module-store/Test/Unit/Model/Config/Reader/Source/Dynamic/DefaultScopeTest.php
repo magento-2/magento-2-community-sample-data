@@ -11,7 +11,7 @@ use Magento\Framework\DataObject;
 use Magento\Store\Model\Config\Reader\Source\Dynamic\DefaultScope;
 use Magento\Store\Model\ResourceModel\Config\Collection\ScopedFactory;
 
-class DefaultScopeTest extends \PHPUnit\Framework\TestCase
+class DefaultScopeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {

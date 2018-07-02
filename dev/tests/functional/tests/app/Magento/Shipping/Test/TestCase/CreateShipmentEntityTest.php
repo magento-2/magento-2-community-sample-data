@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click 'Submit Shipment' button.
  * 6. Perform all asserts.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-28708
  */
 class CreateShipmentEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 
@@ -41,7 +42,7 @@ class CreateShipmentEntityTest extends Injectable
     public function __prepare()
     {
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => "checkmo,flatrate"]
         )->run();
     }
@@ -60,7 +61,7 @@ class CreateShipmentEntityTest extends Injectable
 
         // Steps
         $createShipping = $this->objectManager->create(
-            \Magento\Sales\Test\TestStep\CreateShipmentStep::class,
+            'Magento\Sales\Test\TestStep\CreateShipmentStep',
             ['order' => $order, 'data' => $data]
         );
 

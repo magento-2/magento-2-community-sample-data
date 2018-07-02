@@ -5,7 +5,7 @@
  */
 namespace Magento\PageCache\Test\Unit\Model\Layout;
 
-class LayoutPluginTest extends \PHPUnit\Framework\TestCase
+class LayoutPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\PageCache\Model\Layout\LayoutPlugin
@@ -30,7 +30,7 @@ class LayoutPluginTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->layoutMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Layout::class,
+            'Magento\Framework\View\Layout',
             [],
             '',
             false,
@@ -38,8 +38,8 @@ class LayoutPluginTest extends \PHPUnit\Framework\TestCase
             true,
             ['isCacheable', 'getAllBlocks']
         );
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->configMock = $this->createMock(\Magento\PageCache\Model\Config::class);
+        $this->responseMock = $this->getMock('\Magento\Framework\App\Response\Http', [], [], '', false);
+        $this->configMock = $this->getMock('Magento\PageCache\Model\Config', [], [], '', false);
 
         $this->model = new \Magento\PageCache\Model\Layout\LayoutPlugin(
             $this->responseMock,
@@ -92,12 +92,8 @@ class LayoutPluginTest extends \PHPUnit\Framework\TestCase
     {
         $html = 'html';
         $this->configMock->expects($this->any())->method('isEnabled')->will($this->returnValue($cacheState));
-        $blockStub = $this->createPartialMock(
-            \Magento\PageCache\Test\Unit\Block\Controller\StubBlock::class,
-            ['getIdentities']
-        );
+        $blockStub = $this->getMock('Magento\PageCache\Test\Unit\Block\Controller\StubBlock', null, [], '', false);
         $blockStub->setTtl($ttl);
-        $blockStub->expects($this->any())->method('getIdentities')->willReturn(['identity1', 'identity2']);
         $this->layoutMock->expects($this->once())->method('isCacheable')->will($this->returnValue($layoutIsCacheable));
         $this->layoutMock->expects($this->any())->method('getAllBlocks')->will($this->returnValue([$blockStub]));
 

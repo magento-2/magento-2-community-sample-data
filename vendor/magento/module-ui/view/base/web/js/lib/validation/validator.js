@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'underscore',
     './rules'
@@ -31,16 +27,12 @@ define([
                 message: ''
             };
 
-        if (_.isObject(params)) {
-            message = params.message || '';
-        }
-
         if (!rulesList[id]) {
             return result;
         }
 
         rule    = rulesList[id];
-        message = message || rule.message;
+        message = rule.message;
         valid   = rule.handler(value, params, additionalParams);
 
         if (!valid) {
@@ -76,7 +68,7 @@ define([
             };
 
             _.every(rules, function (ruleParams, id) {
-                if (ruleParams.validate || ruleParams !== false || additionalParams) {
+                if (ruleParams !== false || additionalParams) {
                     result = validate(id, value, ruleParams, additionalParams);
 
                     return result.passed;

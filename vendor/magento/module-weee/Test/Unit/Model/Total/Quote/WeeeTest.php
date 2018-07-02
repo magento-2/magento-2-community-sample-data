@@ -7,10 +7,7 @@ namespace Magento\Weee\Test\Unit\Model\Total\Quote;
 
 use Magento\Tax\Model\Calculation;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class WeeeTest extends \PHPUnit\Framework\TestCase
+class WeeeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Pricing\PriceCurrencyInterface
@@ -22,8 +19,6 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected $weeeCollector;
 
-    private $serializerMock;
-
     /**
      * Setup tax helper with an array of methodName, returnValue
      *
@@ -32,7 +27,7 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupTaxHelper($taxConfig)
     {
-        $taxHelper = $this->createMock(\Magento\Tax\Helper\Data::class);
+        $taxHelper = $this->getMock('Magento\Tax\Helper\Data', [], [], '', false);
 
         foreach ($taxConfig as $method => $value) {
             $taxHelper->expects($this->any())->method($method)->will($this->returnValue($value));
@@ -52,10 +47,7 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
         $storeTaxRate = $taxRates['store_tax_rate'];
         $customerTaxRate = $taxRates['customer_tax_rate'];
 
-        $taxCalculation = $this->createPartialMock(
-            \Magento\Tax\Model\Calculation::class,
-            ['getRateOriginRequest', 'getRateRequest', 'getRate']
-        );
+        $taxCalculation = $this->getMock('Magento\Tax\Model\Calculation', [], [], '', false);
 
         $rateRequest = new \Magento\Framework\DataObject();
         $defaultRateRequest = new \Magento\Framework\DataObject();
@@ -82,12 +74,7 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupWeeeHelper($weeeConfig)
     {
-        $this->serializerMock = $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)->getMock();
-
-        $weeeHelper = $this->getMockBuilder(\Magento\Weee\Helper\Data::class)
-            ->setConstructorArgs(['serializer'  => $this->serializerMock])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $weeeHelper = $this->getMock('Magento\Weee\Helper\Data', [], [], '', false);
 
         foreach ($weeeConfig as $method => $value) {
             $weeeHelper->expects($this->any())->method($method)->will($this->returnValue($value));
@@ -104,7 +91,9 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupItemMockBasics($itemTotalQty)
     {
-        $itemMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Item::class, [
+        $itemMock = $this->getMock(
+            'Magento\Quote\Model\Quote\Item',
+            [
                 'getProduct',
                 'getQuote',
                 'getAddress',
@@ -114,9 +103,13 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
                 'getChildren',
                 'isChildrenCalculated',
                 '__wakeup',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $itemMock->expects($this->any())->method('getProduct')->will($this->returnValue($productMock));
         $itemMock->expects($this->any())->method('getTotalQty')->will($this->returnValue($itemTotalQty));
 
@@ -178,18 +171,22 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupAddressMock($items)
     {
-        $addressMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+        $addressMock = $this->getMock(
+            'Magento\Quote\Model\Quote\Address',
+            [
                 '__wakeup',
                 'getAllItems',
                 'getQuote',
                 'getCustomAttributesCodes'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
-        $this->priceCurrency = $this->getMockBuilder(
-            \Magento\Framework\Pricing\PriceCurrencyInterface::class
-        )->getMock();
+        $quoteMock = $this->getMock('Magento\Quote\Model\Quote', [], [], '', false);
+        $storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
+        $this->priceCurrency = $this->getMockBuilder('Magento\Framework\Pricing\PriceCurrencyInterface')->getMock();
         $this->priceCurrency->expects($this->any())->method('round')->willReturnArgument(0);
         $this->priceCurrency->expects($this->any())->method('convert')->willReturnArgument(0);
         $quoteMock->expects($this->any())->method('getStore')->will($this->returnValue($storeMock));
@@ -209,9 +206,15 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupShippingAssignmentMock($addressMock, $itemMock)
     {
-        $shippingMock = $this->createMock(\Magento\Quote\Api\Data\ShippingInterface::class);
+        $shippingMock = $this->getMock('\Magento\Quote\Api\Data\ShippingInterface', [], [], '', false);
         $shippingMock->expects($this->any())->method('getAddress')->willReturn($addressMock);
-        $shippingAssignmentMock = $this->createMock(\Magento\Quote\Api\Data\ShippingAssignmentInterface::class);
+        $shippingAssignmentMock = $this->getMock(
+            '\Magento\Quote\Api\Data\ShippingAssignmentInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $shippingAssignmentMock->expects($this->any())->method('getItems')->willReturn($itemMock);
         $shippingAssignmentMock->expects($this->any())->method('getShipping')->willReturn($shippingMock);
 
@@ -274,14 +277,11 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
             $itemMock = $this->setupItemMock($itemQty);
             $items[] = $itemMock;
         }
-        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $quoteMock = $this->getMock('\Magento\Quote\Model\Quote', [], [], '', false);
+        $storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $quoteMock->expects($this->any())->method('getStore')->will($this->returnValue($storeMock));
         $addressMock = $this->setupAddressMock($items);
-        $totalMock = new \Magento\Quote\Model\Quote\Address\Total(
-            [],
-            $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)->getMock()
-        );
+        $totalMock = new \Magento\Quote\Model\Quote\Address\Total();
         $shippingAssignmentMock = $this->setupShippingAssignmentMock($addressMock, $items);
 
         $taxHelper = $this->setupTaxHelper($taxConfig);
@@ -336,7 +336,7 @@ class WeeeTest extends \PHPUnit\Framework\TestCase
         ];
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->weeeCollector = $helper->getObject(\Magento\Weee\Model\Total\Quote\Weee::class, $arguments);
+        $this->weeeCollector = $helper->getObject('Magento\Weee\Model\Total\Quote\Weee', $arguments);
 
         $this->weeeCollector->collect($quoteMock, $shippingAssignmentMock, $totalMock);
 

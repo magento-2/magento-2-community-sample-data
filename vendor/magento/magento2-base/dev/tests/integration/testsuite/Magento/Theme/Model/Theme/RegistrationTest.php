@@ -7,7 +7,7 @@ namespace Magento\Theme\Model\Theme;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class RegistrationTest extends \PHPUnit\Framework\TestCase
+class RegistrationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Theme\Registration
@@ -34,16 +34,16 @@ class RegistrationTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\App\AreaList::class)
+        $objectManager->get('Magento\Framework\App\AreaList')
             ->getArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE)
             ->load(\Magento\Framework\App\Area::PART_CONFIG);
 
-        $objectManager->get(\Magento\Framework\App\State::class)
+        $objectManager->get('Magento\Framework\App\State')
             ->setAreaCode(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $this->_theme = $objectManager
-            ->create(\Magento\Framework\View\Design\ThemeInterface::class);
+            ->create('Magento\Framework\View\Design\ThemeInterface');
         $this->_model = $objectManager
-            ->create(\Magento\Theme\Model\Theme\Registration::class);
+            ->create('Magento\Theme\Model\Theme\Registration');
     }
 
     /**

@@ -7,7 +7,7 @@ namespace Magento\Framework\Stdlib\Test\Unit;
 
 use \Magento\Framework\Stdlib\BooleanUtils;
 
-class BooleanUtilsTest extends \PHPUnit\Framework\TestCase
+class BooleanUtilsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var BooleanUtils

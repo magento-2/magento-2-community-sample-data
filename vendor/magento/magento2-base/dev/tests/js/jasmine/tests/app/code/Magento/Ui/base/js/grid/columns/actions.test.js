@@ -27,9 +27,7 @@ define([
                 index: 'delete',
                 hidden: true,
                 rowIndex: 0,
-
-                /** Stub */
-                callback: function () {
+                callback: function() {
                     return true;
                 }
             };
@@ -51,7 +49,7 @@ define([
             var someAction = _.clone(action);
 
             someAction.hidden = false;
-            someAction.index = 'view';
+            someAction.index= 'view';
             model.addAction('delete', action);
             model.addAction('view', someAction);
             expect(model.getVisibleActions('0')).toEqual([someAction]);

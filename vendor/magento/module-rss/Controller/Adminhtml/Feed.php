@@ -12,7 +12,9 @@ namespace Magento\Rss\Controller\Adminhtml;
 abstract class Feed extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Rss::rss';
 
@@ -44,7 +46,7 @@ abstract class Feed extends \Magento\Backend\App\Action
         \Magento\Rss\Model\RssFactory $rssFactory
     ) {
         parent::__construct($context);
-        $this->_objectManager->get(\Magento\Backend\Model\UrlInterface::class)->turnOffSecretKey();
+        $this->_objectManager->get('Magento\Backend\Model\UrlInterface')->turnOffSecretKey();
         $this->rssManager = $rssManager;
         $this->scopeConfig = $scopeConfig;
         $this->rssFactory = $rssFactory;

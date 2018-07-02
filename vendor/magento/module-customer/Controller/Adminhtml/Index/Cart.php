@@ -10,24 +10,27 @@ use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\AddressInterfaceFactory;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
+use Magento\Customer\Controller\RegistryConstants;
 use Magento\Customer\Model\Address\Mapper;
-use Magento\Framework\DataObjectFactory as ObjectFactory;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\DataObjectFactory as ObjectFactory;
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @deprecated 100.2.0
  */
 class Cart extends \Magento\Customer\Controller\Adminhtml\Index
 {
     /**
-     * @var \Magento\Quote\Model\QuoteFactory
+     * @var QuoteFactory
      */
     private $quoteFactory;
 
     /**
-     * Constructor
-     *
+     * Cart constructor.
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
@@ -53,7 +56,8 @@ class Cart extends \Magento\Customer\Controller\Adminhtml\Index
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \Magento\Quote\Model\QuoteFactory|null $quoteFactory
+     * @param QuoteFactory|null $quoteFactory
+     * @throws \RuntimeException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -82,7 +86,7 @@ class Cart extends \Magento\Customer\Controller\Adminhtml\Index
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Quote\Model\QuoteFactory $quoteFactory = null
+        QuoteFactory $quoteFactory = null
     ) {
         parent::__construct(
             $context,
@@ -111,7 +115,10 @@ class Cart extends \Magento\Customer\Controller\Adminhtml\Index
             $resultForwardFactory,
             $resultJsonFactory
         );
-        $this->quoteFactory = $quoteFactory ?: $this->_objectManager->get(\Magento\Quote\Model\QuoteFactory::class);
+        if (null === $quoteFactory) {
+            $quoteFactory = ObjectManager::getInstance()->get(QuoteFactory::class);
+        }
+        $this->quoteFactory = $quoteFactory;
     }
 
     /**
@@ -128,7 +135,7 @@ class Cart extends \Magento\Customer\Controller\Adminhtml\Index
         $deleteItemId = $this->getRequest()->getPost('delete');
         if ($deleteItemId) {
             /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-            $quoteRepository = $this->_objectManager->create(\Magento\Quote\Api\CartRepositoryInterface::class);
+            $quoteRepository = $this->_objectManager->create(CartRepositoryInterface::class);
             /** @var \Magento\Quote\Model\Quote $quote */
             try {
                 $quote = $quoteRepository->getForCustomer($customerId);
@@ -136,7 +143,7 @@ class Cart extends \Magento\Customer\Controller\Adminhtml\Index
                 $quote = $this->quoteFactory->create();
             }
             $quote->setWebsite(
-                $this->_objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)->getWebsite($websiteId)
+                $this->_objectManager->get(StoreManagerInterface::class)->getWebsite($websiteId)
             );
             $item = $quote->getItemById($deleteItemId);
             if ($item && $item->getId()) {

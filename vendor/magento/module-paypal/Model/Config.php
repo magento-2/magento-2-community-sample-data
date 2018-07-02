@@ -867,9 +867,7 @@ class Config extends AbstractConfig
      */
     public function getExpressCheckoutStartUrl($token)
     {
-        return sprintf('https://www.%spaypal.com/checkoutnow%s',
-            $this->getValue('sandboxFlag') ? 'sandbox.' : '',
-            '?token=' . urlencode($token));
+        return $this->getPaypalUrl(['cmd' => '_express-checkout', 'token' => $token]);
     }
 
     /**

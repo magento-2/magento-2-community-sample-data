@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Request;
 
-use Magento\Framework\App\RequestContentInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\RequestSafetyInterface;
 use Magento\Framework\App\Route\ConfigInterface\Proxy as ConfigInterface;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
@@ -16,7 +16,7 @@ use Magento\Framework\Stdlib\StringUtils;
 /**
  * Http request
  */
-class Http extends Request implements RequestContentInterface, RequestSafetyInterface
+class Http extends Request implements RequestInterface, RequestSafetyInterface
 {
     /**#@+
      * HTTP Ports
@@ -76,6 +76,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
 
     /**
      * @var ObjectManagerInterface
+     * @deprecated
      */
     protected $objectManager;
 
@@ -100,7 +101,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
      * @param ConfigInterface $routeConfig
      * @param PathInfoProcessorInterface $pathInfoProcessor
      * @param ObjectManagerInterface  $objectManager
-     * @param \Zend\Uri\UriInterface|string|null $uri
+     * @param string|null $uri
      * @param array $directFrontNames
      */
     public function __construct(
@@ -149,7 +150,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
                 return $this;
             }
 
-            $requestUri = $this->removeRepitedSlashes($requestUri);
+            $requestUri = $this->removeRepeatedSlashes($requestUri);
             $parsedRequestUri = explode('?', $requestUri, 2);
             $queryString = !isset($parsedRequestUri[1]) ? '' : '?' . $parsedRequestUri[1];
             $baseUrl = $this->getBaseUrl();
@@ -172,7 +173,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
      * @param string $pathInfo
      * @return string
      */
-    private function removeRepitedSlashes($pathInfo)
+    private function removeRepeatedSlashes($pathInfo)
     {
         $firstChar = (string)substr($pathInfo, 0, 1);
         if ($firstChar == '/') {
@@ -183,7 +184,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
     }
 
     /**
-     * Check is URI should be marked as no route, helps route to 404 URI like `index.phpadmin`.
+     * Check is URI should be marked as no route, helps to route 404 for incorrect URI.
      *
      * @param string $baseUrl
      * @param string $pathInfo
@@ -362,7 +363,7 @@ class Http extends Request implements RequestContentInterface, RequestSafetyInte
             $hostArr = explode(':', $headerHttpHost);
             $host = $hostArr[0];
             $port = isset($hostArr[1])
-                && (!$secure && $hostArr[1] != 80 || $secure && $hostArr[1] != 443) ? ':' . $hostArr[1] : '';
+            && (!$secure && $hostArr[1] != 80 || $secure && $hostArr[1] != 443) ? ':' . $hostArr[1] : '';
             $path = $this->getBasePath();
 
             return $this->distroBaseUrl = $scheme . $host . $port . rtrim($path, '/') . '/';

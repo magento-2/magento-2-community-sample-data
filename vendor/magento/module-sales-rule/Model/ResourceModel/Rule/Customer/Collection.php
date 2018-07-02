@@ -20,9 +20,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(
-            \Magento\SalesRule\Model\Rule\Customer::class,
-            \Magento\SalesRule\Model\ResourceModel\Rule\Customer::class
-        );
+        $this->_init('Magento\SalesRule\Model\Rule\Customer', 'Magento\SalesRule\Model\ResourceModel\Rule\Customer');
     }
 }

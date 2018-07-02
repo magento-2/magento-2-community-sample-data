@@ -12,14 +12,14 @@ use Magento\Framework\Phrase;
 /**
  * Class StateExceptionTest
  */
-class StateExceptionTest extends \PHPUnit\Framework\TestCase
+class StateExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return void
      */
     public function testStateExceptionInstance()
     {
-        $instanceClass = \Magento\Framework\Exception\StateException::class;
+        $instanceClass = 'Magento\Framework\Exception\StateException';
         $message = 'message %1 %2';
         $params = [
             'parameter1',

@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-http for the canonical source repository
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-http/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Http\Header;
@@ -23,7 +25,7 @@ class CacheControl implements HeaderInterface
      *
      * @var array
      */
-    protected $directives = [];
+    protected $directives = array();
 
     /**
      * Creates a CacheControl object from a headerLine
@@ -39,7 +41,7 @@ class CacheControl implements HeaderInterface
         // check to ensure proper header type for this factory
         if (strtolower($name) !== 'cache-control') {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Invalid header line for Cache-Control string: "%s"',
+                'Invalid header line for Cache-Control string: ""',
                 $name
             ));
         }
@@ -136,16 +138,16 @@ class CacheControl implements HeaderInterface
      */
     public function getFieldValue()
     {
-        $parts = [];
+        $parts = array();
         ksort($this->directives);
         foreach ($this->directives as $key => $value) {
             if (true === $value) {
                 $parts[] = $key;
             } else {
                 if (preg_match('#[^a-zA-Z0-9._-]#', $value)) {
-                    $value = '"' . $value . '"';
+                    $value = '"' . $value.'"';
                 }
-                $parts[] = $key . '=' . $value;
+                $parts[] = "$key=$value";
             }
         }
         return implode(', ', $parts);
@@ -173,7 +175,7 @@ class CacheControl implements HeaderInterface
     {
         $value = trim($value);
 
-        $directives = [];
+        $directives = array();
 
         // handle empty string early so we don't need a separate start state
         if ($value == '') {
@@ -183,7 +185,7 @@ class CacheControl implements HeaderInterface
         $lastMatch = null;
 
         state_directive:
-        switch (static::match(['[a-zA-Z][a-zA-Z_-]*'], $value, $lastMatch)) {
+        switch (static::match(array('[a-zA-Z][a-zA-Z_-]*'), $value, $lastMatch)) {
             case 0:
                 $directive = $lastMatch;
                 goto state_value;
@@ -194,7 +196,7 @@ class CacheControl implements HeaderInterface
         }
 
         state_value:
-        switch (static::match(['="[^"]*"', '=[^",\s;]*'], $value, $lastMatch)) {
+        switch (static::match(array('="[^"]*"', '=[^",\s;]*'), $value, $lastMatch)) {
             case 0:
                 $directives[$directive] = substr($lastMatch, 2, -1);
                 goto state_separator;
@@ -211,7 +213,7 @@ class CacheControl implements HeaderInterface
         }
 
         state_separator:
-        switch (static::match(['\s*,\s*', '$'], $value, $lastMatch)) {
+        switch (static::match(array('\s*,\s*', '$'), $value, $lastMatch)) {
             case 0:
                 goto state_directive;
                 // intentional fall-through
@@ -221,6 +223,7 @@ class CacheControl implements HeaderInterface
 
             default:
                 throw new Exception\InvalidArgumentException('expected SEPARATOR or END');
+
         }
     }
 

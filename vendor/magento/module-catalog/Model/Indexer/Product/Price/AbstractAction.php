@@ -71,11 +71,6 @@ abstract class AbstractAction
     protected $_indexers;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product
-     */
-    private $productResource;
-
-    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $config
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
@@ -124,7 +119,7 @@ abstract class AbstractAction
     {
         // delete invalid rows
         $select = $this->_connection->select()->from(
-            ['index_price' => $this->getIndexTargetTable()],
+            ['index_price' => $this->_defaultIndexerResource->getTable('catalog_product_index_price')],
             null
         )->joinLeft(
             ['ip_tmp' => $this->_defaultIndexerResource->getIdxTable()],
@@ -141,7 +136,7 @@ abstract class AbstractAction
 
         $this->_insertFromTable(
             $this->_defaultIndexerResource->getIdxTable(),
-            $this->getIndexTargetTable()
+            $this->_defaultIndexerResource->getTable('catalog_product_index_price')
         );
         return $this;
     }
@@ -217,90 +212,47 @@ abstract class AbstractAction
     {
         $table = $this->_defaultIndexerResource->getTable('catalog_product_index_tier_price');
         $this->_emptyTable($table);
-        if (empty($entityIds)) {
-            return $this;
-        }
+
+        $websiteExpression = $this->_connection->getCheckSql(
+            'tp.website_id = 0',
+            'ROUND(tp.value * cwd.rate, 4)',
+            'tp.value'
+        );
         $linkField = $this->getProductIdFieldName();
-        $priceAttribute = $this->getProductResource()->getAttribute('price');
-        $baseColumns = [
-            'cpe.entity_id',
-            'tp.customer_group_id',
-            'tp.website_id'
-        ];
-        if ($linkField !== 'entity_id') {
-            $baseColumns[] = 'cpe.' . $linkField;
-        };
-        $subSelect = $this->_connection->select()->from(
+        $select = $this->_connection->select()->from(
             ['cpe' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
-            array_merge_recursive(
-                $baseColumns,
-                [
-                    'min(tp.value) AS value',
-                    'min(tp.percentage_value) AS percentage_value'
-                ]
-            )
-        )->joinInner(
+            ['cpe.entity_id']
+        )->join(
             ['tp' => $this->_defaultIndexerResource->getTable(['catalog_product_entity', 'tier_price'])],
             'tp.' . $linkField . ' = cpe.' . $linkField,
             []
-        )->where("cpe.entity_id IN(?)", $entityIds)
-            ->where("tp.website_id != 0")
-            ->group(['cpe.entity_id', 'tp.customer_group_id', 'tp.website_id']);
+        )->join(
+            ['cg' => $this->_defaultIndexerResource->getTable('customer_group')],
+            'tp.all_groups = 1 OR (tp.all_groups = 0 AND tp.customer_group_id = cg.customer_group_id)',
+            ['customer_group_id']
+        )->join(
+            ['cw' => $this->_defaultIndexerResource->getTable('store_website')],
+            'tp.website_id = 0 OR tp.website_id = cw.website_id',
+            ['website_id']
+        )->join(
+            ['cwd' => $this->_defaultIndexerResource->getTable('catalog_product_index_website')],
+            'cw.website_id = cwd.website_id',
+            []
+        )->where(
+            'cw.website_id != 0'
+        )->columns(
+            new \Zend_Db_Expr("MIN({$websiteExpression})")
+        )->group(
+            ['cpe.entity_id', 'cg.customer_group_id', 'cw.website_id']
+        );
 
-        $subSelect2 = $this->_connection->select()
-            ->from(
-                ['cpe' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
-                array_merge_recursive(
-                    $baseColumns,
-                    [
-                        'MIN(ROUND(tp.value * cwd.rate, 4)) AS value',
-                        'MIN(ROUND(tp.percentage_value * cwd.rate, 4)) AS percentage_value'
+        if (!empty($entityIds)) {
+            $select->where("cpe.entity_id IN(?)", $entityIds);
+        }
 
-                    ]
-                )
-            )
-            ->joinInner(
-                ['tp' => $this->_defaultIndexerResource->getTable(['catalog_product_entity', 'tier_price'])],
-                'tp.' . $linkField . ' = cpe.' . $linkField,
-                []
-            )->join(
-                ['cw' => $this->_defaultIndexerResource->getTable('store_website')],
-                true,
-                []
-            )
-            ->joinInner(
-                ['cwd' => $this->_defaultIndexerResource->getTable('catalog_product_index_website')],
-                'cw.website_id = cwd.website_id',
-                []
-            )
-            ->where("cpe.entity_id IN(?)", $entityIds)
-            ->where("tp.website_id = 0")
-            ->group(
-                ['cpe.entity_id', 'tp.customer_group_id', 'tp.website_id']
-            );
-
-        $unionSelect = $this->_connection->select()
-            ->union([$subSelect, $subSelect2], \Magento\Framework\DB\Select::SQL_UNION_ALL);
-        $select = $this->_connection->select()
-            ->from(
-                ['b' => new \Zend_Db_Expr(sprintf('(%s)', $unionSelect->assemble()))],
-                [
-                    'b.entity_id',
-                    'b.customer_group_id',
-                    'b.website_id',
-                    'MIN(IF(b.value = 0, product_price.value * (1 - b.percentage_value / 100), b.value))'
-                ]
-            )
-            ->joinInner(
-                ['product_price' => $priceAttribute->getBackend()->getTable()],
-                'b.' . $linkField . ' = product_price.' . $linkField,
-                []
-            )
-            ->group(['b.entity_id', 'b.customer_group_id', 'b.website_id']);
-
-        $query = $select->insertFromSelect($table, [], false);
-
+        $query = $select->insertFromSelect($table);
         $this->_connection->query($query);
+
         return $this;
     }
 
@@ -489,7 +441,7 @@ abstract class AbstractAction
 
         if ($children) {
             $select = $this->_connection->select()->from(
-                $this->getIndexTargetTable()
+                $this->_defaultIndexerResource->getTable('catalog_product_index_price')
             )->where(
                 'entity_id IN(?)',
                 $children
@@ -502,18 +454,6 @@ abstract class AbstractAction
     }
 
     /**
-     * Retrieve index table that will be used for write operations.
-     *
-     * This method is used during both partial and full reindex to identify the table.
-     *
-     * @return string
-     */
-    protected function getIndexTargetTable()
-    {
-        return $this->_defaultIndexerResource->getTable('catalog_product_index_price');
-    }
-
-    /**
      * @return string
      */
     protected function getProductIdFieldName()
@@ -521,18 +461,5 @@ abstract class AbstractAction
         $table = $this->_defaultIndexerResource->getTable('catalog_product_entity');
         $indexList = $this->_connection->getIndexList($table);
         return $indexList[$this->_connection->getPrimaryKeyName($table)]['COLUMNS_LIST'][0];
-    }
-
-    /**
-     * @return \Magento\Catalog\Model\ResourceModel\Product
-     * @deprecated 101.1.0
-     */
-    private function getProductResource()
-    {
-        if (null === $this->productResource) {
-            $this->productResource = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\ResourceModel\Product::class);
-        }
-        return $this->productResource;
     }
 }

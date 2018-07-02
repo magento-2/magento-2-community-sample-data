@@ -5,7 +5,7 @@
  */
 namespace Magento\Payment\Test\Unit\Model\Cart\SalesModel;
 
-class OrderTest extends \PHPUnit\Framework\TestCase
+class OrderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Payment\Model\Cart\SalesModel\Order */
     protected $_model;
@@ -15,7 +15,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_orderMock = $this->createMock(\Magento\Sales\Model\Order::class);
+        $this->_orderMock = $this->getMock(\Magento\Sales\Model\Order::class, [], [], '', false);
         $this->_model = new \Magento\Payment\Model\Cart\SalesModel\Order($this->_orderMock);
     }
 

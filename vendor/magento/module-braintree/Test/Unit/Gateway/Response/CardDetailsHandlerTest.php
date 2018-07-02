@@ -11,12 +11,12 @@ use Magento\Braintree\Gateway\Response\CardDetailsHandler;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 
 /**
  * Class CardDetailsHandlerTest
  */
-class CardDetailsHandlerTest extends \PHPUnit\Framework\TestCase
+class CardDetailsHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Braintree\Gateway\Response\CardDetailsHandler

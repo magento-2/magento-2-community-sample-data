@@ -5,7 +5,7 @@
  */
 namespace Magento\Store\Test\Unit\Model;
 
-class WebsiteManagementTest extends \PHPUnit\Framework\TestCase
+class WebsiteManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\WebsiteManagement
@@ -19,9 +19,12 @@ class WebsiteManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->websitesFactoryMock = $this->createPartialMock(
-            \Magento\Store\Model\ResourceModel\Website\CollectionFactory::class,
-            ['create']
+        $this->websitesFactoryMock = $this->getMock(
+            'Magento\Store\Model\ResourceModel\Website\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->model = new \Magento\Store\Model\WebsiteManagement(
             $this->websitesFactoryMock
@@ -30,7 +33,7 @@ class WebsiteManagementTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCount()
     {
-        $websitesMock = $this->createMock(\Magento\Store\Model\ResourceModel\Website\Collection::class);
+        $websitesMock = $this->getMock('\Magento\Store\Model\ResourceModel\Website\Collection', [], [], '', false);
 
         $this->websitesFactoryMock
             ->expects($this->once())

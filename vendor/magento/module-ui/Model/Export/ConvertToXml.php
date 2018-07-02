@@ -139,12 +139,10 @@ class ConvertToXml
         $searchResultIterator = $this->iteratorFactory->create(['items' => $searchResultItems]);
 
         /** @var Excel $excel */
-        $excel = $this->excelFactory->create(
-            [
-                'iterator' => $searchResultIterator,
-                'rowCallback'=> [$this, 'getRowData'],
-            ]
-        );
+        $excel = $this->excelFactory->create([
+            'iterator' => $searchResultIterator,
+            'rowCallback'=> [$this, 'getRowData'],
+        ]);
 
         $this->directory->create('export');
         $stream = $this->directory->openFile($file, 'w+');

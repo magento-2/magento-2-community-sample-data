@@ -9,7 +9,7 @@
  */
 namespace Magento\AdminNotification\Test\Unit\Model;
 
-class NotificationServiceTest extends \PHPUnit\Framework\TestCase
+class NotificationServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Retrieve instance of notification service model
@@ -23,13 +23,19 @@ class NotificationServiceTest extends \PHPUnit\Framework\TestCase
          * @var
          *  $notificationFactory \PHPUnit_Framework_MockObject_MockObject|\Magento\AdminNotification\Model\InboxFactory
          */
-        $notificationFactory = $this->createPartialMock(
-            \Magento\AdminNotification\Model\InboxFactory::class,
-            ['create']
+        $notificationFactory = $this->getMock(
+            'Magento\AdminNotification\Model\InboxFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $notification = $this->createPartialMock(
-            \Magento\AdminNotification\Model\Inbox::class,
-            ['load', 'getId', 'save', 'setIsRead', '__sleep', '__wakeup']
+        $notification = $this->getMock(
+            'Magento\AdminNotification\Model\Inbox',
+            ['load', 'getId', 'save', 'setIsRead', '__sleep', '__wakeup'],
+            [],
+            '',
+            false
         );
         $notification->expects($this->once())->method('load')->with($notificationId)->will($this->returnSelf());
         $notification->expects($this->once())->method('getId')->will($this->returnValue($notificationId));

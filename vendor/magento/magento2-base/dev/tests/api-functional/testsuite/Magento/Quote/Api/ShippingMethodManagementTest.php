@@ -33,8 +33,8 @@ class ShippingMethodManagementTest extends WebapiAbstract
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
-        $this->totalsCollector = $this->objectManager->create(\Magento\Quote\Model\Quote\TotalsCollector::class);
+        $this->quote = $this->objectManager->create('Magento\Quote\Model\Quote');
+        $this->totalsCollector = $this->objectManager->create('Magento\Quote\Model\Quote\TotalsCollector');
     }
 
     /**
@@ -43,7 +43,7 @@ class ShippingMethodManagementTest extends WebapiAbstract
      */
     public function testGetListForVirtualCart()
     {
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $cartId = $quote->load('test_order_with_virtual_product', 'reserved_order_id')->getId();
 
         $this->assertEquals([], $this->_webApiCall($this->getListServiceInfo($cartId), ["cartId" => $cartId]));
@@ -55,7 +55,7 @@ class ShippingMethodManagementTest extends WebapiAbstract
     public function testGetList()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $cartId = $quote->getId();
         if (!$cartId) {
@@ -78,19 +78,20 @@ class ShippingMethodManagementTest extends WebapiAbstract
      */
     public function testGetListForMyCart()
     {
+        $this->markTestSkipped('Will be fixed after MAGETWO-35573');
         $this->_markTestAsRestOnly();
 
         $this->quote->load('test_order_1', 'reserved_order_id');
 
         /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
         $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
+            'Magento\Integration\Api\CustomerTokenServiceInterface'
         );
         $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
 
-        /** @var \Magento\Quote\Model\ShippingMethodManagementInterface $shippingMethodManagementService */
+        /** @var \Magento\Quote\Api\ShippingMethodManagementInterface $shippingMethodManagementService */
         $shippingMethodManagementService = $this->objectManager->create(
-            \Magento\Quote\Model\ShippingMethodManagementInterface::class
+            'Magento\Quote\Api\ShippingMethodManagementInterface'
         );
         $shippingMethodManagementService->set($this->quote->getId(), 'flatrate', 'flatrate');
 
@@ -155,7 +156,7 @@ class ShippingMethodManagementTest extends WebapiAbstract
     {
         $result = [];
         /** @var \Magento\Quote\Model\Cart\ShippingMethodConverter $converter */
-        $converter = $this->objectManager->create(\Magento\Quote\Model\Cart\ShippingMethodConverter::class);
+        $converter = $this->objectManager->create('\Magento\Quote\Model\Cart\ShippingMethodConverter');
         foreach ($groupedRates as $carrierRates) {
             foreach ($carrierRates as $rate) {
                 $result[] = $converter->modelToDataObject($rate, $currencyCode)->__toArray();

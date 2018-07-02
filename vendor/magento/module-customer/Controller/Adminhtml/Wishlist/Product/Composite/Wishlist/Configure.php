@@ -32,7 +32,7 @@ class Configure extends \Magento\Customer\Controller\Adminhtml\Wishlist\Product\
             $configureResult->setMessage($e->getMessage());
         }
 
-        return $this->_objectManager->get(\Magento\Catalog\Helper\Product\Composite::class)
+        return $this->_objectManager->get('Magento\Catalog\Helper\Product\Composite')
             ->renderConfigureResult($configureResult);
     }
 }

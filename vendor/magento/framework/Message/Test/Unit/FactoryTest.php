@@ -6,7 +6,7 @@
 
 namespace Magento\Framework\Message\Test\Unit;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Message\Factory
@@ -20,7 +20,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->factory = new \Magento\Framework\Message\Factory(
             $this->objectManagerMock
         );
@@ -38,7 +38,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateWithWrongInterfaceImplementation()
     {
-        $this->expectException(
+        $this->setExpectedException(
             '\InvalidArgumentException',
             'Magento\Framework\Message\Error doesn\'t implement \Magento\Framework\Message\MessageInterface'
         );
@@ -55,7 +55,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testSuccessfulCreateMessage()
     {
-        $messageMock = $this->createMock(\Magento\Framework\Message\Success::class);
+        $messageMock = $this->getMock('Magento\Framework\Message\Success', [], [], '', false);
         $type = 'success';
         $className = 'Magento\\Framework\\Message\\' . ucfirst($type);
         $this->objectManagerMock

@@ -10,47 +10,23 @@ use Magento\Email\Model\Template;
 /**
  * Class ValidatorTest to test \Magento\Theme\Model\Design\Config\Validator
  */
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const TEMPLATE_CODE = 'email_exception_fixture';
-
     /**
      * @var \Magento\Theme\Model\Design\Config\Validator
      */
     private $model;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $templateFactoryMock;
-
-    /**
-     * @var \Magento\Email\Model\Template
-     */
-    private $templateModel;
-
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\App\AreaList::class)
+        $objectManager->get('Magento\Framework\App\AreaList')
             ->getArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE)
             ->load(\Magento\Framework\App\Area::PART_CONFIG);
-        $objectManager->get(\Magento\Framework\App\State::class)
+        $objectManager->get('Magento\Framework\App\State')
             ->setAreaCode(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
 
-        $this->templateFactoryMock = $this->getMockBuilder(\Magento\Framework\Mail\TemplateInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->templateModel = $objectManager->create(\Magento\Email\Model\Template::class);
-        $this->templateModel->load(self::TEMPLATE_CODE, 'template_code');
-        $this->templateFactoryMock->expects($this->once())
-            ->method("create")
-            ->willReturn($this->templateModel);
-        $this->model = $objectManager->create(
-            \Magento\Theme\Model\Design\Config\Validator::class,
-            [ 'templateFactory' => $this->templateFactoryMock ]
-        );
+        $this->model = $objectManager->get('Magento\Theme\Model\Design\Config\Validator');
     }
 
     /**
@@ -60,26 +36,22 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateHasRecursiveReference()
     {
-        if (!$this->templateModel->getId()) {
-            $this->fail('Cannot load Template model');
-        }
-
+        $this->markTestSkipped("MAGETWO-59802:BuildFailureforL2onbranch2.1-develop");
         $fieldConfig = [
             'path' => 'design/email/header_template',
             'fieldset' => 'other_settings/email',
             'field' => 'email_header_template'
         ];
 
-        $designConfigMock = $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigInterface::class)
+        $designConfigMock = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $designConfigExtensionMock =
-            $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigExtensionInterface::class)
+        $designConfigExtensionMock = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigExtensionInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $designElementMock = $this->getMockBuilder(\Magento\Theme\Model\Data\Design\Config\Data::class)
+        $designElementMock = $this->getMockBuilder('Magento\Theme\Model\Data\Design\Config\Data')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -92,7 +64,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$designElementMock]);
         $designElementMock->expects($this->any())->method('getFieldConfig')->willReturn($fieldConfig);
         $designElementMock->expects($this->once())->method('getPath')->willReturn($fieldConfig['path']);
-        $designElementMock->expects($this->once())->method('getValue')->willReturn($this->templateModel->getId());
+        $designElementMock->expects($this->once())->method('getValue')->willReturn(1);
 
         $this->model->validate($designConfigMock);
     }
@@ -102,26 +74,21 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateNoRecursiveReference()
     {
-        $this->templateFactoryMock->expects($this->once())
-            ->method("create")
-            ->willReturn($this->templateModel);
-
         $fieldConfig = [
             'path' => 'design/email/footer_template',
             'fieldset' => 'other_settings/email',
             'field' => 'email_footer_template'
         ];
 
-        $designConfigMock = $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigInterface::class)
+        $designConfigMock = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $designConfigExtensionMock =
-            $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigExtensionInterface::class)
+        $designConfigExtensionMock = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigExtensionInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $designElementMock = $this->getMockBuilder(\Magento\Theme\Model\Data\Design\Config\Data::class)
+        $designElementMock = $this->getMockBuilder('Magento\Theme\Model\Data\Design\Config\Data')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -134,7 +101,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$designElementMock]);
         $designElementMock->expects($this->any())->method('getFieldConfig')->willReturn($fieldConfig);
         $designElementMock->expects($this->once())->method('getPath')->willReturn($fieldConfig['path']);
-        $designElementMock->expects($this->once())->method('getValue')->willReturn($this->templateModel->getId());
+        $designElementMock->expects($this->once())->method('getValue')->willReturn(1);
 
         $this->model->validate($designConfigMock);
     }

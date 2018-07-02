@@ -3,12 +3,13 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Config\Model\Config\Source;
 
 /**
- * @api
- * @since 100.0.2
+ * Used in creating options for Yes|No config value selection
+ *
  */
+namespace Magento\Config\Model\Config\Source;
+
 class Yesno implements \Magento\Framework\Option\ArrayInterface
 {
     /**

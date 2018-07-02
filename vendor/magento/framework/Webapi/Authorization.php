@@ -7,15 +7,11 @@ namespace Magento\Framework\Webapi;
 
 /**
  * Web API authorization model.
- *
- * @api
- * @since 100.1.0
  */
 class Authorization
 {
     /**
      * @var \Magento\Framework\AuthorizationInterface
-     * @since 100.1.0
      */
     protected $authorization;
 
@@ -23,7 +19,6 @@ class Authorization
      * Initialize dependencies.
      *
      * @param \Magento\Framework\AuthorizationInterface $authorization
-     * @since 100.1.0
      */
     public function __construct(\Magento\Framework\AuthorizationInterface $authorization)
     {
@@ -35,7 +30,6 @@ class Authorization
      *
      * @param string[] $aclResources
      * @return bool
-     * @since 100.1.0
      */
     public function isAllowed($aclResources)
     {

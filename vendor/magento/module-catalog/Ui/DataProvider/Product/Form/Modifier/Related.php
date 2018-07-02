@@ -26,11 +26,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
  * Class Related
- *
- * @api
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 101.0.0
  */
 class Related extends AbstractModifier
 {
@@ -52,55 +48,46 @@ class Related extends AbstractModifier
 
     /**
      * @var LocatorInterface
-     * @since 101.0.0
      */
     protected $locator;
 
     /**
      * @var UrlInterface
-     * @since 101.0.0
      */
     protected $urlBuilder;
 
     /**
      * @var ProductLinkRepositoryInterface
-     * @since 101.0.0
      */
     protected $productLinkRepository;
 
     /**
      * @var ProductRepositoryInterface
-     * @since 101.0.0
      */
     protected $productRepository;
 
     /**
      * @var ImageHelper
-     * @since 101.0.0
      */
     protected $imageHelper;
 
     /**
      * @var Status
-     * @since 101.0.0
      */
     protected $status;
 
     /**
      * @var AttributeSetRepositoryInterface
-     * @since 101.0.0
      */
     protected $attributeSetRepository;
 
     /**
      * @var string
-     * @since 101.0.0
      */
     protected $scopeName;
 
     /**
      * @var string
-     * @since 101.0.0
      */
     protected $scopePrefix;
 
@@ -144,7 +131,6 @@ class Related extends AbstractModifier
 
     /**
      * {@inheritdoc}
-     * @since 101.0.0
      */
     public function modifyMeta(array $meta)
     {
@@ -183,7 +169,6 @@ class Related extends AbstractModifier
 
     /**
      * {@inheritdoc}
-     * @since 101.0.0
      */
     public function modifyData(array $data)
     {
@@ -236,7 +221,7 @@ class Related extends AbstractModifier
      * Get price modifier
      *
      * @return \Magento\Catalog\Ui\Component\Listing\Columns\Price
-     * @deprecated 101.0.0
+     * @deprecated
      */
     private function getPriceModifier()
     {
@@ -254,7 +239,6 @@ class Related extends AbstractModifier
      * @param ProductInterface $linkedProduct
      * @param ProductLinkInterface $linkItem
      * @return array
-     * @since 101.0.0
      */
     protected function fillData(ProductInterface $linkedProduct, ProductLinkInterface $linkItem)
     {
@@ -276,7 +260,6 @@ class Related extends AbstractModifier
      * Retrieve all data scopes
      *
      * @return array
-     * @since 101.0.0
      */
     protected function getDataScopes()
     {
@@ -291,7 +274,6 @@ class Related extends AbstractModifier
      * Prepares config for the Related products fieldset
      *
      * @return array
-     * @since 101.0.0
      */
     protected function getRelatedFieldset()
     {
@@ -331,7 +313,6 @@ class Related extends AbstractModifier
      * Prepares config for the Up-Sell products fieldset
      *
      * @return array
-     * @since 101.0.0
      */
     protected function getUpSellFieldset()
     {
@@ -372,7 +353,6 @@ class Related extends AbstractModifier
      * Prepares config for the Cross-Sell products fieldset
      *
      * @return array
-     * @since 101.0.0
      */
     protected function getCrossSellFieldset()
     {
@@ -416,7 +396,6 @@ class Related extends AbstractModifier
      * @param Phrase $buttonTitle
      * @param string $scope
      * @return array
-     * @since 101.0.0
      */
     protected function getButtonSet(Phrase $content, Phrase $buttonTitle, $scope)
     {
@@ -469,7 +448,6 @@ class Related extends AbstractModifier
      * @param Phrase $title
      * @param string $scope
      * @return array
-     * @since 101.0.0
      */
     protected function getGenericModal(Phrase $title, $scope)
     {
@@ -549,7 +527,6 @@ class Related extends AbstractModifier
      * @param string $scope
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @since 101.0.0
      */
     protected function getGrid($scope)
     {
@@ -611,7 +588,6 @@ class Related extends AbstractModifier
      * Retrieve meta column
      *
      * @return array
-     * @since 101.0.0
      */
     protected function fillMeta()
     {
@@ -677,7 +653,6 @@ class Related extends AbstractModifier
      * @param Phrase $label
      * @param int $sortOrder
      * @return array
-     * @since 101.0.0
      */
     protected function getTextColumn($dataScope, $fit, Phrase $label, $sortOrder)
     {

@@ -10,7 +10,7 @@ namespace Magento\Catalog\Test\Unit\Observer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class MenuCategoryDataTest extends \PHPUnit\Framework\TestCase
+class MenuCategoryDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Observer\MenuCategoryData
@@ -39,22 +39,29 @@ class MenuCategoryDataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_catalogCategory = $this->createPartialMock(\Magento\Catalog\Helper\Category::class, ['getStoreCategories', 'getCategoryUrl']);
+        $this->_catalogCategory = $this->getMock(
+            '\Magento\Catalog\Helper\Category',
+            ['getStoreCategories', 'getCategoryUrl'],
+            [],
+            '',
+            false
+        );
 
-        $layerResolver = $this->createMock(\Magento\Catalog\Model\Layer\Resolver::class);
+        $layerResolver = $this->getMock('Magento\Catalog\Model\Layer\Resolver', [], [], '', false);
         $layerResolver->expects($this->once())->method('get')->willReturn(null);
-        $this->_observer = (new ObjectManager($this))->getObject(\Magento\Catalog\Observer\MenuCategoryData::class,
+        $this->_observer = (new ObjectManager($this))->getObject(
+            'Magento\Catalog\Observer\MenuCategoryData',
             [
                 'layerResolver' => $layerResolver,
                 'catalogCategory' => $this->_catalogCategory,
-                'catalogData' => $this->createMock(\Magento\Catalog\Helper\Data::class),
+                'catalogData' => $this->getMock('\Magento\Catalog\Helper\Data', [], [], '', false),
             ]
         );
     }
 
     public function testGetMenuCategoryData()
     {
-        $category = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['getId', 'getName']);
+        $category = $this->getMock('Magento\Catalog\Model\Category', ['getId', 'getName'], [], '', false);
         $category->expects($this->once())->method('getId')->willReturn('id');
         $category->expects($this->once())->method('getName')->willReturn('name');
         $this->_catalogCategory->expects($this->once())->method('getCategoryUrl')->willReturn('url');

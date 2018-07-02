@@ -5,7 +5,7 @@
  */
 namespace Magento\Checkout\Test\Unit\CustomerData;
 
-class DefaultItemTest extends \PHPUnit\Framework\TestCase
+class DefaultItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Checkout\CustomerData\DefaultItem
@@ -90,3 +90,4 @@ class DefaultItemTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('canApplyMsrp', $itemData);
     }
 }
+

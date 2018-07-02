@@ -8,9 +8,6 @@ namespace Magento\Checkout\Block\Cart;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Checkout\Block\Checkout\LayoutProcessorInterface;
 
-/**
- * @api
- */
 class Totals extends \Magento\Checkout\Block\Cart\AbstractCart
 {
     /**
@@ -21,7 +18,7 @@ class Totals extends \Magento\Checkout\Block\Cart\AbstractCart
     /**
      * @var string
      */
-    protected $_defaultRenderer = \Magento\Checkout\Block\Total\DefaultTotal::class;
+    protected $_defaultRenderer = 'Magento\Checkout\Block\Total\DefaultTotal';
 
     /**
      * @var array
@@ -69,7 +66,6 @@ class Totals extends \Magento\Checkout\Block\Cart\AbstractCart
         foreach ($this->layoutProcessors as $processor) {
             $this->jsLayout = $processor->process($this->jsLayout);
         }
-
         return json_encode($this->jsLayout, JSON_HEX_TAG);
     }
 

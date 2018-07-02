@@ -7,7 +7,7 @@ namespace Magento\Framework\Data\Test\Unit\Argument\Interpreter;
 
 use \Magento\Framework\Data\Argument\Interpreter\Composite;
 
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Argument\InterpreterInterface
@@ -26,8 +26,8 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_interpreterOne = $this->createMock(\Magento\Framework\Data\Argument\InterpreterInterface::class);
-        $this->_interpreterTwo = $this->createMock(\Magento\Framework\Data\Argument\InterpreterInterface::class);
+        $this->_interpreterOne = $this->getMock('Magento\Framework\Data\Argument\InterpreterInterface');
+        $this->_interpreterTwo = $this->getMock('Magento\Framework\Data\Argument\InterpreterInterface');
         $this->_model = new Composite(
             ['one' => $this->_interpreterOne, 'two' => $this->_interpreterTwo],
             'interpreter'
@@ -41,8 +41,8 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
     public function testConstructWrongInterpreter()
     {
         $interpreters = [
-            'correct' => $this->createMock(\Magento\Framework\Data\Argument\InterpreterInterface::class),
-            'wrong' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
+            'correct' => $this->getMock('Magento\Framework\Data\Argument\InterpreterInterface'),
+            'wrong' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
         ];
         new Composite($interpreters, 'interpreter');
     }
@@ -55,8 +55,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
      */
     public function testEvaluateWrongDiscriminator($input, $expectedExceptionMessage)
     {
-        $this->expectException('\InvalidArgumentException');
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->setExpectedException('\InvalidArgumentException', $expectedExceptionMessage);
         $this->_model->evaluate($input);
     }
 
@@ -91,7 +90,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
     public function testAddInterpreter()
     {
         $input = ['interpreter' => 'new', 'value' => 'test'];
-        $newInterpreter = $this->createMock(\Magento\Framework\Data\Argument\InterpreterInterface::class);
+        $newInterpreter = $this->getMock('Magento\Framework\Data\Argument\InterpreterInterface');
         $this->_model->addInterpreter('new', $newInterpreter);
         $newInterpreter->expects($this->once())->method('evaluate')->with(['value' => 'test']);
         $this->_model->evaluate($input);
@@ -104,7 +103,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddInterpreterException()
     {
-        $newInterpreter = $this->createMock(\Magento\Framework\Data\Argument\InterpreterInterface::class);
+        $newInterpreter = $this->getMock('Magento\Framework\Data\Argument\InterpreterInterface');
         $this->_model->addInterpreter('one', $newInterpreter);
     }
 }

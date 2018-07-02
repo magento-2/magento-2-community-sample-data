@@ -5,7 +5,7 @@
  */
 namespace Magento\ImportExport\Model;
 
-class ExportTest extends \PHPUnit\Framework\TestCase
+class ExportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Model object which used for tests
@@ -17,7 +17,7 @@ class ExportTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\ImportExport\Model\Export::class
+            'Magento\ImportExport\Model\Export'
         );
     }
 
@@ -49,15 +49,15 @@ class ExportTest extends \PHPUnit\Framework\TestCase
         return [
             'product' => [
                 '$entity' => 'catalog_product',
-                '$expectedEntityType' => \Magento\CatalogImportExport\Model\Export\Product::class,
+                '$expectedEntityType' => 'Magento\CatalogImportExport\Model\Export\Product',
             ],
             'customer main data' => [
                 '$entity' => 'customer',
-                '$expectedEntityType' => \Magento\CustomerImportExport\Model\Export\Customer::class,
+                '$expectedEntityType' => 'Magento\CustomerImportExport\Model\Export\Customer',
             ],
             'customer address' => [
                 '$entity' => 'customer_address',
-                '$expectedEntityType' => \Magento\CustomerImportExport\Model\Export\Address::class,
+                '$expectedEntityType' => 'Magento\CustomerImportExport\Model\Export\Address',
             ]
         ];
     }

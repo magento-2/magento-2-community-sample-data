@@ -11,7 +11,7 @@ use Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token;
 /**
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token
  */
-class TokenTest extends \PHPUnit\Framework\TestCase
+class TokenTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -110,7 +110,7 @@ class TokenTest extends \PHPUnit\Framework\TestCase
     {
         $line = 110;
         return $this->objectManager->getObject(
-            \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token::class,
+            'Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token',
             [
                 'name' => $name,
                 'value' => $value,

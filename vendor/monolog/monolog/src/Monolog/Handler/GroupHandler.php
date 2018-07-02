@@ -11,8 +11,6 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-
 /**
  * Forwards records to multiple handlers
  *
@@ -75,30 +73,8 @@ class GroupHandler extends AbstractHandler
      */
     public function handleBatch(array $records)
     {
-        if ($this->processors) {
-            $processed = array();
-            foreach ($records as $record) {
-                foreach ($this->processors as $processor) {
-                    $processed[] = call_user_func($processor, $record);
-                }
-            }
-            $records = $processed;
-        }
-
         foreach ($this->handlers as $handler) {
             $handler->handleBatch($records);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFormatter(FormatterInterface $formatter)
-    {
-        foreach ($this->handlers as $handler) {
-            $handler->setFormatter($formatter);
-        }
-
-        return $this;
     }
 }

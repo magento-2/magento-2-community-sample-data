@@ -5,7 +5,7 @@
  */
 namespace Magento\ImportExport\Test\Unit\Model\Export\Entity;
 
-class AbstractEavTest extends \PHPUnit\Framework\TestCase
+class AbstractEavTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Abstract eav export model
@@ -24,7 +24,7 @@ class AbstractEavTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\ImportExport\Model\Export\Entity\AbstractEav::class,
+            'Magento\ImportExport\Model\Export\Entity\AbstractEav',
             [],
             '',
             false,
@@ -56,9 +56,12 @@ class AbstractEavTest extends \PHPUnit\Framework\TestCase
     {
         $method = new \ReflectionMethod($this->_model, '_addAttributesToCollection');
         $method->setAccessible(true);
-        $stubCollection = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Collection\AbstractCollection::class,
-            ['addAttributeToSelect']
+        $stubCollection = $this->getMock(
+            'Magento\Eav\Model\Entity\Collection\AbstractCollection',
+            ['addAttributeToSelect'],
+            [],
+            '',
+            false
         );
         $stubCollection->expects($this->once())->method('addAttributeToSelect')->with($this->_expectedAttributes);
         $method->invoke($this->_model, $stubCollection);
@@ -77,7 +80,7 @@ class AbstractEavTest extends \PHPUnit\Framework\TestCase
         $testAttributeOptions = ['value' => 'option'];
         /** @var $testAttribute \Magento\Eav\Model\Entity\Attribute */
         $testAttribute = $this->getMockForAbstractClass(
-            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
+            'Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
             [],
             '',
             false,
@@ -105,7 +108,7 @@ class AbstractEavTest extends \PHPUnit\Framework\TestCase
 
         /** @var $item \Magento\Framework\Model\AbstractModel|\PHPUnit_Framework_MockObject_MockObject */
         $item = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            'Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,

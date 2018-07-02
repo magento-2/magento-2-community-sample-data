@@ -20,9 +20,9 @@ class Url extends Element implements InputProviderInterface
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'url',
-    ];
+    );
 
     /**
      * @var \Zend\Validator\ValidatorInterface
@@ -37,10 +37,10 @@ class Url extends Element implements InputProviderInterface
     public function getValidator()
     {
         if (null === $this->validator) {
-            $this->validator = new UriValidator([
+            $this->validator = new UriValidator(array(
                 'allowAbsolute' => true,
                 'allowRelative' => false,
-            ]);
+            ));
         }
         return $this->validator;
     }
@@ -54,15 +54,15 @@ class Url extends Element implements InputProviderInterface
      */
     public function getInputSpecification()
     {
-        return [
+        return array(
             'name' => $this->getName(),
             'required' => true,
-            'filters' => [
-                ['name' => 'Zend\Filter\StringTrim'],
-            ],
-            'validators' => [
+            'filters' => array(
+                array('name' => 'Zend\Filter\StringTrim'),
+            ),
+            'validators' => array(
                 $this->getValidator(),
-            ],
-        ];
+            ),
+        );
     }
 }

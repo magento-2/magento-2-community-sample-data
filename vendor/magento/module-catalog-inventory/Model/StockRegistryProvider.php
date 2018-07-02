@@ -180,7 +180,7 @@ class StockRegistryProvider implements StockRegistryProviderInterface
     {
         if (null === $this->stockRegistryStorage) {
             $this->stockRegistryStorage = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
+                ->get('Magento\CatalogInventory\Model\StockRegistryStorage');
         }
         return $this->stockRegistryStorage;
     }

@@ -11,19 +11,43 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Extension;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
-
-class ExtensionTest extends TestCase
+class ExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getResolvedEnabledFixtures
      */
     public function testIsConfigEnabledReturnsTheResolvedValue($enabled)
     {
-        $extension = new EnableableExtension();
-        $this->assertSame($enabled, $extension->isConfigEnabled(new ContainerBuilder(), array('enabled' => $enabled)));
+        $pb = $this->getMockBuilder('Symfony\Component\DependencyInjection\ParameterBag\ParameterBag')
+            ->setMethods(array('resolveValue'))
+            ->getMock()
+        ;
+
+        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(array('getParameterBag'))
+            ->getMock()
+        ;
+
+        $pb->expects($this->once())
+            ->method('resolveValue')
+            ->with($this->equalTo($enabled))
+            ->will($this->returnValue($enabled))
+        ;
+
+        $container->expects($this->once())
+            ->method('getParameterBag')
+            ->will($this->returnValue($pb))
+        ;
+
+        $extension = $this->getMockBuilder('Symfony\Component\DependencyInjection\Extension\Extension')
+            ->setMethods(array())
+            ->getMockForAbstractClass()
+        ;
+
+        $r = new \ReflectionMethod('Symfony\Component\DependencyInjection\Extension\Extension', 'isConfigEnabled');
+        $r->setAccessible(true);
+
+        $r->invoke($extension, $container, array('enabled' => $enabled));
     }
 
     public function getResolvedEnabledFixtures()
@@ -40,20 +64,18 @@ class ExtensionTest extends TestCase
      */
     public function testIsConfigEnabledOnNonEnableableConfig()
     {
-        $extension = new EnableableExtension();
+        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->getMock()
+        ;
 
-        $extension->isConfigEnabled(new ContainerBuilder(), array());
-    }
-}
+        $extension = $this->getMockBuilder('Symfony\Component\DependencyInjection\Extension\Extension')
+            ->setMethods(array())
+            ->getMockForAbstractClass()
+        ;
 
-class EnableableExtension extends Extension
-{
-    public function load(array $configs, ContainerBuilder $container)
-    {
-    }
+        $r = new \ReflectionMethod('Symfony\Component\DependencyInjection\Extension\Extension', 'isConfigEnabled');
+        $r->setAccessible(true);
 
-    public function isConfigEnabled(ContainerBuilder $container, array $config)
-    {
-        return parent::isConfigEnabled($container, $config);
+        $r->invoke($extension, $container, array());
     }
 }

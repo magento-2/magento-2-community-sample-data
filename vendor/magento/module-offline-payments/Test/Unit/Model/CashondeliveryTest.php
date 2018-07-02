@@ -5,7 +5,7 @@
  */
 namespace Magento\OfflinePayments\Test\Unit\Model;
 
-class CashondeliveryTest extends \PHPUnit\Framework\TestCase
+class CashondeliveryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflinePayments\Model\Cashondelivery
@@ -21,12 +21,12 @@ class CashondeliveryTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $paymentDataMock = $this->createMock(\Magento\Payment\Helper\Data::class);
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $paymentDataMock = $this->getMock('Magento\Payment\Helper\Data', [], [], '', false);
 
-        $this->_scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->_scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
         $this->_object = $helper->getObject(
-            \Magento\OfflinePayments\Model\Cashondelivery::class,
+            'Magento\OfflinePayments\Model\Cashondelivery',
             [
                 'eventManager' => $eventManager,
                 'paymentData' => $paymentDataMock,
@@ -37,6 +37,6 @@ class CashondeliveryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetInfoBlockType()
     {
-        $this->assertEquals(\Magento\Payment\Block\Info\Instructions::class, $this->_object->getInfoBlockType());
+        $this->assertEquals('Magento\Payment\Block\Info\Instructions', $this->_object->getInfoBlockType());
     }
 }

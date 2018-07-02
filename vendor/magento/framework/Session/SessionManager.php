@@ -159,7 +159,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * Configure session handler and start session
+     * Configure session handler and start session.
      *
      * @throws \Magento\Framework\Exception\SessionException
      * @return $this
@@ -196,11 +196,12 @@ class SessionManager implements SessionManagerInterface
             \Magento\Framework\Profiler::stop('session_start');
         }
         $this->storage->init(isset($_SESSION) ? $_SESSION : []);
+
         return $this;
     }
 
     /**
-     * Renew session cookie to prolong session
+     * Renew session cookie to prolong session.
      *
      * @param null|string $sid If we have session id we need to use it instead of old cookie value
      * @return $this
@@ -210,8 +211,7 @@ class SessionManager implements SessionManagerInterface
         if (!$this->getCookieLifetime()) {
             return $this;
         }
-        //When we renew cookie, we should aware, that any other session client do not
-        //change cookie too
+        // When we renew cookie, we should aware, that any other session client do not change cookie too
         $cookieValue = $sid ?: $this->cookieManager->getCookie($this->getName());
         if ($cookieValue) {
             $metadata = $this->cookieMetadataFactory->createPublicCookieMetadata();

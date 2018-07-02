@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Model;
 /**
  * Customer log model test.
  */
-class LogTest extends \PHPUnit\Framework\TestCase
+class LogTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Customer log model.
@@ -35,7 +35,7 @@ class LogTest extends \PHPUnit\Framework\TestCase
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->log = $objectManagerHelper->getObject(
-            \Magento\Customer\Model\Log::class,
+            'Magento\Customer\Model\Log',
             [
                 'customerId' => $this->logData['customer_id'],
                 'lastLoginAt' => $this->logData['last_login_at'],

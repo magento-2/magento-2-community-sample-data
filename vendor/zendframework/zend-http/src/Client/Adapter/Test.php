@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-http for the canonical source repository
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-http/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Http\Client\Adapter;
@@ -26,7 +28,7 @@ class Test implements AdapterInterface
      *
      * @var array
      */
-    protected $config = [];
+    protected $config = array();
 
     /**
      * Buffer of responses to be returned by the read() method.  Can be
@@ -34,7 +36,7 @@ class Test implements AdapterInterface
      *
      * @var array
      */
-    protected $responses = ["HTTP/1.1 400 Bad Request\r\n\r\n"];
+    protected $responses = array("HTTP/1.1 400 Bad Request\r\n\r\n");
 
     /**
      * Current position in the response buffer
@@ -76,7 +78,7 @@ class Test implements AdapterInterface
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      */
-    public function setOptions($options = [])
+    public function setOptions($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -120,7 +122,7 @@ class Test implements AdapterInterface
      * @param string        $body
      * @return string Request as string
      */
-    public function write($method, $uri, $httpVer = '1.1', $headers = [], $body = '')
+    public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
         // Build request headers
         $path = $uri->getPath();
@@ -130,12 +132,12 @@ class Test implements AdapterInterface
         if ($uri->getQuery()) {
             $path .= '?' . $uri->getQuery();
         }
-        $request = $method . ' ' . $path . ' HTTP/' . $httpVer . "\r\n";
+        $request = "{$method} {$path} HTTP/{$httpVer}\r\n";
         foreach ($headers as $k => $v) {
             if (is_string($k)) {
-                $v = ucfirst($k) . ': ' . $v;
+                $v = ucfirst($k) . ": $v";
             }
-            $request .= $v . "\r\n";
+            $request .= "$v\r\n";
         }
 
         // Add the request body
@@ -207,8 +209,7 @@ class Test implements AdapterInterface
     {
         if ($index < 0 || $index >= count($this->responses)) {
             throw new Exception\OutOfRangeException(
-                'Index out of range of response buffer size'
-            );
+                'Index out of range of response buffer size');
         }
         $this->responseIndex = $index;
     }

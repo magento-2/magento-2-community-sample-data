@@ -11,7 +11,7 @@ use Magento\Framework\ObjectManagerInterface;
 require_once __DIR__ . '/_files/TMap/TClass.php';
 require_once __DIR__ . '/_files/TMap/TInterface.php';
 
-class TMapTest extends \PHPUnit\Framework\TestCase
+class TMapTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -25,10 +25,10 @@ class TMapTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->om = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->om = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->getMockForAbstractClass();
 
-        $this->omConfig = $this->getMockBuilder(\Magento\Framework\ObjectManager\ConfigInterface::class)
+        $this->omConfig = $this->getMockBuilder('Magento\Framework\ObjectManager\ConfigInterface')
             ->getMockForAbstractClass();
     }
 

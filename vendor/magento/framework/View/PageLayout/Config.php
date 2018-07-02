@@ -11,9 +11,7 @@ namespace Magento\Framework\View\PageLayout;
  */
 class Config extends \Magento\Framework\Config\AbstractXml
 {
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver
-     */
+    /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolver;
 
     /**

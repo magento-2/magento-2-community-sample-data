@@ -6,15 +6,17 @@
 
 namespace Magento\Downloadable\Test\Unit\Helper;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * File helper.
+     *
      * @var \Magento\Downloadable\Helper\File
      */
     private $file;
 
     /**
-     * Core file storage database
+     * Database saving file helper.
      *
      * @var \Magento\MediaStorage\Helper\File\Storage\Database|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -35,6 +37,8 @@ class FileTest extends \PHPUnit\Framework\TestCase
     private $mediaDirectory;
 
     /**
+     * Application context helper.
+     *
      * @var \Magento\Framework\App\Helper\Context|\PHPUnit_Framework_MockObject_MockObject
      */
     private $appContext;

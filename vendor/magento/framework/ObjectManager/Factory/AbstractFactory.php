@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager\Factory;
@@ -127,12 +127,12 @@ abstract class AbstractFactory implements \Magento\Framework\ObjectManager\Facto
     protected function resolveArgument(&$argument, $paramType, $paramDefault, $paramName, $requestedType)
     {
         if ($paramType && $argument !== $paramDefault && !is_object($argument)) {
+            $argumentType = $argument['instance'];
             if (!isset($argument['instance']) || $argument !== (array)$argument) {
                 throw new \UnexpectedValueException(
                     'Invalid parameter configuration provided for $' . $paramName . ' argument of ' . $requestedType
                 );
             }
-            $argumentType = $argument['instance'];
 
             if (isset($argument['shared'])) {
                 $isShared = $argument['shared'];
@@ -145,14 +145,15 @@ abstract class AbstractFactory implements \Magento\Framework\ObjectManager\Facto
             } else {
                 $argument = $this->objectManager->create($argumentType);
             }
-        } elseif ($argument === (array)$argument) {
+
+        } else if ($argument === (array)$argument) {
             if (isset($argument['argument'])) {
                 if (isset($this->globalArguments[$argument['argument']])) {
                     $argument = $this->globalArguments[$argument['argument']];
                 } else {
                     $argument = $paramDefault;
                 }
-            } elseif (!empty($argument)) {
+            } else if (!empty($argument)) {
                 $this->parseArray($argument);
             }
         }
@@ -181,6 +182,7 @@ abstract class AbstractFactory implements \Magento\Framework\ObjectManager\Facto
                     } else {
                         $array[$key] = $this->objectManager->create($item['instance']);
                     }
+
                 } elseif (isset($item['argument'])) {
                     if (isset($this->globalArguments[$item['argument']])) {
                         $array[$key] = $this->globalArguments[$item['argument']];

@@ -7,7 +7,7 @@ namespace Magento\Framework\Phrase\Test\Unit\Renderer;
 
 use \Magento\Framework\Phrase\Renderer\Placeholder;
 
-class PlaceholderTest extends \PHPUnit\Framework\TestCase
+class PlaceholderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Placeholder */
     protected $_renderer;
@@ -15,7 +15,7 @@ class PlaceholderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_renderer = $objectManager->getObject(\Magento\Framework\Phrase\Renderer\Placeholder::class);
+        $this->_renderer = $objectManager->getObject('Magento\Framework\Phrase\Renderer\Placeholder');
     }
 
     /**

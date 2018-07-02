@@ -7,9 +7,8 @@ namespace Magento\Email\Test\Unit\Controller\Adminhtml\Email\Template;
 
 /**
  * @covers \Magento\Email\Controller\Adminhtml\Email\Template\Index
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Email\Controller\Adminhtml\Email\Template\Index
@@ -68,49 +67,49 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->viewMock = $this->getMockBuilder(\Magento\Framework\App\View::class)
+        $this->viewMock = $this->getMockBuilder('Magento\Framework\App\View')
             ->disableOriginalConstructor()
             ->setMethods(['loadLayout', 'getLayout', 'getPage', 'renderLayout'])
             ->getMock();
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->setMethods(['getBlock'])
             ->getMock();
-        $this->menuBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Menu::class)
+        $this->menuBlockMock = $this->getMockBuilder('\Magento\Backend\Block\Menu')
             ->disableOriginalConstructor()
             ->setMethods(['setActive', 'getMenuModel', 'getParentItems'])
             ->getMock();
-        $this->breadcrumbsBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Breadcrumbs::class)
+        $this->breadcrumbsBlockMock = $this->getMockBuilder('\Magento\Backend\Block\Widget\Breadcrumbs')
             ->disableOriginalConstructor()
             ->setMethods(['addLink'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->setMethods(['setActiveMenu', 'getConfig', 'addBreadcrumb'])
             ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->context = $objectManager->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'request' => $this->requestMock,
                 'view' => $this->viewMock
             ]
         );
         $this->indexController = $objectManager->getObject(
-            \Magento\Email\Controller\Adminhtml\Email\Template\Index::class,
+            'Magento\Email\Controller\Adminhtml\Email\Template\Index',
             [
                 'context' => $this->context,
                 'coreRegistry' => $this->registryMock
@@ -167,7 +166,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     public function testExecuteAjax()
     {
         $this->prepareExecute(true);
-        $indexController = $this->getMockBuilder(\Magento\Email\Controller\Adminhtml\Email\Template\Index::class)
+        $indexController = $this->getMockBuilder('Magento\Email\Controller\Adminhtml\Email\Template\Index')
             ->setMethods(['getRequest', '_forward'])
             ->disableOriginalConstructor()
             ->getMock();

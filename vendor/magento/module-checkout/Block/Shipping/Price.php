@@ -11,7 +11,7 @@ use Magento\Quote\Model\Quote\Address\Rate;
 
 /**
  * Class Price
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Price extends AbstractCart
 {

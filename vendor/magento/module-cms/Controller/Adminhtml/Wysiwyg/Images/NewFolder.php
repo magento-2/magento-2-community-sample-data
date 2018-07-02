@@ -6,7 +6,7 @@
  */
 namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
+use \Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Creates new folder.
@@ -28,7 +28,6 @@ class NewFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\App\Filesystem\DirectoryResolver|null $directoryResolver
-     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -37,13 +36,14 @@ class NewFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         \Magento\Framework\App\Filesystem\DirectoryResolver $directoryResolver = null
     ) {
         parent::__construct($context, $coreRegistry);
+
         $this->resultJsonFactory = $resultJsonFactory;
         $this->directoryResolver = $directoryResolver
             ?: $this->_objectManager->get(\Magento\Framework\App\Filesystem\DirectoryResolver::class);
     }
 
     /**
-     * New folder action.
+     * New folder action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -65,7 +65,6 @@ class NewFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         }
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
-        
         return $resultJson->setData($result);
     }
 }

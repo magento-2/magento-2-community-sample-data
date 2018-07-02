@@ -9,7 +9,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Search\Adapter\Mysql\TemporaryStorage;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
+class TemporaryStorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,20 +26,15 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
      */
     private $model;
 
-    /**
-     * @var \Magento\Framework\App\DeploymentConfig|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $config;
-
     protected function setUp()
     {
         $this->tableName = 'some_table_name';
 
-        $this->adapter = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->adapter = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $resource = $this->getMockBuilder('Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->getMock();
         $resource->expects($this->any())
@@ -49,13 +44,9 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
             ->method('getTableName')
             ->willReturn($this->tableName);
 
-        $this->config = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->model = (new ObjectManager($this))->getObject(
-            \Magento\Framework\Search\Adapter\Mysql\TemporaryStorage::class,
-            ['resource' => $resource, 'config' => $this->config]
+            'Magento\Framework\Search\Adapter\Mysql\TemporaryStorage',
+            ['resource' => $resource]
         );
     }
 
@@ -64,7 +55,7 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
         $sql = 'some SQL query';
 
         /** @var \Magento\Framework\DB\Select|\PHPUnit_Framework_MockObject_MockObject $select */
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -92,14 +83,14 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
         $documentId = 312432;
         $documentValue = 1.235123;
 
-        $attributeValue = $this->getMockBuilder(\Magento\Framework\Api\AttributeValue::class)
+        $attributeValue = $this->getMockBuilder('Magento\Framework\Api\AttributeValue')
             ->disableOriginalConstructor()
             ->getMock();
         $attributeValue->expects($this->once())
             ->method('getValue')
             ->willReturn($documentValue);
 
-        $document = $this->getMockBuilder(\Magento\Framework\Api\Search\Document::class)
+        $document = $this->getMockBuilder('Magento\Framework\Api\Search\Document')
             ->disableOriginalConstructor()
             ->getMock();
         $document->expects($this->once())
@@ -122,14 +113,14 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
         $documentId = 312432;
         $documentValue = 1.235123;
 
-        $attributeValue = $this->getMockBuilder(\Magento\Framework\Api\AttributeValue::class)
+        $attributeValue = $this->getMockBuilder('Magento\Framework\Api\AttributeValue')
             ->disableOriginalConstructor()
             ->getMock();
         $attributeValue->expects($this->once())
             ->method('getValue')
             ->willReturn($documentValue);
 
-        $document = $this->getMockBuilder(\Magento\Framework\Api\Search\Document::class)
+        $document = $this->getMockBuilder('Magento\Framework\Api\Search\Document')
             ->disableOriginalConstructor()
             ->getMock();
         $document->expects($this->once())
@@ -147,38 +138,15 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $table);
     }
 
-    public function testNoDropIfNotPersistent()
-    {
-        $this->createTemporaryTable(false);
-
-        $this->adapter->expects($this->never())
-            ->method('dropTemporaryTable');
-
-        // model->createTemporaryTable() is a private method; this will call it
-        $this->model->storeApiDocuments([]);
-    }
-
     /**
      * @return \Magento\Framework\DB\Ddl\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createTemporaryTable($persistentConnection = true)
+    private function createTemporaryTable()
     {
-        $this->config->expects($this->any())
-            ->method('get')
-            ->with('db/connection/indexer/persistent')
-            ->willReturn($persistentConnection);
-
-        $table = $this->getMockBuilder(\Magento\Framework\DB\Ddl\Table::class)
+        $table = $this->getMockBuilder('Magento\Framework\DB\Ddl\Table')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $tableInteractionCount = 0;
-        if ($persistentConnection) {
-            $this->adapter->expects($this->once())
-                ->method('dropTemporaryTable');
-            $tableInteractionCount += 1;
-        }
-        $table->expects($this->at($tableInteractionCount))
+        $table->expects($this->at(1))
             ->method('addColumn')
             ->with(
                 TemporaryStorage::FIELD_ENTITY_ID,
@@ -187,8 +155,7 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
                 ['unsigned' => true, 'nullable' => false, 'primary' => true],
                 'Entity ID'
             );
-        $tableInteractionCount += 1;
-        $table->expects($this->at($tableInteractionCount))
+        $table->expects($this->at(2))
             ->method('addColumn')
             ->with(
                 'score',
@@ -205,6 +172,8 @@ class TemporaryStorageTest extends \PHPUnit\Framework\TestCase
             ->method('newTable')
             ->with($this->tableName)
             ->willReturn($table);
+        $this->adapter->expects($this->once())
+            ->method('dropTemporaryTable');
         $this->adapter->expects($this->once())
             ->method('createTemporaryTable')
             ->with($table);

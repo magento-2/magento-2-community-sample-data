@@ -9,7 +9,7 @@ use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Encryption\Crypt;
 use Magento\Framework\App\DeploymentConfig;
 
-class EncryptorTest extends \PHPUnit\Framework\TestCase
+class EncryptorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Encryption\Encryptor
@@ -23,8 +23,8 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_randomGenerator = $this->createMock(\Magento\Framework\Math\Random::class);
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $this->_randomGenerator = $this->getMock('Magento\Framework\Math\Random', [], [], '', false);
+        $deploymentConfigMock = $this->getMock('\Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfigMock->expects($this->any())
             ->method('get')
             ->with(Encryptor::PARAM_CRYPT_KEY)
@@ -102,7 +102,7 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
      */
     public function testEncryptWithEmptyKey($key)
     {
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfigMock = $this->getMock('\Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfigMock->expects($this->any())
             ->method('get')
             ->with(Encryptor::PARAM_CRYPT_KEY)
@@ -124,7 +124,7 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
      */
     public function testDecryptWithEmptyKey($key)
     {
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfigMock = $this->getMock('\Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfigMock->expects($this->any())
             ->method('get')
             ->with(Encryptor::PARAM_CRYPT_KEY)
@@ -176,7 +176,7 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
 
     public function testEncryptDecryptNewKeyAdded()
     {
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfigMock = $this->getMock('\Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfigMock->expects($this->at(0))
             ->method('get')
             ->with(Encryptor::PARAM_CRYPT_KEY)
@@ -206,5 +206,33 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
         $actualEncryptedData = base64_encode($actual->encrypt('data'));
         $this->assertEquals($expectedEncryptedData, $actualEncryptedData);
         $this->assertEquals($crypt->decrypt($expectedEncryptedData), $actual->decrypt($actualEncryptedData));
+    }
+
+    public function testUseSpecifiedHashingAlgoDataProvider()
+    {
+        return [
+            ['password', 'salt', Encryptor::HASH_VERSION_MD5,
+             '67a1e09bb1f83f5007dc119c14d663aa:salt:0'],
+            ['password', 'salt', Encryptor::HASH_VERSION_SHA256,
+             '13601bda4ea78e55a07b98866d2be6be0744e3866f13c00c811cab608a28f322:salt:1'],
+            ['password', false, Encryptor::HASH_VERSION_MD5,
+             '5f4dcc3b5aa765d61d8327deb882cf99'],
+            ['password', false, Encryptor::HASH_VERSION_SHA256,
+             '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8']
+        ];
+    }
+
+    /**
+     * @dataProvider testUseSpecifiedHashingAlgoDataProvider
+     *
+     * @param $password
+     * @param $salt
+     * @param $hashAlgo
+     * @param $expected
+     */
+    public function testGetHashMustUseSpecifiedHashingAlgo($password, $salt, $hashAlgo, $expected)
+    {
+        $hash = $this->_model->getHash($password, $salt, $hashAlgo);
+        $this->assertEquals($expected, $hash);
     }
 }

@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Framework\Data;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\Report\Framework\Data\Module|\PHPUnit_Framework_MockObject_MockObject
@@ -26,12 +26,24 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->moduleFirst = $this->createMock(\Magento\Setup\Module\Dependency\Report\Framework\Data\Module::class);
-        $this->moduleSecond = $this->createMock(\Magento\Setup\Module\Dependency\Report\Framework\Data\Module::class);
+        $this->moduleFirst = $this->getMock(
+            'Magento\Setup\Module\Dependency\Report\Framework\Data\Module',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->moduleSecond = $this->getMock(
+            'Magento\Setup\Module\Dependency\Report\Framework\Data\Module',
+            [],
+            [],
+            '',
+            false
+        );
 
         $objectManagerHelper = new ObjectManager($this);
         $this->config = $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Dependency\Report\Framework\Data\Config::class,
+            'Magento\Setup\Module\Dependency\Report\Framework\Data\Config',
             ['modules' => [$this->moduleFirst, $this->moduleSecond]]
         );
     }

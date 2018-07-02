@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel\Address\Attribute\Backe
 
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Backend\Region;
 
-class RegionTest extends \PHPUnit\Framework\TestCase
+class RegionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Directory\Model\RegionFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $regionFactory;
@@ -24,15 +24,21 @@ class RegionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->regionFactory = $this->createPartialMock(\Magento\Directory\Model\RegionFactory::class, ['create']);
-        $this->region = $this->createPartialMock(
-            \Magento\Directory\Model\Region::class,
-            ['load', 'getId', 'getCountryId', 'getName']
+        $this->regionFactory = $this->getMock('Magento\Directory\Model\RegionFactory', ['create'], [], '', false);
+        $this->region = $this->getMock(
+            'Magento\Directory\Model\Region',
+            ['load', 'getId', 'getCountryId', 'getName'],
+            [],
+            '',
+            false
         );
         $this->model = new Region($this->regionFactory);
-        $this->object = $this->createPartialMock(
-            \Magento\Framework\DataObject::class,
-            ['getData', 'getCountryId', 'setRegionId', 'setRegion']
+        $this->object = $this->getMock(
+            'Magento\Framework\DataObject',
+            ['getData', 'getCountryId', 'setRegionId', 'setRegion'],
+            [],
+            '',
+            false
         );
     }
 

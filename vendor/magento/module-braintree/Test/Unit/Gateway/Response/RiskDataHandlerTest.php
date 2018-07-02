@@ -6,7 +6,7 @@
 namespace Magento\Braintree\Test\Unit\Gateway\Response;
 
 use Braintree\Transaction;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Response\RiskDataHandler;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
@@ -17,7 +17,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @see \Magento\Braintree\Gateway\Response\RiskDataHandler
  */
-class RiskDataHandlerTest extends \PHPUnit\Framework\TestCase
+class RiskDataHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RiskDataHandler
@@ -57,7 +57,7 @@ class RiskDataHandlerTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['setAdditionalInformation', 'setIsFraudDetected'])
             ->getMock();
         /** @var PaymentDataObjectInterface|MockObject $paymentDO */
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $paymentDO = $this->getMock(PaymentDataObjectInterface::class);
         $paymentDO->expects(self::once())
             ->method('getPayment')
             ->willReturn($payment);

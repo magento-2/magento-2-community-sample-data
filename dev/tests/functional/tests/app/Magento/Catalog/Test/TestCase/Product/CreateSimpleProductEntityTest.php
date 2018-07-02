@@ -21,14 +21,15 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save Product.
  * 6. Perform appropriate assertions.
  *
- * @group Products
- * @ZephyrId MAGETWO-23414, MAGETWO-17475, MAGETWO-43376
+ * @group Products_(CS)
+ * @ZephyrId MAGETWO-23414
  */
 class CreateSimpleProductEntityTest extends Injectable
 {
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -37,13 +38,6 @@ class CreateSimpleProductEntityTest extends Injectable
      * @var string
      */
     protected $configData;
-
-    /**
-     * Should cache be flushed
-     *
-     * @var bool
-     */
-    private $flushCache;
 
     /**
      * Prepare data.
@@ -68,7 +62,6 @@ class CreateSimpleProductEntityTest extends Injectable
      * @param CatalogProductIndex $productGrid
      * @param CatalogProductNew $newProductPage
      * @param string $configData
-     * @param bool $flushCache
      * @return array
      */
     public function testCreate(
@@ -76,16 +69,14 @@ class CreateSimpleProductEntityTest extends Injectable
         Category $category,
         CatalogProductIndex $productGrid,
         CatalogProductNew $newProductPage,
-        $flushCache = false,
         $configData = null
     ) {
         $this->configData = $configData;
-        $this->flushCache = $flushCache;
 
         // Preconditions
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'flushCache' => $this->flushCache]
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            ['configData' => $this->configData]
         )->run();
 
         // Steps
@@ -105,8 +96,8 @@ class CreateSimpleProductEntityTest extends Injectable
     public function tearDown()
     {
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'rollback' => true, 'flushCache' => $this->flushCache]
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            ['configData' => $this->configData, 'rollback' => true]
         )->run();
     }
 }

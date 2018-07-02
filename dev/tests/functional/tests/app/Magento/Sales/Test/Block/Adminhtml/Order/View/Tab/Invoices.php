@@ -30,7 +30,7 @@ class Invoices extends Tab
     public function getGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Invoices\Grid::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Invoices\Grid',
             ['element' => $this->_rootElement->find($this->grid)]
         );
     }

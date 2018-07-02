@@ -8,9 +8,7 @@
 
 require 'customer.php';
 
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
-);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 $customer->setWebsiteId(1)
     ->setEntityId(2)
     ->setEntityTypeId(1)

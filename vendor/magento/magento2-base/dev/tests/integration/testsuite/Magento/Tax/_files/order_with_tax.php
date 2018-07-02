@@ -8,11 +8,11 @@ require __DIR__ . '/../../../Magento/Sales/_files/order.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 /** @var \Magento\Sales\Model\Order $order */
-$order = $objectManager->create(\Magento\Sales\Model\Order::class);
+$order = $objectManager->create('Magento\Sales\Model\Order');
 $order->loadByIncrementId('100000001')->setBaseToGlobalRate(2)->save();
 
 /** @var \Magento\Tax\Model\Sales\Order\Tax $tax */
-$tax = $objectManager->create(\Magento\Tax\Model\Sales\Order\Tax::class);
+$tax = $objectManager->create('Magento\Tax\Model\Sales\Order\Tax');
 $tax->setData(
     [
         'order_id' => $order->getId(),

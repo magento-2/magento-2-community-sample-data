@@ -8,7 +8,8 @@ namespace Magento\Eav\Model\Entity;
 /**
  * Entity type model
  *
- * @api
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Type _getResource()
+ * @method \Magento\Eav\Model\ResourceModel\Entity\Type getResource()
  * @method \Magento\Eav\Model\Entity\Type setEntityTypeCode(string $value)
  * @method string getEntityModel()
  * @method \Magento\Eav\Model\Entity\Type setEntityModel(string $value)
@@ -33,8 +34,7 @@ namespace Magento\Eav\Model\Entity;
  * @method \Magento\Eav\Model\Entity\Type setAdditionalAttributeTable(string $value)
  * @method \Magento\Eav\Model\Entity\Type setEntityAttributeCollection(string $value)
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Type extends \Magento\Framework\Model\AbstractModel
 {
@@ -117,7 +117,7 @@ class Type extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Eav\Model\ResourceModel\Entity\Type::class);
+        $this->_init('Magento\Eav\Model\ResourceModel\Entity\Type');
     }
 
     /**
@@ -381,6 +381,6 @@ class Type extends \Magento\Framework\Model\AbstractModel
         if ($collection) {
             return $collection;
         }
-        return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection::class;
+        return 'Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection';
     }
 }

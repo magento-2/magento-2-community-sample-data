@@ -6,9 +6,9 @@
 
 namespace Magento\Sales\Test\Constraint;
 
-use Magento\Mtf\Constraint\AbstractConstraint;
-use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
+use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
+use Magento\Mtf\Constraint\AbstractConstraint;
 
 /**
  * Assert that comment about authorized amount exists in Comments History section on order page in Admin.
@@ -16,12 +16,12 @@ use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 class AssertAuthorizationInCommentsHistory extends AbstractConstraint
 {
     /**
-     * Pattern of message about authorized amount in order.
+     * Message about authorized amount in order.
      */
-    const AUTHORIZED_AMOUNT_PATTERN = '/(IPN "Pending" )*Authorized amount of .+?%s. Transaction ID: "[\w\-]*"/';
+    const AUTHORIZED_AMOUNT = 'Authorized amount of $';
 
     /**
-     * Assert that comment about authorized amount exists in Comments History section on order page in Admin.
+     * Assert that comment about authorized amount exist in Comments History section on order page in Admin.
      *
      * @param SalesOrderView $salesOrderView
      * @param OrderIndex $salesOrder
@@ -38,14 +38,11 @@ class AssertAuthorizationInCommentsHistory extends AbstractConstraint
         $salesOrder->open();
         $salesOrder->getSalesOrderGrid()->searchAndOpen(['id' => $orderId]);
 
-        /** @var \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info $infoTab */
-        $infoTab = $salesOrderView->getOrderForm()->openTab('info')->getTab('info');
-        $orderComments = $infoTab->getCommentsHistoryBlock()->getComments();
-        $commentsMessages = array_column($orderComments, 'comment');
+        $actualAuthorizedAmount = $salesOrderView->getOrderHistoryBlock()->getAuthorizedAmount();
 
-        \PHPUnit_Framework_Assert::assertRegExp(
-            sprintf(self::AUTHORIZED_AMOUNT_PATTERN, $prices['grandTotal']),
-            implode('. ', $commentsMessages),
+        \PHPUnit_Framework_Assert::assertContains(
+            self::AUTHORIZED_AMOUNT . $prices['grandTotal'],
+            $actualAuthorizedAmount,
             'Incorrect authorized amount value for the order #' . $orderId
         );
     }

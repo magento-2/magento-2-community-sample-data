@@ -5,7 +5,7 @@
  */
 namespace Magento\ConfigurableProduct\Test\Unit\Controller\Adminhtml\Product\Builder;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Controller\Adminhtml\Product\Builder\Plugin
@@ -23,12 +23,12 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     protected $configurableTypeMock;
 
     /**
-     * @var \Magento\Framework\App\Request\Http|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $requestMock;
 
     /**
-     * @var \Magento\Catalog\Model\Product|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $productMock;
 
@@ -48,19 +48,35 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     protected $frontendAttrMock;
 
     /**
-     * @var \Magento\Catalog\Controller\Adminhtml\Product\Builder|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subjectMock;
 
+    /**
+     * @var \Closure
+     */
+    protected $closureMock;
+
     protected function setUp()
     {
-        $this->productFactoryMock = $this->createPartialMock(\Magento\Catalog\Model\ProductFactory::class, ['create']);
-        $this->configurableTypeMock = $this->createMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class
+        $this->productFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ProductFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->configurableTypeMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\Product\Type\Configurable',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
         $methods = ['setTypeId', 'getAttributes', 'addData', 'setWebsiteIds', '__wakeup'];
-        $this->productMock = $this->createPartialMock(\Magento\Catalog\Model\Product::class, $methods);
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', $methods, [], '', false);
+        $product = $this->productMock;
         $attributeMethods = [
             'getId',
             'getFrontend',
@@ -69,9 +85,12 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             'setIsRequired',
             'getIsUnique',
         ];
-        $this->attributeMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            $attributeMethods
+        $this->attributeMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            $attributeMethods,
+            [],
+            '',
+            false
         );
         $configMethods = [
             'setStoreId',
@@ -84,14 +103,30 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             'setTypeId',
             'getSetAttributes',
         ];
-        $this->configurableMock = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class,
-            $configMethods
+        $this->configurableMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\Product\Type\Configurable',
+            $configMethods,
+            [],
+            '',
+            false
         );
-        $this->frontendAttrMock = $this->createMock(
-            \Magento\Quote\Model\ResourceModel\Quote\Address\Attribute\Frontend::class
+        $this->frontendAttrMock = $this->getMock(
+            'Magento\Quote\Model\ResourceModel\Quote\Address\Attribute\Frontend',
+            [],
+            [],
+            '',
+            false
         );
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Controller\Adminhtml\Product\Builder::class);
+        $this->subjectMock = $this->getMock(
+            'Magento\Catalog\Controller\Adminhtml\Product\Builder',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->closureMock = function () use ($product) {
+            return $product;
+        };
         $this->plugin = new \Magento\ConfigurableProduct\Controller\Adminhtml\Product\Builder\Plugin(
             $this->productFactoryMock,
             $this->configurableTypeMock
@@ -102,7 +137,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testAfterBuild()
+    public function testAroundBuild()
     {
         $this->requestMock->expects($this->once())->method('has')->with('attributes')->will($this->returnValue(true));
         $valueMap = [
@@ -221,11 +256,11 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $this->productMock,
-            $this->plugin->afterBuild($this->subjectMock, $this->productMock, $this->requestMock)
+            $this->plugin->aroundBuild($this->subjectMock, $this->closureMock, $this->requestMock)
         );
     }
 
-    public function testAfterBuildWhenProductNotHaveAttributeAndRequiredParameters()
+    public function testAroundBuildWhenProductNotHaveAttributeAndRequiredParameters()
     {
         $valueMap = [
             ['attributes', null, null],
@@ -248,11 +283,11 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         $this->attributeMock->expects($this->never())->method('getAttributeCode');
         $this->assertEquals(
             $this->productMock,
-            $this->plugin->afterBuild($this->subjectMock, $this->productMock, $this->requestMock)
+            $this->plugin->aroundBuild($this->subjectMock, $this->closureMock, $this->requestMock)
         );
     }
 
-    public function testAfterBuildWhenAttributesAreEmpty()
+    public function testAroundBuildWhenAttributesAreEmpty()
     {
         $valueMap = [['popup', null, false], ['product', null, 'product'], ['id', false, false]];
         $this->requestMock->expects($this->once())->method('has')->with('attributes')->will($this->returnValue(false));
@@ -264,7 +299,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         $this->attributeMock->expects($this->never())->method('getAttributeCode');
         $this->assertEquals(
             $this->productMock,
-            $this->plugin->afterBuild($this->subjectMock, $this->productMock, $this->requestMock)
+            $this->plugin->aroundBuild($this->subjectMock, $this->closureMock, $this->requestMock)
         );
     }
 }

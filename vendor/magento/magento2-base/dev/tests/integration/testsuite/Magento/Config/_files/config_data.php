@@ -4,10 +4,10 @@
  * See COPYING.txt for license details.
  */
 
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Config\Model\Config\Factory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\TestFramework\Helper\Bootstrap;
 
 $configData = [
     ScopeConfigInterface::SCOPE_TYPE_DEFAULT => [

@@ -11,7 +11,7 @@ use Magento\Framework\App\Utility\Classes;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\App\Utility\Files;
 
-class ClassesTest extends \PHPUnit\Framework\TestCase
+class ClassesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of already found classes to avoid checking them over and over again
@@ -188,7 +188,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                     );
                 }
                 self::$_existingClasses[$class] = 1;
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
                 $badClasses[] = '\\' . $class;
             }
         }
@@ -290,10 +290,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
             function ($file) {
                 $relativePath = str_replace(BP, "", $file);
                 // Due to the examples given with the regex patterns, we skip this test file itself
-                if (preg_match(
-                    '/\/dev\/tests\/static\/testsuite\/Magento\/Test\/Integrity\/ClassesTest.php$/',
-                    $relativePath
-                )) {
+                if ($relativePath == "/dev/tests/static/testsuite/Magento/Test/Integrity/ClassesTest.php") {
                     return;
                 }
                 $contents = file_get_contents($file);
@@ -602,13 +599,8 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
     {
         $files = Files::init();
         $errors = [];
-        $filesToTest = $files->getPhpFiles(Files::INCLUDE_TESTS);
 
-        if (($key = array_search(str_replace('\\', '/', __FILE__), $filesToTest)) !== false) {
-            unset($filesToTest[$key]);
-        }
-
-        foreach ($filesToTest as $file) {
+        foreach ($files->getFiles([BP . '/dev/tests/{integration,unit}'], '*') as $file) {
             $code = file_get_contents($file);
             if (preg_match('/@covers(DefaultClass)?\s+([\w\\\\]+)(::([\w\\\\]+))?/', $code, $matches)) {
                 if ($this->isNonexistentEntityCovered($matches)) {

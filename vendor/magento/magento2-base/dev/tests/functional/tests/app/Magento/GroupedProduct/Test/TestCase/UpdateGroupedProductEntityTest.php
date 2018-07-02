@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save the Product.
  * 6. Perform all assertions.
  *
- * @group Grouped_Product
+ * @group Grouped_Product_(MX)
  * @ZephyrId MAGETWO-26462
  */
 class UpdateGroupedProductEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

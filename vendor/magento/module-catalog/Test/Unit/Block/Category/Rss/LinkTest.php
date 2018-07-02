@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class LinkTest
  * @package Magento\Catalog\Block\Category\Rss
  */
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Category\Rss\Link
@@ -45,14 +45,14 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->urlBuilderInterface = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->storeManagerInterface = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
+        $this->urlBuilderInterface = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->storeManagerInterface = $this->getMock('Magento\Store\Model\StoreManagerInterface');
+        $this->registry = $this->getMock('Magento\Framework\Registry');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->link = $this->objectManagerHelper->getObject(
-            \Magento\Catalog\Block\Category\Rss\Link::class,
+            'Magento\Catalog\Block\Category\Rss\Link',
             [
                 'rssUrlBuilder' => $this->urlBuilderInterface,
                 'registry' => $this->registry,
@@ -92,7 +92,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsTopCategory($isTop, $categoryLevel)
     {
-        $categoryModel = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['__wakeup', 'getLevel']);
+        $categoryModel = $this->getMock('\Magento\Catalog\Model\Category', ['__wakeup', 'getLevel'], [], '', false);
         $this->registry->expects($this->once())->method('registry')->will($this->returnValue($categoryModel));
         $categoryModel->expects($this->any())->method('getLevel')->will($this->returnValue($categoryLevel));
         $this->assertEquals($isTop, $this->link->isTopCategory());
@@ -111,11 +111,11 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $rssUrl = 'http://rss.magento.com';
         $this->urlBuilderInterface->expects($this->once())->method('getUrl')->will($this->returnValue($rssUrl));
 
-        $categoryModel = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['__wakeup', 'getId']);
+        $categoryModel = $this->getMock('\Magento\Catalog\Model\Category', ['__wakeup', 'getId'], [], '', false);
         $this->registry->expects($this->once())->method('registry')->will($this->returnValue($categoryModel));
         $categoryModel->expects($this->any())->method('getId')->will($this->returnValue('1'));
 
-        $storeModel = $this->createPartialMock(\Magento\Catalog\Model\Category::class, ['__wakeup', 'getId']);
+        $storeModel = $this->getMock('\Magento\Store\Model\Category', ['__wakeup', 'getId'], [], '', false);
         $this->storeManagerInterface->expects($this->any())->method('getStore')->will($this->returnValue($storeModel));
         $storeModel->expects($this->any())->method('getId')->will($this->returnValue('1'));
 

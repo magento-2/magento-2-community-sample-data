@@ -8,9 +8,8 @@ namespace Magento\Framework\View\Asset\PreProcessor;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Factory for @see \Magento\Framework\View\Asset\PreProcessor\Chain
+ * Factory for Magento\Framework\View\Asset\PreProcessor\Chain
  * @codeCoverageIgnore
- * @api
  */
 class ChainFactory implements ChainFactoryInterface
 {
@@ -30,7 +29,7 @@ class ChainFactory implements ChainFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function create(array $arguments = [])
     {

@@ -5,16 +5,16 @@
  */
 
 /**
- * Adminhtml account controller
- *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * Adminhtml account controller.
  */
 namespace Magento\MediaStorage\Controller\Adminhtml\System\Config\System;
 
 abstract class Storage extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Backend::system';
 
@@ -25,7 +25,7 @@ abstract class Storage extends \Magento\Backend\App\Action
      */
     protected function _getSyncSingleton()
     {
-        return $this->_objectManager->get(\Magento\MediaStorage\Model\File\Storage::class);
+        return $this->_objectManager->get('Magento\MediaStorage\Model\File\Storage');
     }
 
     /**

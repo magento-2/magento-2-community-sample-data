@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
     'underscore',
@@ -52,16 +48,14 @@ define([
                 priceBox = $(this.options.priceBoxSelector, form),
                 qty = $(this.options.qtyFieldSelector, form);
 
-            if (priceBox.data('magePriceBox') &&
-                priceBox.priceBox('option') &&
-                priceBox.priceBox('option').priceConfig
-            ) {
+            if (priceBox.data('magePriceBox') && priceBox.priceBox('option') && priceBox.priceBox('option').priceConfig) {
                 if (priceBox.priceBox('option').priceConfig.optionTemplate) {
                     this._setOption('optionTemplate', priceBox.priceBox('option').priceConfig.optionTemplate);
                 }
                 this._setOption('priceFormat', priceBox.priceBox('option').priceConfig.priceFormat);
                 priceBox.priceBox('setDefault', this.options.optionConfig.prices);
             }
+
             this._applyOptionNodeFix(options);
 
             options.on('change', this._onBundleOptionChanged.bind(this));
@@ -85,7 +79,7 @@ define([
             if (handler && handler instanceof Function) {
                 changes = handler(bundleOption, this.options.optionConfig, this);
             } else {
-                changes = defaultGetOptionValue(bundleOption, this.options.optionConfig);//eslint-disable-line
+                changes = defaultGetOptionValue(bundleOption, this.options.optionConfig);
             }
 
             if (changes) {
@@ -119,18 +113,16 @@ define([
          * Helper to fix backend behavior:
          *  - if default qty large than 1 then backend multiply price in config
          *
-         * @deprecated
          * @private
          */
         _applyQtyFix: function applyQtyFix() {
             var config = this.options.optionConfig;
-
             if (config.isFixedPrice) {
                 _.each(config.options, function (option) {
                     _.each(option.selections, function (item) {
                         if (item.qty && item.qty !== 1) {
                             _.each(item.prices, function (price) {
-                                price.amount /= item.qty;
+                                price.amount = price.amount / item.qty;
                             });
                         }
                     });
@@ -149,13 +141,13 @@ define([
             var config = this.options,
                 format = config.priceFormat,
                 template = config.optionTemplate;
-
             template = mageTemplate(template);
             options.filter('select').each(function (index, element) {
                 var $element = $(element),
                     optionId = utils.findOptionId($element),
-                    optionConfig = config.optionConfig && config.optionConfig.options[optionId].selections,
-                    value;
+                    optionName = $element.prop('name'),
+                    optionType = $element.prop('type'),
+                    optionConfig = config.optionConfig && config.optionConfig.options[optionId].selections;
 
                 $element.find('option').each(function (idx, option) {
                     var $option,
@@ -178,8 +170,8 @@ define([
                     prices = optionConfig[optionValue].prices;
 
                     _.each(prices, function (price, type) {
-                        value = +price.amount;
-                        value += _.reduce(price.adjustments, function (sum, x) {//eslint-disable-line
+                        var value = +(price.amount);
+                        value += _.reduce(price.adjustments, function (sum, x) {
                             return sum + x;
                         }, 0);
                         toTemplate.data[type] = {
@@ -242,6 +234,7 @@ define([
 
         switch (optionType) {
             case 'radio':
+
             case 'select-one':
 
                 if (optionType === 'radio' && !element.is(':checked')) {
@@ -254,17 +247,13 @@ define([
                 if (optionValue) {
                     optionQty = optionConfig[optionValue].qty || 0;
                     canQtyCustomize = optionConfig[optionValue].customQty === '1';
-                    toggleQtyField(qtyField, optionQty, optionId, optionValue, canQtyCustomize);//eslint-disable-line
+                    toggleQtyField(qtyField, optionQty, optionId, optionValue, canQtyCustomize);
                     tempChanges = utils.deepClone(optionConfig[optionValue].prices);
-                    tempChanges = applyTierPrice(//eslint-disable-line
-                        tempChanges,
-                        optionQty,
-                        optionConfig[optionValue]
-                    );
-                    tempChanges = applyQty(tempChanges, optionQty);//eslint-disable-line
+                    tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig[optionValue]);
+                    tempChanges = applyQty(tempChanges, optionQty);
                 } else {
                     tempChanges = {};
-                    toggleQtyField(qtyField, '0', optionId, optionValue, false);//eslint-disable-line
+                    toggleQtyField(qtyField, '0', optionId, optionValue, false);
                 }
                 optionHash = 'bundle-option-' + optionName;
                 changes[optionHash] = tempChanges;
@@ -278,8 +267,8 @@ define([
                     optionHash = 'bundle-option-' + optionName + '##' + optionValueCode;
                     optionQty = row.qty || 0;
                     tempChanges = utils.deepClone(row.prices);
-                    tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);//eslint-disable-line
-                    tempChanges = applyQty(tempChanges, optionQty);//eslint-disable-line
+                    tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);
+                    tempChanges = applyQty(tempChanges, optionQty);
                     changes[optionHash] = _.contains(optionValue, optionValueCode) ? tempChanges : {};
                 });
 
@@ -290,8 +279,8 @@ define([
                 optionHash = 'bundle-option-' + optionName + '##' + optionValue;
                 optionQty = optionConfig[optionValue].qty || 0;
                 tempChanges = utils.deepClone(optionConfig[optionValue].prices);
-                tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);//eslint-disable-line
-                tempChanges = applyQty(tempChanges, optionQty);//eslint-disable-line
+                tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);
+                tempChanges = applyQty(tempChanges, optionQty);
                 changes[optionHash] = element.is(':checked') ? tempChanges : {};
 
                 selectedIds[optionId] = selectedIds[optionId] || [];
@@ -306,13 +295,9 @@ define([
             case 'hidden':
                 optionHash = 'bundle-option-' + optionName + '##' + optionValue;
                 optionQty = optionConfig[optionValue].qty || 0;
-                canQtyCustomize = optionConfig[optionValue].customQty === '1';
-                qtyField = element.data('qtyField');
-                qtyField.data('option', element);
-                toggleQtyField(qtyField, optionQty, optionId, optionValue, canQtyCustomize);//eslint-disable-line
                 tempChanges = utils.deepClone(optionConfig[optionValue].prices);
-                tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);//eslint-disable-line
-                tempChanges = applyQty(tempChanges, optionQty);//eslint-disable-line
+                tempChanges = applyTierPrice(tempChanges, optionQty, optionConfig);
+                tempChanges = applyQty(tempChanges, optionQty);
 
                 optionHash = 'bundle-option-' + optionName;
                 changes[optionHash] = tempChanges;
@@ -377,9 +362,11 @@ define([
             lowest = false;
 
         _.each(tiers, function (tier, index) {
-            if (tier['price_qty'] > qty) {
+            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            if (tier.price_qty > qty) {
                 return;
             }
+            // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
 
             if (tier.prices[magicKey].amount < oneItemPrice[magicKey].amount) {
                 lowest = index;

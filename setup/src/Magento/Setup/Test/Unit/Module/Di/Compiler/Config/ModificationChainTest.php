@@ -8,32 +8,27 @@ namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config;
 
 use \Magento\Setup\Module\Di\Compiler\Config\ModificationChain;
 
-class ModificationChainTest extends \PHPUnit\Framework\TestCase
+class ModificationChainTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
         $modificationsList = [];
-        $modificationsList[] = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class
-        )->getMock();
-        $modificationsList[] = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class
-        )->getMock();
+        $modificationsList[] = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
+            ->getMock();
+        $modificationsList[] = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
+            ->getMock();
 
         new ModificationChain($modificationsList);
     }
 
     public function testConstructorException()
     {
-        $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Wrong modifier provided');
+        $this->setExpectedException('InvalidArgumentException', 'Wrong modifier provided');
         $modificationsList = [];
-        $modificationsList[] = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class
-        )->getMock();
-        $modificationsList[] = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class
-        )->getMock();
+        $modificationsList[] = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
+            ->getMock();
+        $modificationsList[] = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
+            ->getMock();
         $modificationsList[] = 'banana';
 
         new ModificationChain($modificationsList);
@@ -53,9 +48,9 @@ class ModificationChainTest extends \PHPUnit\Framework\TestCase
             'data' => [1, 2, 3, 1, 1]
         ];
 
-        $modifier1 = $this->getMockBuilder(\Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class)
+        $modifier1 = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
             ->getMock();
-        $modifier2 = $this->getMockBuilder(\Magento\Setup\Module\Di\Compiler\Config\ModificationInterface::class)
+        $modifier2 = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Config\ModificationInterface')
             ->getMock();
 
         $modificationsList = [$modifier1, $modifier2];

@@ -5,7 +5,7 @@
  */
 namespace Magento\Sitemap\Test\Unit\Model\Config\Backend;
 
-class RobotsTest extends \PHPUnit\Framework\TestCase
+class RobotsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sitemap\Model\Config\Backend\Robots

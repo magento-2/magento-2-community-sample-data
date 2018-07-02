@@ -7,18 +7,18 @@
 namespace Magento\Catalog\Model\Product\Pricing\Renderer;
 
 /**
- * Resolvers check whether product available for sale or not
+ * Resolver provided to check is product available for sale
  */
 class SalableResolver implements SalableResolverInterface
 {
     /**
-     * Check whether product available for sale
+     * Check is product available for sale
      *
      * @param \Magento\Framework\Pricing\SaleableInterface $salableItem
      * @return boolean
      */
     public function isSalable(\Magento\Framework\Pricing\SaleableInterface $salableItem)
     {
-        return $salableItem->getCanShowPrice() !== false;
+        return $salableItem->getCanShowPrice() !== false && $salableItem->isSalable();
     }
 }

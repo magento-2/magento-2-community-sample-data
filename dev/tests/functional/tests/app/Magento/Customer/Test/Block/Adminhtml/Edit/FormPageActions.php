@@ -9,42 +9,26 @@ namespace Magento\Customer\Test\Block\Adminhtml\Edit;
 use Magento\Backend\Test\Block\FormPageActions as ParentFormPageActions;
 
 /**
- * Form page actions block for customer page.
+ * Class FormPageActions
+ * Form page actions block for customer page
  */
 class FormPageActions extends ParentFormPageActions
 {
     /**
-     * "Create Order" button.
+     * "Create Order" button
      *
      * @var string
      */
     protected $createOrderButton = '#order';
 
     /**
-     * "Manage Shopping Cart" button.
-     *
-     * @var string
-     */
-    protected $manageShoppingCartButton = '#manage_quote';
-
-    /**
-     * Click on "Create Order" button.
+     * Click on "Create Order" button
      *
      * @return void
      */
     public function createOrder()
     {
         $this->_rootElement->find($this->createOrderButton)->click();
-    }
-
-    /**
-     * Click on "Manage Shopping Cart" button.
-     *
-     * @return void
-     */
-    public function manageShoppingCart()
-    {
-        $this->_rootElement->find($this->manageShoppingCartButton)->click();
     }
 
     /**

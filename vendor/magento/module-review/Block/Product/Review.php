@@ -11,9 +11,7 @@ use Magento\Framework\View\Element\Template;
 /**
  * Product Review Tab
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Review extends Template implements IdentityInterface
 {

@@ -18,12 +18,13 @@ $allowedResources = [];
 $configCacheFile = BP . '/var/resource_config.json';
 
 $isAllowed = function ($resource, array $allowedResources) {
+    $isResourceAllowed = false;
     foreach ($allowedResources as $allowedResource) {
         if (0 === stripos($resource, $allowedResource)) {
-            return true;
+            $isResourceAllowed = true;
         }
     }
-    return false;
+    return $isResourceAllowed;
 };
 
 $request = new \Magento\MediaStorage\Model\File\Storage\Request(
@@ -73,7 +74,7 @@ if (empty($mediaDirectory)) {
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $params);
 /** @var \Magento\MediaStorage\App\Media $app */
 $app = $bootstrap->createApplication(
-    \Magento\MediaStorage\App\Media::class,
+    'Magento\MediaStorage\App\Media',
     [
         'mediaDirectory' => $mediaDirectory,
         'configCacheFile' => $configCacheFile,

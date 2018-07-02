@@ -9,9 +9,7 @@
 
 namespace Zend\Mvc\Service;
 
-use Zend\Mvc\Router\RoutePluginManager;
-
 class RoutePluginManagerFactory extends AbstractPluginManagerFactory
 {
-    const PLUGIN_MANAGER_CLASS = RoutePluginManager::class;
+    const PLUGIN_MANAGER_CLASS = 'Zend\Mvc\Router\RoutePluginManager';
 }

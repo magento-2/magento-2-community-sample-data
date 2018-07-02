@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute;
 
-class OptionManagementTest extends \PHPUnit\Framework\TestCase
+class OptionManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\OptionManagement
@@ -24,9 +24,9 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attributeRepositoryMock = $this->createMock(\Magento\Eav\Model\AttributeRepository::class);
+        $this->attributeRepositoryMock = $this->getMock('\Magento\Eav\Model\AttributeRepository', [], [], '', false);
         $this->resourceModelMock =
-            $this->createMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute::class);
+            $this->getMock('\Magento\Eav\Model\ResourceModel\Entity\Attribute', [], [], '', false);
         $this->model = new \Magento\Eav\Model\Entity\Attribute\OptionManagement(
             $this->attributeRepositoryMock,
             $this->resourceModelMock
@@ -38,7 +38,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = 'atrCde';
         $optionMock = $this->getMockForAbstractClass(
-            \Magento\Eav\Api\Data\AttributeOptionInterface::class,
+            '\Magento\Eav\Api\Data\AttributeOptionInterface',
             [],
             '',
             false,
@@ -47,7 +47,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             ['getSourceLabels']
         );
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -55,7 +55,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             true,
             ['usesSource', 'setDefault', 'setOption']
         );
-        $labelMock = $this->createMock(\Magento\Eav\Api\Data\AttributeOptionLabelInterface::class);
+        $labelMock = $this->getMock('\Magento\Eav\Api\Data\AttributeOptionLabelInterface');
         $option =
             ['value' => [
                 'new_option' => [
@@ -66,7 +66,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             'order' => [
                 'new_option' => 'optionSortOrder',
             ],
-            ];
+        ];
 
         $this->attributeRepositoryMock->expects($this->once())->method('get')->with($entityType, $attributeCode)
             ->willReturn($attributeMock);
@@ -92,7 +92,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = '';
         $optionMock = $this->getMockForAbstractClass(
-            \Magento\Eav\Api\Data\AttributeOptionInterface::class,
+            '\Magento\Eav\Api\Data\AttributeOptionInterface',
             [],
             '',
             false,
@@ -113,7 +113,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = 'testAttribute';
         $optionMock = $this->getMockForAbstractClass(
-            \Magento\Eav\Api\Data\AttributeOptionInterface::class,
+            '\Magento\Eav\Api\Data\AttributeOptionInterface',
             [],
             '',
             false,
@@ -122,7 +122,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             ['getSourceLabels']
         );
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -146,7 +146,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = 'atrCde';
         $optionMock = $this->getMockForAbstractClass(
-            \Magento\Eav\Api\Data\AttributeOptionInterface::class,
+            '\Magento\Eav\Api\Data\AttributeOptionInterface',
             [],
             '',
             false,
@@ -155,7 +155,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             ['getSourceLabels']
         );
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -163,7 +163,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             true,
             ['usesSource', 'setDefault', 'setOption']
         );
-        $labelMock = $this->createMock(\Magento\Eav\Api\Data\AttributeOptionLabelInterface::class);
+        $labelMock = $this->getMock('\Magento\Eav\Api\Data\AttributeOptionLabelInterface');
         $option =
             ['value' => [
                 'new_option' => [
@@ -198,7 +198,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'atrCode';
         $optionId = 'option';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -233,7 +233,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'atrCode';
         $optionId = 'option';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -269,7 +269,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'atrCode';
         $optionId = 'option';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -279,7 +279,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         );
         $this->attributeRepositoryMock->expects($this->once())->method('get')->with($entityType, $attributeCode)
             ->willReturn($attributeMock);
-        $sourceMock = $this->getMockForAbstractClass(\Magento\Eav\Model\Entity\Attribute\Source\SourceInterface::class);
+        $sourceMock = $this->getMockForAbstractClass('\Magento\Eav\Model\Entity\Attribute\Source\SourceInterface');
         $sourceMock->expects($this->once())->method('getOptionText')->willReturn(false);
         $attributeMock->expects($this->once())->method('usesSource')->willReturn(true);
         $attributeMock->expects($this->once())->method('getSource')->willReturn($sourceMock);
@@ -298,7 +298,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $attributeCode = 'atrCode';
         $optionId = 'option';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -331,7 +331,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = 'atrCode';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,
@@ -339,7 +339,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
             true,
             ['getOptions']
         );
-        $optionsMock = [$this->createMock(\Magento\Eav\Api\Data\AttributeOptionInterface::class)];
+        $optionsMock = [$this->getMock('\Magento\Eav\Api\Data\AttributeOptionInterface')];
         $this->attributeRepositoryMock->expects($this->once())->method('get')->with($entityType, $attributeCode)
             ->willReturn($attributeMock);
         $attributeMock->expects($this->once())->method('getOptions')->willReturn($optionsMock);
@@ -355,7 +355,7 @@ class OptionManagementTest extends \PHPUnit\Framework\TestCase
         $entityType = 42;
         $attributeCode = 'atrCode';
         $attributeMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\AbstractModel::class,
+            '\Magento\Framework\Model\AbstractModel',
             [],
             '',
             false,

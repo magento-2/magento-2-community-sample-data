@@ -5,13 +5,15 @@
  */
 namespace Magento\Ui\Test\Unit\Component\Control;
 
+use \Magento\Ui\Component\Control\ActionPool;
+
+use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\UiComponent\Context;
 use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Ui\Component\Control\ActionPool;
 
-class ActionPoolTest extends \PHPUnit\Framework\TestCase
+class ActionPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Actions toolbar block name
@@ -60,27 +62,33 @@ class ActionPoolTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createPartialMock(
-            \Magento\Framework\View\Element\UiComponent\Context::class,
-            ['getPageLayout']
+        $this->contextMock = $this->getMock(
+            'Magento\Framework\View\Element\UiComponent\Context',
+            ['getPageLayout'],
+            [],
+            '',
+            false
         );
-        $this->toolbarBlockMock = $this->createPartialMock(
-            \Magento\Framework\View\Element\AbstractBlock::class,
-            ['setChild']
+        $this->toolbarBlockMock = $this->getMock(
+            'Magento\Framework\View\Element\AbstractBlock',
+            ['setChild'],
+            [],
+            '',
+            false
         );
-        $this->layoutMock = $this->getMockForAbstractClass(\Magento\Framework\View\LayoutInterface::class);
+        $this->layoutMock = $this->getMockForAbstractClass('Magento\Framework\View\LayoutInterface');
         $this->contextMock->expects($this->any())->method('getPageLayout')->willReturn($this->layoutMock);
         $this->layoutMock->expects($this->once())
             ->method('getBlock')
             ->with(static::ACTIONS_PAGE_TOOLBAR)
             ->willReturn($this->toolbarBlockMock);
 
-        $this->itemFactoryMock = $this->createPartialMock(\Magento\Ui\Component\Control\ItemFactory::class, ['create']);
+        $this->itemFactoryMock = $this->getMock('Magento\Ui\Component\Control\ItemFactory', ['create'], [], '', false);
 
         $this->uiComponentInterfaceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponentInterface::class
+            'Magento\Framework\View\Element\UiComponentInterface'
         );
-        $this->items[$this->key] = $this->createPartialMock(\Magento\Ui\Component\Control\Item::class, ['setData']);
+        $this->items[$this->key] = $this->getMock('Magento\Ui\Component\Control\Item', ['setData'], [], '', false);
         $this->actionPool = new ActionPool(
             $this->contextMock,
             $this->itemFactoryMock,
@@ -96,11 +104,17 @@ class ActionPoolTest extends \PHPUnit\Framework\TestCase
         $this->items[$this->key]->expects($this->any())->method('setData')->with($data)->willReturnSelf();
 
         $this->contextMock->expects($this->any())->method('getPageLayout')->willReturn($this->layoutMock);
-        $toolbarContainerMock = $this->createMock(\Magento\Backend\Block\Widget\Button\Toolbar\Container::class);
+        $toolbarContainerMock = $this->getMock(
+            'Magento\Backend\Block\Widget\Button\Toolbar\Container',
+            [],
+            [],
+            '',
+            false
+        );
         $this->layoutMock->expects($this->once())
             ->method('createBlock')
             ->with(
-                \Magento\Ui\Component\Control\Container::class,
+                'Magento\Ui\Component\Control\Container',
                 'container-name-' . $this->key,
                 [
                     'data' => [

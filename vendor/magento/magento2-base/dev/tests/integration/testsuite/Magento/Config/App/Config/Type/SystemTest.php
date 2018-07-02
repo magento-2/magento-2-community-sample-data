@@ -5,14 +5,14 @@
  */
 namespace Magento\Config\App\Config\Type;
 
-use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Framework\ObjectManagerInterface;
 
 /**
  * @magentoDataFixture Magento/Config/_files/config_data.php
  * @magentoAppIsolation enabled
  */
-class SystemTest extends \PHPUnit\Framework\TestCase
+class SystemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var System

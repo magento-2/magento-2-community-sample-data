@@ -5,12 +5,6 @@
  */
 namespace Magento\Ui\Block\Component;
 
-/**
- * Multi steps wizard block
- *
- * @api
- * @since 100.0.2
- */
 class StepsWizard extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -46,7 +40,6 @@ class StepsWizard extends \Magento\Framework\View\Element\Template
     }
 
     // @codeCoverageIgnoreStart
-
     /**
      * @return array
      */
@@ -73,12 +66,10 @@ class StepsWizard extends \Magento\Framework\View\Element\Template
 
     /**
      * @param array $initData
-     * @return $this
+     * @return array
      */
     public function setInitData($initData)
     {
         $this->initData = $initData;
-
-        return $this;
     }
 }

@@ -10,7 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Layer;
 
 use \Magento\Catalog\Model\Layer\FilterList;
 
-class FilterListTest extends \PHPUnit\Framework\TestCase
+class FilterListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -39,9 +39,13 @@ class FilterListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->attributeListMock = $this->createMock(\Magento\Catalog\Model\Layer\Category\FilterableAttributeList::class);
-        $this->attributeMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
+        $this->objectManagerMock = $this->getMock('\Magento\Framework\ObjectManagerInterface');
+        $this->attributeListMock = $this->getMock(
+            'Magento\Catalog\Model\Layer\Category\FilterableAttributeList', [], [], '', false
+        );
+        $this->attributeMock = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Eav\Attribute', [], [], '', false
+        );
         $filters = [
             FilterList::CATEGORY_FILTER => 'CategoryFilterClass',
             FilterList::PRICE_FILTER => 'PriceFilterClass',
@@ -49,7 +53,7 @@ class FilterListTest extends \PHPUnit\Framework\TestCase
             FilterList::ATTRIBUTE_FILTER => 'AttributeFilterClass',
 
         ];
-        $this->layerMock = $this->createMock(\Magento\Catalog\Model\Layer::class);
+        $this->layerMock = $this->getMock('\Magento\Catalog\Model\Layer', [], [], '', false);
 
         $this->model = new FilterList($this->objectManagerMock, $this->attributeListMock, $filters);
     }

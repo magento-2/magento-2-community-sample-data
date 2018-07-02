@@ -14,9 +14,8 @@ use Magento\Vault\Model\CustomerTokenManagement;
 /**
  * Class ConfigProvider
  * @api
- * @since 100.1.0
  */
-class TokensConfigProvider implements ConfigProviderInterface
+final class TokensConfigProvider implements ConfigProviderInterface
 {
     /**
      * @var string
@@ -64,7 +63,6 @@ class TokensConfigProvider implements ConfigProviderInterface
      * Retrieve assoc array of checkout configuration
      *
      * @return array
-     * @since 100.1.0
      */
     public function getConfig()
     {
@@ -140,7 +138,7 @@ class TokensConfigProvider implements ConfigProviderInterface
     /**
      * Get instance of vault payment list instance
      * @return PaymentMethodListInterface
-     * @deprecated 100.2.0
+     * @deprecated
      */
     private function getVaultPaymentList()
     {

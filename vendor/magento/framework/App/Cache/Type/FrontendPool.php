@@ -10,8 +10,6 @@ use Magento\Framework\App\DeploymentConfig;
 
 /**
  * In-memory readonly pool of cache front-ends with enforced access control, specific to cache types
- *
- * @api
  */
 class FrontendPool
 {
@@ -86,7 +84,7 @@ class FrontendPool
             $frontendInstance = $this->_frontendPool->get($frontendId);
             /** @var $frontendInstance AccessProxy */
             $frontendInstance = $this->_objectManager->create(
-                \Magento\Framework\App\Cache\Type\AccessProxy::class,
+                'Magento\Framework\App\Cache\Type\AccessProxy',
                 ['frontend' => $frontendInstance, 'identifier' => $cacheType]
             );
             $this->_instances[$cacheType] = $frontendInstance;

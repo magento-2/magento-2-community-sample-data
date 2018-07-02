@@ -7,7 +7,7 @@ namespace Magento\Framework\View;
 
 use \Magento\Framework\App\State;
 
-class LayoutTestWithExceptions extends \PHPUnit\Framework\TestCase
+class LayoutTestWithExceptions extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Layout
@@ -17,7 +17,7 @@ class LayoutTestWithExceptions extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $layoutFactory = $objectManager->get(\Magento\Framework\View\LayoutFactory::class);
+        $layoutFactory = $objectManager->get('Magento\Framework\View\LayoutFactory');
         $this->layout = $layoutFactory->create();
         $layoutElement = new \Magento\Framework\View\Layout\Element(
             __DIR__ . '/_files/layout_with_exceptions/layout.xml',
@@ -26,7 +26,7 @@ class LayoutTestWithExceptions extends \PHPUnit\Framework\TestCase
         );
 
         $this->layout->setXml($layoutElement);
-        $objectManager->get(\Magento\Framework\App\Cache\Type\Layout::class)->clean();
+        $objectManager->get('Magento\Framework\App\Cache\Type\Layout')->clean();
     }
 
     /**
@@ -43,7 +43,7 @@ class LayoutTestWithExceptions extends \PHPUnit\Framework\TestCase
      */
     public function testProcessWithExceptions()
     {
-        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\App\State::class)
+        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\App\State')
             ->setMode(State::MODE_DEFAULT);
 
         $this->layout->generateElements();

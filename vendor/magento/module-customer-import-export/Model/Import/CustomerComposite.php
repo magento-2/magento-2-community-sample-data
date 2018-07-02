@@ -288,6 +288,28 @@ class CustomerComposite extends \Magento\ImportExport\Model\Import\AbstractEntit
     }
 
     /**
+     * @inheritDoc
+     */
+    public function validateData()
+    {
+        //Preparing both customer and address imports for mass validation.
+        $source = $this->getSource();
+        $this->_customerEntity->prepareCustomerData($source);
+        $source->rewind();
+        $rows = [];
+        foreach ($source as $row) {
+            $rows[] = [
+                Address::COLUMN_EMAIL => $row[Customer::COLUMN_EMAIL],
+                Address::COLUMN_WEBSITE => $row[Customer::COLUMN_WEBSITE]
+            ];
+        }
+        $source->rewind();
+        $this->_addressEntity->prepareCustomerData(new \ArrayObject($rows));
+
+        return parent::validateData();
+    }
+
+    /**
      * Validate data row
      *
      * @param array $rowData
@@ -488,13 +510,13 @@ class CustomerComposite extends \Magento\ImportExport\Model\Import\AbstractEntit
      */
     public function getValidColumnNames()
     {
-        return array_unique(
-            array_merge(
-                $this->validColumnNames,
-                $this->_customerAttributes,
-                $this->_addressAttributes,
-                $this->_customerEntity->getValidColumnNames()
-            )
+        $this->validColumnNames = array_merge(
+            $this->validColumnNames,
+            $this->_customerAttributes,
+            $this->_addressAttributes,
+            $this->_customerEntity->getValidColumnNames()
         );
+
+        return $this->validColumnNames;
     }
 }

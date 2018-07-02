@@ -5,7 +5,7 @@
  */
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$salesRule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$salesRule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $salesRule->setData(
     [
         'name' => '50% Off on Large Orders',
@@ -18,14 +18,14 @@ $salesRule->setData(
         'stop_rules_processing' => 1,
         'website_ids' => [
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Store\Model\StoreManagerInterface::class
+                'Magento\Store\Model\StoreManagerInterface'
             )->getWebsite()->getId()
         ]
     ]
 );
 
 $salesRule->getConditions()->loadArray([
-    'type' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
+    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
     'attribute' => null,
     'operator' => null,
     'value' => '1',
@@ -34,7 +34,7 @@ $salesRule->getConditions()->loadArray([
     'conditions' =>
         [
                 [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Found',
                     'attribute' => null,
                     'operator' => null,
                     'value' => '1',
@@ -43,14 +43,14 @@ $salesRule->getConditions()->loadArray([
                     'conditions' =>
                         [
                                 [
-                                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                                     'attribute' => 'category_ids',
                                     'operator' => '==',
                                     'value' => '2',
                                     'is_value_processed' => false,
                                 ],
                                 [
-                                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                                     'attribute' => 'attribute_set_id',
                                     'operator' => '==',
                                     'value' => '4',
@@ -59,7 +59,7 @@ $salesRule->getConditions()->loadArray([
                         ],
                 ],
                 [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Found',
                     'attribute' => null,
                     'operator' => null,
                     'value' => '1',
@@ -68,14 +68,14 @@ $salesRule->getConditions()->loadArray([
                     'conditions' =>
                         [
                             [
-                                'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                                 'attribute' => 'quote_item_price',
                                 'operator' => '==',
                                 'value' => '80',
                                 'is_value_processed' => false,
                             ],
                             [
-                                'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                                 'attribute' => 'category_ids',
                                 'operator' => '==',
                                 'value' => '3',
@@ -90,7 +90,7 @@ $salesRule->getConditions()->loadArray([
 $salesRule->save();
 
 /** @var Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
 
 $registry->unregister('_fixture/Magento_SalesRule_Group_Multiple_Categories');
 $registry->register('_fixture/Magento_SalesRule_Group_Multiple_Categories', $salesRule);

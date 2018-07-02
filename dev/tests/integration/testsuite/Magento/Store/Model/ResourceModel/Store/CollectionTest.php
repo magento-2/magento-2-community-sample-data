@@ -5,7 +5,7 @@
  */
 namespace Magento\Store\Model\ResourceModel\Store;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\ResourceModel\Store\Collection
@@ -15,7 +15,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\ResourceModel\Store\Collection::class
+            'Magento\Store\Model\ResourceModel\Store\Collection'
         );
     }
 

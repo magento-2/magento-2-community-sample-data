@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Model;
 
-class AbstractTest extends \PHPUnit\Framework\TestCase
+class AbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Stub class name for class under test
@@ -27,12 +27,7 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         if (!self::$_isStubClass) {
-            $this->getMockForAbstractClass(
-                \Magento\Catalog\Model\AbstractModel\Stub::class,
-                [],
-                self::STUB_CLASS,
-                false
-            );
+            $this->getMockForAbstractClass('Magento\Catalog\Model\AbstractModel\Stub', [], self::STUB_CLASS, false);
             self::$_isStubClass = true;
         }
 
@@ -40,11 +35,11 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
 
         $resourceProperty = new \ReflectionProperty(get_class($this->_model), '_resourceName');
         $resourceProperty->setAccessible(true);
-        $resourceProperty->setValue($this->_model, \Magento\Catalog\Model\ResourceModel\Product::class);
+        $resourceProperty->setValue($this->_model, 'Magento\Catalog\Model\ResourceModel\Product');
 
         $collectionProperty = new \ReflectionProperty(get_class($this->_model), '_collectionName');
         $collectionProperty->setAccessible(true);
-        $collectionProperty->setValue($this->_model, \Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collectionProperty->setValue($this->_model, 'Magento\Catalog\Model\ResourceModel\Product\Collection');
     }
 
     /**
@@ -117,10 +112,7 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model->setStoreId(99);
         $collection = $this->_model->getResourceCollection();
-        $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection::class,
-            $collection
-        );
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection', $collection);
         $this->assertEquals(99, $collection->getStoreId());
     }
 
@@ -144,7 +136,7 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             $store,
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Store\Model\StoreManagerInterface::class
+                'Magento\Store\Model\StoreManagerInterface'
             )->getStore()
         );
     }
@@ -153,7 +145,7 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
     {
         $ids = $this->_model->getWebsiteStoreIds();
         $storeId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore()->getId();
         $this->assertEquals([$storeId => $storeId], $ids);
     }

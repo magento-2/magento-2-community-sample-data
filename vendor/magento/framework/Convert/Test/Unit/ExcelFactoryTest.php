@@ -8,7 +8,7 @@ namespace Magento\Framework\Convert\Test\Unit;
 use Magento\Framework\Convert\ExcelFactory;
 use Magento\Framework\ObjectManagerInterface;
 
-class ExcelFactoryTest extends \PHPUnit\Framework\TestCase
+class ExcelFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ExcelFactory
@@ -22,7 +22,7 @@ class ExcelFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManager = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->setMethods(['create'])
             ->getMockForAbstractClass();
 
@@ -33,15 +33,15 @@ class ExcelFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $excel = $this->getMockBuilder(\Magento\Framework\Convert\Excel::class)
+        $excel = $this->getMockBuilder('Magento\Framework\Convert\Excel')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManager->expects($this->once())
             ->method('create')
-            ->with(\Magento\Framework\Convert\Excel::class, [])
+            ->with('\\Magento\\Framework\\Convert\\Excel', [])
             ->willReturn($excel);
 
-        $this->assertInstanceOf(\Magento\Framework\Convert\Excel::class, $this->model->create());
+        $this->assertInstanceOf('Magento\Framework\Convert\Excel', $this->model->create());
     }
 }

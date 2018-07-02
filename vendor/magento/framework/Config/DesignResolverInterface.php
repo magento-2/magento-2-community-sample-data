@@ -8,7 +8,6 @@ namespace Magento\Framework\Config;
 /**
  * Interface DesignResolverInterface
  * @api
- * @since 100.1.0
  */
 interface DesignResolverInterface extends FileResolverInterface
 {
@@ -18,7 +17,6 @@ interface DesignResolverInterface extends FileResolverInterface
      * @param string $filename
      * @param string $scope
      * @return array
-     * @since 100.1.0
      */
     public function getParents($filename, $scope);
 }

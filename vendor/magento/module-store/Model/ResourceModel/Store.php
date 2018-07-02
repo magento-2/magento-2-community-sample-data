@@ -7,9 +7,6 @@ namespace Magento\Store\Model\ResourceModel;
 
 /**
  * Store Resource Model
- *
- * @api
- * @since 100.0.2
  */
 class Store extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -162,7 +159,6 @@ class Store extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * Read information about all stores
      *
      * @return array
-     * @since 100.1.3
      */
     public function readAllStores()
     {

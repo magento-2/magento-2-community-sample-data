@@ -14,14 +14,10 @@ use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProduct
  */
 class ProductRuleReindex
 {
-    /**
-     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-     */
+    /** @var Configurable */
     private $configurable;
 
-    /**
-     * @var \Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider
-     */
+    /** @var ConfigurableProductsProvider */
     private $configurableProductsProvider;
 
     /**

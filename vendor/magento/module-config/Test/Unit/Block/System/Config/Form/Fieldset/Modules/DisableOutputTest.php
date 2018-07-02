@@ -5,10 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Block\System\Config\Form\Fieldset\Modules;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DisableOutputTest extends \PHPUnit\Framework\TestCase
+class DisableOutputTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Block\System\Config\Form\Fieldset\Modules\DisableOutput
@@ -71,22 +68,22 @@ class DisableOutputTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $rendererMock = $this->getMockBuilder(\Magento\Config\Block\System\Config\Form\Field::class)
+        $rendererMock = $this->getMockBuilder('Magento\Config\Block\System\Config\Form\Field')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock->expects($this->any())
             ->method('getBlockSingleton')
             ->willReturn($rendererMock);
 
-        $this->jsHelperMock = $this->getMockBuilder(\Magento\Framework\View\Helper\Js::class)
+        $this->jsHelperMock = $this->getMockBuilder('Magento\Framework\View\Helper\Js')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->moduleListMock = $this->getMockBuilder(\Magento\Framework\Module\ModuleListInterface::class)
+        $this->moduleListMock = $this->getMockBuilder('Magento\Framework\Module\ModuleListInterface')
             ->setMethods(['getNames', 'has', 'getAll', 'getOne'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,12 +101,12 @@ class DisableOutputTest extends \PHPUnit\Framework\TestCase
             ->method('getOne')
             ->will($this->returnValue(null));
 
-        $this->authSessionMock = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
+        $this->authSessionMock = $this->getMockBuilder('Magento\Backend\Model\Auth\Session')
             ->setMethods(['getUser'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
+        $this->userMock = $this->getMockBuilder('Magento\User\Model\User')
             ->setMethods(['getExtra'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -118,24 +115,22 @@ class DisableOutputTest extends \PHPUnit\Framework\TestCase
             ->method('getUser')
             ->willReturn($this->userMock);
 
-        $groupMock = $this->getMockBuilder(\Magento\Config\Model\Config\Structure\Element\Group::class)
+        $groupMock = $this->getMockBuilder('Magento\Config\Model\Config\Structure\Element\Group')
             ->setMethods(['getFieldsetCss'])
             ->disableOriginalConstructor()
             ->getMock();
         $groupMock->expects($this->any())->method('getFieldsetCss')->will($this->returnValue('test_fieldset_css'));
 
-        $factory = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\Factory::class)
+        $factory = $this->getMockBuilder('Magento\Framework\Data\Form\Element\Factory')
             ->disableOriginalConstructor()
             ->getMock();
-        $factoryColl = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\CollectionFactory::class)
+        $factoryColl = $this->getMockBuilder('Magento\Framework\Data\Form\Element\CollectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $formMock = $this->getMockBuilder(\Magento\Framework\Data\Form\AbstractForm::class)
-            ->setConstructorArgs([$factory, $factoryColl])
-            ->getMock();
+        $formMock = $this->getMock('Magento\Framework\Data\Form\AbstractForm', [], [$factory, $factoryColl]);
 
         $context = $this->objectManager->getObject(
-            \Magento\Backend\Block\Context::class,
+            'Magento\Backend\Block\Context',
             [
                 'layout' => $this->layoutMock,
             ]
@@ -153,11 +148,11 @@ class DisableOutputTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->object = $this->objectManager->getObject(
-            \Magento\Config\Block\System\Config\Form\Fieldset\Modules\DisableOutput::class,
+            'Magento\Config\Block\System\Config\Form\Fieldset\Modules\DisableOutput',
             $data
         );
 
-        $this->elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\Text::class)
+        $this->elementMock = $this->getMockBuilder('Magento\Framework\Data\Form\Element\Text')
             ->setMethods(
                 [
                     'getId', 'getHtmlId', 'getName', 'getExpanded', 'getLegend', 'getComment', 'getTooltip', 'toHtml',

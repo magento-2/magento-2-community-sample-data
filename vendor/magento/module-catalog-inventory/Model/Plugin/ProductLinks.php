@@ -1,7 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Created by PhpStorm.
+ * User: akasian
+ * Date: 11/17/15
+ * Time: 12:29 PM
  */
 
 namespace Magento\CatalogInventory\Model\Plugin;

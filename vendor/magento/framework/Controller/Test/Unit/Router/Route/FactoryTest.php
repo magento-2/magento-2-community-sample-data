@@ -11,7 +11,7 @@ use \Magento\Framework\Controller\Router\Route\Factory;
 use Magento\Framework\Controller\Router\Route\Factory as RouteFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManager;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
@@ -25,11 +25,11 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $objectManager = new ObjectManager($this);
         $this->factory = $objectManager->getObject(
-            \Magento\Framework\Controller\Router\Route\Factory::class,
+            'Magento\Framework\Controller\Router\Route\Factory',
             [
                 'objectManager' => $this->objectManager,
             ]
@@ -45,7 +45,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         $routeClass = 'router';
         $paramRoute = 'route';
 
-        $router = $this->getMockBuilder(\Magento\Framework\App\RouterInterface::class)
+        $router = $this->getMockBuilder('Magento\Framework\App\RouterInterface')
             ->setMockClassName($routeClass)
             ->getMock();
 
@@ -57,7 +57,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         $result = $this->factory->createRoute($routeClass, $paramRoute);
 
         $this->assertInstanceOf($routeClass, $result);
-        $this->assertInstanceOf(\Magento\Framework\App\RouterInterface::class, $result);
+        $this->assertInstanceOf('Magento\Framework\App\RouterInterface', $result);
     }
 
     /**

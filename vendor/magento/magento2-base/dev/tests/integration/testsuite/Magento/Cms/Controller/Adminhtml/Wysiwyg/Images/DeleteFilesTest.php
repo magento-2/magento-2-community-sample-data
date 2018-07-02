@@ -9,9 +9,9 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles class.
+ * Tests Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles.
  */
-class DeleteFilesTest extends \PHPUnit\Framework\TestCase
+class DeleteFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles

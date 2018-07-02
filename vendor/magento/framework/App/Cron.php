@@ -8,11 +8,9 @@
 namespace Magento\Framework\App;
 
 use Magento\Framework\App;
+use Magento\Framework\App\Area;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Cron implements \Magento\Framework\AppInterface
 {
     /**
@@ -38,11 +36,6 @@ class Cron implements \Magento\Framework\AppInterface
     private $objectManager;
 
     /**
-     * @var \Magento\Framework\App\AreaList
-     */
-    private $areaList;
-
-    /**
      * Inject dependencies
      *
      * @param State $state
@@ -50,22 +43,19 @@ class Cron implements \Magento\Framework\AppInterface
      * @param Console\Response $response
      * @param ObjectManagerInterface $objectManager
      * @param array $parameters
-     * @param AreaList|null          $areaList
      */
     public function __construct(
         State $state,
         Console\Request $request,
         Console\Response $response,
         ObjectManagerInterface $objectManager,
-        array $parameters = [],
-        \Magento\Framework\App\AreaList $areaList = null
+        array $parameters = []
     ) {
         $this->_state = $state;
         $this->_request = $request;
         $this->_request->setParams($parameters);
         $this->_response = $response;
         $this->objectManager = $objectManager;
-        $this->areaList = $areaList ? $areaList : $this->objectManager->get(\Magento\Framework\App\AreaList::class);
     }
 
     /**
@@ -76,13 +66,11 @@ class Cron implements \Magento\Framework\AppInterface
     public function launch()
     {
         $this->_state->setAreaCode(Area::AREA_CRONTAB);
-        $configLoader = $this->objectManager->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class);
+        $configLoader = $this->objectManager->get('Magento\Framework\ObjectManager\ConfigLoaderInterface');
         $this->objectManager->configure($configLoader->load(Area::AREA_CRONTAB));
 
-        $this->areaList->getArea(Area::AREA_CRONTAB)->load(Area::PART_TRANSLATE);
-
         /** @var \Magento\Framework\Event\ManagerInterface $eventManager */
-        $eventManager = $this->objectManager->get(\Magento\Framework\Event\ManagerInterface::class);
+        $eventManager = $this->objectManager->get('Magento\Framework\Event\ManagerInterface');
         $eventManager->dispatch('default');
         $this->_response->setCode(0);
         return $this->_response;

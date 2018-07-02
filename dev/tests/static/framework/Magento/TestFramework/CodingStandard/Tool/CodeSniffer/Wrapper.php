@@ -9,15 +9,19 @@
  */
 namespace Magento\TestFramework\CodingStandard\Tool\CodeSniffer;
 
-use PHP_CodeSniffer\Config;
-use PHP_CodeSniffer\Runner;
-
-class Wrapper extends Runner
+class Wrapper extends \PHP_CodeSniffer_CLI
 {
     /**
-     * @var array
+     * Emulate console arguments
+     *
+     * @param $values
+     * @return \Magento\TestFramework\CodingStandard\Tool\CodeSniffer\Wrapper
      */
-    private $settings = [];
+    public function setValues($values)
+    {
+        $this->values = $values;
+        return $this;
+    }
 
     /**
      * Return the current version of php code sniffer
@@ -27,28 +31,10 @@ class Wrapper extends Runner
     public function version()
     {
         $version = '0.0.0';
-        if (defined('\PHP_CodeSniffer\Config::VERSION')) {
-            $version = Config::VERSION;
+        if (defined('\PHP_CodeSniffer::VERSION')) {
+            $phpcs = new \PHP_CodeSniffer();
+            $version = $phpcs::VERSION;
         }
         return $version;
-    }
-
-    public function init()
-    {
-        $this->config->extensions = $this->settings['extensions'];
-        unset($this->settings['extensions']);
-        $this->config->setSettings(array_replace_recursive(
-            $this->config->getSettings(),
-            $this->settings
-        ));
-        return parent::init();
-    }
-
-    /**
-     * @param array $settings
-     */
-    public function setSettings($settings)
-    {
-        $this->settings = $settings;
     }
 }

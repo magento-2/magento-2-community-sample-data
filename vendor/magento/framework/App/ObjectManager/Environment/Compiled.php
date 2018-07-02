@@ -13,24 +13,20 @@ use Magento\Framework\App\Area;
 use Magento\Framework\Interception\ObjectManager\ConfigInterface;
 use Magento\Framework\App\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Compiled extends AbstractEnvironment implements EnvironmentInterface
 {
     /**#@+
      * Mode name
      */
     const MODE = 'compiled';
-    /**#@- */
 
-    /**#@- */
     protected $mode = self::MODE;
+    /**#@- */
 
     /**
      * @var string
      */
-    protected $configPreference = \Magento\Framework\ObjectManager\Factory\Compiled::class;
+    protected $configPreference = 'Magento\Framework\ObjectManager\Factory\Compiled';
 
     /**
      * @var \Magento\Framework\App\ObjectManager\ConfigLoader\Compiled
@@ -104,20 +100,20 @@ class Compiled extends AbstractEnvironment implements EnvironmentInterface
 
         $objectManager->configure(
             $objectManager
-                ->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class)
+                ->get('Magento\Framework\ObjectManager\ConfigLoaderInterface')
                 ->load(Area::AREA_GLOBAL)
         );
-        $objectManager->get(\Magento\Framework\Config\ScopeInterface::class)
+        $objectManager->get('Magento\Framework\Config\ScopeInterface')
             ->setCurrentScope('global');
         $diConfig->setInterceptionConfig(
-            $objectManager->get(\Magento\Framework\Interception\Config\Config::class)
+            $objectManager->get('Magento\Framework\Interception\Config\Config')
         );
-        $sharedInstances[\Magento\Framework\Interception\PluginList\PluginList::class] = $objectManager->create(
-            \Magento\Framework\Interception\PluginListInterface::class,
-            ['cache' => $objectManager->get(\Magento\Framework\App\Interception\Cache\CompiledConfig::class)]
+        $sharedInstances['Magento\Framework\Interception\PluginList\PluginList'] = $objectManager->create(
+            'Magento\Framework\Interception\PluginListInterface',
+            ['cache' => $objectManager->get('Magento\Framework\App\Interception\Cache\CompiledConfig')]
         );
         $objectManager
-            ->get(\Magento\Framework\App\Cache\Manager::class)
+            ->get('Magento\Framework\App\Cache\Manager')
             ->setEnabled([CompiledConfig::TYPE_IDENTIFIER], true);
     }
 }

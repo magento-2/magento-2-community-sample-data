@@ -7,7 +7,7 @@
  */
 namespace Magento\Test\Integrity\Magento\Backend;
 
-class SystemConfigTest extends \PHPUnit\Framework\TestCase
+class SystemConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testSchema()
     {

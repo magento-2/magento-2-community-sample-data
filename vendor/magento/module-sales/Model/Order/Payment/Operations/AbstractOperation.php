@@ -13,9 +13,6 @@ use Magento\Sales\Model\Order\Payment\State\CommandInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface;
 
-/**
- * Class AbstractOperation
- */
 abstract class AbstractOperation
 {
     /**

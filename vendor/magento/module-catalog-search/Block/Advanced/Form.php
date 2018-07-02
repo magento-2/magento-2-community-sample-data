@@ -20,10 +20,6 @@ use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Form extends Template
 {
     /**
@@ -300,7 +296,7 @@ class Form extends Template
     {
         $block = $this->getData('_select_block');
         if ($block === null) {
-            $block = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Html\Select::class);
+            $block = $this->getLayout()->createBlock('Magento\Framework\View\Element\Html\Select');
             $this->setData('_select_block', $block);
         }
         return $block;
@@ -313,7 +309,7 @@ class Form extends Template
     {
         $block = $this->getData('_date_block');
         if ($block === null) {
-            $block = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Html\Date::class);
+            $block = $this->getLayout()->createBlock('Magento\Framework\View\Element\Html\Date');
             $this->setData('_date_block', $block);
         }
         return $block;

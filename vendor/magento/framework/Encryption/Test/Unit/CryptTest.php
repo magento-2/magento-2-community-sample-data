@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Encryption\Test\Unit;
 
-class CryptTest extends \PHPUnit\Framework\TestCase
+class CryptTest extends \PHPUnit_Framework_TestCase
 {
     private $_key;
 

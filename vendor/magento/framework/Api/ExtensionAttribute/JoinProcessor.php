@@ -25,19 +25,13 @@ class JoinProcessor implements \Magento\Framework\Api\ExtensionAttribute\JoinPro
      */
     protected $objectManager;
 
-    /**
-     * @var \Magento\Framework\Reflection\TypeProcessor
-     */
+    /** @var TypeProcessor */
     private $typeProcessor;
 
-    /**
-     * @var \Magento\Framework\Api\ExtensionAttributesFactory
-     */
+    /** @var ExtensionAttributesFactory */
     private $extensionAttributesFactory;
 
-    /**
-     * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper
-     */
+    /** @var JoinProcessorHelper */
     private $joinProcessorHelper;
 
     /**

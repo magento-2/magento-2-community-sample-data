@@ -10,7 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\ProductLink;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 
-class ManagementTest extends \PHPUnit\Framework\TestCase
+class ManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ProductLink\Management
@@ -34,20 +34,26 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
     protected $linkTypeProviderMock;
 
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManager
      */
     protected $objectManager;
 
     protected function setUp()
     {
-        $this->productRepositoryMock = $this->createMock(\Magento\Catalog\Model\ProductRepository::class);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->productRepositoryMock = $this->getMock('\Magento\Catalog\Model\ProductRepository', [], [], '', false);
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
 
-        $this->linkTypeProviderMock = $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class);
+        $this->linkTypeProviderMock = $this->getMock(
+            '\Magento\Catalog\Model\Product\LinkTypeProvider',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $this->objectManager->getObject(
-            \Magento\Catalog\Model\ProductLink\Management::class,
+            'Magento\Catalog\Model\ProductLink\Management',
             [
                 'productRepository' => $this->productRepositoryMock,
                 'linkTypeProvider' => $this->linkTypeProviderMock
@@ -62,7 +68,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($this->productMock);
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "Simple Product 2");
@@ -90,7 +96,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $this->productRepositoryMock->expects($this->never())->method('get')->with($productSku)
             ->willReturn($this->productMock);
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "Simple Product 2");
@@ -114,7 +120,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($this->productMock);
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "Simple Product 1");
@@ -140,7 +146,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
     {
         $productSku = 'Simple Product 1';
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setData("sku", "Simple Product 1");
         $inputRelatedLink->setPosition(0);
@@ -165,7 +171,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $this->productRepositoryMock->expects($this->never())->method('get')->with($productSku)
             ->willReturn($this->productMock);
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "Simple Product 2");
@@ -190,7 +196,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $productSku = 'Simple Product 1';
         $linkType = 'related';
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "Simple Product 2");
@@ -221,7 +227,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($this->productMock);
 
-        $inputRelatedLink = $this->objectManager->getObject(\Magento\Catalog\Model\ProductLink\Link::class);
+        $inputRelatedLink = $this->objectManager->getObject('Magento\Catalog\Model\ProductLink\Link');
         $inputRelatedLink->setProductSku($productSku);
         $inputRelatedLink->setLinkType($linkType);
         $inputRelatedLink->setData("sku", "bad sku");

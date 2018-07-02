@@ -13,9 +13,7 @@ use Magento\Framework\Controller\ResultFactory;
 
 class Sendmail extends \Magento\SendFriend\Controller\Product
 {
-    /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
-     */
+    /** @var  \Magento\Catalog\Api\CategoryRepositoryInterface */
     protected $categoryRepository;
 
     /**

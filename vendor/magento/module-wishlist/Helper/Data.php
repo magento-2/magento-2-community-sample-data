@@ -13,9 +13,6 @@ use Magento\Wishlist\Controller\WishlistProviderInterface;
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {

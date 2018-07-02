@@ -3,12 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Framework\Config;
 
 /**
  * View configuration files handler
+ */
+namespace Magento\Framework\Config;
+
+/**
+ * Class View
  *
- * @api
+ * @property DesignResolverInterface $_fileResolver
  */
 class View extends \Magento\Framework\Config\Reader\Filesystem
 {
@@ -42,7 +46,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
         ValidationStateInterface $validationState,
         $fileName,
         $idAttributes = [],
-        $domDocumentClass = \Magento\Framework\Config\Dom::class,
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
         $defaultScope = 'global',
         $xpath = []
     ) {
@@ -130,6 +134,16 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     }
 
     /**
+     * Return copy of DOM
+     *
+     * @return \Magento\Framework\Config\Dom
+     */
+    public function getDomConfigCopy()
+    {
+        return clone $this->_getDomConfigModel();
+    }
+
+    /**
      * Variables are identified by module and name
      *
      * @return array
@@ -138,7 +152,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     {
         $idAttributes = [
             '/view/vars' => 'module',
-            '/view/vars/(var/)*var' => 'name',
+            '/view/vars/var' => 'name',
             '/view/exclude/item' => ['type', 'item'],
         ];
         foreach ($this->xpath as $attribute) {
@@ -202,7 +216,6 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
 
     /**
      * {@inheritdoc}
-     * @since 100.1.0
      */
     public function read($scope = null)
     {

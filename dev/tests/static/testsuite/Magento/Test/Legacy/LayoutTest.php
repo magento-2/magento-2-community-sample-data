@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of obsolete nodes

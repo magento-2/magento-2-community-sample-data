@@ -11,7 +11,6 @@ use Magento\Framework\App\Config\ConfigSourceInterface;
 use Magento\Framework\App\Config\Spi\PostProcessorInterface;
 use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\Config\Processor\Fallback;
 use Magento\Config\App\Config\Type\System\Reader;
 
@@ -19,7 +18,7 @@ use Magento\Config\App\Config\Type\System\Reader;
  * Test how Class process source, cache them and retrieve value by path
  * @package Magento\Config\Test\Unit\App\Config\Type
  */
-class SystemTest extends \PHPUnit\Framework\TestCase
+class SystemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigSourceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -52,11 +51,6 @@ class SystemTest extends \PHPUnit\Framework\TestCase
     private $configType;
 
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializer;
-
-    /**
      * @var Reader|\PHPUnit_Framework_MockObject_MockObject
      */
     private $reader;
@@ -74,8 +68,6 @@ class SystemTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
         $this->preProcessor = $this->getMockBuilder(PreProcessorInterface::class)
             ->getMockForAbstractClass();
-        $this->serializer = $this->getMockBuilder(SerializerInterface::class)
-            ->getMock();
         $this->reader = $this->getMockBuilder(Reader::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -85,7 +77,6 @@ class SystemTest extends \PHPUnit\Framework\TestCase
             $this->postProcessor,
             $this->fallback,
             $this->cache,
-            $this->serializer,
             $this->preProcessor,
             1,
             'system',
@@ -100,17 +91,14 @@ class SystemTest extends \PHPUnit\Framework\TestCase
         $data = [
             'dev' => [
                 'unsecure' => [
-                    'url' => $url
-                ]
-            ]
+                    'url' => $url,
+                ],
+            ],
         ];
 
-        $this->cache->expects($this->any())
+        $this->cache->expects($this->once())
             ->method('load')
-            ->willReturnOnConsecutiveCalls('1', serialize($data));
-        $this->serializer->expects($this->once())
-            ->method('unserialize')
-            ->willReturn($data);
+            ->willReturn(serialize($data));
         $this->assertEquals($url, $this->configType->get($path));
     }
 
@@ -120,17 +108,14 @@ class SystemTest extends \PHPUnit\Framework\TestCase
         $data = [
             'dev' => [
                 'unsecure' => [
-                    'url' => $url
-                ]
+                    'url' => $url,
+                ],
             ]
         ];
 
-        $this->cache->expects($this->any())
+        $this->cache->expects($this->once())
             ->method('load')
-            ->willReturnOnConsecutiveCalls('1', serialize($data));
-        $this->serializer->expects($this->once())
-            ->method('unserialize')
-            ->willReturn($data);
+            ->willReturn(serialize($data));
         $this->assertEquals($data, $this->configType->get(''));
     }
 
@@ -139,11 +124,6 @@ class SystemTest extends \PHPUnit\Framework\TestCase
         $path = 'stores/default/dev/unsecure/url';
         $url = 'http://magento.test/';
 
-        $dataToCache = [
-            'unsecure' => [
-                'url' => $url
-            ]
-        ];
         $data = [
             'default' => [],
             'websites' => [],
@@ -151,31 +131,23 @@ class SystemTest extends \PHPUnit\Framework\TestCase
                 'default' => [
                     'dev' => [
                         'unsecure' => [
-                            'url' => $url
-                        ]
-                    ]
-                ]
-            ]
+                            'url' => $url,
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->cache->expects($this->any())
             ->method('load')
             ->willReturnOnConsecutiveCalls(false, false);
 
-        $this->serializer->expects($this->atLeastOnce())
-            ->method('serialize')
-            ->willReturn(serialize($dataToCache));
         $this->cache->expects($this->atLeastOnce())
             ->method('save')
             ->willReturnSelf();
         $this->reader->expects($this->once())
             ->method('read')
             ->willReturn($data);
-        $this->postProcessor->expects($this->once())
-            ->method('process')
-            ->with($data)
-            ->willReturn($data);
 
-        $this->assertEquals($url, $this->configType->get($path));
         $this->assertEquals($url, $this->configType->get($path));
     }
 }

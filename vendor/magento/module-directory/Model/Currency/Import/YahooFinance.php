@@ -10,13 +10,20 @@ namespace Magento\Directory\Model\Currency\Import;
  */
 class YahooFinance extends \Magento\Directory\Model\Currency\Import\AbstractImport
 {
-    // @codingStandardsIgnoreStart
-
+    /**
+     * Currency converter url string
+     *
+     * @var string
+     */
     // @codingStandardsIgnoreStart
     private $currencyConverterUrl = 'http://query.yahooapis.com/v1/public/yql?format=json&q={{YQL_STRING}}&env=store://datatables.org/alltableswithkeys';
     // @codingStandardsIgnoreEnd
 
-    // @codingStandardsIgnoreEnd
+    /**
+     * Config path for service timeout
+     *
+     * @var string
+     */
     private $timeoutConfigPath = 'currency/yahoofinance/timeout';
 
     /**

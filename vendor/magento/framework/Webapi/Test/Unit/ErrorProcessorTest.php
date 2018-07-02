@@ -14,7 +14,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Exception as WebapiException;
 use Magento\Framework\Phrase;
 
-class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
+class ErrorProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ErrorProcessor */
     protected $_errorProcessor;
@@ -31,18 +31,18 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** Set up mocks for SUT. */
-        $this->encoderMock = $this->getMockBuilder(\Magento\Framework\Json\Encoder::class)
+        $this->encoderMock = $this->getMockBuilder('Magento\Framework\Json\Encoder')
             ->disableOriginalConstructor()
             ->setMethods(['encode'])
             ->getMock();
 
-        $this->_appStateMock = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $this->_appStateMock = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->_loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
+        $this->_loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
-        $filesystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $filesystemMock = $this->getMockBuilder('\Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -194,7 +194,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
         $logicalException = new \LogicException($errorMessage);
         /** Assert that Logic exception is converted to WebapiException without message obfuscation. */
         $maskedException = $this->_errorProcessor->maskException($logicalException);
-        $this->assertInstanceOf(\Magento\Framework\Webapi\Exception::class, $maskedException);
+        $this->assertInstanceOf('Magento\Framework\Webapi\Exception', $maskedException);
         $this->assertEquals(
             $errorMessage,
             $maskedException->getMessage(),
@@ -313,7 +313,7 @@ class ErrorProcessorTest extends \PHPUnit\Framework\TestCase
         $expectedDetails
     ) {
         /** All masked exceptions must be WebapiException */
-        $expectedType = \Magento\Framework\Webapi\Exception::class;
+        $expectedType = 'Magento\Framework\Webapi\Exception';
         $this->assertInstanceOf(
             $expectedType,
             $maskedException,

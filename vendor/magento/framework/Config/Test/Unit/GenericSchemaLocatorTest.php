@@ -13,7 +13,7 @@ use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 /**
  * @covers \Magento\Framework\Config\GenericSchemaLocator
  */
-class GenericSchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class GenericSchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -37,7 +37,7 @@ class GenericSchemaLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->moduleReaderMock = $this->createMock(ModuleDirReader::class);
+        $this->moduleReaderMock = $this->getMock(ModuleDirReader::class, [], [], '', false);
         $this->schemaLocator = $this->createNewSchemaLocatorInstance(
             $this->moduleReaderMock,
             'Test_ModuleName',

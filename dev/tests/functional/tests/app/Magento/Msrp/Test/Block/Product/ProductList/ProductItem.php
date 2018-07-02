@@ -47,7 +47,7 @@ class ProductItem extends \Magento\Catalog\Test\Block\Product\ProductList\Produc
     public function getMapBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Msrp\Test\Block\Product\Map::class,
+            'Magento\Msrp\Test\Block\Product\Map',
             ['element' => $this->_rootElement->find($this->mapPopupBlock, Locator::SELECTOR_XPATH)]
         );
     }

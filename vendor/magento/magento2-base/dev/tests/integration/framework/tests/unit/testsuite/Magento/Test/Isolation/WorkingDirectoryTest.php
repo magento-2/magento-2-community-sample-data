@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Isolation;
 
-class WorkingDirectoryTest extends \PHPUnit\Framework\TestCase
+class WorkingDirectoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Isolation\WorkingDirectory

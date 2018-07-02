@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\App\Response;
 
-/**
- * Interface \Magento\Framework\App\Response\FileInterface
- *
- */
 interface FileInterface extends HttpInterface
 {
     /**

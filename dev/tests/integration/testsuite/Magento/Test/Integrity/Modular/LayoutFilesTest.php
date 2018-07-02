@@ -5,10 +5,7 @@
  */
 namespace Magento\Test\Integrity\Modular;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class LayoutFilesTest extends \PHPUnit\Framework\TestCase
+class LayoutFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Layout\Argument\Parser
@@ -23,7 +20,7 @@ class LayoutFilesTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_argParser = $objectManager->get(\Magento\Framework\View\Layout\Argument\Parser::class);
+        $this->_argParser = $objectManager->get('Magento\Framework\View\Layout\Argument\Parser');
         $this->_argInterpreter = $objectManager->get('layoutArgumentGeneratorInterpreter');
     }
 
@@ -86,22 +83,21 @@ class LayoutFilesTest extends \PHPUnit\Framework\TestCase
 
         // Arguments, evaluation of which causes a run-time error, because of unsafe assumptions to the environment
         $typeAttr = \Magento\Framework\View\Model\Layout\Merge::TYPE_ATTRIBUTE;
-        $prCollection =
-            \Magento\GroupedProduct\Model\ResourceModel\Product\Type\Grouped\AssociatedProductsCollection::class;
+        $prCollection = 'Magento\GroupedProduct\Model\ResourceModel\Product\Type\Grouped\AssociatedProductsCollection';
         $ignoredArguments = [
             [
                 $typeAttr => 'object',
                 'value' => $prCollection,
             ],
-            [$typeAttr => 'object', 'value' => \Magento\Solr\Model\ResourceModel\Search\Grid\Collection::class],
-            [$typeAttr => 'object', 'value' => \Magento\Wishlist\Model\ResourceModel\Item\Collection\Grid::class],
+            [$typeAttr => 'object', 'value' => 'Magento\Solr\Model\ResourceModel\Search\Grid\Collection'],
+            [$typeAttr => 'object', 'value' => 'Magento\Wishlist\Model\ResourceModel\Item\Collection\Grid'],
             [
                 $typeAttr => 'object',
-                'value' => \Magento\CustomerSegment\Model\ResourceModel\Segment\Report\Detail\Collection::class
+                'value' => 'Magento\CustomerSegment\Model\ResourceModel\Segment\Report\Detail\Collection'
             ],
-            [$typeAttr => 'options', 'model' => \Magento\Solr\Model\Adminhtml\Search\Grid\Options::class],
-            [$typeAttr => 'options', 'model' => \Magento\Logging\Model\ResourceModel\Grid\ActionsGroup::class],
-            [$typeAttr => 'options', 'model' => \Magento\Logging\Model\ResourceModel\Grid\Actions::class],
+            [$typeAttr => 'options', 'model' => 'Magento\Solr\Model\Adminhtml\Search\Grid\Options'],
+            [$typeAttr => 'options', 'model' => 'Magento\Logging\Model\ResourceModel\Grid\ActionsGroup'],
+            [$typeAttr => 'options', 'model' => 'Magento\Logging\Model\ResourceModel\Grid\Actions'],
         ];
         $isIgnoredArgument = in_array($argumentData, $ignoredArguments, true);
 

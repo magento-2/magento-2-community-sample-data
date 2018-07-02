@@ -16,7 +16,7 @@ use Magento\Framework\Stdlib\ArrayManager;
  * Class AbstractDataProviderTest
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
-abstract class AbstractModifierTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractModifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModifierInterface
@@ -56,7 +56,6 @@ abstract class AbstractModifierTest extends \PHPUnit\Framework\TestCase
         $this->productMock = $this->getMockBuilder(ProductInterface::class)
             ->setMethods([
                 'getId',
-                'getTypeId',
                 'getStoreId',
                 'getResource',
                 'getData',

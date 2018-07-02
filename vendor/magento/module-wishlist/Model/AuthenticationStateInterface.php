@@ -6,10 +6,6 @@
  */
 namespace Magento\Wishlist\Model;
 
-/**
- * Interface \Magento\Wishlist\Model\AuthenticationStateInterface
- *
- */
 interface AuthenticationStateInterface
 {
     /**

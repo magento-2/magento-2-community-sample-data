@@ -18,12 +18,12 @@ class InstanceTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
 
         $theme = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->setDefaultDesignTheme()->getDesignTheme();
-        $type = \Magento\Cms\Block\Widget\Page\Link::class;
+        $type = 'Magento\Cms\Block\Widget\Page\Link';
         /** @var $model \Magento\Widget\Model\Widget\Instance */
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Widget\Instance::class
+            'Magento\Widget\Model\Widget\Instance'
         );
         $code = $model->setType($type)->getWidgetReference('type', $type, 'code');
         $this->getRequest()->setParam('code', $code);

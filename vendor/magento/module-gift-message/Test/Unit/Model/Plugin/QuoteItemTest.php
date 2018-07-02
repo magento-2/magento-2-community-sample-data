@@ -5,7 +5,7 @@
  */
 namespace Magento\GiftMessage\Test\Unit\Model\Plugin;
 
-class QuoteItemTest extends \PHPUnit\Framework\TestCase
+class QuoteItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Bundle\Model\Plugin\QuoteItem
@@ -39,27 +39,36 @@ class QuoteItemTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->orderItemMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Item::class,
-            ['setGiftMessageId', 'setGiftMessageAvailable', '__wakeup']
+        $this->orderItemMock = $this->getMock(
+            'Magento\Sales\Model\Order\Item',
+            ['setGiftMessageId', 'setGiftMessageAvailable', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->quoteItemMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\Item::class,
-            ['getGiftMessageId', 'getStoreId', '__wakeup']
+        $this->quoteItemMock = $this->getMock(
+            'Magento\Quote\Model\Quote\Item',
+            ['getGiftMessageId', 'getStoreId', '__wakeup'],
+            [],
+            '',
+            false
         );
         $orderItems = $this->orderItemMock;
         $this->closureMock = function () use ($orderItems) {
             return $orderItems;
         };
-        $this->subjectMock = $this->createMock(\Magento\Quote\Model\Quote\Item\ToOrderItem::class);
-        $this->helperMock = $this->createPartialMock(
-            \Magento\GiftMessage\Helper\Message::class,
-            ['setGiftMessageId', 'isMessagesAllowed']
+        $this->subjectMock = $this->getMock('Magento\Quote\Model\Quote\Item\ToOrderItem', [], [], '', false);
+        $this->helperMock = $this->getMock(
+            'Magento\GiftMessage\Helper\Message',
+            ['setGiftMessageId', 'isMessagesAllowed'],
+            [],
+            '',
+            false
         );
         $this->model = new \Magento\GiftMessage\Model\Plugin\QuoteItem($this->helperMock);
     }
 
-    public function testAfterItemToOrderItem()
+    public function testAroundItemToOrderItem()
     {
         $storeId = 1;
         $giftMessageId = 1;
@@ -90,7 +99,7 @@ class QuoteItemTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             $this->orderItemMock,
-            $this->model->afterConvert($this->subjectMock, $this->orderItemMock, $this->quoteItemMock, [])
+            $this->model->aroundConvert($this->subjectMock, $this->closureMock, $this->quoteItemMock, [])
         );
     }
 }

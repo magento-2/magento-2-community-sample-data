@@ -37,7 +37,7 @@ class OauthHelper
         $integration = self::_createIntegration('all');
         $objectManager = Bootstrap::getObjectManager();
         /** @var $oauthService \Magento\Integration\Api\OauthServiceInterface */
-        $oauthService = $objectManager->get(\Magento\Integration\Api\OauthServiceInterface::class);
+        $oauthService = $objectManager->get('Magento\Integration\Api\OauthServiceInterface');
         $consumer = $oauthService->loadConsumer($integration->getConsumerId());
         $url = TESTS_BASE_URL;
         $consumer->setCallbackUrl($url);
@@ -46,7 +46,7 @@ class OauthHelper
             $consumer->setCreatedAt($date);
         }
         $consumer->save();
-        $token = $objectManager->create(\Magento\Integration\Model\Oauth\Token::class);
+        $token = $objectManager->create('Magento\Integration\Model\Oauth\Token');
         $verifier = $token->createVerifierToken($consumer->getId())->getVerifier();
 
         return [
@@ -112,7 +112,7 @@ class OauthHelper
             $integration = $integrationModel === null ? self::_createIntegration($resources) : $integrationModel;
             $objectManager = Bootstrap::getObjectManager();
             /** @var \Magento\Integration\Api\OauthServiceInterface $oauthService */
-            $oauthService = $objectManager->get(\Magento\Integration\Api\OauthServiceInterface::class);
+            $oauthService = $objectManager->get('Magento\Integration\Api\OauthServiceInterface');
             $oauthService->createAccessToken($integration->getConsumerId());
             $accessToken = $oauthService->getAccessToken($integration->getConsumerId());
             if (!$accessToken) {
@@ -176,7 +176,7 @@ class OauthHelper
     {
         $objectManager = Bootstrap::getObjectManager();
         /** @var $integrationService \Magento\Integration\Api\IntegrationServiceInterface */
-        $integrationService = $objectManager->get(\Magento\Integration\Api\IntegrationServiceInterface::class);
+        $integrationService = $objectManager->get('Magento\Integration\Api\IntegrationServiceInterface');
 
         $params = ['name' => 'Integration' . microtime()];
 

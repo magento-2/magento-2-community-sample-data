@@ -40,13 +40,13 @@ abstract class AbstractBackendController extends \Magento\TestFramework\TestCase
     {
         parent::setUp();
 
-        $this->_objectManager->get(\Magento\Backend\Model\UrlInterface::class)->turnOffSecretKey();
+        $this->_objectManager->get('Magento\Backend\Model\UrlInterface')->turnOffSecretKey();
 
-        $this->_auth = $this->_objectManager->get(\Magento\Backend\Model\Auth::class);
+        $this->_auth = $this->_objectManager->get('Magento\Backend\Model\Auth');
         $this->_session = $this->_auth->getAuthStorage();
         $credentials = $this->_getAdminCredentials();
         $this->_auth->login($credentials['user'], $credentials['password']);
-        $this->_objectManager->get(\Magento\Security\Model\Plugin\Auth::class)->afterLogin($this->_auth);
+        $this->_objectManager->get('Magento\Security\Model\Plugin\Auth')->afterLogin($this->_auth);
     }
 
     /**
@@ -67,24 +67,25 @@ abstract class AbstractBackendController extends \Magento\TestFramework\TestCase
         $this->_auth->getAuthStorage()->destroy(['send_expire_cookie' => false]);
         $this->_auth = null;
         $this->_session = null;
-        $this->_objectManager->get(\Magento\Backend\Model\UrlInterface::class)->turnOnSecretKey();
+        $this->_objectManager->get('Magento\Backend\Model\UrlInterface')->turnOnSecretKey();
         parent::tearDown();
     }
 
     /**
      * Utilize backend session model by default
      *
-     * @param \PHPUnit\Framework\Constraint\Constraint $constraint
+     * @param \PHPUnit_Framework_Constraint $constraint
      * @param string|null $messageType
      * @param string $messageManagerClass
      */
     public function assertSessionMessages(
-        \PHPUnit\Framework\Constraint\Constraint $constraint,
+        \PHPUnit_Framework_Constraint $constraint,
         $messageType = null,
-        $messageManagerClass = \Magento\Framework\Message\Manager::class
+        $messageManagerClass = 'Magento\Framework\Message\Manager'
     ) {
         parent::assertSessionMessages($constraint, $messageType, $messageManagerClass);
     }
+
 
     public function testAclHasAccess()
     {
@@ -101,7 +102,7 @@ abstract class AbstractBackendController extends \Magento\TestFramework\TestCase
         if ($this->resource === null) {
             $this->markTestIncomplete('Acl test is not complete');
         }
-        $this->_objectManager->get(\Magento\Framework\Acl\Builder::class)
+        $this->_objectManager->get('Magento\Framework\Acl\Builder')
             ->getAcl()
             ->deny(null, $this->resource);
         $this->dispatch($this->uri);

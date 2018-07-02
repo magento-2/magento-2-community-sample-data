@@ -9,7 +9,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Class Price
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Price extends \Magento\Checkout\Block\Shipping\Price
 {

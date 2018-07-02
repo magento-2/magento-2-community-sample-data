@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Code\Test\Unit\Minifier\Adapter\Js;
 
-class JShrinkTest extends \PHPUnit\Framework\TestCase
+class JShrinkTest extends \PHPUnit_Framework_TestCase
 {
     public function testMinify()
     {

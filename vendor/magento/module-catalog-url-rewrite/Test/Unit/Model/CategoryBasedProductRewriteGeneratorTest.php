@@ -11,20 +11,26 @@ use Magento\CatalogUrlRewrite\Model\CategoryBasedProductRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 
 /**
- * Class CategoryBasedProductRewriteGeneratorTest
+ * Tests CategoryBasedProductRewriteGenerator class.
  */
-class CategoryBasedProductRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
+class CategoryBasedProductRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Product rewrite generator for scope Mock.
+     *
      * @var ProductScopeRewriteGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
     private $productScopeRewriteGeneratorMock;
 
     /**
+     * Category based product rewrite generator.
      * @var CategoryBasedProductRewriteGenerator
      */
     private $generator;
 
+    /**
+     * @return void
+     */
     public function setUp()
     {
         $this->productScopeRewriteGeneratorMock = $this->getMockBuilder(ProductScopeRewriteGenerator::class)
@@ -36,6 +42,11 @@ class CategoryBasedProductRewriteGeneratorTest extends \PHPUnit\Framework\TestCa
         );
     }
 
+    /**
+     * Covers generate() with global scope.
+     *
+     * @return void
+     */
     public function testGenerationWithGlobalScope()
     {
         $categoryMock = $this->getMockBuilder(Category::class)
@@ -66,6 +77,11 @@ class CategoryBasedProductRewriteGeneratorTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($urls, $this->generator->generate($productMock, $categoryMock, $categoryId));
     }
 
+    /**
+     * Covers generate() with specific store.
+     *
+     * @return void
+     */
     public function testGenerationWithSpecificStore()
     {
         $categoryMock = $this->getMockBuilder(Category::class)

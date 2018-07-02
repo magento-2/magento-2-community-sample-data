@@ -9,7 +9,7 @@
  */
 namespace Magento\ImportExport\Block\Adminhtml\Import\Edit;
 
-class BeforeTest extends \PHPUnit\Framework\TestCase
+class BeforeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test model
@@ -54,9 +54,12 @@ class BeforeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $importModel = $this->createPartialMock(
-            \Magento\ImportExport\Model\Import::class,
-            ['getEntityBehaviors', 'getUniqueEntityBehaviors']
+        $importModel = $this->getMock(
+            'Magento\ImportExport\Model\Import',
+            ['getEntityBehaviors', 'getUniqueEntityBehaviors'],
+            [],
+            '',
+            false
         );
         $importModel->expects(
             $this->any()
@@ -75,7 +78,7 @@ class BeforeTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->_model = $objectManager->create(
-            \Magento\ImportExport\Block\Adminhtml\Import\Edit\Before::class,
+            'Magento\ImportExport\Block\Adminhtml\Import\Edit\Before',
             [
                 'importModel' => $importModel,
             ]
@@ -90,7 +93,7 @@ class BeforeTest extends \PHPUnit\Framework\TestCase
     public function testGetEntityBehaviors()
     {
         $actualEntities = $this->_model->getEntityBehaviors();
-        $expectedEntities = json_encode($this->_expectedEntities);
+        $expectedEntities = \Zend_Json::encode($this->_expectedEntities);
         $this->assertEquals($expectedEntities, $actualEntities);
     }
 
@@ -102,7 +105,7 @@ class BeforeTest extends \PHPUnit\Framework\TestCase
     public function testGetUniqueBehaviors()
     {
         $actualBehaviors = $this->_model->getUniqueBehaviors();
-        $expectedBehaviors = json_encode($this->_expectedBehaviors);
+        $expectedBehaviors = \Zend_Json::encode($this->_expectedBehaviors);
         $this->assertEquals($expectedBehaviors, $actualBehaviors);
     }
 }

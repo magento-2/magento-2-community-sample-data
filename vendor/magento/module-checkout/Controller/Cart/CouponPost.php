@@ -6,6 +6,8 @@
 namespace Magento\Checkout\Controller\Cart;
 
 /**
+ * Coupon Post controller.
+ * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CouponPost extends \Magento\Checkout\Controller\Cart

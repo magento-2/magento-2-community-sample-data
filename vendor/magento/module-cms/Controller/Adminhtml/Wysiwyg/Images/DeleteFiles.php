@@ -5,7 +5,7 @@
  */
 namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
+use \Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Delete image files.
@@ -13,11 +13,15 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class DeleteFiles extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
 {
     /**
+     * Factory for json result.
+     *
      * @var \Magento\Framework\Controller\Result\JsonFactory
      */
     protected $resultJsonFactory;
 
     /**
+     * Factory for raw result.
+     *
      * @var \Magento\Framework\Controller\Result\RawFactory
      */
     protected $resultRawFactory;
@@ -28,8 +32,6 @@ class DeleteFiles extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
     private $directoryResolver;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
@@ -49,6 +51,7 @@ class DeleteFiles extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         $this->resultJsonFactory = $resultJsonFactory;
         $this->directoryResolver = $directoryResolver
             ?: $this->_objectManager->get(\Magento\Framework\App\Filesystem\DirectoryResolver::class);
+
     }
 
     /**
@@ -83,7 +86,7 @@ class DeleteFiles extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
                     $this->getStorage()->deleteFile($filePath);
                 }
             }
-            
+
             return $this->resultRawFactory->create();
         } catch (\Exception $e) {
             $result = ['error' => true, 'message' => $e->getMessage()];

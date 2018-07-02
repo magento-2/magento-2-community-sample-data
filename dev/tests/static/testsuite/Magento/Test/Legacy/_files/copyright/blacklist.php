@@ -5,6 +5,6 @@
  */
 return [
     '/\.(jpe?g|png|gif|ttf|swf|eot|woff|pdf|mp3|pdf|jar|jbf)$/',
-    '/pub\/opt\/magento\/var/',
-    '/COPYING\.txt/'
+    '/pub\/opt\/magento\/var/'
 ];
+

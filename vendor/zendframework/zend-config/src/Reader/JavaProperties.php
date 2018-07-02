@@ -58,7 +58,7 @@ class JavaProperties implements ReaderInterface
     public function fromString($string)
     {
         if (empty($string)) {
-            return [];
+            return array();
         }
 
         $this->directory = null;
@@ -101,7 +101,7 @@ class JavaProperties implements ReaderInterface
      */
     protected function parse($string)
     {
-        $result = [];
+        $result = array();
         $lines = explode("\n", $string);
         $key = "";
         $isWaitingOtherLine = false;

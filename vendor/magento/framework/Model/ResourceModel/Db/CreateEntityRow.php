@@ -5,8 +5,8 @@
  */
 namespace Magento\Framework\Model\ResourceModel\Db;
 
-use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\EntityManager\EntityMetadata;
 
 /**
  * Class ReadEntityRow
@@ -36,6 +36,7 @@ class CreateEntityRow
     {
         $output = [];
         foreach ($metadata->getEntityConnection()->describeTable($metadata->getEntityTable()) as $column) {
+
             if ($column['DEFAULT'] == 'CURRENT_TIMESTAMP' /*|| $column['IDENTITY']*/) {
                 continue;
             }

@@ -11,7 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
 /**
  * Tests Magento\Webapi\Model\Authorization\GuestUserContext
  */
-class GuestUserContextTest extends \PHPUnit\Framework\TestCase
+class GuestUserContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -28,7 +28,7 @@ class GuestUserContextTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->guestUserContext = $this->objectManager->getObject(
-            \Magento\Webapi\Model\Authorization\GuestUserContext::class
+            'Magento\Webapi\Model\Authorization\GuestUserContext'
         );
     }
 

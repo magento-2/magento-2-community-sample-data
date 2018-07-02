@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Block\Backend\Grid;
 
-class ItemsUpdaterTest extends \PHPUnit\Framework\TestCase
+class ItemsUpdaterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param bool $argument
@@ -15,20 +15,14 @@ class ItemsUpdaterTest extends \PHPUnit\Framework\TestCase
     {
         $params = ['change_mode_onthefly' => 1, 'change_mode_changelog' => 2];
 
-        $auth = $this->getMockBuilder(\Magento\Framework\AuthorizationInterface::class)
+        $auth = $this->getMockBuilder('Magento\Framework\AuthorizationInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $auth->expects($this->once())
-            ->method('isAllowed')
-            ->with('Magento_Indexer::changeMode')
-            ->will($this->returnValue($argument));
+        $auth->expects($this->once())->method('isAllowed')->with('Magento_Indexer::changeMode')->will($this->returnValue($argument));
 
         $model = new \Magento\Indexer\Block\Backend\Grid\ItemsUpdater($auth);
         $params = $model->update($params);
-        $this->assertEquals(
-            $argument,
-            (isset($params['change_mode_onthefly']) && isset($params['change_mode_changelog']))
-        );
+        $this->assertEquals($argument, (isset($params['change_mode_onthefly']) && isset($params['change_mode_changelog'])));
     }
 
     /**

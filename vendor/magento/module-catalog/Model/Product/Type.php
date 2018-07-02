@@ -3,17 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/**
+ * Product type model
+ */
 namespace Magento\Catalog\Model\Product;
 
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Product type model
- *
- * @api
- * @since 100.0.2
- */
 class Type implements OptionSourceInterface
 {
     /**#@+
@@ -34,12 +32,12 @@ class Type implements OptionSourceInterface
     /**
      * Default product type model
      */
-    const DEFAULT_TYPE_MODEL = \Magento\Catalog\Model\Product\Type\Simple::class;
+    const DEFAULT_TYPE_MODEL = 'Magento\Catalog\Model\Product\Type\Simple';
 
     /**
      * Default price model
      */
-    const DEFAULT_PRICE_MODEL = \Magento\Catalog\Model\Product\Type\Price::class;
+    const DEFAULT_PRICE_MODEL = 'Magento\Catalog\Model\Product\Type\Price';
 
     /**
      * @var \Magento\Catalog\Model\ProductTypes\ConfigInterface

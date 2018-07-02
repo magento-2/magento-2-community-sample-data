@@ -9,7 +9,6 @@ namespace Magento\Sales\Model\Order\Invoice;
  * Invoice notifier.
  *
  * @api
- * @since 100.1.2
  */
 class Notifier implements \Magento\Sales\Model\Order\Invoice\NotifierInterface
 {
@@ -28,7 +27,6 @@ class Notifier implements \Magento\Sales\Model\Order\Invoice\NotifierInterface
 
     /**
      * {@inheritdoc}
-     * @since 100.1.2
      */
     public function notify(
         \Magento\Sales\Api\Data\OrderInterface $order,

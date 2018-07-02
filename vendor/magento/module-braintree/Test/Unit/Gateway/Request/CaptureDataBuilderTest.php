@@ -8,13 +8,13 @@ namespace Magento\Braintree\Test\Unit\Gateway\Request;
 use Magento\Braintree\Gateway\Request\CaptureDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Class CaptureDataBuilderTest
  */
-class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
+class CaptureDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Braintree\Gateway\Request\CaptureDataBuilder
@@ -33,7 +33,7 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->getMock(PaymentDataObjectInterface::class);
         $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

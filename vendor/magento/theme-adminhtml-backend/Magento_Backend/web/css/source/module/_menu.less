@@ -187,17 +187,6 @@
         display: block;
     }
 
-    // External link marker
-    [target='_blank'] {
-        &:after {
-            &:extend(.abs-icon all);
-            content: @icon-external-link__content;
-            font-size: 0.5rem;
-            margin-left: @indent__xs;
-            vertical-align: super;
-        }
-    }
-
     .level-0 {
         &:first-child {
             > a {
@@ -262,7 +251,7 @@
             transition-timing-function: ease-in-out;
             visibility: hidden;
             z-index: @submenu__z-index - 1;
-
+            
             .ie10 &,
             .ie11 & {
                 height: 100%;
@@ -332,6 +321,7 @@
             margin-bottom: 4.5rem;
 
             //  Section title
+            > a, // ToDo UI: Should be deleted after template changes a -> strong.submenu-group-title
             .submenu-group-title {
                 color: @submenu-section-label__color;
                 display: block;
@@ -512,12 +502,6 @@
             }
         }
     }
-
-    //  This part hides Submenu Group Titles only for menus with single groups.
-    .submenu .column:only-of-type .submenu-group-title,
-    .level-0 > .submenu > ul > .level-1:only-of-type > .submenu-group-title {
-        display: none;
-    }
 }
 
 .admin__menu-overlay {
@@ -542,4 +526,3 @@
         }
     }
 }
-

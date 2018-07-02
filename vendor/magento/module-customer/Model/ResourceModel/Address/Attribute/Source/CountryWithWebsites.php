@@ -43,11 +43,10 @@ class CountryWithWebsites extends \Magento\Eav\Model\Entity\Attribute\Source\Tab
     private $shareConfig;
 
     /**
-     * CountryWithWebsites constructor.
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory $attrOptionFactory
      * @param \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countriesFactory
-     * @param AllowedCountries $allowedCountriesReader
+     * @param AllowedCountries $allowedCountries
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Share $shareConfig
      */
@@ -55,12 +54,12 @@ class CountryWithWebsites extends \Magento\Eav\Model\Entity\Attribute\Source\Tab
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory $attrOptionFactory,
         \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countriesFactory,
-        \Magento\Directory\Model\AllowedCountries $allowedCountriesReader,
+        \Magento\Directory\Model\AllowedCountries $allowedCountries,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Customer\Model\Config\Share $shareConfig
     ) {
         $this->countriesFactory = $countriesFactory;
-        $this->allowedCountriesReader = $allowedCountriesReader;
+        $this->allowedCountriesReader = $allowedCountries;
         $this->storeManager = $storeManager;
         $this->shareConfig = $shareConfig;
         parent::__construct($attrOptionCollectionFactory, $attrOptionFactory);

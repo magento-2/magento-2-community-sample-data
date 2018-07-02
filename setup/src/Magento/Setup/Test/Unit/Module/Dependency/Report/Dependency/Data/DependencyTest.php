@@ -9,7 +9,7 @@ use \Magento\Setup\Module\Dependency\Report\Dependency\Data\Dependency;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DependencyTest extends \PHPUnit\Framework\TestCase
+class DependencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $module
@@ -20,7 +20,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
         return $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Dependency\Report\Dependency\Data\Dependency::class,
+            'Magento\Setup\Module\Dependency\Report\Dependency\Data\Dependency',
             ['module' => $module, 'type' => $type]
         );
     }

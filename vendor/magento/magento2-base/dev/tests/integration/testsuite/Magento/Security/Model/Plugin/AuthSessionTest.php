@@ -8,7 +8,7 @@ namespace Magento\Security\Model\Plugin;
 /**
  * @magentoAppIsolation enabled
  */
-class AuthSessionTest extends \PHPUnit\Framework\TestCase
+class AuthSessionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth
@@ -41,6 +41,13 @@ class AuthSessionTest extends \PHPUnit\Framework\TestCase
     protected $dateTime;
 
     /**
+     * Session Manager.
+     *
+     * @var \Magento\Framework\Session\SessionManager
+     */
+    private $sessionManager;
+
+    /**
      * @var \Magento\Security\Model\ConfigInterface
      */
     protected $securityConfig;
@@ -53,6 +60,7 @@ class AuthSessionTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $this->sessionManager = $this->objectManager->create(\Magento\Framework\Session\SessionManager::class);
         $this->objectManager->get(\Magento\Framework\Config\ScopeInterface::class)
             ->setCurrentScope(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $this->auth = $this->objectManager->create(\Magento\Backend\Model\Auth::class);

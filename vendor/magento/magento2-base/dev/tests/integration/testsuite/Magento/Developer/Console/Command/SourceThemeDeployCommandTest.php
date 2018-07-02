@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @see \Magento\Developer\Console\Command\SourceThemeDeployCommand
  */
-class SourceThemeDeployCommandTest extends \PHPUnit\Framework\TestCase
+class SourceThemeDeployCommandTest extends \PHPUnit_Framework_TestCase
 {
     const PUB_STATIC_DIRECTORY = 'pub/static';
 
@@ -87,17 +87,15 @@ class SourceThemeDeployCommandTest extends \PHPUnit\Framework\TestCase
      */
     private function clearStaticDirectory()
     {
-        if (is_dir($this->pubStatic)) {
-            /** @var \SplFileInfo $file */
-            foreach ($this->collectFiles($this->pubStatic) as $file) {
-                @unlink($file->getPathname());
-            }
+        /** @var \SplFileInfo $file */
+        foreach ($this->collectFiles($this->pubStatic) as $file) {
+            @unlink($file->getPathname());
         }
     }
 
     /**
      * @param string $path
-     * @return \RegexIterator|array
+     * @return \RegexIterator
      */
     private function collectFiles($path)
     {

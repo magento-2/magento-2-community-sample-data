@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\App\Cache;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\SerializerInterface;
-
 class TypeList implements TypeListInterface
 {
     const INVALIDATED_TYPES = 'core_cache_invalidate';
@@ -33,29 +30,21 @@ class TypeList implements TypeListInterface
     protected $_cache;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\Cache\ConfigInterface $config
      * @param StateInterface $cacheState
      * @param InstanceFactory $factory
      * @param \Magento\Framework\App\CacheInterface $cache
-     * @param SerializerInterface $serializer
      */
     public function __construct(
         \Magento\Framework\Cache\ConfigInterface $config,
         StateInterface $cacheState,
         InstanceFactory $factory,
-        \Magento\Framework\App\CacheInterface $cache,
-        SerializerInterface $serializer = null
+        \Magento\Framework\App\CacheInterface $cache
     ) {
         $this->_config = $config;
         $this->_factory = $factory;
         $this->_cacheState = $cacheState;
         $this->_cache = $cache;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
     }
 
     /**
@@ -83,7 +72,7 @@ class TypeList implements TypeListInterface
     {
         $types = $this->_cache->load(self::INVALIDATED_TYPES);
         if ($types) {
-            $types = $this->serializer->unserialize($types);
+            $types = unserialize($types);
         } else {
             $types = [];
         }
@@ -98,7 +87,7 @@ class TypeList implements TypeListInterface
      */
     protected function _saveInvalidatedTypes($types)
     {
-        $this->_cache->save($this->serializer->serialize($types), self::INVALIDATED_TYPES);
+        $this->_cache->save(serialize($types), self::INVALIDATED_TYPES);
     }
 
     /**

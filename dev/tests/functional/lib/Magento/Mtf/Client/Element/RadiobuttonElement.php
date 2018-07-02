@@ -35,7 +35,6 @@ class RadiobuttonElement extends SimpleElement
     public function getValue()
     {
         $this->eventManager->dispatchEvent(['get_value'], [$this->getAbsoluteSelector()]);
-
         return $this->find($this->selectedLabelSelector)->getText();
     }
 
@@ -48,7 +47,6 @@ class RadiobuttonElement extends SimpleElement
     public function setValue($value)
     {
         $this->eventManager->dispatchEvent(['set_value'], [__METHOD__, $this->getAbsoluteSelector()]);
-
         $radioButtonLabel = $this->find(sprintf($this->labelSelector, $value), Locator::SELECTOR_XPATH);
         if (!$this->isSelected()) {
             $radioButtonLabel->click();

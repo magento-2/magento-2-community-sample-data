@@ -11,7 +11,7 @@ namespace Magento\Theme\Test\Unit\Model\Uploader;
 
 use Magento\Framework\Convert\DataSize;
 
-class ServiceTest extends \PHPUnit\Framework\TestCase
+class ServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Theme\Model\Uploader\Service
@@ -55,15 +55,24 @@ class ServiceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_uploader = $this->createMock(\Magento\MediaStorage\Model\File\Uploader::class);
+        $this->_uploader = $this->getMock('Magento\MediaStorage\Model\File\Uploader', [], [], '', false);
         $this->dataSize = new DataSize();
-        $this->_uploaderFactory = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\UploaderFactory::class,
-            ['create']
+        $this->_uploaderFactory = $this->getMock(
+            'Magento\MediaStorage\Model\File\UploaderFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->_uploaderFactory->expects($this->any())->method('create')->will($this->returnValue($this->_uploader));
-        $this->_directoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
-        $this->_filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->_directoryMock = $this->getMock(
+            'Magento\Framework\Filesystem\Directory\Read',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
         $this->_filesystemMock->expects(
             $this->any()
         )->method(
@@ -74,7 +83,7 @@ class ServiceTest extends \PHPUnit\Framework\TestCase
         /** @var $service \Magento\Theme\Model\Uploader\Service */
 
         $this->_fileSizeMock = $this->getMockBuilder(
-            \Magento\Framework\File\Size::class
+            'Magento\Framework\File\Size'
         )->setMethods(
             ['getMaxFileSize']
         )->disableOriginalConstructor()->getMock();

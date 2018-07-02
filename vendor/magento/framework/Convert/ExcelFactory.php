@@ -25,7 +25,7 @@ class ExcelFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Convert\Excel::class
+        $instanceName = '\\Magento\\Framework\\Convert\\Excel'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

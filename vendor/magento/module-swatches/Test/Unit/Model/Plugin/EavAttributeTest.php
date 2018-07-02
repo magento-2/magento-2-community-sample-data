@@ -9,7 +9,7 @@ namespace Magento\Swatches\Test\Unit\Model\Plugin;
 use Magento\Swatches\Model\Plugin\EavAttribute;
 use Magento\Swatches\Model\Swatch;
 
-class EavAttributeTest extends \PHPUnit\Framework\TestCase
+class EavAttributeTest extends \PHPUnit_Framework_TestCase
 {
     const ATTRIBUTE_ID = 123;
     const OPTION_ID = 'option 12';
@@ -56,33 +56,32 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attribute = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
-        $this->swatchFactory = $this->createPartialMock(\Magento\Swatches\Model\SwatchFactory::class, ['create']);
-        $this->swatchHelper = $this->createMock(\Magento\Swatches\Helper\Data::class);
-        $this->swatch = $this->createMock(\Magento\Swatches\Model\Swatch::class);
-        $this->resource = $this->createMock(\Magento\Swatches\Model\ResourceModel\Swatch::class);
+        $this->attribute = $this->getMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, [], [], '', false);
+        $this->swatchFactory = $this->getMock(\Magento\Swatches\Model\SwatchFactory::class, ['create'], [], '', false);
+        $this->swatchHelper = $this->getMock(\Magento\Swatches\Helper\Data::class, [], [], '', false);
+        $this->swatch = $this->getMock(\Magento\Swatches\Model\Swatch::class, [], [], '', false);
+        $this->resource = $this->getMock(\Magento\Swatches\Model\ResourceModel\Swatch::class, [], [], '', false);
         $this->collection =
-            $this->createMock(\Magento\Swatches\Model\ResourceModel\Swatch\Collection::class);
-        $this->collectionFactory = $this->createPartialMock(
+            $this->getMock(\Magento\Swatches\Model\ResourceModel\Swatch\Collection::class, [], [], '', false);
+        $this->collectionFactory = $this->getMock(
             \Magento\Swatches\Model\ResourceModel\Swatch\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->abstractSource = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class);
-
-        $serializer = $this->createPartialMock(
-            \Magento\Framework\Serialize\Serializer\Json::class,
-            ['serialize', 'unserialize']
+        $this->abstractSource = $this->getMock(
+            \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class,
+            [],
+            [],
+            '',
+            false
         );
 
-        $serializer->expects($this->any())
-            ->method('serialize')->willReturnCallback(function ($parameter) {
-                return json_encode($parameter);
-            });
-
-        $serializer->expects($this->any())
-            ->method('unserialize')->willReturnCallback(function ($parameter) {
-                return json_decode($parameter, true);
-            });
+        $secureUnserializer = $this->getMock(
+            \Magento\Framework\Unserialize\SecureUnserializer::class,
+            ['unserialize']
+        );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->eavAttribute = $objectManager->getObject(
@@ -91,9 +90,14 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
                 'collectionFactory' => $this->collectionFactory,
                 'swatchFactory' => $this->swatchFactory,
                 'swatchHelper' => $this->swatchHelper,
-                'serializer' => $serializer,
+                'secureUnserializer' => $secureUnserializer,
             ]
         );
+
+        $secureUnserializer->expects($this->any())
+            ->method('unserialize')->willReturnCallback(function ($parameter) {
+                return unserialize($parameter);
+            });
 
         $this->optionIds = [
             'value' => ['option 89' => 'test 1', 'option 114' => 'test 2', 'option 170' => 'test 3'],
@@ -191,7 +195,7 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\InputException
-     * @expectedExceptionMessage Admin is a required field in each row
+     * @expectedExceptionMessage Admin is a required field in the each row
      */
     public function testBeforeSaveWithFailedValidation()
     {
@@ -269,7 +273,7 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
                     false
                 )
             );
-        $this->eavAttribute->beforeBeforeSave($this->attribute);
+         $this->eavAttribute->beforeBeforeSave($this->attribute);
     }
 
     public function testBeforeSaveNotSwatch()
@@ -290,13 +294,13 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
             ['additional_data']
         )->willReturnOnConsecutiveCalls(
             Swatch::SWATCH_INPUT_TYPE_DROPDOWN,
-            json_encode($additionalData)
+            serialize($additionalData)
         );
 
         $this->attribute
             ->expects($this->once())
             ->method('setData')
-            ->with('additional_data', json_encode($shortAdditionalData))
+            ->with('additional_data', serialize($shortAdditionalData))
             ->will($this->returnSelf());
 
         $this->swatchHelper->expects($this->never())->method('assembleAdditionalDataEavAttribute');
@@ -385,6 +389,11 @@ class EavAttributeTest extends \PHPUnit\Framework\TestCase
         $this->eavAttribute->afterAfterSave($this->attribute);
     }
 
+    /**
+     * Tests afterAfterSave() for test swatch attribute.
+     *
+     * @return void
+     */
     public function testDefaultTextualSwatchAfterSave()
     {
         $this->abstractSource->expects($this->once())->method('getAllOptions')

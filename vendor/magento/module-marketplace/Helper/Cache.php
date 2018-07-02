@@ -6,8 +6,7 @@
 
 namespace Magento\Marketplace\Helper;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Filesystem;
 
 /**
  * Cache helper
@@ -27,22 +26,14 @@ class Cache extends \Magento\Framework\App\Helper\AbstractHelper
     protected $cache;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Framework\Config\CacheInterface $cache
-     * @param SerializerInterface $serializer
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\Config\CacheInterface $cache,
-        SerializerInterface $serializer = null
+        \Magento\Framework\Config\CacheInterface $cache
     ) {
         $this->cache = $cache;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         parent::__construct($context);
     }
 
@@ -55,7 +46,7 @@ class Cache extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->getCache()->load($this->pathToCacheFile);
         if (false !== $data) {
-            $data = $this->serializer->unserialize($data);
+            $data = unserialize($data);
         }
         return $data;
     }
@@ -68,7 +59,7 @@ class Cache extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function savePartnersToCache($partners)
     {
-        return $this->getCache()->save($this->serializer->serialize($partners), $this->pathToCacheFile);
+        return $this->getCache()->save(serialize($partners), $this->pathToCacheFile);
     }
 
     /**

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Cache\Test\Unit\Backend;
 
-class MongoDbTest extends \PHPUnit\Framework\TestCase
+class MongoDbTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Cache\Backend\MongoDb|null
@@ -19,10 +19,20 @@ class MongoDbTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_collection = $this->getMockBuilder('MongoCollection')
-            ->setMethods(['find', 'findOne', 'distinct', 'save', 'update', 'remove', 'drop'])
-            ->getMock();
-        $this->_model = $this->createPartialMock(\Magento\Framework\Cache\Backend\MongoDb::class, ['_getCollection']);
+        $this->_collection = $this->getMock(
+            'MongoCollection',
+            ['find', 'findOne', 'distinct', 'save', 'update', 'remove', 'drop'],
+            [],
+            '',
+            false
+        );
+        $this->_model = $this->getMock(
+            'Magento\Framework\Cache\Backend\MongoDb',
+            ['_getCollection'],
+            [],
+            '',
+            false
+        );
         $this->_model->expects($this->any())->method('_getCollection')->will($this->returnValue($this->_collection));
     }
 

@@ -52,7 +52,7 @@ class FilterIterator extends SplPriorityQueue
 
         // Iterate and remove any matches
         $removed = false;
-        $items   = [];
+        $items   = array();
         $this->rewind();
         while (!$this->isEmpty()) {
             $item = $this->extract();
@@ -82,14 +82,9 @@ class FilterIterator extends SplPriorityQueue
      * @param  FilterIterator $chain
      * @return mixed
      */
-    public function next($context = null, array $params = [], $chain = null)
+    public function next($context = null, array $params = array(), $chain = null)
     {
-        if (empty($context) || ($chain instanceof FilterIterator && $chain->isEmpty())) {
-            return;
-        }
-
-        //We can't extract from an empty heap
-        if ($this->isEmpty()) {
+        if (empty($context) || $chain->isEmpty()) {
             return;
         }
 

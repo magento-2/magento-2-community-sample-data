@@ -8,8 +8,7 @@ namespace Magento\ImportExport\Model\Source\Import;
 /**
  * Source import entity model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Entity implements \Magento\Framework\Option\ArrayInterface
 {

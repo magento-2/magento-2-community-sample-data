@@ -5,14 +5,14 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\PaymentDataBuilder;
 use Magento\Braintree\Gateway\Request\RefundDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
+class RefundDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RefundDataBuilder
@@ -26,7 +26,7 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuild()
     {
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -50,7 +50,7 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNullAmount()
     {
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -74,7 +74,7 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildCutOffLegacyTransactionIdPostfix()
     {
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

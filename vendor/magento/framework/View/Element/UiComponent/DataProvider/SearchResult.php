@@ -12,13 +12,10 @@ use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Psr\Log\LoggerInterface as Logger;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class SearchResult
  * Generic Search Result
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SearchResult extends AbstractCollection implements Api\Search\SearchResultInterface
 {
@@ -43,25 +40,12 @@ class SearchResult extends AbstractCollection implements Api\Search\SearchResult
     protected $document = Document::class;
 
     /**
-     * @var ResourceConnection
-     */
-    private $resourceConnection;
-
-    /**
-     * @var string
-     */
-    private $identifierName;
-
-    /**
-     * SearchResult constructor.
      * @param EntityFactory $entityFactory
      * @param Logger $logger
      * @param FetchStrategy $fetchStrategy
      * @param EventManager $eventManager
      * @param string $mainTable
-     * @param null|string $resourceModel
-     * @param null|string $identifierName
-     * @param null|string $connectionName
+     * @param string $resourceModel
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
@@ -70,40 +54,20 @@ class SearchResult extends AbstractCollection implements Api\Search\SearchResult
         FetchStrategy $fetchStrategy,
         EventManager $eventManager,
         $mainTable,
-        $resourceModel = null,
-        $identifierName = null,
-        $connectionName = null
+        $resourceModel
     ) {
         $this->_init($this->document, $resourceModel);
         $this->setMainTable(true);
-        if ($connectionName) {
-            $connection  = $this->getResourceConnection()->getConnectionByName($connectionName);
-        } else {
-            $connection = $this->getResourceConnection()->getConnection();
-        }
-        $this->setMainTable($this->getResourceConnection()->getTableName($mainTable));
-        $this->identifierName = $identifierName;
+        $this->setMainTable($this->_resource->getTable($mainTable));
         parent::__construct(
             $entityFactory,
             $logger,
             $fetchStrategy,
             $eventManager,
-            $connection,
+            null,
             null
         );
-        $this->_setIdFieldName($this->getIdentifierName());
-    }
-
-    /**
-     * @deprecated 100.2.0
-     * @return ResourceConnection
-     */
-    private function getResourceConnection()
-    {
-        if ($this->resourceConnection == null) {
-            $this->resourceConnection = ObjectManager::getInstance()->get(ResourceConnection::class);
-        }
-        return $this->resourceConnection;
+        $this->_setIdFieldName($this->getResource()->getIdFieldName());
     }
 
     /**
@@ -112,19 +76,6 @@ class SearchResult extends AbstractCollection implements Api\Search\SearchResult
     public function getAggregations()
     {
         return $this->aggregations;
-    }
-
-    /**
-     *  Get resource instance
-     *
-     * @return ResourceConnection|\Magento\Framework\Model\ResourceModel\Db\AbstractDb
-     */
-    public function getResource()
-    {
-        if ($this->_resourceModel) {
-            return parent::getResource();
-        }
-        return $this->getResourceConnection();
     }
 
     /**
@@ -191,63 +142,5 @@ class SearchResult extends AbstractCollection implements Api\Search\SearchResult
             unset($this->totalCount);
         }
         return $this;
-    }
-
-    /**
-     * Retrieve table name
-     *
-     * @param string $table
-     * @return string
-     */
-    public function getTable($table)
-    {
-        return $this->getResourceConnection()->getTableName($table);
-    }
-
-    /**
-     * Get Identifier name
-     *
-     * @return string|bool
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function getIdentifierName()
-    {
-        if ($this->_resourceModel) {
-            return $this->getResource()->getIdFieldName();
-        } elseif ($this->identifierName !== null) {
-            return $this->identifierName;
-        } else {
-            return $this->getResourceConnection()->getConnection()->getAutoIncrementField($this->getMainTable());
-        }
-    }
-
-    /**
-     * Initialize initial fields to select like id field
-     *
-     * @return $this
-     */
-    protected function _initInitialFieldsToSelect()
-    {
-        $idFieldName = $this->getIdentifierName();
-        if ($idFieldName) {
-            $this->_initialFieldsToSelect[] = $idFieldName;
-        }
-        return $this;
-    }
-
-    /**
-     * Retrieve all ids for collection
-     *
-     * @return array
-     */
-    public function getAllIds()
-    {
-        $idsSelect = clone $this->getSelect();
-        $idsSelect->reset(\Magento\Framework\DB\Select::ORDER);
-        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
-        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
-        $idsSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
-        $idsSelect->columns($this->getIdentifierName(), 'main_table');
-        return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Controller;
 
 use \Magento\Setup\Controller\CustomizeYourStore;
 
-class CustomizeYourStoreTest extends \PHPUnit\Framework\TestCase
+class CustomizeYourStoreTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Controller\CustomizeYourStore
@@ -37,12 +37,18 @@ class CustomizeYourStoreTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $this->objectManager = $this->createMock(\Magento\Framework\App\ObjectManager::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $this->objectManager = $this->getMock('Magento\Framework\App\ObjectManager', [], [], '', false);
         $objectManagerProvider->expects($this->any())->method('get')->willReturn($this->objectManager);
-        $this->sampleDataState = $this->createMock(\Magento\Framework\Setup\SampleData\State::class);
-        $this->lists = $this->createMock(\Magento\Framework\Setup\Lists::class);
-        $this->moduleList = $this->createMock(\Magento\Framework\Module\FullModuleList::class);
+        $this->sampleDataState = $this->getMock(
+            'Magento\Framework\Setup\SampleData\State',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->lists = $this->getMock('\Magento\Framework\Setup\Lists', [], [], '', false);
+        $this->moduleList = $this->getMock('Magento\Framework\Module\FullModuleList', [], [], '', false);
         $this->controller = new CustomizeYourStore($this->moduleList, $this->lists, $objectManagerProvider);
     }
 
@@ -71,7 +77,7 @@ class CustomizeYourStoreTest extends \PHPUnit\Framework\TestCase
 
         $viewModel = $this->controller->indexAction();
 
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
 
         $variables = $viewModel->getVariables();
@@ -109,7 +115,7 @@ class CustomizeYourStoreTest extends \PHPUnit\Framework\TestCase
     public function testDefaultTimeZoneAction()
     {
         $jsonModel = $this->controller->defaultTimeZoneAction();
-        $this->assertInstanceOf(\Zend\View\Model\JsonModel::class, $jsonModel);
+        $this->assertInstanceOf('Zend\View\Model\JsonModel', $jsonModel);
         $this->assertArrayHasKey('defaultTimeZone', $jsonModel->getVariables());
     }
 }

@@ -13,7 +13,7 @@ use Magento\Downloadable\Model\Sample\Builder;
 /**
  * Class BuilderTest
  */
-class BuilderTest extends \PHPUnit\Framework\TestCase
+class BuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -60,7 +60,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             \Magento\Framework\Api\DataObjectHelper::class
         )->disableOriginalConstructor()->getMock();
 
-        $this->mockComponentFactory = $this->getMockBuilder(\Magento\Downloadable\Model\SampleFactory::class)
+        $this->mockComponentFactory = $this->getMockBuilder('\Magento\Downloadable\Model\SampleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

@@ -11,7 +11,7 @@ use \Magento\Authorization\Model\UserContextInterface;
 /**
  * Test Magento\Webapi\Controller\Rest\ParamsOverrider
  */
-class ParamsOverriderTest extends \PHPUnit\Framework\TestCase
+class ParamsOverriderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $requestData Data from the request
@@ -26,19 +26,19 @@ class ParamsOverriderTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $userContextMock = $this->getMockBuilder(\Magento\Authorization\Model\UserContextInterface::class)
+        $userContextMock = $this->getMockBuilder('Magento\Authorization\Model\UserContextInterface')
             ->disableOriginalConstructor()->setMethods(['getUserId', 'getUserType'])->getMockForAbstractClass();
         $userContextMock->expects($this->any())->method('getUserId')->will($this->returnValue($userId));
         $userContextMock->expects($this->any())->method('getUserType')->will($this->returnValue($userType));
 
         $paramOverriderCustomerId = $objectManager->getObject(
-            \Magento\Webapi\Controller\Rest\ParamOverriderCustomerId::class,
+            'Magento\Webapi\Controller\Rest\ParamOverriderCustomerId',
             ['userContext' => $userContextMock]
         );
 
         /** @var \Magento\Webapi\Controller\Rest\ParamsOverrider $paramsOverrider */
         $paramsOverrider = $objectManager->getObject(
-            \Magento\Webapi\Controller\Rest\ParamsOverrider::class,
+            'Magento\Webapi\Controller\Rest\ParamsOverrider',
             ['paramOverriders' => ['%customer_id%' => $paramOverriderCustomerId ]]
         );
 

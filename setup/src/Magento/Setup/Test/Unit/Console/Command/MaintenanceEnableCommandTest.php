@@ -10,7 +10,7 @@ use Magento\Setup\Console\Command\MaintenanceEnableCommand;
 use Magento\Setup\Validator\IpValidator;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class MaintenanceEnableCommandTest extends \PHPUnit\Framework\TestCase
+class MaintenanceEnableCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\MaintenanceMode|\PHPUnit_Framework_MockObject_MockObject
@@ -29,8 +29,8 @@ class MaintenanceEnableCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
-        $this->ipValidator = $this->createMock(\Magento\Setup\Validator\IpValidator::class);
+        $this->maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
+        $this->ipValidator = $this->getMock('Magento\Setup\Validator\IpValidator', [], [], '', false);
         $this->command = new MaintenanceEnableCommand($this->maintenanceMode, $this->ipValidator);
     }
 
@@ -51,6 +51,7 @@ class MaintenanceEnableCommandTest extends \PHPUnit\Framework\TestCase
         $tester = new CommandTester($this->command);
         $tester->execute($input);
         $this->assertEquals($expectedMessage, $tester->getDisplay());
+
     }
 
     /**

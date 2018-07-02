@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Test class for \Magento\Security\Model\Plugin\Auth testing
  */
-class AuthTest extends \PHPUnit\Framework\TestCase
+class AuthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var  \Magento\Security\Model\Plugin\Auth
@@ -51,27 +51,39 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->sessionsManager = $this->createPartialMock(
-            \Magento\Security\Model\AdminSessionsManager::class,
-            ['processLogin', 'processLogout', 'getCurrentSession']
+        $this->sessionsManager =  $this->getMock(
+            '\Magento\Security\Model\AdminSessionsManager',
+            ['processLogin', 'processLogout', 'getCurrentSession'],
+            [],
+            '',
+            false
         );
 
         $this->messageManager = $this->getMockForAbstractClass(
-            \Magento\Framework\Message\ManagerInterface::class,
+            '\Magento\Framework\Message\ManagerInterface',
             ['addWarning'],
             '',
             false
         );
 
-        $this->currentSession = $this->createPartialMock(
-            \Magento\Security\Model\AdminSessionInfo::class,
-            ['isOtherSessionsTerminated']
+        $this->currentSession =  $this->getMock(
+            '\Magento\Security\Model\AdminSessionInfo',
+            ['isOtherSessionsTerminated'],
+            [],
+            '',
+            false
         );
 
-        $this->authMock =  $this->createMock(\Magento\Backend\Model\Auth::class);
+        $this->authMock =  $this->getMock(
+            '\Magento\Backend\Model\Auth',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->model = $this->objectManager->getObject(
-            \Magento\Security\Model\Plugin\Auth::class,
+            '\Magento\Security\Model\Plugin\Auth',
             [
                 'sessionsManager' => $this->sessionsManager,
                 'messageManager' =>$this->messageManager

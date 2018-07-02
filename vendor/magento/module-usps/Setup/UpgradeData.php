@@ -10,6 +10,9 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 
+/**
+ * Upgrade script for USPS module.
+ */
 class UpgradeData implements UpgradeDataInterface
 {
     /**
@@ -33,7 +36,7 @@ class UpgradeData implements UpgradeDataInterface
         $installer = $setup;
         $configDataTable = $installer->getTable('core_config_data');
         $connection = $installer->getConnection();
-
+        
         $oldToNewMethodCodesMap = [
             'First-Class' => '0_FCLE',
             'First-Class Mail International Large Envelope' => 'INT_14',
@@ -78,7 +81,7 @@ class UpgradeData implements UpgradeDataInterface
             'Priority Mail International Medium Flat Rate Box' => 'INT_9',
             'Priority Mail International Large Flat Rate Box' => 'INT_11',
         ];
-
+        
         $select = $connection->select()
             ->from($configDataTable)
             ->where(
@@ -86,7 +89,7 @@ class UpgradeData implements UpgradeDataInterface
                 ['carriers/usps/free_method', 'carriers/usps/allowed_methods']
             );
         $oldConfigValues = $connection->fetchAll($select);
-
+        
         foreach ($oldConfigValues as $oldValue) {
             if (stripos($oldValue['path'], 'free_method') && isset($oldToNewMethodCodesMap[$oldValue['value']])) {
                 $newValue = $oldToNewMethodCodesMap[$oldValue['value']];
@@ -101,11 +104,12 @@ class UpgradeData implements UpgradeDataInterface
             } else {
                 continue;
             }
-
+        
             if ($newValue && $newValue != $oldValue['value']) {
                 $whereConfigId = $connection->quoteInto('config_id = ?', $oldValue['config_id']);
                 $connection->update($configDataTable, ['value' => $newValue], $whereConfigId);
             }
         }
+        
     }
 }

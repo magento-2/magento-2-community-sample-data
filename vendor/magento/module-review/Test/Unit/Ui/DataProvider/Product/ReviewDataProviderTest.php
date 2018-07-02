@@ -14,7 +14,7 @@ use Magento\Review\Ui\DataProvider\Product\ReviewDataProvider;
 /**
  * Class ReviewDataProviderTest
  */
-class ReviewDataProviderTest extends \PHPUnit\Framework\TestCase
+class ReviewDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReviewDataProvider

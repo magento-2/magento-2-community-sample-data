@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Test\Unit\Controller\Adminhtml\Dashboard;
 
 /**
@@ -14,8 +16,8 @@ class CustomersNewestTest extends AbstractTestCase
     public function testExecute()
     {
         $this->assertExecute(
-            \Magento\Backend\Controller\Adminhtml\Dashboard\CustomersNewest::class,
-            \Magento\Backend\Block\Dashboard\Tab\Customers\Newest::class
+            'Magento\Backend\Controller\Adminhtml\Dashboard\CustomersNewest',
+            'Magento\Backend\Block\Dashboard\Tab\Customers\Newest'
         );
     }
 }

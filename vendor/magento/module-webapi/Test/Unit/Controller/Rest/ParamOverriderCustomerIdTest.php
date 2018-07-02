@@ -10,7 +10,7 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Webapi\Controller\Rest\ParamOverriderCustomerId;
 
-class ParamOverriderCustomerIdTest extends \PHPUnit\Framework\TestCase
+class ParamOverriderCustomerIdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ParamOverriderCustomerId
@@ -24,10 +24,10 @@ class ParamOverriderCustomerIdTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->userContext = $this->getMockBuilder(\Magento\Authorization\Model\UserContextInterface::class)
+        $this->userContext = $this->getMockBuilder('Magento\Authorization\Model\UserContextInterface')
             ->getMockForAbstractClass();
         $this->model = (new ObjectManager($this))->getObject(
-            \Magento\Webapi\Controller\Rest\ParamOverriderCustomerId::class,
+            'Magento\Webapi\Controller\Rest\ParamOverriderCustomerId',
             [
                 'userContext' => $this->userContext
             ]

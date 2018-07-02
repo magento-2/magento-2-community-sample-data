@@ -6,10 +6,6 @@
  */
 namespace Magento\Catalog\Model\Layer;
 
-/**
- * Interface \Magento\Catalog\Model\Layer\StateKeyInterface
- *
- */
 interface StateKeyInterface
 {
     /**

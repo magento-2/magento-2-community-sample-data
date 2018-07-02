@@ -189,7 +189,7 @@ abstract class AbstractExtensibleModel extends AbstractModel implements
     {
         if (is_array($key)) {
             $key = $this->filterCustomAttributes($key);
-        } elseif ($key == self::CUSTOM_ATTRIBUTES) {
+        } else if ($key == self::CUSTOM_ATTRIBUTES) {
             $filteredData = $this->filterCustomAttributes([self::CUSTOM_ATTRIBUTES => $value]);
             $value = $filteredData[self::CUSTOM_ATTRIBUTES];
         }
@@ -259,18 +259,12 @@ abstract class AbstractExtensibleModel extends AbstractModel implements
             $data = parent::getData($key, $index);
             if ($data === null) {
                 /** Try to find necessary data in custom attributes */
-                $data = isset($this->_data[self::CUSTOM_ATTRIBUTES][$key])
-                    ? $this->_data[self::CUSTOM_ATTRIBUTES][$key]
-                    : null;
+                $data = parent::getData(self::CUSTOM_ATTRIBUTES . "/{$key}", $index);
                 if ($data instanceof \Magento\Framework\Api\AttributeValue) {
                     $data = $data->getValue();
                 }
-                if (null !== $index && isset($data[$index])) {
-                    return $data[$index];
-                }
             }
         }
-
         return $data;
     }
 

@@ -6,7 +6,7 @@
 
 namespace Magento\Marketplace\Test\Unit\Controller\Partners;
 
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Marketplace\Controller\Adminhtml\Partners\Index
@@ -75,7 +75,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getControllerIndexMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Marketplace\Controller\Adminhtml\Partners\Index::class, $methods);
+        return $this->getMock('Magento\Marketplace\Controller\Adminhtml\Partners\Index', $methods, [], '', false);
     }
 
     /**
@@ -83,7 +83,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getLayoutFactoryMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\View\LayoutFactory::class, $methods, []);
+        return $this->getMock('Magento\Framework\View\LayoutFactory', $methods, [], '', false);
     }
 
     /**
@@ -91,7 +91,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getLayoutMock()
     {
-        return $this->getMockForAbstractClass(\Magento\Framework\View\LayoutInterface::class);
+        return $this->getMockForAbstractClass('Magento\Framework\View\LayoutInterface');
     }
 
     /**
@@ -99,7 +99,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getResponseMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\HTTP\PhpEnvironment\Response::class, $methods, []);
+        return $this->getMock('Magento\Framework\HTTP\PhpEnvironment\Response', $methods, [], '', false);
     }
 
     /**
@@ -107,7 +107,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getRequestMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\App\Request\Http::class, $methods, []);
+        return $this->getMock('Magento\Framework\App\Request\Http', $methods, [], '', false);
     }
 
     /**
@@ -115,6 +115,6 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getBlockInterfaceMock()
     {
-        return $this->getMockForAbstractClass(\Magento\Framework\View\Element\BlockInterface::class);
+        return $this->getMockForAbstractClass('Magento\Framework\View\Element\BlockInterface');
     }
 }

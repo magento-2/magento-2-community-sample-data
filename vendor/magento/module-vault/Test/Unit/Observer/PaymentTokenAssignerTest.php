@@ -23,7 +23,7 @@ use Magento\Vault\Observer\PaymentTokenAssigner;
  * Class PaymentTokenAssignerTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PaymentTokenAssignerTest extends \PHPUnit\Framework\TestCase
+class PaymentTokenAssignerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentTokenManagementInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -37,7 +37,7 @@ class PaymentTokenAssignerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->paymentTokenManagement = $this->createMock(PaymentTokenManagementInterface::class);
+        $this->paymentTokenManagement = $this->getMock(PaymentTokenManagementInterface::class);
         $this->observer = new PaymentTokenAssigner($this->paymentTokenManagement);
     }
 
@@ -64,7 +64,7 @@ class PaymentTokenAssignerTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         );
-        $paymentModel = $this->createMock(InfoInterface::class);
+        $paymentModel = $this->getMock(InfoInterface::class);
 
         $observer = $this->getPreparedObserverWithMap(
             [
@@ -93,8 +93,8 @@ class PaymentTokenAssignerTest extends \PHPUnit\Framework\TestCase
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $quote = $this->createMock(CartInterface::class);
-        $customer = $this->createMock(CustomerInterface::class);
+        $quote = $this->getMock(CartInterface::class);
+        $customer = $this->getMock(CustomerInterface::class);
 
         $paymentModel->expects(static::once())
             ->method('getQuote')
@@ -139,9 +139,9 @@ class PaymentTokenAssignerTest extends \PHPUnit\Framework\TestCase
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $quote = $this->createMock(CartInterface::class);
-        $customer = $this->createMock(CustomerInterface::class);
-        $paymentToken = $this->createMock(PaymentTokenInterface::class);
+        $quote = $this->getMock(CartInterface::class);
+        $customer = $this->getMock(CustomerInterface::class);
+        $paymentToken = $this->getMock(PaymentTokenInterface::class);
 
         $paymentModel->expects(static::once())
             ->method('getQuote')

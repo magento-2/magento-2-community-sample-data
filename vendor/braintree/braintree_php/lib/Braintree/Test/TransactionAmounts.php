@@ -9,6 +9,7 @@ namespace Braintree\Test;
  *
  * @package    Braintree
  * @subpackage Test
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class TransactionAmounts
 {

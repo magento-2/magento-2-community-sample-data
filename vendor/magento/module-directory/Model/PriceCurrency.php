@@ -77,7 +77,8 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
         $scope = null,
         $currency = null
     ) {
-        return $this->createCurrency($scope, $currency)->formatPrecision($amount, $precision, [], $includeContainer);
+        return $this->getCurrency($scope, $currency)
+            ->formatPrecision($amount, $precision, [], $includeContainer);
     }
 
     /**
@@ -100,7 +101,20 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
      */
     public function getCurrency($scope = null, $currency = null)
     {
-        return $this->createCurrency($scope, $currency, true);
+        if ($currency instanceof Currency) {
+            $currentCurrency = $currency;
+        } elseif (is_string($currency)) {
+            $currency = $this->currencyFactory->create()
+                ->load($currency);
+            $baseCurrency = $this->getStore($scope)
+                ->getBaseCurrency();
+            $currentCurrency = $baseCurrency->getRate($currency) ? $currency : $baseCurrency;
+        } else {
+            $currentCurrency = $this->getStore($scope)
+                ->getCurrentCurrency();
+        }
+
+        return $currentCurrency;
     }
 
     /**
@@ -142,31 +156,5 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
     public function round($price)
     {
         return round($price, 2);
-    }
-
-    /**
-     * Get currency considering currency rate configuration.
-     *
-     * @param null|string|bool|int|\Magento\Framework\App\ScopeInterface $scope
-     * @param \Magento\Framework\Model\AbstractModel|string|null $currency
-     * @param bool $includeRate
-     *
-     * @return Currency
-     */
-    private function createCurrency($scope, $currency, bool $includeRate = false)
-    {
-        if ($currency instanceof Currency) {
-            $currentCurrency = $currency;
-        } elseif (is_string($currency)) {
-            $currentCurrency = $this->currencyFactory->create()->load($currency);
-            if ($includeRate) {
-                $baseCurrency = $this->getStore($scope)->getBaseCurrency();
-                $currentCurrency = $baseCurrency->getRate($currentCurrency) ? $currentCurrency : $baseCurrency;
-            }
-        } else {
-            $currentCurrency = $this->getStore($scope)->getCurrentCurrency();
-        }
-
-        return $currentCurrency;
     }
 }

@@ -9,8 +9,6 @@ use Magento\Framework\View\Asset\PreProcessorInterface;
 
 /**
  * Interface AlternativeSourceInterface
- *
- * @api
  */
 interface AlternativeSourceInterface extends PreProcessorInterface
 {

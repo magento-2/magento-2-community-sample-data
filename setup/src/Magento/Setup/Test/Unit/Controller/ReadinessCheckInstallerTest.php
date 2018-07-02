@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Controller;
 
 use \Magento\Setup\Controller\ReadinessCheckInstaller;
 
-class ReadinessCheckInstallerTest extends \PHPUnit\Framework\TestCase
+class ReadinessCheckInstallerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReadinessCheckInstaller
@@ -23,7 +23,7 @@ class ReadinessCheckInstallerTest extends \PHPUnit\Framework\TestCase
     public function testIndexAction()
     {
         $viewModel = $this->controller->indexAction();
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
         $variables = $viewModel->getVariables();
         $this->assertArrayHasKey('actionFrom', $variables);
@@ -33,7 +33,7 @@ class ReadinessCheckInstallerTest extends \PHPUnit\Framework\TestCase
     public function testProgressAction()
     {
         $viewModel = $this->controller->progressAction();
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
         $this->assertSame('/magento/setup/readiness-check/progress.phtml', $viewModel->getTemplate());
     }

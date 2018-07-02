@@ -16,7 +16,7 @@ class Factory
     /**
      * Default file list collator
      */
-    const FILE_LIST_COLLATOR = \Magento\Framework\View\File\FileList\Collator::class;
+    const FILE_LIST_COLLATOR = 'Magento\Framework\View\File\FileList\Collator';
 
     /**
      * Object manager
@@ -48,6 +48,6 @@ class Factory
         if (!$collator instanceof CollateInterface) {
             throw new \UnexpectedValueException("$instanceName has to implement the collate interface.");
         }
-        return $this->objectManager->create(\Magento\Framework\View\File\FileList::class, ['collator' => $collator]);
+        return $this->objectManager->create('Magento\Framework\View\File\FileList', ['collator' => $collator]);
     }
 }

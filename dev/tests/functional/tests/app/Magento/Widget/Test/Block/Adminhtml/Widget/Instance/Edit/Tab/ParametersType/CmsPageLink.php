@@ -24,6 +24,6 @@ class CmsPageLink extends ParametersForm
      * @var string
      */
     // @codingStandardsIgnoreStart
-    protected $pathToGrid = \Magento\Widget\Test\Block\Adminhtml\Widget\Instance\Edit\Tab\ParametersType\CmsPageLink\Grid::class;
+    protected $pathToGrid = 'Magento\Widget\Test\Block\Adminhtml\Widget\Instance\Edit\Tab\ParametersType\CmsPageLink\Grid';
     // @codingStandardsIgnoreEnd
 }

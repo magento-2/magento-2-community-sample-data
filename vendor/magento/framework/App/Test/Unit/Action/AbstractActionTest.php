@@ -6,7 +6,7 @@
 
 namespace Magento\Framework\App\Test\Unit\Action;
 
-class AbstractActionTest extends \PHPUnit\Framework\TestCase
+class AbstractActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\Action\AbstractAction|\PHPUnit_Framework_MockObject_MockObject */
     protected $action;
@@ -28,15 +28,15 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()->getMock();
-        $this->response = $this->createMock(\Magento\Framework\App\ResponseInterface::class);
+        $this->response = $this->getMock('Magento\Framework\App\ResponseInterface', [], [], '', false);
 
-        $this->redirect = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $this->redirect = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->setMethods(['setRefererOrBaseUrl'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->redirectFactory = $this->getMockBuilder(\Magento\Framework\Controller\Result\RedirectFactory::class)
+        $this->redirectFactory = $this->getMockBuilder('Magento\Backend\Model\View\Result\RedirectFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -44,7 +44,7 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($this->redirect);
 
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->any())
@@ -57,10 +57,7 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
             ->method('getResponse')
             ->willReturn($this->response);
 
-        $this->action = $this->getMockForAbstractClass(
-            \Magento\Framework\App\Action\AbstractAction::class,
-            [$this->context]
-        );
+        $this->action = $this->getMockForAbstractClass('Magento\Framework\App\Action\AbstractAction', [$this->context]);
     }
 
     public function testGetRequest()

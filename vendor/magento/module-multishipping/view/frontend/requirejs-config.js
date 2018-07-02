@@ -8,8 +8,7 @@ var config = {
         '*': {
             multiShipping: 'Magento_Multishipping/js/multi-shipping',
             orderOverview: 'Magento_Multishipping/js/overview',
-            payment: 'Magento_Multishipping/js/payment',
-            billingLoader: 'Magento_Checkout/js/checkout-loader'
+            payment: 'Magento_Multishipping/js/payment'
         }
     }
 };

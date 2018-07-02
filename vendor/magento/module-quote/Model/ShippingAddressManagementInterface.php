@@ -8,7 +8,6 @@ namespace Magento\Quote\Model;
 /**
  * Interface ShippingAddressManagementInterface
  * @api
- * @since 100.0.2
  */
 interface ShippingAddressManagementInterface
 {

@@ -18,13 +18,12 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface as Adapter;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CategoryTest extends \PHPUnit\Framework\TestCase
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Category
@@ -87,11 +86,6 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     protected $collectionFactoryMock;
 
     /**
-     * @var Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
-    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -122,8 +116,6 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)->getMock();
-
         $this->category = new Category(
             $this->contextMock,
             $this->storeManagerMock,
@@ -131,8 +123,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             $this->managerMock,
             $this->treeFactoryMock,
             $this->collectionFactoryMock,
-            [],
-            $this->serializerMock
+            []
         );
     }
 
@@ -148,15 +139,6 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
         $attribute->expects($this->any())->method('getBackend')->willReturn($backendModel);
         $this->connectionMock->expects($this->once())->method('fetchCol')->willReturn(['result']);
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return json_encode($value);
-                    }
-                )
-            );
 
         $result = $this->category->findWhereAttributeIs($entityIdsFilter, $attribute, $expectedValue);
         $this->assertEquals(['result'], $result);

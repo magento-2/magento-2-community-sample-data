@@ -62,7 +62,7 @@ class Content extends \Magento\Backend\Block\Widget
      */
     protected function _prepareLayout()
     {
-        $this->addChild('uploader', \Magento\Backend\Block\Media\Uploader::class);
+        $this->addChild('uploader', 'Magento\Backend\Block\Media\Uploader');
 
         $this->getUploader()->getConfig()->setUrl(
             $this->_urlBuilder->addSessionParam()->getUrl('catalog/product_gallery/upload')
@@ -242,13 +242,13 @@ class Content extends \Magento\Backend\Block\Widget
 
     /**
      * @return \Magento\Catalog\Helper\Image
-     * @deprecated 101.0.3
+     * @deprecated
      */
     private function getImageHelper()
     {
         if ($this->imageHelper === null) {
             $this->imageHelper = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Helper\Image::class);
+                ->get('Magento\Catalog\Helper\Image');
         }
         return $this->imageHelper;
     }

@@ -4,6 +4,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action\Context;
@@ -13,7 +14,7 @@ use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Controller\Adminhtml\Order;
-use Magento\Sales\Model\Order\Address as AddressModel;
+use Magento\Sales\Model\Order\Address as ModelOrderAddress;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\App\Response\Http\FileFactory;
@@ -36,11 +37,12 @@ class AddressSave extends Order
      * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::actions_edit';
-
+    
     /**
      * @var RegionFactory
      */
     private $regionFactory;
+
     /**
      * @param Context $context
      * @param Registry $coreRegistry
@@ -95,7 +97,7 @@ class AddressSave extends Order
     public function execute()
     {
         $addressId = $this->getRequest()->getParam('address_id');
-        /** @var $address OrderAddressInterface|AddressModel */
+        /** @var $address OrderAddressInterface|ModelOrderAddress */
         $address = $this->_objectManager->create(
             OrderAddressInterface::class
         )->load($addressId);
@@ -113,12 +115,14 @@ class AddressSave extends Order
                     ]
                 );
                 $this->messageManager->addSuccess(__('You updated the order address.'));
+
                 return $resultRedirect->setPath('sales/*/view', ['order_id' => $address->getParentId()]);
             } catch (LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addException($e, __('We can\'t update the order address right now.'));
             }
+
             return $resultRedirect->setPath('sales/*/address', ['address_id' => $address->getId()]);
         } else {
             return $resultRedirect->setPath('sales/*/');
@@ -138,6 +142,7 @@ class AddressSave extends Order
             $attributeValues['region_code'] = $newRegion->getCode();
             $attributeValues['region'] = $newRegion->getDefaultName();
         }
+
         return $attributeValues;
     }
 }

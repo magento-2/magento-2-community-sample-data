@@ -8,11 +8,12 @@ use InvalidArgumentException;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on Subscriptions, see {@link https://developers.braintreepayments.com/reference/response/subscription/php https://developers.braintreepayments.com/reference/response/subscription/php}
+ * For more detailed information on Subscriptions, see {@link http://www.braintreepayments.com/gateway/subscription-api http://www.braintreepaymentsolutions.com/gateway/subscription-api}
  *
  * PHP Version 5
  *
  * @package   Braintree
+ * @copyright 2015 Braintree, a division of PayPal, Inc.
  */
 class SubscriptionGateway
 {
@@ -93,15 +94,12 @@ class SubscriptionGateway
         return $this->_verifyGatewayResponse($response);
     }
 
-    public function retryCharge($subscriptionId, $amount = null, $submitForSettlement = false)
+    public function retryCharge($subscriptionId, $amount = null)
     {
         $transaction_params = ['type' => Transaction::SALE,
             'subscriptionId' => $subscriptionId];
         if (isset($amount)) {
             $transaction_params['amount'] = $amount;
-        }
-        if ($submitForSettlement) {
-            $transaction_params['options'] = ['submitForSettlement' => $submitForSettlement];
         }
 
         $path = $this->_config->merchantPath() . '/transactions';
@@ -136,11 +134,7 @@ class SubscriptionGateway
                 'trialDurationUnit',
                 'trialPeriod',
                 ['descriptor' => ['name', 'phone', 'url']],
-                ['options' => [
-                    'doNotInheritAddOnsOrDiscounts',
-                    'startImmediately',
-                    ['paypal' => ['description']]
-                ]],
+                ['options' => ['doNotInheritAddOnsOrDiscounts', 'startImmediately']],
             ],
             self::_addOnDiscountSignature()
         );
@@ -153,12 +147,7 @@ class SubscriptionGateway
                 'merchantAccountId', 'numberOfBillingCycles', 'paymentMethodToken', 'planId',
                 'paymentMethodNonce', 'id', 'neverExpires', 'price',
                 ['descriptor' => ['name', 'phone', 'url']],
-                ['options' => [
-                    'prorateCharges',
-                    'replaceAllAddOnsAndDiscounts',
-                    'revertSubscriptionOnProrationFailure',
-                    ['paypal' => ['description']]
-                ]],
+                ['options' => ['prorateCharges', 'replaceAllAddOnsAndDiscounts', 'revertSubscriptionOnProrationFailure']],
             ],
             self::_addOnDiscountSignature()
         );

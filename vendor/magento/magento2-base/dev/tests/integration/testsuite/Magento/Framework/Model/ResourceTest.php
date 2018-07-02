@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Model;
 
-class ResourceTest extends \PHPUnit\Framework\TestCase
+class ResourceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ResourceConnection
@@ -17,7 +17,7 @@ class ResourceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\App\ResourceConnection::class);
+            ->create('Magento\Framework\App\ResourceConnection');
     }
 
     public function testGetTableName()
@@ -27,7 +27,7 @@ class ResourceTest extends \PHPUnit\Framework\TestCase
         $tableNameOrig = 'store_website';
 
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\ResourceConnection::class,
+            'Magento\Framework\App\ResourceConnection',
             ['tablePrefix' => 'prefix_']
         );
 
@@ -47,11 +47,11 @@ class ResourceTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\DB\Adapter\Pdo\Mysql $connection */
         $connection = $objectManager->create(
-            \Magento\TestFramework\Db\Adapter\Mysql::class,
+            'Magento\TestFramework\Db\Adapter\Mysql',
             [
                 'config' => [
                     'profiler' => [
-                        'class' => \Magento\Framework\Model\ResourceModel\Db\Profiler::class,
+                        'class' => 'Magento\Framework\Model\ResourceModel\Db\Profiler',
                         'enabled' => 'true',
                     ],
                     'username' => 'username',
@@ -66,7 +66,7 @@ class ResourceTest extends \PHPUnit\Framework\TestCase
         /** @var \Magento\Framework\Model\ResourceModel\Db\Profiler $profiler */
         $profiler = $connection->getProfiler();
 
-        $this->assertInstanceOf(\Magento\Framework\Model\ResourceModel\Db\Profiler::class, $profiler);
+        $this->assertInstanceOf('Magento\Framework\Model\ResourceModel\Db\Profiler', $profiler);
         $this->assertTrue($profiler->getEnabled());
     }
 }

@@ -11,7 +11,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Source;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Catalog\Model\Product\Attribute\Source\Status */
     protected $status;
@@ -36,7 +36,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->collection = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, [
+        $this->collection = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\Collection',
+            [
                 '__wakeup',
                 'getSelect',
                 'joinLeft',
@@ -44,19 +46,29 @@ class StatusTest extends \PHPUnit\Framework\TestCase
                 'getStoreId',
                 'getConnection',
                 'getCheckSql'
-            ]);
-        $this->attributeModel = $this->createPartialMock(\Magento\Catalog\Model\Entity\Attribute::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->attributeModel = $this->getMock(
+            '\Magento\Catalog\Model\Entity\Attributee',
+            [
                 '__wakeup',
                 'getAttributeCode',
                 'getBackend',
                 'getId',
                 'isScopeGlobal',
                 'getEntity',
-                'getAttribute'
-            ]);
-        $this->backendAttributeModel = $this->createPartialMock(\Magento\Catalog\Model\Product\Attribute\Backend\Sku::class, ['__wakeup', 'getTable']);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->backendAttributeModel = $this->getMock(
+            '\Magento\Catalog\Model\Product\Attribute\Backend\Sku', ['__wakeup', 'getTable'], [], '', false);
         $this->status = $this->objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Source\Status::class
+            'Magento\Catalog\Model\Product\Attribute\Source\Status'
         );
 
         $this->attributeModel->expects($this->any())->method('getAttribute')

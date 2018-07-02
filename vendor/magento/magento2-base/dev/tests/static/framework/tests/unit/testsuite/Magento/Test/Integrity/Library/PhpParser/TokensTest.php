@@ -9,7 +9,7 @@ use Magento\TestFramework\Integrity\Library\PhpParser\Tokens;
 
 /**
  */
-class TokensTest extends \PHPUnit\Framework\TestCase
+class TokensTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Tokens
@@ -34,7 +34,7 @@ class TokensTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->parseFactory = $this->getMockBuilder(
-            \Magento\TestFramework\Integrity\Library\PhpParser\ParserFactory::class
+            'Magento\TestFramework\Integrity\Library\PhpParser\ParserFactory'
         )->disableOriginalConstructor()->getMock();
     }
 
@@ -45,7 +45,7 @@ class TokensTest extends \PHPUnit\Framework\TestCase
      */
     public function testParseContent()
     {
-        $parser = $this->createMock(\Magento\TestFramework\Integrity\Library\PhpParser\ParserInterface::class);
+        $parser = $this->getMock('Magento\TestFramework\Integrity\Library\PhpParser\ParserInterface');
 
         $this->parseFactory->expects($this->any())->method('createParsers')->will($this->returnValue([$parser]));
 
@@ -61,13 +61,13 @@ class TokensTest extends \PHPUnit\Framework\TestCase
     public function testGetDependencies()
     {
         $uses = $this->getMockBuilder(
-            \Magento\TestFramework\Integrity\Library\PhpParser\Uses::class
+            'Magento\TestFramework\Integrity\Library\PhpParser\Uses'
         )->disableOriginalConstructor()->getMock();
 
         $this->parseFactory->expects($this->exactly(2))->method('getUses')->will($this->returnValue($uses));
 
         $staticCalls = $this->getMockBuilder(
-            \Magento\TestFramework\Integrity\Library\PhpParser\StaticCalls::class
+            'Magento\TestFramework\Integrity\Library\PhpParser\StaticCalls'
         )->disableOriginalConstructor()->getMock();
 
         $staticCalls->expects(
@@ -81,7 +81,7 @@ class TokensTest extends \PHPUnit\Framework\TestCase
         $this->parseFactory->expects($this->once())->method('getStaticCalls')->will($this->returnValue($staticCalls));
 
         $throws = $this->getMockBuilder(
-            \Magento\TestFramework\Integrity\Library\PhpParser\Throws::class
+            'Magento\TestFramework\Integrity\Library\PhpParser\Throws'
         )->disableOriginalConstructor()->getMock();
 
         $throws->expects($this->once())->method('getDependencies')->will($this->returnValue(['ThrowDependency']));

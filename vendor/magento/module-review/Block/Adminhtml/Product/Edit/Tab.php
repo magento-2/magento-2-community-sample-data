@@ -5,10 +5,6 @@
  */
 namespace Magento\Review\Block\Adminhtml\Product\Edit;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Tab extends \Magento\Backend\Block\Widget\Tab
 {
     /**

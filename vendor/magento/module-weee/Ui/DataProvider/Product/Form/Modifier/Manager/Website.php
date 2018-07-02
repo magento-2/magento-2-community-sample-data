@@ -1,17 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Weee\Ui\DataProvider\Product\Form\Modifier\Manager;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
-use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Directory\Model\Currency;
 use Magento\Store\Api\Data\WebsiteInterface;
+use Magento\Directory\Model\Config\Source\Country as SourceCountry;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 
 /**
  * Class Website
@@ -58,7 +59,8 @@ class Website
             ]
         ];
 
-        if ($this->storeManager->hasSingleStore()
+        if (
+            $this->storeManager->hasSingleStore()
             || ($eavAttribute->getEntityAttribute() && $eavAttribute->getEntityAttribute()->isScopeGlobal()
             )
         ) {

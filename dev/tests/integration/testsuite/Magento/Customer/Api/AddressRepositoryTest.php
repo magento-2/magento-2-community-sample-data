@@ -16,7 +16,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
+class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AddressRepositoryInterface */
     private $repository;
@@ -205,26 +205,8 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         try {
             $this->repository->save($address);
         } catch (InputException $exception) {
-            $this->assertEquals('One or more input exceptions have occurred.', $exception->getMessage());
-            $errors = $exception->getErrors();
-            $this->assertCount(3, $errors);
-            $this->assertEquals('firstname is a required field.', $errors[0]->getLogMessage());
-            $this->assertEquals('lastname is a required field.', $errors[1]->getLogMessage());
             $this->assertEquals(
-                __(
-                    'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName' => 'regionId', 'value' => $invalidRegion]
-                ),
-                $errors[2]->getLogMessage()
-            );
-        }
-
-        $address->setCountryId($invalidCountry = 'invalid_id');
-        try {
-            $this->repository->save($address);
-        } catch (InputException $exception) {
-            $this->assertEquals(
-                'One or more input exceptions have occurred.',
+                InputException::DEFAULT_MESSAGE,
                 $exception->getMessage()
             );
             $errors = $exception->getErrors();
@@ -240,7 +222,34 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals(
                 __(
                     'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName' => 'countryId', 'value' => $invalidCountry]
+                    ['fieldName'=>'regionId', 'value' => $invalidRegion]
+                ),
+                $errors[2]->getLogMessage()
+            );
+        }
+
+        $address->setCountryId($invalidCountry = 'invalid_id');
+        try {
+            $this->repository->save($address);
+        } catch (InputException $exception) {
+            $this->assertEquals(
+                InputException::DEFAULT_MESSAGE,
+                $exception->getMessage()
+            );
+            $errors = $exception->getErrors();
+            $this->assertCount(3, $errors);
+            $this->assertEquals(
+                'firstname is a required field.',
+                $errors[0]->getLogMessage()
+            );
+            $this->assertEquals(
+                'lastname is a required field.',
+                $errors[1]->getLogMessage()
+            );
+            $this->assertEquals(
+                __(
+                    'Invalid value of "%value" provided for the %fieldName field.',
+                    ['fieldName'=>'countryId', 'value' => $invalidCountry]
                 ),
                 $errors[2]->getLogMessage()
             );

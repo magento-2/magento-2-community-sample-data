@@ -10,7 +10,6 @@ namespace Magento\Customer\Api;
 /**
  * Interface for managing customers accounts.
  * @api
- * @since 100.0.2
  */
 interface AccountManagementInterface
 {

@@ -5,11 +5,11 @@
  */
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Helper\Form\Gallery;
 
-use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content;
 use Magento\Framework\Filesystem;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content;
 use Magento\Framework\Phrase;
 
-class ContentTest extends \PHPUnit\Framework\TestCase
+class ContentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem|\PHPUnit_Framework_MockObject_MockObject
@@ -53,23 +53,35 @@ class ContentTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fileSystemMock = $this->createPartialMock(
-            \Magento\Framework\Filesystem::class,
-            ['stat', 'getDirectoryRead']
+        $this->fileSystemMock = $this->getMock(
+            'Magento\Framework\Filesystem',
+            ['stat', 'getDirectoryRead'],
+            [],
+            '',
+            false
         );
-        $this->readMock = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
-        $this->galleryMock = $this->createMock(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery::class);
-        $this->mediaConfigMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product\Media\Config::class,
-            ['getMediaUrl', 'getMediaPath']
+        $this->readMock = $this->getMock('Magento\Framework\Filesystem\Directory\ReadInterface');
+        $this->galleryMock = $this->getMock(
+            'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery',
+            [],
+            [],
+            '',
+            false
         );
-        $this->jsonEncoderMock = $this->getMockBuilder(\Magento\Framework\Json\EncoderInterface::class)
+        $this->mediaConfigMock = $this->getMock(
+            'Magento\Catalog\Model\Product\Media\Config',
+            ['getMediaUrl', 'getMediaPath'],
+            [],
+            '',
+            false
+        );
+        $this->jsonEncoderMock = $this->getMockBuilder('Magento\Framework\Json\EncoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->content = $this->objectManager->getObject(
-            \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content',
             [
                 'mediaConfig' => $this->mediaConfigMock,
                 'jsonEncoder' => $this->jsonEncoderMock,
@@ -152,15 +164,15 @@ class ContentTest extends \PHPUnit\Framework\TestCase
 
     public function testGetImagesJsonWithException()
     {
-        $this->imageHelper = $this->getMockBuilder(\Magento\Catalog\Helper\Image::class)
+        $this->imageHelper = $this->getMockBuilder('Magento\Catalog\Helper\Image')
             ->disableOriginalConstructor()
             ->setMethods(['getDefaultPlaceholderUrl'])
             ->getMock();
-
+        
         $this->objectManager->setBackwardCompatibleProperty(
             $this->content,
             'imageHelper',
-            $this->imageHelper
+            $this->imageHelper          
         );
 
         $placeholderUrl = 'url_to_the_placeholder/placeholder.jpg';
@@ -218,5 +230,5 @@ class ContentTest extends \PHPUnit\Framework\TestCase
         $this->jsonEncoderMock->expects($this->once())->method('encode')->willReturnCallback('json_encode');
 
         $this->assertSame(json_encode($imagesResult), $this->content->getImagesJson());
-    }
+        }
 }

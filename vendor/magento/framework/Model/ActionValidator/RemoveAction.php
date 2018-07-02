@@ -10,9 +10,6 @@ namespace Magento\Framework\Model\ActionValidator;
 
 use Magento\Framework\Model\AbstractModel;
 
-/**
- * @api
- */
 class RemoveAction
 {
     /**

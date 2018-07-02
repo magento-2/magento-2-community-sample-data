@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\App;
 
-/**
- * Interface \Magento\Framework\App\ScopeValidatorInterface
- *
- */
 interface ScopeValidatorInterface
 {
     /**

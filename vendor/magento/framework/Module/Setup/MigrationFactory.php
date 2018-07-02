@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Module\Setup;
 
 /**
@@ -31,10 +33,8 @@ class MigrationFactory
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param string $instanceName
      */
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Module\Setup\Migration::class
-    ) {
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager, $instanceName = 'Magento\Framework\Module\Setup\Migration')
+    {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
     }

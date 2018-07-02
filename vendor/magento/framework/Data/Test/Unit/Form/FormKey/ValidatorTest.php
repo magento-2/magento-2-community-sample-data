@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Data\Test\Unit\Form\FormKey;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Form\FormKey\Validator
@@ -24,8 +24,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_formKeyMock = $this->createPartialMock(\Magento\Framework\Data\Form\FormKey::class, ['getFormKey']);
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->_formKeyMock = $this->getMock(
+            '\Magento\Framework\Data\Form\FormKey',
+            ['getFormKey'],
+            [],
+            '',
+            false
+        );
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
         $this->_model = new \Magento\Framework\Data\Form\FormKey\Validator($this->_formKeyMock);
     }
 

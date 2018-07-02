@@ -9,10 +9,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Log;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Cron extends \Magento\Framework\App\Config\Value
 {
     const CRON_STRING_PATH = 'crontab/default/jobs/log_clean/schedule/cron_expr';

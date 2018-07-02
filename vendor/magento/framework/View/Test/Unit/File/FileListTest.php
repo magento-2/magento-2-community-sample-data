@@ -8,7 +8,7 @@
 
 namespace Magento\Framework\View\Test\Unit\File;
 
-class FileListTest extends \PHPUnit\Framework\TestCase
+class FileListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\File\FileList
@@ -34,7 +34,7 @@ class FileListTest extends \PHPUnit\Framework\TestCase
     {
         $this->_baseFile = $this->_createViewFile('fixture.xml', 'Fixture_TestModule');
         $this->_themeFile = $this->_createViewFile('fixture.xml', 'Fixture_TestModule', 'area/theme/path');
-        $this->collator = $this->createPartialMock(\Magento\Framework\View\File\FileList\Collator::class, ['collate']);
+        $this->collator = $this->getMock('Magento\Framework\View\File\FileList\Collator', ['collate']);
         $this->_model = new \Magento\Framework\View\File\FileList($this->collator);
         $this->_model->add([$this->_baseFile, $this->_themeFile]);
     }
@@ -51,7 +51,7 @@ class FileListTest extends \PHPUnit\Framework\TestCase
     {
         $theme = null;
         if ($themeFullPath !== null) {
-            $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+            $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
             $theme->expects($this->any())->method('getFullPath')->will($this->returnValue($themeFullPath));
         }
         return new \Magento\Framework\View\File($filename, $module, $theme);

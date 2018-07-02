@@ -6,7 +6,10 @@
 
 namespace Magento\SalesRule\Model\Quote\Address\Total;
 
-class ShippingTest extends \PHPUnit\Framework\TestCase
+/**
+ * Shipping test.
+ */
+class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Api\GuestCartManagementInterface
@@ -31,9 +34,10 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppIsolation enabled
+     * Estimate shipment for product that match salesrule with free shipping.
+     *
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
+     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
      */
     public function testRuleByProductWeightWithFreeShipping()
     {
@@ -46,9 +50,10 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppIsolation enabled
+     * Estimate shipment for product that doesn't match salesrule with free shipping.
+     *
      * @magentoDataFixture Magento/SalesRule/_files/rule_free_shipping_by_product_weight.php
-     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
+     * @magentoDataFixture Magento/Catalog/_files/product_without_options.php
      */
     public function testRuleByProductWeightWithoutFreeShipping()
     {
@@ -61,7 +66,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Estimate shipment for guest cart
+     * Estimate shipment for guest cart.
      *
      * @param int $cartId
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]
@@ -76,11 +81,12 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Quote\Api\GuestShipmentEstimationInterface $estimation */
         $estimation = $this->objectManager->get(\Magento\Quote\Api\GuestShipmentEstimationInterface::class);
+
         return $estimation->estimateByExtendedAddress($cartId, $address);
     }
 
     /**
-     * Create guest quote with products
+     * Create guest quote with products.
      *
      * @param int $itemQty
      * @return int
@@ -96,7 +102,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
         $cartItem = $cartItemFactory->create();
         $cartItem->setQuoteId($cartId);
         $cartItem->setQty($itemQty);
-        $cartItem->setSku('simple-99');
+        $cartItem->setSku('simple');
         $cartItem->setProductType(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
 
         $this->itemRepository->save($cartItem);

@@ -45,12 +45,12 @@ class Partial extends AbstractHelper
         }
 
         if (is_scalar($values)) {
-            $values = [];
+            $values = array();
         } elseif ($values instanceof ModelInterface) {
             $values = $values->getVariables();
         } elseif (is_object($values)) {
             if (null !== ($objectKey = $this->getObjectKey())) {
-                $values = [$objectKey => $values];
+                $values = array($objectKey => $values);
             } elseif (method_exists($values, 'toArray')) {
                 $values = $values->toArray();
             } else {

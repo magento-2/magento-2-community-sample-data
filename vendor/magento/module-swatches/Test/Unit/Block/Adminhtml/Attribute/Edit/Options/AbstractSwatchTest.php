@@ -7,9 +7,8 @@ namespace Magento\Swatches\Test\Unit\Block\Adminhtml\Attribute\Edit\Options;
 
 /**
  * Backend swatch abstract block
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AbstractSwatchTest extends \PHPUnit\Framework\TestCase
+class AbstractSwatchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -53,33 +52,42 @@ class AbstractSwatchTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createMock(\Magento\Backend\Block\Template\Context::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->attrOptionCollectionFactoryMock = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory::class,
-            ['create']
+        $this->contextMock = $this->getMock('\Magento\Backend\Block\Template\Context', [], [], '', false);
+        $this->registryMock = $this->getMock('\Magento\Framework\Registry', [], [], '', false);
+        $this->attrOptionCollectionFactoryMock = $this->getMock(
+            '\Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->mediaConfigMock = $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class);
-        $this->universalFactoryMock = $this->createMock(\Magento\Framework\Validator\UniversalFactory::class);
-        $this->swatchHelperMock = $this->createMock(\Magento\Swatches\Helper\Media::class);
+        $this->mediaConfigMock = $this->getMock('\Magento\Catalog\Model\Product\Media\Config', [], [], '', false);
+        $this->universalFactoryMock = $this->getMock(
+            '\Magento\Framework\Validator\UniversalFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->swatchHelperMock = $this->getMock('\Magento\Swatches\Helper\Media', [], [], '', false);
 
-        $this->block = $this->getMockBuilder(
-            \Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\AbstractSwatch::class
-        )
-            ->setMethods(['getData'])
-            ->setConstructorArgs(
-                [
-                    'context' => $this->contextMock,
-                    'registry' => $this->registryMock,
-                    'attrOptionCollectionFactory' => $this->attrOptionCollectionFactoryMock,
-                    'universalFactory' => $this->universalFactoryMock,
-                    'mediaConfig' => $this->mediaConfigMock,
-                    'swatchHelper' => $this->swatchHelperMock,
-                    'data' => []
-                ]
-            )
-            ->getMock();
-        $this->connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->block = $this->getMock(
+            'Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\AbstractSwatch',
+            ['getData'],
+            [
+                'context' => $this->contextMock,
+                'registry' => $this->registryMock,
+                'attrOptionCollectionFactory' => $this->attrOptionCollectionFactoryMock,
+                'universalFactory' => $this->universalFactoryMock,
+                'mediaConfig' => $this->mediaConfigMock,
+                'swatchHelper' => $this->swatchHelperMock,
+                'data' => []
+            ],
+            '',
+            true
+        );
+
+        $this->connectionMock = $this->getMockBuilder('\Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->setMethods(['quoteInto'])
             ->getMockForAbstractClass();
@@ -94,13 +102,16 @@ class AbstractSwatchTest extends \PHPUnit\Framework\TestCase
         if ($values === null) {
             $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-            $option = $this->createPartialMock(
-                \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option::class,
-                ['getId', 'getValue', 'getLabel']
+            $option = $this->getMock(
+                '\Magento\Eav\Model\ResourceModel\Entity\Attribute\Option',
+                ['getId', 'getValue', 'getLabel'],
+                [],
+                '',
+                false
             );
 
             $attrOptionCollectionMock = $objectManager->getCollectionMock(
-                \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection::class,
+                '\Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection',
                 [$option, $option]
             );
 
@@ -109,7 +120,7 @@ class AbstractSwatchTest extends \PHPUnit\Framework\TestCase
                 ->method('create')
                 ->willReturn($attrOptionCollectionMock);
 
-            $attribute = $this->createPartialMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute::class, ['getId']);
+            $attribute = $this->getMock('\Magento\Eav\Model\ResourceModel\Entity\Attribute', ['getId'], [], '', false);
             $attribute->expects($this->once())->method('getId')->willReturn(23);
 
             $this->registryMock
@@ -134,7 +145,7 @@ class AbstractSwatchTest extends \PHPUnit\Framework\TestCase
                 ->method('getConnection')
                 ->willReturn($this->connectionMock);
 
-            $zendDbSelectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+            $zendDbSelectMock = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
             $attrOptionCollectionMock->expects($this->any())->method('getSelect')->willReturn($zendDbSelectMock);
             $zendDbSelectMock->expects($this->any())->method('joinLeft')->willReturnSelf();
 

@@ -13,7 +13,7 @@ use Magento\Framework\App\Config\Initial\Reader;
  *
  * @package Magento\Config\Test\Unit\App\Config\Source
  */
-class ModularConfigSourceTest extends \PHPUnit\Framework\TestCase
+class ModularConfigSourceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Reader|\PHPUnit_Framework_MockObject_MockObject

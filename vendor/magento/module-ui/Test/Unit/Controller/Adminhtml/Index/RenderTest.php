@@ -6,13 +6,12 @@
 namespace Magento\Ui\Test\Unit\Controller\Adminhtml\Index;
 
 use Magento\Ui\Controller\Adminhtml\Index\Render;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
- * Test for Magento\Ui\Controller\Adminhtml\Index\Render
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Unit test for Magento\Ui\Controller\Adminhtml\Index\Render
  */
-class RenderTest extends \PHPUnit\Framework\TestCase
+class RenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Render
@@ -20,75 +19,44 @@ class RenderTest extends \PHPUnit\Framework\TestCase
     private $render;
 
     /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     private $requestMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     private $responseMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\View\Element\UiComponentFactory|MockObject
      */
     private $uiFactoryMock;
 
     /**
-     * @var \Magento\Backend\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Backend\App\Action\Context|MockObject
      */
     private $contextMock;
 
     /**
-     * @var \Magento\Framework\AuthorizationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\AuthorizationInterface|MockObject
      */
     private $authorizationMock;
 
     /**
-     * @var \Magento\Backend\Model\Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Backend\Model\Session|MockObject
      */
     private $sessionMock;
 
     /**
-     * @var \Magento\Framework\App\ActionFlag|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\ActionFlag|MockObject
      */
     private $actionFlagMock;
 
     /**
-     * @var \Magento\Backend\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Backend\Helper\Data|MockObject
      */
     private $helperMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponent\ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uiComponentContextMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface|
-     *      \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $dataProviderMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uiComponentMock;
-
-    /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $resultJsonFactoryMock;
-
-    /**
-     * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $loggerMock;
 
     /**
      * @inheritdoc
@@ -118,29 +86,6 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->helperMock = $this->getMockBuilder(\Magento\Backend\Helper\Data::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->uiComponentContextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class
-        );
-        $this->dataProviderMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class
-        );
-        $this->uiComponentMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponentInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['render']
-        );
-
-        $this->resultJsonFactoryMock = $this->getMockBuilder(
-            \Magento\Framework\Controller\Result\JsonFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->loggerMock = $this->getMockForAbstractClass(\Psr\Log\LoggerInterface::class);
 
         $this->contextMock->expects($this->any())
             ->method('getRequest')
@@ -160,91 +105,42 @@ class RenderTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())
             ->method('getHelper')
             ->willReturn($this->helperMock);
-        $this->uiComponentContextMock->expects($this->once())
-            ->method('getDataProvider')
-            ->willReturn($this->dataProviderMock);
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-
-        $this->render = $this->objectManagerHelper->getObject(
-            \Magento\Ui\Controller\Adminhtml\Index\Render::class,
-            [
-                'context' => $this->contextMock,
-                'factory' => $this->uiFactoryMock,
-                'resultJsonFactory' => $this->resultJsonFactoryMock,
-                'logger' => $this->loggerMock
-            ]
-        );
+        $this->render = new Render($this->contextMock, $this->uiFactoryMock);
     }
 
-    public function testExecuteAjaxRequestException()
+    public function testExecuteAjaxRequest()
     {
-        $namespace = 'test-name';
+        $name = 'test-name';
         $renderedData = '<html>data</html>';
 
-        $this->prepareComponent($namespace, $renderedData);
-        $this->responseMock->expects($this->once())
-            ->method('appendBody')
-            ->willThrowException(new \Exception('exception'));
-        $jsonResultMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Json::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['setData'])
-            ->getMock();
-        $this->resultJsonFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($jsonResultMock);
-        $jsonResultMock->expects($this->once())
-            ->method('setData')
-            ->willReturnSelf();
-        $this->loggerMock->expects($this->once())
-            ->method('critical')
-            ->willReturnSelf();
+        $this->prepareComponent($name, $renderedData);
+
+        $this->responseMock->expects($this->never())->method('setHeader');
 
         $this->render->executeAjaxRequest();
     }
 
     public function testExecuteAjaxJsonRequest()
     {
-        $namespace = 'test-name';
+        $name = 'test-name';
         $renderedData = '{"data": "test"}';
-        $acceptType = 'json';
 
-        $this->prepareComponent($namespace, $renderedData, $acceptType);
-        $this->responseMock->expects($this->any())
-            ->method('appendBody')
-            ->with($renderedData);
+        $this->prepareComponent($name, $renderedData, 'json');
+
         $this->responseMock->expects($this->once())
             ->method('setHeader')
-            ->with('Content-Type', 'application/json')
-            ->willReturnSelf();
-
-        $this->render->executeAjaxRequest();
-    }
-
-    public function testExecuteAjaxRequest()
-    {
-        $namespace = 'test-name';
-        $renderedData = '<html>data</html>';
-
-        $this->prepareComponent($namespace, $renderedData);
-        $this->responseMock->expects($this->any())
-            ->method('appendBody')
-            ->with($renderedData);
-        $this->responseMock->expects($this->never())
-            ->method('setHeader')
-            ->with('Content-type', 'application/json')
-            ->willReturnSelf();
+            ->with('Content-Type', 'application/json');
 
         $this->render->executeAjaxRequest();
     }
 
     /**
-     * @param array $dataProviderConfig
-     * @param bool|null $isAllowed
-     * @param int $authCallCount
+     * @param string $acl
+     * @param bool $isAllowed
      * @dataProvider executeAjaxRequestWithoutPermissionsDataProvider
      */
-    public function testExecuteAjaxRequestWithoutPermissions(array $dataProviderConfig, $isAllowed, $authCallCount = 1)
+    public function testExecuteAjaxRequestWithoutPermissions($acl, $isAllowed)
     {
         $name = 'test-name';
         $renderedData = '<html>data</html>';
@@ -253,44 +149,45 @@ class RenderTest extends \PHPUnit\Framework\TestCase
             ->method('getParam')
             ->with('namespace')
             ->willReturn($name);
-        $this->requestMock->expects($this->any())
-            ->method('getParams')
-            ->willReturn([]);
-        if ($isAllowed === false) {
-            $this->requestMock->expects($this->once())
-                ->method('isAjax')
-                ->willReturn(true);
-        }
-        $this->responseMock->expects($this->never())
-            ->method('setRedirect');
         $this->responseMock->expects($this->any())
             ->method('appendBody')
             ->with($renderedData);
-
-        $this->dataProviderMock->expects($this->once())
-            ->method('getConfigData')
-            ->willReturn($dataProviderConfig);
-
-        $this->authorizationMock->expects($this->exactly($authCallCount))
+        $this->authorizationMock->expects($acl ? $this->once() : $this->never())
             ->method('isAllowed')
-            ->with(isset($dataProviderConfig['aclResource']) ? $dataProviderConfig['aclResource'] : null)
+            ->with($acl)
             ->willReturn($isAllowed);
 
-        $this->uiComponentMock->expects($this->any())
+        $componentMock = $this->getMockForAbstractClass(
+            \Magento\Framework\View\Element\UiComponentInterface::class,
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['render']
+        );
+
+        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $contextMock->expects($this->any())->method('getAcceptType')->willReturn('html');
+
+        $componentMock->expects($this->any())
             ->method('render')
             ->willReturn($renderedData);
-        $this->uiComponentMock->expects($this->any())
+        $componentMock->expects($this->any())
             ->method('getChildComponents')
             ->willReturn([]);
-        $this->uiComponentMock->expects($this->any())
+        $componentMock->expects($this->any())
+            ->method('getData')
+            ->with('acl')
+            ->willReturn($acl);
+        $componentMock->expects($this->any())
             ->method('getContext')
-            ->willReturn($this->uiComponentContextMock);
-        $this->uiComponentContextMock->expects($this->any())
-            ->method('getAcceptType')
-            ->willReturn('html');
+            ->willReturn($contextMock);
         $this->uiFactoryMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->uiComponentMock);
+            ->willReturn($componentMock);
 
         $this->render->executeAjaxRequest();
     }
@@ -300,31 +197,20 @@ class RenderTest extends \PHPUnit\Framework\TestCase
      */
     public function executeAjaxRequestWithoutPermissionsDataProvider()
     {
-        $aclResource = 'Magento_Test::index_index';
         return [
-            [
-                'dataProviderConfig' => ['aclResource' => $aclResource],
-                'isAllowed' => true
-            ],
-            [
-                'dataProviderConfig' => ['aclResource' => $aclResource],
-                'isAllowed' => false
-            ],
-            [
-                'dataProviderConfig' => [],
-                'isAllowed' => null,
-                'authCallCount' => 0
-            ],
+            ['Magento_Test::index_index', true],
+            ['Magento_Test::index_index', false],
+            ['', null],
         ];
     }
 
     /**
-     * Prepare component mock.
+     * Prepares component mock.
      *
      * @param string $namespace
      * @param string $renderedData
      * @param string $acceptType
-     * @return void
+     * @return \Magento\Framework\View\Element\UiComponentInterface|MockObject
      */
     private function prepareComponent($namespace, $renderedData, $acceptType = 'html')
     {
@@ -332,26 +218,38 @@ class RenderTest extends \PHPUnit\Framework\TestCase
             ->method('getParam')
             ->with('namespace')
             ->willReturn($namespace);
-        $this->requestMock->expects($this->any())
-            ->method('getParams')
-            ->willReturn([]);
-        $this->dataProviderMock->expects($this->once())
-            ->method('getConfigData')
-            ->willReturn([]);
-        $this->uiComponentMock->expects($this->once())
+        $this->responseMock->expects($this->once())
+            ->method('appendBody')
+            ->with($renderedData);
+
+        /** @var \Magento\Framework\View\Element\UiComponentInterface|MockObject $componentMock */
+        $componentMock = $this->getMockForAbstractClass(
+            \Magento\Framework\View\Element\UiComponentInterface::class,
+            [],
+            '',
+            false,
+            true,
+            true,
+            ['render']
+        );
+        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $contextMock->expects($this->once())->method('getAcceptType')->willReturn($acceptType);
+
+        $componentMock->expects($this->once())
             ->method('render')
             ->willReturn($renderedData);
-        $this->uiComponentMock->expects($this->once())
+        $componentMock->expects($this->once())
             ->method('getChildComponents')
             ->willReturn([]);
-        $this->uiComponentMock->expects($this->exactly(2))
+        $componentMock->expects($this->once())
             ->method('getContext')
-            ->willReturn($this->uiComponentContextMock);
-        $this->uiComponentContextMock->expects($this->once())
-            ->method('getAcceptType')
-            ->willReturn($acceptType);
+            ->willReturn($contextMock);
         $this->uiFactoryMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->uiComponentMock);
+            ->willReturn($componentMock);
+
+        return $componentMock;
     }
 }

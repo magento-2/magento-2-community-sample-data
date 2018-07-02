@@ -5,11 +5,10 @@
  */
 namespace Magento\Setup\Module\Di\Code\Scanner;
 
+use Magento\Setup\Module\Di\Compiler\Log\Log;
 use Magento\Framework\Api\Code\Generator\ExtensionAttributesGenerator;
 use Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator;
 use Magento\Framework\ObjectManager\Code\Generator\Factory as FactoryGenerator;
-use Magento\Setup\Module\Di\Compiler\Log\Log;
-use \Magento\Framework\Reflection\TypeProcessor;
 
 class PhpScanner implements ScannerInterface
 {
@@ -19,21 +18,11 @@ class PhpScanner implements ScannerInterface
     protected $_log;
 
     /**
-     * @var TypeProcessor
-     */
-    private $typeProcessor;
-
-    /**
-     * Initialize dependencies.
-     *
      * @param Log $log
-     * @param TypeProcessor|null $typeProcessor
      */
-    public function __construct(Log $log, TypeProcessor $typeProcessor = null)
+    public function __construct(Log $log)
     {
         $this->_log = $log;
-        $this->typeProcessor = $typeProcessor
-            ?: \Magento\Framework\App\ObjectManager::getInstance()->get(TypeProcessor::class);
     }
 
     /**
@@ -56,9 +45,22 @@ class PhpScanner implements ScannerInterface
                 preg_match('/\[\s\<\w+?>\s([\w\\\\]+)/s', $parameter->__toString(), $matches);
                 if (isset($matches[1]) && substr($matches[1], -strlen($entityType)) == $entityType) {
                     $missingClassName = $matches[1];
-                    if ($this->shouldGenerateClass($missingClassName, $entityType, $file)) {
-                        $missingClasses[] = $missingClassName;
+                    try {
+                        if (class_exists($missingClassName)) {
+                            continue;
+                        }
+                    } catch (\RuntimeException $e) {
                     }
+                    $sourceClassName = $this->getSourceClassName($missingClassName, $entityType);
+                    if (!class_exists($sourceClassName) && !interface_exists($sourceClassName)) {
+                        $this->_log->add(
+                            Log::CONFIGURATION_ERROR,
+                            $missingClassName,
+                            "Invalid {$entityType} for nonexistent class {$sourceClassName} in file {$file}"
+                        );
+                        continue;
+                    }
+                    $missingClasses[] = $missingClassName;
                 }
             }
         }
@@ -81,7 +83,7 @@ class PhpScanner implements ScannerInterface
         ) {
             /** Process special cases for extension class and extension interface */
             return $sourceClassName . 'Interface';
-        } elseif ($entityType == FactoryGenerator::ENTITY_TYPE) {
+        } else if ($entityType == FactoryGenerator::ENTITY_TYPE) {
             $extensionAttributesSuffix = ucfirst(ExtensionAttributesGenerator::ENTITY_TYPE);
             if (substr($sourceClassName, -strlen($extensionAttributesSuffix)) == $extensionAttributesSuffix) {
                 /** Process special case for extension factories */
@@ -105,7 +107,7 @@ class PhpScanner implements ScannerInterface
      */
     protected function _fetchFactories($reflectionClass, $file)
     {
-        $factorySuffix = '\\' . ucfirst(FactoryGenerator::ENTITY_TYPE);
+        $factorySuffix = '\\'.ucfirst(FactoryGenerator::ENTITY_TYPE);
         $absentFactories = $this->_findMissingClasses(
             $file,
             $reflectionClass,
@@ -135,18 +137,12 @@ class PhpScanner implements ScannerInterface
      */
     protected function _fetchMissingExtensionAttributesClasses($reflectionClass, $file)
     {
-        $missingExtensionInterfaces = [];
-        $methodName = 'getExtensionAttributes';
-        $entityType = ucfirst(\Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator::ENTITY_TYPE);
-        if ($reflectionClass->hasMethod($methodName) && $reflectionClass->isInterface()) {
-            $returnType = $this->typeProcessor->getGetterReturnType(
-                (new \Zend\Code\Reflection\ClassReflection($reflectionClass->getName()))->getMethod($methodName)
-            );
-            $missingClassName = $returnType['type'];
-            if ($this->shouldGenerateClass($missingClassName, $entityType, $file)) {
-                $missingExtensionInterfaces[] = $missingClassName;
-            }
-        }
+        $missingExtensionInterfaces = $this->_findMissingClasses(
+            $file,
+            $reflectionClass,
+            'setExtensionAttributes',
+            ucfirst(\Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator::ENTITY_TYPE)
+        );
         $missingExtensionClasses = [];
         $missingExtensionFactories = [];
         foreach ($missingExtensionInterfaces as $missingExtensionInterface) {
@@ -247,33 +243,5 @@ class PhpScanner implements ScannerInterface
             }
         }
         return array_unique($classes);
-    }
-
-    /**
-     * Check if specified class is missing and if it can be generated.
-     *
-     * @param string $missingClassName
-     * @param string $entityType
-     * @param string $file
-     * @return bool
-     */
-    private function shouldGenerateClass($missingClassName, $entityType, $file)
-    {
-        try {
-            if (class_exists($missingClassName)) {
-                return false;
-            }
-        } catch (\RuntimeException $e) {
-        }
-        $sourceClassName = $this->getSourceClassName($missingClassName, $entityType);
-        if (!class_exists($sourceClassName) && !interface_exists($sourceClassName)) {
-            $this->_log->add(
-                Log::CONFIGURATION_ERROR,
-                $missingClassName,
-                "Invalid {$entityType} for nonexistent class {$sourceClassName} in file {$file}"
-            );
-            return false;
-        }
-        return true;
     }
 }

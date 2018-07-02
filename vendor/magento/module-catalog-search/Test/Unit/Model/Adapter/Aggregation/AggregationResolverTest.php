@@ -5,10 +5,13 @@
  */
 namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Aggregation;
 
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Catalog\Api\Data\ProductAttributeSearchResultsInterface;
 use Magento\CatalogSearch\Model\Adapter\Aggregation\AggregationResolver;
-use Magento\CatalogSearch\Model\Adapter\Aggregation\RequestCheckerInterface;
 use Magento\Catalog\Api\AttributeSetFinderInterface;
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Config;
 use Magento\Framework\Search\RequestInterface;
@@ -17,12 +20,17 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AggregationResolverTest extends \PHPUnit\Framework\TestCase
+class AggregationResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AttributeSetFinderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $attributeSetFinder;
+
+    /**
+     * @var ProductAttributeRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productAttributeRepository;
 
     /**
      * @var SearchCriteriaBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -40,62 +48,29 @@ class AggregationResolverTest extends \PHPUnit\Framework\TestCase
     private $config;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $attributeCollection;
-
-    /**
      * @var AggregationResolver
      */
     private $aggregationResolver;
 
-    /**
-     * @var RequestCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $aggregationChecker;
-
     protected function setUp()
     {
-        $this->attributeSetFinder = $this->getMockBuilder(AttributeSetFinderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->attributeSetFinder = $this->getMock(AttributeSetFinderInterface::class);
+        $this->productAttributeRepository = $this->getMock(ProductAttributeRepositoryInterface::class);
         $this->searchCriteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->request = $this->getMock(RequestInterface::class);
         $this->config = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $this->attributeCollection = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->aggregationChecker = $this->getMockBuilder(RequestCheckerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->aggregationResolver = (new ObjectManager($this))->getObject(
             AggregationResolver::class,
             [
                 'attributeSetFinder' => $this->attributeSetFinder,
+                'productAttributeRepository' => $this->productAttributeRepository,
                 'searchCriteriaBuilder' => $this->searchCriteriaBuilder,
                 'config' => $this->config,
-                'attributeCollection' => $this->attributeCollection,
-                'aggregationChecker' => $this->aggregationChecker
             ]
         );
-    }
-
-    public function testIsNotAplicable()
-    {
-        $documentIds = [1];
-        $this->aggregationChecker
-            ->expects($this->once())
-            ->method('isApplicable')
-            ->with($this->request)
-            ->willReturn(false);
-        $this->assertEquals([], $this->aggregationResolver->resolve($this->request, $documentIds));
     }
 
     public function testResolve()
@@ -103,57 +78,54 @@ class AggregationResolverTest extends \PHPUnit\Framework\TestCase
         $documentIds = [1, 2, 3];
         $attributeSetIds = [4, 5];
         $requestName = 'request_name';
-        $select =  $this->searchCriteriaBuilder = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $adapter = $this->searchCriteriaBuilder = $this->getMockBuilder(
-            \Magento\Framework\DB\Adapter\AdapterInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->aggregationChecker
-            ->expects($this->once())
-            ->method('isApplicable')
-            ->with($this->request)
-            ->willReturn(true);
 
         $this->attributeSetFinder
             ->expects($this->once())
             ->method('findAttributeSetIdsByProductIds')
             ->with($documentIds)
             ->willReturn($attributeSetIds);
-        $this->attributeCollection->expects($this->once())
-            ->method('setAttributeSetFilter')
-            ->with($attributeSetIds)
-            ->willReturnSelf();
-        $this->attributeCollection->expects($this->once())
-            ->method('setEntityTypeFilter')
-            ->with(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE)
-            ->willReturnSelf();
-        $this->attributeCollection->expects($this->atLeastOnce())
-            ->method('getSelect')
-            ->willReturn($select);
-        $select->expects($this->once())->method('reset')->with(\Magento\Framework\DB\Select::COLUMNS)->willReturnSelf();
-        $select->expects($this->once())->method('columns')->with('attribute_code')->willReturnSelf();
-        $this->attributeCollection->expects($this->once())->method('getConnection')->willReturn($adapter);
-        $adapter->expects($this->once())->method('fetchCol')->with($select)->willReturn(['code_1', 'code_2']);
 
-        $bucketFirst = $this->getMockBuilder(BucketInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $searchCriteria = $this->getMock(SearchCriteriaInterface::class);
+
+        $this->searchCriteriaBuilder
+            ->expects($this->once())
+            ->method('addFilter')
+            ->with('attribute_set_id', $attributeSetIds, 'in')
+            ->willReturnSelf();
+        $this->searchCriteriaBuilder
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($searchCriteria);
+
+        $attributeFirst = $this->getMock(ProductAttributeInterface::class);
+        $attributeFirst->expects($this->once())
+            ->method('getAttributeCode')
+            ->willReturn('code_1');
+        $attributeSecond = $this->getMock(ProductAttributeInterface::class);
+        $attributeSecond->expects($this->once())
+            ->method('getAttributeCode')
+            ->willReturn('code_2');
+
+        $searchResult = $this->getMock(ProductAttributeSearchResultsInterface::class);
+        $searchResult->expects($this->once())
+            ->method('getItems')
+            ->willReturn([$attributeFirst, $attributeSecond]);
+
+        $this->productAttributeRepository
+            ->expects($this->once())
+            ->method('getList')
+            ->with($searchCriteria)
+            ->willReturn($searchResult);
+
+        $bucketFirst = $this->getMock(BucketInterface::class);
         $bucketFirst->expects($this->once())
             ->method('getField')
             ->willReturn('code_1');
-        $bucketSecond = $this->getMockBuilder(BucketInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $bucketSecond = $this->getMock(BucketInterface::class);
         $bucketSecond->expects($this->once())
             ->method('getField')
             ->willReturn('some_another_code');
-        $bucketThird = $this->getMockBuilder(BucketInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $bucketThird = $this->getMock(BucketInterface::class);
         $bucketThird->expects($this->once())
             ->method('getName')
             ->willReturn('custom_not_attribute_field');

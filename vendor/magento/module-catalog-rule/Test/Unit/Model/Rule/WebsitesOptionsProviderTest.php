@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogRule\Test\Unit\Model\Rule;
 
-class WebsitesOptionsProviderTest extends \PHPUnit\Framework\TestCase
+class WebsitesOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\Rule\WebsitesOptionsProvider
@@ -19,7 +19,7 @@ class WebsitesOptionsProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setup()
     {
-        $this->storeMock = $this->createMock(\Magento\Store\Model\System\Store::class);
+        $this->storeMock = $this->getMock('\Magento\Store\Model\System\Store', [], [], '', false);
         $this->model = new \Magento\CatalogRule\Model\Rule\WebsitesOptionsProvider($this->storeMock);
     }
 

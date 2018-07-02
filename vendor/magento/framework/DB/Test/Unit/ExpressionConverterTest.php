@@ -6,9 +6,10 @@
 
 namespace Magento\Framework\DB\Test\Unit;
 
+
 use Magento\Framework\DB\ExpressionConverter;
 
-class ExpressionConverterTest extends \PHPUnit\Framework\TestCase
+class ExpressionConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider shortenEntityNameDataProvider

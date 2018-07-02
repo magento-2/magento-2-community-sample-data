@@ -6,7 +6,10 @@
 
 namespace Magento\Sales\Block\Order;
 
-class ItemsTest extends \PHPUnit\Framework\TestCase
+/**
+ * Test class for \Magento\Sales\Block\Order\Items
+ */
+class ItemsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Order\Items
@@ -36,7 +39,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @covers \Magento\Sales\Block\Order\Items::getItems
+     *
      * @magentoDataFixture Magento/Sales/_files/order.php
+     * @return void
      */
     public function testGetOrderItems()
     {
@@ -46,9 +52,12 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test that pager is displayed for order items list.
+     *
      * @magentoAppIsolation enabled
      * @magentoConfigFixture default/sales/orders/items_per_page 3
      * @magentoDataFixture Magento/Sales/_files/order_item_list.php
+     * @return void
      */
     public function testPagerIsDisplayed()
     {
@@ -67,7 +76,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test that pager is not displayed for order items list.
+     *
      * @magentoDataFixture Magento/Sales/_files/order_item_list.php
+     * @return void
      */
     public function testPagerIsNotDisplayed()
     {
@@ -86,10 +98,13 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @covers \Magento\Sales\Block\Order\Items::getPagerHtml
+     *
      * @magentoAppIsolation enabled
      * @magentoAppArea frontend
      * @magentoConfigFixture default/sales/orders/items_per_page 3
      * @magentoDataFixture Magento/Sales/_files/order_item_list.php
+     * @return void
      */
     public function testGetPagerHtml()
     {
@@ -108,7 +123,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @covers \Magento\Sales\Block\Order\Items::getOrder
+     *
      * @magentoDataFixture Magento/Sales/_files/order.php
+     * @return void
      */
     public function testGetOrder()
     {
@@ -120,7 +138,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Register order in registry
+     * Register order in registry.
      *
      * @return \Magento\Sales\Model\Order
      */
@@ -130,6 +148,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $order = $this->objectManager->get(\Magento\Sales\Model\Order::class);
         $order->loadByIncrementId('100000001');
         $this->registry->register('current_order', $order);
+        
         return $order;
     }
 }

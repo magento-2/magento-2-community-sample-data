@@ -5,6 +5,7 @@
  */
 namespace Magento\Backend\Block\Dashboard;
 
+
 /**
  * Adminhtml dashboard sales statistics bar
  *

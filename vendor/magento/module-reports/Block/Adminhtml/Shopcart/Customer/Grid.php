@@ -104,7 +104,7 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\Shopcart
                 'align' => 'right',
                 'currency_code' => $currencyCode,
                 'index' => 'total',
-                'renderer' => \Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency::class,
+                'renderer' => 'Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency',
                 'rate' => $this->getRate($currencyCode)
             ]
         );

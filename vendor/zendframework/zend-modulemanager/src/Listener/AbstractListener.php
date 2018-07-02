@@ -26,8 +26,11 @@ abstract class AbstractListener
      */
     public function __construct(ListenerOptions $options = null)
     {
-        $options = $options ?: new ListenerOptions;
-        $this->setOptions($options);
+        if (null === $options) {
+            $this->setOptions(new ListenerOptions);
+        } else {
+            $this->setOptions($options);
+        }
     }
 
     /**
@@ -62,7 +65,7 @@ abstract class AbstractListener
     protected function writeArrayToFile($filePath, $array)
     {
         $content = "<?php\nreturn " . var_export($array, 1) . ';';
-        file_put_contents($filePath, $content, LOCK_EX);
+        file_put_contents($filePath, $content);
         return $this;
     }
 }

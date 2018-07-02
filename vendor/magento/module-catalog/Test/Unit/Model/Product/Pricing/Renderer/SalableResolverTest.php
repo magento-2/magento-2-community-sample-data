@@ -6,7 +6,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Pricing\Renderer;
 
-class SalableResolverTest extends \PHPUnit\Framework\TestCase
+class SalableResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver
@@ -20,9 +20,12 @@ class SalableResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->product = $this->createPartialMock(
+        $this->product = $this->getMock(
             \Magento\Catalog\Model\Product::class,
-            ['__wakeup', 'getCanShowPrice']
+            ['__wakeup', 'getCanShowPrice', 'isSalable'],
+            [],
+            '',
+            false
         );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
@@ -37,6 +40,8 @@ class SalableResolverTest extends \PHPUnit\Framework\TestCase
             ->method('getCanShowPrice')
             ->willReturn(true);
 
+        $this->product->expects($this->any())->method('isSalable')->willReturn(true);
+
         $result = $this->object->isSalable($this->product);
         $this->assertTrue($result);
     }
@@ -45,7 +50,9 @@ class SalableResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->product->expects($this->any())
             ->method('getCanShowPrice')
-            ->willReturn(false);
+            ->willReturn(true);
+
+        $this->product->expects($this->any())->method('isSalable')->willReturn(false);
 
         $result = $this->object->isSalable($this->product);
         $this->assertFalse($result);

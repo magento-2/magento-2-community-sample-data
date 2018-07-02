@@ -11,7 +11,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model\Product\Type;
 /**
  * Class \Magento\ConfigurableProduct\Test\Unit\Model\Product\Type\PluginTest
  */
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $expected
@@ -20,7 +20,9 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      */
     public function testAfterGetOptionArray(array $expected, array $data)
     {
-        $moduleManagerMock = $this->createPartialMock(\Magento\Framework\Module\Manager::class, ['isOutputEnabled']);
+        $moduleManagerMock = $this->getMock(
+            'Magento\Framework\Module\Manager', ['isOutputEnabled'], [], '', false
+        );
         $moduleManagerMock->expects($this->once())
             ->method('isOutputEnabled')
             ->with('Magento_ConfigurableProduct')
@@ -38,7 +40,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      */
     public function afterGetOptionArrayDataProvider()
     {
-        $productTypeMock = $this->createMock(\Magento\Catalog\Model\Product\Type::class);
+        $productTypeMock = $this->getMock('Magento\Catalog\Model\Product\Type', [], [], '', false);
         return [
             [
                 [

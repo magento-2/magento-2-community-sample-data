@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Swatches\Test\Unit\Model;
 
 use Magento\Eav\Model\Entity\Attribute;
@@ -10,14 +11,15 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Model\SwatchAttributeCodes;
 
-class SwatchAttributeCodesTest extends \PHPUnit\Framework\TestCase
+class SwatchAttributeCodesTest extends \PHPUnit_Framework_TestCase
 {
+
     const ATTRIBUTE_TABLE = 'eav_attribute';
     const ATTRIBUTE_OPTION_TABLE = 'eav_attribute_option';
     const SWATCH_OPTION_TABLE = 'eav_attribute_option_swatch';
+
     const CACHE_KEY = 'swatch-attribute-list';
 
     /**
@@ -26,50 +28,56 @@ class SwatchAttributeCodesTest extends \PHPUnit\Framework\TestCase
     private $swatchAttributeCodesModel;
 
     /**
-     * @var CacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInterface
      */
     private $cache;
 
     /**
-     * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResourceConnection;
      */
     private $resourceConnection;
 
-    /**
-     * @var array
-     */
     private $swatchAttributesCodes = [
         10 => 'text_swatch',
-        11 => 'image_swatch',
+        11 => 'image_swatch'
     ];
 
     protected function setUp()
     {
-        $this->cache = $this->createPartialMock(CacheInterface::class, [
+        $this->cache = $this->getMock(
+            CacheInterface::class,
+            [
                 'getFrontend',
                 'load',
                 'save',
                 'remove',
                 'clean'
-            ]);
-
-        $this->resourceConnection = $this->createPartialMock(
-            ResourceConnection::class,
-            ['getConnection', 'getTableName']
+            ],
+            [],
+            '',
+            false
         );
 
-        $this->swatchAttributeCodesModel = (new ObjectManager($this))->getObject(SwatchAttributeCodes::class, [
-            'cache' => $this->cache,
-            'resourceConnection' => $this->resourceConnection,
-            'cacheKey' => self::CACHE_KEY,
-            'cacheTags' => [Attribute::CACHE_TAG],
-        ]);
+        $this->resourceConnection = $this->getMock(
+            ResourceConnection::class,
+            ['getConnection', 'getTableName'],
+            [],
+            '',
+            false
+        );
+
+        $cacheTags = [Attribute::CACHE_TAG];
+
+        $this->swatchAttributeCodesModel = new SwatchAttributeCodes(
+            $this->cache,
+            $this->resourceConnection,
+            self::CACHE_KEY,
+            $cacheTags
+        );
     }
 
     /**
      * @dataProvider dataForGettingCodes
-     * @param array|bool $swatchAttributeCodesCache
-     * @param array $expected
      */
     public function testGetCodes($swatchAttributeCodesCache, $expected)
     {
@@ -78,9 +86,21 @@ class SwatchAttributeCodesTest extends \PHPUnit\Framework\TestCase
             ->with(self::CACHE_KEY)
             ->willReturn($swatchAttributeCodesCache);
 
-        $adapterMock = $this->createPartialMock(Mysql::class, ['select', 'fetchPairs']);
+        $adapterMock = $this->getMock(
+            Mysql::class,
+            ['select', 'fetchPairs'],
+            [],
+            '',
+            false
+        );
 
-        $selectMock = $this->createPartialMock(Select::class, ['from', 'where', 'join']);
+        $selectMock = $this->getMock(
+            Select::class,
+            ['from', 'where', 'join'],
+            [],
+            '',
+            false
+        );
         $selectMock
             ->method('from')
             ->withConsecutive(
@@ -102,7 +122,7 @@ class SwatchAttributeCodesTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnSelf();
 
-        // used anything for second argument because of new \Zend_Db_Expt used in code.
+        //used anything for second argument because of new \Zend_Db_Expt used in code.
         $selectMock->method('where')
             ->with(
                 self::identicalTo('a.attribute_id IN (?)'),
@@ -136,9 +156,6 @@ class SwatchAttributeCodesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
     public function dataForGettingCodes()
     {
         return [

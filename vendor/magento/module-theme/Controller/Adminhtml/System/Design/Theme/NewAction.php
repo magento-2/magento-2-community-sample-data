@@ -6,10 +6,6 @@
  */
 namespace Magento\Theme\Controller\Adminhtml\System\Design\Theme;
 
-/**
- * Class NewAction
- * @deprecated 100.2.0
- */
 class NewAction extends \Magento\Theme\Controller\Adminhtml\System\Design\Theme
 {
     /**

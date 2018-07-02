@@ -8,40 +8,45 @@ namespace Magento\Swatches\Controller\Ajax;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Catalog\Model\Product;
 
 /**
  * Class Media
+ *
+ * @package Magento\Swatches\Controller\Ajax
  */
 class Media extends \Magento\Framework\App\Action\Action
 {
     /**
-     * @var \Magento\Catalog\Model\Product Factory
+     * @var \Magento\Swatches\Helper\Data
+     */
+    protected $swatchHelper;
+
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $productModelFactory;
 
     /**
-     * @var \Magento\Swatches\Helper\Data
-     */
-    private $swatchHelper;
-
-    /**
      * @param Context $context
-     * @param \Magento\Catalog\Model\ProductFactory $productModelFactory
      * @param \Magento\Swatches\Helper\Data $swatchHelper
+     * @param \Magento\Catalog\Model\ProductFactory $productModelFactory
      */
     public function __construct(
         Context $context,
-        \Magento\Catalog\Model\ProductFactory $productModelFactory,
-        \Magento\Swatches\Helper\Data $swatchHelper
+        \Magento\Swatches\Helper\Data $swatchHelper,
+        \Magento\Catalog\Model\ProductFactory $productModelFactory
     ) {
-        $this->productModelFactory = $productModelFactory;
         $this->swatchHelper = $swatchHelper;
+        $this->productModelFactory = $productModelFactory;
 
         parent::__construct($context);
     }
 
     /**
-     * Get product media for specified configurable product variation
+     * Get product media by fallback:
+     * 1stly by default attribute values
+     * 2ndly by getting base image from configurable product
      *
      * @return string
      */
@@ -49,14 +54,60 @@ class Media extends \Magento\Framework\App\Action\Action
     {
         $productMedia = [];
         if ($productId = (int)$this->getRequest()->getParam('product_id')) {
-            $productMedia = $this->swatchHelper->getProductMediaGallery(
-                $this->productModelFactory->create()->load($productId)
-            );
+            $currentConfigurable = $this->productModelFactory->create()->load($productId);
+            $attributes = (array)$this->getRequest()->getParam('attributes');
+            if (!empty($attributes)) {
+                $product = $this->getProductVariationWithMedia($currentConfigurable, $attributes);
+            }
+            if ((empty($product) || (!$product->getImage() || $product->getImage() == 'no_selection'))
+                && isset($currentConfigurable)
+            ) {
+                $product = $currentConfigurable;
+            }
+            $productMedia = $this->swatchHelper->getProductMediaGallery($product);
         }
 
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultJson->setData($productMedia);
         return $resultJson;
+    }
+
+    protected function getProductVariationWithMedia(Product $currentConfigurable, array $attributes)
+    {
+        $product = null;
+        $layeredAttributes = [];
+        $configurableAttributes = $this->swatchHelper->getAttributesFromConfigurable($currentConfigurable);
+        if ($configurableAttributes) {
+            $layeredAttributes = $this->getLayeredAttributesIfExists($configurableAttributes);
+        }
+        $resultAttributes = array_merge($layeredAttributes, $attributes);
+
+        $product = $this->swatchHelper->loadVariationByFallback($currentConfigurable, $resultAttributes);
+        if (!$product || (!$product->getImage() || $product->getImage() == 'no_selection')) {
+            $product = $this->swatchHelper->loadFirstVariationWithSwatchImage($currentConfigurable, $resultAttributes);
+        }
+        if (!$product) {
+            $product = $this->swatchHelper->loadFirstVariationWithImage($currentConfigurable, $resultAttributes);
+        }
+        return $product;
+    }
+
+    /**
+     * @param array $configurableAttributes
+     * @return array
+     */
+    protected function getLayeredAttributesIfExists(array $configurableAttributes)
+    {
+        $layeredAttributes = [];
+
+        foreach ($configurableAttributes as $attribute) {
+            if ($urlAdditional = (array)$this->getRequest()->getParam('additional')) {
+                if (array_key_exists($attribute['attribute_code'], $urlAdditional)) {
+                    $layeredAttributes[$attribute['attribute_code']] = $urlAdditional[$attribute['attribute_code']];
+                }
+            }
+        }
+        return $layeredAttributes;
     }
 }

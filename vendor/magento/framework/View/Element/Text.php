@@ -7,8 +7,6 @@ namespace Magento\Framework\View\Element;
 
 /**
  * Class Text
- *
- * @api
  */
 class Text extends \Magento\Framework\View\Element\AbstractBlock
 {

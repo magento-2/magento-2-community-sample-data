@@ -19,7 +19,7 @@ use Magento\Store\Model\Store;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PriceColumn
@@ -87,7 +87,7 @@ class PriceTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects(static::never())
+        $this->contextMock->expects(static::any())
             ->method('getProcessor')
             ->willReturn($this->uiElementProcessorMock);
 

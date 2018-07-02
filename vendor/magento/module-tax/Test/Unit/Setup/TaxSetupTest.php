@@ -5,7 +5,7 @@
  */
 namespace Magento\Tax\Test\Unit\Setup;
 
-class TaxSetupTest extends \PHPUnit\Framework\TestCase
+class TaxSetupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Setup\TaxSetup
@@ -19,15 +19,15 @@ class TaxSetupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->typeConfigMock = $this->createMock(\Magento\Catalog\Model\ProductTypes\ConfigInterface::class);
+        $this->typeConfigMock = $this->getMock('Magento\Catalog\Model\ProductTypes\ConfigInterface');
 
-        $salesSetup = $this->createMock(\Magento\Sales\Setup\SalesSetup::class);
-        $salesSetupFactory = $this->createPartialMock(\Magento\Sales\Setup\SalesSetupFactory::class, ['create']);
+        $salesSetup = $this->getMock('\Magento\Sales\Setup\SalesSetup', [], [], '', false);
+        $salesSetupFactory = $this->getMock('Magento\Sales\Setup\SalesSetupFactory', ['create'], [], '', false);
         $salesSetupFactory->expects($this->any())->method('create')->will($this->returnValue($salesSetup));
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->taxSetup = $helper->getObject(
-            \Magento\Tax\Setup\TaxSetup::class,
+            'Magento\Tax\Setup\TaxSetup',
             [
                 'productTypeConfig' => $this->typeConfigMock,
                 'salesSetupFactory' => $salesSetupFactory,

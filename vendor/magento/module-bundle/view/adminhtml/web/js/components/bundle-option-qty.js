@@ -11,28 +11,16 @@ define([
     return Abstract.extend({
         defaults: {
             valueUpdate: 'input',
-            isInteger: true,
-            validation: {
-                'validate-number': true
-            }
+            isInteger: true
         },
 
         /**
-         * @inheritdoc
+         * update event
          */
         onUpdate: function () {
+            this.validation['validate-number'] = true;
             this.validation['validate-digits'] = this.isInteger;
-            this._super();
-        },
-
-        /**
-         * @inheritdoc
-         */
-        hasChanged: function () {
-            var notEqual = this.value() !== this.initialValue.toString();
-
-            return !this.visible() ? false : notEqual;
+            this.validate();
         }
-
     });
 });

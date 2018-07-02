@@ -18,7 +18,6 @@ class ReturnUrl extends Payflow
     protected $allowedOrderStates = [
         Order::STATE_PROCESSING,
         Order::STATE_COMPLETE,
-        Order::STATE_PAYMENT_REVIEW
     ];
 
     /**

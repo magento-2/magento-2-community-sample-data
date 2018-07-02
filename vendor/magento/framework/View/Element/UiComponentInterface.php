@@ -9,8 +9,6 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 /**
  * Interface UiComponentInterface
- *
- * @api
  */
 interface UiComponentInterface extends BlockInterface
 {

@@ -9,7 +9,6 @@ namespace Magento\Tax\Api\Data;
 /**
  * Quote details interface.
  * @api
- * @since 100.0.2
  */
 interface QuoteDetailsInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

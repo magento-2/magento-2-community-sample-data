@@ -5,11 +5,11 @@
  */
 namespace Magento\CustomerSampleData\Model;
 
-use Magento\Customer\Api\Data\RegionInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Setup\SampleData\Context as SampleDataContext;
+use Magento\Customer\Api\Data\RegionInterface;
 
 /**
+ * Class Customer
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Customer
@@ -50,12 +50,12 @@ class Customer
     protected $accountManagement;
 
     /**
-     * @var array
+     * @var array $customerDataProfile
      */
     protected $customerDataProfile;
 
     /**
-     * @var array
+     * @var array $customerDataAddress
      */
     protected $customerDataAddress;
 
@@ -69,15 +69,8 @@ class Customer
      */
     protected $dataObjectHelper;
 
-    /**
-     * @var \Magento\Framework\App\State
-     */
-    protected $appState;
 
-    /**
-     * @var Json
-     */
-    private $serializer;
+    protected $appState;
 
     /**
      * @param SampleDataContext $sampleDataContext
@@ -89,7 +82,6 @@ class Customer
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Api\DataObjectHelper $dataObjectHelper
      * @param \Magento\Framework\App\State $appState
-     * @param Json|null $serializer
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -101,8 +93,7 @@ class Customer
         \Magento\Customer\Api\AccountManagementInterface $accountManagement,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Api\DataObjectHelper $dataObjectHelper,
-        \Magento\Framework\App\State $appState,
-        Json $serializer = null
+        \Magento\Framework\App\State $appState
     ) {
         $this->fixtureManager = $sampleDataContext->getFixtureManager();
         $this->csvReader = $sampleDataContext->getCsvReader();
@@ -114,13 +105,10 @@ class Customer
         $this->storeManager = $storeManager;
         $this->dataObjectHelper = $dataObjectHelper;
         $this->appState = $appState;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Json::class);
     }
 
     /**
-     * Loop through list of fixture files and install sample data
-     *
-     * @param string[] $fixtures
+     * {@inheritdoc}
      */
     public function install($fixtures)
     {
@@ -249,7 +237,7 @@ class Customer
         foreach ($row as $field => $value) {
             if (isset($data[$field])) {
                 if ($field == 'street') {
-                    $data[$field] = $this->serializer->unserialize($value);
+                    $data[$field] = unserialize($value);
                     continue;
                 }
                 if ($field == 'password') {
@@ -268,6 +256,6 @@ class Customer
     protected function getRegionId($address)
     {
         $country = $this->countryFactory->create()->loadByCode($address['country_id']);
-        return $country->getRegionCollection()->addFieldToFilter('default_name', $address['region'])->getFirstItem()->getId();
+        return $country->getRegionCollection()->addFieldToFilter('name', $address['region'])->getFirstItem()->getId();
     }
 }

@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Stdlib\DateTime;
 
 /**
@@ -63,10 +65,9 @@ interface TimezoneInterface
      * @param mixed $date
      * @param string $locale
      * @param bool $useTimezone
-     * @param bool $includeTime
      * @return \DateTime
      */
-    public function date($date = null, $locale = null, $useTimezone = true, $includeTime = true);
+    public function date($date = null, $locale = null, $useTimezone = true);
 
     /**
      * Create \DateTime object with date converted to scope timezone and scope Locale
@@ -142,7 +143,6 @@ interface TimezoneInterface
      * @param string|\DateTimeInterface $date
      * @param string $format
      * @return string
-     * @since 100.1.0
      */
     public function convertConfigTimeToUtc($date, $format = 'Y-m-d H:i:s');
 }

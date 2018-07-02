@@ -8,7 +8,7 @@ namespace Magento\Braintree\Gateway\Validator;
 use Braintree\Result\Error;
 use Braintree\Result\Successful;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 
 class GeneralResponseValidator extends AbstractValidator
@@ -19,25 +19,15 @@ class GeneralResponseValidator extends AbstractValidator
     protected $subjectReader;
 
     /**
-     * @var ErrorCodeValidator
-     */
-    private $errorCodeValidator;
-
-    /**
      * Constructor
      *
      * @param ResultInterfaceFactory $resultFactory
      * @param SubjectReader $subjectReader
-     * @param ErrorCodeValidator $errorCodeValidator
      */
-    public function __construct(
-        ResultInterfaceFactory $resultFactory,
-        SubjectReader $subjectReader,
-        ErrorCodeValidator $errorCodeValidator
-    ) {
+    public function __construct(ResultInterfaceFactory $resultFactory, SubjectReader $subjectReader)
+    {
         parent::__construct($resultFactory);
         $this->subjectReader = $subjectReader;
-        $this->errorCodeValidator = $errorCodeValidator;
     }
 
     /**
@@ -72,10 +62,9 @@ class GeneralResponseValidator extends AbstractValidator
             function ($response) {
                 return [
                     property_exists($response, 'success') && $response->success === true,
-                    [$response->message ?? __('Braintree error response.')]
+                    [__('Braintree error response.')]
                 ];
-            },
-            $this->errorCodeValidator
+            }
         ];
     }
 }

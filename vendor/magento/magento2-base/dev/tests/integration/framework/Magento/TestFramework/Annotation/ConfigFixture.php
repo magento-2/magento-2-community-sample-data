@@ -21,7 +21,7 @@ class ConfigFixture
     /**
      * Test instance that is available between 'startTest' and 'stopTest' events
      *
-     * @var \PHPUnit\Framework\TestCase
+     * @var \PHPUnit_Framework_TestCase
      */
     protected $_currentTest;
 
@@ -52,7 +52,7 @@ class ConfigFixture
         $result = null;
         if ($scopeCode !== false) {
             /** @var \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig */
-            $scopeConfig = $objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+            $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
             $result = $scopeConfig->getValue(
                 $configPath,
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
@@ -76,7 +76,7 @@ class ConfigFixture
             if (strpos($configPath, 'default/') === 0) {
                 $configPath = substr($configPath, 8);
                 $objectManager->get(
-                    \Magento\Framework\App\Config\MutableScopeConfigInterface::class
+                    'Magento\Framework\App\Config\MutableScopeConfigInterface'
                 )->setValue(
                     $configPath,
                     $value,
@@ -85,7 +85,7 @@ class ConfigFixture
             }
         } else {
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\App\Config\MutableScopeConfigInterface::class
+                'Magento\Framework\App\Config\MutableScopeConfigInterface'
             )->setValue(
                 $configPath,
                 $value,
@@ -98,10 +98,10 @@ class ConfigFixture
     /**
      * Assign required config values and save original ones
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    protected function _assignConfigData(\PHPUnit\Framework\TestCase $test)
+    protected function _assignConfigData(\PHPUnit_Framework_TestCase $test)
     {
         $annotations = $test->getAnnotations();
         if (!isset($annotations['method']['magentoConfigFixture'])) {
@@ -154,9 +154,9 @@ class ConfigFixture
     /**
      * Handler for 'startTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    public function startTest(\PHPUnit\Framework\TestCase $test)
+    public function startTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->_currentTest = $test;
         $this->_assignConfigData($test);
@@ -165,11 +165,11 @@ class ConfigFixture
     /**
      * Handler for 'endTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function endTest(\PHPUnit\Framework\TestCase $test)
+    public function endTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->_currentTest = null;
         $this->_restoreConfigData();

@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Event;
 
-class MagentoTest extends \PHPUnit\Framework\TestCase
+class MagentoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Event\Magento
@@ -23,10 +23,11 @@ class MagentoTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_eventManager = $this->getMockBuilder(\Magento\TestFramework\EventManager::class)
-            ->setMethods(['fireEvent'])
-            ->setConstructorArgs([[]])
-            ->getMock();
+        $this->_eventManager = $this->getMock(
+            'Magento\TestFramework\EventManager',
+            ['fireEvent'],
+            [[]]
+        );
         $this->_object = new \Magento\TestFramework\Event\Magento($this->_eventManager);
     }
 
@@ -60,6 +61,6 @@ class MagentoTest extends \PHPUnit\Framework\TestCase
     public function testInitStoreAfter()
     {
         $this->_eventManager->expects($this->once())->method('fireEvent')->with('initStoreAfter');
-        $this->_object->execute($this->createMock(\Magento\Framework\Event\Observer::class));
+        $this->_object->execute($this->getMock('\Magento\Framework\Event\Observer'));
     }
 }

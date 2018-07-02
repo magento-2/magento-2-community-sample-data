@@ -11,11 +11,15 @@ namespace Magento\Newsletter\Controller\Adminhtml;
 class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
     /**
+     * Form key.
+     *
      * @var string
      */
     private $formKey;
 
     /**
+     * Template model.
+     *
      * @var \Magento\Newsletter\Model\Template
      */
     protected $model;
@@ -42,7 +46,7 @@ class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBac
     protected function tearDown()
     {
         /**
-         * Unset messages
+         * Unset messages.
          */
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)
             ->destroy();
@@ -58,11 +62,11 @@ class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBac
         $this->getRequest()->setParam('id', $this->model->getId());
         $this->dispatch('backend/newsletter/template/save');
         /**
-         * Check that errors was generated and set to session
+         * Check that errors was generated and set to session.
          */
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
         /**
-         * Check that success message is set
+         * Check that success message is set.
          */
         $this->assertSessionMessages(
             $this->equalTo(['The newsletter template has been saved.']),
@@ -87,12 +91,12 @@ class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBac
         $this->dispatch('backend/newsletter/template/save');
 
         /**
-         * Check that errors was generated and set to session
+         * Check that errors was generated and set to session.
          */
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
         /**
-         * Check that success message is set
+         * Check that success message is set.
          */
         $this->assertSessionMessages(
             $this->equalTo(['The newsletter template has been saved.']),
@@ -113,12 +117,12 @@ class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBac
         $this->dispatch('backend/newsletter/template/delete');
 
         /**
-         * Check that errors was generated and set to session
+         * Check that errors was generated and set to session.
          */
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
         /**
-         * Check that success message is set
+         * Check that success message is set.
          */
         $this->assertSessionMessages(
             $this->equalTo(['The newsletter template has been deleted.']),
@@ -139,7 +143,7 @@ class NewsletterTemplateTest extends \Magento\TestFramework\TestCase\AbstractBac
         $this->dispatch('backend/newsletter/template/save');
 
         /**
-         * Check that errors was generated and set to session
+         * Check that errors was generated and set to session.
          */
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 

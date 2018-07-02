@@ -10,9 +10,7 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 /**
  * Category resource collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection
 {
@@ -65,7 +63,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Catalog\Model\Category::class, \Magento\Catalog\Model\ResourceModel\Category::class);
+        $this->_init('Magento\Catalog\Model\Category', 'Magento\Catalog\Model\ResourceModel\Category');
     }
 
     /**

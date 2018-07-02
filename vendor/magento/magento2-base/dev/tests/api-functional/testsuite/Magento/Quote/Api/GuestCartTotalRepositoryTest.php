@@ -34,17 +34,17 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->searchCriteriaBuilder = $this->objectManager->create(
-            \Magento\Framework\Api\SearchCriteriaBuilder::class
+            'Magento\Framework\Api\SearchCriteriaBuilder'
         );
         $this->filterBuilder = $this->objectManager->create(
-            \Magento\Framework\Api\FilterBuilder::class
+            'Magento\Framework\Api\FilterBuilder'
         );
     }
 
     protected function getQuoteMaskedId($quoteId)
     {
         /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
-        $quoteIdMask = $this->objectManager->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)->create();
+        $quoteIdMask = $this->objectManager->create('Magento\Quote\Model\QuoteIdMaskFactory')->create();
         $quoteIdMask->load($quoteId, 'quote_id');
         return $quoteIdMask->getMaskedId();
     }
@@ -54,8 +54,9 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
      */
     public function testGetTotals()
     {
+        $this->markTestSkipped('Will be fixed after MAGETWO-35573');
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $cartId = $this->getQuoteMaskedId($quote->getId());
 
@@ -85,7 +86,6 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
             Totals::KEY_BASE_SHIPPING_INCL_TAX => $shippingAddress->getBaseShippingInclTax(),
             Totals::KEY_BASE_CURRENCY_CODE => $quote->getBaseCurrencyCode(),
             Totals::KEY_QUOTE_CURRENCY_CODE => $quote->getQuoteCurrencyCode(),
-            Totals::KEY_ITEMS_QTY => $quote->getItemsQty(),
             Totals::KEY_ITEMS => [$this->getQuoteItemTotalsData($quote)],
         ];
 
@@ -93,17 +93,7 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
 
         $data = $this->formatTotalsData($data);
 
-        $actual = $this->_webApiCall($this->getServiceInfoForTotalsService($cartId), $requestData);
-
-        unset($actual['items'][0]['options']);
-        unset($actual['weee_tax_applied_amount']);
-
-        unset($actual['total_segments']);
-        if (array_key_exists('extension_attributes', $actual)) {
-            unset($actual['extension_attributes']);
-        }
-
-        $this->assertEquals($data, $actual);
+        $this->assertEquals($data, $this->_webApiCall($this->getServiceInfoForTotalsService($cartId), $requestData));
     }
 
     /**
@@ -172,7 +162,6 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
         $item = array_shift($items);
 
         return [
-            ItemTotals::KEY_ITEM_ID => $item->getItemId(),
             ItemTotals::KEY_PRICE => $item->getPrice(),
             ItemTotals::KEY_BASE_PRICE => $item->getBasePrice(),
             ItemTotals::KEY_QTY => $item->getQty(),
@@ -189,9 +178,6 @@ class GuestCartTotalRepositoryTest extends WebapiAbstract
             ItemTotals::KEY_BASE_PRICE_INCL_TAX => $item->getBasePriceInclTax(),
             ItemTotals::KEY_ROW_TOTAL_INCL_TAX => $item->getRowTotalInclTax(),
             ItemTotals::KEY_BASE_ROW_TOTAL_INCL_TAX => $item->getBaseRowTotalInclTax(),
-            ItemTotals::KEY_WEEE_TAX_APPLIED_AMOUNT => $item->getWeeeTaxAppliedAmount(),
-            ItemTotals::KEY_WEEE_TAX_APPLIED => $item->getWeeeTaxApplied(),
-            ItemTotals::KEY_NAME => $item->getName(),
         ];
     }
 }

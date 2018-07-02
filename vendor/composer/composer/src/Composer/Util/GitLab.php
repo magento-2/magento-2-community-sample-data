@@ -64,22 +64,12 @@ class GitLab
             return true;
         }
 
-        // if available use token from composer config
-        $authTokens = $this->config->get('gitlab-token');
-
-        if (isset($authTokens[$originUrl])) {
-            $this->io->setAuthentication($originUrl, $authTokens[$originUrl], 'private-token');
-
-            return true;
-        }
-
         return false;
     }
 
     /**
      * Authorizes a GitLab domain interactively via OAuth.
      *
-     * @param string $scheme    Scheme used in the origin URL
      * @param string $originUrl The host this GitLab instance is located at
      * @param string $message   The reason this authorization is required
      *
@@ -144,7 +134,7 @@ class GitLab
             'username' => $username,
             'password' => $password,
             'grant_type' => 'password',
-        ), null, '&');
+        ));
         $options = array(
             'retry-auth-failure' => false,
             'http' => array(

@@ -36,6 +36,13 @@ class Method extends Block
     protected $billingAddressSelector = '.payment-method-billing-address';
 
     /**
+     * Save credit card check box.
+     *
+     * @var string
+     */
+    protected $vaultCheckbox = '#%s_enable_vault';
+
+    /**
      * PayPal load spinner.
      *
      * @var string
@@ -110,7 +117,6 @@ class Method extends Block
      */
     public function inContextPaypalCheckout()
     {
-        $this->waitForElementNotVisible($this->waitElement);
         $this->_rootElement->find($this->placeOrderButton)->click();
         $this->browser->selectWindow();
         $this->waitForFormLoaded();
@@ -127,8 +133,21 @@ class Method extends Block
         $element = $this->_rootElement->find($this->billingAddressSelector);
 
         return $this->blockFactory->create(
-            \Magento\Checkout\Test\Block\Onepage\Payment\Method\Billing::class,
+            '\Magento\Checkout\Test\Block\Onepage\Payment\Method\Billing',
             ['element' => $element]
         );
+    }
+
+    /**
+     * Save credit card.
+     *
+     * @param string $paymentMethod
+     * @param string $creditCardSave
+     * @return void
+     */
+    public function saveCreditCard($paymentMethod, $creditCardSave)
+    {
+        $saveCard = sprintf($this->vaultCheckbox, $paymentMethod);
+        $this->_rootElement->find($saveCard, Locator::SELECTOR_CSS, 'checkbox')->setValue($creditCardSave);
     }
 }

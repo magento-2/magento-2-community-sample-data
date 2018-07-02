@@ -8,10 +8,7 @@
 namespace Magento\ConfigurableProduct\Model\ResourceModel\Product\Indexer\Price;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Store\Api\StoreResolverInterface;
-use Magento\Store\Model\Store;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -31,8 +28,8 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
      * @param \Magento\Eav\Model\Config $eavConfig
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\Module\Manager $moduleManager
-     * @param string|null $connectionName
-     * @param StoreResolverInterface|null $storeResolver
+     * @param string $connectionName
+     * @param StoreResolverInterface $storeResolver
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
@@ -44,9 +41,40 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
         StoreResolverInterface $storeResolver = null
     ) {
         parent::__construct($context, $tableStrategy, $eavConfig, $eventManager, $moduleManager, $connectionName);
-        $this->storeResolver = $storeResolver ?: \Magento\Framework\App\ObjectManager::getInstance()->get(
-            StoreResolverInterface::class
-        );
+        $this->storeResolver = $storeResolver ?:
+            \Magento\Framework\App\ObjectManager::getInstance()->get(StoreResolverInterface::class);
+    }
+
+    /**
+     * Reindex temporary (price result data) for all products
+     *
+     * @return $this
+     * @throws \Exception
+     */
+    public function reindexAll()
+    {
+        $this->tableStrategy->setUseIdxTable(true);
+        $this->beginTransaction();
+        try {
+            $this->reindex();
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+        return $this;
+    }
+
+    /**
+     * Reindex temporary (price result data) for defined product(s)
+     *
+     * @param int|array $entityIds
+     * @return \Magento\ConfigurableProduct\Model\ResourceModel\Product\Indexer\Price\Configurable
+     */
+    public function reindexEntity($entityIds)
+    {
+        $this->reindex($entityIds);
+        return $this;
     }
 
     /**
@@ -58,7 +86,7 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
         if ($this->hasEntity() || !empty($entityIds)) {
             $this->prepareFinalPriceDataForType($entityIds, $this->getTypeId());
             $this->_applyCustomOption();
-            $this->_applyConfigurableOption($entityIds);
+            $this->_applyConfigurableOption();
             $this->_movePriceDataToIndexTable($entityIds);
         }
         return $this;
@@ -110,11 +138,10 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
      * Calculate minimal and maximal prices for configurable product options
      * and apply it to final price
      *
-     * @param null|int|array $entityIds
      * @return \Magento\ConfigurableProduct\Model\ResourceModel\Product\Indexer\Price\Configurable
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function _applyConfigurableOption($entityIds = null)
+    protected function _applyConfigurableOption()
     {
         $metadata = $this->getMetadataPool()->getMetadata(ProductInterface::class);
         $connection = $this->getConnection();
@@ -136,20 +163,15 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
             ['parent_id' => 'entity_id']
         );
 
-        if ($entityIds !== null) {
-            $subSelect->where('le.entity_id IN (?)', $entityIds);
-        }
-
         $select = $connection->select();
-        $select
-            ->from(['sub' => new \Zend_Db_Expr('(' . (string)$subSelect . ')')], '')
+        $select->from(['sub' => new \Zend_Db_Expr('(' . (string)$subSelect . ')')], '')
             ->columns([
                 'sub.parent_id',
                 'sub.entity_id',
                 'sub.customer_group_id',
                 'sub.website_id',
                 'sub.price',
-                'sub.tier_price'
+                'sub.tier_price',
             ]);
 
         $query = $select->insertFromSelect($coaTable);
@@ -179,7 +201,6 @@ class Configurable extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\
             ' AND i.website_id = io.website_id',
             []
         );
-        // adds price of custom option, that was applied in DefaultPrice::_applyCustomOption
         $select->columns(
             [
                 'min_price' => new \Zend_Db_Expr('i.min_price - i.orig_price + io.min_price'),

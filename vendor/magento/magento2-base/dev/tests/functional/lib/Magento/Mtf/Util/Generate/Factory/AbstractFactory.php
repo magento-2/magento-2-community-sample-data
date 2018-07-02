@@ -1,5 +1,6 @@
 <?php
 /**
+ * @api
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -14,7 +15,6 @@ use Magento\Framework\Filesystem\Glob;
  *
  * Abstract Factory Generator
  *
- * @api
  */
 abstract class AbstractFactory
 {

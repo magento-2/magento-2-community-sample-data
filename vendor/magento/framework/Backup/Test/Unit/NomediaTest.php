@@ -5,17 +5,10 @@
  */
 namespace Magento\Framework\Backup\Test\Unit;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-
 require_once __DIR__ . '/_files/io.php';
 
-class NomediaTest extends \PHPUnit\Framework\TestCase
+class NomediaTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    private $objectManager;
-
     /**
      * @var \Magento\Framework\Filesystem
      */
@@ -31,11 +24,6 @@ class NomediaTest extends \PHPUnit\Framework\TestCase
      */
     protected $_backupDbMock;
 
-    /**
-     * @var \Magento\Framework\Backup\Filesystem\Rollback\Fs
-     */
-    private $fsMock;
-
     public static function setUpBeforeClass()
     {
         require __DIR__ . '/_files/app_dirs.php';
@@ -48,8 +36,7 @@ class NomediaTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
-        $this->_backupDbMock = $this->createMock(\Magento\Framework\Backup\Db::class);
+        $this->_backupDbMock = $this->getMock('Magento\Framework\Backup\Db', [], [], '', false);
         $this->_backupDbMock->expects($this->any())->method('setBackupExtension')->will($this->returnSelf());
 
         $this->_backupDbMock->expects($this->any())->method('setTime')->will($this->returnSelf());
@@ -68,13 +55,13 @@ class NomediaTest extends \PHPUnit\Framework\TestCase
 
         $this->_backupDbMock->expects($this->any())->method('create')->will($this->returnValue(true));
 
-        $this->_filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $dirMock = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\WriteInterface::class);
+        $this->_filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $dirMock = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\WriteInterface');
         $this->_filesystemMock->expects($this->any())
             ->method('getDirectoryWrite')
             ->will($this->returnValue($dirMock));
 
-        $this->_backupFactoryMock = $this->createMock(\Magento\Framework\Backup\Factory::class);
+        $this->_backupFactoryMock = $this->getMock('Magento\Framework\Backup\Factory', [], [], '', false);
         $this->_backupFactoryMock->expects(
             $this->once()
         )->method(
@@ -82,8 +69,6 @@ class NomediaTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue($this->_backupDbMock)
         );
-
-        $this->fsMock = $this->createMock(\Magento\Framework\Backup\Filesystem\Rollback\Fs::class);
     }
 
     /**
@@ -96,14 +81,7 @@ class NomediaTest extends \PHPUnit\Framework\TestCase
 
         $rootDir = TESTS_TEMP_DIR . '/Magento/Backup/data';
 
-        $model = $this->objectManager->getObject(
-            \Magento\Framework\Backup\Nomedia::class,
-            [
-                'filesystem' => $this->_filesystemMock,
-                'backupFactory' => $this->_backupFactoryMock,
-                'rollBackFs' => $this->fsMock,
-            ]
-        );
+        $model = new \Magento\Framework\Backup\Nomedia($this->_filesystemMock, $this->_backupFactoryMock);
         $model->setRootDir($rootDir);
         $model->setBackupsDir($rootDir);
         $model->{$action}();

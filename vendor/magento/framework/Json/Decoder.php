@@ -6,7 +6,6 @@
 namespace Magento\Framework\Json;
 
 /**
- * @deprecated 100.2.0 @see \Magento\Framework\Serialize\Serializer\Json::unserialize
  */
 class Decoder implements DecoderInterface
 {

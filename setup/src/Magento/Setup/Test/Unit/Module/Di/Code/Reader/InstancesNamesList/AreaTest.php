@@ -12,7 +12,7 @@ use \Magento\Setup\Module\Di\Code\Reader\Decorator\Area;
  *
  * @package Magento\Setup\Module\Di\Code\Reader\Decorator
  */
-class AreaTest extends \PHPUnit\Framework\TestCase
+class AreaTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Reader\ClassesScanner | \PHPUnit_Framework_MockObject_MockObject
@@ -31,13 +31,13 @@ class AreaTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->classesScannerMock = $this->getMockBuilder(\Magento\Setup\Module\Di\Code\Reader\ClassesScanner::class)
+        $this->classesScannerMock = $this->getMockBuilder('\Magento\Setup\Module\Di\Code\Reader\ClassesScanner')
             ->disableOriginalConstructor()
             ->setMethods(['getList'])
             ->getMock();
 
         $this->classReaderDecoratorMock = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Code\Reader\ClassReaderDecorator::class
+            '\Magento\Setup\Module\Di\Code\Reader\ClassReaderDecorator'
         )
             ->disableOriginalConstructor()
             ->setMethods(['getConstructor'])

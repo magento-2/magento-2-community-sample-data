@@ -5,7 +5,7 @@
  */
 namespace Magento\Test\Integrity\Modular\Magento\Catalog;
 
-class AttributeConfigFilesTest extends \PHPUnit\Framework\TestCase
+class AttributeConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -16,7 +16,7 @@ class AttributeConfigFilesTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Catalog\Model\Attribute\Config\SchemaLocator $schemaLocator */
-        $schemaLocator = $objectManager->get(\Magento\Catalog\Model\Attribute\Config\SchemaLocator::class);
+        $schemaLocator = $objectManager->get('Magento\Catalog\Model\Attribute\Config\SchemaLocator');
         $this->_schemaFile = $schemaLocator->getSchema();
     }
 
@@ -26,7 +26,7 @@ class AttributeConfigFilesTest extends \PHPUnit\Framework\TestCase
      */
     public function testFileFormat($file)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $dom = new \Magento\Framework\Config\Dom(file_get_contents($file), $validationStateMock);

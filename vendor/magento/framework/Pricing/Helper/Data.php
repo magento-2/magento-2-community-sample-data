@@ -9,8 +9,6 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Pricing data helper
- *
- * @api
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {

@@ -1,18 +1,15 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Eav\Model\Attribute;
 
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterface
 {
     /**
@@ -46,18 +43,12 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
     protected $joinProcessor;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group $groupResource
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\CollectionFactory $groupListFactory
      * @param \Magento\Eav\Model\Entity\Attribute\GroupFactory $groupFactory
      * @param \Magento\Eav\Api\AttributeSetRepositoryInterface $setRepository
      * @param \Magento\Eav\Api\Data\AttributeGroupSearchResultsInterfaceFactory $searchResultsFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
-     * @param CollectionProcessorInterface $collectionProcessor
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -66,8 +57,7 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
         \Magento\Eav\Model\Entity\Attribute\GroupFactory $groupFactory,
         \Magento\Eav\Api\AttributeSetRepositoryInterface $setRepository,
         \Magento\Eav\Api\Data\AttributeGroupSearchResultsInterfaceFactory $searchResultsFactory,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
-        CollectionProcessorInterface $collectionProcessor = null
+        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
     ) {
         $this->groupResource = $groupResource;
         $this->groupListFactory = $groupListFactory;
@@ -75,7 +65,6 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
         $this->setRepository = $setRepository;
         $this->searchResultsFactory = $searchResultsFactory;
         $this->joinProcessor = $joinProcessor;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -117,13 +106,25 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
      */
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
     {
-        /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\Collection $collection */
+        $attributeSetId = $this->retrieveAttributeSetIdFromSearchCriteria($searchCriteria);
+        if (!$attributeSetId) {
+            throw InputException::requiredField('attribute_set_id');
+        }
+        try {
+            $this->setRepository->get($attributeSetId);
+        } catch (\Exception $exception) {
+            throw NoSuchEntityException::singleField('attributeSetId', $attributeSetId);
+        }
+
         $collection = $this->groupListFactory->create();
         $this->joinProcessor->process($collection);
+        $collection->setAttributeSetFilter($attributeSetId);
+        $collection->setSortOrder();
 
-        $this->collectionProcessor->process($searchCriteria, $collection);
+        if ($attributeGroupCode = $this->retrieveAttributeGroupCodeFromSearchCriteria($searchCriteria)) {
+            $collection->addFilter('attribute_group_code', $attributeGroupCode);
+        }
 
-        /** @var \Magento\Eav\Api\Data\AttributeGroupSearchResultsInterface $searchResult */
         $searchResult = $this->searchResultsFactory->create();
         $searchResult->setSearchCriteria($searchCriteria);
         $searchResult->setItems($collection->getItems());
@@ -178,7 +179,6 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
      * @return null|string
-     * @deprecated
      */
     protected function retrieveAttributeSetIdFromSearchCriteria(
         \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
@@ -194,18 +194,21 @@ class GroupRepository implements \Magento\Eav\Api\AttributeGroupRepositoryInterf
     }
 
     /**
-     * Retrieve collection processor
+     * Retrieve attribute group code
      *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
+     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @return null|string
      */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                'Magento\Eav\Model\Api\SearchCriteria\AttributeGroupCollectionProcessor'
-            );
+    private function retrieveAttributeGroupCodeFromSearchCriteria(
+        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+    ) {
+        foreach ($searchCriteria->getFilterGroups() as $group) {
+            foreach ($group->getFilters() as $filter) {
+                if ($filter->getField() === 'attribute_group_code') {
+                    return $filter->getValue();
+                }
+            }
         }
-        return $this->collectionProcessor;
+        return null;
     }
 }

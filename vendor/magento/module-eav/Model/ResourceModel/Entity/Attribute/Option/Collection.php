@@ -63,8 +63,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            \Magento\Eav\Model\Entity\Attribute\Option::class,
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option::class
+            'Magento\Eav\Model\Entity\Attribute\Option',
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Option'
         );
         $this->_optionValueTable = $this->_coreResource->getTableName('eav_attribute_option_value');
     }
@@ -78,7 +78,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function setAttributeFilter($setId)
     {
-        return $this->addFieldToFilter('attribute_id', $setId);
+        return $this->addFieldToFilter('main_table.attribute_id', $setId);
     }
 
     /**

@@ -32,7 +32,7 @@ class Factory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Authorizenet\Model\Request::class
+        $instanceName = 'Magento\Authorizenet\Model\Request'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

@@ -9,7 +9,7 @@ namespace Magento\CatalogSearch\Model\ResourceModel\Advanced;
  * Test class for \Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection.
  * @magentoDbIsolation disabled
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection
@@ -19,7 +19,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->advancedCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection::class);
+            ->create('\Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection');
     }
 
     /**

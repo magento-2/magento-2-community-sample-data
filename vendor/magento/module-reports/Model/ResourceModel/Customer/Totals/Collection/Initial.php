@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Customer\Totals\Collection;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Initial extends \Magento\Reports\Model\ResourceModel\Report\Collection
 {
     /**
@@ -22,5 +18,5 @@ class Initial extends \Magento\Reports\Model\ResourceModel\Report\Collection
      *
      * @var string
      */
-    protected $_reportCollection = \Magento\Reports\Model\ResourceModel\Customer\Totals\Collection::class;
+    protected $_reportCollection = 'Magento\Reports\Model\ResourceModel\Customer\Totals\Collection';
 }

@@ -8,7 +8,7 @@ namespace Magento\Config\Test\Unit\Model\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ScopeDefinerTest extends \PHPUnit\Framework\TestCase
+class ScopeDefinerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\ScopeDefiner
@@ -22,10 +22,10 @@ class ScopeDefinerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\RequestInterface', [], [], '', false);
         $objectManager = new ObjectManager($this);
         $this->_model = $objectManager->getObject(
-            \Magento\Config\Model\Config\ScopeDefiner::class,
+            'Magento\Config\Model\Config\ScopeDefiner',
             ['request' => $this->_requestMock]
         );
     }

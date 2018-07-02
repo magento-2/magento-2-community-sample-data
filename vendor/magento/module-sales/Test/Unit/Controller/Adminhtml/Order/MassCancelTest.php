@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class MassCancelTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MassCancelTest extends \PHPUnit\Framework\TestCase
+class MassCancelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Controller\Adminhtml\Order\MassCancel
@@ -88,35 +88,47 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->contextMock = $this->createMock(\Magento\Backend\App\Action\Context::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\Manager::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\ResponseInterface::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $this->contextMock = $this->getMock('Magento\Backend\App\Action\Context', [], [], '', false);
+        $this->messageManagerMock = $this->getMock('Magento\Framework\Message\Manager', [], [], '', false);
+        $this->responseMock = $this->getMock('Magento\Framework\App\ResponseInterface', [], [], '', false);
+        $this->requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->objectManagerMock = $this->getMock(
+            'Magento\Framework\ObjectManager\ObjectManager',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $resultRedirectFactory = $this->createMock(\Magento\Backend\Model\View\Result\RedirectFactory::class);
+        $resultRedirectFactory = $this->getMock(
+            'Magento\Backend\Model\View\Result\RedirectFactory',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->orderCollectionMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Collection::class)
+        $this->orderCollectionMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Order\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resourceCollection = \Magento\Sales\Model\ResourceModel\Order\CollectionFactory::class;
+        $resourceCollection = 'Magento\Sales\Model\ResourceModel\Order\CollectionFactory';
         $this->orderCollectionFactoryMock = $this->getMockBuilder($resourceCollection)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->sessionMock = $this->createPartialMock(\Magento\Backend\Model\Session::class, ['setIsUrlNotice']);
-        $this->actionFlagMock = $this->createPartialMock(\Magento\Framework\App\ActionFlag::class, ['get', 'set']);
-        $this->helperMock = $this->createPartialMock(\Magento\Backend\Helper\Data::class, ['getUrl']);
-        $this->resultRedirectMock = $this->createMock(\Magento\Backend\Model\View\Result\Redirect::class);
+        $this->sessionMock = $this->getMock('Magento\Backend\Model\Session', ['setIsUrlNotice'], [], '', false);
+        $this->actionFlagMock = $this->getMock('Magento\Framework\App\ActionFlag', ['get', 'set'], [], '', false);
+        $this->helperMock = $this->getMock('\Magento\Backend\Helper\Data', ['getUrl'], [], '', false);
+        $this->resultRedirectMock = $this->getMock('Magento\Backend\Model\View\Result\Redirect', [], [], '', false);
         $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirectMock);
 
-        $redirectMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $resultFactoryMock->expects($this->any())
@@ -137,7 +149,7 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())
             ->method('getResultFactory')
             ->willReturn($resultFactoryMock);
-        $this->filterMock = $this->createMock(\Magento\Ui\Component\MassAction\Filter::class);
+        $this->filterMock = $this->getMock('Magento\Ui\Component\MassAction\Filter', [], [], '', false);
         $this->filterMock->expects($this->once())
             ->method('getCollection')
             ->with($this->orderCollectionMock)
@@ -146,7 +158,7 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($this->orderCollectionMock);
         $this->massAction = $objectManagerHelper->getObject(
-            \Magento\Sales\Controller\Adminhtml\Order\MassCancel::class,
+            'Magento\Sales\Controller\Adminhtml\Order\MassCancel',
             [
                 'context' => $this->contextMock,
                 'filter' => $this->filterMock,
@@ -161,10 +173,10 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteCanCancelOneOrder()
     {
-        $order1 = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order1 = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
-        $order2 = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order2 = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
         $orders = [$order1, $order2];
@@ -212,10 +224,10 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
      */
     public function testExcludedCannotCancelOrders()
     {
-        $order1 = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order1 = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
-        $order2 = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order2 = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -257,7 +269,7 @@ class MassCancelTest extends \PHPUnit\Framework\TestCase
     {
         $exception = new \Exception('Can not cancel');
 
-        $order1 = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order1 = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderCollectionMock->expects($this->any())

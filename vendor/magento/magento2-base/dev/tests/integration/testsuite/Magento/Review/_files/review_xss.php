@@ -7,10 +7,10 @@
 require __DIR__ . '/../../../Magento/Catalog/_files/product_simple_xss.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 $product = $productRepository->get('product-with-xss');
 
-$review = $objectManager->create(\Magento\Review\Model\Review::class);
+$review = $objectManager->create('Magento\Review\Model\Review');
 $review->setEntityId(
     $review->getEntityIdByCode(\Magento\Review\Model\Review::ENTITY_PRODUCT_CODE)
 )->setEntityPkValue(
@@ -19,12 +19,12 @@ $review->setEntityId(
     \Magento\Review\Model\Review::STATUS_PENDING
 )->setStoreId(
     \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
+        'Magento\Store\Model\StoreManagerInterface'
     )->getStore()->getId()
 )->setStores(
     [
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore()->getId()
     ]
 )->setNickname(

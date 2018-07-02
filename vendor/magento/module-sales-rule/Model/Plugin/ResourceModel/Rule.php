@@ -8,7 +8,7 @@ namespace Magento\SalesRule\Model\Plugin\ResourceModel;
 /**
  * Class Rule
  * @package Magento\SalesRule\Model\Plugin\ResourceModel
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Rule
 {

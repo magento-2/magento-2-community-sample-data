@@ -8,10 +8,8 @@ namespace Magento\EncryptionKey\Test\Unit\Model\ResourceModel\Key;
 
 /**
  * Test Class For Magento\EncryptionKey\Model\ResourceModel\Key\Change
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ChangeTest extends \PHPUnit\Framework\TestCase
+class ChangeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Encryption\EncryptorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $encryptMock;
@@ -48,50 +46,50 @@ class ChangeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->encryptMock = $this->getMockBuilder(\Magento\Framework\Encryption\EncryptorInterface::class)
+        $this->encryptMock = $this->getMockBuilder('Magento\Framework\Encryption\EncryptorInterface')
             ->disableOriginalConstructor()
             ->setMethods(['setNewKey', 'exportKeys'])
             ->getMockForAbstractClass();
-        $this->filesystemMock = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystemMock = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->structureMock = $this->getMockBuilder(\Magento\Config\Model\Config\Structure::class)
+        $this->structureMock = $this->getMockBuilder('Magento\Config\Model\Config\Structure')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->writerMock = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig\Writer::class)
+        $this->writerMock = $this->getMockBuilder('Magento\Framework\App\DeploymentConfig\Writer')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->adapterMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->adapterMock = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $this->selectMock = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
-            ->setMethods(['from', 'where', 'update'])
+            ->setMethods([])
             ->getMock();
-        $translationClassName = \Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface::class;
+        $translationClassName = 'Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface';
         $this->tansactionMock = $this->getMockBuilder($translationClassName)
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $relationClassName = \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor::class;
+        $relationClassName = 'Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor';
         $this->objRelationMock = $this->getMockBuilder($relationClassName)
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->randomMock = $this->createMock(\Magento\Framework\Math\Random::class);
+        $this->randomMock = $this->getMock('Magento\Framework\Math\Random', [], [], '', false);
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->model = $helper->getObject(
-            \Magento\EncryptionKey\Model\ResourceModel\Key\Change::class,
+            'Magento\EncryptionKey\Model\ResourceModel\Key\Change',
             [
                 'filesystem' => $this->filesystemMock,
                 'structure' => $this->structureMock,

@@ -7,9 +7,6 @@ namespace Magento\Payment\Model;
 
 /**
  * Provide methods for collecting cart items information of specific sales model entity
- *
- * @api
- * @since 100.0.2
  */
 class Cart
 {
@@ -23,9 +20,14 @@ class Cart
     const AMOUNT_DISCOUNT = 'discount';
 
     const AMOUNT_SUBTOTAL = 'subtotal';
-    /**#@-*/
 
-    /**#@-*/
+    /**@@+*/
+
+    /**
+     * Sales model
+     *
+     * @var \Magento\Payment\Model\Cart\SalesModel\SalesModelInterface
+     */
     protected $_salesModel;
 
     /**

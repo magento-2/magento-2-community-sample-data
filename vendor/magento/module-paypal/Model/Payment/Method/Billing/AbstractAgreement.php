@@ -27,12 +27,12 @@ abstract class AbstractAgreement extends \Magento\Payment\Model\Method\AbstractM
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\Paypal\Block\Payment\Info\Billing\Agreement::class;
+    protected $_infoBlockType = 'Magento\Paypal\Block\Payment\Info\Billing\Agreement';
 
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\Payment\Form\Billing\Agreement::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\Payment\Form\Billing\Agreement';
 
     /**
      * Is method instance available

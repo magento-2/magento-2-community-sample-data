@@ -10,7 +10,7 @@ use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Payment\Model\Method;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class CaptureOperationTest extends \PHPUnit\Framework\TestCase
+class CaptureOperationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -39,23 +39,23 @@ class CaptureOperationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $transactionClass = \Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface::class;
-        $transactionBuilderClass = \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface::class;
+        $transactionClass = 'Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface';
+        $transactionBuilderClass = 'Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface';
         $this->transactionManager = $this->getMockBuilder($transactionClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventManager = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManager = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->transactionBuilder = $this->getMockBuilder($transactionBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->stateCommand = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment\State\CommandInterface::class)
+        $this->stateCommand = $this->getMockBuilder('Magento\Sales\Model\Order\Payment\State\CommandInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Sales\Model\Order\Payment\Operations\CaptureOperation::class,
+            'Magento\Sales\Model\Order\Payment\Operations\CaptureOperation',
             [
                 'transactionManager' => $this->transactionManager,
                 'eventManager' => $this->eventManager,
@@ -69,15 +69,15 @@ class CaptureOperationTest extends \PHPUnit\Framework\TestCase
     {
         $baseGrandTotal = 10;
 
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $paymentMethod = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $paymentMethod = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $orderPayment = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
+        $orderPayment = $this->getMockBuilder('Magento\Sales\Model\Order\Payment')
             ->disableOriginalConstructor()
             ->getMock();
         $orderPayment->expects($this->any())
@@ -106,7 +106,7 @@ class CaptureOperationTest extends \PHPUnit\Framework\TestCase
             ->with($orderPayment)
             ->willReturnSelf();
 
-        $invoice = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice::class)
+        $invoice = $this->getMockBuilder('Magento\Sales\Model\Order\Invoice')
             ->disableOriginalConstructor()
             ->getMock();
         $invoice->expects($this->any())

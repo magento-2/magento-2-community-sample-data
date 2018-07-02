@@ -120,7 +120,6 @@ class Simple implements Fallback\ResolverInterface
      */
     protected function resolveFile(RuleInterface $fallbackRule, $file, array $params = [])
     {
-        $params['file'] = $file;
         foreach ($fallbackRule->getPatternDirs($params) as $dir) {
             $path = "{$dir}/{$file}";
             $dirRead = $this->readFactory->create($dir);

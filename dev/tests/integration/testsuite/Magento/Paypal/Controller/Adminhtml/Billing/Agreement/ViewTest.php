@@ -27,28 +27,25 @@ class ViewTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     {
         /** @var \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection $billingAgreementCollection */
         $billingAgreementCollection = Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
         );
         $agreementId = $billingAgreementCollection->getFirstItem()->getId();
         $this->uri = $this->uri . '/agreement/' . $agreementId;
 
         parent::testAclHasAccess();
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'a[name="billing_agreement_info"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//a[@name="billing_agreement_info"]',
-                $this->getResponse()->getBody()
-            ),
+            $this->getResponse()->getBody(),
             "Response for billing agreement info doesn't contain billing agreement info tab"
         );
 
-        $this->assertEquals(
+        $this->assertSelectRegExp(
+            'a',
+            '/customer\@example.com/',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//a[contains(text(), "customer@example.com")]',
-                $this->getResponse()->getBody()
-            ),
+            $this->getResponse()->getBody(),
             "Response for billing agreement info doesn't contain Customer info"
         );
     }

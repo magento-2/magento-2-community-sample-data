@@ -15,9 +15,9 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\App\ResourceConnection;
 
 /**
- * Class DataCategoryUsedInProductsHashMapTest
+ * Tests DataCategoryUsedInProductsHashMap class.
  */
-class DataCategoryUsedInProductsHashMapTest extends \PHPUnit\Framework\TestCase
+class DataCategoryUsedInProductsHashMapTest extends \PHPUnit_Framework_TestCase
 {
     /** @var HashMapPool|\PHPUnit_Framework_MockObject_MockObject */
     private $hashMapPoolMock;
@@ -36,10 +36,10 @@ class DataCategoryUsedInProductsHashMapTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
-        $this->dataCategoryMapMock = $this->createMock(DataCategoryHashMap::class);
-        $this->dataProductMapMock = $this->createMock(DataProductHashMap::class);
-        $this->connectionMock = $this->createMock(ResourceConnection::class);
+        $this->hashMapPoolMock = $this->getMock(HashMapPool::class, [], [], '', false);
+        $this->dataCategoryMapMock = $this->getMock(DataCategoryHashMap::class, [], [], '', false);
+        $this->dataProductMapMock = $this->getMock(DataProductHashMap::class, [], [], '', false);
+        $this->connectionMock = $this->getMock(ResourceConnection::class, [], [], '', false);
 
         $this->hashMapPoolMock->expects($this->any())
             ->method('getDataMap')
@@ -69,8 +69,8 @@ class DataCategoryUsedInProductsHashMapTest extends \PHPUnit\Framework\TestCase
         $categoryIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $categoryIdsOther = ['2' => [2, 3, 4]];
 
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $selectMock = $this->createMock(Select::class);
+        $connectionMock = $this->getMock(AdapterInterface::class);
+        $selectMock = $this->getMock(Select::class, [], [], '', false);
 
         $this->connectionMock->expects($this->any())
             ->method('getConnection')

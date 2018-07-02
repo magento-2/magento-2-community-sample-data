@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\Interception;
 
-/**
- * Interface \Magento\Framework\Interception\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**

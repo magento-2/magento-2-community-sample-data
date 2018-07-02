@@ -5,6 +5,7 @@
  */
 namespace Magento\TestFramework;
 
+
 /**
  * Provides access to the application for the tests
  *
@@ -26,12 +27,8 @@ class WebApiApplication extends Application
     /**
      * {@inheritdoc}
      */
-    public function install($cleanup)
+    public function install()
     {
-        if ($cleanup) {
-            $this->cleanup();
-        }
-
         $installOptions = $this->getInstallConfig();
 
         /* Install application */

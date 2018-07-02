@@ -7,10 +7,6 @@
  */
 namespace Magento\GoogleOptimizer\Block\Code;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Page extends \Magento\GoogleOptimizer\Block\AbstractCode
 {
     /**

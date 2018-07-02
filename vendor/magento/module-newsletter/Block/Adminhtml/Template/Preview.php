@@ -3,14 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Newsletter\Block\Adminhtml\Template;
 
 /**
  * Newsletter template preview block
- *
- * @api
- * @since 100.0.2
  */
+namespace Magento\Newsletter\Block\Adminhtml\Template;
+
 class Preview extends \Magento\Backend\Block\Widget
 {
     /**

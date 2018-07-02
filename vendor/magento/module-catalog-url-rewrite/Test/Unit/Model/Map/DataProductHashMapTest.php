@@ -5,19 +5,23 @@
  */
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Map;
 
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
-use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
-use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
-use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
-use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
+use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Magento\Framework\DB\Select;
+use Magento\Catalog\Model\ProductRepository;
+use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
+use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
+use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 
 /**
- * Class DataProductHashMapTest
+ * Tests DataProductHashMap
  */
-class DataProductHashMapTest extends \PHPUnit\Framework\TestCase
+class DataProductHashMapTest extends \PHPUnit_Framework_TestCase
 {
     /** @var HashMapPool|\PHPUnit_Framework_MockObject_MockObject */
     private $hashMapPoolMock;
@@ -40,12 +44,15 @@ class DataProductHashMapTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
-        $this->dataCategoryMapMock = $this->createMock(DataCategoryHashMap::class);
-        $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->productCollectionMock = $this->createPartialMock(
+        $this->hashMapPoolMock = $this->getMock(HashMapPool::class, [], [], '', false);
+        $this->dataCategoryMapMock = $this->getMock(DataCategoryHashMap::class, [], [], '', false);
+        $this->collectionFactoryMock = $this->getMock(CollectionFactory::class, ['create'], [], '', false);
+        $this->productCollectionMock = $this->getMock(
             ProductCollection::class,
-            ['getSelect', 'getConnection', 'getAllIds']
+            ['getSelect', 'getConnection', 'getAllIds'],
+            [],
+            '',
+            false
         );
 
         $this->collectionFactoryMock->expects($this->any())
@@ -73,8 +80,8 @@ class DataProductHashMapTest extends \PHPUnit\Framework\TestCase
         $productIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $productIdsOther = ['2' => [2, 3, 4]];
 
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $selectMock = $this->createMock(Select::class);
+        $connectionMock = $this->getMock(AdapterInterface::class);
+        $selectMock = $this->getMock(Select::class, [], [], '', false);
 
         $this->productCollectionMock->expects($this->exactly(3))
             ->method('getAllIds')

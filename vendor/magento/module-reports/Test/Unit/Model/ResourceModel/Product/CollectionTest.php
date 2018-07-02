@@ -43,7 +43,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductCollection
@@ -114,7 +114,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ['context' => $context, 'defaultAttributes' => $defaultAttributes]
         );
 
-        $this->eventTypeFactoryMock = $this->createMock(TypeFactory::class);
+        $this->eventTypeFactoryMock = $this->createPartialMock(TypeFactory::class, ['create']);
         $productTypeMock = $this->createMock(ProductType::class);
         $quoteResourceMock = $this->createMock(Collection::class);
         $this->connectionMock = $this->createPartialMockForAbstractClass(AdapterInterface::class, ['select']);
@@ -137,6 +137,9 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock->expects($this->atLeastOnce())->method('getTableName')->willReturn('test_table');
         $this->resourceMock->expects($this->atLeastOnce())->method('getConnection')->willReturn($this->connectionMock);
         $this->connectionMock->expects($this->atLeastOnce())->method('select')->willReturn($this->selectMock);
+
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
         $this->collection = new ProductCollection(
             $entityFactoryMock,
@@ -282,5 +285,39 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             true,
             $methods
         );
+    }
+
+    /**
+     * Returns a partial test double for the specified class.
+     *
+     * @param string   $originalClassName
+     * @param string[] $methods
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createPartialMock($originalClassName, array $methods)
+    {
+        return $this->getMockBuilder($originalClassName)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->setMethods(empty($methods) ? null : $methods)
+            ->getMock();
+    }
+
+    /**
+     * Returns a test double for the specified class.
+     *
+     * @param string $originalClassName
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createMock($originalClassName)
+    {
+        return $this->getMockBuilder($originalClassName)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->getMock();
     }
 }

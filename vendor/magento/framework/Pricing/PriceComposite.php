@@ -6,6 +6,7 @@
 
 namespace Magento\Framework\Pricing;
 
+use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\Pricing\Price\Factory as PriceFactory;
 use Magento\Framework\Pricing\Price\PriceInterface;
 

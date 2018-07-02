@@ -8,10 +8,6 @@ namespace Magento\Theme\Controller\Adminhtml\System\Design\Theme;
 
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * Class Delete
- * @deprecated 100.2.0
- */
 class Delete extends \Magento\Theme\Controller\Adminhtml\System\Design\Theme
 {
     /**
@@ -25,9 +21,7 @@ class Delete extends \Magento\Theme\Controller\Adminhtml\System\Design\Theme
         try {
             if ($themeId) {
                 /** @var $theme \Magento\Framework\View\Design\ThemeInterface */
-                $theme = $this->_objectManager->create(
-                    \Magento\Framework\View\Design\ThemeInterface::class
-                )->load($themeId);
+                $theme = $this->_objectManager->create('Magento\Framework\View\Design\ThemeInterface')->load($themeId);
                 if (!$theme->getId()) {
                     throw new \InvalidArgumentException(sprintf('We cannot find a theme with id "%1".', $themeId));
                 }
@@ -43,7 +37,7 @@ class Delete extends \Magento\Theme\Controller\Adminhtml\System\Design\Theme
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addException($e, __('We cannot delete the theme.'));
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
         }
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setPath('adminhtml/*/');

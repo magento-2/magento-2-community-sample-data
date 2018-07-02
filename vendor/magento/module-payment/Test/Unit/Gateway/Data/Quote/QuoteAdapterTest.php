@@ -12,7 +12,7 @@ use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 /**
  * Class QuoteAdapterTest
  */
-class QuoteAdapterTest extends \PHPUnit\Framework\TestCase
+class QuoteAdapterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var QuoteAdapter */
     protected $model;
@@ -29,7 +29,7 @@ class QuoteAdapterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
+        $this->quoteMock = $this->getMock(\Magento\Quote\Model\Quote::class, [], [], '', false);
 
         $this->addressAdapterFactoryMock =
             $this->getMockBuilder(\Magento\Payment\Gateway\Data\Quote\AddressAdapterFactory::class)

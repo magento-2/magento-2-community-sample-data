@@ -5,35 +5,33 @@
  */
 namespace Magento\Sales\Model\Order;
 
-use Magento\Sales\Api\Data\InvoiceInterface;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\Order\Invoice\PayOperation;
-
 /**
- * @inheritdoc
+ * Payment adapter.
+ *
+ * @api
  */
 class PaymentAdapter implements PaymentAdapterInterface
 {
     /**
-     * @var PayOperation
+     * @var \Magento\Sales\Model\Order\Invoice\PayOperation
      */
     private $payOperation;
 
     /**
-     * @param PayOperation $payOperation
+     * @param \Magento\Sales\Model\Order\Invoice\PayOperation $payOperation
      */
     public function __construct(
-        PayOperation $payOperation
+        \Magento\Sales\Model\Order\Invoice\PayOperation $payOperation
     ) {
         $this->payOperation = $payOperation;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function pay(
-        OrderInterface $order,
-        InvoiceInterface $invoice,
+        \Magento\Sales\Api\Data\OrderInterface $order,
+        \Magento\Sales\Api\Data\InvoiceInterface $invoice,
         $capture
     ) {
         return $this->payOperation->execute($order, $invoice, $capture);

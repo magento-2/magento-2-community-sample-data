@@ -8,7 +8,7 @@ namespace Magento\Framework\Notification\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class NotifierListTest extends \PHPUnit\Framework\TestCase
+class NotifierListTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
@@ -18,40 +18,40 @@ class NotifierListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->objectManagerHelper = new ObjectManagerHelper($this);
     }
 
     public function testAsArraySuccess()
     {
-        $notifier1 = $this->objectManagerHelper->getObject(\Magento\Framework\Notification\NotifierPool::class);
-        $notifier2 = $this->objectManagerHelper->getObject(\Magento\Framework\Notification\NotifierPool::class);
+        $notifier1 = $this->objectManagerHelper->getObject('Magento\Framework\Notification\NotifierPool');
+        $notifier2 = $this->objectManagerHelper->getObject('Magento\Framework\Notification\NotifierPool');
         $notifierList = $this->objectManagerHelper->getObject(
-            \Magento\Framework\Notification\NotifierList::class,
+            'Magento\Framework\Notification\NotifierList',
             [
                 'objectManager' => $this->objectManager,
                 'notifiers' => [$notifier1, $notifier2]
             ]
         );
-        $this->expectException('InvalidArgumentException');
+        $this->setExpectedException('InvalidArgumentException');
         $result = $notifierList->asArray();
         foreach ($result as $notifier) {
-            $this->assertInstanceOf(\Magento\Framework\Notification\NotifierInterface::class, $notifier);
+            $this->assertInstanceOf('Magento\Framework\Notification\NotifierInterface', $notifier);
         }
     }
 
     public function testAsArrayException()
     {
-        $notifierCorrect = $this->objectManagerHelper->getObject(\Magento\Framework\Notification\NotifierPool::class);
-        $notifierIncorrect = $this->objectManagerHelper->getObject(\Magento\Framework\Notification\NotifierList::class);
+        $notifierCorrect = $this->objectManagerHelper->getObject('Magento\Framework\Notification\NotifierPool');
+        $notifierIncorrect = $this->objectManagerHelper->getObject('Magento\Framework\Notification\NotifierList');
         $notifierList = $this->objectManagerHelper->getObject(
-            \Magento\Framework\Notification\NotifierList::class,
+            'Magento\Framework\Notification\NotifierList',
             [
                 'objectManager' => $this->objectManager,
                 'notifiers' => [$notifierCorrect, $notifierIncorrect]
             ]
         );
-        $this->expectException('InvalidArgumentException');
+        $this->setExpectedException('InvalidArgumentException');
         $notifierList->asArray();
     }
 }

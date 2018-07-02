@@ -3,7 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/* eslint-disable max-nested-callbacks */
 define([
     'statistician',
     'underscore'

@@ -12,7 +12,6 @@ use Magento\Framework\Search\Adapter\Aggregation\AggregationResolverInterface;
 use Magento\Framework\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Config;
 use Magento\Framework\Search\RequestInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as AttributeCollection;
 
 class AggregationResolver implements AggregationResolverInterface
 {
@@ -35,17 +34,7 @@ class AggregationResolver implements AggregationResolverInterface
      * @var Config
      */
     private $config;
-
-    /**
-     * @var RequestCheckerInterface
-     */
-    private $requestChecker;
-
-    /**
-     * @var AttributeCollection
-     */
-    private $attributeCollection;
-
+    
     /**
      * AggregationResolver constructor
      *
@@ -53,25 +42,17 @@ class AggregationResolver implements AggregationResolverInterface
      * @param ProductAttributeRepositoryInterface $productAttributeRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param Config $config
-     * @param AttributeCollection $attributeCollection [optional]
-     * @param RequestCheckerInterface|null $aggregationChecker
      */
     public function __construct(
         AttributeSetFinderInterface $attributeSetFinder,
         ProductAttributeRepositoryInterface $productAttributeRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        Config $config,
-        AttributeCollection $attributeCollection = null,
-        RequestCheckerInterface $aggregationChecker = null
+        Config $config
     ) {
         $this->attributeSetFinder = $attributeSetFinder;
         $this->productAttributeRepository = $productAttributeRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->config = $config;
-        $this->attributeCollection = $attributeCollection
-            ?: \Magento\Framework\App\ObjectManager::getInstance()->get(AttributeCollection::class);
-        $this->requestChecker = $aggregationChecker ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(RequestCheckerInterface::class);
     }
 
     /**
@@ -79,10 +60,6 @@ class AggregationResolver implements AggregationResolverInterface
      */
     public function resolve(RequestInterface $request, array $documentIds)
     {
-        if (!$this->requestChecker->isApplicable($request)) {
-            return [];
-        }
-
         $data = $this->config->get($request->getName());
 
         $bucketKeys = isset($data['aggregations']) ? array_keys($data['aggregations']) : [];
@@ -92,8 +69,7 @@ class AggregationResolver implements AggregationResolverInterface
             $request->getAggregation(),
             function ($bucket) use ($attributeCodes, $bucketKeys) {
                 /** @var BucketInterface $bucket */
-                return in_array($bucket->getField(), $attributeCodes, true) ||
-                    in_array($bucket->getName(), $bucketKeys, true);
+                return in_array($bucket->getField(), $attributeCodes) || in_array($bucket->getName(), $bucketKeys);
             }
         );
         return array_values($resolvedAggregation);
@@ -109,14 +85,15 @@ class AggregationResolver implements AggregationResolverInterface
     {
         $attributeSetIds = $this->attributeSetFinder->findAttributeSetIdsByProductIds($documentIds);
 
-        $this->attributeCollection->setAttributeSetFilter($attributeSetIds);
-        $this->attributeCollection->setEntityTypeFilter(
-            \Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE
-        );
-        $this->attributeCollection->getSelect()
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns('attribute_code');
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('attribute_set_id', $attributeSetIds, 'in')
+            ->create();
+        $result = $this->productAttributeRepository->getList($searchCriteria);
 
-        return $this->attributeCollection->getConnection()->fetchCol($this->attributeCollection->getSelect());
+        $attributeCodes = [];
+        foreach ($result->getItems() as $attribute) {
+            $attributeCodes[] = $attribute->getAttributeCode();
+        }
+        return $attributeCodes;
     }
 }

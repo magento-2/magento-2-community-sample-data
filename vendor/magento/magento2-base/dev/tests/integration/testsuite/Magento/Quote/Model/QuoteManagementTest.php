@@ -11,7 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Class for testing QuoteManagement model
  */
-class QuoteManagementTest extends \PHPUnit\Framework\TestCase
+class QuoteManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Create order with product that has child items

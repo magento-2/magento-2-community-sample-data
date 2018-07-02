@@ -6,10 +6,10 @@
 namespace Magento\UrlRewrite\Block\Catalog\Product;
 
 /**
+ * Test for \Magento\UrlRewrite\Block\Catalog\Product\Edit
  * @magentoAppArea adminhtml
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test prepare layout
@@ -25,12 +25,12 @@ class EditTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $layout \Magento\Framework\View\LayoutInterface */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
 
         /** @var $block \Magento\UrlRewrite\Block\Catalog\Product\Edit */
         $block = $layout->createBlock(
-            \Magento\UrlRewrite\Block\Catalog\Product\Edit::class,
+            'Magento\UrlRewrite\Block\Catalog\Product\Edit',
             '',
             ['data' => $blockAttributes]
         );
@@ -59,7 +59,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['selector']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Selector::class,
+                'Magento\UrlRewrite\Block\Selector',
                 $selectorBlock,
                 'Child block with entity selector is invalid'
             );
@@ -84,7 +84,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['product_link']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Link::class,
+                'Magento\UrlRewrite\Block\Link',
                 $productLinkBlock,
                 'Child block with product link is invalid'
             );
@@ -115,7 +115,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['category_link']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Link::class,
+                'Magento\UrlRewrite\Block\Link',
                 $categoryLinkBlock,
                 'Child block with category link is invalid'
             );
@@ -155,92 +155,74 @@ class EditTest extends \PHPUnit\Framework\TestCase
         if (isset($expected['back_button'])) {
             if ($expected['back_button']) {
                 if ($block->getProduct()->getId()) {
-                    $this->assertEquals(
+                    $this->assertSelectCount(
+                        'button.back[onclick~="\/product"]',
                         1,
-                        \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                            '//button[contains(@class, "back") and contains(@onclick, "/product")]',
-                            $buttonsHtml
-                        ),
+                        $buttonsHtml,
                         'Back button is not present in product URL rewrite edit block'
                     );
                 } else {
-                    $this->assertEquals(
+                    $this->assertSelectCount(
+                        'button.back',
                         1,
-                        \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                            '//button[contains(@class,"back")]',
-                            $buttonsHtml
-                        ),
+                        $buttonsHtml,
                         'Back button is not present in product URL rewrite edit block'
                     );
                 }
             } else {
-                $this->assertEquals(
+                $this->assertSelectCount(
+                    'button.back',
                     0,
-                    \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                        '//button[contains(@class,"back")]',
-                        $buttonsHtml
-                    ),
+                    $buttonsHtml,
                     'Back button should not present in product URL rewrite edit block'
                 );
             }
         }
 
         if ($expected['save_button']) {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button.save',
                 1,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[contains(@class,"save")]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Save button is not present in product URL rewrite edit block'
             );
         } else {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button.save',
                 0,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[contains(@class,"save")]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Save button should not present in product URL rewrite edit block'
             );
         }
 
         if ($expected['reset_button']) {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button[title="Reset"]',
                 1,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[@title="Reset"]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Reset button is not present in product URL rewrite edit block'
             );
         } else {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button[title="Reset"]',
                 0,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[@title="Reset"]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Reset button should not present in product URL rewrite edit block'
             );
         }
 
         if ($expected['delete_button']) {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button.delete',
                 1,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[contains(@class,"delete")]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Delete button is not present in product URL rewrite edit block'
             );
         } else {
-            $this->assertEquals(
+            $this->assertSelectCount(
+                'button.delete',
                 0,
-                \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                    '//button[contains(@class,"delete")]',
-                    $buttonsHtml
-                ),
+                $buttonsHtml,
                 'Delete button should not present in product URL rewrite edit block'
             );
         }
@@ -262,7 +244,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['form']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Catalog\Edit\Form::class,
+                'Magento\UrlRewrite\Block\Catalog\Edit\Form',
                 $formBlock,
                 'Child block with form is invalid'
             );
@@ -307,7 +289,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['products_grid']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Catalog\Product\Grid::class,
+                'Magento\UrlRewrite\Block\Catalog\Product\Grid',
                 $gridBlock,
                 'Child block with product grid is invalid'
             );
@@ -332,7 +314,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['categories_tree']) {
             $this->assertInstanceOf(
-                \Magento\UrlRewrite\Block\Catalog\Category\Tree::class,
+                'Magento\UrlRewrite\Block\Catalog\Category\Tree',
                 $categoriesTreeBlock,
                 'Child block with categories tree is invalid'
             );
@@ -345,7 +327,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
 
         if ($expected['skip_categories']) {
             $this->assertInstanceOf(
-                \Magento\Backend\Block\Widget\Button::class,
+                'Magento\Backend\Block\Widget\Button',
                 $skipCategoriesBlock,
                 'Child block with skip categories is invalid'
             );
@@ -364,21 +346,21 @@ class EditTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $urlRewrite \Magento\UrlRewrite\Model\UrlRewrite */
         $urlRewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\UrlRewrite\Model\UrlRewrite::class
+            'Magento\UrlRewrite\Model\UrlRewrite'
         );
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class,
+            'Magento\Catalog\Model\Product',
             ['data' => ['entity_id' => 1, 'name' => 'Test product']]
         );
         /** @var $category \Magento\Catalog\Model\Category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class,
+            'Magento\Catalog\Model\Category',
             ['data' => ['entity_id' => 1, 'name' => 'Test category']]
         );
         /** @var $existingUrlRewrite \Magento\UrlRewrite\Model\UrlRewrite */
         $existingUrlRewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\UrlRewrite\Model\UrlRewrite::class,
+            'Magento\UrlRewrite\Model\UrlRewrite',
             ['data' => ['url_rewrite_id' => 1]]
         );
         return [

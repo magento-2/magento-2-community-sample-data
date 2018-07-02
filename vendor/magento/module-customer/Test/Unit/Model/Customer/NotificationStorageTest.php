@@ -7,87 +7,80 @@ namespace Magento\Customer\Test\Unit\Model\Customer;
 
 use Magento\Customer\Model\Customer\NotificationStorage;
 
-class NotificationStorageTest extends \PHPUnit\Framework\TestCase
+/**
+ * Class NotificationStorageTest
+ *
+ * Test for class \Magento\Customer\Model\Customer\NotificationStorage
+ */
+class NotificationStorageTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var NotificationStorage
+     * @var NotificationStorage|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $notificationStorage;
+    protected $model;
 
     /**
      * @var \Magento\Framework\Cache\FrontendInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $cacheMock;
+    protected $cache;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * Set up
+     *
+     * @return void
      */
-    private $serializerMock;
-
     protected function setUp()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->cacheMock = $this->createMock(\Magento\Framework\Cache\FrontendInterface::class);
-        $this->notificationStorage = $objectManager->getObject(
-            NotificationStorage::class,
-            ['cache' => $this->cacheMock]
-        );
-        $this->serializerMock = $this->createMock(\Magento\Framework\Serialize\SerializerInterface::class);
-        $objectManager->setBackwardCompatibleProperty($this->notificationStorage, 'serializer', $this->serializerMock);
+        $this->cache = $this->getMockBuilder('Magento\Framework\Cache\FrontendInterface')->getMockForAbstractClass();
+        $this->model = new NotificationStorage($this->cache);
     }
 
     public function testAdd()
     {
         $customerId = 1;
         $notificationType = 'some_type';
-        $data = [
-            'customer_id' => $customerId,
-            'notification_type' => $notificationType
-        ];
-        $serializedData = 'serialized data';
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->with($data)
-            ->willReturn($serializedData);
-        $this->cacheMock->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('save')
             ->with(
-                $serializedData,
+                serialize([
+                    'customer_id' => $customerId,
+                    'notification_type' => $notificationType
+                ]),
                 $this->getCacheKey($notificationType, $customerId)
             );
-        $this->notificationStorage->add($notificationType, $customerId);
+        $this->model->add($notificationType, $customerId);
     }
 
     public function testIsExists()
     {
         $customerId = 1;
         $notificationType = 'some_type';
-        $this->cacheMock->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('test')
             ->with($this->getCacheKey($notificationType, $customerId))
             ->willReturn(true);
-        $this->assertTrue($this->notificationStorage->isExists($notificationType, $customerId));
+        $this->assertTrue($this->model->isExists($notificationType, $customerId));
     }
 
     public function testRemove()
     {
         $customerId = 1;
         $notificationType = 'some_type';
-        $this->cacheMock->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('remove')
             ->with($this->getCacheKey($notificationType, $customerId));
-        $this->notificationStorage->remove($notificationType, $customerId);
+        $this->model->remove($notificationType, $customerId);
     }
 
     /**
-     * Get cache key
+     * Retrieve cache key
      *
      * @param string $notificationType
      * @param string $customerId
      * @return string
      */
-    private function getCacheKey($notificationType, $customerId)
+    protected function getCacheKey($notificationType, $customerId)
     {
         return 'notification_' . $notificationType . '_' . $customerId;
     }

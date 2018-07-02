@@ -7,9 +7,7 @@
 require __DIR__ . '/../../Checkout/_files/simple_product.php';
 
 /** @var $bundleProduct \Magento\Catalog\Model\Product */
-$bundleProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\Product::class
-);
+$bundleProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $bundleProduct->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_BUNDLE
 )->setId(
@@ -74,7 +72,7 @@ $bundleProduct->setTypeId(
 )->save();
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->load($bundleProduct->getId());
 
 /** @var $typeInstance \Magento\Bundle\Model\Product\Type */

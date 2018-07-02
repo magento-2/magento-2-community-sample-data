@@ -80,7 +80,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     {
         $this->addChild(
             'category_link',
-            \Magento\UrlRewrite\Block\Link::class,
+            'Magento\UrlRewrite\Block\Link',
             [
                 'item_url' => $this->_adminhtmlData->getUrl('adminhtml/*/*') . 'category',
                 'item_name' => $this->_getCategory()->getName(),
@@ -96,7 +96,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
      */
     private function _addCategoryTreeBlock()
     {
-        $this->addChild('categories_tree', \Magento\UrlRewrite\Block\Catalog\Category\Tree::class);
+        $this->addChild('categories_tree', 'Magento\UrlRewrite\Block\Catalog\Category\Tree');
     }
 
     /**
@@ -107,7 +107,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     protected function _createEditFormBlock()
     {
         return $this->getLayout()->createBlock(
-            \Magento\UrlRewrite\Block\Catalog\Edit\Form::class,
+            'Magento\UrlRewrite\Block\Catalog\Edit\Form',
             '',
             ['data' => ['category' => $this->_getCategory(), 'url_rewrite' => $this->_getUrlRewrite()]]
         );

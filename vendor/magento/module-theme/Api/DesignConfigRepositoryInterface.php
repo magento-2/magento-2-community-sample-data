@@ -10,7 +10,6 @@ use Magento\Theme\Api\Data\DesignConfigInterface;
 /**
  * Design config CRUD interface.
  * @api
- * @since 100.1.0
  */
 interface DesignConfigRepositoryInterface
 {
@@ -20,7 +19,6 @@ interface DesignConfigRepositoryInterface
      * @param string $scope
      * @param mixed $scopeId
      * @return DesignConfigInterface
-     * @since 100.1.0
      */
     public function getByScope($scope, $scopeId);
 
@@ -29,7 +27,6 @@ interface DesignConfigRepositoryInterface
      *
      * @param DesignConfigInterface $designConfig
      * @return DesignConfigInterface
-     * @since 100.1.0
      */
     public function save(DesignConfigInterface $designConfig);
 
@@ -38,7 +35,6 @@ interface DesignConfigRepositoryInterface
      *
      * @param DesignConfigInterface $designConfig
      * @return DesignConfigInterface
-     * @since 100.1.0
      */
     public function delete(DesignConfigInterface $designConfig);
 }

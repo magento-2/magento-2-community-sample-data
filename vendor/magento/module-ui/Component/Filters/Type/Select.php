@@ -12,8 +12,7 @@ use Magento\Ui\Component\Form\Element\Select as ElementSelect;
 use Magento\Ui\Component\Filters\FilterModifier;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Select
  */
 class Select extends AbstractFilter
 {

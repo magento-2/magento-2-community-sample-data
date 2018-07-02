@@ -29,7 +29,6 @@ class ContinueToPaypalInContextStep implements TestStepInterface
     {
         $this->checkoutOnepage = $checkoutOnepage;
     }
-
     /**
      * Click Continue to PayPal button.
      *

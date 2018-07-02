@@ -9,7 +9,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Theme\Model\Design\Config\DataProvider\DataLoader;
 
-class DataLoaderTest extends \PHPUnit\Framework\TestCase
+class DataLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DataLoader
@@ -48,20 +48,20 @@ class DataLoaderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataPersistor = $this->getMockBuilder(\Magento\Framework\App\Request\DataPersistorInterface::class)
+        $this->dataPersistor = $this->getMockBuilder('Magento\Framework\App\Request\DataPersistorInterface')
             ->getMockForAbstractClass();
-        $this->designConfigRepository = $this->getMockBuilder(\Magento\Theme\Api\DesignConfigRepositoryInterface::class)
+        $this->designConfigRepository = $this->getMockBuilder('Magento\Theme\Api\DesignConfigRepositoryInterface')
             ->getMockForAbstractClass();
-        $this->designConfig = $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigInterface::class)
+        $this->designConfig = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigInterface')
             ->getMockForAbstractClass();
-        $this->designConfigData = $this->getMockBuilder(\Magento\Theme\Api\Data\DesignConfigDataInterface::class)
+        $this->designConfigData = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigDataInterface')
             ->getMockForAbstractClass();
-        $this->designConfigExtension = $this->getMockBuilder(
-            \Magento\Theme\Api\Data\DesignConfigExtensionInterface::class
-        )->setMethods(['getDesignConfigData'])->getMockForAbstractClass();
+        $this->designConfigExtension = $this->getMockBuilder('Magento\Theme\Api\Data\DesignConfigExtensionInterface')
+            ->setMethods(['getDesignConfigData'])
+            ->getMockForAbstractClass();
 
         $this->model = new DataLoader(
             $this->request,

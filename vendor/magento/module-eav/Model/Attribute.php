@@ -17,10 +17,6 @@ namespace Magento\Eav\Model;
 
 use Magento\Store\Model\Website;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Attribute extends \Magento\Eav\Model\Entity\Attribute
 {
     /**
@@ -30,8 +26,9 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute
     //const MODULE_NAME = 'Magento_Eav';
 
     /**
-     * Name of the module
-     * Override it
+     * Prefix of model events object
+     *
+     * @var string
      */
     protected $_eventObject = 'attribute';
 
@@ -62,7 +59,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute
      */
     public function getWebsite()
     {
-        if ($this->_website === null) {
+        if (is_null($this->_website)) {
             $this->_website = $this->_storeManager->getWebsite();
         }
 
@@ -88,7 +85,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute
     public function getUsedInForms()
     {
         $forms = $this->getData('used_in_forms');
-        if ($forms === null) {
+        if (is_null($forms)) {
             $forms = $this->_getResource()->getUsedInForms($this);
             $this->setData('used_in_forms', $forms);
         }
@@ -106,7 +103,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute
         if (is_array($rules)) {
             return $rules;
         } elseif (!empty($rules)) {
-            return (array)$this->getSerializer()->unserialize($rules);
+            return unserialize($rules);
         }
         return [];
     }
@@ -122,7 +119,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute
         if (empty($rules)) {
             $rules = null;
         } elseif (is_array($rules)) {
-            $rules = $this->getSerializer()->serialize($rules);
+            $rules = serialize($rules);
         }
         $this->setData('validate_rules', $rules);
 

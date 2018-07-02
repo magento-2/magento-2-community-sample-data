@@ -5,7 +5,7 @@
  */
 namespace Magento\PageCache\Test\Unit\Model\Cache;
 
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\PageCache\Model\Cache\Type */
     protected $model;
@@ -18,13 +18,13 @@ class TypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cacheFrontendPoolMock = $this->getMockBuilder(\Magento\Framework\App\Cache\Type\FrontendPool::class)
+        $this->cacheFrontendPoolMock = $this->getMockBuilder('Magento\Framework\App\Cache\Type\FrontendPool')
             ->disableOriginalConstructor()
             ->getMock();
-        $cacheFrontend = $this->getMockBuilder(\Magento\Framework\Cache\FrontendInterface::class)
+        $cacheFrontend = $this->getMockBuilder('Magento\Framework\Cache\FrontendInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheFrontendPoolMock->expects($this->once())
@@ -32,7 +32,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn($cacheFrontend);
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\PageCache\Model\Cache\Type::class,
+            'Magento\PageCache\Model\Cache\Type',
             [
                 'eventManager' => $this->eventManagerMock,
                 'cacheFrontendPool' => $this->cacheFrontendPoolMock,

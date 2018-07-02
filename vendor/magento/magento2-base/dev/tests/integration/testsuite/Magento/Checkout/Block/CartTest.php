@@ -9,7 +9,7 @@
  */
 namespace Magento\Checkout\Block;
 
-class CartTest extends \PHPUnit\Framework\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetMethods()
     {
@@ -21,16 +21,10 @@ class CartTest extends \PHPUnit\Framework\TestCase
             \Magento\Framework\View\Element\Text::class
         )->setChild(
             'child1',
-            $layout->createBlock(
-                \Magento\Framework\View\Element\Text::class,
-                'method1'
-            )
+            $layout->createBlock(\Magento\Framework\View\Element\Text::class, 'method1')
         )->setChild(
             'child2',
-            $layout->createBlock(
-                \Magento\Framework\View\Element\Text::class,
-                'method2'
-            )
+            $layout->createBlock(\Magento\Framework\View\Element\Text::class, 'method2')
         );
         /** @var $block \Magento\Checkout\Block\Cart */
         $block = $layout->createBlock(\Magento\Checkout\Block\Cart::class)->setChild('child', $child);
@@ -63,6 +57,11 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $methods);
     }
 
+    /**
+     * @covers \Magento\Checkout\Block\Cart::getPagerHtml
+     *
+     * @return void
+     */
     public function testGetPagerHtml()
     {
         /** @var $layout \Magento\Framework\View\Layout */
@@ -72,6 +71,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         /** @var $block \Magento\Checkout\Block\Cart */
         $block = $layout->createBlock(\Magento\Checkout\Block\Cart::class);
         $pager = $block->getPagerHtml();
+
         $this->assertEquals('', $pager);
     }
 }

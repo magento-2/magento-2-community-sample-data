@@ -5,10 +5,10 @@
  */
 namespace Magento\CheckoutAgreements\Test\Unit\Model;
 
-use Magento\CheckoutAgreements\Model\AgreementsProvider;
 use Magento\Store\Model\ScopeInterface;
+use Magento\CheckoutAgreements\Model\AgreementsProvider;
 
-class AgreementsConfigProviderTest extends \PHPUnit\Framework\TestCase
+class AgreementsConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CheckoutAgreements\Model\AgreementsConfigProvider
@@ -32,11 +32,15 @@ class AgreementsConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->agreementsRepositoryMock = $this->createMock(
-            \Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface::class
+        $this->scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->agreementsRepositoryMock = $this->getMock(
+            '\Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface',
+            [],
+            [],
+            '',
+            false
         );
-        $this->escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $this->escaperMock = $this->getMock('\Magento\Framework\Escaper', [], [], '', false);
 
         $this->model = new \Magento\CheckoutAgreements\Model\AgreementsConfigProvider(
             $this->scopeConfigMock,
@@ -70,7 +74,7 @@ class AgreementsConfigProviderTest extends \PHPUnit\Framework\TestCase
             ->with(AgreementsProvider::PATH_ENABLED, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
 
-        $agreement = $this->createMock(\Magento\CheckoutAgreements\Api\Data\AgreementInterface::class);
+        $agreement = $this->getMock('\Magento\CheckoutAgreements\Api\Data\AgreementInterface');
         $this->agreementsRepositoryMock->expects($this->any())->method('getList')->willReturn([$agreement]);
 
         $agreement->expects($this->once())->method('getIsHtml')->willReturn(true);
@@ -108,7 +112,7 @@ class AgreementsConfigProviderTest extends \PHPUnit\Framework\TestCase
             ->with(AgreementsProvider::PATH_ENABLED, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
 
-        $agreement = $this->createMock(\Magento\CheckoutAgreements\Api\Data\AgreementInterface::class);
+        $agreement = $this->getMock('\Magento\CheckoutAgreements\Api\Data\AgreementInterface');
         $this->agreementsRepositoryMock->expects($this->any())->method('getList')->willReturn([$agreement]);
         $this->escaperMock->expects($this->once())->method('escapeHtml')->with($content)->willReturn($escapedContent);
 

@@ -12,7 +12,6 @@ use Magento\Framework\Exception\LocalizedException;
  * Interface for integration permissions management.
  *
  * @api
- * @since 100.0.2
  */
 interface AuthorizationServiceInterface
 {

@@ -7,7 +7,7 @@ namespace Magento\Framework\Search\Test\Unit\Request;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CleanerTest extends \PHPUnit\Framework\TestCase
+class CleanerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\Search\Request\Aggregation\StatusInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $status;
@@ -21,13 +21,13 @@ class CleanerTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->status = $this->getMockBuilder(\Magento\Framework\Search\Request\Aggregation\StatusInterface::class)
+        $this->status = $this->getMockBuilder('\Magento\Framework\Search\Request\Aggregation\StatusInterface')
             ->disableOriginalConstructor()
             ->setMethods(['isEnabled'])
             ->getMockForAbstractClass();
 
         $this->cleaner = $helper->getObject(
-            \Magento\Framework\Search\Request\Cleaner::class,
+            'Magento\Framework\Search\Request\Cleaner',
             ['aggregationStatus' => $this->status]
         );
     }

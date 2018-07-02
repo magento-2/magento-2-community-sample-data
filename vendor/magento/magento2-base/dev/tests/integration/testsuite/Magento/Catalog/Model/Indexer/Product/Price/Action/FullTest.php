@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Price\Action;
 /**
  * Full reindex Test
  */
-class FullTest extends \PHPUnit\Framework\TestCase
+class FullTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Price\Processor
@@ -18,7 +18,7 @@ class FullTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Indexer\Product\Price\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Price\Processor'
         );
     }
 
@@ -32,10 +32,10 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $this->_processor->reindexAll();
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(2);

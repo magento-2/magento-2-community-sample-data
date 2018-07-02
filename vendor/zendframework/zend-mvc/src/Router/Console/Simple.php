@@ -36,7 +36,7 @@ class Simple implements RouteInterface
      *
      * @var array
      */
-    protected $assembledParams = [];
+    protected $assembledParams = array();
 
     /**
      * @var RouteMatcherInterface
@@ -56,9 +56,9 @@ class Simple implements RouteInterface
      */
     public function __construct(
         $routeOrRouteMatcher,
-        array $constraints = [],
-        array $defaults = [],
-        array $aliases = [],
+        array $constraints = array(),
+        array $defaults = array(),
+        array $aliases = array(),
         $filters = null,
         $validators = null
     ) {
@@ -82,7 +82,7 @@ class Simple implements RouteInterface
      * @throws Exception\InvalidArgumentException
      * @return self
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -94,13 +94,13 @@ class Simple implements RouteInterface
             throw new Exception\InvalidArgumentException('Missing "route" in options array');
         }
 
-        foreach ([
+        foreach (array(
             'constraints',
             'defaults',
             'aliases',
-        ] as $opt) {
+        ) as $opt) {
             if (!isset($options[$opt])) {
-                $options[$opt] = [];
+                $options[$opt] = array();
             }
         }
 
@@ -153,9 +153,9 @@ class Simple implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
-        $this->assembledParams = [];
+        $this->assembledParams = array();
     }
 
     /**

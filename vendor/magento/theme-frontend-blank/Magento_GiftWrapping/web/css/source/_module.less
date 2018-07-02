@@ -25,17 +25,6 @@
 //  _____________________________________________
 
 & when (@media-common = true) {
-    .gift-wrapping {
-        .label {
-            .lib-css(margin, @form-field-type-label-block__margin);
-            display: inline-block;
-        }
-
-        .field {
-            margin-bottom: @indent__s;
-        }
-    }
-
     .gift-wrapping-info {
         .lib-css(font-weight, @font-weight__light);
         font-size: @font-size__l;
@@ -158,8 +147,6 @@
 
     .gift-summary,
     .gift-options {
-        &:extend(.abs-adjustment-incl-excl-tax all);
-
         .price-box {
             margin-left: 22px;
         }
@@ -173,30 +160,8 @@
                 font-weight: @font-weight__bold;
             }
         }
-    }
 
-    //
-    //  Multiple Shipping Checkout
-    //  ---------------------------------------------
-
-    .order-options {
-        .item {
-            padding-bottom: @indent__base;
-        }
-
-        .product {
-            &:extend(.abs-add-clearfix all);
-            margin-bottom: @indent__s;
-        }
-
-        .product-image-container {
-            float: left;
-            padding-right: @indent__s;
-        }
-
-        .gift-wrapping {
-            margin-bottom: @indent__s;
-        }
+        &:extend(.abs-adjustment-incl-excl-tax all);
     }
 }
 
@@ -252,21 +217,18 @@
         }
     }
 
-    .gift-options-cart-item,
-    .cart-gift-item {
-        .gift-wrapping {
+    .gift-wrapping {
+        box-sizing: border-box;
+        float: left;
+        padding-right: @indent__base;
+        width: 50%;
+
+        & + .gift-message {
+            .lib-css(border-left, @gift-wrapping__border-width solid @gift-wrapping__border-color);
             box-sizing: border-box;
             float: left;
-            padding-right: @indent__base;
+            padding-left: 4.5rem;
             width: 50%;
-
-            & + .gift-message {
-                .lib-css(border-left, @gift-wrapping__border-width solid @gift-wrapping__border-color);
-                box-sizing: border-box;
-                float: left;
-                padding-left: 4.5rem;
-                width: 50%;
-            }
         }
     }
 }

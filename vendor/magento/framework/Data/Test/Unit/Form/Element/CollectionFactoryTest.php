@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
-class CollectionFactoryTest extends \PHPUnit\Framework\TestCase
+class CollectionFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -23,9 +23,14 @@ class CollectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $objectManagerMock =
-            $this->createPartialMock(\Magento\Framework\ObjectManager\ObjectManager::class, ['create']);
-        $collectionMock = $this->createMock(\Magento\Framework\Data\Form\Element\Collection::class);
+        $objectManagerMock = $this->getMock(
+            'Magento\Framework\ObjectManager\ObjectManager',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $collectionMock = $this->getMock('Magento\Framework\Data\Form\Element\Collection', [], [], '', false);
         $objectManagerMock->expects($this->once())->method('create')->will($this->returnValue($collectionMock));
         $this->_model = new \Magento\Framework\Data\Form\Element\CollectionFactory($objectManagerMock);
     }
@@ -35,6 +40,6 @@ class CollectionFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate()
     {
-        $this->assertInstanceOf(\Magento\Framework\Data\Form\Element\Collection::class, $this->_model->create([]));
+        $this->assertInstanceOf('Magento\Framework\Data\Form\Element\Collection', $this->_model->create([]));
     }
 }

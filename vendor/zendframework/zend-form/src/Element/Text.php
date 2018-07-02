@@ -18,7 +18,7 @@ class Text extends Element
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'text',
-    ];
+    );
 }

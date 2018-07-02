@@ -48,7 +48,9 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     }
 
     /**
-     * {@inheritdoc}
+     * Sets a custom children builder.
+     *
+     * @param NodeBuilder $builder A custom NodeBuilder
      */
     public function setBuilder(NodeBuilder $builder)
     {
@@ -56,7 +58,9 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     }
 
     /**
-     * {@inheritdoc}
+     * Returns a builder to add children nodes.
+     *
+     * @return NodeBuilder
      */
     public function children()
     {
@@ -66,69 +70,13 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Sets a prototype for child nodes.
      *
-     * @param string $type The type of node
+     * @param string $type the type of node
      *
      * @return NodeDefinition
      */
     public function prototype($type)
     {
         return $this->prototype = $this->getNodeBuilder()->node(null, $type)->setParent($this);
-    }
-
-    /**
-     * @return VariableNodeDefinition
-     */
-    public function variablePrototype()
-    {
-        return $this->prototype('variable');
-    }
-
-    /**
-     * @return ScalarNodeDefinition
-     */
-    public function scalarPrototype()
-    {
-        return $this->prototype('scalar');
-    }
-
-    /**
-     * @return BooleanNodeDefinition
-     */
-    public function booleanPrototype()
-    {
-        return $this->prototype('boolean');
-    }
-
-    /**
-     * @return IntegerNodeDefinition
-     */
-    public function integerPrototype()
-    {
-        return $this->prototype('integer');
-    }
-
-    /**
-     * @return FloatNodeDefinition
-     */
-    public function floatPrototype()
-    {
-        return $this->prototype('float');
-    }
-
-    /**
-     * @return ArrayNodeDefinition
-     */
-    public function arrayPrototype()
-    {
-        return $this->prototype('array');
-    }
-
-    /**
-     * @return EnumNodeDefinition
-     */
-    public function enumPrototype()
-    {
-        return $this->prototype('enum');
     }
 
     /**
@@ -150,9 +98,9 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Adds children with a default value when none are defined.
      *
-     * This method is applicable to prototype nodes only.
-     *
      * @param int|string|array|null $children The number of children|The child name|The children names to be added
+     *
+     * This method is applicable to prototype nodes only.
      *
      * @return $this
      */
@@ -364,7 +312,19 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     }
 
     /**
-     * {@inheritdoc}
+     * Appends a node definition.
+     *
+     *     $node = new ArrayNodeDefinition()
+     *         ->children()
+     *             ->scalarNode('foo')->end()
+     *             ->scalarNode('baz')->end()
+     *         ->end()
+     *         ->append($this->getBarNodeDefinition())
+     *     ;
+     *
+     * @param NodeDefinition $node A NodeDefinition instance
+     *
+     * @return $this
      */
     public function append(NodeDefinition $node)
     {
@@ -412,10 +372,6 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
                 $node->setKeyAttribute($this->key, $this->removeKeyItem);
             }
 
-            if (false === $this->allowEmptyValue) {
-                @trigger_error(sprintf('Using %s::cannotBeEmpty() at path "%s" has no effect, consider requiresAtLeastOneElement() instead. In 4.0 both methods will behave the same.', __CLASS__, $node->getPath()), E_USER_DEPRECATED);
-            }
-
             if (true === $this->atLeastOne) {
                 $node->setMinNumberOfElements(1);
             }
@@ -441,7 +397,6 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
         $node->addEquivalentValue(false, $this->falseEquivalent);
         $node->setPerformDeepMerging($this->performDeepMerging);
         $node->setRequired($this->required);
-        $node->setDeprecated($this->deprecationMessage);
         $node->setIgnoreExtraKeys($this->ignoreExtraKeys, $this->removeExtraKeys);
         $node->setNormalizeKeys($this->normalizeKeys);
 
@@ -465,6 +420,8 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Validate the configuration of a concrete node.
      *
+     * @param ArrayNode $node The related node
+     *
      * @throws InvalidDefinitionException
      */
     protected function validateConcreteNode(ArrayNode $node)
@@ -475,10 +432,6 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
             throw new InvalidDefinitionException(
                 sprintf('->useAttributeAsKey() is not applicable to concrete nodes at path "%s"', $path)
             );
-        }
-
-        if (false === $this->allowEmptyValue) {
-            @trigger_error(sprintf('->cannotBeEmpty() is not applicable to concrete nodes at path "%s". In 4.0 it will throw an exception.', $path), E_USER_DEPRECATED);
         }
 
         if (true === $this->atLeastOne) {
@@ -502,6 +455,8 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
 
     /**
      * Validate the configuration of a prototype node.
+     *
+     * @param PrototypedArrayNode $node The related node
      *
      * @throws InvalidDefinitionException
      */

@@ -10,7 +10,7 @@ use Magento\Tools\Composer\Package\Reader;
 /**
  * Class RootComposerMappingTest
  */
-class RootComposerMappingTest extends \PHPUnit\Framework\TestCase
+class RootComposerMappingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test existence of paths for marshalling

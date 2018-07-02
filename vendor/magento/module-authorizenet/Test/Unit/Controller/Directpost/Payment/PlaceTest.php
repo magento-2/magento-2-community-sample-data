@@ -13,7 +13,6 @@ use Magento\Checkout\Model\Type\Onepage;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\Http;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
@@ -28,7 +27,7 @@ use Magento\Quote\Model\Quote;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PlaceTest extends \PHPUnit\Framework\TestCase
+class PlaceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -96,11 +95,6 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
     protected $quoteMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $loggerMock;
-
-    /**
      * @var CheckoutSession|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $checkoutSessionMock;
@@ -108,63 +102,60 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->directpostSessionMock = $this
-            ->getMockBuilder(\Magento\Authorizenet\Model\Directpost\Session::class)
+            ->getMockBuilder('Magento\Authorizenet\Model\Directpost\Session')
             ->disableOriginalConstructor()
             ->getMock();
         $this->quoteMock = $this
-            ->getMockBuilder(\Magento\Quote\Model\Quote::class)
+            ->getMockBuilder('Magento\Quote\Model\Quote')
             ->disableOriginalConstructor()
             ->getMock();
         $this->checkoutSessionMock = $this
-            ->getMockBuilder(\Magento\Checkout\Model\Session::class)
+            ->getMockBuilder('Magento\Checkout\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
         $this->checkoutSessionMock->expects($this->any())
             ->method('getQuote')
             ->will($this->returnValue($this->quoteMock));
         $this->objectManagerMock = $this
-            ->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+            ->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->getMockForAbstractClass();
         $this->objectManagerMock->expects($this->any())
             ->method('get')
             ->willReturnMap([
-                [\Magento\Authorizenet\Model\Directpost\Session::class, $this->directpostSessionMock],
-                [\Magento\Checkout\Model\Session::class, $this->checkoutSessionMock],
+                ['Magento\Authorizenet\Model\Directpost\Session', $this->directpostSessionMock],
+                ['Magento\Checkout\Model\Session', $this->checkoutSessionMock],
             ]);
         $this->coreRegistryMock = $this
-            ->getMockBuilder(\Magento\Framework\Registry::class)
+            ->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->dataFactoryMock = $this
-            ->getMockBuilder(\Magento\Authorizenet\Helper\DataFactory::class)
+            ->getMockBuilder('Magento\Authorizenet\Helper\DataFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $this->cartManagementMock = $this
-            ->getMockBuilder(\Magento\Quote\Api\CartManagementInterface::class)
+            ->getMockBuilder('Magento\Quote\Api\CartManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->onepageCheckout = $this
-            ->getMockBuilder(\Magento\Checkout\Model\Type\Onepage::class)
+            ->getMockBuilder('Magento\Checkout\Model\Type\Onepage')
             ->disableOriginalConstructor()
             ->getMock();
         $this->jsonHelperMock = $this
-            ->getMockBuilder(\Magento\Framework\Json\Helper\Data::class)
+            ->getMockBuilder('Magento\Framework\Json\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestMock = $this
-            ->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+            ->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->getMockForAbstractClass();
         $this->responseMock = $this
-            ->getMockBuilder(\Magento\Framework\App\Response\Http::class)
+            ->getMockBuilder('Magento\Framework\App\Response\Http')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $this->loggerMock = $this
-            ->getMockBuilder(\Psr\Log\LoggerInterface::class)
-            ->getMock();
 
         $this->objectManager = new ObjectManager($this);
         $this->placeOrderController = $this->objectManager->getObject(
-            \Magento\Authorizenet\Controller\Directpost\Payment\Place::class,
+            'Magento\Authorizenet\Controller\Directpost\Payment\Place',
             [
                 'request' => $this->requestMock,
                 'response' => $this->responseMock,
@@ -174,7 +165,6 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
                 'cartManagement' => $this->cartManagementMock,
                 'onepageCheckout' => $this->onepageCheckout,
                 'jsonHelper' => $this->jsonHelperMock,
-                'logger' => $this->loggerMock,
             ]
         );
     }
@@ -224,15 +214,13 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
      * @param $controller
      * @param $quoteId
      * @param $result
-     * @param \Exception $exception Exception to check
      * @dataProvider textExecuteFailedPlaceOrderDataProvider
      */
     public function testExecuteFailedPlaceOrder(
         $paymentMethod,
         $controller,
         $quoteId,
-        $result,
-        $exception
+        $result
     ) {
         $this->requestMock->expects($this->at(0))
             ->method('getParam')
@@ -250,11 +238,7 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
 
         $this->cartManagementMock->expects($this->once())
             ->method('placeOrder')
-            ->willThrowException($exception);
-
-        $this->loggerMock->expects($this->once())
-            ->method('critical')
-            ->with($exception);
+            ->willThrowException(new \Exception());
 
         $this->jsonHelperMock->expects($this->any())
             ->method('jsonEncode')
@@ -294,19 +278,11 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
      */
     public function textExecuteFailedPlaceOrderDataProvider()
     {
-        $objectFailed1 = new \Magento\Framework\DataObject(
-            [
-                'error' => true,
-                'error_messages' => __('An error occurred on the server. Please try to place the order again.')
-            ]
-        );
-        $generalException = new \Exception('Exception logging will save the world!');
-        $localizedException = new LocalizedException(__('Electronic payments save the trees.'));
-        $objectFailed2 = new \Magento\Framework\DataObject(
-            [
-                'error' => true,
-                'error_messages' => $localizedException->getMessage()
-            ]
+        $objectFailed = new \Magento\Framework\DataObject();
+        $objectFailed->setData('error', true);
+        $objectFailed->setData(
+            'error_messages',
+            __('An error occurred on the server. Please try to place the order again.')
         );
 
         return [
@@ -314,15 +290,7 @@ class PlaceTest extends \PHPUnit\Framework\TestCase
                 ['method' => 'authorizenet_directpost'],
                 IframeConfigProvider::CHECKOUT_IDENTIFIER,
                 1,
-                $objectFailed1,
-                $generalException,
-            ],
-            [
-                ['method' => 'authorizenet_directpost'],
-                IframeConfigProvider::CHECKOUT_IDENTIFIER,
-                1,
-                $objectFailed2,
-                $localizedException,
+                $objectFailed
             ],
         ];
     }

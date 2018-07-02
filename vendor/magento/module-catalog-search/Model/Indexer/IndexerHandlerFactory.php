@@ -10,10 +10,6 @@ use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class IndexerHandlerFactory
 {
     /**
@@ -89,6 +85,7 @@ class IndexerHandlerFactory
                 'Indexer handler is not available: ' . $currentHandler
             );
         }
+
         return $indexer;
     }
 }

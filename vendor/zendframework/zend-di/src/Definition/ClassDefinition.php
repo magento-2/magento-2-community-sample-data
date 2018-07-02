@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -25,7 +25,7 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
     /**
      * @var string[]
      */
-    protected $supertypes = [];
+    protected $supertypes = array();
 
     /**
      * @var null|\Callable|array|string
@@ -35,12 +35,12 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
     /**
      * @var bool[]
      */
-    protected $methods = [];
+    protected $methods = array();
 
     /**
      * @var array
      */
-    protected $methodParameters = [];
+    protected $methodParameters = array();
 
     /**
      * @param string $class
@@ -111,7 +111,7 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
         }
 
         if (!array_key_exists($method, $this->methodParameters)) {
-            $this->methodParameters[$method] = [];
+            $this->methodParameters[$method] = array();
         }
 
         $type     = (isset($parameterInfo['type'])) ? $parameterInfo['type'] : null;
@@ -119,12 +119,12 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
         $default  = (isset($parameterInfo['default'])) ? $parameterInfo['default'] : null;
 
         $fqName = $this->class . '::' . $method . ':' . $parameterName;
-        $this->methodParameters[$method][$fqName] = [
+        $this->methodParameters[$method][$fqName] = array(
             $parameterName,
             $type,
             $required,
             $default
-        ];
+        );
 
         return $this;
     }
@@ -134,7 +134,7 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
      */
     public function getClasses()
     {
-        return [$this->class];
+        return array($this->class);
     }
 
     /**
@@ -151,7 +151,7 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
     public function getClassSupertypes($class)
     {
         if ($this->class !== $class) {
-            return [];
+            return array();
         }
         return $this->supertypes;
     }
@@ -181,7 +181,7 @@ class ClassDefinition implements DefinitionInterface, PartialMarker
     public function getMethods($class)
     {
         if ($this->class !== $class) {
-            return [];
+            return array();
         }
         return $this->methods;
     }

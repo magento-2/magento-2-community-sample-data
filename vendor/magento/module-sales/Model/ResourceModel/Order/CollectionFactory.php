@@ -33,7 +33,7 @@ class CollectionFactory implements CollectionFactoryInterface
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Sales\Model\ResourceModel\Order\Collection::class
+        $instanceName = '\\Magento\\Sales\\Model\\ResourceModel\\Order\\Collection'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

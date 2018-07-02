@@ -10,7 +10,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create;
 /**
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\Create\Form */
     protected $_orderCreateBlock;
@@ -26,19 +26,19 @@ class FormTest extends \PHPUnit\Framework\TestCase
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         $sessionMock = $this->getMockBuilder(
-            \Magento\Backend\Model\Session\Quote::class
+            'Magento\Backend\Model\Session\Quote'
         )->disableOriginalConstructor()->setMethods(
             ['getCustomerId', 'getQuote', 'getStoreId', 'getStore']
         )->getMock();
         $sessionMock->expects($this->any())->method('getCustomerId')->will($this->returnValue(1));
 
-        $quote = $this->_objectManager->create(\Magento\Quote\Model\Quote::class)->load(1);
+        $quote = $this->_objectManager->create('Magento\Quote\Model\Quote')->load(1);
         $sessionMock->expects($this->any())->method('getQuote')->will($this->returnValue($quote));
 
         $sessionMock->expects($this->any())->method('getStoreId')->will($this->returnValue(1));
 
         $storeMock = $this->getMockBuilder(
-            \Magento\Store\Model\Store::class
+            '\Magento\Store\Model\Store'
         )->disableOriginalConstructor()->setMethods(
             ['getCurrentCurrencyCode']
         )->getMock();
@@ -46,9 +46,9 @@ class FormTest extends \PHPUnit\Framework\TestCase
         $sessionMock->expects($this->any())->method('getStore')->will($this->returnValue($storeMock));
 
         /** @var \Magento\Framework\View\LayoutInterface $layout */
-        $layout = $this->_objectManager->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = $this->_objectManager->get('Magento\Framework\View\LayoutInterface');
         $this->_orderCreateBlock = $layout->createBlock(
-            \Magento\Sales\Block\Adminhtml\Order\Create\Form::class,
+            'Magento\Sales\Block\Adminhtml\Order\Create\Form',
             'order_create_block' . rand(),
             ['sessionQuote' => $sessionMock]
         );
@@ -88,12 +88,12 @@ ORDER_DATA_JSON;
     private function setUpMockAddress()
     {
         /** @var \Magento\Customer\Api\Data\RegionInterfaceFactory $regionFactory */
-        $regionFactory = $this->_objectManager->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class);
+        $regionFactory = $this->_objectManager->create('Magento\Customer\Api\Data\RegionInterfaceFactory');
 
         /** @var \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory */
-        $addressFactory = $this->_objectManager->create(\Magento\Customer\Api\Data\AddressInterfaceFactory::class);
+        $addressFactory = $this->_objectManager->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
-        $addressRepository = $this->_objectManager->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+        $addressRepository = $this->_objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
 
         $addressData1 = $addressFactory->create()->setCountryId(
             'US'

@@ -11,54 +11,49 @@ use Magento\Paypal\Model\Config;
 use Magento\Paypal\Model\Billing\AgreementFactory;
 use Magento\Quote\Model\Quote;
 
-/**
- * Plugin for \Magento\Payment\Model\Checks\Composite
- */
 class SpecificationPlugin
 {
     /**
      * @var AgreementFactory
      */
-    private $agreementFactory;
+    protected $_agreementFactory;
 
     /**
      * @param AgreementFactory $agreementFactory
      */
     public function __construct(AgreementFactory $agreementFactory)
     {
-        $this->agreementFactory = $agreementFactory;
+        $this->_agreementFactory = $agreementFactory;
     }
 
     /**
      * Override check for Billing Agreements
      *
      * @param SpecificationInterface $specification
-     * @param bool $result
+     * @param \Closure $proceed
      * @param MethodInterface $paymentMethod
      * @param Quote $quote
      * @return bool
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterIsApplicable(
+    public function aroundIsApplicable(
         SpecificationInterface $specification,
-        $result,
+        \Closure $proceed,
         MethodInterface $paymentMethod,
         Quote $quote
     ) {
-        if (!$result) {
+        $originallyIsApplicable = $proceed($paymentMethod, $quote);
+        if (!$originallyIsApplicable) {
             return false;
         }
 
         if ($paymentMethod->getCode() == Config::METHOD_BILLING_AGREEMENT) {
             if ($quote->getCustomerId()) {
-                $availableBA = $this->agreementFactory->create()->getAvailableCustomerBillingAgreements(
+                $availableBA = $this->_agreementFactory->create()->getAvailableCustomerBillingAgreements(
                     $quote->getCustomerId()
                 );
-
                 return count($availableBA) > 0;
             }
-
             return false;
         }
 

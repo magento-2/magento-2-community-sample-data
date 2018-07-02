@@ -7,17 +7,20 @@
 namespace Magento\CatalogSearch\Model\Search\RequestGenerator;
 
 /**
- * @api
- * @since 100.1.6
+ * Search request generator resolver.
  */
 class GeneratorResolver
 {
     /**
+     * Search request generators.
+     *
      * @var GeneratorInterface[]
      */
     private $generators;
 
     /**
+     * Default search request generator.
+     *
      * @var GeneratorInterface
      */
     private $defaultGenerator;
@@ -33,10 +36,11 @@ class GeneratorResolver
     }
 
     /**
+     * Return search generator for specified attribute backend type.
+     *
      * @param string $type
      * @return GeneratorInterface
      * @throws \InvalidArgumentException
-     * @since 100.1.6
      */
     public function getGeneratorForType($type)
     {
@@ -46,6 +50,7 @@ class GeneratorResolver
                 'Generator must implement ' . GeneratorInterface::class
             );
         }
+        
         return $generator;
     }
 }

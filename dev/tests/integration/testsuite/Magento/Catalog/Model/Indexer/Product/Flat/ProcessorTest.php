@@ -23,10 +23,10 @@ class ProcessorTest extends \Magento\TestFramework\Indexer\TestCase
     protected function setUp()
     {
         $this->_state = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Indexer\Product\Flat\State::class
+            'Magento\Catalog\Model\Indexer\Product\Flat\State'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Flat\Processor'
         );
     }
 
@@ -53,7 +53,7 @@ class ProcessorTest extends \Magento\TestFramework\Indexer\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
 
         /** @var \Magento\Catalog\Model\ResourceModel\Product $productResource */
@@ -74,7 +74,7 @@ class ProcessorTest extends \Magento\TestFramework\Indexer\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
 
         /** @var \Magento\Catalog\Model\ResourceModel\Product $productResource */
@@ -105,9 +105,7 @@ class ProcessorTest extends \Magento\TestFramework\Indexer\TestCase
     public function testAddNewStoreGroup()
     {
         /** @var \Magento\Store\Model\Group $storeGroup */
-        $storeGroup = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\Group::class
-        );
+        $storeGroup = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Store\Model\Group');
         $storeGroup->setData(
             ['website_id' => 1, 'name' => 'New Store Group', 'root_category_id' => 2, 'group_id' => null]
         );

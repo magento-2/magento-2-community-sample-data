@@ -6,15 +6,14 @@
 namespace Magento\Paypal\Model\Payflow\Service\Response;
 
 use Magento\Framework\DataObject;
+
 use Magento\Payment\Model\Method\Logger;
 use Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface;
 use Magento\Framework\Session\Generic;
-use Magento\Paypal\Model\Payflowpro;
+use Magento\Payment\Model\InfoInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Paypal\Model\Payflow\Transparent;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
-use Magento\Quote\Model\Quote\Payment;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
 
 /**
  * Class Transaction
@@ -52,6 +51,8 @@ class Transaction
     private $logger;
 
     /**
+     * Constructor
+     *
      * @param Generic $sessionTransparent
      * @param CartRepositoryInterface $quoteRepository
      * @param Transparent $transparent
@@ -76,7 +77,7 @@ class Transaction
     }
 
     /**
-     * Returns gateway response data object.
+     * Returns gateway response data object
      *
      * @param array $gatewayTransactionResponse
      * @return DataObject
@@ -84,35 +85,28 @@ class Transaction
     public function getResponseObject($gatewayTransactionResponse)
     {
         $response = new DataObject();
-        $response = $this->transparent->mapGatewayResponse((array) $gatewayTransactionResponse, $response);
-
+        $response = $this->transparent->mapGatewayResponse($gatewayTransactionResponse, $response);
         $this->logger->debug(
-            (array) $gatewayTransactionResponse,
-            (array) $this->transparent->getDebugReplacePrivateDataKeys(),
-            (bool) $this->transparent->getDebugFlag()
+            $gatewayTransactionResponse,
+            (array)$this->transparent->getDebugReplacePrivateDataKeys(),
+            (bool)$this->transparent->getDebugFlag()
         );
-
         return $response;
     }
 
     /**
-     * Saves payment information in quote.
+     * Saves payment information in quote
      *
-     * @param DataObject $response
+     * @param Object $response
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function savePaymentInQuote($response)
     {
         $quote = $this->quoteRepository->get($this->sessionTransparent->getQuoteId());
 
+        /** @var InfoInterface $payment */
         $payment = $this->paymentManagement->get($quote->getId());
-        if (!$payment instanceof Payment) {
-            throw new \InvalidArgumentException("Variable must contain instance of \\Quote\\Payment.");
-        }
-
-        $payment->setData(OrderPaymentInterface::CC_TYPE, $response->getData(OrderPaymentInterface::CC_TYPE));
-        $payment->setAdditionalInformation(Payflowpro::PNREF, $response->getData(Payflowpro::PNREF));
+        $payment->setAdditionalInformation(Transparent::PNREF, $response->getPnref());
 
         $this->errorHandler->handle($payment, $response);
 

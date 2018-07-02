@@ -7,6 +7,7 @@
 namespace Magento\Checkout\Test\Block\Onepage;
 
 use Magento\Mtf\Block\Block;
+use Magento\Mtf\Fixture\InjectableFixture;
 use Magento\Payment\Test\Fixture\CreditCard;
 
 /**
@@ -47,8 +48,8 @@ class Payment extends Block
      *
      * @var string
      */
-    protected $placeOrder = '.payment-method._active .action.primary.checkout';
-
+    protected $placeOrder = '.action.primary.checkout';
+    
     /**
      * Wait element.
      *
@@ -74,20 +75,14 @@ class Payment extends Block
      * Select payment method.
      *
      * @param array $payment
-     * @param CreditCard|null $creditCard
-     * @param string $paymentForm
-     * @param bool $fillCreditCardOn3rdParty
+     * @param InjectableFixture|null $creditCard
      * @throws \Exception
+     * @return void
      */
-    public function selectPaymentMethod(
-        array $payment,
-        CreditCard $creditCard = null,
-        $paymentForm = 'default',
-        $fillCreditCardOn3rdParty = false
-    ) {
-        $paymentMethod = $payment['method'];
-        $paymentSelector = sprintf($this->paymentMethodInput, $paymentMethod);
-        $paymentLabelSelector = sprintf($this->paymentMethodLabel, $paymentMethod);
+    public function selectPaymentMethod(array $payment, InjectableFixture $creditCard = null)
+    {
+        $paymentSelector = sprintf($this->paymentMethodInput, $payment['method']);
+        $paymentLabelSelector = sprintf($this->paymentMethodLabel, $payment['method']);
 
         try {
             $this->waitForElementNotVisible($this->waitElement);
@@ -95,36 +90,25 @@ class Payment extends Block
         } catch (\Exception $exception) {
             throw new \Exception('Such payment method is absent.');
         }
-        $browser = $this->browser;
-        $browser->waitUntil(
-            function () use ($browser, $paymentSelector) {
-                return $browser->find($paymentSelector);
-            }
-        );
+
         $paymentRadioButton = $this->_rootElement->find($paymentSelector);
         if ($paymentRadioButton->isVisible()) {
             $paymentRadioButton->click();
         }
 
-        if (isset($payment['po_number'])) {
+        if ($payment['method'] == "purchaseorder") {
             $this->_rootElement->find($this->purchaseOrderNumber)->setValue($payment['po_number']);
         }
-        if ($creditCard !== null && $fillCreditCardOn3rdParty === false) {
-            $this->callRender($paymentForm, 'fill', [$creditCard]);
+        if ($creditCard !== null) {
+            $class = explode('\\', get_class($creditCard));
+            $module = $class[1];
+            /** @var \Magento\Payment\Test\Block\Form\Cc $formBlock */
+            $formBlock = $this->blockFactory->create(
+                "\\Magento\\{$module}\\Test\\Block\\Form\\Cc",
+                ['element' => $this->_rootElement->find('#payment_form_' . $payment['method'])]
+            );
+            $formBlock->fill($creditCard);
         }
-    }
-
-    /**
-     * Check visibility of payment method block by payment method type.
-     *
-     * @param array $payment
-     * @return bool
-     */
-    public function isVisiblePaymentMethod(array $payment)
-    {
-        $paymentSelector = sprintf($this->paymentMethodInput, $payment['method']);
-
-        return $this->_rootElement->find($paymentSelector)->isVisible();
     }
 
     /**
@@ -151,20 +135,5 @@ class Payment extends Block
     {
         $this->_rootElement->find($this->placeOrder)->click();
         $this->waitForElementNotVisible($this->waitElement);
-    }
-
-    /**
-     * Retrieve list of payment methods.
-     *
-     * @return array
-     */
-    public function getPaymentMethods()
-    {
-        $paymentMethodsArray = [];
-        $paymentMethods = $this->_rootElement->getElements($this->paymentMethodLabels);
-        foreach ($paymentMethods as $paymentMethod) {
-            $paymentMethodsArray[] = $paymentMethod->getText();
-        }
-        return $paymentMethodsArray;
     }
 }

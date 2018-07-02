@@ -9,9 +9,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
  * @magentoAppArea adminhtml
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\TestCase
+class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Event\Observer
@@ -47,7 +46,7 @@ class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\
             'groups' => ['checkmo' => ['fields' => ['order_status' => ['value' => $statusCode]]]],
         ];
         $this->_objectManager->create(
-            \Magento\Config\Model\Config::class
+            'Magento\Config\Model\Config'
         )->setSection(
             'payment'
         )->setWebsite(
@@ -57,17 +56,17 @@ class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\
         )->save();
 
         /** @var \Magento\Sales\Model\Order\Status $status */
-        $status = $this->_objectManager->get(\Magento\Sales\Model\Order\Status::class)->load($statusCode);
+        $status = $this->_objectManager->get('Magento\Sales\Model\Order\Status')->load($statusCode);
 
         /** @var $scopeConfig \Magento\Framework\App\Config\ScopeConfigInterface */
-        $scopeConfig = $this->_objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $scopeConfig = $this->_objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
         $defaultStatus = (string)$scopeConfig->getValue(
             'payment/checkmo/order_status',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
         /** @var \Magento\Config\Model\ResourceModel\Config $config */
-        $config = $this->_objectManager->get(\Magento\Config\Model\ResourceModel\Config::class);
+        $config = $this->_objectManager->get('Magento\Config\Model\ResourceModel\Config');
         $config->saveConfig(
             'payment/checkmo/order_status',
             $statusCode,
@@ -105,20 +104,20 @@ class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\
         $statusCode = 'custom_new_status';
 
         /** @var \Magento\Config\Model\ResourceModel\Config $config */
-        $config = $this->_objectManager->get(\Magento\Config\Model\ResourceModel\Config::class);
+        $config = $this->_objectManager->get('Magento\Config\Model\ResourceModel\Config');
         $config->saveConfig('payment/checkmo/order_status', $statusCode, 'default', 0);
 
         $this->_resetConfig();
 
         $observer = $this->_objectManager->create(
-            \Magento\Payment\Observer\UpdateOrderStatusForPaymentMethodsObserver::class
+            'Magento\Payment\Observer\UpdateOrderStatusForPaymentMethodsObserver'
         );
         $observer->execute($this->_eventObserver);
 
         $this->_resetConfig();
 
         /** @var $scopeConfig \Magento\Framework\App\Config\ScopeConfigInterface */
-        $scopeConfig = $this->_objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $scopeConfig = $this->_objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
         $unassignedStatus = (string)$scopeConfig->getValue(
             'payment/checkmo/order_status',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
@@ -134,9 +133,9 @@ class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\
     protected function _createEventObserver()
     {
         $data = ['status' => 'custom_new_status', 'state' => \Magento\Sales\Model\Order::STATE_NEW];
-        $event = $this->_objectManager->create(\Magento\Framework\Event::class, ['data' => $data]);
+        $event = $this->_objectManager->create('Magento\Framework\Event', ['data' => $data]);
         return $this->_objectManager
-            ->create(\Magento\Framework\Event\Observer::class, ['data' => ['event' => $event]]);
+            ->create('Magento\Framework\Event\Observer', ['data' => ['event' => $event]]);
     }
 
     /**
@@ -144,7 +143,7 @@ class UpdateOrderStatusForPaymentMethodsObserverTest extends \PHPUnit\Framework\
      */
     protected function _resetConfig()
     {
-        $this->_objectManager->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class)->reinit();
-        $this->_objectManager->create(\Magento\Store\Model\StoreManagerInterface::class)->reinitStores();
+        $this->_objectManager->get('Magento\Framework\App\Config\ReinitableConfigInterface')->reinit();
+        $this->_objectManager->create('Magento\Store\Model\StoreManagerInterface')->reinitStores();
     }
 }

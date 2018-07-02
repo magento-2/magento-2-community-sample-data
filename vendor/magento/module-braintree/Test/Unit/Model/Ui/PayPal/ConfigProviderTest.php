@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * Test for class \Magento\Braintree\Model\Ui\PayPal\ConfigProvider
  */
-class ConfigProviderTest extends \PHPUnit\Framework\TestCase
+class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config|MockObject
@@ -49,35 +49,42 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * Run test getConfig method
      *
-     * @param array $expected
+     * @param array $config
      * @dataProvider getConfigDataProvider
      */
     public function testGetConfig($expected)
     {
-        $this->config->method('isActive')
+        $this->config->expects(static::once())
+            ->method('isActive')
             ->willReturn(true);
 
-        $this->config->method('isAllowToEditShippingAddress')
+        $this->config->expects(static::once())
+            ->method('isAllowToEditShippingAddress')
             ->willReturn(true);
 
-        $this->config->method('getMerchantName')
+        $this->config->expects(static::once())
+            ->method('getMerchantName')
             ->willReturn('Test');
 
-        $this->config->method('getTitle')
+        $this->config->expects(static::once())
+            ->method('getTitle')
             ->willReturn('Payment Title');
 
-        $this->localeResolver->method('getLocale')
+        $this->localeResolver->expects(static::once())
+            ->method('getLocale')
             ->willReturn('en_US');
 
-        $this->config->method('isSkipOrderReview')
+        $this->config->expects(static::once())
+            ->method('isSkipOrderReview')
             ->willReturn(false);
 
-        $this->config->method('getPayPalIcon')
+        $this->config->expects(static::once())
+            ->method('getPayPalIcon')
             ->willReturn([
                 'width' => 30, 'height' => 26, 'url' => 'https://icon.test.url'
             ]);
 
-        self::assertEquals($expected, $this->configProvider->getConfig());
+        static::assertEquals($expected, $this->configProvider->getConfig());
     }
 
     /**
@@ -94,7 +101,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                             'title' => 'Payment Title',
                             'isAllowShippingAddressOverride' => true,
                             'merchantName' => 'Test',
-                            'locale' => 'en_US',
+                            'locale' => 'en_us',
                             'paymentAcceptanceMarkSrc' =>
                                 'https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png',
                             'vaultCode' => ConfigProvider::PAYPAL_VAULT_CODE,

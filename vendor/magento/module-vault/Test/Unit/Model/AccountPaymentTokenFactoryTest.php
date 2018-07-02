@@ -8,7 +8,6 @@ namespace Magento\Vault\Test\Unit\Model;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
-use Magento\Vault\Model\PaymentTokenFactory;
 use Magento\Vault\Model\AccountPaymentTokenFactory;
 use Magento\Vault\Model\PaymentToken;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
@@ -16,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class AccountPaymentTokenFactoryTest
  */
-class AccountPaymentTokenFactoryTest extends \PHPUnit\Framework\TestCase
+class AccountPaymentTokenFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerInterface|MockObject
@@ -37,16 +36,10 @@ class AccountPaymentTokenFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $tokenTypes = [
-            'account' => \Magento\Vault\Api\Data\PaymentTokenFactoryInterface::TOKEN_TYPE_ACCOUNT,
-            'credit_card' => \Magento\Vault\Api\Data\PaymentTokenFactoryInterface::TOKEN_TYPE_CREDIT_CARD
-        ];
-
         $this->paymentToken = $objectManager->getObject(PaymentToken::class);
-        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
-        $this->paymentTokenFactory = new PaymentTokenFactory($this->objectManager, $tokenTypes);
-        $this->factory = new AccountPaymentTokenFactory($this->objectManager, $this->paymentTokenFactory);
+        $this->objectManager = $this->getMock(ObjectManagerInterface::class);
+        $this->factory = new AccountPaymentTokenFactory($this->objectManager);
     }
 
     /**
@@ -57,8 +50,6 @@ class AccountPaymentTokenFactoryTest extends \PHPUnit\Framework\TestCase
         $this->objectManager->expects(static::once())
             ->method('create')
             ->willReturn($this->paymentToken);
-
-        $this->paymentToken->setType(\Magento\Vault\Api\Data\PaymentTokenFactoryInterface::TOKEN_TYPE_ACCOUNT);
 
         /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->factory->create();

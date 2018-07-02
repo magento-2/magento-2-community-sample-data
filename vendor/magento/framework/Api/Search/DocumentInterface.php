@@ -7,10 +7,6 @@ namespace Magento\Framework\Api\Search;
 
 use Magento\Framework\Api\CustomAttributesDataInterface;
 
-/**
- * Interface \Magento\Framework\Api\Search\DocumentInterface
- *
- */
 interface DocumentInterface extends CustomAttributesDataInterface
 {
     const ID = 'id';

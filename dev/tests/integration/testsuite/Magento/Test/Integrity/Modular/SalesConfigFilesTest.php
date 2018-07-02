@@ -34,7 +34,7 @@ class SalesConfigFilesTest extends AbstractMergedConfigTest
     protected function getMergedSchemaFile()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        return $objectManager->get(\Magento\Sales\Model\Config\SchemaLocator::class)->getSchema();
+        return $objectManager->get('Magento\Sales\Model\Config\SchemaLocator')->getSchema();
     }
 
     protected function getConfigFiles()

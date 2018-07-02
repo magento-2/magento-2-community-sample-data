@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-server for the canonical source repository
- * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
- * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Server\Method;
@@ -20,7 +22,7 @@ class Callback
     protected $class;
 
     /**
-     * @var string|callable Function name or callable for function callback
+     * @var string Function name for function callback
      */
     protected $function;
 
@@ -37,7 +39,7 @@ class Callback
     /**
      * @var array Valid callback types
      */
-    protected $types = ['function', 'static', 'instance'];
+    protected $types = array('function', 'static', 'instance');
 
     /**
      * Constructor
@@ -96,12 +98,12 @@ class Callback
     /**
      * Set callback function
      *
-     * @param  string|callable $function
+     * @param  string $function
      * @return \Zend\Server\Method\Callback
      */
     public function setFunction($function)
     {
-        $this->function = is_callable($function) ? $function : (string) $function;
+        $this->function = (string) $function;
         $this->setType('function');
         return $this;
     }
@@ -109,7 +111,7 @@ class Callback
     /**
      * Get callback function
      *
-     * @return null|string|callable
+     * @return null|string
      */
     public function getFunction()
     {
@@ -142,17 +144,13 @@ class Callback
      * Set callback type
      *
      * @param  string $type
-     * @return \Zend\Server\Method\Callback
+     * @return Callback
      * @throws Server\Exception\InvalidArgumentException
      */
     public function setType($type)
     {
-        if (! in_array($type, $this->types)) {
-            throw new Server\Exception\InvalidArgumentException(sprintf(
-                'Invalid method callback type "%s" passed to %s',
-                $type,
-                __METHOD__
-            ));
+        if (!in_array($type, $this->types)) {
+            throw new Server\Exception\InvalidArgumentException('Invalid method callback type "' . $type . '" passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->type = $type;
         return $this;
@@ -176,9 +174,9 @@ class Callback
     public function toArray()
     {
         $type = $this->getType();
-        $array = [
+        $array = array(
             'type' => $type,
-        ];
+        );
         if ('function' == $type) {
             $array['function'] = $this->getFunction();
         } else {

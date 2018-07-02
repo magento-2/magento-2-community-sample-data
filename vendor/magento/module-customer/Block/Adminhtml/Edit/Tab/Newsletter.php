@@ -145,7 +145,7 @@ class Newsletter extends \Magento\Backend\Block\Widget\Form\Generic implements T
         $form->setHtmlIdPrefix('_newsletter');
         $customerId = $this->_coreRegistry->registry(RegistryConstants::CURRENT_CUSTOMER_ID);
         $subscriber = $this->_subscriberFactory->create()->loadByCustomerId($customerId);
-        $this->_coreRegistry->register('subscriber', $subscriber, true);
+        $this->_coreRegistry->register('subscriber', $subscriber);
 
         $fieldset = $form->addFieldset('base_fieldset', ['legend' => __('Newsletter Information')]);
 
@@ -160,7 +160,7 @@ class Newsletter extends \Magento\Backend\Block\Widget\Form\Generic implements T
             ]
         );
 
-        if ($this->customerAccountManagement->isReadonly($customerId)) {
+        if ($this->customerAccountManagement->isReadOnly($customerId)) {
             $form->getElement('subscription')->setReadonly(true, true);
         }
         $isSubscribed = $subscriber->isSubscribed();
@@ -221,6 +221,24 @@ class Newsletter extends \Magento\Backend\Block\Widget\Form\Generic implements T
         }
 
         return null;
+    }
+
+    /**
+     * Prepare the layout.
+     *
+     * @return $this
+     */
+    protected function _prepareLayout()
+    {
+        $this->setChild(
+            'grid',
+            $this->getLayout()->createBlock(
+                'Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter\Grid',
+                'newsletter.grid'
+            )
+        );
+        parent::_prepareLayout();
+        return $this;
     }
 
     /**

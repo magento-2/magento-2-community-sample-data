@@ -7,9 +7,7 @@ namespace Magento\Catalog\Block\Category;
 
 /**
  * Class View
- * @api
  * @package Magento\Catalog\Block\Category
- * @since 100.0.2
  */
 class View extends \Magento\Framework\View\Element\Template implements \Magento\Framework\DataObject\IdentityInterface
 {
@@ -59,7 +57,7 @@ class View extends \Magento\Framework\View\Element\Template implements \Magento\
     {
         parent::_prepareLayout();
 
-        $this->getLayout()->createBlock(\Magento\Catalog\Block\Breadcrumbs::class);
+        $this->getLayout()->createBlock('Magento\Catalog\Block\Breadcrumbs');
 
         $category = $this->getCurrentCategory();
         if ($category) {
@@ -120,7 +118,7 @@ class View extends \Magento\Framework\View\Element\Template implements \Magento\
     {
         if (!$this->getData('cms_block_html')) {
             $html = $this->getLayout()->createBlock(
-                \Magento\Cms\Block\Block::class
+                'Magento\Cms\Block\Block'
             )->setBlockId(
                 $this->getCurrentCategory()->getLandingPage()
             )->toHtml();

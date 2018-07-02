@@ -5,7 +5,7 @@
  */
 namespace Magento\Cms\Block;
 
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -13,12 +13,12 @@ class PageTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetPage()
     {
-        $page = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Cms\Model\Page::class);
+        $page = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Cms\Model\Page');
         $page->load('page100', 'identifier');
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
-        $pageBlock = $layout->createBlock(\Magento\Cms\Block\Page::class);
+        $pageBlock = $layout->createBlock('Magento\Cms\Block\Page');
         $pageBlock->setData('page', $page);
         $pageBlock->toHtml();
         $this->assertEquals($page, $pageBlock->getPage());

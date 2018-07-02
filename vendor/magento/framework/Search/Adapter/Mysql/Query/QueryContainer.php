@@ -12,7 +12,6 @@ use Magento\Framework\Search\Request\QueryInterface as RequestQueryInterface;
 class QueryContainer
 {
     const DERIVED_QUERY_PREFIX = 'derived_';
-
     /**
      * @var array
      */

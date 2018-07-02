@@ -11,6 +11,7 @@
  */
 namespace Magento\Backend\Block\Dashboard;
 
+
 class Totals extends \Magento\Backend\Block\Dashboard\Bar
 {
     /**

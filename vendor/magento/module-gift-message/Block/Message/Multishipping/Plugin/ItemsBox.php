@@ -5,10 +5,6 @@
  */
 namespace Magento\GiftMessage\Block\Message\Multishipping\Plugin;
 
-use Magento\Multishipping\Block\Checkout\Shipping as ShippingBlock;
-use Magento\GiftMessage\Helper\Message as MessageHelper;
-use Magento\Framework\DataObject;
-
 /**
  * Multishipping items box plugin
  */
@@ -17,16 +13,16 @@ class ItemsBox
     /**
      * Gift message helper
      *
-     * @var MessageHelper
+     * @var \Magento\GiftMessage\Helper\Message
      */
     protected $helper;
 
     /**
      * Construct
      *
-     * @param MessageHelper $helper
+     * @param \Magento\GiftMessage\Helper\Message $helper
      */
-    public function __construct(MessageHelper $helper)
+    public function __construct(\Magento\GiftMessage\Helper\Message $helper)
     {
         $this->helper = $helper;
     }
@@ -34,15 +30,19 @@ class ItemsBox
     /**
      * Get items box message text for multishipping
      *
-     * @param ShippingBlock $subject
-     * @param string $itemsBoxText
-     * @param DataObject $addressEntity
+     * @param \Magento\Multishipping\Block\Checkout\Shipping $subject
+     * @param callable $proceed
+     * @param \Magento\Framework\DataObject $addressEntity
      *
      * @return string
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterGetItemsBoxTextAfter(ShippingBlock $subject, $itemsBoxText, DataObject $addressEntity)
-    {
+    public function aroundGetItemsBoxTextAfter(
+        \Magento\Multishipping\Block\Checkout\Shipping $subject,
+        \Closure $proceed,
+        \Magento\Framework\DataObject $addressEntity
+    ) {
+        $itemsBoxText = $proceed($addressEntity);
         return $itemsBoxText . $this->helper->getInline('multishipping_address', $addressEntity);
     }
 }

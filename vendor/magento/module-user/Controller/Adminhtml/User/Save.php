@@ -9,9 +9,6 @@ use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Security\Model\SecurityCookie;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Save extends \Magento\User\Controller\Adminhtml\User
 {
     /**
@@ -23,7 +20,7 @@ class Save extends \Magento\User\Controller\Adminhtml\User
      * Get security cookie
      *
      * @return SecurityCookie
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getSecurityCookie()
     {
@@ -55,19 +52,21 @@ class Save extends \Magento\User\Controller\Adminhtml\User
             return;
         }
         $model->setData($this->_getAdminUserData($data));
-        $userRoles = $this->getRequest()->getParam('roles', []);
-        if (count($userRoles)) {
-            $model->setRoleId($userRoles[0]);
+        $uRoles = $this->getRequest()->getParam('roles', []);
+        if (count($uRoles)) {
+            $model->setRoleId($uRoles[0]);
         }
 
         /** @var $currentUser \Magento\User\Model\User */
-        $currentUser = $this->_objectManager->get(\Magento\Backend\Model\Auth\Session::class)->getUser();
-        if ($userId == $currentUser->getId()
-            && $this->_objectManager->get(\Magento\Framework\Validator\Locale::class)
-                ->isValid($data['interface_locale'])
+        $currentUser = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser();
+        if ($userId == $currentUser->getId() && $this->_objectManager->get(
+            'Magento\Framework\Validator\Locale'
+        )->isValid(
+            $data['interface_locale']
+        )
         ) {
             $this->_objectManager->get(
-                \Magento\Backend\Model\Locale\Manager::class
+                'Magento\Backend\Model\Locale\Manager'
             )->switchBackendInterfaceLocale(
                 $data['interface_locale']
             );

@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class CombineTest
  */
-class CombineTest extends \PHPUnit\Framework\TestCase
+class CombineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogWidget\Model\Rule\Condition\Combine|\PHPUnit_Framework_MockObject_MockObject
@@ -27,19 +27,17 @@ class CombineTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
         $arguments = $objectManagerHelper->getConstructArguments(
-            \Magento\CatalogWidget\Model\Rule\Condition\Combine::class
+            'Magento\CatalogWidget\Model\Rule\Condition\Combine'
         );
 
-        $this->conditionFactory = $this->getMockBuilder(
-            \Magento\CatalogWidget\Model\Rule\Condition\ProductFactory::class
-        )->setMethods(['create'])
+        $this->conditionFactory = $this->getMockBuilder('\Magento\CatalogWidget\Model\Rule\Condition\ProductFactory')
+            ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $arguments['conditionFactory'] = $this->conditionFactory;
-        $arguments['excludedAttributes'] = ['excluded_attribute'];
 
         $this->condition = $objectManagerHelper->getObject(
-            \Magento\CatalogWidget\Model\Rule\Condition\Combine::class,
+            'Magento\CatalogWidget\Model\Rule\Condition\Combine',
             $arguments
         );
     }
@@ -48,8 +46,7 @@ class CombineTest extends \PHPUnit\Framework\TestCase
     {
         $expectedOptions = [
             ['value' => '', 'label' => __('Please choose a condition to add.')],
-            ['value' => \Magento\CatalogWidget\Model\Rule\Condition\Combine::class,
-                'label' => __('Conditions Combination')],
+            ['value' => 'Magento\CatalogWidget\Model\Rule\Condition\Combine', 'label' => __('Conditions Combination')],
             ['label' => __('Product Attribute'), 'value' => [
                 ['value' => 'Magento\CatalogWidget\Model\Rule\Condition\Product|sku', 'label' => 'SKU'],
                 ['value' => 'Magento\CatalogWidget\Model\Rule\Condition\Product|category', 'label' => 'Category'],
@@ -59,9 +56,8 @@ class CombineTest extends \PHPUnit\Framework\TestCase
         $attributeOptions = [
             'sku' => 'SKU',
             'category' => 'Category',
-            'excluded_attribute' => 'Excluded attribute',
         ];
-        $productCondition = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\Product::class)
+        $productCondition = $this->getMockBuilder('\Magento\CatalogWidget\Model\Rule\Condition\Product')
             ->setMethods(['loadAttributeOptions', 'getAttributeOption'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -76,13 +72,13 @@ class CombineTest extends \PHPUnit\Framework\TestCase
 
     public function testCollectValidatedAttributes()
     {
-        $collection = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
+        $collection = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Collection')
             ->disableOriginalConstructor()
             ->getMock();
-        $condition = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\Combine::class)
-            ->disableOriginalConstructor()->setMethods(['collectValidatedAttributes'])
+        $condition = $this->getMockBuilder('Magento\CatalogWidget\Model\Rule\Condition\Combine')
+            ->disableOriginalConstructor()->setMethods(['addToCollection'])
             ->getMock();
-        $condition->expects($this->any())->method('collectValidatedAttributes')->with($collection)
+        $condition->expects($this->any())->method('addToCollection')->with($collection)
             ->will($this->returnSelf());
 
         $this->condition->setConditions([$condition]);

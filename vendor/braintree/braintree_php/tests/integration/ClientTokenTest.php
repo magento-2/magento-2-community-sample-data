@@ -169,13 +169,12 @@ class ClientTokenTest extends Setup
 
     public function test_ClientTokenAcceptsMerchantAccountId()
     {
-        $expectedMerchantAccountId = Test\Helper::nonDefaultMerchantAccountId();
         $clientToken = Test\Helper::decodedClientToken([
-            'merchantAccountId' => $expectedMerchantAccountId
+            'merchantAccountId' => 'my_merchant_account'
         ]);
         $merchantAccountId = json_decode($clientToken)->merchantAccountId;
 
-        $this->assertEquals($expectedMerchantAccountId, $merchantAccountId);
+        $this->assertEquals('my_merchant_account', $merchantAccountId);
     }
 
     public function test_GenerateRaisesExceptionOnGateway422()

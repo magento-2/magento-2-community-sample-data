@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Model\Indexer;
 
-class FlatTest extends \PHPUnit\Framework\TestCase
+class FlatTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var int
@@ -47,7 +47,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass()
     {
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -60,7 +60,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
 
         $result = $category->getCollection()->getAllIds();
@@ -80,7 +80,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var  $indexer \Magento\Framework\Indexer\IndexerInterface */
         $indexer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Indexer\Model\Indexer::class
+            'Magento\Indexer\Model\Indexer'
         );
         $indexer->load('catalog_category_flat');
         $indexer->reindexAll();
@@ -88,11 +88,11 @@ class FlatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
-        $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Category\Flat::class, $category->getResource());
+        $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Category\Flat', $category->getResource());
         $this->checkCategoryData($category);
     }
 
@@ -104,7 +104,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -125,13 +125,13 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $category->getResource()->load($category, 2);
 
         /** @var \Magento\Catalog\Model\Category $categoryOne */
         $categoryOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $categoryOne->setName('Category One')->setPath($category->getPath())->setIsActive(true);
         $category->getResource()->save($categoryOne);
@@ -141,7 +141,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\Category $categoryTwo */
         $categoryTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
 
         $categoryTwo->setName('Category Two')->setPath($categoryOne->getPath())->setIsActive(true);
@@ -171,7 +171,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -185,7 +185,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\Category $categoryOne */
         $categoryOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             self::$categoryOne
         );
@@ -220,7 +220,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $categoryTwo */
         $categoryTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             self::$categoryTwo
         );
@@ -231,7 +231,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
         self::loadAttributeValues($categoryTwo);
 
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -239,7 +239,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
         self::loadAttributeValues($category);
 
         $categoryOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             self::$categoryOne
         );
@@ -261,7 +261,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -276,7 +276,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\Category $categoryTwo */
         $categoryTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             self::$categoryTwo
         );
@@ -284,7 +284,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\Category $categoryOne */
         $categoryOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             self::$categoryOne
         );
@@ -301,7 +301,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
 
         $category->load(self::$categoryTwo);
@@ -329,7 +329,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         )->load(
             2
         );
@@ -363,7 +363,7 @@ class FlatTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Config $catalogConfig */
         $catalogConfig = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Config::class
+            'Magento\Catalog\Model\Config'
         );
         $attributeCodes = $catalogConfig->getEntityAttributeCodes(\Magento\Catalog\Model\Category::ENTITY);
 

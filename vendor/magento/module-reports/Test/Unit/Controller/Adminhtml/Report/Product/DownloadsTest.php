@@ -29,19 +29,16 @@ class DownloadsTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Repo
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->downloads = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\Downloads::class,
-            [
-                'context' => $this->contextMock,
-                'fileFactory' => $this->fileFactoryMock,
-                'dateFilter' => $this->dateMock,
-            ]
-        );
+        $this->downloads = $objectManager->getObject('Magento\Reports\Controller\Adminhtml\Report\Product\Downloads', [
+            'context' => $this->contextMock,
+            'fileFactory' => $this->fileFactoryMock,
+            'dateFilter' => $this->dateMock,
+        ]);
     }
 
     /**
@@ -49,7 +46,7 @@ class DownloadsTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Repo
      */
     public function testExecute()
     {
-        $titleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $titleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,7 +83,7 @@ class DownloadsTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Repo
         $this->layoutMock
             ->expects($this->once())
             ->method('createBlock')
-            ->with(\Magento\Reports\Block\Adminhtml\Product\Downloads::class)
+            ->with('Magento\Reports\Block\Adminhtml\Product\Downloads')
             ->willReturn($this->abstractBlockMock);
 
         $this->downloads->execute();

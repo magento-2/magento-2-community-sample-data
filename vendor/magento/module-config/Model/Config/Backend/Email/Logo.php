@@ -12,7 +12,7 @@
 namespace Magento\Config\Model\Config\Backend\Email;
 
 /**
- * @deprecated 100.1.5
+ * @deprecated
  */
 class Logo extends \Magento\Config\Model\Config\Backend\Image
 {

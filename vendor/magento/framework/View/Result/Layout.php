@@ -7,7 +7,6 @@
 namespace Magento\Framework\View\Result;
 
 use Magento\Framework;
-use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\AbstractResult;
 use Magento\Framework\View;
@@ -15,8 +14,6 @@ use Magento\Framework\View;
 /**
  * A generic layout response can be used for rendering any kind of layout
  * So it comprises a response body from the layout elements it has and sets it to the HTTP response
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @api
  */
@@ -104,7 +101,7 @@ class Layout extends AbstractResult
     /**
      * Get layout instance for current page
      *
-     * @return \Magento\Framework\View\LayoutInterface
+     * @return \Magento\Framework\View\Layout
      */
     public function getLayout()
     {
@@ -155,29 +152,31 @@ class Layout extends AbstractResult
     /**
      * Render current layout
      *
-     * @param HttpResponseInterface|ResponseInterface $httpResponse
+     * @param ResponseInterface $response
      * @return $this
      */
-    public function renderResult(ResponseInterface $httpResponse)
+    public function renderResult(ResponseInterface $response)
     {
         \Magento\Framework\Profiler::start('LAYOUT');
         \Magento\Framework\Profiler::start('layout_render');
 
+        $this->applyHttpHeaders($response);
+        $this->render($response);
+
         $this->eventManager->dispatch('layout_render_before');
         $this->eventManager->dispatch('layout_render_before_' . $this->request->getFullActionName());
-
-        $this->applyHttpHeaders($httpResponse);
-        $this->render($httpResponse);
-
         \Magento\Framework\Profiler::stop('layout_render');
         \Magento\Framework\Profiler::stop('LAYOUT');
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * Render current layout
+     *
+     * @param ResponseInterface $response
+     * @return $this
      */
-    protected function render(HttpResponseInterface $response)
+    protected function render(ResponseInterface $response)
     {
         $output = $this->layout->getOutput();
         $this->translateInline->processResponseBody($output);

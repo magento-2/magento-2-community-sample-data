@@ -6,7 +6,7 @@
 
 namespace Magento\Directory\Test\Unit\Model\Currency\Import;
 
-class YahooFinanceTest extends \PHPUnit\Framework\TestCase
+class YahooFinanceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Currency\Import\YahooFinance
@@ -27,21 +27,21 @@ class YahooFinanceTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->currencyFactoryMock = $this->getMockBuilder(\Magento\Directory\Model\CurrencyFactory::class)
+        $this->currencyFactoryMock = $this->getMockBuilder('Magento\Directory\Model\CurrencyFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->httpClientFactoryMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClientFactory::class)
+        $this->httpClientFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $scopeMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $scopeMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Directory\Model\Currency\Import\YahooFinance::class,
+            'Magento\Directory\Model\Currency\Import\YahooFinance',
             [
                 'currencyFactory' => $this->currencyFactoryMock,
                 'scopeConfig' => $scopeMock,
@@ -62,12 +62,12 @@ class YahooFinanceTest extends \PHPUnit\Framework\TestCase
             . "&env=store://datatables.org/alltableswithkeys for UAH.";
 
         /** @var \Magento\Directory\Model\Currency|\PHPUnit_Framework_MockObject_MockObject $currencyMock */
-        $currencyMock = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
+        $currencyMock = $this->getMockBuilder('Magento\Directory\Model\Currency')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
         /** @var \Magento\Framework\HTTP\ZendClient|\PHPUnit_Framework_MockObject_MockObject $currencyMock */
-        $httpClientMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClient::class)
+        $httpClientMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClient')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();

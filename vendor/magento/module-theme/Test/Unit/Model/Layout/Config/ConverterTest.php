@@ -7,7 +7,7 @@
  */
 namespace Magento\Theme\Test\Unit\Model\Layout\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Layout\Config\Converter

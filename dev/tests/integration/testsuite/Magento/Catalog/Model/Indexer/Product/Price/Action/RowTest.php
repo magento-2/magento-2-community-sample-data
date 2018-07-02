@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Price\Action;
 /**
  * Class RowTest
  */
-class RowTest extends \PHPUnit\Framework\TestCase
+class RowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -23,10 +23,10 @@ class RowTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Indexer\Product\Price\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Price\Processor'
         );
     }
 
@@ -38,10 +38,10 @@ class RowTest extends \PHPUnit\Framework\TestCase
     public function testProductUpdate()
     {
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $this->_processor->getIndexer()->setScheduled(false);

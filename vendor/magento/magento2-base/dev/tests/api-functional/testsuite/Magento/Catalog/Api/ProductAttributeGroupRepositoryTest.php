@@ -180,7 +180,7 @@ class ProductAttributeGroupRepositoryTest extends \Magento\TestFramework\TestCas
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Eav\Model\Entity\Attribute\Group */
-        $attributeGroup = $objectManager->create(\Magento\Eav\Model\Entity\Attribute\Group::class)
+        $attributeGroup = $objectManager->create('Magento\Eav\Model\Entity\Attribute\Group')
             ->load($groupName, 'attribute_group_name');
         if ($attributeGroup->getId() === null) {
             return null;

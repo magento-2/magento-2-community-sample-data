@@ -8,10 +8,6 @@ namespace Magento\Config\Model\Placeholder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * @api
- * @since 100.1.2
- */
 class PlaceholderFactory
 {
     /**
@@ -45,7 +41,6 @@ class PlaceholderFactory
      * @param string $type
      * @return PlaceholderInterface
      * @throws LocalizedException
-     * @since 100.1.2
      */
     public function create($type)
     {

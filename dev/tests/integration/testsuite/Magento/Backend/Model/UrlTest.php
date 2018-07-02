@@ -7,16 +7,16 @@ namespace Magento\Backend\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Url\ParamEncoder;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\Escaper;
 
 /**
  * Test class for \Magento\Backend\Model\UrlInterface.
  *
  * @magentoAppArea adminhtml
  */
-class UrlTest extends \PHPUnit\Framework\TestCase
+class UrlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestInterface
@@ -35,93 +35,49 @@ class UrlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * App isolation is enabled to protect next tests from polluted registry by getUrl().
+     * App isolation is enabled to protect next tests from polluted registry by getUrl()
      *
-     * @param string $routePath
-     * @param array $requestParams
-     * @param string $expectedResult
-     * @param array|null $routeParams
-     * @dataProvider getUrlDataProvider
      * @magentoAppIsolation enabled
      */
-    public function testGetUrl(
-        string $routePath,
-        array $requestParams,
-        string $expectedResult,
-        array $routeParams = null
-    ) {
-        $this->request->setParams($requestParams);
-        $url = $this->_model->getUrl($routePath, $routeParams);
-        $this->assertContains($expectedResult, $url);
-    }
-
-    /**
-     * Data provider for getUrl method.
-     *
-     * @return array
-     */
-    public function getUrlDataProvider()
+    public function testGetUrl()
     {
-        /** @var $escaper Escaper */
-        $escaper = Bootstrap::getObjectManager()->get(Escaper::class);
+        $url = $this->_model->getUrl('adminhtml/auth/login');
+        $this->assertContains('admin/auth/login/key/', $url);
 
-        return [
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => [],
-                'expectedResult'=> 'admin/auth/login/key/',
-            ],
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => [],
-                'expectedResult'=> '/param1/a1==/',
-                'routeParams' => [
-                    '_escape_params' => false,
-                    'param1' => 'a1==',
-                ],
-            ],
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => [],
-                'expectedResult'=> '/param1/a1==/',
-                'routeParams' => [
-                    '_escape_params' => false,
-                    'param1' => 'a1==',
-                ],
-            ],
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => ['param2' => 'a2=='],
-                'expectedResult'=> '/param2/a2==/',
-                'routeParams' => [
-                    '_current' => true,
-                    '_escape_params' => false,
-                ],
-            ],
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => [],
-                'expectedResult' => '/param3/' . $escaper->encodeUrlParam('a3==') . '/',
-                'routeParams' => [
-                    '_escape_params' => true,
-                    'param3' => 'a3=='
-                ],
-            ],
-            [
-                'routePath' => 'adminhtml/auth/login',
-                'requestParams' => ['param4' => 'a4=='],
-                'expectedResult' => '/param4/' . $escaper->encodeUrlParam('a4==') . '/',
-                'routeParams' => [
-                    '_current' => true,
-                    '_escape_params' => true,
-                ],
-            ],
-            [
-                'routePath' => 'route/controller/action/id/100',
-                'requestParams' => [],
-                'expectedResult' => 'id/100',
-            ],
+        $routeParams = [
+            '_escape_params' => false,
+            'param1' => 'a1=='
         ];
+        $url = $this->_model->getUrl('path', $routeParams);
+        $this->assertContains('/param1/a1==/', $url);
+
+        $this->request->setParams(['param2' => 'a2==']);
+        $routeParams = [
+            '_current' => true,
+            '_escape_params' => false,
+        ];
+        $url = $this->_model->getUrl('path', $routeParams);
+        $this->assertContains('/param2/a2==/', $url);
+
+        /** @var ParamEncoder $paramEncoder */
+        $paramEncoder = Bootstrap::getObjectManager()->get(ParamEncoder::class);
+        $routeParams = [
+            '_escape_params' => true,
+            'param3' => 'a3=='
+        ];
+        $url = $this->_model->getUrl('path', $routeParams);
+        $this->assertContains('/param3/' . $paramEncoder->encode('a3==') . '/', $url);
+
+        $this->request->setParams(['param4' => 'a4==']);
+        $routeParams = [
+            '_current' => true,
+            '_escape_params' => true,
+        ];
+        $url = $this->_model->getUrl('path', $routeParams);
+        $this->assertContains('/param4/' . $paramEncoder->encode('a4==') . '/', $url);
+
+        $url = $this->_model->getUrl('route/controller/action/id/100');
+        $this->assertContains('id/100', $url);
     }
 
     /**
@@ -143,8 +99,8 @@ class UrlTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_model->setRequest($this->request);
-        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Session\SessionManagerInterface::class
+        Bootstrap::getObjectManager()->get(
+            SessionManagerInterface::class
         )->setData(
             '_form_key',
             'salt'

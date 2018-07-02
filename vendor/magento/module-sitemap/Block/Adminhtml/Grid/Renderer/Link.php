@@ -11,8 +11,6 @@
 namespace Magento\Sitemap\Block\Adminhtml\Grid\Renderer;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Config\Model\Config\Reader\Source\Deployed\DocumentRoot;
-use Magento\Framework\App\ObjectManager;
 
 class Link extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {
@@ -27,28 +25,19 @@ class Link extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
     protected $_sitemapFactory;
 
     /**
-     * @var DocumentRoot
-     */
-    protected $documentRoot;
-
-    /**
      * @param \Magento\Backend\Block\Context $context
      * @param \Magento\Sitemap\Model\SitemapFactory $sitemapFactory
      * @param \Magento\Framework\Filesystem $filesystem
      * @param array $data
-     * @param DocumentRoot $documentRoot
      */
     public function __construct(
         \Magento\Backend\Block\Context $context,
         \Magento\Sitemap\Model\SitemapFactory $sitemapFactory,
         \Magento\Framework\Filesystem $filesystem,
-        array $data = [],
-        DocumentRoot $documentRoot = null
+        array $data = []
     ) {
         $this->_sitemapFactory = $sitemapFactory;
         $this->_filesystem = $filesystem;
-        $this->documentRoot = $documentRoot ?: ObjectManager::getInstance()->get(DocumentRoot::class);
-
         parent::__construct($context, $data);
     }
 
@@ -65,8 +54,7 @@ class Link extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
         $url = $this->escapeHtml($sitemap->getSitemapUrl($row->getSitemapPath(), $row->getSitemapFilename()));
 
         $fileName = preg_replace('/^\//', '', $row->getSitemapPath() . $row->getSitemapFilename());
-        $documentRootPath = $this->documentRoot->getPath();
-        $directory = $this->_filesystem->getDirectoryRead($documentRootPath);
+        $directory = $this->_filesystem->getDirectoryRead(DirectoryList::ROOT);
         if ($directory->isFile($fileName)) {
             return sprintf('<a href="%1$s">%1$s</a>', $url);
         }

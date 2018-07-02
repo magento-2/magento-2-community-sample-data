@@ -67,7 +67,7 @@ EOT
             foreach ($repos as $repo) {
                 foreach ($repo->findPackages($packageName) as $package) {
                     $packageExists = true;
-                    if ($package instanceof CompletePackageInterface && $this->handlePackage($package, $input->getOption('homepage'), $input->getOption('show'))) {
+                    if ($this->handlePackage($package, $input->getOption('homepage'), $input->getOption('show'))) {
                         $handled = true;
                         break 2;
                     }
@@ -118,20 +118,19 @@ EOT
     {
         $url = ProcessExecutor::escape($url);
 
-        $process = new ProcessExecutor($this->getIO());
         if (Platform::isWindows()) {
-            return $process->execute('start "web" explorer "' . $url . '"', $output);
+            return passthru('start "web" explorer "' . $url . '"');
         }
 
-        $linux = $process->execute('which xdg-open', $output);
-        $osx = $process->execute('which open', $output);
+        passthru('which xdg-open', $linux);
+        passthru('which open', $osx);
 
         if (0 === $linux) {
-            $process->execute('xdg-open ' . $url, $output);
+            passthru('xdg-open ' . $url);
         } elseif (0 === $osx) {
-            $process->execute('open ' . $url, $output);
+            passthru('open ' . $url);
         } else {
-            $this->getIO()->writeError('No suitable browser opening command found, open yourself: ' . $url);
+            $this->getIO()->writeError('no suitable browser opening command found, open yourself: ' . $url);
         }
     }
 

@@ -9,7 +9,7 @@ namespace Magento\User\Test\Unit\Helper;
 /**
  * Test class for \Magento\User\Helper\Data testing
  */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\User\Helper\Data
@@ -28,19 +28,19 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->mathRandomMock = $this->getMockBuilder(\Magento\Framework\Math\Random::class)
+        $this->mathRandomMock = $this->getMockBuilder('Magento\Framework\Math\Random')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->configMock = $this->getMockBuilder(\Magento\Backend\App\ConfigInterface::class)
+        $this->configMock = $this->getMockBuilder('Magento\Backend\App\ConfigInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\User\Helper\Data::class,
+            'Magento\User\Helper\Data',
             [
                 'config' => $this->configMock,
                 'mathRandom' => $this->mathRandomMock

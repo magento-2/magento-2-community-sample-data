@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Interception\Code\Generator;
 
 class Interceptor extends \Magento\Framework\Code\Generator\EntityAbstract
@@ -85,8 +87,13 @@ class Interceptor extends \Magento\Framework\Code\Generator\EntityAbstract
      */
     protected function isInterceptedMethod(\ReflectionMethod $method)
     {
-        return !($method->isConstructor() || $method->isFinal() || $method->isStatic() || $method->isDestructor()) &&
-            !in_array($method->getName(), ['__sleep', '__wakeup', '__clone']);
+        return !($method->isConstructor() ||
+            $method->isFinal() ||
+            $method->isStatic() ||
+            $method->isDestructor()) && !in_array(
+                $method->getName(),
+                ['__sleep', '__wakeup', '__clone']
+            );
     }
 
     /**
@@ -103,17 +110,16 @@ class Interceptor extends \Magento\Framework\Code\Generator\EntityAbstract
         }
 
         $methodInfo = [
-            'name' => ($method->returnsReference() ? '& ' : '') . $method->getName(),
+            'name' => $method->getName(),
             'parameters' => $parameters,
             'body' => "\$pluginInfo = \$this->pluginList->getNext(\$this->subjectType, '{$method->getName()}');\n" .
-                "if (!\$pluginInfo) {\n" .
-                "    return parent::{$method->getName()}({$this->_getParameterList(
+            "if (!\$pluginInfo) {\n" .
+            "    return parent::{$method->getName()}({$this->_getParameterList(
                 $parameters
             )});\n" .
             "} else {\n" .
             "    return \$this->___callPlugins('{$method->getName()}', func_get_args(), \$pluginInfo);\n" .
             "}",
-            'returnType' => $method->getReturnType(),
             'docblock' => ['shortDescription' => '{@inheritdoc}'],
         ];
 
@@ -153,8 +159,8 @@ class Interceptor extends \Magento\Framework\Code\Generator\EntityAbstract
         } else {
             $this->_classGenerator->setExtendedClass($typeName);
         }
-        $this->_classGenerator->addTrait('\\'. \Magento\Framework\Interception\Interceptor::class);
-        $interfaces[] =  '\\'. \Magento\Framework\Interception\InterceptorInterface::class;
+        $this->_classGenerator->addTrait('\Magento\Framework\Interception\Interceptor');
+        $interfaces[] = '\Magento\Framework\Interception\InterceptorInterface';
         $this->_classGenerator->setImplementedInterfaces($interfaces);
         return parent::_generateCode();
     }

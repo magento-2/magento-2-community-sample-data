@@ -215,7 +215,7 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
         $isGlobalScopeContent
     ) {
         $sampleData = [
-            'sample_id' => (int)$sample->getId(),
+            'sample_id' => (int)$sample->getid(),
             'is_delete' => 0,
             'type' => $sample->getSampleType(),
             'sort_order' => $sample->getSortOrder(),
@@ -327,7 +327,7 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
     /**
      * Get MetadataPool instance
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return MetadataPool
      */
     private function getMetadataPool()
@@ -342,7 +342,7 @@ class SampleRepository implements \Magento\Downloadable\Api\SampleRepositoryInte
     /**
      * Get SampleTypeHandler Instance
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return SampleHandler
      */
     private function getSampleTypeHandler()

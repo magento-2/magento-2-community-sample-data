@@ -53,13 +53,11 @@ abstract class PrintInvoice extends \Magento\Framework\App\Action\Action
     {
         $invoiceId = (int)$this->getRequest()->getParam('invoice_id');
         if ($invoiceId) {
-            $invoice = $this->_objectManager->create(
-                \Magento\Sales\Api\InvoiceRepositoryInterface::class
-            )->get($invoiceId);
+            $invoice = $this->_objectManager->create('Magento\Sales\Api\InvoiceRepositoryInterface')->get($invoiceId);
             $order = $invoice->getOrder();
         } else {
             $orderId = (int)$this->getRequest()->getParam('order_id');
-            $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class)->load($orderId);
+            $order = $this->_objectManager->create('Magento\Sales\Model\Order')->load($orderId);
         }
 
         if ($this->orderAuthorization->canView($order)) {
@@ -74,7 +72,7 @@ abstract class PrintInvoice extends \Magento\Framework\App\Action\Action
         } else {
             /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
             $resultRedirect = $this->resultRedirectFactory->create();
-            if ($this->_objectManager->get(\Magento\Customer\Model\Session::class)->isLoggedIn()) {
+            if ($this->_objectManager->get('Magento\Customer\Model\Session')->isLoggedIn()) {
                 $resultRedirect->setPath('*/*/history');
             } else {
                 $resultRedirect->setPath('sales/guest/form');

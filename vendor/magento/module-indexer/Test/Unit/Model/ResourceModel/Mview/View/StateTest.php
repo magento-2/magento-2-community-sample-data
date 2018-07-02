@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Model\ResourceModel\Mview\View;
 
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Indexer\Model\ResourceModel\Mview\View\State
@@ -14,14 +14,20 @@ class StateTest extends \PHPUnit\Framework\TestCase
 
     public function testConstruct()
     {
-        $resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $resourceMock = $this->getMock(
+            '\Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = $objectManager->getConstructArguments(
-            \Magento\Indexer\Model\ResourceModel\Mview\View\State::class,
+            '\Magento\Indexer\Model\ResourceModel\Mview\View\State',
             ['resource' => $resourceMock]
         );
         $this->model = $objectManager->getObject(
-            \Magento\Indexer\Model\ResourceModel\Mview\View\State::class,
+            '\Magento\Indexer\Model\ResourceModel\Mview\View\State',
             $arguments
         );
         $this->assertEquals(

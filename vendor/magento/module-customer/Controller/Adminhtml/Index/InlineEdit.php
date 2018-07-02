@@ -24,39 +24,25 @@ class InlineEdit extends \Magento\Backend\App\Action
      */
     const ADMIN_RESOURCE = 'Magento_Customer::manage';
 
-    /**
-     * @var \Magento\Customer\Api\Data\CustomerInterface
-     */
+    /** @var CustomerInterface */
     private $customer;
 
-    /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface
-     */
+    /** @var CustomerRepositoryInterface */
     protected $customerRepository;
 
-    /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory
-     */
+    /** @var \Magento\Framework\Controller\Result\JsonFactory  */
     protected $resultJsonFactory;
 
-    /**
-     * @var \Magento\Customer\Model\Customer\Mapper
-     */
+    /** @var \Magento\Customer\Model\Customer\Mapper  */
     protected $customerMapper;
 
-    /**
-     * @var \Magento\Framework\Api\DataObjectHelper
-     */
+    /** @var \Magento\Framework\Api\DataObjectHelper  */
     protected $dataObjectHelper;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
+    /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
-    /**
-     * @var \Magento\Customer\Model\EmailNotificationInterface
-     */
+    /** @var EmailNotificationInterface */
     private $emailNotification;
 
     /**
@@ -87,7 +73,7 @@ class InlineEdit extends \Magento\Backend\App\Action
      * Get email notification
      *
      * @return EmailNotificationInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getEmailNotification()
     {
@@ -177,7 +163,7 @@ class InlineEdit extends \Magento\Backend\App\Action
         $this->dataObjectHelper->populateWithArray(
             $customer,
             $customerData,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
     }
 
@@ -196,7 +182,7 @@ class InlineEdit extends \Magento\Backend\App\Action
                 $this->dataObjectHelper->populateWithArray(
                     $address,
                     $this->processAddressData($data),
-                    \Magento\Customer\Api\Data\AddressInterface::class
+                    '\Magento\Customer\Api\Data\AddressInterface'
                 );
                 break;
             }

@@ -7,8 +7,6 @@ namespace Magento\Framework\Search\Request;
 
 /**
  * Filter Interface
- *
- * @api
  */
 interface FilterInterface
 {

@@ -8,7 +8,7 @@ namespace Magento\Store\Test\Unit\Block\Store;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
-class SwitcherTest extends \PHPUnit\Framework\TestCase
+class SwitcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Block\Store\Switcher
@@ -38,25 +38,25 @@ class SwitcherTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->storeFactoryMock = $this->getMockBuilder(\Magento\Store\Model\StoreFactory::class)
+        $this->storeFactoryMock = $this->getMockBuilder('Magento\Store\Model\StoreFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->storeGroupFactoryMock = $this->getMockBuilder(\Magento\Store\Model\GroupFactory::class)
+        $this->storeGroupFactoryMock = $this->getMockBuilder('Magento\Store\Model\GroupFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->loadMocks();
         $this->model = $objectManager->getObject(
-            \Magento\Store\Block\Store\Switcher::class,
+            'Magento\Store\Block\Store\Switcher',
             [
                 'scopeConfig' => $this->scopeConfigMock,
                 'storeManager' => $this->storeManagerMock,
@@ -80,23 +80,23 @@ class SwitcherTest extends \PHPUnit\Framework\TestCase
 
     protected function loadMocks()
     {
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
-            ->setMethods(['getLocaleCode', 'isActive', 'getId', 'getGroupId', 'getCollection', 'setLocaleCode'])
+            ->setMethods(['getLocaleCode', 'isActive', 'getId', 'getGroupId', 'getCollection'])
             ->getMock();
-        $groupMock = $this->getMockBuilder(\Magento\Store\Model\Group::class)
+        $groupMock = $this->getMockBuilder('Magento\Store\Model\Group')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
         /** @var AbstractCollection|\PHPUnit_Framework_MockObject_MockObject */
         $storeCollectionMock =
-            $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class)
+            $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection')
                 ->disableOriginalConstructor()
                 ->setMethods(['addWebsiteFilter', 'load'])
                 ->getMockForAbstractClass();
         /** @var AbstractCollection|\PHPUnit_Framework_MockObject_MockObject */
         $groupCollectionMock =
-            $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class)
+            $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection')
                 ->disableOriginalConstructor()
                 ->setMethods(['addWebsiteFilter', 'load'])
                 ->getMockForAbstractClass();

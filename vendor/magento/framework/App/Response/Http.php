@@ -9,12 +9,10 @@ namespace Magento\Framework\App\Response;
 
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Stdlib\Cookie\CookieMetadata;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\Session\Config\ConfigInterface;
 
 class Http extends \Magento\Framework\HTTP\PhpEnvironment\Response
 {
@@ -27,35 +25,20 @@ class Http extends \Magento\Framework\HTTP\PhpEnvironment\Response
     /** X-FRAME-OPTIONS Header name */
     const HEADER_X_FRAME_OPT = 'X-Frame-Options';
 
-    /**
-     * @var \Magento\Framework\App\Request\Http
-     */
+    /** @var \Magento\Framework\App\Request\Http */
     protected $request;
 
-    /**
-     * @var \Magento\Framework\Stdlib\CookieManagerInterface
-     */
+    /** @var \Magento\Framework\Stdlib\CookieManagerInterface */
     protected $cookieManager;
 
-    /**
-     * @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
-     */
+    /** @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory */
     protected $cookieMetadataFactory;
 
-    /**
-     * @var \Magento\Framework\App\Http\Context
-     */
+    /** @var \Magento\Framework\App\Http\Context */
     protected $context;
 
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime
-     */
+    /** @var DateTime */
     protected $dateTime;
-
-    /**
-     * @var \Magento\Framework\Session\Config\ConfigInterface
-     */
-    private $sessionConfig;
 
     /**
      * @param HttpRequest $request
@@ -63,22 +46,19 @@ class Http extends \Magento\Framework\HTTP\PhpEnvironment\Response
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param Context $context
      * @param DateTime $dateTime
-     * @param ConfigInterface|null $sessionConfig
      */
     public function __construct(
         HttpRequest $request,
         CookieManagerInterface $cookieManager,
         CookieMetadataFactory $cookieMetadataFactory,
         Context $context,
-        DateTime $dateTime,
-        ConfigInterface $sessionConfig = null
+        DateTime $dateTime
     ) {
         $this->request = $request;
         $this->cookieManager = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->context = $context;
         $this->dateTime = $dateTime;
-        $this->sessionConfig = $sessionConfig ?: ObjectManager::getInstance()->get(ConfigInterface::class);
     }
 
     /**
@@ -101,10 +81,7 @@ class Http extends \Magento\Framework\HTTP\PhpEnvironment\Response
     {
         $varyString = $this->context->getVaryString();
         if ($varyString) {
-            $cookieLifeTime = $this->sessionConfig->getCookieLifetime();
-            $sensitiveCookMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata(
-                [CookieMetadata::KEY_DURATION => $cookieLifeTime]
-            )->setPath('/');
+            $sensitiveCookMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
             $this->cookieManager->setSensitiveCookie(self::COOKIE_VARY_STRING, $varyString, $sensitiveCookMetadata);
         } elseif ($this->request->get(self::COOKIE_VARY_STRING)) {
             $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
@@ -191,11 +168,9 @@ class Http extends \Magento\Framework\HTTP\PhpEnvironment\Response
     public function __wakeup()
     {
         $objectManager = ObjectManager::getInstance();
-        $this->cookieManager = $objectManager->create(\Magento\Framework\Stdlib\CookieManagerInterface::class);
-        $this->cookieMetadataFactory = $objectManager->get(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
-        );
-        $this->request = $objectManager->get(\Magento\Framework\App\Request\Http::class);
+        $this->cookieManager = $objectManager->create('Magento\Framework\Stdlib\CookieManagerInterface');
+        $this->cookieMetadataFactory = $objectManager->get('Magento\Framework\Stdlib\Cookie\CookieMetadataFactory');
+        $this->request = $objectManager->get('Magento\Framework\App\Request\Http');
     }
 
     /**

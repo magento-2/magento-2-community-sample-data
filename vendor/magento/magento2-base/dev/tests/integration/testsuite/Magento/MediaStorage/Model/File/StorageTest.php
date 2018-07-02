@@ -7,7 +7,7 @@ namespace Magento\MediaStorage\Model\File;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * test for \Magento\MediaStorage\Model\File\Storage::getScriptConfig()
@@ -17,7 +17,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
     public function testGetScriptConfig()
     {
         $config = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\MediaStorage\Model\File\Storage::class
+            'Magento\MediaStorage\Model\File\Storage'
         )->getScriptConfig();
         $this->assertInternalType('array', $config);
         $this->assertArrayHasKey('media_directory', $config);
@@ -25,7 +25,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('update_time', $config);
         /** @var \Magento\Framework\Filesystem $filesystem */
         $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Filesystem::class
+            'Magento\Framework\Filesystem'
         );
         $this->assertEquals(
             $filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),

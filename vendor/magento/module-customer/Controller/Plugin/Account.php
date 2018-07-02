@@ -8,9 +8,6 @@ namespace Magento\Customer\Controller\Plugin;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\App\Action\AbstractAction;
-use Magento\Framework\Controller\ResultInterface;
 
 class Account
 {
@@ -39,12 +36,16 @@ class Account
     /**
      * Dispatch actions allowed for not authorized users
      *
-     * @param AbstractAction $subject
+     * @param ActionInterface $subject
+     * @param \Closure $proceed
      * @param RequestInterface $request
-     * @return void
+     * @return mixed
      */
-    public function beforeDispatch(AbstractAction $subject, RequestInterface $request)
-    {
+    public function aroundDispatch(
+        ActionInterface $subject,
+        \Closure $proceed,
+        RequestInterface $request
+    ) {
         $action = strtolower($request->getActionName());
         $pattern = '/^(' . implode('|', $this->allowedActions) . ')$/i';
 
@@ -55,19 +56,8 @@ class Account
         } else {
             $this->session->setNoReferer(true);
         }
-    }
 
-    /**
-     * Remove No-referer flag from customer session
-     *
-     * @param AbstractAction $subject
-     * @param ResponseInterface|ResultInterface $result
-     * @param RequestInterface $request
-     * @return ResponseInterface|ResultInterface
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function afterDispatch(AbstractAction $subject, $result, RequestInterface $request)
-    {
+        $result = $proceed($request);
         $this->session->unsNoReferer(false);
         return $result;
     }

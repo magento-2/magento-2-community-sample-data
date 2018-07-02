@@ -8,7 +8,7 @@ namespace Magento\Framework\Component\Test\Unit;
 use Magento\Framework\Component\DirSearch;
 use Magento\Framework\Filesystem\DriverPool;
 
-class DirSearchTest extends \PHPUnit\Framework\TestCase
+class DirSearchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem\Directory\ReadInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,11 +32,9 @@ class DirSearchTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registrar = $this->getMockForAbstractClass(
-            \Magento\Framework\Component\ComponentRegistrarInterface::class
-        );
-        $this->readFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
-        $this->dir = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
+        $this->registrar = $this->getMockForAbstractClass('\Magento\Framework\Component\ComponentRegistrarInterface');
+        $this->readFactory = $this->getMock('\Magento\Framework\Filesystem\Directory\ReadFactory', [], [], '', false);
+        $this->dir = $this->getMockForAbstractClass('\Magento\Framework\Filesystem\Directory\ReadInterface');
         $this->dir->expects($this->any())
             ->method('getAbsolutePath')
             ->willReturnArgument(0);
@@ -100,7 +98,7 @@ class DirSearchTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($actualFiles);
         /** @var \Magento\Framework\Component\ComponentFile $file */
         foreach ($actualFiles as $file) {
-            $this->assertInstanceOf(\Magento\Framework\Component\ComponentFile::class, $file);
+            $this->assertInstanceOf('\Magento\Framework\Component\ComponentFile', $file);
             $this->assertSame($componentType, $file->getComponentType());
         }
         $this->assertCount(2, $actualFiles);

@@ -15,7 +15,7 @@ use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
 /**
  * Contains tests for PayPal token Ui component provider
  */
-class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
+class TokenUiComponentProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerInterface

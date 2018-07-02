@@ -10,7 +10,7 @@ namespace Magento\Framework\Communication;
  *
  * @magentoCache config disabled
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Check how valid communication XML config is parsed.
@@ -20,42 +20,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $topics = $this->getConfigInstance(__DIR__ . '/_files/valid_communication.xml')->getTopics();
         $expectedParsedTopics = include __DIR__ . '/_files/valid_communication_expected.php';
         $this->assertEquals($expectedParsedTopics, $topics);
-    }
-
-    /**
-     * Get topic configuration by its name
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Service method specified in the definition of topic "customerDeletedNumbers" is not av
-     */
-    public function testGetTopicsNumeric()
-    {
-        $this->getConfigInstance(__DIR__ . '/_files/valid_communication_numeric.xml')->getTopics();
-    }
-
-    // @codingStandardsIgnoreStart
-    /**
-     * Get topic configuration by its name
-     *
-     * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage Invalid XML in file 0:
-    Element 'topic', attribute 'schema': [facet 'pattern'] The value '55\Customer\Api\CustomerRepositoryInterface::delete' is not accepted by the pattern '[a-zA-Z]+[a-zA-Z0-9\\]+::[a-zA-Z0-9]+'.
-    Line: 9
-
-    Element 'topic', attribute 'schema': '55\Customer\Api\CustomerRepositoryInterface::delete' is not a valid value of the atomic type 'schemaType'.
-    Line: 9
-
-    Element 'handler', attribute 'type': [facet 'pattern'] The value '55\Customer\Api\CustomerRepositoryInterface' is not accepted by the pattern '[a-zA-Z]+[a-zA-Z0-9\\]+'.
-    Line: 10
-
-    Element 'handler', attribute 'type': '55\Customer\Api\CustomerRepositoryInterface' is not a valid value of the atomic type 'serviceTypeType'.
-    Line: 10
-     *
-     */
-    // @codingStandardsIgnoreEnd
-    public function testGetTopicsNumericInvalid()
-    {
-        $this->getConfigInstance(__DIR__ . '/_files/invalid_communication_numeric.xml')->getTopics();
     }
 
     /**
@@ -304,28 +268,28 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfigInstance($configFilePath, $envConfigFilePath = null)
     {
-        $fileResolver = $this->getMockForAbstractClass(\Magento\Framework\Config\FileResolverInterface::class);
+        $fileResolver = $this->getMockForAbstractClass('Magento\Framework\Config\FileResolverInterface');
         $fileResolver->expects($this->any())
             ->method('get')
             ->willReturn([file_get_contents($configFilePath)]);
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $xmlReader = $objectManager->create(
-            \Magento\Framework\Communication\Config\Reader\XmlReader::class,
+            'Magento\Framework\Communication\Config\Reader\XmlReader',
             ['fileResolver' => $fileResolver]
         );
-        $deploymentConfigReader = $this->getMockBuilder(\Magento\Framework\App\DeploymentConfig\Reader::class)
+        $deploymentConfigReader = $this->getMockBuilder('Magento\Framework\App\DeploymentConfig\Reader')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
         $envConfigData = include $envConfigFilePath ?: __DIR__ . '/_files/valid_communication_input.php';
         $deploymentConfigReader->expects($this->any())->method('load')->willReturn($envConfigData);
         $deploymentConfig = $objectManager->create(
-            \Magento\Framework\App\DeploymentConfig::class,
+            'Magento\Framework\App\DeploymentConfig',
             ['reader' => $deploymentConfigReader]
         );
-        $methodsMap = $objectManager->create(\Magento\Framework\Reflection\MethodsMap::class);
+        $methodsMap = $objectManager->create('Magento\Framework\Reflection\MethodsMap');
         $envReader = $objectManager->create(
-            \Magento\Framework\Communication\Config\Reader\EnvReader::class,
+            'Magento\Framework\Communication\Config\Reader\EnvReader',
             [
                 'deploymentConfig' => $deploymentConfig,
                 'methodsMap' => $methodsMap
@@ -337,18 +301,18 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         ];
         /** @var \Magento\Framework\Communication\Config\CompositeReader $reader */
         $reader = $objectManager->create(
-            \Magento\Framework\Communication\Config\CompositeReader::class,
+            'Magento\Framework\Communication\Config\CompositeReader',
             ['readers' => $readersConfig]
         );
         /** @var \Magento\Framework\Communication\Config $config */
         $configData = $objectManager->create(
-            \Magento\Framework\Communication\Config\Data::class,
+            'Magento\Framework\Communication\Config\Data',
             [
                 'reader' => $reader
             ]
         );
         return $objectManager->create(
-            \Magento\Framework\Communication\ConfigInterface::class,
+            'Magento\Framework\Communication\ConfigInterface',
             ['configData' => $configData]
         );
     }

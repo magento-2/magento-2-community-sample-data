@@ -10,7 +10,7 @@ use Magento\Payment\Gateway\Validator\Result;
 /**
  * Class ResultTest
  */
-class ResultTest extends \PHPUnit\Framework\TestCase
+class ResultTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Result */
     protected $model;

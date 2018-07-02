@@ -5,13 +5,11 @@
  */
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Action;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.3
  */
 class DataProvider
 {
@@ -97,11 +95,6 @@ class DataProvider
     private $metadata;
 
     /**
-     * @var array
-     */
-    private $attributeOptions = [];
-
-    /**
      * @param ResourceConnection $resource
      * @param \Magento\Catalog\Model\Product\Type $catalogProductType
      * @param \Magento\Eav\Model\Config $eavConfig
@@ -152,7 +145,6 @@ class DataProvider
      * @param int $lastProductId
      * @param int $limit
      * @return array
-     * @since 100.0.3
      */
     public function getSearchableProducts(
         $storeId,
@@ -186,13 +178,22 @@ class DataProvider
     }
 
     /**
+     * Retrieve EAV Config Singleton
+     *
+     * @return \Magento\Eav\Model\Config
+     */
+    private function getEavConfig()
+    {
+        return $this->eavConfig;
+    }
+
+    /**
      * Retrieve searchable attributes
      *
      * @param string $backendType
      * @return \Magento\Eav\Model\Entity\Attribute[]
-     * @since 100.0.3
      */
-    public function getSearchableAttributes($backendType = null)
+    private function getSearchableAttributes($backendType = null)
     {
         if (null === $this->searchableAttributes) {
             $this->searchableAttributes = [];
@@ -209,7 +210,7 @@ class DataProvider
                 ['engine' => $this->engine, 'attributes' => $attributes]
             );
 
-            $entity = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntity();
+            $entity = $this->getEavConfig()->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntity();
 
             foreach ($attributes as $attribute) {
                 $attribute->setEntity($entity);
@@ -237,9 +238,8 @@ class DataProvider
      *
      * @param int|string $attribute
      * @return \Magento\Eav\Model\Entity\Attribute
-     * @since 100.0.3
      */
-    public function getSearchableAttribute($attribute)
+    private function getSearchableAttribute($attribute)
     {
         $attributes = $this->getSearchableAttributes();
         if (is_numeric($attribute)) {
@@ -254,7 +254,7 @@ class DataProvider
             }
         }
 
-        return $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attribute);
+        return $this->getEavConfig()->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attribute);
     }
 
     /**
@@ -281,7 +281,6 @@ class DataProvider
      * @param array $productIds
      * @param array $attributeTypes
      * @return array
-     * @since 100.0.3
      */
     public function getProductAttributes($storeId, array $productIds, array $attributeTypes)
     {
@@ -372,7 +371,6 @@ class DataProvider
      * @param int $productId Product Entity Id
      * @param string $typeId Super Product Link Type
      * @return array|null
-     * @since 100.0.3
      */
     public function getProductChildIds($productId, $typeId)
     {
@@ -427,7 +425,6 @@ class DataProvider
      * @param int $storeId
      * @return string
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @since 100.0.3
      */
     public function prepareProductIndex($indexData, $productData, $storeId)
     {
@@ -437,6 +434,7 @@ class DataProvider
             $attributeCode = $attribute->getAttributeCode();
 
             if (isset($productData[$attributeCode])) {
+
                 if ('store_id' === $attributeCode) {
                     continue;
                 }
@@ -502,21 +500,11 @@ class DataProvider
             && $attribute->usesSource()
             && $this->engine->allowAdvancedIndex()
         ) {
-            if (!isset($this->attributeOptions[$attributeId][$storeId])) {
-                $attribute->setStoreId($storeId);
-                $options = $attribute->getSource()->toOptionArray();
-                $this->attributeOptions[$attributeId][$storeId] = array_combine(
-                    array_column($options, 'value'),
-                    array_column($options, 'label')
-                );
-            }
+            $attribute->setStoreId($storeId);
 
-            $valueText = '';
-            if (isset($this->attributeOptions[$attributeId][$storeId][$valueId])) {
-                $valueText = $this->attributeOptions[$attributeId][$storeId][$valueId];
-            }
+            $valueText = (array) $attribute->getSource()->getIndexOptionText($valueId);
 
-            $pieces = array_filter(array_merge([$value], [$valueText]));
+            $pieces = array_filter(array_merge([$value], $valueText));
 
             $value = implode($this->separator, $pieces);
         }

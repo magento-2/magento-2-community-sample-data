@@ -2,30 +2,28 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/* eslint-disable strict */
+/*jshint browser:true jquery:true*/
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
         define([
-            'jquery',
-            'mage/translate'
+            "jquery",
+            "mage/translate"
         ], factory);
     } else {
         factory(jQuery);
     }
 }(function ($) {
+
     var methods = {
         /**
          * Decorate a list (e.g. a <ul> containing <li>) recursively if specified.
-         * @param {Boolean} isRecursive
+         * @param {boolean} isRecursive
          */
         list: function (isRecursive) {
-            return this.each(function () {
-                var list = $(this),
-                    items;
-
+            return this.each(function() {
+                var list = $(this);
                 if (list.length > 0) {
-                    items = typeof isRecursive === undefined || isRecursive ?
+                    var items = (typeof(isRecursive) === undefined || isRecursive) ?
                         list.find('li') :
                         list.children();
                     items.decorate('generic', ['odd', 'even', 'last']);
@@ -38,11 +36,9 @@
          * @param {Array} decoratorParams
          */
         generic: function (decoratorParams) {
-            var elements = $(this),
-                allSupportedParams;
-
+            var elements = $(this);
             if (elements) {
-                allSupportedParams = {
+                var allSupportedParams = {
                     even: 'odd', // Flip jQuery odd/even so that index 0 is odd.
                     odd: 'even',
                     last: 'last',
@@ -51,7 +47,7 @@
 
                 decoratorParams = decoratorParams || allSupportedParams;
 
-                $.each(decoratorParams, function (index, param) {
+                $.each(decoratorParams, function(index, param) {
                     if (param === 'even' || param === 'odd') {
                         elements.filter(':' + param).removeClass('odd even').addClass(allSupportedParams[param]);
                     } else {
@@ -59,7 +55,6 @@
                     }
                 });
             }
-
             return this;
         },
 
@@ -68,12 +63,10 @@
          * @param {Object} instanceOptions
          */
         table: function (instanceOptions) {
-            return this.each(function () {
-                var table = $(this),
-                    options;
-
+            return this.each(function() {
+                var table = $(this);
                 if (table.length > 0) {
-                    options = {
+                    var options = {
                         'tbody': false,
                         'tbody tr': ['odd', 'even', 'first', 'last'],
                         'thead tr': ['first', 'last'],
@@ -101,10 +94,9 @@
         /**
          * Annotate data list elements with CSS classes.
          */
-        dataList: function () {
-            return this.each(function () {
+        dataList: function() {
+            return this.each(function() {
                 var list = $(this);
-
                 if (list) {
                     list.find('dt').decorate('generic', ['odd', 'even', 'last']);
                     list.find('dd').decorate('generic', ['odd', 'even', 'last']);
@@ -113,20 +105,15 @@
         }
     };
 
-    /**
-     * @param {String} method
-     * @return {*}
-     */
-    $.fn.decorate = function (method) {
-        var message;
-
+    $.fn.decorate = function(method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
+        } else if (typeof method === 'object' || ! method) {
             return methods.init.apply(this, arguments);
+        } else {
+            var message = $.mage.__('Method %s does not exist on jQuery.decorate');
+            $.error(message.replace('%s', method));
         }
-
-        message = $.mage.__('Method %s does not exist on jQuery.decorate');
-        $.error(message.replace('%s', method));
     };
+
 }));

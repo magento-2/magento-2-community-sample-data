@@ -23,7 +23,7 @@ class RouteParamsResolverFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Url\RouteParamsResolverInterface::class
+        $instanceName = 'Magento\Framework\Url\RouteParamsResolverInterface'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

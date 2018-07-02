@@ -8,7 +8,7 @@ namespace Magento\ProductVideo\Test\Unit\Model\Plugin\Catalog\Product\Gallery;
 /**
  * Unit test for plugin for catalog product gallery read handler.
  */
-class ReadHandlerTest extends \PHPUnit\Framework\TestCase
+class ReadHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Subject of testing.
@@ -40,21 +40,45 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->attribute = $this->createMock(\Magento\Eav\Model\Entity\Attribute::class);
+        $this->attribute = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute',
+            [],
+            [],
+            '',
+            false
+        );
         $this->attribute->expects($this->any())
             ->method('getAttributeCode')
             ->willReturn('media_gallery');
 
-        $this->resourceModel = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Gallery::class);
+        $this->resourceModel = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Gallery',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->mediaGalleryReadHandler = $this->createMock(\Magento\Catalog\Model\Product\Gallery\ReadHandler::class);
+        $this->mediaGalleryReadHandler = $this->getMock(
+            'Magento\Catalog\Model\Product\Gallery\ReadHandler',
+            [],
+            [],
+            '',
+            false
+        );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->subject = $objectManager->getObject(
-            \Magento\ProductVideo\Model\Plugin\Catalog\Product\Gallery\ReadHandler::class,
+            'Magento\ProductVideo\Model\Plugin\Catalog\Product\Gallery\ReadHandler',
             [
                 'resourceModel' => $this->resourceModel
             ]

@@ -9,7 +9,7 @@ use Magento\Customer\Ui\Component\Listing\Column\ValidationRules;
 use Magento\Customer\Ui\Component\Listing\Column\InlineEditUpdater;
 use Magento\Customer\Api\Data\ValidationRuleInterface;
 
-class InlineEditUpdaterTest extends \PHPUnit\Framework\TestCase
+class InlineEditUpdaterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ValidationRules|\PHPUnit_Framework_MockObject_MockObject  */
     protected $validationRules;
@@ -25,15 +25,15 @@ class InlineEditUpdaterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->validationRules = $this->getMockBuilder(
-            \Magento\Customer\Ui\Component\Listing\Column\ValidationRules::class
-        )->disableOriginalConstructor()->getMock();
-
-        $this->validationRule = $this->getMockBuilder(\Magento\Customer\Api\Data\ValidationRuleInterface::class)
+        $this->validationRules = $this->getMockBuilder('Magento\Customer\Ui\Component\Listing\Column\ValidationRules')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->column = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentInterface::class)
+        $this->validationRule = $this->getMockBuilder('Magento\Customer\Api\Data\ValidationRuleInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->column = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -45,6 +45,7 @@ class InlineEditUpdaterTest extends \PHPUnit\Framework\TestCase
         $this->column->expects($this->once())
             ->method('getConfiguration')
             ->willReturn([
+                'dataType' => 'text',
                 'visible' => true,
             ]);
         $this->validationRules->expects($this->once())
@@ -59,6 +60,7 @@ class InlineEditUpdaterTest extends \PHPUnit\Framework\TestCase
             ->with(
                 'config',
                 [
+                    'dataType' => 'text',
                     'visible' => true,
                     'editor' => [
                         'editorType' => 'text',

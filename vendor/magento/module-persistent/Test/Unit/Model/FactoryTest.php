@@ -5,7 +5,7 @@
  */
 namespace Magento\Persistent\Test\Unit\Model;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|PHPUnit_Framework_MockObject_MockObject
@@ -21,9 +21,9 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->_objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_factory = $helper->getObject(
-            \Magento\Persistent\Model\Factory::class,
+            'Magento\Persistent\Model\Factory',
             ['objectManager' => $this->_objectManagerMock]
         );
     }
@@ -32,9 +32,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         $className = 'SomeModel';
 
-        $classMock = $this->getMockBuilder('SomeModel')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $classMock = $this->getMock('SomeModel');
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(
@@ -54,7 +52,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
         $className = 'SomeModel';
         $data = ['param1', 'param2'];
 
-        $classMock = $this->createMock('SomeModel');
+        $classMock = $this->getMock('SomeModel');
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(

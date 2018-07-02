@@ -6,10 +6,7 @@
 
 namespace Magento\Sales\Test\Unit\Helper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Helper\Data
@@ -31,25 +28,25 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $contextMock->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
 
-        $storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $appStateMock = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $appStateMock = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $pricingCurrencyMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceCurrencyInterface::class)
+        $pricingCurrencyMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceCurrencyInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -60,7 +57,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             $pricingCurrencyMock
         );
 
-        $this->storeMock = $this->getMockBuilder(\Magento\Sales\Model\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Sales\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
     }

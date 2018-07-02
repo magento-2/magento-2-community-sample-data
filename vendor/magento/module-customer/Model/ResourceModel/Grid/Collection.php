@@ -20,11 +20,6 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
     protected $document = Document::class;
 
     /**
-     * @inheritdoc
-     */
-    protected $_map = ['fields' => ['entity_id' => 'main_table.entity_id']];
-
-    /**
      * Initialize dependencies.
      *
      * @param EntityFactory $entityFactory
@@ -40,7 +35,7 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
         FetchStrategy $fetchStrategy,
         EventManager $eventManager,
         $mainTable = 'customer_grid_flat',
-        $resourceModel = \Magento\Customer\Model\ResourceModel\Customer::class
+        $resourceModel = '\Magento\Customer\Model\ResourceModel\Customer'
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $mainTable, $resourceModel);
     }

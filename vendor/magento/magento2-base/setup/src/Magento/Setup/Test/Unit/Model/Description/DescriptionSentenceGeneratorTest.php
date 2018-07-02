@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description;
 
-class DescriptionSentenceGeneratorTest extends \PHPUnit\Framework\TestCase
+class DescriptionSentenceGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Model\Dictionary
@@ -29,7 +29,7 @@ class DescriptionSentenceGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->dictionaryMock = $this->createMock(\Magento\Setup\Model\Dictionary::class);
+        $this->dictionaryMock = $this->getMock(\Magento\Setup\Model\Dictionary::class, [], [], '', false);
         $this->sentenceGenerator = new \Magento\Setup\Model\Description\DescriptionSentenceGenerator(
             $this->dictionaryMock,
             $this->sentenceConfig

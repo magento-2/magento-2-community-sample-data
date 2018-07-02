@@ -9,7 +9,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Theme\Ui\Component\Listing\Column\EditAction;
 
-class EditActionTest extends \PHPUnit\Framework\TestCase
+class EditActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var EditAction */
     protected $component;
@@ -25,15 +25,21 @@ class EditActionTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->uiComponentFactory = $this->createMock(\Magento\Framework\View\Element\UiComponentFactory::class);
+        $this->context->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->uiComponentFactory = $this->getMock(
+            'Magento\Framework\View\Element\UiComponentFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->urlBuilder = $this->getMockForAbstractClass(
-            \Magento\Framework\UrlInterface::class,
+            'Magento\Framework\UrlInterface',
             [],
             '',
             false

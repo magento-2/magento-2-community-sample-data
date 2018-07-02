@@ -9,9 +9,6 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Class Meta
- *
- * @api
- * @since 100.0.2
  */
 class Meta extends AbstractModel
 {
@@ -20,6 +17,6 @@ class Meta extends AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\SalesSequence\Model\ResourceModel\Meta::class);
+        $this->_init('Magento\SalesSequence\Model\ResourceModel\Meta');
     }
 }

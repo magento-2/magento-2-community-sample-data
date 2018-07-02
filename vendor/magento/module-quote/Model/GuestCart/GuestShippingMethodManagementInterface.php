@@ -5,10 +5,6 @@
  */
 namespace Magento\Quote\Model\GuestCart;
 
-/**
- * Interface \Magento\Quote\Model\GuestCart\GuestShippingMethodManagementInterface
- *
- */
 interface GuestShippingMethodManagementInterface
 {
     /**

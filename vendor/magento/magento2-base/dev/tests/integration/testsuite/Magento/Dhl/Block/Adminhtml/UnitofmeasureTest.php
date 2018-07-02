@@ -8,7 +8,7 @@ namespace Magento\Dhl\Block\Adminhtml;
 /**
  * @magentoAppArea adminhtml
  */
-class UnitofmeasureTest extends \PHPUnit\Framework\TestCase
+class UnitofmeasureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -17,10 +17,10 @@ class UnitofmeasureTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $layout \Magento\Framework\View\Layout */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
         /** @var $block \Magento\Dhl\Block\Adminhtml\Unitofmeasure */
-        $block = $layout->createBlock(\Magento\Dhl\Block\Adminhtml\Unitofmeasure::class);
+        $block = $layout->createBlock('Magento\Dhl\Block\Adminhtml\Unitofmeasure');
         $this->assertNotEmpty($block->toHtml());
     }
 }

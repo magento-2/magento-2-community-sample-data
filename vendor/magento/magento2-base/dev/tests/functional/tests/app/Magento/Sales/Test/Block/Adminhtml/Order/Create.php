@@ -191,7 +191,7 @@ class Create extends Block
      *
      * @return \Magento\Sales\Test\Block\Adminhtml\Order\Create\Totals
      */
-    protected function getTotalsBlock()
+    public function getTotalsBlock()
     {
         return $this->blockFactory->create(
             \Magento\Sales\Test\Block\Adminhtml\Order\Create\Totals::class,
@@ -279,22 +279,20 @@ class Create extends Block
     }
 
     /**
-     * Fill Billing Address.
+     * Fill addresses based on present data in customer and order fixtures.
      *
-     * @param FixtureInterface $billingAddress
-     * @param string $saveAddress [optional]
+     * @param FixtureInterface $address
+     * @param string $saveAddress
      * @param bool $setShippingAddress [optional]
      * @return void
      */
-    public function fillBillingAddress(
-        FixtureInterface $billingAddress,
-        $saveAddress = 'No',
-        $setShippingAddress = true
-    ) {
-        if ($setShippingAddress !== false) {
+    public function fillAddresses(FixtureInterface $address, $saveAddress = 'No', $setShippingAddress = true)
+    {
+        if ($setShippingAddress) {
             $this->getShippingAddressBlock()->uncheckSameAsBillingShippingAddress();
         }
-        $this->getBillingAddressBlock()->fill($billingAddress);
+        $this->browser->find($this->header)->hover();
+        $this->getBillingAddressBlock()->fill($address);
         $this->getBillingAddressBlock()->saveInAddressBookBillingAddress($saveAddress);
         $this->getTemplateBlock()->waitLoader();
         if ($setShippingAddress) {
@@ -339,7 +337,6 @@ class Create extends Block
         $this->getTemplateBlock()->waitLoader();
         $this->_rootElement->find($this->orderMethodsSelector)->click();
         $this->getBillingMethodBlock()->selectPaymentMethod($paymentCode, $creditCard);
-        $this->_rootElement->click();
         $this->getTemplateBlock()->waitLoader();
     }
 

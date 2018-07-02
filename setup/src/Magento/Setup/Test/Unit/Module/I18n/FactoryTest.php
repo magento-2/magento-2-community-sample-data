@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Module\I18n;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\I18n\Factory
@@ -15,7 +15,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->factory = $objectManagerHelper->getObject(\Magento\Setup\Module\I18n\Factory::class);
+        $this->factory = $objectManagerHelper->getObject('Magento\Setup\Module\I18n\Factory');
     }
 
     /**
@@ -38,19 +38,19 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                \Magento\Setup\Module\I18n\Dictionary\Writer\Csv::class,
+                'Magento\Setup\Module\I18n\Dictionary\Writer\Csv',
                 TESTS_TEMP_DIR . '/filename.invalid_type',
             ],
             [
-                \Magento\Setup\Module\I18n\Dictionary\Writer\Csv::class,
+                'Magento\Setup\Module\I18n\Dictionary\Writer\Csv',
                 TESTS_TEMP_DIR . '/filename'
             ],
             [
-                \Magento\Setup\Module\I18n\Dictionary\Writer\Csv::class,
+                'Magento\Setup\Module\I18n\Dictionary\Writer\Csv',
                 TESTS_TEMP_DIR . '/filename.csv'
             ],
             [
-                \Magento\Setup\Module\I18n\Dictionary\Writer\Csv\Stdo::class,
+                'Magento\Setup\Module\I18n\Dictionary\Writer\Csv\Stdo',
                 ''
             ],
         ];

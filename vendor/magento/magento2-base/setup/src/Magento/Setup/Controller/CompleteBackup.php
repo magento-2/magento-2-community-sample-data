@@ -18,8 +18,8 @@ class CompleteBackup extends AbstractActionController
     public function indexAction()
     {
         $view = new ViewModel;
-        $view->setTemplate('/error/404.phtml');
-        $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_404);
+        $view->setTerminal(true);
+        $view->setTemplate('/magento/setup/complete-backup.phtml');
         return $view;
     }
 

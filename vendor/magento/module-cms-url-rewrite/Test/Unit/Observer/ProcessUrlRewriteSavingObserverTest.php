@@ -17,7 +17,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\TestCase
+class ProcessUrlRewriteSavingObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper

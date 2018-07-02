@@ -9,7 +9,9 @@ namespace Magento\AdminNotification\Controller\Adminhtml\System\Message;
 class ListAction extends \Magento\Backend\App\AbstractAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_AdminNotification::show_list';
 

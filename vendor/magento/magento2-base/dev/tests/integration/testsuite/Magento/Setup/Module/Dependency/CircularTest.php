@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Module\Dependency;
 
-class CircularTest extends \PHPUnit\Framework\TestCase
+class CircularTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Circular

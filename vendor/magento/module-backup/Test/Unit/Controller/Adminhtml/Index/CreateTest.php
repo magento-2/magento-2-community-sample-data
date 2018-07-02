@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreateTest extends \PHPUnit\Framework\TestCase
+class CreateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -89,7 +89,7 @@ class CreateTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
-            ->setMethods(['representJson', 'setRedirect'])
+            ->setMethods(['representJson'])
             ->getMock();
         $this->sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
             ->disableOriginalConstructor()

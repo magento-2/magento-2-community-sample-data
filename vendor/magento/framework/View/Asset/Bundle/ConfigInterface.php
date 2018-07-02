@@ -8,11 +8,6 @@ namespace Magento\Framework\View\Asset\Bundle;
 
 use Magento\Framework\View\Asset\File\FallbackContext;
 
-/**
- * Interface ConfigInterface
- * @deprecated 100.2.0
- * @see \Magento\Deploy\Config\BundleConfig
- */
 interface ConfigInterface
 {
     /**

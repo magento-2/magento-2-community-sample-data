@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description;
 
-class MixinManagerTest extends \PHPUnit\Framework\TestCase
+class MixinManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\MixinManager
@@ -19,7 +19,13 @@ class MixinManagerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->mixinFactoryMock = $this->createMock(\Magento\Setup\Model\Description\Mixin\MixinFactory::class);
+        $this->mixinFactoryMock = $this->getMock(
+            \Magento\Setup\Model\Description\Mixin\MixinFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->mixinManager = new \Magento\Setup\Model\Description\MixinManager($this->mixinFactoryMock);
     }
 

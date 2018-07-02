@@ -9,7 +9,6 @@ namespace Magento\Vault\Model\Ui;
  * Interface TokenUiComponentInterface
  * @package Magento\Vault\Model\Ui
  * @api
- * @since 100.1.0
  */
 interface TokenUiComponentInterface
 {
@@ -17,7 +16,6 @@ interface TokenUiComponentInterface
      * Returns component configuration
      *
      * @return array
-     * @since 100.1.0
      */
     public function getConfig();
 
@@ -25,7 +23,6 @@ interface TokenUiComponentInterface
      * Returns component name
      *
      * @return string
-     * @since 100.1.0
      */
     public function getName();
 }

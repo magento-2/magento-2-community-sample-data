@@ -8,7 +8,9 @@
 
 namespace Magento\Framework\Stdlib\Cookie;
 
-class PhpCookieReaderTest extends \PHPUnit\Framework\TestCase
+use Magento\Framework\Stdlib\Cookie\PhpCookieReader;
+
+class PhpCookieReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -31,7 +33,6 @@ class PhpCookieReaderTest extends \PHPUnit\Framework\TestCase
         $_COOKIE[self::NAME] = self::VALUE;
         $this->model = new PhpCookieReader();
     }
-
     public function testGetCookieExists()
     {
         $this->assertSame(self::VALUE, $this->model->getCookie(self::NAME, self::DEFAULT_VAL));

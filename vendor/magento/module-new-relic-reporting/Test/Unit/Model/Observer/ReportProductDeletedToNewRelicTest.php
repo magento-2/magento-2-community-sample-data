@@ -10,7 +10,7 @@ use Magento\NewRelicReporting\Model\Observer\ReportProductDeletedToNewRelic;
 /**
  * Class ReportProductDeletedToNewRelicTest
  */
-class ReportProductDeletedToNewRelicTest extends \PHPUnit\Framework\TestCase
+class ReportProductDeletedToNewRelicTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReportProductDeletedToNewRelic
@@ -34,11 +34,11 @@ class ReportProductDeletedToNewRelicTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Config::class)
+        $this->config = $this->getMockBuilder('Magento\NewRelicReporting\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['isNewRelicEnabled'])
             ->getMock();
-        $this->newRelicWrapper = $this->getMockBuilder(\Magento\NewRelicReporting\Model\NewRelicWrapper::class)
+        $this->newRelicWrapper = $this->getMockBuilder('Magento\NewRelicReporting\Model\NewRelicWrapper')
             ->disableOriginalConstructor()
             ->setMethods(['addCustomParameter'])
             ->getMock();
@@ -57,7 +57,7 @@ class ReportProductDeletedToNewRelicTest extends \PHPUnit\Framework\TestCase
     public function testReportProductDeletedToNewRelicModuleDisabledFromConfig()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -76,7 +76,7 @@ class ReportProductDeletedToNewRelicTest extends \PHPUnit\Framework\TestCase
     public function testReportProductDeletedToNewRelic()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 

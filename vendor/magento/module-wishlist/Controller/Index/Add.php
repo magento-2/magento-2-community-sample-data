@@ -114,9 +114,8 @@ class Add extends \Magento\Wishlist\Controller\AbstractIndex
             if (is_string($result)) {
                 throw new \Magento\Framework\Exception\LocalizedException(__($result));
             }
-            if ($wishlist->isObjectNew()) {
-                $wishlist->save();
-            }
+            $wishlist->save();
+
             $this->_eventManager->dispatch(
                 'wishlist_add_product',
                 ['wishlist' => $wishlist, 'product' => $product, 'item' => $result]
@@ -129,7 +128,7 @@ class Add extends \Magento\Wishlist\Controller\AbstractIndex
                 $referer = $this->_redirect->getRefererUrl();
             }
 
-            $this->_objectManager->get(\Magento\Wishlist\Helper\Data::class)->calculate();
+            $this->_objectManager->get('Magento\Wishlist\Helper\Data')->calculate();
 
             $this->messageManager->addComplexSuccessMessage(
                 'addProductSuccessMessage',

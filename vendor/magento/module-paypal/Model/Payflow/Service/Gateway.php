@@ -5,13 +5,14 @@
  */
 namespace Magento\Paypal\Model\Payflow\Service;
 
-use Magento\Framework\DataObject;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Math\Random;
-use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Payment\Model\Method\Online\GatewayInterface;
+use Magento\Payment\Model\Method\ConfigInterface;
+use Magento\Framework\DataObject;
 
 /**
  * Gateway Service
@@ -103,6 +104,7 @@ class Gateway implements GatewayInterface
 
             $result->setData(array_change_key_case($responseArray, CASE_LOWER));
             $result->setData('result_code', $result->getData('result'));
+
         } catch (\Zend_Http_Client_Exception $e) {
             $result->addData(
                 [

@@ -18,7 +18,7 @@ use Magento\Ui\Component\Form;
  * Class DownloadablePanelTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DownloadablePanelTest extends \PHPUnit\Framework\TestCase
+class DownloadablePanelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -51,9 +51,9 @@ class DownloadablePanelTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->productMock = $this->createMock(ProductInterface::class);
-        $this->locatorMock = $this->createMock(LocatorInterface::class);
-        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
+        $this->productMock = $this->getMock(ProductInterface::class);
+        $this->locatorMock = $this->getMock(LocatorInterface::class);
+        $this->arrayManagerMock = $this->getMock(ArrayManager::class, [], [], '', false);
         $this->downloadablePanel = $this->objectManagerHelper->getObject(
             DownloadablePanel::class,
             [

@@ -9,7 +9,7 @@ namespace Magento\Framework\Filesystem;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class FileResolverTest extends \PHPUnit\Framework\TestCase
+class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Path to add to include path
@@ -33,7 +33,7 @@ class FileResolverTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->model = Bootstrap::getObjectManager()->create(\Magento\Framework\Filesystem\FileResolver::class);
+        $this->model = Bootstrap::getObjectManager()->create('Magento\Framework\Filesystem\FileResolver');
         $this->originalPath = get_include_path();
         set_include_path('/pre/existing/paths/');
     }

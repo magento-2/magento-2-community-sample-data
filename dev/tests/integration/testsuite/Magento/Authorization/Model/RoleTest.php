@@ -8,7 +8,7 @@ namespace Magento\Authorization\Model;
 /**
  * @magentoAppArea adminhtml
  */
-class RoleTest extends \PHPUnit\Framework\TestCase
+class RoleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorization\Model\Role
@@ -18,7 +18,7 @@ class RoleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Authorization\Model\Role::class);
+            ->create('Magento\Authorization\Model\Role');
     }
 
     public function testGetRoleUsers()

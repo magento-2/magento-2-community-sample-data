@@ -6,9 +6,9 @@
 
 namespace Magento\Catalog\Test\Fixture\CatalogProductSimple;
 
-use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
 use Magento\Mtf\Fixture\DataSource;
 use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
 
 /**
  * Source for attribute field.
@@ -20,7 +20,7 @@ class CustomAttribute extends DataSource
      *
      * @var CatalogProductAttribute
      */
-    private $attribute;
+    protected $attribute;
 
     /**
      * @constructor
@@ -54,7 +54,7 @@ class CustomAttribute extends DataSource
      * @param CatalogProductAttribute $attribute
      * @return string|null
      */
-    private function getDefaultAttributeValue(CatalogProductAttribute $attribute)
+    protected function getDefaultAttributeValue(CatalogProductAttribute $attribute)
     {
         $data = $attribute->getData();
         $value = '';
@@ -91,7 +91,7 @@ class CustomAttribute extends DataSource
      * @param CatalogProductAttribute $attribute
      * @return string
      */
-    private function createAttributeCode(CatalogProductAttribute $attribute)
+    protected function createAttributeCode(CatalogProductAttribute $attribute)
     {
         $label = $attribute->getFrontendLabel();
         return strtolower(preg_replace('@[\W\s]+@', '_', $label));

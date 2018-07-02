@@ -21,7 +21,6 @@ class Role extends Tab
      * @param array $fields
      * @param SimpleElement|null $element
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setFieldsData(array $fields, SimpleElement $element = null)
     {
@@ -36,7 +35,7 @@ class Role extends Tab
     public function getRoleGrid()
     {
         return $this->blockFactory->create(
-            \Magento\User\Test\Block\Adminhtml\User\Tab\Role\Grid::class,
+            'Magento\User\Test\Block\Adminhtml\User\Tab\Role\Grid',
             ['element' => $this->_rootElement->find('#permissionsUserRolesGrid')]
         );
     }

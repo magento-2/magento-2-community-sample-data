@@ -95,19 +95,8 @@
         }
     }
 
-    //  Full name fieldset
-    .fieldset {
-        .fullname {
-            > .label {
-                &:extend(.abs-visually-hidden all);
-            }
-        }
-    }
-
     .box-billing-address,
     .box-shipping-address,
-    .box-address-billing,
-    .box-address-shipping,
     .box-information,
     .box-newsletter {
         .box-content {
@@ -243,7 +232,6 @@
 
             .input-text {
                 .lib-vendor-prefix-order(0);
-                z-index: 2;
             }
         }
     }
@@ -265,35 +253,35 @@
             z-index: -1;
         }
 
-        .password-none & {
+        .password-strength-meter-0 & {
             &:before {
                 background-color: @_password-default;
                 width: 100%;
             }
         }
 
-        .password-weak & {
+        .password-strength-meter-1 & {
             &:before {
                 background-color: @_password-weak;
                 width: 25%;
             }
         }
 
-        .password-medium & {
+        .password-strength-meter-2 & {
             &:before {
                 background-color: @_password-medium;
                 width: 50%;
             }
         }
 
-        .password-strong & {
+        .password-strength-meter-3 & {
             &:before {
                 background-color: @_password-strong;
                 width: 75%;
             }
         }
 
-        .password-very-strong & {
+        .password-strength-meter-4 & {
             &:before {
                 background-color: @_password-very-strong;
                 width: 100%;
@@ -321,11 +309,6 @@
 
     .order-products-toolbar {
         position: relative;
-
-        .toolbar-amount {
-            position: relative;
-            text-align: center;
-        }
     }
 }
 
@@ -365,15 +348,9 @@
     .form-create-account {
         .fieldset-fullname {
             .fields {
-                display: table;
-                width: 100%;
-
                 .field {
-                    display: table-cell;
-
-                    + .field {
-                        padding-left: @indent__s;
-                    }
+                    float: left;
+                    margin: 0 @indent__s @indent__s 0;
                 }
             }
 
@@ -439,22 +416,14 @@
     .block-addresses-list {
         .items.addresses {
             &:extend(.abs-add-clearfix-desktop all);
-            font-size: 0;
 
             > .item {
-                display: inline-block;
-                font-size: @font-size__base;
+                &:extend(.abs-blocks-2columns all);
                 margin-bottom: @indent__base;
-                vertical-align: top;
-                width: 48%;
 
                 &:nth-last-child(1),
                 &:nth-last-child(2) {
                     margin-bottom: 0;
-                }
-
-                &:nth-child(even) {
-                    margin-left: 4%;
                 }
             }
         }
@@ -471,7 +440,7 @@
     }
 
     .form-address-edit {
-        > .fieldset {
+        .fieldset {
             &:extend(.abs-blocks-2columns all);
         }
     }
@@ -489,8 +458,6 @@
 
     .box-billing-address,
     .box-shipping-address,
-    .box-address-billing,
-    .box-address-shipping,
     .box-information {
         .box-content {
             &:extend(.abs-account-block-font-size all);

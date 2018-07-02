@@ -23,14 +23,20 @@ class OrderSenderTest extends AbstractSenderTest
     {
         $this->stepMockSetup();
 
-        $this->orderResourceMock = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order::class,
-            ['saveAttribute']
+        $this->orderResourceMock = $this->getMock(
+            '\Magento\Sales\Model\ResourceModel\Order',
+            ['saveAttribute'],
+            [],
+            '',
+            false
         );
 
-        $this->identityContainerMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Email\Container\OrderIdentity::class,
-            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId']
+        $this->identityContainerMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Email\Container\OrderIdentity',
+            ['getStore', 'isEnabled', 'getConfigValue', 'getTemplateId', 'getGuestTemplateId'],
+            [],
+            '',
+            false
         );
         $this->identityContainerMock->expects($this->any())
             ->method('getStore')
@@ -76,7 +82,13 @@ class OrderSenderTest extends AbstractSenderTest
                 ->willReturn($emailSendingResult);
 
             if ($emailSendingResult) {
-                $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+                $addressMock = $this->getMock(
+                    'Magento\Sales\Model\Order\Address',
+                    [],
+                    [],
+                    '',
+                    false
+                );
 
                 $this->addressRenderer->expects($this->any())
                     ->method('format')
@@ -133,10 +145,7 @@ class OrderSenderTest extends AbstractSenderTest
                 );
             }
         } else {
-            $this->orderResourceMock->expects($this->at(0))
-                ->method('saveAttribute')
-                ->with($this->orderMock, 'email_sent');
-            $this->orderResourceMock->expects($this->at(1))
+            $this->orderResourceMock->expects($this->once())
                 ->method('saveAttribute')
                 ->with($this->orderMock, 'send_email');
 
@@ -186,7 +195,7 @@ class OrderSenderTest extends AbstractSenderTest
             ->method('isEnabled')
             ->willReturn(true);
 
-        $addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+        $addressMock = $this->getMock('Magento\Sales\Model\Order\Address', [], [], '', false);
 
         $this->addressRenderer->expects($this->exactly($formatCallCount))
             ->method('format')

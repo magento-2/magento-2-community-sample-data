@@ -92,27 +92,29 @@ class ContextPlugin
 
     /**
      * @param \Magento\Framework\App\ActionInterface $subject
+     * @param callable $proceed
      * @param \Magento\Framework\App\RequestInterface $request
-     * @return void
+     * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function beforeDispatch(
+    public function aroundDispatch(
         \Magento\Framework\App\ActionInterface $subject,
+        \Closure $proceed,
         \Magento\Framework\App\RequestInterface $request
     ) {
         if (!$this->weeeHelper->isEnabled() ||
             !$this->customerSession->isLoggedIn() ||
             !$this->moduleManager->isEnabled('Magento_PageCache') ||
             !$this->cacheConfig->isEnabled()) {
-            return;
+            return $proceed($request);
         }
 
         $basedOn = $this->taxHelper->getTaxBasedOn();
         if ($basedOn != 'shipping' && $basedOn != 'billing') {
-            return;
+            return $proceed($request);
         }
 
         $weeeTaxRegion = $this->getWeeeTaxRegion($basedOn);
@@ -122,8 +124,8 @@ class ContextPlugin
 
         if (!$countryId && !$regionId) {
             // country and region does not exist
-            return;
-        } elseif ($countryId && !$regionId) {
+            return $proceed($request);
+        } else if ($countryId && !$regionId) {
             // country exist and region does not exist
             $regionId = 0;
             $exist = $this->weeeTax->isWeeeInLocation(
@@ -156,6 +158,7 @@ class ContextPlugin
                 0
             );
         }
+        return $proceed($request);
     }
 
     /**
@@ -186,7 +189,8 @@ class ContextPlugin
                 $countryId = $defaultShippingAddress['country_id'];
                 $regionId = $defaultShippingAddress['region_id'];
             }
-        } elseif ($basedOn == 'billing') {
+
+        } else if ($basedOn == 'billing') {
             $defaultBillingAddress = $this->customerSession->getDefaultTaxBillingAddress();
             if (empty($defaultBillingAddress)) {
                 $countryId = $defaultCountryId;

@@ -5,29 +5,20 @@
  */
 namespace Magento\Catalog\Model\ProductOptions;
 
-use Magento\Framework\Serialize\SerializerInterface;
-
-/**
- * Provides product options configuration
- */
 class Config extends \Magento\Framework\Config\Data implements
     \Magento\Catalog\Model\ProductOptions\ConfigInterface
 {
     /**
-     * Constructor
-     *
      * @param \Magento\Catalog\Model\ProductOptions\Config\Reader $reader
      * @param \Magento\Framework\Config\CacheInterface $cache
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param string $cacheId
      */
     public function __construct(
         \Magento\Catalog\Model\ProductOptions\Config\Reader $reader,
         \Magento\Framework\Config\CacheInterface $cache,
-        $cacheId = 'product_options_config',
-        SerializerInterface $serializer = null
+        $cacheId = 'product_options_config'
     ) {
-        parent::__construct($reader, $cache, $cacheId, $serializer);
+        parent::__construct($reader, $cache, $cacheId);
     }
 
     /**

@@ -9,7 +9,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Validator\Attribute;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Testing  \Magento\Eav\Model\Validator\Attribute\Data::isValid
@@ -31,15 +31,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
     ) {
         $entity = $this->_getEntityMock();
         $attribute = $this->_getAttributeMock($attributeData);
-        $attrDataFactory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setMethods(['create'])
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
+        $attrDataFactory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            ['create'],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
 
         $validator = new \Magento\Eav\Model\Validator\Attribute\Data($attrDataFactory);
         $validator->setAttributes([$attribute])->setData($data);
@@ -149,7 +148,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     public function testIsValidAttributesFromCollection()
     {
         /** @var \Magento\Eav\Model\Entity\AbstractEntity $resource */
-        $resource = $this->getMockForAbstractClass(\Magento\Eav\Model\Entity\AbstractEntity::class, [], '', false);
+        $resource = $this->getMockForAbstractClass('Magento\Eav\Model\Entity\AbstractEntity', [], '', false);
         $attribute = $this->_getAttributeMock(
             [
                 'attribute_code' => 'attribute',
@@ -158,9 +157,9 @@ class DataTest extends \PHPUnit\Framework\TestCase
                 'is_visible' => true,
             ]
         );
-        $collection = $this->getMockBuilder(\Magento\Framework\DataObject::class)->setMethods(['getItems'])->getMock();
+        $collection = $this->getMockBuilder('Magento\Framework\DataObject')->setMethods(['getItems'])->getMock();
         $collection->expects($this->once())->method('getItems')->will($this->returnValue([$attribute]));
-        $entityType = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $entityType = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['getAttributeCollection'])
             ->getMock();
         $entityType->expects($this->once())->method('getAttributeCollection')->will($this->returnValue($collection));
@@ -168,15 +167,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $entity->expects($this->once())->method('getResource')->will($this->returnValue($resource));
         $entity->expects($this->once())->method('getEntityType')->will($this->returnValue($entityType));
         $dataModel = $this->_getDataModelMock(true);
-        $attrDataFactory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setMethods(['create'])
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
+        $attrDataFactory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            ['create'],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
         $attrDataFactory->expects(
             $this->once()
         )->method(
@@ -218,16 +216,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $data = ['attribute' => 'new_test_data', 'attribute2' => 'some data'];
         $entity = $this->_getEntityMock();
         $dataModel = $this->_getDataModelMock(true, $data['attribute']);
-        $attrDataFactory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setMethods(['create'])
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
-
+        $attrDataFactory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            ['create'],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
         $attrDataFactory->expects(
             $this->once()
         )->method(
@@ -262,14 +258,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
     public function testSetAttributesWhiteList()
     {
         $attributes = ['attr1', 'attr2', 'attr3'];
-        $attrDataFactory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
+        $attrDataFactory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            [],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
         $validator = new \Magento\Eav\Model\Validator\Attribute\Data($attrDataFactory);
         $result = $validator->setAttributesWhiteList($attributes);
         $this->assertAttributeEquals($attributes, '_attributesWhiteList', $validator);
@@ -279,14 +275,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
     public function testSetAttributesBlackList()
     {
         $attributes = ['attr1', 'attr2', 'attr3'];
-        $attrDataFactory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
+        $attrDataFactory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            [],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
         $validator = new \Magento\Eav\Model\Validator\Attribute\Data($attrDataFactory);
         $result = $validator->setAttributesBlackList($attributes);
         $this->assertAttributeEquals($attributes, '_attributesBlackList', $validator);
@@ -315,15 +311,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
         );
         $expectedMessages = ['attribute1' => ['Error1'], 'attribute2' => ['Error2']];
         $expectedDouble = ['attribute1' => ['Error1', 'Error1'], 'attribute2' => ['Error2', 'Error2']];
-        $factory = $this->getMockBuilder(\Magento\Eav\Model\AttributeDataFactory::class)
-            ->setMethods(['create'])
-            ->setConstructorArgs(
-                [
-                    'objectManager' => $this->createMock(\Magento\Framework\ObjectManagerInterface::class),
-                    'string' => $this->createMock(\Magento\Framework\Stdlib\StringUtils::class)
-                ]
-            )
-            ->getMock();
+        $factory = $this->getMock(
+            'Magento\Eav\Model\AttributeDataFactory',
+            ['create'],
+            [
+                'objectManager' => $this->getMock('Magento\Framework\ObjectManagerInterface'),
+                'string' => $this->getMock('Magento\Framework\Stdlib\StringUtils')
+            ]
+        );
         $validator = new \Magento\Eav\Model\Validator\Attribute\Data($factory);
         $validator->setAttributes([$firstAttribute, $secondAttribute])->setData($data);
 
@@ -380,7 +375,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getAttributeMock($attributeData)
     {
-        $attribute = $this->getMockBuilder(\Magento\Eav\Model\Attribute::class)
+        $attribute = $this->getMockBuilder('Magento\Eav\Model\Attribute')
             ->setMethods([
                 'getAttributeCode',
                 'getDataModel',
@@ -434,7 +429,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function _getDataModelMock($returnValue, $argument = null)
     {
         $dataModel = $this->getMockBuilder(
-            \Magento\Eav\Model\Attribute\Data\AbstractData::class
+            'Magento\Eav\Model\Attribute\Data\AbstractData'
         )->disableOriginalConstructor()->setMethods(
             ['validateValue']
         )->getMockForAbstractClass();
@@ -460,7 +455,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function _getEntityMock()
     {
         $entity = $this->getMockBuilder(
-            \Magento\Framework\Model\AbstractModel::class
+            'Magento\Framework\Model\AbstractModel'
         )->setMethods(
             ['getAttribute', 'getResource', 'getEntityType', '__wakeup']
         )->disableOriginalConstructor()->getMock();

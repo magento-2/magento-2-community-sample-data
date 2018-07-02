@@ -5,7 +5,7 @@
  */
 namespace Magento\Checkout\Test\Unit\Block\Checkout;
 
-class DirectoryDataProcessorTest extends \PHPUnit\Framework\TestCase
+class DirectoryDataProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Checkout\Block\Checkout\DirectoryDataProcessor
@@ -40,43 +40,54 @@ class DirectoryDataProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $storeManagerMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $directoryDataHelperMock;
+    protected $directoryDataHelperMock;
 
     protected function setUp()
     {
-        $this->countryCollectionFactoryMock = $this->createPartialMock(
+        $this->countryCollectionFactoryMock = $this->getMock(
             \Magento\Directory\Model\ResourceModel\Country\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->countryCollectionMock = $this->createMock(
-            \Magento\Directory\Model\ResourceModel\Country\Collection::class
+        $this->countryCollectionMock = $this->getMock(
+            \Magento\Directory\Model\ResourceModel\Country\Collection::class,
+            [],
+            [],
+            '',
+            false
         );
-        $this->regionCollectionFactoryMock = $this->createPartialMock(
+        $this->regionCollectionFactoryMock = $this->getMock(
             \Magento\Directory\Model\ResourceModel\Region\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->regionCollectionMock = $this->createMock(
-            \Magento\Directory\Model\ResourceModel\Region\Collection::class
+        $this->regionCollectionMock = $this->getMock(
+            \Magento\Directory\Model\ResourceModel\Region\Collection::class,
+            [],
+            [],
+            '',
+            false
         );
-        $this->storeResolverMock = $this->createMock(
+        $this->storeResolverMock = $this->getMock(
             \Magento\Store\Api\StoreResolverInterface::class
         );
-        $this->directoryDataHelperMock = $this->createMock(\Magento\Directory\Helper\Data::class);
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->directoryDataHelperMock = $this->getMock(
+            \Magento\Directory\Helper\Data::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->model = new \Magento\Checkout\Block\Checkout\DirectoryDataProcessor(
             $this->countryCollectionFactoryMock,
             $this->regionCollectionFactoryMock,
             $this->storeResolverMock,
-            $this->directoryDataHelperMock,
-            $this->storeManagerMock
+            $this->directoryDataHelperMock
         );
     }
 
@@ -86,12 +97,6 @@ class DirectoryDataProcessorTest extends \PHPUnit\Framework\TestCase
             'country_id' => [],
             'region_id' => [],
         ];
-
-        $storeMock = $this->getMockBuilder(\Magento\Store\Api\Data\StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock->expects($this->atLeastOnce())->method('getId')->willReturn(42);
-        $this->storeManagerMock->expects($this->atLeastOnce())->method('getStore')->willReturn($storeMock);
 
         $this->countryCollectionFactoryMock->expects($this->once())
             ->method('create')

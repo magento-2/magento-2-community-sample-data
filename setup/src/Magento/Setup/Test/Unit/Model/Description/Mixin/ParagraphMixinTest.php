@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description\Mixin;
 
-class ParagraphMixinTest extends \PHPUnit\Framework\TestCase
+class ParagraphMixinTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\Mixin\ParagraphMixin

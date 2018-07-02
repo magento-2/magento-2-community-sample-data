@@ -127,7 +127,7 @@ class Rows extends \Magento\Catalog\Model\Indexer\Category\Product\AbstractActio
 
     /**
      * Register affected products
-     *
+     * 
      * @param array $entityIds
      * @return void
      */
@@ -211,7 +211,11 @@ class Rows extends \Magento\Catalog\Model\Indexer\Category\Product\AbstractActio
     /**
      * Returns a list of category ids which are assigned to product ids in the index
      *
-     * @return \Magento\Framework\Indexer\CacheContext
+     * This may be required to get list of categories that are affected by the indexation process.
+     * Also, returns all parents of assigned categories as they're may be affected as well.
+     *
+     * @param array $productIds
+     * @return array
      */
     private function getCategoryIdsFromIndex(array $productIds)
     {

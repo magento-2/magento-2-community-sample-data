@@ -13,7 +13,6 @@ namespace Magento\Catalog\Model\ResourceModel;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Url
@@ -704,7 +703,7 @@ class Url extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }

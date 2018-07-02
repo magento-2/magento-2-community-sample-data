@@ -10,8 +10,8 @@
 namespace Zend\Crypt\Password;
 
 use Traversable;
-use Zend\Crypt\Utils;
 use Zend\Math\Rand;
+use Zend\Crypt\Utils;
 
 /**
  * Apache password authentication
@@ -26,12 +26,12 @@ class Apache implements PasswordInterface
     /**
      * @var array
      */
-    protected $supportedFormat = [
+    protected $supportedFormat = array(
         'crypt',
         'sha1',
         'md5',
         'digest',
-    ];
+    );
 
     /**
      * @var string
@@ -54,7 +54,7 @@ class Apache implements PasswordInterface
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
         if (empty($options)) {
             return;

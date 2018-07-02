@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Event\Test\Unit\Invoker;
 
-class InvokerDefaultTest extends \PHPUnit\Framework\TestCase
+class InvokerDefaultTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -34,13 +34,22 @@ class InvokerDefaultTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_observerFactoryMock = $this->createMock(\Magento\Framework\Event\ObserverFactory::class);
-        $this->_observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $this->_listenerMock = $this->createPartialMock(
-            \Magento\Framework\Event\Test\Unit\Invoker\ObserverExample::class,
-            ['execute']
+        $this->_observerFactoryMock = $this->getMock(
+            'Magento\Framework\Event\ObserverFactory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->_appStateMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->_observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
+        $this->_listenerMock = $this->getMock(
+            'Magento\Framework\Event\Test\Unit\Invoker\ObserverExample',
+            ['execute'],
+            [],
+            '',
+            false
+        );
+        $this->_appStateMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
 
         $this->_invokerDefault = new \Magento\Framework\Event\Invoker\InvokerDefault(
             $this->_observerFactoryMock,
@@ -103,7 +112,7 @@ class InvokerDefaultTest extends \PHPUnit\Framework\TestCase
      */
     public function testWrongInterfaceCallWithEnabledDeveloperMode($shared)
     {
-        $notObserver = $this->getMockBuilder('NotObserver')->getMock();
+        $notObserver = $this->getMock('NotObserver');
         $this->_observerFactoryMock->expects(
             $this->any()
         )->method(
@@ -146,7 +155,7 @@ class InvokerDefaultTest extends \PHPUnit\Framework\TestCase
      */
     public function testWrongInterfaceCallWithDisabledDeveloperMode($shared)
     {
-        $notObserver = $this->getMockBuilder('NotObserver')->getMock();
+        $notObserver = $this->getMock('NotObserver');
         $this->_observerFactoryMock->expects(
             $this->any()
         )->method(

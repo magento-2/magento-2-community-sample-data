@@ -52,7 +52,7 @@ class BundleRegularPrice extends \Magento\Catalog\Pricing\Price\RegularPrice imp
             if ($this->product->getPriceType() == Price::PRICE_TYPE_FIXED) {
                 /** @var \Magento\Catalog\Pricing\Price\CustomOptionPrice $customOptionPrice */
                 $customOptionPrice = $this->priceInfo->getPrice(CustomOptionPrice::PRICE_CODE);
-                $price += $customOptionPrice->getCustomOptionRange(true, $this->getPriceCode());
+                $price += $customOptionPrice->getCustomOptionRange(true);
             }
             $this->amount[$this->getValue()] = $this->calculator->getMinRegularAmount($price, $this->product);
         }
@@ -71,7 +71,7 @@ class BundleRegularPrice extends \Magento\Catalog\Pricing\Price\RegularPrice imp
             if ($this->product->getPriceType() == Price::PRICE_TYPE_FIXED) {
                 /** @var \Magento\Catalog\Pricing\Price\CustomOptionPrice $customOptionPrice */
                 $customOptionPrice = $this->priceInfo->getPrice(CustomOptionPrice::PRICE_CODE);
-                $price += $customOptionPrice->getCustomOptionRange(false, $this->getPriceCode());
+                $price += $customOptionPrice->getCustomOptionRange(false);
             }
             $this->maximalPrice = $this->calculator->getMaxRegularAmount($price, $this->product);
         }

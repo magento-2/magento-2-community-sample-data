@@ -13,6 +13,7 @@ use InvalidArgumentException;
  * as the shipping address when creating a Transaction.
  *
  * @package   Braintree
+ * @copyright 2015 Braintree, a division of PayPal, Inc.
  */
 class AddressGateway
 {
@@ -63,16 +64,10 @@ class AddressGateway
 
         $this->_validateCustomerId($customerId);
         unset($attribs['customerId']);
-        try {
-            return $this->_doCreate(
-                '/customers/' . $customerId . '/addresses',
-                ['address' => $attribs]
-            );
-        } catch (Exception\NotFound $e) {
-            throw new Exception\NotFound(
-                'Customer ' . $customerId . ' not found.'
-            );
-        }
+        return $this->_doCreate(
+            '/customers/' . $customerId . '/addresses',
+            ['address' => $attribs]
+        );
     }
 
     /**
@@ -279,6 +274,7 @@ class AddressGateway
         $response = $this->_http->post($fullPath, $params);
 
         return $this->_verifyGatewayResponse($response);
+
     }
 
     /**

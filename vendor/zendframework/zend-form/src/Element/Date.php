@@ -16,17 +16,14 @@ use Zend\Validator\DateStep as DateStepValidator;
 
 class Date extends DateTimeElement
 {
-
-    const DATETIME_FORMAT = 'Y-m-d';
-
     /**
      * Seed attributes
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'date',
-    ];
+    );
 
     /**
      * Date format to use for DateTime values. By default, this is RFC-3339,
@@ -50,11 +47,11 @@ class Date extends DateTimeElement
         $baseValue = (isset($this->attributes['min']))
                      ? $this->attributes['min'] : date($format, 0);
 
-        return new DateStepValidator([
+        return new DateStepValidator(array(
             'format'    => $format,
             'baseValue' => $baseValue,
             'timezone'  => new DateTimezone('UTC'),
             'step'      => new DateInterval("P{$stepValue}D"),
-        ]);
+        ));
     }
 }

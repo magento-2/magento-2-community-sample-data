@@ -8,10 +8,7 @@ namespace Magento\Customer\Test\Unit\Controller\Account;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class CreatePasswordTest extends \PHPUnit\Framework\TestCase
+class CreatePasswordTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Controller\Account\CreatePassword */
     protected $model;
@@ -39,26 +36,26 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->sessionMock = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->sessionMock = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods(['setRpToken', 'setRpCustomerId', 'getRpToken', 'getRpCustomerId'])
             ->getMock();
-        $this->pageFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->pageFactoryMock = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->accountManagementMock = $this->getMockBuilder(\Magento\Customer\Api\AccountManagementInterface::class)
+        $this->accountManagementMock = $this->getMockBuilder('Magento\Customer\Api\AccountManagementInterface')
             ->getMockForAbstractClass();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->getMockForAbstractClass();
-        $this->redirectFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\RedirectFactory::class)
+        $this->redirectFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\Result\RedirectFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMockForAbstractClass();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\Customer\Controller\Account\CreatePassword::class,
+            'Magento\Customer\Controller\Account\CreatePassword',
             [
                 'customerSession' => $this->sessionMock,
                 'resultPageFactory' => $this->pageFactoryMock,
@@ -97,7 +94,7 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
             ->with($customerId);
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -141,7 +138,7 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         /** @var \Magento\Framework\View\Result\Page|\PHPUnit_Framework_MockObject_MockObject $pageMock */
-        $pageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $pageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -151,7 +148,7 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
             ->willReturn($pageMock);
 
         /** @var \Magento\Framework\View\Layout|\PHPUnit_Framework_MockObject_MockObject $layoutMock */
-        $layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -160,7 +157,7 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
             ->willReturn($layoutMock);
 
         /** @var \Magento\Customer\Block\Account\Resetpassword|\PHPUnit_Framework_MockObject_MockObject $layoutMock */
-        $blockMock = $this->getMockBuilder(\Magento\Customer\Block\Account\Resetpassword::class)
+        $blockMock = $this->getMockBuilder('Magento\Customer\Block\Account\Resetpassword')
             ->disableOriginalConstructor()
             ->setMethods(['setCustomerId', 'setResetPasswordLinkToken'])
             ->getMock();
@@ -214,7 +211,7 @@ class CreatePasswordTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
 
         /** @var Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 

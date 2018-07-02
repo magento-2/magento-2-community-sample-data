@@ -6,7 +6,7 @@
 
 namespace Magento\Widget\Test\Constraint;
 
-use Magento\Mtf\Util\Command\Cli\Cache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
 use Magento\Cms\Test\Page\CmsIndex;
 use Magento\Widget\Test\Fixture\Widget;
@@ -23,17 +23,19 @@ class AssertWidgetProductLink extends AbstractConstraint
      * @param CmsIndex $cmsIndex
      * @param CatalogProductView $productView
      * @param Widget $widget
-     * @param Cache $cache
+     * @param AdminCache $adminCache
      * @return void
      */
     public function processAssert(
         CmsIndex $cmsIndex,
         CatalogProductView $productView,
         Widget $widget,
-        Cache $cache
+        AdminCache $adminCache
     ) {
         // Flush cache
-        $cache->flush();
+        $adminCache->open();
+        $adminCache->getActionsBlock()->flushMagentoCache();
+        $adminCache->getMessagesBlock()->waitSuccessMessage();
 
         $cmsIndex->open();
         $cmsIndex->getTopmenu()->selectCategoryByName($widget->getWidgetInstance()[0]['entities']->getName());

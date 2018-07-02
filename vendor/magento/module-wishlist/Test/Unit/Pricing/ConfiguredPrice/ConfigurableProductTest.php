@@ -5,7 +5,7 @@
  */
 namespace Magento\Wishlist\Test\Unit\Pricing\ConfiguredPrice;
 
-class ConfigurableProductTest extends \PHPUnit\Framework\TestCase
+class ConfigurableProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Pricing\SaleableInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,20 +34,20 @@ class ConfigurableProductTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfoInterface::class)
+        $this->priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfoInterface')
             ->getMockForAbstractClass();
         
-        $this->saleableItem = $this->getMockBuilder(\Magento\Framework\Pricing\SaleableInterface::class)
+        $this->saleableItem = $this->getMockBuilder('Magento\Framework\Pricing\SaleableInterface')
             ->setMethods([
                 'getPriceInfo',
                 'getCustomOption',
             ])
             ->getMockForAbstractClass();
 
-        $this->calculator = $this->getMockBuilder(\Magento\Framework\Pricing\Adjustment\CalculatorInterface::class)
+        $this->calculator = $this->getMockBuilder('Magento\Framework\Pricing\Adjustment\CalculatorInterface')
             ->getMockForAbstractClass();
 
-        $this->priceCurrency = $this->getMockBuilder(\Magento\Framework\Pricing\PriceCurrencyInterface::class)
+        $this->priceCurrency = $this->getMockBuilder('Magento\Framework\Pricing\PriceCurrencyInterface')
             ->getMockForAbstractClass();
 
         $this->model = new \Magento\Wishlist\Pricing\ConfiguredPrice\ConfigurableProduct(
@@ -62,13 +62,13 @@ class ConfigurableProductTest extends \PHPUnit\Framework\TestCase
     {
         $priceValue = 10;
 
-        $priceMock = $this->getMockBuilder(\Magento\Framework\Pricing\Price\PriceInterface::class)
+        $priceMock = $this->getMockBuilder('Magento\Framework\Pricing\Price\PriceInterface')
             ->getMockForAbstractClass();
         $priceMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceValue);
 
-        $this->priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $this->priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $this->priceInfoMock->expects($this->once())
@@ -76,14 +76,14 @@ class ConfigurableProductTest extends \PHPUnit\Framework\TestCase
             ->with(\Magento\Wishlist\Pricing\ConfiguredPrice\ConfigurableProduct::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
         $productMock->expects($this->once())
             ->method('getPriceInfo')
             ->willReturn($this->priceInfoMock);
 
-        $wishlistItemOptionMock = $this->getMockBuilder(\Magento\Wishlist\Model\Item\Option::class)
+        $wishlistItemOptionMock = $this->getMockBuilder('Magento\Wishlist\Model\Item\Option')
             ->disableOriginalConstructor()
             ->getMock();
         $wishlistItemOptionMock->expects($this->once())

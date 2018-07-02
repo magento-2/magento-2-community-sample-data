@@ -15,7 +15,7 @@ class Sample extends \Magento\Downloadable\Controller\Adminhtml\Downloadable\Pro
      */
     protected function _createLink()
     {
-        return $this->_objectManager->create(\Magento\Downloadable\Model\Sample::class);
+        return $this->_objectManager->create('Magento\Downloadable\Model\Sample');
     }
 
     /**
@@ -23,7 +23,7 @@ class Sample extends \Magento\Downloadable\Controller\Adminhtml\Downloadable\Pro
      */
     protected function _getLink()
     {
-        return $this->_objectManager->get(\Magento\Downloadable\Model\Sample::class);
+        return $this->_objectManager->get('Magento\Downloadable\Model\Sample');
     }
 
     /**
@@ -44,7 +44,7 @@ class Sample extends \Magento\Downloadable\Controller\Adminhtml\Downloadable\Pro
                 $resourceType = DownloadHelper::LINK_TYPE_URL;
             } elseif ($sample->getSampleType() == DownloadHelper::LINK_TYPE_FILE) {
                 $resource = $this->_objectManager->get(
-                    \Magento\Downloadable\Helper\File::class
+                    'Magento\Downloadable\Helper\File'
                 )->getFilePath(
                     $this->_getLink()->getBasePath(),
                     $sample->getSampleFile()

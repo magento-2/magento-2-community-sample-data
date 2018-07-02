@@ -47,15 +47,13 @@ abstract class Wishlist extends \Magento\Backend\App\Action
         }
 
         /* @var $wishlistItem \Magento\Wishlist\Model\Item */
-        $wishlistItem = $this->_objectManager->create(
-            \Magento\Wishlist\Model\Item::class
-        )->loadWithOptions($wishlistItemId);
+        $wishlistItem = $this->_objectManager->create('Magento\Wishlist\Model\Item')->loadWithOptions($wishlistItemId);
 
         if (!$wishlistItem->getWishlistId()) {
             throw new CoreException(__('Please load Wish List item.'));
         }
 
-        $this->_wishlist = $this->_objectManager->create(\Magento\Wishlist\Model\Wishlist::class)
+        $this->_wishlist = $this->_objectManager->create('Magento\Wishlist\Model\Wishlist')
             ->load($wishlistItem->getWishlistId());
 
         $this->_wishlistItem = $wishlistItem;

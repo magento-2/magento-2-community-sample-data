@@ -101,7 +101,6 @@ class TransactionAdvancedSearchTest extends Setup
           'creditCardExpirationDate' => "05/2012",
           'creditCardNumber' => Braintree\Test\CreditCardNumbers::$visa,
           'creditCardUniqueIdentifier' => $transaction->creditCardDetails->uniqueNumberIdentifier,
-          'currency' => "USD",
           'customerCompany' => "Braintree",
           'customerEmail' => "smith@example.com",
           'customerFax' => "5551231234",

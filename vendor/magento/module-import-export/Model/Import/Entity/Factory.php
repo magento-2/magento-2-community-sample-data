@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * Import entity factory
  */
@@ -28,7 +30,7 @@ class Factory
 
     /**
      * @param string $className
-     * @return AbstractEntity|\Magento\ImportExport\Model\Import\AbstractEntity
+     * @return \Magento\ImportExport\Model\Import\Entity\AbstractEntity|\Magento\ImportExport\Model\Import\AbstractEntity
      * @throws \InvalidArgumentException
      */
     public function create($className)

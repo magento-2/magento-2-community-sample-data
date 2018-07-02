@@ -33,7 +33,7 @@ class Url extends AbstractPlugin
      * @throws \Zend\Mvc\Exception\DomainException
      * @return string
      */
-    public function fromRoute($route = null, $params = [], $options = [], $reuseMatchedParams = false)
+    public function fromRoute($route = null, $params = array(), $options = array(), $reuseMatchedParams = false)
     {
         $controller = $this->getController();
         if (!$controller instanceof InjectApplicationEventInterface) {
@@ -65,7 +65,7 @@ class Url extends AbstractPlugin
 
         if (3 == func_num_args() && is_bool($options)) {
             $reuseMatchedParams = $options;
-            $options = [];
+            $options = array();
         }
 
         if ($route === null) {

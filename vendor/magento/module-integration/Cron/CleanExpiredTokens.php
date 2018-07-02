@@ -25,8 +25,6 @@ class CleanExpiredTokens
     private $oauthHelper;
 
     /**
-     * Initialize dependencies.
-     *
      * @param TokenResourceModel $tokenResourceModel
      * @param OauthHelper $oauthHelper
      */

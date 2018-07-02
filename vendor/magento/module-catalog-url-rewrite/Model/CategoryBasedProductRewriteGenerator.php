@@ -10,19 +10,20 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Visibility;
 
 /**
- * Class ProductUrlRewriteGenerator
- * @package Magento\CatalogUrlRewrite\Model
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Generates product url rewrites based on category.
  */
 class CategoryBasedProductRewriteGenerator
 {
     /**
+     * Generates url rewrites for different scopes.
+     *
      * @var ProductScopeRewriteGenerator
      */
     private $productScopeRewriteGenerator;
 
     /**
      * @param ProductScopeRewriteGenerator $productScopeRewriteGenerator
+     * @return void
      */
     public function __construct(
         ProductScopeRewriteGenerator $productScopeRewriteGenerator
@@ -31,10 +32,10 @@ class CategoryBasedProductRewriteGenerator
     }
 
     /**
-     * Generate product url rewrites based on category
+     * Generates product url rewrites based on category
      *
-     * @param \Magento\Catalog\Model\Product $product
-     * @param \Magento\Catalog\Model\Category $category
+     * @param Product $product
+     * @param Category $category
      * @param int|null $rootCategoryId
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
      */

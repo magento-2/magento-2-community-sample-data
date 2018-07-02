@@ -80,7 +80,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     {
         $this->addChild(
             'cms_page_link',
-            \Magento\UrlRewrite\Block\Link::class,
+            'Magento\UrlRewrite\Block\Link',
             [
                 'item_url' => $this->_adminhtmlData->getUrl('adminhtml/*/*') . 'cms_page',
                 'item_name' => $this->getCmsPage()->getTitle(),
@@ -96,7 +96,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
      */
     private function _addCmsPageGridBlock()
     {
-        $this->addChild('cms_pages_grid', \Magento\UrlRewrite\Block\Cms\Page\Grid::class);
+        $this->addChild('cms_pages_grid', 'Magento\UrlRewrite\Block\Cms\Page\Grid');
     }
 
     /**
@@ -107,7 +107,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     protected function _createEditFormBlock()
     {
         return $this->getLayout()->createBlock(
-            \Magento\UrlRewrite\Block\Cms\Page\Edit\Form::class,
+            'Magento\UrlRewrite\Block\Cms\Page\Edit\Form',
             '',
             ['data' => ['cms_page' => $this->_getCmsPage(), 'url_rewrite' => $this->_getUrlRewrite()]]
         );

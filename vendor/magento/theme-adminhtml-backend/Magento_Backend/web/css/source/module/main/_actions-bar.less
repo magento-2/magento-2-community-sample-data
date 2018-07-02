@@ -31,7 +31,7 @@
         .store-switcher {
             display: none;
         }
-
+        
         .page-actions-placeholder {
             min-height: 50px;
         }
@@ -69,14 +69,12 @@
     }
 
     button,
-    .page-actions-buttons > button,
-    .page-actions-buttons > .action {
+    .page-actions-buttons > button {
         &:extend(.abs-action-l all);
     }
 
     > button,
-    .page-actions-buttons > button,
-    .page-actions-buttons > .action {
+    .page-actions-buttons > button {
         &:extend(.abs-action-quaternary all);
         float: right;
         margin-left: @_page-action__indent;
@@ -119,13 +117,6 @@
         &.delete {
             //  ToDo UI: Should be changed to ._delete
             .lib-vendor-prefix-order(-1);
-        }
-    }
-
-    .page-actions-buttons {
-        > .action-element {
-            float: right;
-            margin-left: @_page-action__indent;
         }
     }
 

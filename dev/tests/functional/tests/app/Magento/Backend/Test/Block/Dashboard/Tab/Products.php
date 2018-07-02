@@ -26,7 +26,7 @@ class Products extends Tab
     public function getBestsellersGrid()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Dashboard\Tab\Products\Ordered::class,
+            '\Magento\Backend\Test\Block\Dashboard\Tab\Products\Ordered',
             ['element' => $this->browser->find($this->orderedProductsGrid)]
         );
     }

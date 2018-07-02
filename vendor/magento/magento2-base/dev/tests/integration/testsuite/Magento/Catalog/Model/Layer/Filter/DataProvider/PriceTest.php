@@ -13,7 +13,7 @@ namespace Magento\Catalog\Model\Layer\Filter\DataProvider;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Price
@@ -23,14 +23,14 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $category->load(4);
         $layer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Catalog\Model\Layer\Category::class);
+            ->get('Magento\Catalog\Model\Layer\Category');
         $layer->setCurrentCategory($category);
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Filter\DataProvider\Price::class, ['layer' => $layer]);
+            ->create('Magento\Catalog\Model\Layer\Filter\DataProvider\Price', ['layer' => $layer]);
     }
 
     /**

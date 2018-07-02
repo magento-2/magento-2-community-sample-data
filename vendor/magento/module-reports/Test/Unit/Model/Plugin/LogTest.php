@@ -8,7 +8,7 @@ namespace Magento\Reports\Test\Unit\Model\Plugin;
 
 use Magento\Reports\Model\Plugin\Log;
 
-class LogTest extends \PHPUnit\Framework\TestCase
+class LogTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\Plugin\Log
@@ -45,20 +45,20 @@ class LogTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->eventMock = $this->getMockBuilder(\Magento\Reports\Model\Event::class)
+        $this->eventMock = $this->getMockBuilder('Magento\Reports\Model\Event')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->comparedMock = $this->getMockBuilder(\Magento\Reports\Model\Product\Index\Compared::class)
+        $this->comparedMock = $this->getMockBuilder('Magento\Reports\Model\Product\Index\Compared')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->viewedMock = $this->getMockBuilder(\Magento\Reports\Model\Product\Index\Viewed::class)
+        $this->viewedMock = $this->getMockBuilder('Magento\Reports\Model\Product\Index\Viewed')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->logResourceMock = $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\Visitor::class)
+        $this->logResourceMock = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\Visitor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->subjectMock = $this->getMockBuilder(\Magento\Customer\Model\ResourceModel\Visitor::class)
+        $this->subjectMock = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\Visitor')
             ->disableOriginalConstructor()
             ->getMock();
 

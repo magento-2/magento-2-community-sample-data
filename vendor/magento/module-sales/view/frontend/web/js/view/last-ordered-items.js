@@ -2,7 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'uiComponent',
     'Magento_Customer/js/customer-data'
@@ -10,15 +9,13 @@ define([
     'use strict';
 
     return Component.extend({
-        /** @inheritdoc */
         initialize: function () {
-            var isShowAddToCart = false,
-                item;
+            var isShowAddToCart = false;
 
             this._super();
             this.lastOrderedItems = customerData.get('last-ordered-items');
 
-            for (item in this.lastOrderedItems.items) {
+            for (var item in this.lastOrderedItems.items) {
                 if (item['is_saleable']) {
                     isShowAddToCart = true;
                     break;

@@ -8,8 +8,8 @@ namespace Magento\SalesRule\Model;
 /**
  * SalesRule Coupon Model
  *
- * @api
- * @since 100.0.2
+ * @method \Magento\SalesRule\Model\ResourceModel\Coupon _getResource()
+ * @method \Magento\SalesRule\Model\ResourceModel\Coupon getResource()
  */
 class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\SalesRule\Api\Data\CouponInterface
@@ -33,7 +33,7 @@ class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(\Magento\SalesRule\Model\ResourceModel\Coupon::class);
+        $this->_init('Magento\SalesRule\Model\ResourceModel\Coupon');
     }
 
     /**
@@ -73,7 +73,6 @@ class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Get coupon id
      *
@@ -302,6 +301,5 @@ class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

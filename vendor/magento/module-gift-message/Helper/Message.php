@@ -114,7 +114,7 @@ class Message extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$this->skipPage($type) && !$this->isMessagesAllowed($type, $entity)) {
             return '';
         }
-        return $this->_layoutFactory->create()->createBlock(\Magento\GiftMessage\Block\Message\Inline::class)
+        return $this->_layoutFactory->create()->createBlock('Magento\GiftMessage\Block\Message\Inline')
             ->setId('giftmessage_form_' . $this->_nextId++)
             ->setDontDisplayContainer($dontDisplayContainer)
             ->setEntity($entity)

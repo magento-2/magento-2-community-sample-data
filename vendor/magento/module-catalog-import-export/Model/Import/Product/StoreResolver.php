@@ -27,7 +27,6 @@ class StoreResolver
      * @var array
      */
     protected $websiteCodeToStoreIds = [];
-
     /**
      * All stores code-ID pairs.
      *

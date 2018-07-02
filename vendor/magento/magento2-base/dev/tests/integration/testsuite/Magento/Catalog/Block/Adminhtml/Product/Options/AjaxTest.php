@@ -8,7 +8,7 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Options;
 /**
  * @magentoAppArea adminhtml
  */
-class AjaxTest extends \PHPUnit\Framework\TestCase
+class AjaxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Adminhtml\Product\Options\Ajax
@@ -19,9 +19,9 @@ class AjaxTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Catalog\Block\Adminhtml\Product\Options\Ajax::class
+            'Magento\Catalog\Block\Adminhtml\Product\Options\Ajax'
         );
     }
 
@@ -39,9 +39,9 @@ class AjaxTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 
-        $objectManager->get(\Magento\Framework\Registry::class)
+        $objectManager->get('Magento\Framework\Registry')
             ->register(
                 'import_option_products',
                 [$productRepository->get('simple')->getId()]

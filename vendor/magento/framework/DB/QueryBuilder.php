@@ -83,7 +83,7 @@ class QueryBuilder
         $mapperInstance = $this->mapperFactory->create($mapper);
         $select = $mapperInstance->map($this->criteria);
         $query = $this->queryFactory->create(
-            \Magento\Framework\DB\Query::class,
+            'Magento\Framework\DB\Query',
             [
                 'select' => $select,
                 'criteria' => $this->criteria,

@@ -13,9 +13,6 @@ use Magento\Shipping\Model\Shipment\Request;
 
 /**
  * Class AbstractCarrier
- *
- * @api
- * @since 100.0.2
  */
 abstract class AbstractCarrier extends \Magento\Framework\DataObject implements AbstractCarrierInterface
 {
@@ -123,7 +120,7 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
      * Retrieve information from carrier configuration
      *
      * @param   string $field
-     * @return  false|string
+     * @return  void|false|string
      */
     public function getConfigData($field)
     {
@@ -436,6 +433,12 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
                     }
                 }
             }
+        } else {
+            /**
+             * if we can apply free shipping for all order we should force price
+             * to $0.00 for shipping with out sending second request to carrier
+             */
+            $price = 0;
         }
 
         /**
@@ -454,7 +457,7 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
      */
     public function getFinalPriceWithHandlingFee($cost)
     {
-        $handlingFee = (float)$this->getConfigData('handling_fee');
+        $handlingFee = $this->getConfigData('handling_fee');
         $handlingType = $this->getConfigData('handling_type');
         if (!$handlingType) {
             $handlingType = self::HANDLING_TYPE_FIXED;
@@ -636,7 +639,6 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
      *
      * @param string $data
      * @return string
-     * @since 100.1.0
      */
     protected function filterDebugData($data)
     {
@@ -644,8 +646,7 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
             $xml = new \SimpleXMLElement($data);
             $this->filterXmlData($xml);
             $data = $xml->asXML();
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) {}
         return $data;
     }
 
@@ -660,7 +661,7 @@ abstract class AbstractCarrier extends \Magento\Framework\DataObject implements 
         foreach ($xml->children() as $child) {
             if ($child->count()) {
                 $this->filterXmlData($child);
-            } elseif (in_array((string) $child->getName(), $this->_debugReplacePrivateDataKeys)) {
+            } else if (in_array((string) $child->getName(), $this->_debugReplacePrivateDataKeys)) {
                 $child[0] = self::DEBUG_KEYS_MASK;
             }
         }

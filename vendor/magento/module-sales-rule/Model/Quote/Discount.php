@@ -131,8 +131,6 @@ class Discount extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
             $this->calculator->processShippingAmount($address);
             $total->addTotalAmount($this->getCode(), -$address->getShippingDiscountAmount());
             $total->addBaseTotalAmount($this->getCode(), -$address->getBaseShippingDiscountAmount());
-            $total->setShippingDiscountAmount($address->getShippingDiscountAmount());
-            $total->setBaseShippingDiscountAmount($address->getBaseShippingDiscountAmount());
         }
 
         $this->calculator->prepareDescription($address);
@@ -179,7 +177,7 @@ class Discount extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
             $roundingDelta[$key] = 0.0000001;
         }
         foreach ($item->getChildren() as $child) {
-            $ratio = $parentBaseRowTotal != 0 ? $child->getBaseRowTotal() / $parentBaseRowTotal : 0;
+            $ratio = $child->getBaseRowTotal() / $parentBaseRowTotal;
             foreach ($keys as $key) {
                 if (!$item->hasData($key)) {
                     continue;

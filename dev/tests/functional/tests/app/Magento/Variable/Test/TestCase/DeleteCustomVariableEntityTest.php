@@ -22,13 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click 'Delete' button.
  * 5. Perform asserts.
  *
- * @group Variables
+ * @group Variables_(PS)
  * @ZephyrId MAGETWO-25535
  */
 class DeleteCustomVariableEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

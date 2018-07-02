@@ -8,10 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Image;
 use Magento\Framework\App\Area;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class CacheTest extends \PHPUnit\Framework\TestCase
+class CacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -55,32 +52,32 @@ class CacheTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->product = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->viewConfig = $this->getMockBuilder(\Magento\Framework\View\ConfigInterface::class)
+        $this->viewConfig = $this->getMockBuilder('Magento\Framework\View\ConfigInterface')
             ->getMockForAbstractClass();
 
-        $this->config = $this->getMockBuilder(\Magento\Framework\Config\View::class)
+        $this->config = $this->getMockBuilder('Magento\Framework\Config\View')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->themeCollection = $this->getMockBuilder(\Magento\Theme\Model\ResourceModel\Theme\Collection::class)
+        $this->themeCollection = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->imageHelper = $this->getMockBuilder(\Magento\Catalog\Helper\Image::class)
+        $this->imageHelper = $this->getMockBuilder('Magento\Catalog\Helper\Image')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mediaGalleryCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
+        $this->mediaGalleryCollection = $this->getMockBuilder('Magento\Framework\Data\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->objectManager = new ObjectManager($this);
         $this->model = $this->objectManager->getObject(
-            \Magento\Catalog\Model\Product\Image\Cache::class,
+            'Magento\Catalog\Model\Product\Image\Cache',
             [
                 'viewConfig' => $this->viewConfig,
                 'themeCollection' => $this->themeCollection,
@@ -96,7 +93,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
     {
         $imageFile = 'image.jpg';
         $imageItem = $this->objectManager->getObject(
-            \Magento\Framework\DataObject::class,
+            'Magento\Framework\DataObject',
             [
                 'data' => ['file' => $imageFile]
             ]
@@ -115,7 +112,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
             ->with('Magento_Catalog')
             ->willReturn($data);
 
-        $themeMock = $this->getMockBuilder(\Magento\Theme\Model\Theme::class)
+        $themeMock = $this->getMockBuilder('Magento\Theme\Model\Theme')
             ->disableOriginalConstructor()
             ->getMock();
         $themeMock->expects($this->exactly(3))
@@ -185,58 +182,6 @@ class CacheTest extends \PHPUnit\Framework\TestCase
         $this->imageHelper->expects($this->exactly(3))
             ->method('save')
             ->will($this->returnSelf());
-
-        $this->model->generate($this->product);
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Exception\RuntimeException
-     */
-    public function testGenerateWithException()
-    {
-        $imageFile = 'image.jpg';
-        $imageItem = $this->objectManager->getObject(
-            \Magento\Framework\DataObject::class,
-            [
-                'data' => ['file' => $imageFile]
-            ]
-        );
-        $this->mediaGalleryCollection->expects($this->once())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([$imageItem]));
-
-        $this->product->expects($this->atLeastOnce())
-            ->method('getMediaGalleryImages')
-            ->willReturn($this->mediaGalleryCollection);
-
-        $data = $this->getTestData();
-        $this->config->expects($this->once())
-            ->method('getMediaEntities')
-            ->with('Magento_Catalog')
-            ->willReturn($data);
-
-        $themeMock = $this->getMockBuilder(\Magento\Theme\Model\Theme::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $themeMock->expects($this->exactly(3))
-            ->method('getCode')
-            ->willReturn('Magento\theme');
-
-        $this->themeCollection->expects($this->once())
-            ->method('loadRegisteredThemes')
-            ->willReturn([$themeMock]);
-
-        $this->viewConfig->expects($this->once())
-            ->method('getViewConfig')
-            ->with([
-                'area' => Area::AREA_FRONTEND,
-                'themeModel' => $themeMock,
-            ])
-            ->willReturn($this->config);
-
-        $this->imageHelper->expects($this->exactly(3))
-            ->method('init')
-            ->willThrowException(new \Exception('Some text '));
 
         $this->model->generate($this->product);
     }

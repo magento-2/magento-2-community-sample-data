@@ -7,90 +7,193 @@ namespace Magento\Store\App\Config\Source;
 
 use Magento\Framework\App\Config\ConfigSourceInterface;
 use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Store\Model\Group;
+use Magento\Store\Model\ResourceModel\Website\CollectionFactory as WebsiteCollectionFactory;
+use Magento\Store\Model\ResourceModel\Group\CollectionFactory as GroupCollectionFactory;
+use Magento\Store\Model\ResourceModel\Store\CollectionFactory as StoreCollectionFactory;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\Website;
+use Magento\Store\Model\WebsiteFactory;
+use Magento\Store\Model\GroupFactory;
+use Magento\Store\Model\StoreFactory;
 
 /**
- * Config source. Retrieve all configuration for scopes from db
+ * Class RuntimeConfigSource
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RuntimeConfigSource implements ConfigSourceInterface
 {
+    /**
+     * @var WebsiteCollectionFactory
+     */
+    private $websiteCollectionFactory;
+
+    /**
+     * @var GroupCollectionFactory
+     */
+    private $groupCollectionFactory;
+
+    /**
+     * @var StoreCollectionFactory
+     */
+    private $storeCollectionFactory;
+
     /**
      * @var DeploymentConfig
      */
     private $deploymentConfig;
 
     /**
-     * @var ResourceConnection
+     * @var WebsiteFactory
      */
-    private $resourceConnection;
+    private $websiteFactory;
 
     /**
-     * @var AdapterInterface
+     * @var GroupFactory
      */
-    private $connection;
+    private $groupFactory;
 
     /**
+     * @var StoreFactory
+     */
+    private $storeFactory;
+
+    /**
+     * DynamicDataProvider constructor.
+     *
+     * @param WebsiteCollectionFactory $websiteCollectionFactory
+     * @param GroupCollectionFactory $groupCollectionFactory
+     * @param StoreCollectionFactory $storeCollectionFactory
+     * @param WebsiteFactory $websiteFactory
+     * @param GroupFactory $groupFactory
+     * @param StoreFactory $storeFactory
      * @param DeploymentConfig $deploymentConfig
-     * @param ResourceConnection $resourceConnection
      */
     public function __construct(
-        DeploymentConfig $deploymentConfig,
-        ResourceConnection $resourceConnection
+        WebsiteCollectionFactory $websiteCollectionFactory,
+        GroupCollectionFactory $groupCollectionFactory,
+        StoreCollectionFactory $storeCollectionFactory,
+        WebsiteFactory $websiteFactory,
+        GroupFactory $groupFactory,
+        StoreFactory $storeFactory,
+        DeploymentConfig $deploymentConfig
     ) {
+        $this->websiteCollectionFactory = $websiteCollectionFactory;
+        $this->groupCollectionFactory = $groupCollectionFactory;
+        $this->storeCollectionFactory = $storeCollectionFactory;
         $this->deploymentConfig = $deploymentConfig;
-        $this->resourceConnection = $resourceConnection;
+        $this->websiteFactory = $websiteFactory;
+        $this->groupFactory = $groupFactory;
+        $this->storeFactory = $storeFactory;
     }
 
     /**
-     * Return whole scopes config data from db.
-     * Ignore $path argument due to config source must return all config data
-     *
-     * @param string $path
-     * @return array
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @inheritdoc
      */
     public function get($path = '')
     {
+        if (strpos($path, '/') === false) {
+            $scopePool = $path;
+            $scopeCode = null;
+        } else {
+            list($scopePool, $scopeCode) = explode('/', $path);
+        }
+
+        $data = [];
         if ($this->canUseDatabase()) {
-            return [
-                'websites' => $this->getEntities('store_website', 'code'),
-                'groups' => $this->getEntities('store_group', 'group_id'),
-                'stores' => $this->getEntities('store', 'code'),
-            ];
+            switch ($scopePool) {
+                case 'websites':
+                    $data['websites'] = $this->getWebsitesData($scopeCode);
+                    break;
+                case 'groups':
+                    $data['groups'] = $this->getGroupsData($scopeCode);
+                    break;
+                case 'stores':
+                    $data['stores'] = $this->getStoresData($scopeCode);
+                    break;
+                default:
+                    $data = [
+                        'websites' => $this->getWebsitesData(),
+                        'groups' => $this->getGroupsData(),
+                        'stores' => $this->getStoresData(),
+                    ];
+                    break;
+            }
         }
 
-        return [];
+        return $data;
     }
 
     /**
-     * @return AdapterInterface
-     */
-    private function getConnection()
-    {
-        if (null === $this->connection) {
-            $this->connection = $this->resourceConnection->getConnection();
-        }
-        return $this->connection;
-    }
-
-    /**
-     * Get entities from specified table in format [entityKeyField => [entity data], ...]
-     *
-     * @param string $table
-     * @param string $keyField
+     * @param string|null $code
      * @return array
      */
-    private function getEntities($table, $keyField)
+    private function getWebsitesData($code = null)
     {
-        $entities = $this->getConnection()->fetchAll(
-            $this->getConnection()->select()->from($this->resourceConnection->getTableName($table))
-        );
-        $data = [];
-        foreach ($entities as $entity) {
-            $data[$entity[$keyField]] = $entity;
+        if ($code !== null) {
+            $website = $this->websiteFactory->create();
+            $website->load($code);
+            $data[$code] = $website->getData();
+        } else {
+            $collection = $this->websiteCollectionFactory->create();
+            $collection->setLoadDefault(true);
+            $data = [];
+            /** @var Website $website */
+            foreach ($collection as $website) {
+                $data[$website->getCode()] = $website->getData();
+            }
         }
+        return $data;
+    }
 
+    /**
+     * @param string|null $id
+     * @return array
+     */
+    private function getGroupsData($id = null)
+    {
+        if ($id !== null) {
+            $group = $this->groupFactory->create();
+            $group->load($id);
+            $data[$id] = $group->getData();
+        } else {
+            $collection = $this->groupCollectionFactory->create();
+            $collection->setLoadDefault(true);
+            $data = [];
+            /** @var Group $group */
+            foreach ($collection as $group) {
+                $data[$group->getId()] = $group->getData();
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * @param string|null $code
+     * @return array
+     */
+    private function getStoresData($code = null)
+    {
+        if ($code !== null) {
+            $store = $this->storeFactory->create();
+
+            if (is_numeric($code)) {
+                $store->load($code);
+            } else {
+                $store->load($code, 'code');
+            }
+
+            $data[$code] = $store->getData();
+        } else {
+            $collection = $this->storeCollectionFactory->create();
+            $collection->setLoadDefault(true);
+            $data = [];
+            /** @var Store $store */
+            foreach ($collection as $store) {
+                $data[$store->getCode()] = $store->getData();
+            }
+            return $data;
+        }
         return $data;
     }
 

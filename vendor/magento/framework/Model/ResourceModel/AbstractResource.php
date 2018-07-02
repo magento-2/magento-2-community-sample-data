@@ -5,32 +5,16 @@
  */
 namespace Magento\Framework\Model\ResourceModel;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\CallbackPool;
-use Magento\Framework\Serialize\Serializer\Json;
-use Psr\Log\LoggerInterface;
 
 /**
  * Abstract resource model
- *
- * @api
  */
 abstract class AbstractResource
 {
     /**
-     * @var Json
-     * @since 100.2.0
-     */
-    protected $serializer;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Constructor
+     * Main constructor
      */
     public function __construct()
     {
@@ -52,7 +36,7 @@ abstract class AbstractResource
      *
      * @return \Magento\Framework\DB\Adapter\AdapterInterface
      */
-    abstract public function getConnection();
+    abstract protected function getConnection();
 
     /**
      * Start resource transaction
@@ -98,7 +82,7 @@ abstract class AbstractResource
                     call_user_func($callback);
                 }
             } catch (\Exception $e) {
-                $this->getLogger()->critical($e);
+                throw $e;
             }
         }
         return $this;
@@ -132,7 +116,7 @@ abstract class AbstractResource
         if (empty($value) && $unsetEmpty) {
             $object->unsetData($field);
         } else {
-            $object->setData($field, $this->getSerializer()->serialize($value ?: $defaultValue));
+            $object->setData($field, serialize($value ?: $defaultValue));
         }
 
         return $this;
@@ -149,15 +133,16 @@ abstract class AbstractResource
     protected function _unserializeField(DataObject $object, $field, $defaultValue = null)
     {
         $value = $object->getData($field);
+
         if ($value) {
-            $value = $this->getSerializer()->unserialize($object->getData($field));
-            if (empty($value)) {
-                $object->setData($field, $defaultValue);
-            } else {
-                $object->setData($field, $value);
-            }
-        } else {
+            $unserializedValue = @unserialize($value);
+            $value = $unserializedValue !== false || $value === 'b:0;' ? $unserializedValue : $value;
+        }
+
+        if (empty($value)) {
             $object->setData($field, $defaultValue);
+        } else {
+            $object->setData($field, $value);
         }
     }
 
@@ -202,7 +187,7 @@ abstract class AbstractResource
         $type = strtolower($type);
         if ($type == 'decimal' || $type == 'numeric' || $type == 'float') {
             $value = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Locale\FormatInterface::class
+                'Magento\Framework\Locale\FormatInterface'
             )->getNumber(
                 $value
             );
@@ -242,35 +227,5 @@ abstract class AbstractResource
             $columns = empty($fieldsetColumns) ? '*' : [$object->getIdFieldName()];
         }
         return $columns;
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return Json
-     * @deprecated 100.2.0
-     * @since 100.2.0
-     */
-    protected function getSerializer()
-    {
-        if (null === $this->serializer) {
-            $this->serializer = ObjectManager::getInstance()->get(Json::class);
-        }
-        return $this->serializer;
-    }
-
-    /**
-     * Get logger
-     *
-     * @return LoggerInterface
-     * @deprecated 100.2.0
-     * @since 100.2.0
-     */
-    private function getLogger()
-    {
-        if (null === $this->logger) {
-            $this->logger = ObjectManager::getInstance()->get(LoggerInterface::class);
-        }
-        return $this->logger;
     }
 }

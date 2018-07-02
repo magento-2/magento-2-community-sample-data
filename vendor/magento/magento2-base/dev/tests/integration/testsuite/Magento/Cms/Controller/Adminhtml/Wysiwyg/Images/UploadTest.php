@@ -9,9 +9,9 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload class.
+ * Tests Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload.
  */
-class UploadTest extends \PHPUnit\Framework\TestCase
+class UploadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload

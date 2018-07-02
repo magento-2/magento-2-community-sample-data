@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\View;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\Serializer\Json;
-
 /**
  * Class DesignExceptions
  */
@@ -35,28 +32,18 @@ class DesignExceptions
     protected $scopeType;
 
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
-     * DesignExceptions constructor
-     *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param string $exceptionConfigPath
      * @param string $scopeType
-     * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         $exceptionConfigPath,
-        $scopeType,
-        Json $serializer = null
+        $scopeType
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->exceptionConfigPath = $exceptionConfigPath;
         $this->scopeType = $scopeType;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
     /**
@@ -78,7 +65,7 @@ class DesignExceptions
         if (!$expressions) {
             return false;
         }
-        $expressions = $this->serializer->unserialize($expressions);
+        $expressions = unserialize($expressions);
         foreach ($expressions as $rule) {
             if (preg_match($rule['regexp'], $userAgent)) {
                 return $rule['value'];

@@ -118,7 +118,7 @@ class Samples extends \Magento\Backend\Block\Widget
     public function getAddButtonHtml()
     {
         $addButton = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             [
                 'label' => __('Add New Link'),
@@ -220,7 +220,7 @@ class Samples extends \Magento\Backend\Block\Widget
     {
         $this->addChild(
             'upload_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'id' => '',
                 'label' => __('Upload Files'),

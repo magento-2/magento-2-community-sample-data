@@ -11,14 +11,12 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\Argument\BoundArgument;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Compiler\CheckExceptionOnInvalidReferenceBehaviorPass;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class CheckExceptionOnInvalidReferenceBehaviorPassTest extends TestCase
+class CheckExceptionOnInvalidReferenceBehaviorPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
@@ -29,10 +27,6 @@ class CheckExceptionOnInvalidReferenceBehaviorPassTest extends TestCase
             ->addArgument(new Reference('b'))
         ;
         $container->register('b', '\stdClass');
-
-        $this->process($container);
-
-        $this->addToAssertionCount(1);
     }
 
     /**
@@ -66,41 +60,6 @@ class CheckExceptionOnInvalidReferenceBehaviorPassTest extends TestCase
         ;
 
         $this->process($container);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid ignore-on-uninitialized reference found in service
-     */
-    public function testProcessThrowsExceptionOnNonSharedUninitializedReference()
-    {
-        $container = new ContainerBuilder();
-
-        $container
-            ->register('a', 'stdClass')
-            ->addArgument(new Reference('b', $container::IGNORE_ON_UNINITIALIZED_REFERENCE))
-        ;
-
-        $container
-            ->register('b', 'stdClass')
-            ->setShared(false)
-        ;
-
-        $this->process($container);
-    }
-
-    public function testProcessDefinitionWithBindings()
-    {
-        $container = new ContainerBuilder();
-
-        $container
-            ->register('b')
-            ->setBindings(array(new BoundArgument(new Reference('a'))))
-        ;
-
-        $this->process($container);
-
-        $this->addToAssertionCount(1);
     }
 
     private function process(ContainerBuilder $container)

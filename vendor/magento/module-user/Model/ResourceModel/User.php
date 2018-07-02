@@ -9,20 +9,19 @@ namespace Magento\User\Model\ResourceModel;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use Magento\Authorization\Model\Acl\Role\User as RoleUser;
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Framework\Acl\Data\CacheInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\User\Model\Backend\Config\ObserverConfig;
 use Magento\User\Model\User as ModelUser;
 
 /**
  * ACL user resource
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     * @var \Magento\Framework\Acl\CacheInterface
+     */
+    protected $_aclCache;
+
     /**
      * Role model
      *
@@ -36,38 +35,25 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $dateTime;
 
     /**
-     * @var CacheInterface
-     */
-    private $aclDataCache;
-
-    /**
-     * @var ObserverConfig|null
-     */
-    private $observerConfig;
-
-    /**
      * Construct
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Framework\Acl\CacheInterface $aclCache
      * @param \Magento\Authorization\Model\RoleFactory $roleFactory
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param string $connectionName
-     * @param CacheInterface $aclDataCache
-     * @param ObserverConfig|null $observerConfig
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\Acl\CacheInterface $aclCache,
         \Magento\Authorization\Model\RoleFactory $roleFactory,
         \Magento\Framework\Stdlib\DateTime $dateTime,
-        $connectionName = null,
-        CacheInterface $aclDataCache = null,
-        ObserverConfig $observerConfig = null
+        $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
+        $this->_aclCache = $aclCache;
         $this->_roleFactory = $roleFactory;
         $this->dateTime = $dateTime;
-        $this->aclDataCache = $aclDataCache ?: ObjectManager::getInstance()->get(CacheInterface::class);
-        $this->observerConfig = $observerConfig ?: ObjectManager::getInstance()->get(ObserverConfig::class);
     }
 
     /**
@@ -176,7 +162,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $user)
     {
-        $user->setExtra($this->getSerializer()->unserialize($user->getExtra()));
+        $user->setExtra(unserialize($user->getExtra()));
         if ($user->hasRoleId()) {
             $this->_clearUserRoles($user);
             $this->_createUserRole($user->getRoleId(), $user);
@@ -222,13 +208,13 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     'role_type' => RoleUser::ROLE_TYPE,
                     'user_id' => $user->getId(),
                     'user_type' => UserContextInterface::USER_TYPE_ADMIN,
-                    'role_name' => $user->getFirstName(),
+                    'role_name' => $user->getFirstname(),
                 ]
             );
 
             $insertData = $this->_prepareDataForTable($data, $this->getTable('authorization_role'));
             $this->getConnection()->insert($this->getTable('authorization_role'), $insertData);
-            $this->aclDataCache->clean();
+            $this->_aclCache->clean();
         }
     }
 
@@ -241,7 +227,7 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $user)
     {
         if (is_string($user->getExtra())) {
-            $user->setExtra($this->getSerializer()->unserialize($user->getExtra()));
+            $user->setExtra(unserialize($user->getExtra()));
         }
         return parent::_afterLoad($user);
     }
@@ -569,14 +555,12 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 ->select()
                 ->from($table, 'password_id')
                 ->where('user_id = :user_id')
+                ->order('expires ' . \Magento\Framework\DB\Select::SQL_DESC)
                 ->order('password_id ' . \Magento\Framework\DB\Select::SQL_DESC)
                 ->limit($retainLimit),
             [':user_id' => $userId]
         );
-        $where = [
-            'user_id = ?' => $userId,
-            'last_updated <= ?' => time() - $this->observerConfig->getAdminPasswordLifetime()
-        ];
+        $where = ['user_id = ?' => $userId, 'expires <= ?' => time()];
         if ($retainPasswordIds) {
             $where['password_id NOT IN (?)'] = $retainPasswordIds;
         }
@@ -597,21 +581,19 @@ class User extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param ModelUser $user
      * @param string $passwordHash
-     * @param int $lifetime deprecated, password expiration date doesn't save anymore,
-     *        it is calculated in runtime based on password created date and lifetime config value
+     * @param int $lifetime
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @see \Magento\User\Model\Backend\Config\ObserverConfig::_isLatestPasswordExpired()
      */
-    public function trackPassword($user, $passwordHash, $lifetime = 0)
+    public function trackPassword($user, $passwordHash, $lifetime)
     {
+        $now = time();
         $this->getConnection()->insert(
             $this->getTable('admin_passwords'),
             [
                 'user_id' => $user->getId(),
                 'password_hash' => $passwordHash,
-                'last_updated' => time()
+                'expires' => $now + $lifetime,
+                'last_updated' => $now
             ]
         );
     }

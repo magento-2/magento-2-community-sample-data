@@ -45,7 +45,7 @@ class Samples extends Form
     {
         $element = $element ?: $this->_rootElement;
         return $this->blockFactory->create(
-            \Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Downloadable\SampleRow::class,
+            'Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Downloadable\SampleRow',
             ['element' => $element->find(sprintf($this->rowBlock, ++$index))]
         );
     }
@@ -66,7 +66,7 @@ class Samples extends Form
             $element->find($this->addNewSampleRow)->click();
 
             if (isset($sample['sort_order'])) {
-                $currentSortOrder = (int)$sample['sort_order'] - 1;
+                $currentSortOrder = (int)$sample['sort_order'];
                 unset($sample['sort_order']);
             } else {
                 $currentSortOrder = 0;
@@ -94,7 +94,7 @@ class Samples extends Form
             unset($sample['sort_order']);
             $processedSample = $this->getRowBlock($index, $element)
                 ->getDataSampleRow($sample);
-            $processedSample['sort_order'] = $index + 1;
+            $processedSample['sort_order'] = $index;
             $newFields['downloadable']['sample'][$index] = $processedSample;
         }
         return $newFields;

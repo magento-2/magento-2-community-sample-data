@@ -8,9 +8,6 @@ namespace Magento\Framework\View\Layout\Reader;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\Page;
 
-/**
- * @api
- */
 class Context
 {
     /**

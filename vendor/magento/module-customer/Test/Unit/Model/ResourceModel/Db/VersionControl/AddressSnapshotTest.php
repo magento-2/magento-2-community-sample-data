@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel\Db\VersionControl;
 
 use Magento\Customer\Model\ResourceModel\Db\VersionControl\AddressSnapshot;
 
-class AddressSnapshotTest extends \PHPUnit\Framework\TestCase
+class AddressSnapshotTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AddressSnapshot
@@ -21,9 +21,9 @@ class AddressSnapshotTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->metadataMock = $this->getMockBuilder(
-            \Magento\Framework\Model\ResourceModel\Db\VersionControl\Metadata::class
-        )->disableOriginalConstructor()->getMock();
+        $this->metadataMock = $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\VersionControl\Metadata')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = new AddressSnapshot(
             $this->metadataMock
@@ -45,7 +45,7 @@ class AddressSnapshotTest extends \PHPUnit\Framework\TestCase
     ) {
         $entityId = 1;
 
-        $dataObjectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $dataObjectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getId',
@@ -102,7 +102,7 @@ class AddressSnapshotTest extends \PHPUnit\Framework\TestCase
 
     public function testIsModifiedBypass()
     {
-        $dataObjectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $dataObjectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getId',

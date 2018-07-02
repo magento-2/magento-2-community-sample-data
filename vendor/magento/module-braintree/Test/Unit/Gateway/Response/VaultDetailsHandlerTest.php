@@ -8,7 +8,7 @@ namespace Magento\Braintree\Test\Unit\Gateway\Response;
 use Braintree\Transaction;
 use Braintree\Transaction\CreditCardDetails;
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Response\VaultDetailsHandler;
 use Magento\Framework\DataObject;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
@@ -25,7 +25,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
+class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const TRANSACTION_ID = '432erwwe';
 
@@ -71,7 +71,7 @@ class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentToken = $this->createMock(PaymentTokenInterface::class);
+        $this->paymentToken = $this->getMock(PaymentTokenInterface::class);
         $this->paymentTokenFactory = $this->getMockBuilder(CreditCardTokenFactory::class)
             ->setMethods(['create'])
             ->disableOriginalConstructor()
@@ -122,14 +122,11 @@ class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getCctypesMapper')
             ->willReturn($mapperArray);
 
-        $this->serializer = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
-
         $this->paymentHandler = new VaultDetailsHandler(
             $this->paymentTokenFactory,
             $this->paymentExtensionFactory,
             $this->config,
-            $this->subjectReader,
-            $this->serializer
+            $this->subjectReader
         );
     }
 

@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Class ReadTest
  * Test for Magento\Framework\Filesystem\Directory\Read class
  */
-class WriteTest extends \PHPUnit\Framework\TestCase
+class WriteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test data to be cleaned
@@ -385,7 +385,7 @@ class WriteTest extends \PHPUnit\Framework\TestCase
         $fullPath = __DIR__ . '/../_files/' . $path;
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Framework\Filesystem\Directory\WriteFactory $directoryFactory */
-        $directoryFactory = $objectManager->create(\Magento\Framework\Filesystem\Directory\WriteFactory::class);
+        $directoryFactory = $objectManager->create('Magento\Framework\Filesystem\Directory\WriteFactory');
         $directory = $directoryFactory->create($fullPath, DriverPool::FILE, $permissions);
         $this->testDirectories[] = $directory;
         return $directory;

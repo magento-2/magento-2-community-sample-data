@@ -6,13 +6,11 @@
 namespace Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Catalog Product Eav Attributes abstract indexer resource model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\AbstractIndexer
 {
@@ -24,13 +22,13 @@ abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\
     protected $_eventManager = null;
 
     /**
-     * AbstractEav constructor.
+     * Construct
+     *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Framework\Indexer\Table\StrategyInterface $tableStrategy
      * @param \Magento\Eav\Model\Config $eavConfig
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
-     * @param null $connectionName
-     * @param \Magento\Indexer\Model\Indexer\StateFactory|null $stateFactory
+     * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
@@ -77,11 +75,40 @@ abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\
      */
     public function reindexEntities($processIds)
     {
+        $connection = $this->getConnection();
+
         $this->clearTemporaryIndexTable();
+
+        if (!is_array($processIds)) {
+            $processIds = [$processIds];
+        }
+
+        $parentIds = $this->getRelationsByChild($processIds);
+        if ($parentIds) {
+            $processIds = array_unique(array_merge($processIds, $parentIds));
+        }
+        $childIds = $this->getRelationsByParent($processIds);
+        if ($childIds) {
+            $processIds = array_unique(array_merge($processIds, $childIds));
+        }
 
         $this->_prepareIndex($processIds);
         $this->_prepareRelationIndex($processIds);
         $this->_removeNotVisibleEntityFromIndex();
+
+        $connection->beginTransaction();
+        try {
+            // remove old index
+            $where = $connection->quoteInto('entity_id IN(?)', $processIds);
+            $connection->delete($this->getMainTable(), $where);
+
+            // insert new index
+            $this->insertFromTable($this->getIdxTable(), $this->getMainTable());
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
+        }
         return $this;
     }
 
@@ -191,8 +218,7 @@ abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\
             ]
         );
         if ($parentIds !== null) {
-            $ids = implode(',', array_map('intval', $parentIds));
-            $select->where("e.entity_id IN({$ids})");
+            $select->where('e.entity_id IN(?)', $parentIds);
         }
 
         /**
@@ -245,8 +271,6 @@ abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\
             'ca.is_filterable_in_search > 0',
             'ca.is_visible_in_advanced_search > 0',
             'ca.is_filterable > 0',
-            // Visibility is attribute that isn't used by search, but required to determine is product should be shown
-            "ea.attribute_code = 'visibility'"
         ];
 
         return implode(' OR ', $conditions);

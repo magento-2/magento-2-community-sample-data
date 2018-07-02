@@ -44,14 +44,13 @@ class Upload extends \Magento\Backend\App\Action
     }
 
     /**
-     * Upload file controller action
+     * Upload file controller action.
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
         $imageId = $this->_request->getParam('param_name', 'image');
-
         try {
             $result = $this->imageUploader->saveFileToTmpDir($imageId);
 

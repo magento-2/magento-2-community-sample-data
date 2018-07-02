@@ -126,7 +126,7 @@ abstract class AssertTaxRuleApplying extends AbstractConstraint
         $this->productSimple->persist();
         // Customer login
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         // Clearing shopping cart and adding product to shopping cart

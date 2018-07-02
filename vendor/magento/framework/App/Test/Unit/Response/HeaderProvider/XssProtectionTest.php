@@ -9,7 +9,7 @@ namespace Magento\Framework\App\Test\Unit\Response\HeaderProvider;
 use Magento\Framework\App\Response\HeaderProvider\XssProtection;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class XssProtectionTest extends \PHPUnit\Framework\TestCase
+class XssProtectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider userAgentDataProvider
@@ -18,12 +18,12 @@ class XssProtectionTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetValue($userAgent, $expectedHeader)
     {
-        $headerServiceMock = $this->getMockBuilder(\Magento\Framework\HTTP\Header::class)
+        $headerServiceMock = $this->getMockBuilder('Magento\Framework\HTTP\Header')
             ->disableOriginalConstructor()
             ->getMock();
         $headerServiceMock->expects($this->once())->method('getHttpUserAgent')->willReturn($userAgent);
         $model = (new ObjectManager($this))->getObject(
-            \Magento\Framework\App\Response\HeaderProvider\XssProtection::class,
+            'Magento\Framework\App\Response\HeaderProvider\XssProtection',
             ['headerService' => $headerServiceMock]
         );
         $this->assertSame($expectedHeader, $model->getValue());

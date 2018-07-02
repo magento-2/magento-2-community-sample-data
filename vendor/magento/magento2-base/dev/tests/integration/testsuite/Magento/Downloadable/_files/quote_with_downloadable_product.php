@@ -9,12 +9,12 @@ require __DIR__ . '/product_downloadable.php';
 $product->load(1);
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
 $quote->setCustomerIsGuest(
     true
 )->setStoreId(
     \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
+        'Magento\Store\Model\StoreManagerInterface'
     )->getStore()->getId()
 )->setReservedOrderId(
     'reserved_order_id_1'
@@ -31,7 +31,7 @@ $quote->save();
 
 /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
 $quoteIdMask = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)
+    ->create('Magento\Quote\Model\QuoteIdMaskFactory')
     ->create();
 $quoteIdMask->setQuoteId($quote->getId());
 $quoteIdMask->setDataChanges(true);

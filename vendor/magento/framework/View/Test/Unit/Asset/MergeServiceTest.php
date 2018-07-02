@@ -18,9 +18,8 @@ use Magento\Framework\View\Asset\MergeStrategy\FileExists;
 
 /**
  * Class MergeServiceTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MergeServiceTest extends \PHPUnit\Framework\TestCase
+class MergeServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var MergeService
@@ -97,8 +96,8 @@ class MergeServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetMergedAssets(array $assets, $contentType, $appMode, $mergeStrategy)
     {
-        $mergedAsset = $this->createMock(AssetInterface::class);
-        $mergeStrategyMock = $this->createMock($mergeStrategy);
+        $mergedAsset = $this->getMock(AssetInterface::class);
+        $mergeStrategyMock = $this->getMock($mergeStrategy, [], [], '', false);
 
         $this->configMock->expects($this->once())->method('isMergeCssFiles')->willReturn(true);
         $this->configMock->expects($this->once())->method('isMergeJsFiles')->willReturn(true);

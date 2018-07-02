@@ -7,10 +7,6 @@ namespace Magento\Framework\ObjectManager;
 
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Interface \Magento\Framework\ObjectManager\FactoryInterface
- *
- */
 interface FactoryInterface
 {
     /**

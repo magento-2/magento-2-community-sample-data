@@ -5,10 +5,6 @@
  */
 namespace Magento\Backend\Block;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Cache extends \Magento\Backend\Block\Widget\Grid\Container
 {
     /**
@@ -22,29 +18,24 @@ class Cache extends \Magento\Backend\Block\Widget\Grid\Container
         $this->_headerText = __('Cache Storage Management');
         parent::_construct();
         $this->buttonList->remove('add');
+        $this->buttonList->add(
+            'flush_magento',
+            [
+                'label' => __('Flush Magento Cache'),
+                'onclick' => 'setLocation(\'' . $this->getFlushSystemUrl() . '\')',
+                'class' => 'primary flush-cache-magento'
+            ]
+        );
 
-        if ($this->_authorization->isAllowed('Magento_Backend::flush_magento_cache')) {
-            $this->buttonList->add(
-                'flush_magento',
-                [
-                    'label' => __('Flush Magento Cache'),
-                    'onclick' => 'setLocation(\'' . $this->getFlushSystemUrl() . '\')',
-                    'class' => 'primary flush-cache-magento'
-                ]
-            );
-        }
-
-        if ($this->_authorization->isAllowed('Magento_Backend::flush_cache_storage')) {
-            $message = __('The cache storage may contain additional data. Are you sure that you want to flush it?');
-            $this->buttonList->add(
-                'flush_system',
-                [
-                    'label' => __('Flush Cache Storage'),
-                    'onclick' => 'confirmSetLocation(\'' . $message . '\', \'' . $this->getFlushStorageUrl() . '\')',
-                    'class' => 'flush-cache-storage'
-                ]
-            );
-        }
+        $message = __('The cache storage may contain additional data. Are you sure that you want to flush it?');
+        $this->buttonList->add(
+            'flush_system',
+            [
+                'label' => __('Flush Cache Storage'),
+                'onclick' => 'confirmSetLocation(\'' . $message . '\', \'' . $this->getFlushStorageUrl() . '\')',
+                'class' => 'flush-cache-storage'
+            ]
+        );
     }
 
     /**

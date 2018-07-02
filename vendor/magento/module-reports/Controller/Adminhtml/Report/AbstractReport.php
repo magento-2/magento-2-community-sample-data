@@ -13,14 +13,10 @@ namespace Magento\Reports\Controller\Adminhtml\Report;
 
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractReport extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
@@ -74,7 +70,7 @@ abstract class AbstractReport extends \Magento\Backend\App\Action
     protected function _getSession()
     {
         if ($this->_adminSession === null) {
-            $this->_adminSession = $this->_objectManager->get(\Magento\Backend\Model\Auth\Session::class);
+            $this->_adminSession = $this->_objectManager->get('Magento\Backend\Model\Auth\Session');
         }
         return $this->_adminSession;
     }
@@ -104,7 +100,7 @@ abstract class AbstractReport extends \Magento\Backend\App\Action
         }
 
         $requestData = $this->_objectManager->get(
-            \Magento\Backend\Helper\Data::class
+            'Magento\Backend\Helper\Data'
         )->prepareFilterString(
             $this->getRequest()->getParam('filter')
         );
@@ -142,9 +138,7 @@ abstract class AbstractReport extends \Magento\Backend\App\Action
      */
     protected function _showLastExecutionTime($flagCode, $refreshCode)
     {
-        $flag = $this->_objectManager->create(\Magento\Reports\Model\Flag::class)
-            ->setReportFlagCode($flagCode)
-            ->loadSelf();
+        $flag = $this->_objectManager->create('Magento\Reports\Model\Flag')->setReportFlagCode($flagCode)->loadSelf();
         $updatedAt = 'undefined';
         if ($flag->hasData()) {
             $updatedAt =  $this->timezone->formatDate(

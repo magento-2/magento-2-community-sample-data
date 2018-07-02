@@ -9,7 +9,7 @@ namespace Magento\Framework\Validator\Test\Unit;
 /**
  * Test case for \Magento\Framework\Validator\StringLength
  */
-class StringLengthTest extends \PHPUnit\Framework\TestCase
+class StringLengthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Validator\StringLength

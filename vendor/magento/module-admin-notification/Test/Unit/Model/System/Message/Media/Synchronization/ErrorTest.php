@@ -5,7 +5,7 @@
  */
 namespace Magento\AdminNotification\Test\Unit\Model\System\Message\Media\Synchronization;
 
-class ErrorTest extends \PHPUnit\Framework\TestCase
+class ErrorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -24,18 +24,15 @@ class ErrorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_syncFlagMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\Flag::class,
-            ['setState', 'save', 'getFlagData']
-        );
+        $this->_syncFlagMock = $this->getMock('Magento\MediaStorage\Model\File\Storage\Flag', [], [], '', false);
 
-        $this->_fileStorage = $this->createMock(\Magento\MediaStorage\Model\File\Storage\Flag::class);
+        $this->_fileStorage = $this->getMock('Magento\MediaStorage\Model\File\Storage\Flag', [], [], '', false);
         $this->_fileStorage->expects($this->any())->method('loadSelf')->will($this->returnValue($this->_syncFlagMock));
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = ['fileStorage' => $this->_fileStorage];
         $this->_model = $objectManagerHelper->getObject(
-            \Magento\AdminNotification\Model\System\Message\Media\Synchronization\Error::class,
+            'Magento\AdminNotification\Model\System\Message\Media\Synchronization\Error',
             $arguments
         );
     }
@@ -59,7 +56,7 @@ class ErrorTest extends \PHPUnit\Framework\TestCase
         // create new instance to ensure that it hasn't been displayed yet (var $this->_isDisplayed is unset)
         /** @var $model \Magento\AdminNotification\Model\System\Message\Media\Synchronization\Error */
         $model = $objectManagerHelper->getObject(
-            \Magento\AdminNotification\Model\System\Message\Media\Synchronization\Error::class,
+            'Magento\AdminNotification\Model\System\Message\Media\Synchronization\Error',
             $arguments
         );
 

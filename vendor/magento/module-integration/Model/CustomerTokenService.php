@@ -99,9 +99,6 @@ class CustomerTokenService implements \Magento\Integration\Api\CustomerTokenServ
     public function revokeCustomerAccessToken($customerId)
     {
         $tokenCollection = $this->tokenModelCollectionFactory->create()->addFilterByCustomerId($customerId);
-        if ($tokenCollection->getSize() == 0) {
-            throw new LocalizedException(__('This customer has no tokens.'));
-        }
         try {
             foreach ($tokenCollection as $token) {
                 $token->delete();
@@ -116,7 +113,7 @@ class CustomerTokenService implements \Magento\Integration\Api\CustomerTokenServ
      * Get request throttler instance
      *
      * @return RequestThrottler
-     * @deprecated 100.0.4
+     * @deprecated
      */
     private function getRequestThrottler()
     {

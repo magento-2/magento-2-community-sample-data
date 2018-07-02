@@ -5,27 +5,15 @@
  */
 namespace Magento\Paypal\Test\Unit\Model;
 
-use Magento\Checkout\Model\Session;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
-use Magento\Paypal\Model\Api\Nvp;
 use Magento\Paypal\Model\Api\ProcessableException as ApiProcessableException;
 use Magento\Paypal\Model\Express;
-use Magento\Paypal\Model\Pro;
 use Magento\Quote\Api\Data\PaymentInterface;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment;
-use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
-use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Class ExpressTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ExpressTest extends \PHPUnit\Framework\TestCase
+class ExpressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -46,169 +34,178 @@ class ExpressTest extends \PHPUnit\Framework\TestCase
     /**
      * @var Express
      */
-    private $model;
+    protected $_model;
 
     /**
-     * @var Session|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkoutSession;
+    protected $_checkoutSession;
 
     /**
-     * @var Pro|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $pro;
+    protected $_pro;
 
     /**
-     * @var Nvp|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $nvp;
+    protected $_nvp;
 
     /**
-     * @var ObjectManager
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
-    private $helper;
+    protected $_helper;
 
     /**
-     * @var BuilderInterface|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $transactionBuilder;
+    protected $transactionBuilder;
 
     /**
-     * @var ManagerInterface|MockObject
+     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $eventManager;
+    private $eventManagerMock;
 
     protected function setUp()
     {
-        $this->checkoutSession = $this->createPartialMock(
-            Session::class,
-            ['getPaypalTransactionData', 'setPaypalTransactionData']
+        $this->_checkoutSession = $this->getMock(
+            'Magento\Checkout\Model\Session',
+            ['getPaypalTransactionData', 'setPaypalTransactionData'],
+            [],
+            '',
+            false
         );
         $this->transactionBuilder = $this->getMockForAbstractClass(
-            BuilderInterface::class,
+            'Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface',
             [],
             '',
             false,
             false
         );
-        $this->nvp = $this->createPartialMock(
-            Nvp::class,
-            [
-                'setProcessableErrors',
-                'setAmount',
-                'setCurrencyCode',
-                'setTransactionId',
-                'callDoAuthorization',
-                'setData'
-            ]
+        $this->_nvp = $this->getMock(
+            'Magento\Paypal\Model\Api\Nvp',
+            ['setProcessableErrors', 'setAmount', 'setCurrencyCode', 'setTransactionId', 'callDoAuthorization'],
+            [],
+            '',
+            false
         );
-        $this->pro = $this->createPartialMock(
-            Pro::class,
-            ['setMethod', 'getApi', 'importPaymentInfo', 'resetApi']
+        $this->_pro = $this->getMock(
+            'Magento\Paypal\Model\Pro',
+            ['setMethod', 'getApi', 'importPaymentInfo', 'resetApi'],
+            [],
+            '',
+            false
         );
-        $this->eventManager = $this->getMockBuilder(ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->setMethods(['dispatch'])
             ->getMockForAbstractClass();
 
-        $this->pro->expects($this->any())->method('getApi')->will($this->returnValue($this->nvp));
-        $this->helper = new ObjectManager($this);
+        $this->_pro->expects($this->any())->method('getApi')->will($this->returnValue($this->_nvp));
+        $this->_helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
     }
 
     public function testSetApiProcessableErrors()
     {
-        $this->nvp->expects($this->once())->method('setProcessableErrors')->with($this->errorCodes);
+        $this->_nvp->expects($this->once())->method('setProcessableErrors')->with($this->errorCodes);
 
-        $this->model = $this->helper->getObject(
-            \Magento\Paypal\Model\Express::class,
+        $this->_model = $this->_helper->getObject(
+            'Magento\Paypal\Model\Express',
             [
-                'data' => [$this->pro],
-                'checkoutSession' => $this->checkoutSession,
+                'data' => [$this->_pro],
+                'checkoutSession' => $this->_checkoutSession,
                 'transactionBuilder' => $this->transactionBuilder
             ]
         );
     }
 
-    /**
-     * Tests order payment action.
-     */
     public function testOrder()
     {
-        $transactionData = ['TOKEN' => 'EC-7NJ4634216284232D'];
-        $this->checkoutSession
-            ->method('getPaypalTransactionData')
-            ->willReturn($transactionData);
+        $this->_nvp->expects($this->any())->method('setProcessableErrors')->will($this->returnSelf());
+        $this->_nvp->expects($this->any())->method('setAmount')->will($this->returnSelf());
+        $this->_nvp->expects($this->any())->method('setCurrencyCode')->will($this->returnSelf());
+        $this->_nvp->expects($this->any())->method('setTransactionId')->will($this->returnSelf());
+        $this->_nvp->expects($this->any())->method('callDoAuthorization')->will($this->returnSelf());
 
-        $order = $this->createPartialMock(Order::class, ['setActionFlag']);
-        $order->method('setActionFlag')
-            ->with(Order::ACTION_FLAG_INVOICE, false)
-            ->willReturnSelf();
+        $this->_checkoutSession->expects($this->once())->method('getPaypalTransactionData')->will(
+            $this->returnValue([])
+        );
+        $this->_checkoutSession->expects($this->once())->method('setPaypalTransactionData')->with([]);
 
-        $paymentModel = $this->createPartialMock(Payment::class, ['getOrder']);
-        $paymentModel->method('getOrder')
-            ->willReturn($order);
-
-        $this->model = $this->helper->getObject(
-            \Magento\Paypal\Model\Express::class,
+        $currency = $this->getMock('Magento\Directory\Model\Currency', ['__wakeup', 'formatTxt'], [], '', false);
+        $paymentModel = $this->getMock(
+            'Magento\Sales\Model\Order\Payment',
             [
-                'data' => [$this->pro],
-                'checkoutSession' => $this->checkoutSession
+                '__wakeup',
+                'getBaseCurrency',
+                'getOrder',
+                'getIsTransactionPending',
+                'addStatusHistoryComment',
+                'addTransactionCommentsToOrder'
+            ],
+            [],
+            '',
+            false
+        );
+        $order = $this->getMock(
+            'Magento\Sales\Model\Order',
+            ['setState', 'getBaseCurrency', 'getBaseCurrencyCode', 'setStatus'],
+            [],
+            '',
+            false
+        );
+        $paymentModel->expects($this->any())->method('getOrder')->willReturn($order);
+        $order->expects($this->any())->method('getBaseCurrency')->willReturn($currency);
+        $order->expects($this->any())->method('setState')->with('payment_review')->willReturnSelf();
+        $paymentModel->expects($this->any())->method('getIsTransactionPending')->will($this->returnSelf());
+        $this->transactionBuilder->expects($this->any())->method('setOrder')->with($order)->will($this->returnSelf());
+        $this->transactionBuilder->expects($this->any())->method('setPayment')->will($this->returnSelf());
+        $this->transactionBuilder->expects($this->any())->method('setTransactionId')->will($this->returnSelf());
+        $this->_model = $this->_helper->getObject(
+            'Magento\Paypal\Model\Express',
+            [
+                'data' => [$this->_pro],
+                'checkoutSession' => $this->_checkoutSession,
+                'transactionBuilder' => $this->transactionBuilder
             ]
         );
-
-        $this->nvp->method('setData')
-            ->with($transactionData)
-            ->willReturnSelf();
-
-        static::assertEquals($this->model, $this->model->order($paymentModel, 12.3));
+        $this->assertEquals($this->_model, $this->_model->order($paymentModel, 12.3));
     }
 
     public function testAssignData()
     {
         $transportValue = 'something';
 
-        $extensionAttribute = $this->getMockForAbstractClass(
-            \Magento\Quote\Api\Data\PaymentExtensionInterface::class,
-            [],
-            '',
-            false,
-            false
-        );
-
         $data = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [
-                    Express\Checkout::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT => $transportValue,
-                    Express\Checkout::PAYMENT_INFO_TRANSPORT_PAYER_ID => $transportValue,
-                    Express\Checkout::PAYMENT_INFO_TRANSPORT_TOKEN => $transportValue,
-                    \Magento\Framework\Api\ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY => $extensionAttribute
+                    Express\Checkout::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT => $transportValue
                 ]
             ]
         );
 
-        $this->model = $this->helper->getObject(
-            \Magento\Paypal\Model\Express::class,
+        $this->_model = $this->_helper->getObject(
+            'Magento\Paypal\Model\Express',
             [
-                'data' => [$this->pro],
-                'checkoutSession' => $this->checkoutSession,
+                'data' => [$this->_pro],
+                'checkoutSession' => $this->_checkoutSession,
                 'transactionBuilder' => $this->transactionBuilder,
-                'eventDispatcher' => $this->eventManager,
+                'eventDispatcher' => $this->eventManagerMock,
             ]
         );
 
-        $paymentInfo = $this->createMock(InfoInterface::class);
-        $this->model->setInfoInstance($paymentInfo);
+        $paymentInfo = $this->getMock(InfoInterface::class);
+        $this->_model->setInfoInstance($paymentInfo);
 
         $this->parentAssignDataExpectation($data);
 
-        $paymentInfo->expects(static::exactly(3))
+        $paymentInfo->expects(static::once())
             ->method('setAdditionalInformation')
-            ->withConsecutive(
-                [Express\Checkout::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT, $transportValue],
-                [Express\Checkout::PAYMENT_INFO_TRANSPORT_PAYER_ID, $transportValue],
-                [Express\Checkout::PAYMENT_INFO_TRANSPORT_TOKEN, $transportValue]
+            ->with(
+                Express\Checkout::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT,
+                $transportValue
             );
 
-        $this->model->assignData($data);
+        $this->_model->assignData($data);
     }
 
     /**
@@ -218,16 +215,16 @@ class ExpressTest extends \PHPUnit\Framework\TestCase
     {
         $eventData = [
             AbstractDataAssignObserver::METHOD_CODE => $this,
-            AbstractDataAssignObserver::MODEL_CODE => $this->model->getInfoInstance(),
+            AbstractDataAssignObserver::MODEL_CODE => $this->_model->getInfoInstance(),
             AbstractDataAssignObserver::DATA_CODE => $data
         ];
 
-        $this->eventManager->expects(static::exactly(2))
+        $this->eventManagerMock->expects(static::exactly(2))
             ->method('dispatch')
             ->willReturnMap(
                 [
                     [
-                        'payment_method_assign_data_' . $this->model->getCode(),
+                        'payment_method_assign_data_' . $this->_model->getCode(),
                         $eventData
                     ],
                     [

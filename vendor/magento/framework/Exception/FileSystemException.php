@@ -7,8 +7,6 @@ namespace Magento\Framework\Exception;
 
 /**
  * Magento filesystem exception
- *
- * @api
  */
 class FileSystemException extends LocalizedException
 {

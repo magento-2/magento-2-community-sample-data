@@ -8,12 +8,12 @@ namespace Magento\Tax\Model\TaxClass\Source;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetAllOptions()
     {
         /** @var \Magento\Tax\Model\ResourceModel\TaxClass\Collection $collection */
-        $collection = Bootstrap::getObjectManager()->get(\Magento\Tax\Model\ResourceModel\TaxClass\Collection::class);
+        $collection = Bootstrap::getObjectManager()->get('Magento\Tax\Model\ResourceModel\TaxClass\Collection');
         $expectedResult = [];
         /** @var \Magento\Tax\Model\ClassModel $taxClass */
         foreach ($collection as $taxClass) {
@@ -25,7 +25,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             $this->fail('Preconditions failed: At least one tax class should be available.');
         }
         /** @var \Magento\Tax\Model\TaxClass\Source\Product $source */
-        $source = Bootstrap::getObjectManager()->get(\Magento\Tax\Model\TaxClass\Source\Product::class);
+        $source = Bootstrap::getObjectManager()->get('Magento\Tax\Model\TaxClass\Source\Product');
         $this->assertEquals(
             $expectedResult,
             $source->getAllOptions(false),
@@ -36,7 +36,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testGetAllOptionsWithDefaultValues()
     {
         /** @var \Magento\Tax\Model\ResourceModel\TaxClass\Collection $collection */
-        $collection = Bootstrap::getObjectManager()->get(\Magento\Tax\Model\ResourceModel\TaxClass\Collection::class);
+        $collection = Bootstrap::getObjectManager()->get('Magento\Tax\Model\ResourceModel\TaxClass\Collection');
         $expectedResult = [];
         /** @var \Magento\Tax\Model\ClassModel $taxClass */
         foreach ($collection as $taxClass) {
@@ -49,7 +49,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         }
         $expectedResult = array_merge([['value' => '0', 'label' => __('None')]], $expectedResult);
         /** @var \Magento\Tax\Model\TaxClass\Source\Product $source */
-        $source = Bootstrap::getObjectManager()->get(\Magento\Tax\Model\TaxClass\Source\Product::class);
+        $source = Bootstrap::getObjectManager()->get('Magento\Tax\Model\TaxClass\Source\Product');
         $this->assertEquals(
             $expectedResult,
             $source->getAllOptions(true),

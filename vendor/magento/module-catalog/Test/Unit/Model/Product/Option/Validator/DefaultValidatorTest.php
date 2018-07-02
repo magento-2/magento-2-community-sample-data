@@ -6,7 +6,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Option\Validator;
 
-class DefaultValidatorTest extends \PHPUnit\Framework\TestCase
+class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Option\Validator\DefaultValidator
@@ -20,9 +20,8 @@ class DefaultValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $configMock = $this->createMock(\Magento\Catalog\Model\ProductOptions\ConfigInterface::class);
-        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $priceConfigMock = new \Magento\Catalog\Model\Config\Source\Product\Options\Price($storeManagerMock);
+        $configMock = $this->getMock('Magento\Catalog\Model\ProductOptions\ConfigInterface');
+        $priceConfigMock = new \Magento\Catalog\Model\Config\Source\Product\Options\Price();
         $config = [
             [
                 'label' => 'group label 1',
@@ -80,7 +79,7 @@ class DefaultValidatorTest extends \PHPUnit\Framework\TestCase
     public function testIsValidTitle($title, $type, $priceType, $price, $product, $messages, $result)
     {
         $methods = ['getTitle', 'getType', 'getPriceType', 'getPrice', '__wakeup', 'getProduct'];
-        $valueMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, $methods);
+        $valueMock = $this->getMock('Magento\Catalog\Model\Product\Option', $methods, [], '', false);
         $valueMock->expects($this->once())->method('getTitle')->will($this->returnValue($title));
         $valueMock->expects($this->any())->method('getType')->will($this->returnValue($type));
         $valueMock->expects($this->once())->method('getPriceType')->will($this->returnValue($priceType));
@@ -110,7 +109,7 @@ class DefaultValidatorTest extends \PHPUnit\Framework\TestCase
     public function testIsValidFail($product)
     {
         $methods = ['getTitle', 'getType', 'getPriceType', 'getPrice', '__wakeup', 'getProduct'];
-        $valueMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, $methods);
+        $valueMock = $this->getMock('Magento\Catalog\Model\Product\Option', $methods, [], '', false);
         $valueMock->expects($this->once())->method('getProduct')->will($this->returnValue($product));
         $valueMock->expects($this->once())->method('getTitle');
         $valueMock->expects($this->any())->method('getType');
@@ -148,7 +147,7 @@ class DefaultValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidationNegativePrice($title, $type, $priceType, $price, $product)
     {
         $methods = ['getTitle', 'getType', 'getPriceType', 'getPrice', '__wakeup', 'getProduct'];
-        $valueMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, $methods);
+        $valueMock = $this->getMock('Magento\Catalog\Model\Product\Option', $methods, [], '', false);
         $valueMock->expects($this->once())->method('getTitle')->will($this->returnValue($title));
         $valueMock->expects($this->exactly(2))->method('getType')->will($this->returnValue($type));
         $valueMock->expects($this->once())->method('getPriceType')->will($this->returnValue($priceType));

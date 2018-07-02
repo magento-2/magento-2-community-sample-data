@@ -42,9 +42,7 @@ abstract class Agreement extends \Magento\Backend\App\Action
     protected function _initBillingAgreement()
     {
         $agreementId = $this->getRequest()->getParam('agreement');
-        $agreementModel = $this->_objectManager->create(
-            \Magento\Paypal\Model\Billing\Agreement::class
-        )->load($agreementId);
+        $agreementModel = $this->_objectManager->create('Magento\Paypal\Model\Billing\Agreement')->load($agreementId);
 
         if (!$agreementModel->getId()) {
             $this->messageManager->addErrorMessage(

@@ -21,14 +21,14 @@ use Magento\Mtf\Fixture\FixtureFactory;
  * 3. Click (X) icon near the $product from dataset.
  * 4. Perform assertions.
  *
- * @group Compare_Products
+ * @group Compare_Products_(MX)
  * @ZephyrId MAGETWO-26161
  */
 class DeleteCompareProductsTest extends AbstractCompareProductsTest
 {
     /* tags */
     const MVP = 'yes';
-    const STABLE = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

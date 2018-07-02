@@ -6,9 +6,12 @@
 
 // @codingStandardsIgnoreFile
 
-/** @var \Magento\UrlRewrite\Block\Edit $block */
+/**
+ * @var $block \Magento\UrlRewrite\Block\Edit
+ */
 ?>
-<?= $block->getChildHtml() ?>
+<?php echo $block->getChildHtml() ?>
+
 <?php if ($block->getChildBlock('form')): ?>
 <script>
 require([
@@ -16,8 +19,10 @@ require([
     'mage/backend/form',
     'mage/backend/validation'
 ], function($){
+
     $('#edit_form').form()
-        .validation({validationUrl: '<?= $block->escapeUrl($block->getValidationUrl()) ?>'});
+        .validation({validationUrl: '<?php /* @escapeNotVerified */ echo $block->getValidationUrl() ?>'});
+
 });
 </script>
 <?php endif; ?>

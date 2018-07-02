@@ -13,9 +13,6 @@ use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Profiler;
 
-/**
- * @api
- */
 class Form extends \Magento\Framework\Data\Form\AbstractForm
 {
     /**

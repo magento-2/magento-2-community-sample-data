@@ -38,12 +38,12 @@ class FormFileUploadProgress extends FormInput
      */
     public function renderHiddenId()
     {
-        $attributes = [
+        $attributes = array(
             'id'    => 'progress_key',
             'name'  => $this->getName(),
             'type'  => 'hidden',
             'value' => $this->getValue()
-        ];
+        );
 
         return sprintf(
             '<input %s%s',

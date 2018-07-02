@@ -3,22 +3,26 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/** @var \Magento\Framework\ObjectManagerInterface $objectManager */
+$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
 \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea('adminhtml');
-\Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+$objectManager->get(
     \Magento\Framework\App\Config\MutableScopeConfigInterface::class
 )->setValue(
     'carriers/flatrate/active',
     1,
     \Magento\Store\Model\ScopeInterface::SCOPE_STORE
 );
-\Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+$objectManager->get(
     \Magento\Framework\App\Config\MutableScopeConfigInterface::class
 )->setValue(
     'payment/paypal_express/active',
     1,
     \Magento\Store\Model\ScopeInterface::SCOPE_STORE
 );
-$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
 /** @var $product \Magento\Catalog\Model\Product */
 $product = $objectManager->create(\Magento\Catalog\Model\Product::class);
 $product->setTypeId('simple')
@@ -58,8 +62,7 @@ $billingData = [
     'use_for_shipping' => '1',
 ];
 
-$billingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Model\Quote\Address::class, ['data' => $billingData]);
+$billingAddress = $objectManager->create(\Magento\Quote\Model\Quote\Address::class, ['data' => $billingData]);
 $billingAddress->setAddressType('billing');
 
 $shippingAddress = clone $billingAddress;
@@ -69,22 +72,14 @@ $shippingAddress->setCollectShippingRates(true);
 
 /** @var $quote \Magento\Quote\Model\Quote */
 $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
-$quote->setCustomerIsGuest(
-    true
-)->setStoreId(
-    $objectManager->get(
-        \Magento\Store\Model\StoreManagerInterface::class
-    )->getStore()->getId()
-)->setReservedOrderId(
-    '100000002'
-)->setBillingAddress(
-    $billingAddress
-)->setShippingAddress(
-    $shippingAddress
-)->addProduct(
-    $product,
-    10
-);
+$quote->setCustomerIsGuest(true)
+    ->setStoreId(
+        $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)->getStore()->getId()
+    )
+    ->setReservedOrderId('100000002')
+    ->setBillingAddress($billingAddress)
+    ->setShippingAddress($shippingAddress)
+    ->addProduct($product, 10);
 $quote->getShippingAddress()->setShippingMethod('flatrate_flatrate');
 $quote->getShippingAddress()->setCollectShippingRates(true);
 $quote->getPayment()->setMethod(\Magento\Paypal\Model\Config::METHOD_WPS_EXPRESS);

@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Block\Page\System\Config\Robots;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -11,7 +13,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 /**
  * "Reset to Defaults" button renderer
  *
- * @deprecated 100.2.0
+ * @deprecated
  * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Reset extends \Magento\Config\Block\System\Config\Form\Field
@@ -51,8 +53,7 @@ class Reset extends \Magento\Config\Block\System\Config\Form\Field
     public function getRobotsDefaultCustomInstructions()
     {
         return trim((string)$this->_scopeConfig->getValue(
-            self::XML_PATH_ROBOTS_DEFAULT_CUSTOM_INSTRUCTIONS,
-            ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+            self::XML_PATH_ROBOTS_DEFAULT_CUSTOM_INSTRUCTIONS, ScopeConfigInterface::SCOPE_TYPE_DEFAULT
         ));
     }
 
@@ -64,7 +65,7 @@ class Reset extends \Magento\Config\Block\System\Config\Form\Field
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             [
                 'id' => 'reset_to_default_button',

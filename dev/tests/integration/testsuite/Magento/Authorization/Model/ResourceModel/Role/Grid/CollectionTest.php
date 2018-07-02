@@ -8,7 +8,7 @@ namespace Magento\Authorization\Model\ResourceModel\Role\Grid;
 /**
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorization\Model\ResourceModel\Role\Grid\Collection
@@ -18,7 +18,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Authorization\Model\ResourceModel\Role\Grid\Collection::class
+            'Magento\Authorization\Model\ResourceModel\Role\Grid\Collection'
         );
     }
 

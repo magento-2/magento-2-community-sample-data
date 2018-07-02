@@ -9,11 +9,6 @@ namespace Magento\Framework\Config;
 
 use Magento\Framework\Config\Dom\UrnResolver;
 
-/**
- * Class SchemaLocator provides the information about xsd schema to be used for a configuration validation
- * Current class can be configured through di.xml
- * The default value of realPath variable contains information about view.xsd to keep the backward compatibility.
- */
 class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
 {
     /**
@@ -24,16 +19,11 @@ class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
     protected $schema = null;
 
     /**
-     * SchemaLocator constructor.
-     *
-     * @param UrnResolver $urnResolver
-     * @param string $realPath
+     * @param \Magento\Framework\Config\Dom\UrnResolver $urnResolver
      */
-    public function __construct(
-        UrnResolver $urnResolver,
-        $realPath = 'urn:magento:framework:Config/etc/view.xsd'
-    ) {
-        $this->schema = $urnResolver->getRealPath($realPath);
+    public function __construct(UrnResolver $urnResolver)
+    {
+        $this->schema = $urnResolver->getRealPath('urn:magento:framework:Config/etc/view.xsd');
     }
 
     /**

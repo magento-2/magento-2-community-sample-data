@@ -35,7 +35,7 @@ use Magento\Mtf\TestStep\TestStepFactory;
  * 6. Save product
  * 7. Perform all assertions
  *
- * @group Configurable_Product
+ * @group Configurable_Product_(MX)
  * @ZephyrId MAGETWO-26041
  */
 class CreateConfigurableProductEntityTest extends Injectable
@@ -43,6 +43,7 @@ class CreateConfigurableProductEntityTest extends Injectable
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

@@ -37,15 +37,15 @@ class ExportViewedCsvTest extends \Magento\Reports\Test\Unit\Controller\Adminhtm
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->helperMock = $this->getMockBuilder(\Magento\Backend\Helper\Data::class)
+        $this->helperMock = $this->getMockBuilder('Magento\Backend\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->objectManagerMock
@@ -57,7 +57,7 @@ class ExportViewedCsvTest extends \Magento\Reports\Test\Unit\Controller\Adminhtm
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->exportViewedCsv = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\ExportViewedCsv::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\ExportViewedCsv',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,
@@ -82,7 +82,7 @@ class ExportViewedCsvTest extends \Magento\Reports\Test\Unit\Controller\Adminhtm
         $this->layoutMock
             ->expects($this->once())
             ->method('createBlock')
-            ->with(\Magento\Reports\Block\Adminhtml\Product\Viewed\Grid::class)
+            ->with('Magento\Reports\Block\Adminhtml\Product\Viewed\Grid')
             ->willReturn($this->abstractBlockMock);
 
         $this->fileFactoryMock

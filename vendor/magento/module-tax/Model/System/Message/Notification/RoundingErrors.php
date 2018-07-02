@@ -13,22 +13,28 @@ namespace Magento\Tax\Model\System\Message\Notification;
 class RoundingErrors implements \Magento\Tax\Model\System\Message\NotificationInterface
 {
     /**
+     * Store manager object.
+     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
 
     /**
+     * Store Url builder object.
+     *
      * @var \Magento\Framework\UrlInterface
      */
     private $urlBuilder;
 
     /**
+     * Store Tax config object.
+     *
      * @var \Magento\Tax\Model\Config
      */
     private $taxConfig;
 
     /**
-     * Stores with invalid display settings
+     * Stores with invalid display settings.
      *
      * @var array
      */
@@ -66,6 +72,7 @@ class RoundingErrors implements \Magento\Tax\Model\System\Message\NotificationIn
         if (!$this->taxConfig->isWrongDisplaySettingsIgnored() && $this->getStoresWithWrongSettings()) {
             return true;
         }
+
         return false;
     }
 
@@ -103,13 +110,13 @@ class RoundingErrors implements \Magento\Tax\Model\System\Message\NotificationIn
     }
 
     /**
-     * Check if tax calculation type and price display settings are compatible
+     * Check if tax calculation type and price display settings are compatible.
      *
      * Invalid settings if
      *      Tax Calculation Method Based On 'Total' or 'Row'
-     *      and at least one Price Display Settings has 'Including and Excluding Tax' value
+     *      and at least one Price Display Settings has 'Including and Excluding Tax' value.
      *
-     * @param null|int|bool|string|\Magento\Store\Model\Store $store $store
+     * @param null|int|bool|string|\Magento\Store\Model\Store $store
      * @return bool
      */
     private function checkSettings($store = null)
@@ -117,6 +124,7 @@ class RoundingErrors implements \Magento\Tax\Model\System\Message\NotificationIn
         if ($this->taxConfig->getAlgorithm($store) == \Magento\Tax\Model\Calculation::CALC_UNIT_BASE) {
             return true;
         }
+
         return $this->taxConfig->getPriceDisplayType($store) != \Magento\Tax\Model\Config::DISPLAY_TYPE_BOTH
             && $this->taxConfig->getShippingPriceDisplayType($store) != \Magento\Tax\Model\Config::DISPLAY_TYPE_BOTH
             && !$this->taxConfig->displayCartPricesBoth($store)
@@ -146,6 +154,7 @@ class RoundingErrors implements \Magento\Tax\Model\System\Message\NotificationIn
                 $this->storesWithInvalidSettings[] = $website->getName() . ' (' . $store->getName() . ')';
             }
         }
+
         return $this->storesWithInvalidSettings;
     }
 }

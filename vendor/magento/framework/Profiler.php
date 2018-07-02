@@ -349,7 +349,6 @@ class Profiler
      * @param bool $isAjax
      * @return array
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected static function _parseConfig($profilerConfig, $baseDir, $isAjax)
     {
@@ -357,7 +356,7 @@ class Profiler
 
         if (is_scalar($profilerConfig)) {
             $config['drivers'] = [
-                ['output' => is_numeric($profilerConfig) ? 'html' : $profilerConfig],
+                ['output' => $isAjax ? 'firebug' : (is_numeric($profilerConfig) ? 'html' : $profilerConfig)],
             ];
         } else {
             $config = array_merge($config, $profilerConfig);

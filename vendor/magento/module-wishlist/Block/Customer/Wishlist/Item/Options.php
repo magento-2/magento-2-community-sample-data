@@ -9,9 +9,7 @@ namespace Magento\Wishlist\Block\Customer\Wishlist\Item;
 /**
  * Wishlist block customer items
  *
- * @api
  * @method \Magento\Wishlist\Model\Item getItem()
- * @since 100.0.2
  */
 class Options extends \Magento\Wishlist\Block\AbstractBlock
 {
@@ -27,7 +25,7 @@ class Options extends \Magento\Wishlist\Block\AbstractBlock
      */
     protected $_optionsCfg = [
         'default' => [
-            'helper' => \Magento\Catalog\Helper\Product\Configuration::class,
+            'helper' => 'Magento\Catalog\Helper\Product\Configuration',
             'template' => 'Magento_Wishlist::options_list.phtml',
         ],
     ];
@@ -105,23 +103,7 @@ class Options extends \Magento\Wishlist\Block\AbstractBlock
         $data = $this->getOptionsRenderCfg($item->getProduct()->getTypeId());
         $helper = $this->_helperPool->get($data['helper']);
 
-        $options = $helper->getOptions($item);
-        foreach ($options as $index => $option) {
-            if (is_array($option) && array_key_exists('value', $option)) {
-                if (!(array_key_exists('has_html', $option) && $option['has_html'] === true)) {
-                    if (is_array($option['value'])) {
-                        foreach ($option['value'] as $key => $value) {
-                            $option['value'][$key] = $this->escapeHtml($value);
-                        }
-                    } else {
-                        $option['value'] = $this->escapeHtml($option['value']);
-                    }
-                }
-                $options[$index]['value'] = $option['value'];
-            }
-        }
-
-        return $options;
+        return $helper->getOptions($item);
     }
 
     /**

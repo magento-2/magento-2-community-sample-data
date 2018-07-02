@@ -37,7 +37,7 @@ class SequenceFactory
     public function __construct(
         SequenceRegistry $sequenceRegistry,
         ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\EntityManager\Sequence\Sequence::class
+        $instanceName = 'Magento\\Framework\\EntityManager\\Sequence\\Sequence'
     ) {
         $this->sequenceRegistry = $sequenceRegistry;
         $this->objectManager = $objectManager;

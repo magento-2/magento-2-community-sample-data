@@ -69,6 +69,7 @@ class InstallSchema implements InstallSchemaInterface
             $connection->createTable($table);
         }
 
+
         /**
          * Rename/Create table 'variable_value'
          */

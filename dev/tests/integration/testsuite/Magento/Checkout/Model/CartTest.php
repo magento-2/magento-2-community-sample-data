@@ -8,7 +8,7 @@ namespace Magento\Checkout\Model;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CartTest extends \PHPUnit\Framework\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Cart
@@ -34,7 +34,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddProductWithLowerQty()
     {
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             'The fewest you may purchase is 3'
         );

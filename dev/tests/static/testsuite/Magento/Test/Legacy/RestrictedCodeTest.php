@@ -3,43 +3,32 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Test\Legacy;
-
-use Magento\Framework\Component\ComponentRegistrar;
 
 /**
  * Tests to find usage of restricted code
  */
-class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
+namespace Magento\Test\Legacy;
+
+use Magento\Framework\Component\ComponentRegistrar;
+
+class RestrictedCodeTest extends \PHPUnit_Framework_TestCase
 {
     /**@#+
      * Lists of restricted entities from fixtures
      *
      * @var array
      */
-    private static $_classes = [];
+    protected static $_classes = [];
     /**#@-*/
 
     /**
      * List of fixtures that contain restricted classes and should not be tested
-     *
      * @var array
      */
-    private static $_fixtureFiles = [];
-
-    /**
-     * @var ComponentRegistrar
-     */
-    private $componentRegistrar;
-
-    protected function setUp()
-    {
-        $this->componentRegistrar = new ComponentRegistrar();
-    }
+    protected static $_fixtureFiles = [];
 
     /**
      * Read fixtures into memory as arrays
-     *
      * @return void
      */
     public static function setUpBeforeClass()
@@ -80,7 +69,6 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test that restricted entities are not used in PHP files
-     *
      * @return void
      */
     public function testPhpFiles()
@@ -109,13 +97,15 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
     protected function _testRestrictedClasses($file)
     {
         $content = file_get_contents($file);
+        $componentRegistrar = new ComponentRegistrar();
         foreach (self::$_classes as $restrictedClass => $classRules) {
             foreach ($classRules['exclude'] as $skippedPathInfo) {
-                if (strpos($file, $this->getExcludedFilePath($skippedPathInfo)) === 0) {
+                $skippedPath = $componentRegistrar->getPath($skippedPathInfo['type'], $skippedPathInfo['name'])
+                    . '/' . $skippedPathInfo['path'];
+                if (strpos($file, $skippedPath) === 0) {
                     continue 2;
                 }
             }
-
             $this->assertFalse(
                 \Magento\TestFramework\Utility\CodeCheck::isClassUsed($restrictedClass, $content),
                 sprintf(
@@ -126,19 +116,5 @@ class RestrictedCodeTest extends \PHPUnit\Framework\TestCase
                 )
             );
         }
-    }
-
-    /**
-     * Get full path for excluded file
-     *
-     * @param array $pathInfo
-     * @return string
-     */
-    private function getExcludedFilePath($pathInfo)
-    {
-        if ($pathInfo['type'] != 'setup') {
-            return $this->componentRegistrar->getPath($pathInfo['type'], $pathInfo['name']) . '/' . $pathInfo['path'];
-        }
-        return BP . '/setup/' . $pathInfo['path'];
     }
 }

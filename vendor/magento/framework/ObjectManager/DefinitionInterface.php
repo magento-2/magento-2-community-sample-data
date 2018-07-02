@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\ObjectManager;
 
-/**
- * Interface \Magento\Framework\ObjectManager\DefinitionInterface
- *
- */
 interface DefinitionInterface
 {
     /**

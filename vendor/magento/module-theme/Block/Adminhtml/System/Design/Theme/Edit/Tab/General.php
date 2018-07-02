@@ -58,7 +58,7 @@ class General extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Ab
     protected function _prepareForm()
     {
         /** @var \Magento\Backend\Model\Session $session */
-        $session = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
+        $session = $this->_objectManager->get('Magento\Backend\Model\Session');
         $formDataFromSession = $session->getThemeData();
         $this->_isThemeEditable = $this->_getCurrentTheme()->isEditable();
         /** @var ThemeInterface $currentTheme */
@@ -102,10 +102,10 @@ class General extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Ab
         }
 
         /** @var Collection $themesCollections */
-        $themesCollections = $this->_objectManager->create(\Magento\Theme\Model\Theme\Collection::class);
+        $themesCollections = $this->_objectManager->create('Magento\Theme\Model\Theme\Collection');
 
         /** @var \Magento\Framework\Json\Helper\Data $helper */
-        $helper = $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class);
+        $helper = $this->_objectManager->get('Magento\Framework\Json\Helper\Data');
 
         $themesCollections->addConstraint(Collection::CONSTRAINT_AREA, Area::AREA_FRONTEND);
         $onChangeScript = sprintf(
@@ -118,7 +118,7 @@ class General extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Ab
         );
 
         /** @var ThemeInterface $parentTheme */
-        $parentTheme = $this->_objectManager->create(\Magento\Framework\View\Design\ThemeInterface::class);
+        $parentTheme = $this->_objectManager->create('Magento\Framework\View\Design\ThemeInterface');
         if (!empty($formData['parent_id'])) {
             $parentTheme->load($formData['parent_id']);
         }
@@ -241,7 +241,7 @@ class General extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Ab
      */
     protected function _getAdditionalElementTypes()
     {
-        $element = \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\Image::class;
+        $element = 'Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\Image';
         return ['image' => $element];
     }
 

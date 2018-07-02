@@ -7,10 +7,6 @@ namespace Magento\Indexer\Model\Source;
 
 use Magento\Framework\Exception\NotFoundException;
 
-/**
- * Interface \Magento\Indexer\Model\Source\DataInterface
- *
- */
 interface DataInterface
 {
     /**

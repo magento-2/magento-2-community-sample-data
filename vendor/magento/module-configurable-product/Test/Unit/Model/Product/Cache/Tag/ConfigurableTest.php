@@ -6,9 +6,9 @@
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model\Product\Cache\Tag;
 
-use Magento\ConfigurableProduct\Model\Product\Cache\Tag\Configurable;
+use \Magento\ConfigurableProduct\Model\Product\Cache\Tag\Configurable;
 
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -23,8 +23,12 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->typeResource = $this->createMock(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable::class
+        $this->typeResource = $this->getMock(
+            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable::class,
+            [],
+            [],
+            '',
+            false
         );
 
         $this->model = new Configurable($this->typeResource);
@@ -32,21 +36,19 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWithScalar()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Provided argument is not an object');
+        $this->setExpectedException(\InvalidArgumentException::class, 'Provided argument is not an object');
         $this->model->getTags('scalar');
     }
 
     public function testGetTagsWithObject()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Provided argument must be a product');
-        $this->model->getTags(new \stdClass());
+        $this->setExpectedException(\InvalidArgumentException::class, 'Provided argument must be a product');
+        $this->model->getTags(new \StdClass);
     }
 
     public function testGetTagsWithVariation()
     {
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
 
         $identities = ['id1', 'id2'];
 
@@ -54,13 +56,6 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
             ->method('getIdentities')
             ->willReturn($identities);
 
-        $parentId = 4;
-        $this->typeResource->expects($this->once())
-            ->method('getParentIdsByChild')
-            ->willReturn([$parentId]);
-
-        $expected = array_merge($identities, [\Magento\Catalog\Model\Product::CACHE_TAG . '_' . $parentId]);
-
-        $this->assertEquals($expected, $this->model->getTags($product));
+        $this->assertEquals($identities, $this->model->getTags($product));
     }
 }

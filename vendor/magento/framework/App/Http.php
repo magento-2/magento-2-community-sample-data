@@ -1,5 +1,7 @@
 <?php
 /**
+ * Http application
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -15,8 +17,6 @@ use Magento\Framework\Event;
 use Magento\Framework\Filesystem;
 
 /**
- * HTTP web application. Called from webroot index.php to serve web requests.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Http implements \Magento\Framework\AppInterface
@@ -109,7 +109,7 @@ class Http implements \Magento\Framework\AppInterface
      *
      * @return \Psr\Log\LoggerInterface
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getLogger()
     {
@@ -131,7 +131,7 @@ class Http implements \Magento\Framework\AppInterface
         $this->_state->setAreaCode($areaCode);
         $this->_objectManager->configure($this->_configLoader->load($areaCode));
         /** @var \Magento\Framework\App\FrontControllerInterface $frontController */
-        $frontController = $this->_objectManager->get(\Magento\Framework\App\FrontControllerInterface::class);
+        $frontController = $this->_objectManager->get('Magento\Framework\App\FrontControllerInterface');
         $result = $frontController->dispatch($this->_request);
         // TODO: Temporary solution until all controllers return ResultInterface (MAGETWO-28359)
         if ($result instanceof ResultInterface) {

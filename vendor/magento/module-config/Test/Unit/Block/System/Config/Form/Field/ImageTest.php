@@ -11,7 +11,7 @@
  */
 namespace Magento\Config\Test\Unit\Block\System\Config\Form\Field;
 
-class ImageTest extends \PHPUnit\Framework\TestCase
+class ImageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Url|\PHPUnit_Framework_MockObject_MockObject
@@ -31,9 +31,9 @@ class ImageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->urlBuilderMock = $this->createMock(\Magento\Framework\Url::class);
+        $this->urlBuilderMock = $this->getMock('Magento\Framework\Url', [], [], '', false);
         $this->image = $objectManager->getObject(
-            \Magento\Config\Block\System\Config\Form\Field\Image::class,
+            'Magento\Config\Block\System\Config\Form\Field\Image',
             [
                 'urlBuilder' => $this->urlBuilderMock,
             ]
@@ -74,7 +74,7 @@ class ImageTest extends \PHPUnit\Framework\TestCase
                 'showInWebsite' => '1',
                 'showInStore' => '1',
                 'label' => null,
-                'backend_model' => \Magento\BackendModelConfig\Backend\Image::class,
+                'backend_model' => 'Magento\\Backend\\Model\\Config\\Backend\\Image',
                 'upload_dir' => [
                     'config' => 'system/filesystem/media',
                     'scope_info' => '1',

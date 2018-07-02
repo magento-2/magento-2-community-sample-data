@@ -26,13 +26,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click 'Save' button.
  * 6. Perform all asserts.
  *
- * @group URL_Rewrites
+ * @group URL_Rewrites_(MX)
  * @ZephyrId MAGETWO-24838
  */
 class UpdateCategoryUrlRewriteEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

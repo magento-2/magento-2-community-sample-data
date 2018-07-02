@@ -9,10 +9,7 @@ namespace Magento\Customer\Test\Unit\Helper;
 use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Helper\Address|\PHPUnit_Framework_MockObject_MockObject */
     protected $helper;
@@ -41,7 +38,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $className = \Magento\Customer\Helper\Address::class;
+        $className = 'Magento\Customer\Helper\Address';
         $arguments = $objectManagerHelper->getConstructArguments($className);
         /** @var \Magento\Framework\App\Helper\Context $context */
         $this->context = $arguments['context'];
@@ -63,7 +60,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     public function testGetStreetLines($numLines, $expectedNumLines)
     {
         $attributeMock = $this->getMockBuilder(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class
+            'Magento\Customer\Api\Data\AttributeMetadataInterface'
         )->getMock();
         $attributeMock->expects($this->any())->method('getMultilineCount')->will($this->returnValue($numLines));
 
@@ -72,7 +69,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
             ->method('getAttributeMetadata')
             ->will($this->returnValue($attributeMock));
 
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)->disableOriginalConstructor()->getMock();
+        $store = $this->getMockBuilder('Magento\Store\Model\Store')->disableOriginalConstructor()->getMock();
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($store));
 
         $this->assertEquals($expectedNumLines, $this->helper->getStreetLines());
@@ -116,9 +113,9 @@ class AddressTest extends \PHPUnit\Framework\TestCase
      */
     public function getRendererDataProvider()
     {
-        $blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\BlockInterface::class)->getMock();
+        $blockMock = $this->getMockBuilder('Magento\Framework\View\Element\BlockInterface')->getMock();
         $blockFactory = $this->getMockBuilder(
-            \Magento\Framework\View\Element\BlockFactory::class
+            'Magento\Framework\View\Element\BlockFactory'
         )->disableOriginalConstructor()->getMock();
         $blockFactory->expects($this->once())
             ->method('createBlock')
@@ -133,7 +130,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     public function testGetConfigCanShowConfig()
     {
         $result = ['key1' => 'value1', 'key2' => 'value2'];
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)->disableOriginalConstructor()->getMock();
+        $store = $this->getMockBuilder('Magento\Store\Model\Store')->disableOriginalConstructor()->getMock();
         $store->expects($this->any())
             ->method('getWebsiteId')
             ->will($this->returnValue('1'));
@@ -150,33 +147,39 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->helper->canShowConfig('key2'));
     }
 
-    public function testGetAttributeValidationClass()
+    /**
+     * @param $attrCode
+     * @param $attrClass
+     * @param $customAttrClass
+     * @param $result
+     * @dataProvider getAttributeValidationClassDataProvider
+     */
+    public function testGetAttributeValidationClass($attrCode, $attrClass, $customAttrClass, $result)
     {
-        $attributeCode = 'attr_code';
-        $attributeClass = 'Attribute_Class';
+        $attributeMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')->getMock();
+        $attributeMock->expects($this->any())->method('getFrontendClass')->will($this->returnValue($attrClass));
 
-        $attributeMock = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
-        $attributeMock->expects($this->once())
-            ->method('getFrontendClass')
-            ->willReturn($attributeClass);
+        $customAttrMock = $this->getMockBuilder('Magento\Customer\Api\Data\AttributeMetadataInterface')->getMock();
+        $customAttrMock->expects($this->any())->method('isVisible')->will($this->returnValue(true));
+        $customAttrMock->expects($this->any())->method('getFrontendClass')->will($this->returnValue($customAttrClass));
+
+        $this->customerMetadataService->expects($this->any())
+            ->method('getAttributeMetadata')
+            ->will($this->returnValue($customAttrMock));
 
         $this->addressMetadataService->expects($this->any())
             ->method('getAttributeMetadata')
-            ->willReturn($attributeMock);
+            ->will($this->returnValue($attributeMock));
 
-        $this->assertEquals($attributeClass, $this->helper->getAttributeValidationClass($attributeCode));
+        $this->assertEquals($result, $this->helper->getAttributeValidationClass($attrCode));
     }
 
-    public function testGetAttributeValidationClassWithNoAttribute()
+    public function getAttributeValidationClassDataProvider()
     {
-        $attrCode = 'attr_code';
-
-        $this->addressMetadataService->expects($this->any())
-            ->method('getAttributeMetadata')
-            ->willReturn(null);
-
-        $this->assertEquals('', $this->helper->getAttributeValidationClass($attrCode));
+        return [
+            ['attr_code', 'Attribute_Class', '', 'Attribute_Class'],
+            ['firstname', 'Attribute_Class', 'Attribute2_Class', 'Attribute2_Class'],
+        ];
     }
 
     /**
@@ -322,21 +325,19 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         $this->addressConfig->expects($this->once())
             ->method('getFormatByCode')
             ->with($code)
-            ->will(
-                $this->returnValue(
-                    new \Magento\Framework\DataObject($result !== null ? ['renderer' => $result] : [])
-                )
-            );
+            ->will($this->returnValue(
+                new \Magento\Framework\DataObject($result !== null ? ['renderer' => $result] : [])
+            ));
         $this->assertEquals($result, $this->helper->getFormatTypeRenderer($code));
     }
 
     public function getFormatTypeRendererDataProvider()
     {
-        $renderer = $this->getMockBuilder(\Magento\Customer\Block\Address\Renderer\RendererInterface::class)
+        $renderer = $this->getMockBuilder('Magento\Customer\Block\Address\Renderer\RendererInterface')
             ->disableOriginalConstructor()->getMock();
         return [
             ['valid_code', $renderer],
-            ['invalid_code', null],
+            ['invalid_code', null]
         ];
     }
 
@@ -348,7 +349,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     public function testGetFormat($code, $result)
     {
         if ($result) {
-            $renderer = $this->getMockBuilder(\Magento\Customer\Block\Address\Renderer\RendererInterface::class)
+            $renderer = $this->getMockBuilder('Magento\Customer\Block\Address\Renderer\RendererInterface')
                 ->disableOriginalConstructor()->getMock();
             $renderer->expects($this->once())
                 ->method('getFormatArray')
@@ -357,11 +358,9 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         $this->addressConfig->expects($this->once())
             ->method('getFormatByCode')
             ->with($code)
-            ->will(
-                $this->returnValue(
-                    new \Magento\Framework\DataObject(!empty($result) ? ['renderer' => $renderer] : [])
-                )
-            );
+            ->will($this->returnValue(
+                new \Magento\Framework\DataObject(!empty($result) ? ['renderer' => $renderer] : [])
+            ));
 
         $this->assertEquals($result, $this->helper->getFormat($code));
     }
@@ -370,37 +369,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         return [
             ['valid_code', ['key' => 'value']],
-            ['invalid_code', ''],
-        ];
-    }
-
-    /**
-     * @param string $attributeCode
-     * @param bool $isMetadataExists
-     * @dataProvider isAttributeVisibleDataProvider
-     */
-    public function testIsAttributeVisible($attributeCode, $isMetadataExists)
-    {
-        $attributeMetadata = null;
-        if ($isMetadataExists) {
-            $attributeMetadata = $this->getMockBuilder(\Magento\Customer\Api\Data\AttributeMetadataInterface::class)
-                ->getMockForAbstractClass();
-            $attributeMetadata->expects($this->once())
-                ->method('isVisible')
-                ->willReturn(true);
-        }
-        $this->addressMetadataService->expects($this->once())
-            ->method('getAttributeMetadata')
-            ->with($attributeCode)
-            ->willReturn($attributeMetadata);
-        $this->assertEquals($isMetadataExists, $this->helper->isAttributeVisible($attributeCode));
-    }
-
-    public function isAttributeVisibleDataProvider()
-    {
-        return [
-            ['fax', true],
-            ['invalid_code', false],
+            ['invalid_code', '']
         ];
     }
 }

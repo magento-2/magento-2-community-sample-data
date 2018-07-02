@@ -27,14 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Click "Save Review" button.
  * 7. Perform Asserts.
  *
- * @group Reviews_and_Ratings
+ * @group Reviews_and_Ratings_(MX)
  * @ZephyrId MAGETWO-26476
  */
 class CreateProductReviewBackendEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -110,14 +110,13 @@ class CreateProductReviewBackendEntityTest extends Injectable
     {
         // Precondition:
         $product = $review->getDataFieldConfig('entity_id')['source']->getEntity();
-        $filter = ['sku' => $product->getSku()];
+        $filter = ['id' => $product->getId()];
         $this->review = $review;
 
         // Steps:
         $this->reviewIndex->open();
         $this->reviewIndex->getReviewActions()->addNew();
-        $this->reviewEdit->getProductGrid()->search($filter);
-        $this->reviewEdit->getProductGrid()->openFirstRow();
+        $this->reviewEdit->getProductGrid()->searchAndOpen($filter);
         $this->reviewEdit->getReviewForm()->fill($this->review);
         $this->reviewEdit->getPageActions()->save();
 

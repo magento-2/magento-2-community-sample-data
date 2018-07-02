@@ -3,17 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Rule\Model;
 
-use Magento\Framework\Api\AttributeValueFactory;
-use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Unserialize\SecureUnserializer;
 
 /**
  * Abstract Rule entity data model
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensibleModel
 {
@@ -53,12 +52,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
     protected $_isReadonly = false;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     * @since 100.2.0
-     */
-    protected $serializer;
-
-    /**
      * Getter for rule combine conditions instance
      *
      * @return \Magento\Rule\Model\Condition\Combine
@@ -87,8 +80,11 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
     protected $_localeDate;
 
     /**
-     * AbstractModel constructor
-     *
+     * @var SecureUnserializer
+     */
+    protected $unserializer;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
@@ -96,10 +92,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param array $data
-     * @param ExtensionAttributesFactory|null $extensionFactory
-     * @param AttributeValueFactory|null $customAttributeFactory
-     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @param SecureUnserializer $unserializer
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -109,20 +102,16 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = [],
-        ExtensionAttributesFactory $extensionFactory = null,
-        AttributeValueFactory $customAttributeFactory = null,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        SecureUnserializer $unserializer = null
     ) {
         $this->_formFactory = $formFactory;
         $this->_localeDate = $localeDate;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(
-            \Magento\Framework\Serialize\Serializer\Json::class
-        );
+        $this->unserializer = $unserializer ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
         parent::__construct(
             $context,
             $registry,
-            $extensionFactory ?: $this->getExtensionFactory(),
-            $customAttributeFactory ?: $this->getCustomAttributeFactory(),
+            $this->getExtensionFactory(),
+            $this->getCustomAttributeFactory(),
             $resource,
             $resourceCollection,
             $data
@@ -141,19 +130,21 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
         // Check if discount amount not negative
         if ($this->hasDiscountAmount()) {
             if ((int)$this->getDiscountAmount() < 0) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('Please choose a valid discount amount.'));
+                throw new LocalizedException(__('Please choose a valid discount amount.'));
             }
         }
 
+        $this->validateSerializedFields();
+
         // Serialize conditions
         if ($this->getConditions()) {
-            $this->setConditionsSerialized($this->serializer->serialize($this->getConditions()->asArray()));
+            $this->setConditionsSerialized(serialize($this->getConditions()->asArray()));
             $this->_conditions = null;
         }
 
         // Serialize actions
         if ($this->getActions()) {
-            $this->setActionsSerialized($this->serializer->serialize($this->getActions()->asArray()));
+            $this->setActionsSerialized(serialize($this->getActions()->asArray()));
             $this->_actions = null;
         }
 
@@ -210,7 +201,13 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
         if ($this->hasConditionsSerialized()) {
             $conditions = $this->getConditionsSerialized();
             if (!empty($conditions)) {
-                $conditions = $this->serializer->unserialize($conditions);
+                try {
+                    $conditions = $this->unserializer->unserialize($conditions);
+                } catch (\InvalidArgumentException $e) {
+                    $this->_logger->critical($e);
+                    $conditions = false;
+                }
+
                 if (is_array($conditions) && !empty($conditions)) {
                     $this->_conditions->loadArray($conditions);
                 }
@@ -248,7 +245,13 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
         if ($this->hasActionsSerialized()) {
             $actions = $this->getActionsSerialized();
             if (!empty($actions)) {
-                $actions = $this->serializer->unserialize($actions);
+                try {
+                    $actions = $this->unserializer->unserialize($actions);
+                } catch (\InvalidArgumentException $e) {
+                    $this->_logger->critical($e);
+                    $actions = false;
+                }
+                
                 if (is_array($actions) && !empty($actions)) {
                     $this->_actions->loadArray($actions);
                 }
@@ -356,7 +359,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
                 /**
                  * Convert dates into \DateTime
                  */
-                if (in_array($key, ['from_date', 'to_date'], true) && $value) {
+                if (in_array($key, ['from_date', 'to_date']) && $value) {
                     $value = new \DateTime($value);
                 }
                 $this->setData($key, $value);
@@ -484,7 +487,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
 
     /**
      * @return \Magento\Framework\Api\ExtensionAttributesFactory
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getExtensionFactory()
     {
@@ -494,11 +497,33 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
 
     /**
      * @return \Magento\Framework\Api\AttributeValueFactory
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getCustomAttributeFactory()
     {
         return \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Api\AttributeValueFactory::class);
+    }
+
+    /**
+     * Validates "conditions" and "actions" serialized data.
+     *
+     * @return void
+     * @throws LocalizedException if field data could not be unserialized
+     */
+    private function validateSerializedFields()
+    {
+        $fields = ['conditions' => 'conditions_serialized', 'actions' => 'actions_serialized'];
+        foreach ($fields as $fieldName => $field) {
+            $data = $this->getData($field);
+            if (!empty($data)) {
+                try {
+                    $this->unserializer->unserialize($data);
+                } catch (\InvalidArgumentException $e) {
+                    $this->_logger->critical($e);
+                    throw new LocalizedException(__('Please specify valid %1.', $fieldName));
+                }
+            }
+        }
     }
 }

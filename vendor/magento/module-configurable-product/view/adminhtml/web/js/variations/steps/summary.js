@@ -2,7 +2,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+// jscs:disable jsDoc
 define([
     'uiComponent',
     'jquery',
@@ -55,8 +55,6 @@ define([
             sections: [],
             gridTemplate: 'Magento_ConfigurableProduct/variations/steps/summary-grid'
         },
-
-        /** @inheritdoc */
         initObservable: function () {
             var pagingObservables = {
                 currentNew: ko.getObservable(this.pagingNew, 'current'),
@@ -82,16 +80,10 @@ define([
         },
         nextLabelText: $.mage.__('Generate Products'),
         variations: [],
-
-        /**
-         * @param {*} variations
-         * @param {Function} getSectionValue
-         */
         calculate: function (variations, getSectionValue) {
             var productSku = this.variationsComponent().getProductValue('sku'),
                 productPrice = this.variationsComponent().getProductPrice(),
                 productWeight = this.variationsComponent().getProductValue('weight'),
-                productName = this.variationsComponent().getProductValue('name'),
                 variationsKeys = [],
                 gridExisting = [],
                 gridNew = [],
@@ -99,7 +91,7 @@ define([
 
             this.variations = [];
             _.each(variations, function (options) {
-                var product, images, sku, name, quantity, price, variation,
+                var product, images, sku, quantity, price, variation,
                     productId = this.variationsComponent().getProductIdByOptions(options);
 
                 if (productId) {
@@ -111,9 +103,6 @@ define([
                 sku = productSku + _.reduce(options, function (memo, option) {
                     return memo + '-' + option.label;
                 }, '');
-                name = productName + _.reduce(options, function (memo, option) {
-                        return memo + '-' + option.label;
-                    }, '');
                 quantity = getSectionValue('quantity', options);
 
                 if (!quantity && productId) {
@@ -132,7 +121,7 @@ define([
                     options: options,
                     images: images,
                     sku: sku,
-                    name: name,
+                    name: sku,
                     quantity: quantity,
                     price: price,
                     productId: productId,
@@ -165,10 +154,6 @@ define([
             this.variationsDeleted = gridDeleted;
 
         },
-
-        /**
-         * Generate grid.
-         */
         generateGrid: function () {
             var pageExisting = this.pagingExisting.pageSize * this.pagingExisting.current,
                 pageNew = this.pagingNew.pageSize * this.pagingNew.current,
@@ -183,11 +168,6 @@ define([
             this.pagingDeleted.totalRecords = this.variationsDeleted.length;
             this.gridDeleted(this.variationsDeleted.slice(pageDeleted - this.pagingDeleted.pageSize, pageDeleted));
         },
-
-        /**
-         * @param {Object} variation
-         * @return {Array}
-         */
         prepareRowForGrid: function (variation) {
             var row = [];
 
@@ -203,25 +183,12 @@ define([
 
             return row;
         },
-
-        /**
-         * @return {String|*}
-         */
         getGridTemplate: function () {
             return this.gridTemplate;
         },
-
-        /**
-         * @return {*|String}
-         */
         getGridId: function () {
             return _.uniqueId('grid_');
         },
-
-        /**
-         * @param {*} attributes
-         * @return {Array}
-         */
         getColumnsName: function (attributes) {
             var columns = this.attributesName.slice(0);
 
@@ -231,10 +198,6 @@ define([
 
             return columns;
         },
-
-        /**
-         * @param {Object} wizard
-         */
         render: function (wizard) {
             this.wizard = wizard;
             this.sections(wizard.data.sections());
@@ -248,18 +211,10 @@ define([
             this.calculate(wizard.data.variations, wizard.data.sectionHelper);
             this.generateGrid();
         },
-
-        /**
-         * Force.
-         */
         force: function () {
             this.variationsComponent().render(this.variations, this.attributes());
             this.modalComponent().closeModal();
         },
-
-        /**
-         * Back.
-         */
         back: function () {
         }
     });

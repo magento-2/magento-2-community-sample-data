@@ -5,12 +5,7 @@
  */
 namespace Magento\Paypal\Helper;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Payment\Api\Data\PaymentMethodInterface;
-use Magento\Payment\Api\PaymentMethodListInterface;
-use Magento\Payment\Model\Method\InstanceFactory;
-use Magento\Payment\Model\MethodInterface;
-use Magento\Paypal\Model\Billing\Agreement\MethodInterface as BillingAgreementMethodInterface;
+use Magento\Paypal\Model\Billing\Agreement\MethodInterface;
 
 /**
  * Paypal Data helper
@@ -18,7 +13,7 @@ use Magento\Paypal\Model\Billing\Agreement\MethodInterface as BillingAgreementMe
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const HTML_TRANSACTION_ID =
-        '<a target="_blank" href="https://www%1$s.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=%2$s">%2$s</a>';
+        '<a target="_blank" href="https://www.%1$s.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=%2$s">%2$s</a>';
 
     /**
      * Cache for shouldAskToCreateBillingAgreement()
@@ -46,16 +41,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\Paypal\Model\ConfigFactory
      */
     private $configFactory;
-
-    /**
-     * @var PaymentMethodListInterface
-     */
-    private $paymentMethodList;
-
-    /**
-     * @var InstanceFactory
-     */
-    private $paymentMethodInstanceFactory;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
@@ -103,24 +88,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param null|string|bool|int|\Magento\Store\Model\Store $store
      * @param \Magento\Quote\Model\Quote|null $quote
-     * @return BillingAgreementMethodInterface[]
+     * @return MethodInterface[]
      */
     public function getBillingAgreementMethods($store = null, $quote = null)
     {
-        $activeMethods = array_map(
-            function (PaymentMethodInterface $method) {
-                return $this->getPaymentMethodInstanceFactory()->create($method);
-            },
-            $this->getPaymentMethodList()->getActiveList($store)
-        );
-
-        $result = array_filter(
-            $activeMethods,
-            function (MethodInterface $method) use ($quote) {
-                return $method instanceof BillingAgreementMethodInterface && $method->isAvailable($quote);
+        $result = [];
+        foreach ($this->_paymentData->getStoreMethods($store, $quote) as $method) {
+            if ($method instanceof MethodInterface) {
+                $result[] = $method;
             }
-        );
-
+        }
         return $result;
     }
 
@@ -136,41 +113,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (in_array($methodCode, $this->methodCodes)) {
             /** @var \Magento\Paypal\Model\Config $config */
             $config = $this->configFactory->create()->setMethod($methodCode);
-            $sandboxFlag = ($config->getValue('sandboxFlag') ? '.sandbox' : '');
+            $sandboxFlag = ($config->getValue('sandboxFlag') ? 'sandbox' : '');
             return sprintf(self::HTML_TRANSACTION_ID, $sandboxFlag, $txnId);
         }
         return $txnId;
-    }
-
-    /**
-     * Get payment method list.
-     *
-     * @return PaymentMethodListInterface
-     * @deprecated 100.2.0
-     */
-    private function getPaymentMethodList()
-    {
-        if ($this->paymentMethodList === null) {
-            $this->paymentMethodList = ObjectManager::getInstance()->get(
-                PaymentMethodListInterface::class
-            );
-        }
-        return $this->paymentMethodList;
-    }
-
-    /**
-     * Get payment method instance factory.
-     *
-     * @return InstanceFactory
-     * @deprecated 100.2.0
-     */
-    private function getPaymentMethodInstanceFactory()
-    {
-        if ($this->paymentMethodInstanceFactory === null) {
-            $this->paymentMethodInstanceFactory = ObjectManager::getInstance()->get(
-                InstanceFactory::class
-            );
-        }
-        return $this->paymentMethodInstanceFactory;
     }
 }

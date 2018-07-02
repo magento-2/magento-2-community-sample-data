@@ -29,7 +29,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Fill fields with test data and save.
  * 7. Perform all assertions.
  *
- * @group Customer_Account
+ * @group Customer_Account_(CS)
  * @ZephyrId MAGETWO-25925
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,6 +38,7 @@ class UpdateCustomerFrontendEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     /* end tags */
 
@@ -142,7 +143,7 @@ class UpdateCustomerFrontendEntityTest extends Injectable
 
         // Steps
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $initialCustomer]
         )->run();
         $this->customerAccountIndex->getInfoBlock()->openEditContactInfo();
@@ -156,10 +157,6 @@ class UpdateCustomerFrontendEntityTest extends Injectable
         $this->customerAddressEdit->getEditForm()->fill($address);
         $this->customerAddressEdit->getEditForm()->saveAddress();
 
-        return [
-            'customer' => $this->prepareCustomer($customer, $initialCustomer),
-            'shippingAddress' => $address,
-            'billingAddress' => $address
-        ];
+        return ['customer' => $this->prepareCustomer($customer, $initialCustomer)];
     }
 }

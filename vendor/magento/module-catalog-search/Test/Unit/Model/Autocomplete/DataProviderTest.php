@@ -8,7 +8,7 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Autocomplete;
 use Magento\CatalogSearch\Model\Autocomplete\DataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DataProviderTest extends \PHPUnit\Framework\TestCase
+class DataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DataProvider
@@ -34,12 +34,12 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->suggestCollection = $this->getMockBuilder(\Magento\Search\Model\ResourceModel\Query\Collection::class)
+        $this->suggestCollection = $this->getMockBuilder('Magento\Search\Model\ResourceModel\Query\Collection')
             ->disableOriginalConstructor()
             ->setMethods(['getIterator'])
             ->getMock();
 
-        $this->query = $this->getMockBuilder(\Magento\Search\Model\Query::class)
+        $this->query = $this->getMockBuilder('Magento\Search\Model\Query')
             ->disableOriginalConstructor()
             ->setMethods(['getQueryText', 'getSuggestCollection'])
             ->getMock();
@@ -47,7 +47,7 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getSuggestCollection')
             ->willReturn($this->suggestCollection);
 
-        $queryFactory = $this->getMockBuilder(\Magento\Search\Model\QueryFactory::class)
+        $queryFactory = $this->getMockBuilder('Magento\Search\Model\QueryFactory')
             ->disableOriginalConstructor()
             ->setMethods(['get'])
             ->getMock();
@@ -55,13 +55,13 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturn($this->query);
 
-        $this->itemFactory = $this->getMockBuilder(\Magento\Search\Model\Autocomplete\ItemFactory::class)
+        $this->itemFactory = $this->getMockBuilder('Magento\Search\Model\Autocomplete\ItemFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
         $this->model = $helper->getObject(
-            \Magento\CatalogSearch\Model\Autocomplete\DataProvider::class,
+            '\Magento\CatalogSearch\Model\Autocomplete\DataProvider',
             [
                 'queryFactory' => $queryFactory,
                 'itemFactory' => $this->itemFactory
@@ -85,7 +85,7 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getQueryText')
             ->willReturn($queryString);
 
-         $itemMock =  $this->getMockBuilder(\Magento\Search\Model\Autocomplete\Item::class)
+         $itemMock =  $this->getMockBuilder('Magento\Search\Model\Autocomplete\Item')
             ->disableOriginalConstructor()
             ->setMethods(['getTitle', 'toArray'])
             ->getMock();

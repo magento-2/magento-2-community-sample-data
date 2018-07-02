@@ -97,7 +97,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Group
                     $this->storeCustomerGroupDataToSession(
                         $this->dataObjectProcessor->buildOutputDataArray(
                             $customerGroup,
-                            \Magento\Customer\Api\Data\GroupInterface::class
+                            '\Magento\Customer\Api\Data\GroupInterface'
                         )
                     );
                 }

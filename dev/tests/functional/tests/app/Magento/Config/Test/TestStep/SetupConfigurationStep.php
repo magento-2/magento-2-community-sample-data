@@ -38,11 +38,11 @@ class SetupConfigurationStep implements TestStepInterface
     protected $rollback;
 
     /**
-     * Flush cache.
+     * Flush cache after change config flag.
      *
      * @var bool
      */
-    protected $flushCache;
+    private $flushCache;
 
     /**
      * Cli command to do operations with cache.
@@ -94,12 +94,14 @@ class SetupConfigurationStep implements TestStepInterface
             $config = $this->fixtureFactory->createByCode('configData', ['dataset' => $configDataSet . $prefix]);
             if ($config->hasData('section')) {
                 $config->persist();
-                $result = array_merge($result, $config->getSection());
-            }
-            if ($this->flushCache) {
-                $this->cache->flush();
+                $result = array_replace_recursive($result, $config->getSection());
             }
         }
+
+        if ($this->flushCache) {
+            $this->cache->flush();
+        }
+
         $config = $this->fixtureFactory->createByCode('configData', ['data' => $result]);
 
         return ['config' => $config];

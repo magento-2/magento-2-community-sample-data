@@ -8,8 +8,6 @@ namespace Magento\Framework;
 
 /**
  * Validator class that represents chain of validators.
- *
- * @api
  */
 class Validator extends \Magento\Framework\Validator\AbstractValidator
 {

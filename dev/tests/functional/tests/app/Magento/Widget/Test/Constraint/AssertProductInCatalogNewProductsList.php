@@ -24,7 +24,7 @@ class AssertProductInCatalogNewProductsList extends AbstractConstraint
      * @var CatalogCategoryView
      */
     protected $catalogCategoryView;
-    
+
     /**
      * Assert that created product appears in Catalog New Products List widget on frontend on Category Page.
      *

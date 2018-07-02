@@ -6,10 +6,6 @@
 
 namespace Magento\Catalog\Model\ProductLink\Converter;
 
-/**
- * Interface \Magento\Catalog\Model\ProductLink\Converter\ConverterInterface
- *
- */
 interface ConverterInterface
 {
     /**

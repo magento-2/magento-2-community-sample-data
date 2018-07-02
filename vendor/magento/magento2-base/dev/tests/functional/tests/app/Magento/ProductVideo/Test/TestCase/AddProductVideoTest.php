@@ -24,7 +24,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Click "Save" button on product page.
  * 7. Perform asserts.
  *
- * @group ProductVideo
+ * @group ProductVideo_(MX)
  * @ZephyrId MAGETWO-43673
  */
 class AddProductVideoTest extends Injectable
@@ -32,6 +32,7 @@ class AddProductVideoTest extends Injectable
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -82,7 +83,7 @@ class AddProductVideoTest extends Injectable
 
         // Preconditions
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => $this->configData]
         )->run();
 
@@ -113,7 +114,7 @@ class AddProductVideoTest extends Injectable
     {
         if ($this->configData) {
             $this->objectManager->create(
-                \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+                'Magento\Config\Test\TestStep\SetupConfigurationStep',
                 ['configData' => $this->configData, 'rollback' => true]
             )->run();
         }

@@ -11,9 +11,6 @@ use Magento\Framework\View\Asset\Minification;
 
 /**
  * Block responsible for including RequireJs config on the page
- *
- * @api
- * @since 100.0.2
  */
 class Config extends \Magento\Framework\View\Element\AbstractBlock
 {
@@ -36,11 +33,6 @@ class Config extends \Magento\Framework\View\Element\AbstractBlock
      * @var Minification
      */
     protected $minification;
-
-    /**
-     * @var \Magento\Framework\View\Asset\ConfigInterface
-     */
-    private $bundleConfig;
 
     /**
      * @param \Magento\Framework\View\Element\Context $context
@@ -75,8 +67,11 @@ class Config extends \Magento\Framework\View\Element\AbstractBlock
      */
     protected function _prepareLayout()
     {
-        $after = RequireJsConfig::REQUIRE_JS_FILE_NAME;
+        $requireJsConfig = $this->fileManager->createRequireJsConfigAsset();
+        $requireJsMixinsConfig = $this->fileManager->createRequireJsMixinsAsset();
         $assetCollection = $this->pageConfig->getAssetCollection();
+
+        $after = RequireJsConfig::REQUIRE_JS_FILE_NAME;
         if ($this->minification->isEnabled('js')) {
             $minResolver = $this->fileManager->createMinResolverAsset();
             $assetCollection->insert(
@@ -86,25 +81,11 @@ class Config extends \Magento\Framework\View\Element\AbstractBlock
             );
             $after = $minResolver->getFilePath();
         }
-        $requireJsMapConfig = $this->fileManager->createRequireJsMapConfigAsset();
-        if ($requireJsMapConfig) {
-            $urlResolverAsset = $this->fileManager->createUrlResolverAsset();
-            $assetCollection->insert(
-                $urlResolverAsset->getFilePath(),
-                $urlResolverAsset,
-                $after
-            );
-            $after = $urlResolverAsset->getFilePath();
-            $assetCollection->insert(
-                $requireJsMapConfig->getFilePath(),
-                $requireJsMapConfig,
-                $after
-            );
-            $after = $requireJsMapConfig->getFilePath();
-        }
+
         if ($this->bundleConfig->isBundlingJsFiles()) {
             $bundleAssets = $this->fileManager->createBundleJsPool();
             $staticAsset = $this->fileManager->createStaticJsAsset();
+
             /** @var \Magento\Framework\View\Asset\File $bundleAsset */
             if (!empty($bundleAssets) && $staticAsset !== false) {
                 $bundleAssets = array_reverse($bundleAssets);
@@ -123,18 +104,19 @@ class Config extends \Magento\Framework\View\Element\AbstractBlock
                 $after = $staticAsset->getFilePath();
             }
         }
-        $requireJsConfig = $this->fileManager->createRequireJsConfigAsset();
+
         $assetCollection->insert(
             $requireJsConfig->getFilePath(),
             $requireJsConfig,
             $after
         );
-        $requireJsMixinsConfig = $this->fileManager->createRequireJsMixinsAsset();
+
         $assetCollection->insert(
             $requireJsMixinsConfig->getFilePath(),
             $requireJsMixinsConfig,
             $after
         );
+
         return parent::_prepareLayout();
     }
 }

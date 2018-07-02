@@ -9,7 +9,7 @@ namespace Magento\PageCache\Block;
 /**
  * Class JavascriptTest
  */
-class JavascriptTest extends \PHPUnit\Framework\TestCase
+class JavascriptTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\PageCache\Block\Javascript
@@ -25,10 +25,10 @@ class JavascriptTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->request = $objectManager->get(\Magento\Framework\App\RequestInterface::class);
+        $this->request = $objectManager->get('Magento\Framework\App\RequestInterface');
 
         $this->javascript = $objectManager->create(
-            \Magento\PageCache\Block\Javascript::class
+            'Magento\PageCache\Block\Javascript'
         );
     }
 

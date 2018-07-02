@@ -9,7 +9,7 @@
 require 'simple_product.php';
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
 $quote->setStoreId(
     1
     )->setIsActive(
@@ -29,7 +29,7 @@ $quote->collectTotals()->save();
 
 /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
 $quoteIdMask = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)
+    ->create('Magento\Quote\Model\QuoteIdMaskFactory')
     ->create();
 $quoteIdMask->setQuoteId($quote->getId());
 $quoteIdMask->setDataChanges(true);

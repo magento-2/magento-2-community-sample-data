@@ -12,7 +12,7 @@ use Magento\Ui\DataProvider\EavValidationRules;
 /**
  * Class EavValidationRulesTest
  */
-class EavValidationRulesTest extends \PHPUnit\Framework\TestCase
+class EavValidationRulesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager

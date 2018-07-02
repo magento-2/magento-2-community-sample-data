@@ -9,12 +9,9 @@
 
 namespace Zend\Mvc\Service;
 
-use Interop\Container\ContainerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
-use Zend\Form\FormElementManager\FormElementManagerV2Polyfill;
-use Zend\Form\FormElementManager\FormElementManagerV3Polyfill;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\RuntimeException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -23,24 +20,18 @@ class FormAnnotationBuilderFactory implements FactoryInterface
     /**
      * Create service
      *
-     * @param  ContainerInterface $container
-     * @param  string $name
-     * @param  null|array $options
-     * @return AnnotationBuilder
-     * @throws ServiceNotCreatedException for invalid listener configuration.
+     * @param ServiceLocatorInterface $serviceLocator
+     * @throws \Zend\ServiceManager\Exception\RuntimeException
+     * @return mixed
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function createService(ServiceLocatorInterface $serviceLocator)
     {
         //setup a form factory which can use custom form elements
         $annotationBuilder = new AnnotationBuilder();
-        $eventManager       = $container->get('EventManager');
-        $annotationBuilder->setEventManager($eventManager);
+        $formElementManager = $serviceLocator->get('FormElementManager');
+        $formElementManager->injectFactory($annotationBuilder);
 
-        $formElementManager = $container->get('FormElementManager');
-
-        $this->injectFactory($formElementManager, $container, $annotationBuilder);
-
-        $config = $container->get('config');
+        $config = $serviceLocator->get('Config');
         if (isset($config['form_annotation_builder'])) {
             $config = $config['form_annotation_builder'];
 
@@ -52,11 +43,11 @@ class FormAnnotationBuilderFactory implements FactoryInterface
 
             if (isset($config['listeners'])) {
                 foreach ((array) $config['listeners'] as $listenerName) {
-                    $listener = $container->get($listenerName);
+                    $listener = $serviceLocator->get($listenerName);
                     if (!($listener instanceof ListenerAggregateInterface)) {
-                        throw new ServiceNotCreatedException(sprintf('Invalid event listener (%s) provided', $listenerName));
+                        throw new RuntimeException(sprintf('Invalid event listener (%s) provided', $listenerName));
                     }
-                    $listener->attach($eventManager);
+                    $listener->attach($annotationBuilder->getEventManager());
                 }
             }
 
@@ -66,42 +57,5 @@ class FormAnnotationBuilderFactory implements FactoryInterface
         }
 
         return $annotationBuilder;
-    }
-
-    /**
-     * Create and return AnnotationBuilder instance
-     *
-     * For use with zend-servicemanager v2; proxies to __invoke().
-     *
-     * @param ServiceLocatorInterface $container
-     * @return AnnotationBuilder
-     */
-    public function createService(ServiceLocatorInterface $container)
-    {
-        return $this($container, AnnotationBuilder::class);
-    }
-
-    /**
-     * Handle zend-servicemanager dependent InitializerInterface signature
-     *
-     * @param FormElementManagerV2Polyfill|FormElementManagerV3Polyfill $formElementManager
-     * @param ContainerInterface                                        $container
-     * @param AnnotationBuilder                                         $annotationBuilder
-     *
-     * @return void
-     */
-    private function injectFactory(
-        $formElementManager,
-        ContainerInterface $container,
-        AnnotationBuilder $annotationBuilder
-    ) {
-        if ($formElementManager instanceof FormElementManagerV2Polyfill) {
-            $formElementManager->injectFactory($annotationBuilder, $formElementManager);
-            return;
-        }
-
-        if ($formElementManager instanceof FormElementManagerV3Polyfill) {
-            $formElementManager->injectFactory($container, $annotationBuilder);
-        }
     }
 }

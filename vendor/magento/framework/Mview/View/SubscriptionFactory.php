@@ -5,6 +5,11 @@
  */
 namespace Magento\Framework\Mview\View;
 
+/**
+ * Class SubscriptionFactory
+ * @package Magento\Framework\Mview\View
+ *
+ */
 class SubscriptionFactory extends AbstractFactory
 {
     /**

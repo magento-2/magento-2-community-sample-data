@@ -45,8 +45,7 @@ class Remove
         return $composerApplication->runComposerCommand(
             [
                 'command' => 'remove',
-                'packages' => $packages,
-                '--no-update' => true,
+                'packages' => $packages
             ]
         );
     }

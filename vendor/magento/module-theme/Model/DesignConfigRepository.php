@@ -15,19 +15,13 @@ use Magento\Theme\Model\Design\Config\Storage as ConfigStorage;
 
 class DesignConfigRepository implements DesignConfigRepositoryInterface
 {
-    /**
-     * @var \Magento\Framework\App\Config\ReinitableConfigInterface
-     */
+    /** @var ReinitableConfigInterface */
     protected $reinitableConfig;
 
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var IndexerRegistry */
     protected $indexerRegistry;
 
-    /**
-     * @var \Magento\Theme\Model\Design\Config\Storage
-     */
+    /** @var ConfigStorage */
     protected $configStorage;
 
     /**
@@ -57,7 +51,7 @@ class DesignConfigRepository implements DesignConfigRepositoryInterface
      *
      * @return Design\Config\Validator
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getValidator()
     {

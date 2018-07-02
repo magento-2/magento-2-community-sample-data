@@ -7,7 +7,7 @@ namespace Magento\Test\Integrity\Modular;
 
 use Magento\Framework\Filesystem;
 
-class IndexerConfigFilesTest extends \PHPUnit\Framework\TestCase
+class IndexerConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Configuration acl file list
@@ -36,7 +36,7 @@ class IndexerConfigFilesTest extends \PHPUnit\Framework\TestCase
      */
     public function testIndexerConfigFile($file)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $domConfig = new \Magento\Framework\Config\Dom(file_get_contents($file), $validationStateMock);

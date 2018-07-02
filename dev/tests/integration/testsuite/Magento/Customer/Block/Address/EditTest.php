@@ -8,7 +8,7 @@ namespace Magento\Customer\Block\Address;
 /**
  * Tests Address Edit Block
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Edit */
     protected $_block;
@@ -26,23 +26,23 @@ class EditTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->_customerSession = $objectManager->get('Magento\Customer\Model\Session');
         $this->_customerSession->setCustomerId(1);
 
-        $this->_context = $objectManager->get(\Magento\Backend\Block\Template\Context::class);
+        $this->_context = $objectManager->get('Magento\Backend\Block\Template\Context');
         $this->_requestId = $this->_context->getRequest()->getParam('id');
         $this->_context->getRequest()->setParam('id', '1');
 
-        $objectManager->get(\Magento\Framework\App\State::class)->setAreaCode('frontend');
+        $objectManager->get('Magento\Framework\App\State')->setAreaCode('frontend');
 
         /** @var $layout \Magento\Framework\View\Layout */
-        $layout = $objectManager->get(\Magento\Framework\View\LayoutInterface::class);
+        $layout = $objectManager->get('Magento\Framework\View\LayoutInterface');
         $currentCustomer = $objectManager->create(
-            \Magento\Customer\Helper\Session\CurrentCustomer::class,
+            'Magento\Customer\Helper\Session\CurrentCustomer',
             ['customerSession' => $this->_customerSession]
         );
         $this->_block = $layout->createBlock(
-            \Magento\Customer\Block\Address\Edit::class,
+            'Magento\Customer\Block\Address\Edit',
             '',
             ['customerSession' => $this->_customerSession, 'currentCustomer' => $currentCustomer]
         );
@@ -54,13 +54,13 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $this->_customerSession->setCustomerId(null);
         $this->_context->getRequest()->setParam('id', $this->_requestId);
         /** @var \Magento\Customer\Model\AddressRegistry $addressRegistry */
-        $addressRegistry = $objectManager->get(\Magento\Customer\Model\AddressRegistry::class);
+        $addressRegistry = $objectManager->get('Magento\Customer\Model\AddressRegistry');
         //Cleanup address from registry
         $addressRegistry->remove(1);
         $addressRegistry->remove(2);
 
         /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
-        $customerRegistry = $objectManager->get(\Magento\Customer\Model\CustomerRegistry::class);
+        $customerRegistry = $objectManager->get('Magento\Customer\Model\CustomerRegistry');
         //Cleanup customer from registry
         $customerRegistry->remove(1);
     }

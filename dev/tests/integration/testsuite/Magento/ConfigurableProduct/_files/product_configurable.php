@@ -55,7 +55,7 @@ foreach ($options as $option) {
     $product = $productRepository->save($product);
 
     /** @var \Magento\CatalogInventory\Model\Stock\Item $stockItem */
-    $stockItem = Bootstrap::getObjectManager()->create(\Magento\CatalogInventory\Model\Stock\Item::class);
+    $stockItem = Bootstrap::getObjectManager()->create('Magento\CatalogInventory\Model\Stock\Item');
     $stockItem->load($productId, 'product_id');
 
     if (!$stockItem->getProductId()) {
@@ -99,29 +99,8 @@ $extensionConfigurableAttributes->setConfigurableProductLinks($associatedProduct
 
 $product->setExtensionAttributes($extensionConfigurableAttributes);
 
-// Remove any previously created product with the same id.
-/** @var \Magento\Framework\Registry $registry */
-$registry = Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
-$registry->unregister('isSecureArea');
-$registry->register('isSecureArea', true);
-try {
-    $productToDelete = $productRepository->getById(1);
-    $productRepository->delete($productToDelete);
-
-    /** @var \Magento\Quote\Model\ResourceModel\Quote\Item $itemResource */
-    $itemResource = Bootstrap::getObjectManager()->get(\Magento\Quote\Model\ResourceModel\Quote\Item::class);
-    $itemResource->getConnection()->delete(
-        $itemResource->getMainTable(),
-        'product_id = ' . $productToDelete->getId()
-    );
-} catch (\Exception $e) {
-    // Nothing to remove
-}
-$registry->unregister('isSecureArea');
-$registry->register('isSecureArea', false);
-
 $product->setTypeId(Configurable::TYPE_CODE)
-    ->setId(1)
+    ->setId(1001)
     ->setAttributeSetId($attributeSetId)
     ->setWebsiteIds([1])
     ->setName('Configurable Product')
@@ -131,12 +110,3 @@ $product->setTypeId(Configurable::TYPE_CODE)
     ->setStockData(['use_config_manage_stock' => 1, 'is_in_stock' => 1]);
 
 $productRepository->save($product);
-
-/** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $categoryLinkManagement */
-$categoryLinkManagement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\CategoryLinkManagementInterface::class);
-
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [2]
-);

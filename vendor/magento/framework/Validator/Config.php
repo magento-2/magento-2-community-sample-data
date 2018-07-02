@@ -21,8 +21,10 @@ class Config extends \Magento\Framework\Config\AbstractXml
     const CONSTRAINT_TYPE_PROPERTY = 'property';
     /**#@-*/
 
-    /**#@-*/
-    protected $_defaultBuilderClass = \Magento\Framework\Validator\Builder::class;
+    /**
+     * @var string
+     */
+    protected $_defaultBuilderClass = 'Magento\Framework\Validator\Builder';
 
     /**
      * @var \Magento\Framework\Validator\UniversalFactory

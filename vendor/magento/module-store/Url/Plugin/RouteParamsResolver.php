@@ -49,12 +49,15 @@ class RouteParamsResolver
      * Process scope query parameters.
      *
      * @param \Magento\Framework\Url\RouteParamsResolver $subject
+     * @param callable $proceed
      * @param array $data
      * @param bool $unsetOldParams
-     * @return array
+     * @return \Magento\Framework\Url\RouteParamsResolver
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeSetRouteParams(
+    public function aroundSetRouteParams(
         \Magento\Framework\Url\RouteParamsResolver $subject,
+        \Closure $proceed,
         array $data,
         $unsetOldParams = true
     ) {
@@ -75,6 +78,6 @@ class RouteParamsResolver
         }
         unset($data['_scope_to_url']);
 
-        return [$data, $unsetOldParams];
+        return $proceed($data, $unsetOldParams);
     }
 }

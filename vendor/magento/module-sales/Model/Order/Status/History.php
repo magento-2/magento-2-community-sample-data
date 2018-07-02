@@ -12,9 +12,9 @@ use Magento\Sales\Model\AbstractModel;
 /**
  * Order status history comments
  *
- * @api
+ * @method \Magento\Sales\Model\ResourceModel\Order\Status\History _getResource()
+ * @method \Magento\Sales\Model\ResourceModel\Order\Status\History getResource()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class History extends AbstractModel implements OrderStatusHistoryInterface
 {
@@ -82,7 +82,7 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Status\History::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Status\History');
     }
 
     /**
@@ -178,7 +178,6 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Returns comment
      *
@@ -328,6 +327,5 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

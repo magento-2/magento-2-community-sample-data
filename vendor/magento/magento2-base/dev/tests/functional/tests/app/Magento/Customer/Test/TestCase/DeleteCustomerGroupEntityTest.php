@@ -24,13 +24,14 @@ use Magento\Customer\Test\Fixture\Customer;
  *  5. Confirm in pop-up.
  *  6. Perform all assertions.
  *
- * @group Customer_Groups
+ * @group Customer_Groups_(CS)
  * @ZephyrId MAGETWO-25243
  */
 class DeleteCustomerGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

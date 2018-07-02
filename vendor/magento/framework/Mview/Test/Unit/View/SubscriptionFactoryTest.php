@@ -10,7 +10,7 @@ namespace Magento\Framework\Mview\Test\Unit\View;
 
 use \Magento\Framework\Mview\View\SubscriptionFactory;
 
-class SubscriptionFactoryTest extends \PHPUnit\Framework\TestCase
+class SubscriptionFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Mview\View\SubscriptionFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -24,18 +24,18 @@ class SubscriptionFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->model = new SubscriptionFactory($this->objectManagerMock);
     }
 
     public function testCreate()
     {
         $subscriptionInterfaceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Mview\View\SubscriptionInterface::class, [], '', false
+            'Magento\Framework\Mview\View\SubscriptionInterface', [], '', false
         );
         $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Framework\Mview\View\SubscriptionInterface::class, ['some_data'])
+            ->with('Magento\Framework\Mview\View\SubscriptionInterface', ['some_data'])
             ->will($this->returnValue($subscriptionInterfaceMock));
         $this->assertEquals($subscriptionInterfaceMock, $this->model->create(['some_data']));
     }

@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Wishlist\Product;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
 {
     /**
@@ -24,7 +20,7 @@ class Collection extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
      */
     public function _construct()
     {
-        $this->_init(\Magento\Wishlist\Model\Wishlist::class, \Magento\Wishlist\Model\ResourceModel\Wishlist::class);
+        $this->_init('Magento\Wishlist\Model\Wishlist', 'Magento\Wishlist\Model\ResourceModel\Wishlist');
     }
 
     /**

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\ObjectManager\Test\Unit\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManager\Config\SchemaLocator

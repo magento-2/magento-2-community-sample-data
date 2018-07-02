@@ -8,9 +8,6 @@ namespace Magento\Framework\View\Element\Js;
 use Magento\Framework\App\State;
 use Magento\Framework\View\Element\Template;
 
-/**
- * @api
- */
 class Components extends Template
 {
     /**

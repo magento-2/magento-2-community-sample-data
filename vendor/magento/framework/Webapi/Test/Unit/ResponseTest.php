@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Webapi\Test\Unit;
 
-class ResponseTest extends \PHPUnit\Framework\TestCase
+class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Response object.

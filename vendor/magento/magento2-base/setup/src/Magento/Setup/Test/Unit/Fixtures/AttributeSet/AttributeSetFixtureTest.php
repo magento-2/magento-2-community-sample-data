@@ -9,7 +9,7 @@ namespace Magento\Setup\Test\Unit\Fixtures\AttributeSet;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class AttributeSetFixtureTest extends \PHPUnit\Framework\TestCase
+class AttributeSetFixtureTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecute()
     {

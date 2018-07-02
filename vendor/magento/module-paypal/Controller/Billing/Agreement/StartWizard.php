@@ -15,20 +15,20 @@ class StartWizard extends \Magento\Paypal\Controller\Billing\Agreement
      */
     public function execute()
     {
-        $agreement = $this->_objectManager->create(\Magento\Paypal\Model\Billing\Agreement::class);
+        $agreement = $this->_objectManager->create('Magento\Paypal\Model\Billing\Agreement');
         $paymentCode = $this->getRequest()->getParam('payment_method');
         if ($paymentCode) {
             try {
                 $agreement->setStoreId(
-                    $this->_objectManager->get(\Magento\Store\Model\StoreManager::class)->getStore()->getId()
+                    $this->_objectManager->get('Magento\Store\Model\StoreManager')->getStore()->getId()
                 )->setMethodCode(
                     $paymentCode
                 )->setReturnUrl(
                     $this->_objectManager->create(
-                        \Magento\Framework\UrlInterface::class
+                        'Magento\Framework\UrlInterface'
                     )->getUrl('*/*/returnWizard', ['payment_method' => $paymentCode])
                 )->setCancelUrl(
-                    $this->_objectManager->create(\Magento\Framework\UrlInterface::class)
+                    $this->_objectManager->create('Magento\Framework\UrlInterface')
                         ->getUrl('*/*/cancelWizard', ['payment_method' => $paymentCode])
                 );
 

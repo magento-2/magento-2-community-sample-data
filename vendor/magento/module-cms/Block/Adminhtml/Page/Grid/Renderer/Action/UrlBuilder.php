@@ -37,7 +37,6 @@ class UrlBuilder
             $routePath,
             [
                 '_current' => false,
-                '_nosid' => true,
                 '_query' => [StoreResolverInterface::PARAM_NAME => $store]
             ]
         );

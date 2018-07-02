@@ -9,8 +9,8 @@ namespace Magento\Framework\Mview\View;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
- * @api
- * @since 100.1.0
+ * Class ChangelogTableNotExistsException
+ * @package Magento\Framework\Mview\View
  */
 class ChangelogTableNotExistsException extends LocalizedException
 {

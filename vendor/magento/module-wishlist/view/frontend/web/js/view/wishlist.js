@@ -2,7 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'uiComponent',
     'Magento_Customer/js/customer-data'
@@ -10,7 +9,6 @@ define([
     'use strict';
 
     return Component.extend({
-        /** @inheritdoc */
         initialize: function () {
             this._super();
 

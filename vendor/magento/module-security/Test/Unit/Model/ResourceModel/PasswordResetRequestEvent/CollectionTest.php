@@ -9,7 +9,7 @@ namespace Magento\Security\Test\Unit\Model\ResourceModel\PasswordResetRequestEve
 /**
  * Test class for \Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection testing
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection */
     protected $collectionMock;
@@ -29,24 +29,57 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $entityFactory = $this->createMock(\Magento\Framework\Data\Collection\EntityFactoryInterface::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $fetchStrategy = $this->createMock(\Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-
-        $this->dateTimeMock = $this->createPartialMock(
-            \Magento\Framework\Stdlib\DateTime\DateTime::class,
-            ['gmtTimestamp']
+        $entityFactory = $this->getMock(
+            '\Magento\Framework\Data\Collection\EntityFactoryInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $logger = $this->getMock(
+            '\Psr\Log\LoggerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $fetchStrategy = $this->getMock(
+            '\Magento\Framework\Data\Collection\Db\FetchStrategyInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $eventManager = $this->getMock(
+            '\Magento\Framework\Event\ManagerInterface',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->selectMock = $this->createPartialMock(\Magento\Framework\DB\Select::class, ['limit', 'from']);
+        $this->dateTimeMock = $this->getMock(
+            '\Magento\Framework\Stdlib\DateTime\DateTime',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $this->selectMock = $this->getMock(
+            '\Magento\Framework\DB\Select',
+            ['limit', 'from'],
+            [],
+            '',
+            false
+        );
+
+        $connection = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('select')->willReturn($this->selectMock);
 
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\AbstractDb::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\AbstractDb')
             ->disableOriginalConstructor()
             ->setMethods(['getConnection', 'getMainTable', 'getTable', 'deleteRecordsOlderThen'])
             ->getMockForAbstractClass();
@@ -58,32 +91,15 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock->expects($this->any())->method('getMainTable')->willReturn('table_test');
         $this->resourceMock->expects($this->any())->method('getTable')->willReturn('test');
 
-        $this->collectionMock = $this->getMockBuilder(
-            \Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection::class
-        )
-            ->setMethods(['addFieldToFilter', 'addOrder', 'getSelect', 'getResource', 'getConnection'])
-            ->setConstructorArgs(
-                [
-                    $entityFactory,
-                    $logger,
-                    $fetchStrategy,
-                    $eventManager,
-                    $this->dateTimeMock,
-                    $connection,
-                    $this->resourceMock
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflection = new \ReflectionClass(get_class($this->collectionMock));
-        $reflectionProperty = $reflection->getProperty('dateTime');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->collectionMock, $this->dateTimeMock);
-
-        $this->collectionMock->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($connection));
+        $this->collectionMock = $this->getMock(
+            '\Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection',
+            ['addFieldToFilter', 'addOrder'],
+            [$entityFactory, $logger, $fetchStrategy, $eventManager,
+                $this->dateTimeMock,
+                $connection, $this->resourceMock],
+            '',
+            true
+        );
 
         $this->collectionMock->expects($this->any())
             ->method('getSelect')
@@ -230,7 +246,6 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ->method('deleteRecordsOlderThen')
             ->with($timestamp);
 
-        $result = $this->collectionMock->deleteRecordsOlderThen($timestamp);
-        $this->assertEquals($this->collectionMock, $result);
+        $this->collectionMock->deleteRecordsOlderThen($timestamp);
     }
 }

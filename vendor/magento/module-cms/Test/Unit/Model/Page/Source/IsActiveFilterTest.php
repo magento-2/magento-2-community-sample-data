@@ -12,7 +12,7 @@ class IsActiveFilterTest extends IsActiveTest
      */
     protected function getSourceClassName()
     {
-        return \Magento\Cms\Model\Page\Source\IsActiveFilter::class;
+        return 'Magento\Cms\Model\Page\Source\IsActiveFilter';
     }
 
     /**

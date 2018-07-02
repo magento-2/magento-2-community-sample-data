@@ -9,7 +9,6 @@ namespace Magento\Store\Api\Data;
  * Store interface
  *
  * @api
- * @since 100.0.2
  */
 interface StoreInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -37,14 +36,14 @@ interface StoreInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 
     /**
      * Retrieve store name
-     *
+     * 
      * @return string
      */
     public function getName();
 
     /**
      * Set store name
-     *
+     * 
      * @param string $name
      * @return $this
      */

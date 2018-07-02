@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @deprecated since version 2.2.0
- */
 define([
     'Magento_Ui/js/form/element/abstract'
 ], function (Abstract) {

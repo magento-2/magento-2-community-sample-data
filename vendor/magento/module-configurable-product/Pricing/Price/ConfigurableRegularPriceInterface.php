@@ -12,7 +12,6 @@ use Magento\Framework\Pricing\Price\BasePriceProviderInterface;
 /**
  * Configurable regular price interface
  * @api
- * @since 100.0.2
  */
 interface ConfigurableRegularPriceInterface extends BasePriceProviderInterface
 {

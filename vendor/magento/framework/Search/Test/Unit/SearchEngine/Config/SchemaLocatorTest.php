@@ -7,7 +7,7 @@ namespace Magento\Framework\Search\Test\Unit\SearchEngine\Config;
 
 use Magento\Framework\Search\SearchEngine\Config\SchemaLocator;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SchemaLocator
@@ -16,7 +16,7 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $urnResolver = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $urnResolver = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
         $urnResolver->expects($this->any())
             ->method('getRealPath')
             ->with(SchemaLocator::SEARCH_ENGINE_XSD_PATH)

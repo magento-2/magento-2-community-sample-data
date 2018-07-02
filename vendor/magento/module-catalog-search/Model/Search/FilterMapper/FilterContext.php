@@ -11,26 +11,45 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 
 /**
- * FilterContext represents a Context of the Strategy pattern
- * Its responsibility is to choose appropriate strategy to apply passed filter to the Select
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * FilterContext represents a Context of the Strategy pattern.
+ * Its responsibility is to choose appropriate strategy to apply passed filter to the Select.
  */
 class FilterContext implements FilterStrategyInterface
 {
     /**
+     * Strategy which processes exclusions from general rules.
+     *
      * @var ExclusionStrategy
      */
     private $exclusionStrategy;
 
     /**
+     * Eav attributes config.
+     *
      * @var EavConfig
      */
     private $eavConfig;
 
     /**
+     * Strategy for handling dropdown or multi-select attributes.
+     *
+     * @var TermDropdownStrategy
+     */
+    private $termDropdownStrategy;
+
+    /**
+     * Strategy for handling static attributes.
+     *
      * @var StaticAttributeStrategy
      */
     private $staticAttributeStrategy;
+
+    /**
+     * Resolving table alias for Search Request filter.
+     *
+     * @var AliasResolver
+     */
+    private $aliasResolver;
 
     /**
      * @param EavConfig $eavConfig
@@ -38,7 +57,6 @@ class FilterContext implements FilterStrategyInterface
      * @param ExclusionStrategy $exclusionStrategy
      * @param TermDropdownStrategy $termDropdownStrategy
      * @param StaticAttributeStrategy $staticAttributeStrategy
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         EavConfig $eavConfig,
@@ -48,7 +66,9 @@ class FilterContext implements FilterStrategyInterface
         StaticAttributeStrategy $staticAttributeStrategy
     ) {
         $this->eavConfig = $eavConfig;
+        $this->aliasResolver = $aliasResolver;
         $this->exclusionStrategy = $exclusionStrategy;
+        $this->termDropdownStrategy = $termDropdownStrategy;
         $this->staticAttributeStrategy = $staticAttributeStrategy;
     }
 
@@ -63,11 +83,12 @@ class FilterContext implements FilterStrategyInterface
 
         if (!$isApplied) {
             $attribute = $this->getAttributeByCode($filter->getField());
+
             if ($attribute) {
                 if ($filter->getType() === \Magento\Framework\Search\Request\FilterInterface::TYPE_TERM
                     && in_array($attribute->getFrontendInput(), ['select', 'multiselect'], true)
                 ) {
-                    $isApplied = false;
+                    $isApplied = $this->termDropdownStrategy->apply($filter, $select);
                 } elseif ($attribute->getBackendType() === AbstractAttribute::TYPE_STATIC) {
                     $isApplied = $this->staticAttributeStrategy->apply($filter, $select);
                 }
@@ -78,8 +99,12 @@ class FilterContext implements FilterStrategyInterface
     }
 
     /**
+     * Returns attribute by attribute_code.
+     *
      * @param string $field
+     *
      * @return \Magento\Catalog\Model\ResourceModel\Eav\Attribute
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function getAttributeByCode($field)

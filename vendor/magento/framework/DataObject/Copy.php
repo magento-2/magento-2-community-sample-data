@@ -214,9 +214,9 @@ class Copy
 
         if ($targetIsArray) {
             $target[$targetCode] = $value;
-        } elseif ($target instanceof \Magento\Framework\DataObject) {
+        } else if ($target instanceof \Magento\Framework\DataObject) {
             $target->setDataUsingMethod($targetCode, $value);
-        } elseif ($target instanceof \Magento\Framework\Api\ExtensibleDataInterface) {
+        } else if ($target instanceof \Magento\Framework\Api\ExtensibleDataInterface) {
             $this->setAttributeValueFromExtensibleDataObject($target, $targetCode, $value);
         } elseif ($target instanceof \Magento\Framework\Api\AbstractSimpleObject) {
             $target->setData($targetCode, $value);

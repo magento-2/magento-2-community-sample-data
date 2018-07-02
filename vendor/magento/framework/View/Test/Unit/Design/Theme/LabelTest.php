@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit\Design\Theme;
 use Magento\Framework\View\Design\Theme\Label;
 use Magento\Framework\View\Design\Theme\Label\ListInterface;
 
-class LabelTest extends \PHPUnit\Framework\TestCase
+class LabelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Label
@@ -22,7 +22,7 @@ class LabelTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->labelList = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\Label\ListInterface::class)
+        $this->labelList = $this->getMockBuilder('Magento\Framework\View\Design\Theme\Label\ListInterface')
             ->getMockForAbstractClass();
 
         $this->model = new Label(

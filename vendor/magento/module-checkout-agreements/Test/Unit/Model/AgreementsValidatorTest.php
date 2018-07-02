@@ -8,7 +8,7 @@ namespace Magento\CheckoutAgreements\Test\Unit\Model;
 use Magento\CheckoutAgreements\Model\AgreementsValidator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class AgreementsValidatorTest extends \PHPUnit\Framework\TestCase
+class AgreementsValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AgreementsValidator */
     protected $object;
@@ -40,7 +40,7 @@ class AgreementsValidatorTest extends \PHPUnit\Framework\TestCase
     public function testIsValid($data, $result)
     {
         $this->object = $this->objectManagerHelper->getObject(
-            \Magento\CheckoutAgreements\Model\AgreementsValidator::class,
+            'Magento\CheckoutAgreements\Model\AgreementsValidator',
             []
         );
         $this->assertEquals($result, $this->object->isValid($data));
@@ -68,15 +68,13 @@ class AgreementsValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testNotIsValid($data, $result)
     {
-        $provider = $this->getMockForAbstractClass(
-            \Magento\CheckoutAgreements\Model\AgreementsProviderInterface::class
-        );
+        $provider = $this->getMockForAbstractClass('\Magento\CheckoutAgreements\Model\AgreementsProviderInterface');
         $provider->expects($this->once())
             ->method('getRequiredAgreementIds')
             ->will($this->returnValue([1, 3, '4']));
 
         $this->object = $this->objectManagerHelper->getObject(
-            \Magento\CheckoutAgreements\Model\AgreementsValidator::class,
+            'Magento\CheckoutAgreements\Model\AgreementsValidator',
             ['list' => [$provider]]
         );
         $this->assertEquals($result, $this->object->isValid($data));

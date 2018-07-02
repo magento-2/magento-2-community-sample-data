@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\Block;
 
 use Magento\Customer\Block\Newsletter;
 
-class NewsletterTest extends \PHPUnit\Framework\TestCase
+class NewsletterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -21,12 +21,9 @@ class NewsletterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->urlBuilder = $this->getMock('\Magento\Framework\UrlInterface');
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->block = $helper->getObject(
-            \Magento\Customer\Block\Newsletter::class,
-            ['urlBuilder' => $this->urlBuilder]
-        );
+        $this->block = $helper->getObject('Magento\Customer\Block\Newsletter', ['urlBuilder' => $this->urlBuilder]);
     }
 
     public function testGetAction()

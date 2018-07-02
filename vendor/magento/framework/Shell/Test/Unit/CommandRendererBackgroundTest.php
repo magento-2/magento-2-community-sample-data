@@ -7,7 +7,7 @@ namespace Magento\Framework\Shell\Test\Unit;
 
 use \Magento\Framework\Shell\CommandRendererBackground;
 
-class CommandRendererBackgroundTest extends \PHPUnit\Framework\TestCase
+class CommandRendererBackgroundTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test data for command
@@ -23,7 +23,7 @@ class CommandRendererBackgroundTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->osInfo = $this->getMockBuilder(\Magento\Framework\OsInfo::class)->getMock();
+        $this->osInfo = $this->getMockBuilder('Magento\Framework\OsInfo')->getMock();
     }
 
     /**

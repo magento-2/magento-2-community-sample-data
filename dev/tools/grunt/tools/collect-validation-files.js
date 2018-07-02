@@ -27,6 +27,7 @@ module.exports = {
     },
 
     getFilesForValidate: function () {
+
         var blackListFiles = glob.sync(pc.static.blacklist + '*.txt'),
             whiteListFiles = glob.sync(pc.static.whitelist + '*.txt'),
             blackList = this.readFiles(blackListFiles),

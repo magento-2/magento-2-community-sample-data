@@ -22,7 +22,7 @@ class MassDelete extends \Magento\Newsletter\Controller\Adminhtml\Subscriber
             try {
                 foreach ($subscribersIds as $subscriberId) {
                     $subscriber = $this->_objectManager->create(
-                        \Magento\Newsletter\Model\Subscriber::class
+                        'Magento\Newsletter\Model\Subscriber'
                     )->load(
                         $subscriberId
                     );

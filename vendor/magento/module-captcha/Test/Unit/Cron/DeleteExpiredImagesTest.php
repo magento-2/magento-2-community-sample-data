@@ -5,7 +5,7 @@
  */
 namespace Magento\Captcha\Test\Unit\Cron;
 
-class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
+class DeleteExpiredImagesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * CAPTCHA helper
@@ -51,11 +51,11 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->_helper = $this->createMock(\Magento\Captcha\Helper\Data::class);
-        $this->_adminHelper = $this->createMock(\Magento\Captcha\Helper\Adminhtml\Data::class);
-        $this->_filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->_directory = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
-        $this->_storeManager = $this->createMock(\Magento\Store\Model\StoreManager::class);
+        $this->_helper = $this->getMock('Magento\Captcha\Helper\Data', [], [], '', false);
+        $this->_adminHelper = $this->getMock('Magento\Captcha\Helper\Adminhtml\Data', [], [], '', false);
+        $this->_filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->_directory = $this->getMock('Magento\Framework\Filesystem\Directory\Write', [], [], '', false);
+        $this->_storeManager = $this->getMock('Magento\Store\Model\StoreManager', [], [], '', false);
 
         $this->_filesystem->expects(
             $this->once()
@@ -76,8 +76,9 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getExpiredImages
      */
-    public function testDeleteExpiredImages($website, $isFile, $filename, $mTime, $timeout)
+    public function testDeleteExpiredImages($website, $isFile, $filename, $mTime, $timeout, $mustDelete)
     {
+        $this->markTestSkipped("MAGETWO-34751: Hidden dependency");
         $this->_storeManager->expects(
             $this->once()
         )->method(
@@ -92,7 +93,7 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
                 'getConfig'
             )->with(
                 $this->equalTo('timeout'),
-                new \PHPUnit\Framework\Constraint\IsIdentical($website->getDefaultStore())
+                new \PHPUnit_Framework_Constraint_IsIdentical($website->getDefaultStore())
             )->will(
                 $this->returnValue($timeout)
             );
@@ -105,7 +106,7 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
             'getConfig'
         )->with(
             $this->equalTo('timeout'),
-            new \PHPUnit\Framework\Constraint\IsNull()
+            new \PHPUnit_Framework_Constraint_IsNull()
         )->will(
             $this->returnValue($timeout)
         );
@@ -120,6 +121,11 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
         );
         $this->_directory->expects($this->exactly($timesToCall))->method('isFile')->will($this->returnValue($isFile));
         $this->_directory->expects($this->any())->method('stat')->will($this->returnValue(['mtime' => $mTime]));
+        if ($mustDelete) {
+            $this->_directory->expects($this->exactly($timesToCall))->method('delete')->with($filename);
+        } else {
+            $this->_directory->expects($this->never())->method('delete');
+        }
 
         $this->_deleteExpiredImages->execute();
     }
@@ -129,8 +135,14 @@ class DeleteExpiredImagesTest extends \PHPUnit\Framework\TestCase
      */
     public function getExpiredImages()
     {
-        $website = $this->createPartialMock(\Magento\Store\Model\Website::class, ['__wakeup', 'getDefaultStore']);
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['__wakeup']);
+        $website = $this->getMock(
+            'Magento\Store\Model\Website',
+            ['__wakeup', 'getDefaultStore'],
+            [],
+            '',
+            false
+        );
+        $store = $this->getMock('Magento\Store\Model\Store', ['__wakeup'], [], '', false);
         $website->expects($this->any())->method('getDefaultStore')->will($this->returnValue($store));
         $time = time();
         return [

@@ -26,16 +26,18 @@ class ApplyRules
      * Apply catalog rules after product resource model save
      *
      * @param \Magento\Catalog\Model\ResourceModel\Product $subject
-     * @param \Magento\Catalog\Model\ResourceModel\Product $productResource
+     * @param callable $proceed
      * @param \Magento\Framework\Model\AbstractModel $product
      * @return \Magento\Catalog\Model\ResourceModel\Product
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(
+    public function aroundSave(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
-        \Magento\Catalog\Model\ResourceModel\Product $productResource,
+        callable $proceed,
         \Magento\Framework\Model\AbstractModel $product
     ) {
+        $productResource = $proceed($product);
         if (!$product->getIsMassupdate()) {
             $this->productRuleProcessor->reindexRow($product->getId());
         }

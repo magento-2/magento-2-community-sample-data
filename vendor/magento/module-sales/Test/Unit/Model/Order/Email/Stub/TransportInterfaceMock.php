@@ -18,14 +18,4 @@ class TransportInterfaceMock implements TransportInterface
     {
         return;
     }
-
-    /**
-     * Get message
-     *
-     * @return string
-     */
-    public function getMessage()
-    {
-        return '';
-    }
 }

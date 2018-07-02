@@ -14,7 +14,6 @@ namespace Composer;
 
 use Composer\Json\JsonFile;
 use Composer\Spdx\SpdxLicenses;
-use Composer\CaBundle\CaBundle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Seld\PharUtils\Timestamps;
@@ -121,8 +120,6 @@ class Compiler
             ->in(__DIR__.'/../../vendor/justinrainbow/json-schema/')
             ->in(__DIR__.'/../../vendor/composer/spdx-licenses/')
             ->in(__DIR__.'/../../vendor/composer/semver/')
-            ->in(__DIR__.'/../../vendor/composer/ca-bundle/')
-            ->in(__DIR__.'/../../vendor/psr/')
             ->sort($finderSort)
         ;
 
@@ -136,13 +133,12 @@ class Compiler
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_classmap.php'));
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_files.php'));
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_real.php'));
-        $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_static.php'));
         if (file_exists(__DIR__.'/../../vendor/composer/include_paths.php')) {
             $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/include_paths.php'));
         }
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/ClassLoader.php'));
 
-        $this->addFile($phar, new \SplFileInfo(CaBundle::getBundledCaBundlePath()), false);
+        $this->addFile($phar, new \SplFileInfo(__DIR__ . '/../../res/cacert.pem'), false);
 
         $this->addComposerBin($phar);
 

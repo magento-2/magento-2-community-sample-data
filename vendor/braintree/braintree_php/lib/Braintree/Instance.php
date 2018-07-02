@@ -4,6 +4,7 @@ namespace Braintree;
 /**
  * Braintree Class Instance template
  *
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  * @abstract
  */
 abstract class Instance

@@ -20,7 +20,7 @@ class Blocks extends \Magento\Widget\Controller\Adminhtml\Widget\Instance
         $layout = $this->getRequest()->getParam('layout');
         $selected = $this->getRequest()->getParam('selected', null);
         $blocksChooser = $this->_view->getLayout()->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Chooser\Container::class
+            'Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Chooser\Container'
         )->setValue(
             $selected
         )->setArea(
@@ -43,7 +43,7 @@ class Blocks extends \Magento\Widget\Controller\Adminhtml\Widget\Instance
     public function execute()
     {
         $this->_objectManager->get(
-            \Magento\Framework\App\State::class
+            'Magento\Framework\App\State'
         )->emulateAreaCode(
             'frontend',
             [$this, 'renderPageContainers']

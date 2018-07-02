@@ -17,7 +17,7 @@ use Magento\Framework\View\Page\Config;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config
@@ -76,23 +76,21 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->assetRepo = $this->createMock(\Magento\Framework\View\Asset\Repository::class);
-        $this->pageAssets = $this->createMock(\Magento\Framework\View\Asset\GroupedCollection::class);
-        $this->scopeConfig =
-            $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->favicon = $this->createMock(\Magento\Framework\View\Page\FaviconInterface::class);
-        $this->builder = $this->createMock(\Magento\Framework\View\Layout\BuilderInterface::class);
-        $this->asset = $this->createMock(\Magento\Framework\View\Asset\File::class);
-        $this->remoteAsset = $this->createMock(\Magento\Framework\View\Asset\Remote::class);
-        $this->title = $this->createMock(\Magento\Framework\View\Page\Title::class);
-        $this->localeMock =
-            $this->getMockForAbstractClass(\Magento\Framework\Locale\ResolverInterface::class, [], '', false);
+        $this->assetRepo = $this->getMock('Magento\Framework\View\Asset\Repository', [], [], '', false);
+        $this->pageAssets = $this->getMock('Magento\Framework\View\Asset\GroupedCollection', [], [], '', false);
+        $this->scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
+        $this->favicon = $this->getMock('Magento\Framework\View\Page\FaviconInterface', [], [], '', false);
+        $this->builder = $this->getMock('Magento\Framework\View\Layout\BuilderInterface', [], [], '', false);
+        $this->asset = $this->getMock('Magento\Framework\View\Asset\File', [], [], '', false);
+        $this->remoteAsset = $this->getMock('\Magento\Framework\View\Asset\Remote', [], [], '', false);
+        $this->title = $this->getMock('Magento\Framework\View\Page\Title', [], [], '', false);
+        $this->localeMock = $this->getMockForAbstractClass('Magento\Framework\Locale\ResolverInterface', [], '', false);
         $this->localeMock->expects($this->any())
             ->method('getLocale')
             ->willReturn(Resolver::DEFAULT_LOCALE);
         $this->model = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
             ->getObject(
-                \Magento\Framework\View\Page\Config::class,
+                'Magento\Framework\View\Page\Config',
                 [
                     'assetRepo' => $this->assetRepo,
                     'pageAssets' => $this->pageAssets,
@@ -102,7 +100,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->areaResolverMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->areaResolverMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
         $areaResolverReflection = (new \ReflectionClass(get_class($this->model)))->getProperty('areaResolver');
         $areaResolverReflection->setAccessible(true);
         $areaResolverReflection->setValue($this->model, $this->areaResolverMock);
@@ -111,7 +109,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testSetBuilder()
     {
         $this->assertInstanceOf(
-            \Magento\Framework\View\Page\Config::class,
+            'Magento\Framework\View\Page\Config',
             $this->model->setBuilder($this->builder)
         );
     }
@@ -120,14 +118,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $this->model->setBuilder($this->builder);
         $this->builder->expects($this->once())->method('build')->will(
-            $this->returnValue(\Magento\Framework\View\LayoutInterface::class)
+            $this->returnValue('Magento\Framework\View\LayoutInterface')
         );
         $this->model->publicBuild();
     }
 
     public function testGetTitle()
     {
-        $this->assertInstanceOf(\Magento\Framework\View\Page\Title::class, $this->model->getTitle());
+        $this->assertInstanceOf('\Magento\Framework\View\Page\Title', $this->model->getTitle());
     }
 
     public function testMetadata()
@@ -261,10 +259,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAssetCollection()
     {
-        $this->assertInstanceOf(
-            \Magento\Framework\View\Asset\GroupedCollection::class,
-            $this->model->getAssetCollection()
-        );
+        $this->assertInstanceOf('Magento\Framework\View\Asset\GroupedCollection', $this->model->getAssetCollection());
     }
 
     /**
@@ -282,7 +277,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         );
         $this->pageAssets->expects($this->once())->method('add')->with($expectedName, $this->asset, $properties);
         $this->assertInstanceOf(
-            \Magento\Framework\View\Page\Config::class,
+            'Magento\Framework\View\Page\Config',
             $this->model->addPageAsset($file, $properties, $name)
         );
     }
@@ -321,7 +316,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         );
         $this->pageAssets->expects($this->once())->method('add')->with($expectedName, $this->remoteAsset, $properties);
         $this->assertInstanceOf(
-            \Magento\Framework\View\Page\Config::class,
+            'Magento\Framework\View\Page\Config',
             $this->model->addRemotePageAsset($url, $contentType, $properties, $name)
         );
     }
@@ -359,13 +354,13 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             $this->remoteAsset,
             $expected
         );
-        $this->assertInstanceOf(\Magento\Framework\View\Page\Config::class, $this->model->addRss($title, $href));
+        $this->assertInstanceOf('Magento\Framework\View\Page\Config', $this->model->addRss($title, $href));
     }
 
     public function testAddBodyClass()
     {
         $className = 'test class';
-        $this->assertInstanceOf(\Magento\Framework\View\Page\Config::class, $this->model->addBodyClass($className));
+        $this->assertInstanceOf('Magento\Framework\View\Page\Config', $this->model->addBodyClass($className));
         $this->assertEquals('test-class', $this->model->getElementAttribute('body', 'class'));
     }
 
@@ -412,10 +407,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testElementAttributeException($elementType, $attribute, $value)
     {
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
-            $elementType . " isn't allowed"
-        );
+        $this->setExpectedException('\Magento\Framework\Exception\LocalizedException', $elementType . " isn't allowed");
         $this->model->setElementAttribute($elementType, $attribute, $value);
     }
 
@@ -520,7 +512,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $model = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
             ->getObject(
-                \Magento\Framework\View\Page\Config::class,
+                'Magento\Framework\View\Page\Config',
                 [
                     'assetRepo' => $this->assetRepo,
                     'pageAssets' => $this->pageAssets,

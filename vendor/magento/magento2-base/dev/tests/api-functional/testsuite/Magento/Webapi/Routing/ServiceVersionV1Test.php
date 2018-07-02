@@ -21,12 +21,10 @@ class ServiceVersionV1Test extends \Magento\Webapi\Routing\BaseService
      * @var string
      */
     protected $_version;
-
     /**
      * @var string
      */
     protected $_restResourcePath;
-
     /**
      * @var string
      */
@@ -45,11 +43,11 @@ class ServiceVersionV1Test extends \Magento\Webapi\Routing\BaseService
         $this->_restResourcePath = "/{$this->_version}/testmodule1/";
 
         $this->valueFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Api\AttributeValueFactory::class
+            'Magento\Framework\Api\AttributeValueFactory'
         );
 
         $this->itemFactory = Bootstrap::getObjectManager()->create(
-            \Magento\TestModule1\Service\V1\Entity\ItemFactory::class
+            'Magento\TestModule1\Service\V1\Entity\ItemFactory'
         );
     }
 

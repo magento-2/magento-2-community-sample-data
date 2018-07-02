@@ -5,7 +5,7 @@
  */
 namespace Magento\Theme\Test\Unit\Controller\Adminhtml\System\Design\Wysiwyg\Files;
 
-class DeleteFolderTest extends \PHPUnit\Framework\TestCase
+class DeleteFolderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files */
     protected $controller;
@@ -24,14 +24,14 @@ class DeleteFolderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->storage = $this->createMock(\Magento\Theme\Model\Wysiwyg\Storage::class);
-        $this->storageHelper = $this->createMock(\Magento\Theme\Helper\Storage::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->response = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $this->storage = $this->getMock('Magento\Theme\Model\Wysiwyg\Storage', [], [], '', false);
+        $this->storageHelper = $this->getMock('Magento\Theme\Helper\Storage', [], [], '', false);
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->controller = $helper->getObject(
-            \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\DeleteFolder::class,
+            'Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\DeleteFolder',
             [
                 'objectManager' => $this->objectManager,
                 'response' => $this->response,
@@ -48,14 +48,14 @@ class DeleteFolderTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager->expects($this->at(0))
             ->method('get')
-            ->with(\Magento\Theme\Model\Wysiwyg\Storage::class)
+            ->with('Magento\Theme\Model\Wysiwyg\Storage')
             ->willReturn($this->storage);
         $this->storage->expects($this->once())
             ->method('deleteDirectory')
             ->with('/current/path/')
             ->willThrowException(new \Exception('Message'));
 
-        $jsonData = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
+        $jsonData = $this->getMock('Magento\Framework\Json\Helper\Data', [], [], '', false);
         $jsonData->expects($this->once())
             ->method('jsonEncode')
             ->with(['error' => true, 'message' => 'Message'])
@@ -63,7 +63,7 @@ class DeleteFolderTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->willReturn($jsonData);
 
         $this->controller->execute();

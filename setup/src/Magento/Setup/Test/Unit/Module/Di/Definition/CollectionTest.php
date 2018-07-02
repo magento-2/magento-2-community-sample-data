@@ -12,7 +12,7 @@ namespace Magento\Setup\Test\Unit\Module\Di\Definition;
  * Class CollectionTest
  * @package Magento\Setup\Module\Di\Definition
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Definition\Collection
@@ -56,7 +56,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->collectionMock = $this->getMockBuilder(\Magento\Setup\Module\Di\Definition\Collection::class)
+        $this->collectionMock = $this->getMockBuilder('\Magento\Setup\Module\Di\Definition\Collection')
             ->setMethods([])->getMock();
         $this->model = new \Magento\Setup\Module\Di\Definition\Collection();
     }

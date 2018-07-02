@@ -10,8 +10,6 @@ use Magento\Quote\Model\Quote\Item;
 
 /**
  * Item interface
- *
- * @api
  */
 interface ItemInterface
 {

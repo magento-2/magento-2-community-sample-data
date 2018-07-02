@@ -1,4 +1,6 @@
 /**
+ * Handles additional ajax request for rendering user private content
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -10,25 +12,6 @@ define([
     'mage/cookies'
 ], function ($, domReady) {
     'use strict';
-
-    /**
-     * Helper. Generate random string
-     * TODO: Merge with mage/utils
-     * @param {String} chars - list of symbols
-     * @param {Number} length - length for need string
-     * @returns {String}
-     */
-    function generateRandomString(chars, length) {
-        var result = '';
-
-        length = length > 0 ? length : 1;
-
-        while (length--) {
-            result += chars[Math.round(Math.random() * (chars.length - 1))];
-        }
-
-        return result;
-    }
 
     /**
      * Nodes tree to flat list converter
@@ -100,7 +83,6 @@ define([
 
     /**
      * PageCache Widget
-     * Handles additional ajax request for rendering user private content.
      */
     $.widget('mage.pageCache', {
         options: {
@@ -160,10 +142,10 @@ define([
                 } else {
                     matches = this.options.patternPlaceholderClose.exec(el.nodeValue);
 
-                    if (matches) { //eslint-disable-line max-depth
+                    if (matches) {
                         name = matches[1];
 
-                        if (tmp[name]) { //eslint-disable-line max-depth
+                        if (tmp[name]) {
                             tmp[name].closeElement = el;
                             placeholders.push(tmp[name]);
                             delete tmp[name];
@@ -196,18 +178,18 @@ define([
             for (yy = 0, len = contents.length; yy < len; yy++) {
                 element = contents[yy];
 
-                if (element == placeholder.openElement) { //eslint-disable-line eqeqeq
+                if (element == placeholder.openElement) {
                     startReplacing = true;
                 }
 
                 if (startReplacing) {
                     $(element).remove();
-                } else if (element.nodeType != 8) { //eslint-disable-line eqeqeq
+                } else if (element.nodeType != 8) {
                     //due to comment tag doesn't have siblings we try to find it manually
                     prevSibling = element;
                 }
 
-                if (element == placeholder.closeElement) { //eslint-disable-line eqeqeq
+                if (element == placeholder.closeElement) {
                     break;
                 }
             }
@@ -279,4 +261,22 @@ define([
         'pageCache': $.mage.pageCache,
         'formKey': $.mage.formKey
     };
+
+    /**
+     * Helper. Generate random string
+     * TODO: Merge with mage/utils
+     * @param {String} chars - list of symbols
+     * @param {Number} length - length for need string
+     * @returns {String}
+     */
+    function generateRandomString(chars, length) {
+        var result = '';
+        length = length > 0 ? length : 1;
+
+        while (length--) {
+            result += chars[Math.round(Math.random() * (chars.length - 1))];
+        }
+
+        return result;
+    }
 });

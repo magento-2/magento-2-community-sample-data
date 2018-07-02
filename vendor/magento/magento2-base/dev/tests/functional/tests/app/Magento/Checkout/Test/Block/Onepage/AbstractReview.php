@@ -134,28 +134,27 @@ abstract class AbstractReview extends Block
     protected $waitElement = '.loading-mask';
 
     /**
-     * Selector for cart items block
+     * Selector for items counter.
      *
      * @var string
      */
-    protected $itemsBlock = '.block.items-in-cart  > .title';
+    private $itemsBlock = '.block.items-in-cart  > .title';
 
     /**
-     * Selector for items counter
+     * Selector for items counter.
      *
      * @var string
      */
-    protected $itemsCounterSelector = '.items-in-cart .title';
+    private $itemsCounterSelector = '.items-in-cart .title';
 
     /**
-     * Selector for list of cart items
+     * Selector for list of cart items.
      *
      * @var string
      */
-    protected $cartItemsContentSelector = '.content.minicart-items';
+    private $cartItemsContentSelector = '.content.minicart-items';
 
     /**
-     * @constructor
      * @param SimpleElement $element
      * @param BlockFactory $blockFactory
      * @param BrowserInterface $browser
@@ -255,7 +254,7 @@ abstract class AbstractReview extends Block
     }
 
     /**
-     * Click to expand cart items block
+     * Click to expand cart items block.
      *
      * @return void
      */
@@ -267,7 +266,7 @@ abstract class AbstractReview extends Block
     }
 
     /**
-     * Returns checkout summary block items counter value
+     * Returns checkout summary block items counter value.
      *
      * @return string
      */
@@ -277,7 +276,7 @@ abstract class AbstractReview extends Block
     }
 
     /**
-     * Returns go to cart link element
+     * Returns go to cart link element.
      *
      * @return \Magento\Mtf\Client\ElementInterface
      */

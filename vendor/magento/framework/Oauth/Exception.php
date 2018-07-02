@@ -8,9 +8,7 @@ namespace Magento\Framework\Oauth;
 use Magento\Framework\Exception\AuthenticationException;
 
 /**
- * OAuth Exception
- *
- * @api
+ * OAuth \Exception
  */
 class Exception extends AuthenticationException
 {

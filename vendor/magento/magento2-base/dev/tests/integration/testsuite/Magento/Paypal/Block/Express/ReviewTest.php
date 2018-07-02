@@ -9,24 +9,24 @@
  */
 namespace Magento\Paypal\Block\Express;
 
-class ReviewTest extends \PHPUnit\Framework\TestCase
+class ReviewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Sales/_files/quote.php
      */
     public function testRenderAddress()
     {
-        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
         $quote->load('test01', 'reserved_order_id');
 
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Paypal\Block\Express\Review::class
+            'Magento\Paypal\Block\Express\Review'
         );
         $addressData = include __DIR__ . '/../../../Sales/_files/address_data.php';
         $address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Quote\Model\Quote\Address::class,
+            'Magento\Quote\Model\Quote\Address',
             ['data' => $addressData]
         );
         $address->setAddressType('billing');

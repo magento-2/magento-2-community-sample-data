@@ -5,7 +5,7 @@
  */
 namespace Magento\SalesRule\Test\Unit\Observer;
 
-class CatalogAttributeDeleteAfterObserverTest extends \PHPUnit\Framework\TestCase
+class CatalogAttributeDeleteAfterObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Observer\CatalogAttributeDeleteAfterObserver|\PHPUnit_Framework_MockObject_MockObject
@@ -23,7 +23,7 @@ class CatalogAttributeDeleteAfterObserverTest extends \PHPUnit\Framework\TestCas
         $this->initMocks();
 
         $this->model = $helper->getObject(
-            \Magento\SalesRule\Observer\CatalogAttributeDeleteAfterObserver::class,
+            'Magento\SalesRule\Observer\CatalogAttributeDeleteAfterObserver',
             [
                 'checkSalesRulesAvailability' => $this->checkSalesRulesAvailability
             ]
@@ -32,19 +32,26 @@ class CatalogAttributeDeleteAfterObserverTest extends \PHPUnit\Framework\TestCas
 
     protected function initMocks()
     {
-        $this->checkSalesRulesAvailability = $this->createMock(
-            \Magento\SalesRule\Observer\CheckSalesRulesAvailability::class
+        $this->checkSalesRulesAvailability = $this->getMock(
+            'Magento\SalesRule\Observer\CheckSalesRulesAvailability',
+            [],
+            [],
+            '',
+            false
         );
     }
 
     public function testCatalogAttributeDeleteAfter()
     {
         $attributeCode = 'attributeCode';
-        $observer = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $event = $this->createPartialMock(\Magento\Framework\Event::class, ['getAttribute', '__wakeup']);
-        $attribute = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            ['dataHasChangedFor', 'getIsUsedForPromoRules', 'getAttributeCode', '__wakeup']
+        $observer = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
+        $event = $this->getMock('Magento\Framework\Event', ['getAttribute', '__wakeup'], [], '', false);
+        $attribute = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            ['dataHasChangedFor', 'getIsUsedForPromoRules', 'getAttributeCode', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $observer->expects($this->once())

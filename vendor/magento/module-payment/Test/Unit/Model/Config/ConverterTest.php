@@ -7,7 +7,7 @@
  */
 namespace Magento\Payment\Test\Unit\Model\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\Config\Converter

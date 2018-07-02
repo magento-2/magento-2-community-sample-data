@@ -21,14 +21,14 @@ use Magento\CurrencySymbol\Test\Fixture\CurrencySymbolEntity;
  * 4. Click 'Save Currency Symbols' button
  * 5. Perform all asserts.
  *
- * @group Currency
+ * @group Currency_(PS)
  * @ZephyrId MAGETWO-26638
  */
 class ResetCurrencySymbolEntityTest extends AbstractCurrencySymbolEntityTest
 {
     /* tags */
     const MVP = 'no';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

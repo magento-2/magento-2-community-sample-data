@@ -77,6 +77,13 @@ class Grid extends DataGrid
     protected $firstRowSelector = '//tbody/tr[1]/td[contains(@class,"data-grid-actions-cell")]/a';
 
     /**
+     * Global seach block selector.
+     *
+     * @var string
+     */
+    private $globalSearch = '.search-global';
+
+    /**
      * Start to create new order.
      *
      * @return void
@@ -96,7 +103,7 @@ class Grid extends DataGrid
         $this->openFilterBlock();
 
         $storeGroupElements = $this->_rootElement->find($this->filters['purchase_point']['selector'])
-            ->getElements('.//option/preceding-sibling::optgroup[1]', Locator::SELECTOR_XPATH);
+            ->getElements('//option/preceding-sibling::optgroup[1]', Locator::SELECTOR_XPATH);
         $result = [];
 
         foreach ($storeGroupElements as $storeGroupElement) {
@@ -105,5 +112,34 @@ class Grid extends DataGrid
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function selectItems(array $items, $isSortable = true)
+    {
+        if ($isSortable) {
+            $this->sortGridByField('ID');
+        }
+        foreach ($items as $item) {
+            //Hover on search block is made to avoid click on invisible element currentPage
+            $searchBlock = $this->browser->find($this->globalSearch);
+            $searchBlock->hover();
+            $this->_rootElement->find($this->currentPage, Locator::SELECTOR_XPATH)->setValue('');
+            $this->waitLoader();
+            $selectItem = $this->getRow($item)->find($this->selectItem);
+            do {
+                if ($selectItem->isVisible()) {
+                    if (!$selectItem->isSelected()) {
+                        $selectItem->click();
+                    }
+                    break;
+                }
+            } while ($this->nextPage());
+            if (!$selectItem->isVisible()) {
+                throw new \Exception("Searched item was not found\n" . print_r($item, true));
+            }
+        }
     }
 }

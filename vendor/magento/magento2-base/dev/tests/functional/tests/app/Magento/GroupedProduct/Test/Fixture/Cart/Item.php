@@ -6,6 +6,9 @@
 
 namespace Magento\GroupedProduct\Test\Fixture\Cart;
 
+use Magento\GroupedProduct\Test\Fixture\GroupedProduct;
+use Magento\Mtf\Fixture\FixtureInterface;
+
 /**
  * Data for verify cart item block on checkout page.
  *
@@ -15,19 +18,18 @@ namespace Magento\GroupedProduct\Test\Fixture\Cart;
 class Item extends \Magento\Catalog\Test\Fixture\Cart\Item
 {
     /**
-     * Return prepared dataset.
-     *
-     * @param null|string $key
-     * @return array
+     * @constructor
+     * @param FixtureInterface $product
      */
-    public function getData($key = null)
+    public function __construct(FixtureInterface $product)
     {
-        $checkoutData = $this->product->getCheckoutData();
+        /** @var GroupedProduct $product */
+        $checkoutData = $product->getCheckoutData();
         $this->data = isset($checkoutData['cartItem']) ? $checkoutData['cartItem'] : [];
         $associatedProducts = [];
         $cartItem = [];
 
-        foreach ($this->product->getAssociated()['products'] as $key => $product) {
+        foreach ($product->getAssociated()['products'] as $key => $product) {
             $key = 'product_key_' . $key;
             $associatedProducts[$key] = $product;
         }
@@ -49,7 +51,5 @@ class Item extends \Magento\Catalog\Test\Fixture\Cart\Item
         }
 
         $this->data = $cartItem;
-
-        return $this->data;
     }
 }

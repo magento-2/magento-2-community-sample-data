@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Eav\Action;
 /**
  * Row reindex Test
  */
-class RowTest extends \PHPUnit\Framework\TestCase
+class RowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDbIsolation disabled
@@ -18,25 +18,25 @@ class RowTest extends \PHPUnit\Framework\TestCase
     public function testUpdateProduct()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attr **/
-        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class)
+        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config')
             ->getAttribute('catalog_product', 'weight');
         $attr->setIsFilterable(1)->save();
 
         $this->assertTrue($attr->isIndexable());
 
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         $product->setWeight(11);
         $product->save();
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         /** @var \Magento\Catalog\Block\Product\ListProduct $listProduct */
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(2);

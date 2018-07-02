@@ -5,7 +5,7 @@
  */
 namespace Magento\Theme\Model;
 
-class ThemeTest extends \PHPUnit\Framework\TestCase
+class ThemeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test crud operations for theme model using valid data
@@ -16,7 +16,7 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $themeModel \Magento\Framework\View\Design\ThemeInterface */
         $themeModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         );
         $themeModel->setData($this->_getThemeValidData());
 
@@ -49,7 +49,7 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $theme \Magento\Framework\View\Design\ThemeInterface */
         $theme = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         );
         $collection = $theme->getCollection()
             ->addTypeFilter(\Magento\Framework\View\Design\ThemeInterface::TYPE_VIRTUAL);
@@ -73,12 +73,12 @@ class ThemeTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Theme\Model\Theme\Registration $registration */
         $registration = $objectManager->get(
-            \Magento\Theme\Model\Theme\Registration::class
+            'Magento\Theme\Model\Theme\Registration'
         );
         $registration->register();
         /** @var \Magento\Framework\View\Design\Theme\FlyweightFactory $themeFactory */
         $themeFactory = $objectManager->get(
-            \Magento\Framework\View\Design\Theme\FlyweightFactory::class
+            'Magento\Framework\View\Design\Theme\FlyweightFactory'
         );
         $theme = $themeFactory->create('Vendor_FrameworkThemeTest/custom_theme');
         $this->assertCount(2, $theme->getInheritedThemes());

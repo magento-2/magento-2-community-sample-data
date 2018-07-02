@@ -4,9 +4,9 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Backend\Block\Dashboard;
+// @codingStandardsIgnoreFile
 
-use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+namespace Magento\Backend\Block\Dashboard;
 
 /**
  * Adminhtml dashboard tab abstract
@@ -40,7 +40,7 @@ abstract class AbstractDashboard extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * @return array|AbstractCollection|\Magento\Eav\Model\Entity\Collection\Abstract
+     * @return array|\Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection|\Magento\Eav\Model\Entity\Collection\Abstract
      */
     public function getCollection()
     {

@@ -12,7 +12,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
  * Interface InvoiceCommentCreationInterface
  *
  * @api
- * @since 100.1.2
  */
 interface InvoiceCommentCreationInterface extends ExtensibleDataInterface, CommentInterface
 {
@@ -20,7 +19,6 @@ interface InvoiceCommentCreationInterface extends ExtensibleDataInterface, Comme
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Magento\Sales\Api\Data\InvoiceCommentCreationExtensionInterface|null
-     * @since 100.1.2
      */
     public function getExtensionAttributes();
 
@@ -29,7 +27,6 @@ interface InvoiceCommentCreationInterface extends ExtensibleDataInterface, Comme
      *
      * @param \Magento\Sales\Api\Data\InvoiceCommentCreationExtensionInterface $extensionAttributes
      * @return $this
-     * @since 100.1.2
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\InvoiceCommentCreationExtensionInterface $extensionAttributes

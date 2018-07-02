@@ -18,7 +18,7 @@ abstract class AbstractCacheManageCommandTest extends AbstractCacheCommandTest
 
     protected function setUp()
     {
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder('\Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         parent::setUp();
@@ -27,7 +27,7 @@ abstract class AbstractCacheManageCommandTest extends AbstractCacheCommandTest
     /**
      * @return array
      */
-    public function executeDataProvider()
+    public function testExecuteDataProvider()
     {
         return [
             'implicit all' => [

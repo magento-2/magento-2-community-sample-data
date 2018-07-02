@@ -9,7 +9,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo\Total;
 /**
  * Class DiscountTest
  */
-class DiscountTest extends \PHPUnit\Framework\TestCase
+class DiscountTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Creditmemo\Total\Cost
@@ -38,22 +38,43 @@ class DiscountTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->orderMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order::class,
-            ['getBaseShippingDiscountAmount', 'getBaseShippingAmount', 'getShippingAmount']
+        $this->orderMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            ['getBaseShippingDiscountAmount', 'getBaseShippingAmount', 'getShippingAmount'],
+            [],
+            '',
+            false
         );
-        $this->orderItemMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, [
+        $this->orderItemMock = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [
                 'isDummy', 'getDiscountInvoiced', 'getBaseDiscountInvoiced', 'getQtyInvoiced', 'getQty',
                 'getDiscountRefunded', 'getQtyRefunded'
-            ]);
-        $this->creditmemoMock = $this->createPartialMock(\Magento\Sales\Model\Order\Creditmemo::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->creditmemoMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Creditmemo',
+            [
                 'setBaseCost', 'getAllItems', 'getOrder', 'getBaseShippingAmount', 'roundPrice',
                 'setDiscountAmount', 'setBaseDiscountAmount'
-            ]);
-        $this->creditmemoItemMock = $this->createPartialMock(\Magento\Sales\Model\Order\Creditmemo\Item::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->creditmemoItemMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Creditmemo\Item',
+            [
                 'getHasChildren', 'getBaseCost', 'getQty', 'getOrderItem', 'setDiscountAmount',
                 'setBaseDiscountAmount', 'isLast'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->total = new \Magento\Sales\Model\Order\Creditmemo\Total\Discount();
     }
 

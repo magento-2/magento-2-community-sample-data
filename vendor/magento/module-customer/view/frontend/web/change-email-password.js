@@ -2,6 +2,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+/*jshint browser:true jquery:true expr:true*/
 define([
     'jquery',
     'jquery/ui'
@@ -33,19 +34,6 @@ define([
             }, this));
 
             this._checkChoice();
-            this._bind();
-        },
-
-        /**
-         * Event binding, will monitor change, keyup and paste events.
-         * @private
-         */
-        _bind: function () {
-            this._on($(this.options.emailSelector), {
-                'change': this._updatePasswordFieldWithEmailValue,
-                'keyup': this._updatePasswordFieldWithEmailValue,
-                'paste': this._updatePasswordFieldWithEmailValue
-            });
         },
 
         /**
@@ -79,7 +67,10 @@ define([
 
             $(this.options.currentPasswordSelector).attr('data-validate', '{required:true}').prop('disabled', false);
             $(this.options.emailSelector).attr('data-validate', '{required:true}').prop('disabled', false);
-            this._updatePasswordFieldWithEmailValue();
+            $(this.options.newPasswordSelector).attr(
+                'data-validate',
+                '{required:true, \'validate-customer-password\':true}'
+            ).prop('disabled', false);
             $(this.options.confirmPasswordSelector).attr(
                 'data-validate',
                 '{required:true, equalTo:"' + this.options.newPasswordSelector + '"}'
@@ -128,19 +119,6 @@ define([
             $(this.options.emailContainerSelector).hide();
 
             $(this.options.emailSelector).removeAttr('data-validate').prop('disabled', true);
-        },
-
-        /**
-         * Update password validation rules with email input field value
-         * @private
-         */
-        _updatePasswordFieldWithEmailValue: function () {
-            $(this.options.newPasswordSelector).attr(
-                'data-validate',
-                '{required:true, ' +
-                '\'validate-customer-password\':true, ' +
-                '\'password-not-equal-to-user-name\':\'' + $(this.options.emailSelector).val() + '\'}'
-            ).prop('disabled', false);
         }
     });
 

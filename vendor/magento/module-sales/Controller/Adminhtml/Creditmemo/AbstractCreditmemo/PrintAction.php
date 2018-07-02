@@ -62,15 +62,13 @@ class PrintAction extends \Magento\Backend\App\Action
             $creditmemo = $this->creditmemoRepository->get($creditmemoId);
             if ($creditmemo) {
                 $pdf = $this->_objectManager->create(
-                    \Magento\Sales\Model\Order\Pdf\Creditmemo::class
+                    'Magento\Sales\Model\Order\Pdf\Creditmemo'
                 )->getPdf(
                     [$creditmemo]
                 );
-                $date = $this->_objectManager->get(
-                    \Magento\Framework\Stdlib\DateTime\DateTime::class
-                )->date('Y-m-d_H-i-s');
+                $date = $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime')->date('Y-m-d_H-i-s');
                 return $this->_fileFactory->create(
-                    \creditmemo::class . $date . '.pdf',
+                    'creditmemo' . $date . '.pdf',
                     $pdf->render(),
                     DirectoryList::VAR_DIR,
                     'application/pdf'

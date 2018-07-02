@@ -7,10 +7,7 @@ namespace Magento\Wishlist\Test\Unit\Controller\Index;
 
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -54,18 +51,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\App\Action\Context::class);
-        $this->request = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->wishlistProvider = $this->createMock(\Magento\Wishlist\Controller\WishlistProvider::class);
-        $this->redirect = $this->createMock(\Magento\Store\App\Response\Redirect::class);
-        $this->resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->context = $this->getMock('Magento\Framework\App\Action\Context', [], [], '', false);
+        $this->request = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->response = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $this->wishlistProvider = $this->getMock('Magento\Wishlist\Controller\WishlistProvider', [], [], '', false);
+        $this->redirect = $this->getMock('\Magento\Store\App\Response\Redirect', [], [], '', false);
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -80,11 +77,11 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareContext()
     {
-        $om = $this->createMock(\Magento\Framework\App\ObjectManager::class);
-        $eventManager = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $url = $this->createMock(\Magento\Framework\Url::class);
-        $actionFlag = $this->createMock(\Magento\Framework\App\ActionFlag::class);
-        $messageManager = $this->createMock(\Magento\Framework\Message\Manager::class);
+        $om = $this->getMock('Magento\Framework\App\ObjectManager', [], [], '', false);
+        $eventManager = $this->getMock('Magento\Framework\Event\Manager', null, [], '', false);
+        $url = $this->getMock('Magento\Framework\Url', [], [], '', false);
+        $actionFlag = $this->getMock('Magento\Framework\App\ActionFlag', [], [], '', false);
+        $messageManager = $this->getMock('Magento\Framework\Message\Manager', [], [], '', false);
 
         $this->context
             ->expects($this->any())
@@ -147,7 +144,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
     public function testExecutePassed()
     {
-        $wishlist = $this->createMock(\Magento\Wishlist\Model\Wishlist::class);
+        $wishlist = $this->getMock('Magento\Wishlist\Model\Wishlist', [], [], '', false);
 
         $this->wishlistProvider->expects($this->once())
             ->method('getWishlist')

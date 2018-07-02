@@ -10,10 +10,6 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory;
 use Magento\Framework\View\Element\UiComponent\ObserverInterface;
 use Magento\Framework\View\Element\UiComponentInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Filters implements ObserverInterface
 {
     /**

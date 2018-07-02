@@ -16,9 +16,7 @@ use Magento\Wishlist\Helper\Data;
  */
 class CustomerLogin implements ObserverInterface
 {
-    /**
-     * @var \Magento\Wishlist\Helper\Data
-     */
+    /** @var Data */
     protected $wishlistData;
 
     /**

@@ -9,7 +9,7 @@ namespace Magento\SalesRule\Model\ResourceModel\Rule;
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/SalesRule/_files/rules.php
@@ -21,24 +21,16 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     public function testSetValidationFilter($couponCode, $expectedItems)
     {
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
         $items = array_values($collection->setValidationFilter(1, 0, $couponCode)->getItems());
 
         $ids = [];
-
-        $this->assertEquals(
-            count($expectedItems),
-            count($items),
-            'Invalid number of items in the result collection'
-        );
-
         foreach ($items as $key => $item) {
             $this->assertEquals($expectedItems[$key], $item->getName());
-            $this->assertFalse(
-                in_array($item->getId(), $ids),
-                'Item should be unique in result collection'
-            );
+            if (in_array($item->getId(), $ids)) {
+                $this->fail('Item should be unique in result collection');
+            }
             $ids[] = $item->getId();
         }
     }
@@ -73,17 +65,17 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\SalesRule\Model\Rule $rule */
-        $rule = $objectManager->get(\Magento\Framework\Registry::class)
+        $rule = $objectManager->get('Magento\Framework\Registry')
             ->registry('_fixture/Magento_SalesRule_Group_Multiple_Categories');
 
         /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_item_with_items', 'reserved_order_id');
 
         //gather only the existing rules that obey the validation filter
         /** @var  \Magento\SalesRule\Model\ResourceModel\Rule\Collection $ruleCollection */
         $ruleCollection = $objectManager->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
 
         $appliedRulesArray = array_keys(
@@ -110,17 +102,17 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\SalesRule\Model\Rule $rule */
-        $rule = $objectManager->get(\Magento\Framework\Registry::class)
+        $rule = $objectManager->get('Magento\Framework\Registry')
             ->registry('_fixture/Magento_SalesRule_Group_Multiple_Categories');
 
         /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_item_with_items', 'reserved_order_id');
 
         //gather only the existing rules that obey the validation filter
         /** @var  \Magento\SalesRule\Model\ResourceModel\Rule\Collection $ruleCollection */
         $ruleCollection = $objectManager->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
 
         $appliedRulesArray = array_keys(
@@ -148,13 +140,13 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_item_with_items', 'reserved_order_id');
 
         //gather only the existing rules that obey the validation filter
         /** @var  \Magento\SalesRule\Model\ResourceModel\Rule\Collection $ruleCollection */
         $ruleCollection = $objectManager->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
 
         $appliedRulesArray = array_keys(
@@ -181,7 +173,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->setSpecificTimezone('Europe/Kiev');
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
         $collection->addWebsiteGroupDateFilter(1, 0);
         $items = array_values($collection->getItems());
@@ -200,7 +192,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->setSpecificTimezone('Australia/Sydney');
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection'
         );
         $collection->addWebsiteGroupDateFilter(1, 0);
         $items = array_values($collection->getItems());
@@ -223,43 +215,10 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
-        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Config\Model\Config\Factory::class)
+        \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Config\Model\Config\Factory')
             ->create()
             ->addData($localeData)
             ->save();
-    }
-
-    /**
-     * Check that it's possible to find previously created rule by attribute.
-     *
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     * @magentoDataFixture Magento/SalesRule/_files/rule_custom_product_attribute.php
-     */
-    public function testAddAttributeInConditionFilterPositive()
-    {
-        $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
-        );
-        $collection->addAttributeInConditionFilter('attribute_for_sales_rule_1');
-        $item = $collection->getFirstItem();
-        $this->assertEquals('50% Off on some attribute', $item->getName());
-    }
-
-    /**
-     * Check that it's not possible to find previously created rule by wrong attribute.
-     *
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     * @magentoDataFixture Magento/SalesRule/_files/rule_custom_product_attribute.php
-     */
-    public function testAddAttributeInConditionFilterNegative()
-    {
-        $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Rule\Collection::class
-        );
-        $collection->addAttributeInConditionFilter('attribute_for_sales_rule_2');
-        $this->assertEquals(0, $collection->count());
     }
 
     public function tearDown()

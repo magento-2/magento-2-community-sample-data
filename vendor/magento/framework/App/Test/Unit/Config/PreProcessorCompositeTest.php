@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit\Config;
 use Magento\Framework\App\Config\PreProcessorComposite;
 use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 
-class PreProcessorCompositeTest extends \PHPUnit\Framework\TestCase
+class PreProcessorCompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PreProcessorComposite

@@ -8,10 +8,6 @@ namespace Magento\Config\Model\Config\Source\Website;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Store\Model\System\Store;
 
-/**
- * @api
- * @since 100.0.2
- */
 class OptionHash implements ArrayInterface
 {
     /**

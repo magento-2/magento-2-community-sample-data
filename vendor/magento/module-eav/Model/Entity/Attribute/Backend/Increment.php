@@ -8,8 +8,7 @@ namespace Magento\Eav\Model\Entity\Attribute\Backend;
 /**
  * Entity/Attribute/Model - attribute backend default
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Increment extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {

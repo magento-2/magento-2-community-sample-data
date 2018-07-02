@@ -5,30 +5,14 @@
  */
 namespace Magento\Framework\View\Test\Unit\Model\Layout\Update;
 
-use Magento\Framework\Phrase;
 use Magento\Framework\View\Model\Layout\Update\Validator;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
-    private $_objectHelper;
-
-    /**
-     * @var \Magento\Framework\Config\DomFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $domConfigFactory;
-
-    /**
-     * @var \Magento\Framework\View\Model\Layout\Update\Validator|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $model;
-
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $urnResolver;
+    protected $_objectHelper;
 
     /**
      * @var \Magento\Framework\Config\ValidationStateInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -38,59 +22,65 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->domConfigFactory = $this->getMockBuilder(
+    }
+
+    /**
+     * @param string $layoutUpdate
+     * @param boolean $isSchemaValid
+     * @return Validator
+     */
+    protected function _createValidator($layoutUpdate, $isSchemaValid = true)
+    {
+        $domConfigFactory = $this->getMockBuilder(
             \Magento\Framework\Config\DomFactory::class
-        )->disableOriginalConstructor()->getMock();
-        $this->urnResolver = $this->getMockBuilder(
-            \Magento\Framework\Config\Dom\UrnResolver::class
         )->disableOriginalConstructor()->getMock();
         $this->validationState = $this->getMockBuilder(
             \Magento\Framework\Config\ValidationStateInterface::class
         )->disableOriginalConstructor()->getMock();
 
-        $this->model = $this->_objectHelper->getObject(
-            \Magento\Framework\View\Model\Layout\Update\Validator::class,
-            [
-                'domConfigFactory' => $this->domConfigFactory,
-                'urnResolver' => $this->urnResolver,
-                'validationState' => $this->validationState,
-            ]
-        );
-    }
-
-    /**
-     * @param string $layoutUpdate
-     * @return Validator
-     */
-    protected function _createValidator($layoutUpdate)
-    {
+        $urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
         $params = [
             'xml' => '<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' .
                 trim($layoutUpdate) . '</layout>',
-            'schemaFile' => $this->urnResolver->getRealPath('urn:magento:framework:View/Layout/etc/page_layout.xsd'),
+            'schemaFile' => $urnResolver->getRealPath('urn:magento:framework:View/Layout/etc/page_layout.xsd'),
             'validationState' => $this->validationState,
         ];
 
-        $this->domConfigFactory->expects(
+        $exceptionMessage = 'validation exception';
+        $domConfigFactory->expects(
             $this->once()
         )->method(
             'createDom'
         )->with(
             $this->equalTo($params)
-        )->willReturnSelf();
+        )->will(
+            $isSchemaValid ? $this->returnSelf() : $this->throwException(
+                new \Magento\Framework\Config\Dom\ValidationException($exceptionMessage)
+            )
+        );
+        $urnResolver = $this->_objectHelper->getObject(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $model = $this->_objectHelper->getObject(
+            \Magento\Framework\View\Model\Layout\Update\Validator::class,
+            [
+                'domConfigFactory' => $domConfigFactory,
+                'urnResolver' => $urnResolver,
+                'validationState' => $this->validationState,
+            ]
+        );
 
-        return $this->model;
+        return $model;
     }
 
     /**
      * @dataProvider testIsValidNotSecurityCheckDataProvider
      * @param string $layoutUpdate
+     * @param boolean $isValid
      * @param boolean $expectedResult
      * @param array $messages
      */
-    public function testIsValidNotSecurityCheck($layoutUpdate, $expectedResult, $messages)
+    public function testIsValidNotSecurityCheck($layoutUpdate, $isValid, $expectedResult, $messages)
     {
-        $model = $this->_createValidator($layoutUpdate);
+        $model = $this->_createValidator($layoutUpdate, $isValid);
         $this->assertEquals(
             $expectedResult,
             $model->isValid(
@@ -108,7 +98,15 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     public function testIsValidNotSecurityCheckDataProvider()
     {
         return [
-            ['test', true, []],
+            ['test', true, true, []],
+            [
+                'test',
+                false,
+                false,
+                [
+                    Validator::XML_INVALID => 'Please correct the XML data and try again. validation exception'
+                ]
+            ]
         ];
     }
 
@@ -178,55 +176,17 @@ XML;
                 $insecureHelper,
                 false,
                 [
-                    Validator::HELPER_ARGUMENT_TYPE => 'Helper arguments should not be used in custom layout updates.',
+                    Validator::HELPER_ARGUMENT_TYPE => 'Helper arguments should not be used in custom layout updates.'
                 ],
             ],
             [
                 $insecureUpdater,
                 false,
                 [
-                    Validator::UPDATER_MODEL => 'Updater model should not be used in custom layout updates.',
-                ],
+                    Validator::UPDATER_MODEL => 'Updater model should not be used in custom layout updates.'
+                ]
             ],
-            [$secureLayout, true, []],
+            [$secureLayout, true, []]
         ];
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Config\Dom\ValidationException
-     * @expectedExceptionMessage Please correct the XML data and try again.
-     */
-    public function testIsValidThrowsValidationException()
-    {
-        $this->domConfigFactory->expects($this->once())->method('createDom')->willThrowException(
-            new \Magento\Framework\Config\Dom\ValidationException('Please correct the XML data and try again.')
-        );
-        $this->model->isValid('test');
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Config\Dom\ValidationSchemaException
-     * @expectedExceptionMessage Please correct the XSD data and try again.
-     */
-    public function testIsValidThrowsValidationSchemaException()
-    {
-        $this->domConfigFactory->expects($this->once())->method('createDom')->willThrowException(
-            new \Magento\Framework\Config\Dom\ValidationSchemaException(
-                new Phrase('Please correct the XSD data and try again.')
-            )
-        );
-        $this->model->isValid('test');
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Exception.
-     */
-    public function testIsValidThrowsException()
-    {
-        $this->domConfigFactory->expects($this->once())->method('createDom')->willThrowException(
-            new \Exception('Exception.')
-        );
-        $this->model->isValid('test');
     }
 }

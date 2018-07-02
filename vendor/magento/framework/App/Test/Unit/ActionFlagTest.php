@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Test\Unit;
 
-class ActionFlagTest extends \PHPUnit\Framework\TestCase
+class ActionFlagTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ActionFlag
@@ -19,7 +19,7 @@ class ActionFlagTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
         $this->_actionFlag = new \Magento\Framework\App\ActionFlag($this->_requestMock);
     }
 

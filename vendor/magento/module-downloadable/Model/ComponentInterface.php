@@ -8,8 +8,7 @@ namespace Magento\Downloadable\Model;
 /**
  * Downloadable component interface
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 interface ComponentInterface
 {

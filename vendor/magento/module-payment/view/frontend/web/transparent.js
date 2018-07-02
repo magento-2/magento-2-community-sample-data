@@ -3,15 +3,13 @@
  * See COPYING.txt for license details.
  */
 
-/* @api */
 define([
     'jquery',
     'mage/template',
     'Magento_Ui/js/modal/alert',
     'jquery/ui',
-    'Magento_Payment/js/model/credit-card-validation/validator',
-    'Magento_Checkout/js/model/full-screen-loader'
-], function ($, mageTemplate, alert, ui, validator, fullScreenLoader) {
+    'Magento_Payment/js/model/credit-card-validation/validator'
+], function ($, mageTemplate, alert) {
     'use strict';
 
     $.widget('mage.transparent', {
@@ -108,8 +106,8 @@ define([
                  * {Function}
                  */
                 beforeSend: function () {
-                    fullScreenLoader.startLoader();
-                },
+                    this.element.trigger('showAjaxLoader');
+                }.bind(this),
 
                 /**
                  * {Function}
@@ -132,8 +130,6 @@ define([
                         );
                         this._postPaymentToGateway(preparedData);
                     } else {
-                        fullScreenLoader.stopLoader(true);
-
                         msg = response['error_messages'];
 
                         if (this.options.context) {

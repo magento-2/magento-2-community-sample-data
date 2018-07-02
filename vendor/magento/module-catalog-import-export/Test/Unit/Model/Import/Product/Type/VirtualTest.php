@@ -6,16 +6,19 @@
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Type;
 
-class VirtualTest extends \PHPUnit\Framework\TestCase
+class VirtualTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test for method prepareAttributesWithDefaultValueForSave
      */
     public function testPrepareAttributesWithDefaultValueForSave()
     {
-        $virtualModelMock = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Product\Type\Virtual::class,
-            []
+        $virtualModelMock = $this->getMock(
+            'Magento\CatalogImportExport\Model\Import\Product\Type\Virtual',
+            null,
+            [],
+            '',
+            false
         );
 
         $this->setPropertyValue(
@@ -31,10 +34,14 @@ class VirtualTest extends \PHPUnit\Framework\TestCase
                         'is_unique' => '0',
                         'frontend_label' => 'Name',
                         'is_static' => false,
-                        'apply_to' => [],
+                        'apply_to' =>
+                            [
+                            ],
                         'type' => 'varchar',
                         'default_value' => null,
-                        'options' => [],
+                        'options' =>
+                            [
+                            ],
                     ],
                     'sku' => [
                         'id' => '70',
@@ -44,10 +51,14 @@ class VirtualTest extends \PHPUnit\Framework\TestCase
                         'is_unique' => '1',
                         'frontend_label' => 'SKU',
                         'is_static' => true,
-                        'apply_to' => [],
+                        'apply_to' =>
+                            [
+                            ],
                         'type' => 'varchar',
                         'default_value' => null,
-                        'options' => [],
+                        'options' =>
+                            [
+                            ],
                     ]
                 ]
             ]
@@ -66,7 +77,7 @@ class VirtualTest extends \PHPUnit\Framework\TestCase
         ];
 
         $result = $virtualModelMock->prepareAttributesWithDefaultValueForSave($rowData);
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($result, $expectedResult);
     }
 
     /**

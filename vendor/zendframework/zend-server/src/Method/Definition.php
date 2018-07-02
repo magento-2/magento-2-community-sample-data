@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-server for the canonical source repository
- * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
- * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Server\Method;
@@ -22,7 +24,7 @@ class Definition
     /**
      * @var array
      */
-    protected $invokeArguments = [];
+    protected $invokeArguments = array();
 
     /**
      * @var string
@@ -42,7 +44,7 @@ class Definition
     /**
      * @var array Array of \Zend\Server\Method\Prototype objects
      */
-    protected $prototypes = [];
+    protected $prototypes = array();
 
     /**
      * Constructor
@@ -106,7 +108,7 @@ class Definition
     {
         if (is_array($callback)) {
             $callback = new Callback($callback);
-        } elseif (! $callback instanceof Callback) {
+        } elseif (!$callback instanceof Callback) {
             throw new Server\Exception\InvalidArgumentException('Invalid method callback provided');
         }
         $this->callback = $callback;
@@ -134,7 +136,7 @@ class Definition
     {
         if (is_array($prototype)) {
             $prototype = new Prototype($prototype);
-        } elseif (! $prototype instanceof Prototype) {
+        } elseif (!$prototype instanceof Prototype) {
             throw new Server\Exception\InvalidArgumentException('Invalid method prototype provided');
         }
         $this->prototypes[] = $prototype;
@@ -163,7 +165,7 @@ class Definition
      */
     public function setPrototypes(array $prototypes)
     {
-        $this->prototypes = [];
+        $this->prototypes = array();
         $this->addPrototypes($prototypes);
         return $this;
     }
@@ -209,11 +211,8 @@ class Definition
      */
     public function setObject($object)
     {
-        if (! is_object($object) && (null !== $object)) {
-            throw new Server\Exception\InvalidArgumentException(sprintf(
-                'Invalid object passed to %s',
-                __METHOD__
-            ));
+        if (!is_object($object) && (null !== $object)) {
+            throw new Server\Exception\InvalidArgumentException('Invalid object passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->object = $object;
         return $this;
@@ -259,18 +258,18 @@ class Definition
     public function toArray()
     {
         $prototypes = $this->getPrototypes();
-        $signatures = [];
+        $signatures = array();
         foreach ($prototypes as $prototype) {
             $signatures[] = $prototype->toArray();
         }
 
-        return [
+        return array(
             'name'            => $this->getName(),
             'callback'        => $this->getCallback()->toArray(),
             'prototypes'      => $signatures,
             'methodHelp'      => $this->getMethodHelp(),
             'invokeArguments' => $this->getInvokeArguments(),
             'object'          => $this->getObject(),
-        ];
+        );
     }
 }

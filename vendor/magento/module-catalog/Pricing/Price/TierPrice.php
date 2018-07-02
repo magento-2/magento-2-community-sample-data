@@ -16,11 +16,9 @@ use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\Price\AbstractPrice;
 use Magento\Framework\Pricing\Price\BasePriceProviderInterface;
 use Magento\Framework\Pricing\PriceInfoInterface;
-use Magento\Customer\Model\Group\RetrieverInterface as CustomerGroupRetrieverInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Tire prices model
  */
 class TierPrice extends AbstractPrice implements TierPriceInterface, BasePriceProviderInterface
 {
@@ -31,7 +29,6 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
 
     /**
      * @var Session
-     * @deprecated 101.1.0
      */
     protected $customerSession;
 
@@ -60,18 +57,12 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
     protected $groupManagement;
 
     /**
-     * @var CustomerGroupRetrieverInterface
-     */
-    private $customerGroupRetriever;
-
-    /**
      * @param Product $saleableItem
      * @param float $quantity
      * @param CalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param Session $customerSession
      * @param GroupManagementInterface $groupManagement
-     * @param CustomerGroupRetrieverInterface|null $customerGroupRetriever
      */
     public function __construct(
         Product $saleableItem,
@@ -79,19 +70,16 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
         CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         Session $customerSession,
-        GroupManagementInterface $groupManagement,
-        CustomerGroupRetrieverInterface $customerGroupRetriever = null
+        GroupManagementInterface $groupManagement
     ) {
-        $quantity = floatval($quantity) ? $quantity : 1;
+        $quantity = $quantity ?: 1;
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
         $this->customerSession = $customerSession;
         $this->groupManagement = $groupManagement;
-        $this->customerGroupRetriever = $customerGroupRetriever
-            ?? \Magento\Framework\App\ObjectManager::getInstance()->get(CustomerGroupRetrieverInterface::class);
         if ($saleableItem->hasCustomerGroupId()) {
             $this->customerGroup = (int) $saleableItem->getCustomerGroupId();
         } else {
-            $this->customerGroup = (int) $this->customerGroupRetriever->getCustomerGroupId();
+            $this->customerGroup = (int) $this->customerSession->getCustomerGroupId();
         }
     }
 
@@ -219,7 +207,6 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
      * and related product price amount.
      *
      * @param AmountInterface $amount
-     *
      * @return float
      */
     public function getSavePercent(AmountInterface $amount)

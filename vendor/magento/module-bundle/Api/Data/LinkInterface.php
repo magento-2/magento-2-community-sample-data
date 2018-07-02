@@ -10,7 +10,6 @@ namespace Magento\Bundle\Api\Data;
 /**
  * Interface LinkInterface
  * @api
- * @since 100.0.2
  */
 interface LinkInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

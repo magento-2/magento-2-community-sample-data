@@ -37,7 +37,7 @@ abstract class AbstractForm extends \Magento\Backend\Block\Widget\Form\Generic
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
         );
 
-        $this->_prepareStoreFieldset($form);
+        $this->_prepareStoreFieldSet($form);
 
         $form->addField(
             'store_type',

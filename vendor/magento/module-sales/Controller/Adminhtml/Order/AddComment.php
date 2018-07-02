@@ -46,7 +46,7 @@ class AddComment extends \Magento\Sales\Controller\Adminhtml\Order
                 $order->save();
                 /** @var OrderCommentSender $orderCommentSender */
                 $orderCommentSender = $this->_objectManager
-                    ->create(\Magento\Sales\Model\Order\Email\Sender\OrderCommentSender::class);
+                    ->create('Magento\Sales\Model\Order\Email\Sender\OrderCommentSender');
 
                 $orderCommentSender->send($order, $notify, $comment);
 

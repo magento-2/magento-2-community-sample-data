@@ -8,7 +8,6 @@ namespace Magento\Framework\Filter;
 /**
  * Magento Filter Manager
  *
- * @api
  * @method string email(string $value)
  * @method string money(string $value, $params = array())
  * @method string simple(string $value, $params = array())

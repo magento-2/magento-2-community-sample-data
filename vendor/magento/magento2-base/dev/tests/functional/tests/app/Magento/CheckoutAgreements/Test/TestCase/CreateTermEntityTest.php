@@ -19,15 +19,15 @@ use Magento\Mtf\TestCase\Scenario;
  * 4. Save
  * 5. Perform all assertions
  *
- * @group Terms_and_Conditions
+ * @group Terms_and_Conditions_(CS)
  * @ZephyrId MAGETWO-29586, MAGETWO-32499
  */
 class CreateTermEntityTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'extended_acceptance_test';
-    const SEVERITY = 'S3';
     /* end tags */
 
     /**

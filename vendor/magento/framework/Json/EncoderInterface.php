@@ -9,8 +9,6 @@ namespace Magento\Framework\Json;
  * JSON encoder
  *
  * @api
- *
- * @deprecated 100.2.0 @see \Magento\Framework\Serialize\Serializer\Json::serialize
  */
 interface EncoderInterface
 {

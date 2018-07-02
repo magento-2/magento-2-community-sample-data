@@ -15,7 +15,6 @@ use Magento\Sales\Setup\SalesSetupFactory;
 
 /**
  * @codeCoverageIgnore
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InstallData implements InstallDataInterface
 {
@@ -39,6 +38,7 @@ class InstallData implements InstallDataInterface
      * @var SalesSetupFactory
      */
     protected $salesSetupFactory;
+
 
     /**
      * Init
@@ -89,19 +89,19 @@ class InstallData implements InstallDataInterface
             'gift_message_available',
             [
                 'group' => 'Gift Options',
-                'backend' => \Magento\Catalog\Model\Product\Attribute\Backend\Boolean::class,
+                'backend' => 'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
                 'frontend' => '',
                 'label' => 'Allow Gift Message',
                 'input' => 'select',
                 'class' => '',
-                'source' => \Magento\Catalog\Model\Product\Attribute\Source\Boolean::class,
+                'source' => 'Magento\Catalog\Model\Product\Attribute\Source\Boolean',
                 'global' => true,
                 'visible' => true,
                 'required' => false,
                 'user_defined' => false,
                 'default' => '',
                 'apply_to' => '',
-                'input_renderer' => \Magento\GiftMessage\Block\Adminhtml\Product\Helper\Form\Config::class,
+                'input_renderer' => 'Magento\GiftMessage\Block\Adminhtml\Product\Helper\Form\Config',
                 'visible_on_front' => false,
                 'is_used_in_grid' => true,
                 'is_visible_in_grid' => false,

@@ -29,15 +29,15 @@ class CollectionTest extends AbstractCollectionTest
     {
         parent::setUp();
 
-        $this->storeManagerMock  = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock  = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->getMockForAbstractClass();
 
-        $this->metadataPoolMock  = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
+        $this->metadataPoolMock  = $this->getMockBuilder('Magento\Framework\EntityManager\MetadataPool')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->collection = $this->objectManager->getObject(
-            \Magento\Cms\Model\ResourceModel\Page\Collection::class,
+            'Magento\Cms\Model\ResourceModel\Page\Collection',
             [
                 'resource' => $this->resource,
                 'connection' => $this->connection,
@@ -95,7 +95,7 @@ class CollectionTest extends AbstractCollectionTest
             $expectedResult[$storeData[$linkField]][] = $storeData['store_id'];
         }
 
-        $entityMetadataMock = $this->getMockBuilder(\Magento\Framework\EntityManager\EntityMetadata::class)
+        $entityMetadataMock = $this->getMockBuilder('Magento\Framework\EntityManager\EntityMetadata')
             ->disableOriginalConstructor()
             ->getMock();
         $entityMetadataMock->expects($this->any())->method('getLinkField')->willReturn($linkField);
@@ -104,9 +104,7 @@ class CollectionTest extends AbstractCollectionTest
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         $this->connection->expects($this->any())->method('fetchAll')->willReturn($storesData);
 
-        $storeDataMock = $this->getMockBuilder(
-            \Magento\Store\Api\Data\StoreInterface::class
-        )->getMockForAbstractClass();
+        $storeDataMock = $this->getMockBuilder('Magento\Store\Api\Data\StoreInterface')->getMockForAbstractClass();
         $storeDataMock->expects($this->any())->method('getId')->willReturn(current($expectedResult[$item->getId()]));
         $storeDataMock->expects($this->any())->method('getCode')->willReturn('some_code');
         $this->storeManagerMock->expects($this->any())->method('getStores')->willReturn([$storeDataMock]);

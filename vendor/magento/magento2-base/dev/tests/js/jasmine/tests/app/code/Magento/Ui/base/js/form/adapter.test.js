@@ -4,6 +4,9 @@
  */
 
 /*eslint max-nested-callbacks: 0*/
+/*jscs:disable requirePaddingNewLinesInObjects*/
+/*jscs:disable jsDoc*/
+
 define([
     'Magento_Ui/js/form/adapter'
 ], function (obj) {

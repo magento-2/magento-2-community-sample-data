@@ -9,7 +9,7 @@ namespace Magento\Test\Integrity\App\Language;
 use Magento\Framework\App\Language\Config;
 use Magento\Framework\Component\ComponentRegistrar;
 
-class CircularDependencyTest extends \PHPUnit\Framework\TestCase
+class CircularDependencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config[][]
@@ -24,10 +24,10 @@ class CircularDependencyTest extends \PHPUnit\Framework\TestCase
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $componentRegistrar = new ComponentRegistrar();
         $declaredLanguages = $componentRegistrar->getPaths(ComponentRegistrar::LANGUAGE);
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
-        $domFactoryMock = $this->createMock(\Magento\Framework\Config\DomFactory::class);
+        $domFactoryMock = $this->getMock('Magento\Framework\Config\DomFactory', [], [], '', false);
         $domFactoryMock->expects($this->any())
             ->method('createDom')
             ->willReturnCallback(
@@ -45,7 +45,7 @@ class CircularDependencyTest extends \PHPUnit\Framework\TestCase
         $packs = [];
         foreach ($declaredLanguages as $language) {
             $languageConfig = $objectManager->getObject(
-                \Magento\Framework\App\Language\Config::class,
+                'Magento\Framework\App\Language\Config',
                 [
                     'source' => file_get_contents($language . '/language.xml'),
                     'domFactory' => $domFactoryMock

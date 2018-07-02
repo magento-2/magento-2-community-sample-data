@@ -12,7 +12,7 @@ use Magento\Setup\Model\Complex\Pattern;
  * Class PatternTest
  *
  */
-class PatternTest extends \PHPUnit\Framework\TestCase
+class PatternTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Get pattern object
@@ -42,8 +42,8 @@ class PatternTest extends \PHPUnit\Framework\TestCase
                     [
                         'id' => '%s',
                         'name' => 'Static',
-                        'calculated' => function ($index, $generatedKey) {
-                            return $index * 10 + $generatedKey;
+                        'calculated' => function ($index) {
+                            return $index * 10;
                         },
                     ],
                     [
@@ -53,7 +53,7 @@ class PatternTest extends \PHPUnit\Framework\TestCase
                         'name' => 'yyy %s'
                     ],
                 ],
-                'expectedCount'      => 3,
+                'ecpectedCount'      => 3,
                 'expectedRowsResult' => [
                     ['id' => '1', 'name' => 'Static', 'calculated' => 10],
                     ['id' => '',  'name' => 'xxx 1',  'calculated' => ''],
@@ -68,7 +68,7 @@ class PatternTest extends \PHPUnit\Framework\TestCase
                         'calculated' => 'calc %s',
                     ],
                 ],
-                'expectedCount' => 1,
+                'ecpectedCount' => 1,
                 'expectedRowsResult' => [
                     ['id' => '1', 'name' => 'Dynamic 1', 'calculated' => 'calc 1'],
                 ],

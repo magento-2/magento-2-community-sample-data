@@ -22,13 +22,13 @@ class AssertSuggestSearchingResult extends AbstractConstraint
      * Click on search suggestion and verify that search is performed.
      *
      * @param CmsIndex $cmsIndex
-     * @param CatalogSearchQuery $searchTerm
+     * @param CatalogSearchQuery $catalogSearch
      * @param AssertCatalogSearchResult $assertCatalogSearchResult
      * @param AdvancedResult $resultPage
      * @return void
      */
     public function processAssert(
-        CatalogSearchQuery $searchTerm,
+        CatalogSearchQuery $catalogSearch,
         CmsIndex $cmsIndex,
         AssertCatalogSearchResult $assertCatalogSearchResult,
         AdvancedResult $resultPage
@@ -36,11 +36,11 @@ class AssertSuggestSearchingResult extends AbstractConstraint
         $cmsIndex->open();
         $searchBlock = $cmsIndex->getSearchBlock();
 
-        $queryText = $searchTerm->getQueryText();
+        $queryText = $catalogSearch->getQueryText();
         $searchBlock->fillSearch($queryText);
 
-        if ($searchTerm->hasData('num_results')) {
-            $isVisible = $searchBlock->isSuggestSearchVisible($queryText, $searchTerm->getNumResults());
+        if ($catalogSearch->hasData('num_results')) {
+            $isVisible = $searchBlock->isSuggestSearchVisible($queryText, $catalogSearch->getNumResults());
         } else {
             $isVisible = $searchBlock->isSuggestSearchVisible($queryText);
         }
@@ -50,7 +50,7 @@ class AssertSuggestSearchingResult extends AbstractConstraint
             'Block "Suggest Search" when searching was not found'
         );
         $searchBlock->clickSuggestedText($queryText);
-        $assertCatalogSearchResult->processAssert($searchTerm, $resultPage);
+        $assertCatalogSearchResult->processAssert($catalogSearch, $resultPage);
     }
 
     /**

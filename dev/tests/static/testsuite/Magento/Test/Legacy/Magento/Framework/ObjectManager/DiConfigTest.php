@@ -5,7 +5,7 @@
  */
 namespace Magento\Test\Legacy\Magento\Framework\ObjectManager;
 
-class DiConfigTest extends \PHPUnit\Framework\TestCase
+class DiConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testObsoleteDiFormat()
     {
@@ -70,7 +70,7 @@ class DiConfigTest extends \PHPUnit\Framework\TestCase
         $xml = simplexml_load_file($file);
         foreach ($xml->xpath('//type') as $type) {
             $this->assertNotContains(
-                \Magento\Framework\Console\CommandList::class,
+                'Magento\Framework\Console\CommandList',
                 $type->attributes(),
                 'Use \Magento\Framework\Console\CommandListInterface instead of \Magento\Framework\Console\CommandList'
             );

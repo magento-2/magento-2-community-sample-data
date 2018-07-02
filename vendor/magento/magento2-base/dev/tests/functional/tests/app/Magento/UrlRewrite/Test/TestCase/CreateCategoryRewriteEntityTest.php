@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 7. Save Rewrite.
  * 8. Verify created rewrite.
  *
- * @group URL_Rewrites
+ * @group URL_Rewrites_(MX)
  * @ZephyrId MAGETWO-24280
  */
 class CreateCategoryRewriteEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     /* end tags */
 
@@ -68,7 +69,7 @@ class CreateCategoryRewriteEntityTest extends Injectable
         $this->urlRewriteIndex = $urlRewriteIndex;
         $category = $fixtureFactory->createByCode(
             'category',
-            ['dataset' => 'default_subcategory_with_single_quote_in_name']
+            ['dataset' => 'default_subcategory']
         );
         $category->persist();
         return ['category' => $category];
@@ -87,7 +88,6 @@ class CreateCategoryRewriteEntityTest extends Injectable
         $this->urlRewriteIndex->open();
         $this->urlRewriteIndex->getPageActionsBlock()->addNew();
         $this->urlRewriteEdit->getFormBlock()->fill($urlRewrite);
-
         $this->urlRewriteEdit->getTreeBlock()->selectCategory($category);
         $this->urlRewriteEdit->getFormBlock()->fill($urlRewrite);
         $this->urlRewriteEdit->getPageMainActions()->save();

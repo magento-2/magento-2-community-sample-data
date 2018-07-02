@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Test\Unit\Model\Menu\Builder\Command;
 
-class UpdateTest extends \PHPUnit\Framework\TestCase
+class UpdateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Menu\Builder\Command\Update

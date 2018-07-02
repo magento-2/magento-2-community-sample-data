@@ -12,9 +12,9 @@ use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 
 /**
- * Class CategoryProductUrlPathGeneratorTest
+ * Tests CategoryProductUrlPathGenerator class.
  */
-class CategoryProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
+class CategoryProductUrlPathGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductScopeRewriteGenerator|\PHPUnit_Framework_MockObject_MockObject

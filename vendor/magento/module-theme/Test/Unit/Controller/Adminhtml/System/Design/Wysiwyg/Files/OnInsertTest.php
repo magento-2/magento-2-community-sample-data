@@ -5,7 +5,7 @@
  */
 namespace Magento\Theme\Test\Unit\Controller\Adminhtml\System\Design\Wysiwyg\Files;
 
-class OnInsertTest extends \PHPUnit\Framework\TestCase
+class OnInsertTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files */
     protected $controller;
@@ -24,14 +24,14 @@ class OnInsertTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->view = $this->createMock(\Magento\Framework\App\ViewInterface::class);
-        $this->storageHelper = $this->createMock(\Magento\Theme\Helper\Storage::class);
-        $this->response = $this->createPartialMock(\Magento\Framework\App\Response\Http::class, ['setBody']);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->view = $this->getMock('\Magento\Framework\App\ViewInterface', [], [], '', false);
+        $this->storageHelper = $this->getMock('Magento\Theme\Helper\Storage', [], [], '', false);
+        $this->response = $this->getMock('Magento\Framework\App\Response\Http', ['setBody'], [], '', false);
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->controller = $helper->getObject(
-            \Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\OnInsert::class,
+            'Magento\Theme\Controller\Adminhtml\System\Design\Wysiwyg\Files\OnInsert',
             [
                 'objectManager' => $this->objectManager,
                 'view' => $this->view,
@@ -44,7 +44,7 @@ class OnInsertTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager->expects($this->once())
             ->method('get')
-            ->with(\Magento\Theme\Helper\Storage::class)
+            ->with('Magento\Theme\Helper\Storage')
             ->willReturn($this->storageHelper);
         $this->storageHelper
             ->expects($this->once())

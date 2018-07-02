@@ -8,18 +8,18 @@ namespace Magento\Newsletter\Block\Adminhtml;
 /**
  * @magentoAppArea adminhtml
  */
-class SubscriberTest extends \PHPUnit\Framework\TestCase
+class SubscriberTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetShowQueueAdd()
     {
         /** @var $layout \Magento\Framework\View\Layout */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
         /** @var $block \Magento\Newsletter\Block\Adminhtml\Subscriber */
-        $block = $layout->createBlock(\Magento\Newsletter\Block\Adminhtml\Subscriber::class, 'block');
+        $block = $layout->createBlock('Magento\Newsletter\Block\Adminhtml\Subscriber', 'block');
         /** @var $childBlock \Magento\Framework\View\Element\Template */
-        $childBlock = $layout->addBlock(\Magento\Framework\View\Element\Template::class, 'grid', 'block');
+        $childBlock = $layout->addBlock('Magento\Framework\View\Element\Template', 'grid', 'block');
 
         $expected = 'test_data';
         $this->assertNotEquals($expected, $block->getShowQueueAdd());

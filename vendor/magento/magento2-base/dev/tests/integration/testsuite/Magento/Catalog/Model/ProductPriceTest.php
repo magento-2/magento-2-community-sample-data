@@ -13,7 +13,7 @@
  */
 namespace Magento\Catalog\Model;
 
-class ProductPriceTest extends \PHPUnit\Framework\TestCase
+class ProductPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -23,7 +23,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
     }
 
@@ -37,7 +37,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     public function testGetPriceModel()
     {
         $default = $this->_model->getPriceModel();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Type\Price::class, $default);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Type\Price', $default);
         $this->assertSame($default, $this->_model->getPriceModel());
     }
 
@@ -68,7 +68,6 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     public function testSetGetFinalPrice()
     {
         $this->assertEquals(0, $this->_model->getFinalPrice());
-        $this->_model->setPrice(10);
         $this->_model->setFinalPrice(10);
         $this->assertEquals(10, $this->_model->getFinalPrice());
     }

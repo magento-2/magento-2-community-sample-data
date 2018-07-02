@@ -6,16 +6,17 @@
 
 namespace Magento\ProductVideo\Test\Constraint;
 
-use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 use Magento\Cms\Test\Page\CmsIndex;
-use Magento\Mtf\Constraint\AbstractConstraint;
 use Magento\Mtf\Fixture\InjectableFixture;
+use Magento\Mtf\Constraint\AbstractConstraint;
+use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 
 /**
  * Assert that video is absent on category page.
  */
 class AssertNoVideoCategoryView extends AbstractConstraint
 {
+
     /**
      * Assert that video is absent on category page on Store front.
      *

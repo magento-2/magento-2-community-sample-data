@@ -6,20 +6,19 @@
 namespace Magento\Quote\Test\Unit\Model\Quote\Item;
 
 use Magento\Catalog\Model\Product;
-use Magento\Framework\App\State;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Processor;
 use Magento\Quote\Model\Quote\ItemFactory;
-use Magento\Store\Model\Store;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Store;
+use Magento\Framework\App\State;
+use Magento\Framework\DataObject;
 
 /**
  * Tests for Magento\Quote\Model\Service\Quote\Processor
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Processor
@@ -63,12 +62,17 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->quoteItemFactoryMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\ItemFactory::class,
-            ['create']
+        $this->quoteItemFactoryMock = $this->getMock(
+            'Magento\Quote\Model\Quote\ItemFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->itemMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Item::class, [
+        $this->itemMock = $this->getMock(
+            'Magento\Quote\Model\Quote\Item',
+            [
                 'getId',
                 'setOptions',
                 '__wakeup',
@@ -77,18 +81,34 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
                 'setCustomPrice',
                 'setOriginalCustomPrice',
                 'setData'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->quoteItemFactoryMock->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->itemMock));
 
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId', '__wakeup']);
+        $this->storeManagerMock = $this->getMock(
+            'Magento\Store\Model\StoreManager',
+            ['getStore'],
+            [],
+            '',
+            false
+        );
+        $this->storeMock = $this->getMock('Magento\Store\Model\Store', ['getId', '__wakeup'], [], '', false);
         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->will($this->returnValue($this->storeMock));
 
-        $this->stateMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->stateMock = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->processor = new Processor(
             $this->quoteItemFactoryMock,
@@ -96,13 +116,19 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             $this->stateMock
         );
 
-        $this->productMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getCustomOptions', '__wakeup', 'getParentProductId', 'getCartQty', 'getStickWithinParent']
+        $this->productMock = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getCustomOptions', '__wakeup', 'getParentProductId', 'getCartQty', 'getStickWithinParent'],
+            [],
+            '',
+            false
         );
-        $this->objectMock = $this->createPartialMock(
-            \Magento\Framework\DataObject::class,
-            ['getResetCount', 'getId', 'getCustomPrice']
+        $this->objectMock = $this->getMock(
+            'Magento\Framework\DataObject',
+            ['getResetCount', 'getId', 'getCustomPrice'],
+            [],
+            '',
+            false
         );
     }
 
@@ -149,8 +175,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->will($this->returnValue($requestId));
 
-        $result = $this->processor->init($this->productMock, $this->objectMock);
-        $this->assertNotNull($result);
+        $this->processor->init($this->productMock, $this->objectMock);
     }
 
     public function testInitWithoutModification()

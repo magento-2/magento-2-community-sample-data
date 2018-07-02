@@ -9,13 +9,14 @@ namespace Magento\Test\Less;
 use Magento\Framework\App\Utility;
 use Magento\TestFramework\CodingStandard\Tool\CodeSniffer;
 use Magento\TestFramework\CodingStandard\Tool\CodeSniffer\LessWrapper;
+use PHPUnit_Framework_TestCase;
 use Magento\Framework\App\Utility\Files;
 use Magento\Test\Php\LiveCodeTest as PHPCodeTest;
 
 /**
  * Set of tests for static code style
  */
-class LiveCodeTest extends \PHPUnit\Framework\TestCase
+class LiveCodeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var string

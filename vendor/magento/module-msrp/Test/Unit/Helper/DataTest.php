@@ -8,10 +8,11 @@
 
 namespace Magento\Msrp\Test\Unit\Helper;
 
+
 /**
  * Class DataTest
  */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Msrp\Helper\Data
@@ -30,8 +31,8 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
-        $this->productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->priceCurrencyMock = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface');
+        $this->productMock = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getMsrp', 'getPriceInfo', '__wakeup'])
             ->getMock();
@@ -39,7 +40,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->helper = $objectManager->getObject(
-            \Magento\Msrp\Helper\Data::class,
+            'Magento\Msrp\Helper\Data',
             [
                 'priceCurrency' => $this->priceCurrencyMock,
             ]
@@ -59,14 +60,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $finalPriceMock = $this->getMockBuilder(\Magento\Catalog\Pricing\Price\FinalPrice::class)
+        $finalPriceMock = $this->getMockBuilder('\Magento\Catalog\Pricing\Price\FinalPrice')
             ->disableOriginalConstructor()
             ->getMock();
         $finalPriceMock->expects($this->any())
             ->method('getValue')
             ->will($this->returnValue($convertedFinalPrice));
 
-        $priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfoMock = $this->getMockBuilder('\Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $priceInfoMock->expects($this->once())

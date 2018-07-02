@@ -8,7 +8,7 @@ namespace Magento\Paypal\Test\Unit\Model\Report\Settlement;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class RowTest extends \PHPUnit\Framework\TestCase
+class RowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Paypal\Model\Report\Settlement\Row
@@ -18,7 +18,7 @@ class RowTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->row = $objectManagerHelper->getObject(\Magento\Paypal\Model\Report\Settlement\Row::class);
+        $this->row = $objectManagerHelper->getObject('Magento\Paypal\Model\Report\Settlement\Row');
     }
 
     /**

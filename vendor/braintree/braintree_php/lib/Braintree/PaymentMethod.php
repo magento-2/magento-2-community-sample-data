@@ -6,6 +6,7 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -16,6 +17,8 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
+ *
  */
 class PaymentMethod extends Base
 {
@@ -36,9 +39,9 @@ class PaymentMethod extends Base
         return Configuration::gateway()->paymentMethod()->update($token, $attribs);
     }
 
-    public static function delete($token, $options=[])
+    public static function delete($token)
     {
-        return Configuration::gateway()->paymentMethod()->delete($token, $options);
+        return Configuration::gateway()->paymentMethod()->delete($token);
     }
 }
 class_alias('Braintree\PaymentMethod', 'Braintree_PaymentMethod');

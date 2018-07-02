@@ -503,7 +503,7 @@ class AbstractAction
     {
         if (null === $this->categoryMetadata) {
             $metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
             $this->categoryMetadata = $metadataPool->getMetadata(\Magento\Catalog\Api\Data\CategoryInterface::class);
         }
         return $this->categoryMetadata;
@@ -516,7 +516,7 @@ class AbstractAction
     {
         if (null === $this->skipStaticColumns) {
             $provider = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Indexer\Category\Flat\SkipStaticColumnsProvider::class);
+                ->get('Magento\Catalog\Model\Indexer\Category\Flat\SkipStaticColumnsProvider');
             $this->skipStaticColumns = $provider->get();
         }
         return $this->skipStaticColumns;

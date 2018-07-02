@@ -13,7 +13,6 @@ use Magento\Catalog\Helper\DefaultCategory;
 
 /**
  * @codeCoverageIgnore
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InstallData implements InstallDataInterface
 {
@@ -30,7 +29,7 @@ class InstallData implements InstallDataInterface
     private $defaultCategory;
 
     /**
-     * @deprecated 101.0.0
+     * @deprecated
      * @return DefaultCategory
      */
     private function getDefaultCategory()
@@ -282,7 +281,7 @@ class InstallData implements InstallDataInterface
                 $newGeneralTabName => 100,
                 'is_required' => 0,
                 'default_value' => 1,
-                'frontend_input_renderer' => \Magento\Framework\Data\Form\Element\Hidden::class,
+                'frontend_input_renderer' => 'Magento\Framework\Data\Form\Element\Hidden',
             ],
             //Autosettings tab
             'short_description' => [$autosettingsTabName => 0, 'is_required' => 0],
@@ -328,13 +327,13 @@ class InstallData implements InstallDataInterface
             \Magento\Catalog\Model\Category::ENTITY,
             'custom_design_from',
             'attribute_model',
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
         );
         $categorySetup->updateAttribute(
             \Magento\Catalog\Model\Category::ENTITY,
             'custom_design_from',
             'frontend_model',
-            \Magento\Eav\Model\Entity\Attribute\Frontend\Datetime::class
+            'Magento\Eav\Model\Entity\Attribute\Frontend\Datetime'
         );
     }
 }

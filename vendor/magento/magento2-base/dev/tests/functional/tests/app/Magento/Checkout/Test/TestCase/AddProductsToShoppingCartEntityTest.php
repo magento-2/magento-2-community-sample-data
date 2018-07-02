@@ -6,14 +6,13 @@
 
 namespace Magento\Checkout\Test\TestCase;
 
-use Magento\Backend\Test\Page\Adminhtml\SystemConfigEdit;
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
 use Magento\Checkout\Test\Page\CheckoutCart;
-use Magento\Mtf\Client\BrowserInterface;
 use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\ObjectManager;
 use Magento\Mtf\TestCase\Injectable;
 use Magento\Mtf\TestStep\TestStepFactory;
-use Magento\Mtf\Util\Command\Cli\Cache;
+use Magento\Backend\Test\Page\Adminhtml\SystemConfigEdit;
 
 /**
  * Preconditions:
@@ -25,156 +24,111 @@ use Magento\Mtf\Util\Command\Cli\Cache;
  * 3. Add to cart test product
  * 4. Perform all asserts
  *
- * @group Shopping_Cart
- * @ZephyrId MAGETWO-25382, MAGETWO-42677, MAGETWO-45389
+ * @group Shopping_Cart_(CS)
+ * @ZephyrId MAGETWO-25382
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddProductsToShoppingCartEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S0';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
-     * Browser interface
-     *
-     * @var BrowserInterface
-     */
-    protected $browser;
-
-    /**
-     * Fixture factory
+     * Fixture factory.
      *
      * @var FixtureFactory
      */
     protected $fixtureFactory;
 
     /**
-     * Catalog product view page
+     * Catalog product view page.
      *
      * @var CatalogProductView
      */
     protected $catalogProductView;
 
     /**
-     * Checkout cart page
+     * Checkout cart page.
      *
      * @var CheckoutCart
      */
     protected $cartPage;
 
     /**
+     * Test step creation factory.
+     *
+     * @var TestStepFactory
+     */
+    protected $testStepFactory;
+
+    /**
      * Configuration data.
      *
      * @var string
      */
-    private $configData;
-
-    /**
-     * Factory for Test Steps.
-     *
-     * @var TestStepFactory
-     */
-    private $testStepFactory;
-
-    /**
-     * Should cache be flushed.
-     *
-     * @var bool
-     */
-    private $flushCache;
-
-    /**
-     * "Configuration" page in Admin panel.
-     *
-     * @var SystemConfigEdit
-     */
-    private $configurationAdminPage;
-
-    /**
-     * Cache CLI.
-     *
-     * @var Cache
-     */
-    private $cache;
+    protected $configData;
 
     /**
      * Prepare test data.
      *
-     * @param BrowserInterface $browser
-     * @param FixtureFactory $fixtureFactory
      * @param CatalogProductView $catalogProductView
      * @param CheckoutCart $cartPage
      * @param TestStepFactory $testStepFactory
-     * @param Cache $cache
+     * @param FixtureFactory $fixtureFactory
      * @return void
      */
     public function __prepare(
-        BrowserInterface $browser,
-        FixtureFactory $fixtureFactory,
         CatalogProductView $catalogProductView,
         CheckoutCart $cartPage,
         TestStepFactory $testStepFactory,
-        Cache $cache
+        FixtureFactory $fixtureFactory
     ) {
-        $this->browser = $browser;
-        $this->fixtureFactory = $fixtureFactory;
         $this->catalogProductView = $catalogProductView;
         $this->cartPage = $cartPage;
         $this->testStepFactory = $testStepFactory;
-        $this->cache = $cache;
+        $this->fixtureFactory = $fixtureFactory;
     }
 
     /**
      * Run test add products to shopping cart.
      *
-     * @param array $productsData
+     * @param string $productsData
      * @param array $cart
      * @param string|null $configData [optional]
-     * @param bool $flushCache [optional]
-     * @param bool $isValidationFailed
      * @return array
      */
-    public function test(
-        array $productsData,
-        array $cart,
-        $configData = null,
-        $flushCache = false,
-        $isValidationFailed = false
-    ) {
+    public function test($productsData, array $cart, $configData = null)
+    {
         // Preconditions
         $this->configData = $configData;
-        $this->flushCache = $flushCache;
 
         $this->testStepFactory->create(
             \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'flushCache' => $this->flushCache]
+            ['configData' => $this->configData]
         )->run();
-
-        if ($this->configData == 'enable_https_frontend_admin_with_url') {
-            $_ENV['app_backend_url'] = preg_replace('/(http[s]?)/', 'https', $_ENV['app_backend_url']);
-            $_ENV['app_frontend_url'] = preg_replace('/(http[s]?)/', 'https', $_ENV['app_frontend_url']);
-        }
         $products = $this->prepareProducts($productsData);
+        $this->setupConfiguration();
 
         // Steps
-        $this->addToCart($products, $isValidationFailed);
+        $this->addToCart($products);
 
         $cart['data']['items'] = ['products' => $products];
         return [
             'cart' => $this->fixtureFactory->createByCode('cart', $cart),
-            'products' => $products
+            'product' => array_shift($products),
+            'products' => $products,
         ];
     }
 
     /**
      * Create products.
      *
-     * @param array $productList
+     * @param string $productList
      * @return array
      */
-    protected function prepareProducts(array $productList)
+    protected function prepareProducts($productList)
     {
         $addToCartStep = $this->testStepFactory->create(
             \Magento\Catalog\Test\TestStep\CreateProductsStep::class,
@@ -189,73 +143,35 @@ class AddProductsToShoppingCartEntityTest extends Injectable
      * Add products to cart.
      *
      * @param array $products
-     * @param bool $isValidationFailed
      * @return void
      */
-    protected function addToCart(array $products, $isValidationFailed)
+    protected function addToCart(array $products)
     {
         $addToCartStep = $this->testStepFactory->create(
             \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
-            ['products' => $products, 'isValidationFailed' => $isValidationFailed]
+            ['products' => $products]
         );
         $addToCartStep->run();
     }
 
     /**
-     * Clean data after running test.
+     * Setup configuration.
      *
      * @return void
      */
-    public function tearDown()
+    private function setupConfiguration()
     {
-        // Workaround until MTA-3879 is delivered.
-        if ($this->configData == 'enable_https_frontend_admin_with_url') {
-            $this->getSystemConfigEditPage()->open();
-            $this->getSystemConfigEditPage()->getForm()
-                ->getGroup('web', 'secure')->setValue('web', 'secure', 'use_in_frontend', 'No');
-            $this->getSystemConfigEditPage()->getForm()
-                ->getGroup('web', 'secure')->setValue('web', 'secure', 'use_in_adminhtml', 'No');
-            $this->getSystemConfigEditPage()->getForm()
-                ->getGroup('web', 'secure')->setValue('web', 'secure', 'base_url', $this->getBaseUrl());
-            $this->getSystemConfigEditPage()->getForm()
-                ->getGroup('web', 'secure')->setValue('web', 'secure', 'base_link_url', $this->getBaseUrl());
-            $this->getSystemConfigEditPage()->getPageActions()->save();
-            $_ENV['app_backend_url'] = preg_replace('/(http[s]?)/', 'http', $_ENV['app_backend_url']);
-            $_ENV['app_frontend_url'] = preg_replace('/(http[s]?)/', 'http', $_ENV['app_frontend_url']);
-            $this->cache->flush();
-        }
-
         $this->testStepFactory->create(
             \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'rollback' => true, 'flushCache' => $this->flushCache]
+            ['configData' => $this->configData]
         )->run();
     }
 
-    /**
-     * Get base URL.
-     *
-     * @param bool $useHttps
-     * @return string
-     */
-    private function getBaseUrl($useHttps = false)
+    protected function tearDown()
     {
-        $protocol = $useHttps ? 'https' : 'http';
-        return preg_replace('/(http[s]?)/', $protocol, $_ENV['app_frontend_url']);
-    }
-
-    /**
-     * Create System Config Edit Page.
-     *
-     * @return SystemConfigEdit
-     */
-    private function getSystemConfigEditPage()
-    {
-        if (null === $this->configurationAdminPage) {
-            $this->configurationAdminPage = \Magento\Mtf\ObjectManagerFactory::getObjectManager()->create(
-                \Magento\Backend\Test\Page\Adminhtml\SystemConfigEdit::class
-            );
-        }
-
-        return $this->configurationAdminPage;
+        $this->testStepFactory->create(
+            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            ['configData' => $this->configData, 'rollback' => true]
+        )->cleanup();
     }
 }

@@ -29,7 +29,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 7. Create Order.
  * 8. Perform all assertions from dataset.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-29382
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -37,6 +37,7 @@ class AssignCustomOrderStatusTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -172,7 +173,7 @@ class AssignCustomOrderStatusTest extends Injectable
             $this->orderStatusIndex->open()->getOrderStatusGrid()->searchAndUnassign($filter);
             $this->orderStatusIndex->getMessagesBlock()->waitSuccessMessage();
             $this->objectManager->create(
-                \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+                'Magento\Config\Test\TestStep\SetupConfigurationStep',
                 ['configData' => 'checkmo_custom_new_order_status_rollback']
             )->run();
         }

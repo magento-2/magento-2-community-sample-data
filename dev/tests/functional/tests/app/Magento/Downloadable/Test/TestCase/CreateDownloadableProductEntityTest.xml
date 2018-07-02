@@ -23,7 +23,8 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductInCart" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation2" summary="Create product with default set links">
+        <variation name="CreateDownloadableProductEntityTestVariation2">
+            <data name="description" xsi:type="string">Create product with default set links</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">100</data>
@@ -40,9 +41,9 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductInStock" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation3" summary="Create product with default sets samples and links">
+        <variation name="CreateDownloadableProductEntityTestVariation3">
             <data name="tag" xsi:type="string">to_maintain:yes</data>
-            <data name="issue" xsi:type="string">MAGETWO-67096: [FT] Magento\Downloadable\Test\TestCase\CreateDownloadableProductEntityTest fails on Jenkins</data>
+            <data name="description" xsi:type="string">Create product with default sets samples and links</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">1</data>
@@ -60,7 +61,8 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableSamplesData" />
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableLinksData" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation4" summary="Create product with custom options">
+        <variation name="CreateDownloadableProductEntityTestVariation4">
+            <data name="description" xsi:type="string">Create product with custom options</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">33</data>
@@ -78,9 +80,9 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableLinksData" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation5" summary="Create product without category">
+        <variation name="CreateDownloadableProductEntityTestVariation5">
             <data name="tag" xsi:type="string">to_maintain:yes</data>
-            <data name="issue" xsi:type="string">MAGETWO-67096: [FT] Magento\Downloadable\Test\TestCase\CreateDownloadableProductEntityTest fails on Jenkins</data>
+            <data name="description" xsi:type="string">Create product without category</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">55</data>
@@ -101,7 +103,8 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductInStock" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductSearchableBySku" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation6" summary="Create product with out of stock status">
+        <variation name="CreateDownloadableProductEntityTestVariation6">
+            <data name="description" xsi:type="string">Create product with out of stock status</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">100</data>
@@ -116,7 +119,8 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductInGrid" />
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableProductForm" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation7" summary="Create product with manage stock">
+        <variation name="CreateDownloadableProductEntityTestVariation7">
+            <data name="description" xsi:type="string">Create product with manage stock</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">9999</data>
@@ -132,7 +136,8 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableProductForm" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductOutOfStock" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation8" summary="Create product without tax class id">
+        <variation name="CreateDownloadableProductEntityTestVariation8">
+            <data name="description" xsi:type="string">Create product without tax class id</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">98</data>
@@ -148,8 +153,9 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableProductForm" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation9" summary="Create product with import custom options">
-            <data name="issue" xsi:type="string">MAGETWO-59316: Sort order of Customizable Options isn't taken into account while creating Product via Webapi</data>
+        <variation name="CreateDownloadableProductEntityTestVariation9">
+            <data name="issue" xsi:type="string">MAGETWO-60789: API wrong custom attributes order</data>
+            <data name="description" xsi:type="string">Create product with import custom options</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">57</data>
@@ -171,9 +177,9 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableSamplesData" />
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableLinksData" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation10" summary="Create product with three links">
+        <variation name="CreateDownloadableProductEntityTestVariation10">
             <data name="tag" xsi:type="string">to_maintain:yes</data>
-            <data name="issue" xsi:type="string">MAGETWO-67096: [FT] Magento\Downloadable\Test\TestCase\CreateDownloadableProductEntityTest fails on Jenkins</data>
+            <data name="description" xsi:type="string">Create product with three links</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">65</data>
@@ -195,9 +201,9 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableSamplesData" />
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableLinksData" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation11" summary="Create product with three links without description">
+        <variation name="CreateDownloadableProductEntityTestVariation11">
             <data name="tag" xsi:type="string">to_maintain:yes</data>
-            <data name="issue" xsi:type="string">MAGETWO-67096: [FT] Magento\Downloadable\Test\TestCase\CreateDownloadableProductEntityTest fails on Jenkins</data>
+            <data name="description" xsi:type="string">Create product with three links without description</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">65</data>
@@ -216,7 +222,8 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableLinksData" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductCustomOptionsOnProductPage" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation12" summary="Create product without filling quantity and stock">
+        <variation name="CreateDownloadableProductEntityTestVariation12">
+            <data name="description" xsi:type="string">Create product without filling quantity and stock</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">100</data>
@@ -230,7 +237,8 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductVisibleInCategory" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation13" summary="Create product with special price">
+        <variation name="CreateDownloadableProductEntityTestVariation13">
+            <data name="description" xsi:type="string">Create product with special price</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">10</data>
@@ -247,7 +255,8 @@
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductSpecialPriceOnProductPage" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation14" summary="Create product with group price">
+        <variation name="CreateDownloadableProductEntityTestVariation14">
+            <data name="description" xsi:type="string">Create product with group price</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">365</data>
@@ -262,7 +271,8 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableProductForm" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
         </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation15" summary="Create product with tier price">
+        <variation name="CreateDownloadableProductEntityTestVariation15">
+            <data name="description" xsi:type="string">Create product with tier price</data>
             <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
             <data name="product/data/price/value" xsi:type="string">250</data>
@@ -278,18 +288,6 @@
             <constraint name="Magento\Downloadable\Test\Constraint\AssertDownloadableProductForm" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductPage" />
             <constraint name="Magento\Catalog\Test\Constraint\AssertProductTierPriceOnProductPage" />
-        </variation>
-        <variation name="CreateDownloadableProductEntityTestVariation16" summary="Create downloadable product and assign it to custom website">
-            <data name="product/data/name" xsi:type="string">DownloadableProduct_%isolation%</data>
-            <data name="product/data/sku" xsi:type="string">DownloadableProduct_%isolation%</data>
-            <data name="product/data/price/value" xsi:type="string">350</data>
-            <data name="product/data/quantity_and_stock_status/qty" xsi:type="string">75</data>
-            <data name="product/data/quantity_and_stock_status/is_in_stock" xsi:type="string">In Stock</data>
-            <data name="product/data/downloadable_links/dataset" xsi:type="string">one_separately_link</data>
-            <data name="product/data/url_key" xsi:type="string">downloadableproduct-%isolation%</data>
-            <data name="product/data/website_ids/0/dataset" xsi:type="string">custom_store</data>
-            <constraint name="Magento\Catalog\Test\Constraint\AssertProductSaveMessage" />
-            <constraint name="Magento\Catalog\Test\Constraint\AssertProductOnCustomWebsite" />
         </variation>
     </testCase>
 </config>

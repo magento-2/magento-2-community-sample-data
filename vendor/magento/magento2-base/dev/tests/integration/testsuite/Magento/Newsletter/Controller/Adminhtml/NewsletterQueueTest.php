@@ -19,7 +19,7 @@ class NewsletterQueueTest extends \Magento\TestFramework\TestCase\AbstractBacken
     {
         parent::setUp();
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Newsletter\Model\Template::class
+            'Magento\Newsletter\Model\Template'
         );
     }
 
@@ -29,11 +29,11 @@ class NewsletterQueueTest extends \Magento\TestFramework\TestCase\AbstractBacken
          * Unset messages
          */
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Session::class
+            'Magento\Backend\Model\Session'
         )->getMessages(
             true
         );
-        $this->_model = null;
+        unset($this->_model);
     }
 
     /**

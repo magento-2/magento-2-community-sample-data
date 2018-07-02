@@ -12,7 +12,7 @@ use Magento\Integration\Model\Integration;
 /**
  * @magentoDataFixture Magento/Integration/_files/integration_all_permissions.php
  */
-class WebapiTest extends \PHPUnit\Framework\TestCase
+class WebapiTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Registry */
     protected $registry;
@@ -21,7 +21,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->registry = $objectManager->get(\Magento\Framework\Registry::class);
+        $this->registry = $objectManager->get('Magento\Framework\Registry');
     }
 
     protected function tearDown()
@@ -76,7 +76,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         return $objectManager->create(
-            \Magento\Integration\Block\Adminhtml\Integration\Activate\Permissions\Tab\Webapi::class
+            'Magento\Integration\Block\Adminhtml\Integration\Activate\Permissions\Tab\Webapi'
         );
     }
 
@@ -87,7 +87,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $integration Integration */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $integration = $objectManager->create(\Magento\Integration\Model\Integration::class);
+        $integration = $objectManager->create('Magento\Integration\Model\Integration');
         return $integration->load('Fixture Integration', 'name');
     }
 }

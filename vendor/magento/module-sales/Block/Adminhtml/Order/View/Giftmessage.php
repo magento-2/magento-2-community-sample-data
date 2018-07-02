@@ -8,9 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\View;
 /**
  * Edit order giftmessage block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Giftmessage extends \Magento\Backend\Block\Widget
 {
@@ -101,7 +99,7 @@ class Giftmessage extends \Magento\Backend\Block\Widget
     {
         $this->addChild(
             'save_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Save Gift Message'), 'class' => 'save']
         );
 

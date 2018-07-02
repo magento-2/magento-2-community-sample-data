@@ -11,10 +11,6 @@
  */
 namespace Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Main extends \Magento\Backend\Block\Widget\Form\Generic implements \Magento\Backend\Block\Widget\Tab\TabInterface
 {
     /**
@@ -186,7 +182,7 @@ class Main extends \Magento\Backend\Block\Widget\Form\Generic implements \Magent
                 ]
             );
             $renderer = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class
+                'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element'
             );
             $field->setRenderer($renderer);
         }
@@ -206,7 +202,7 @@ class Main extends \Magento\Backend\Block\Widget\Form\Generic implements \Magent
 
         /* @var $layoutBlock \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout */
         $layoutBlock = $this->getLayout()->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout::class
+            'Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout'
         )->setWidgetInstance(
             $widgetInstance
         );

@@ -9,7 +9,7 @@ namespace Magento\Framework\Validator\Test\Unit;
 /**
  * Test case for \Magento\Framework\Validator\AbstractValidator
  */
-class ValidatorAbstractTest extends \PHPUnit\Framework\TestCase
+class ValidatorAbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var null|\Magento\Framework\Translate\AdapterInterface
@@ -33,7 +33,7 @@ class ValidatorAbstractTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getTranslator()
     {
-        return $this->getMockBuilder(\Magento\Framework\Translate\AdapterInterface::class)->getMockForAbstractClass();
+        return $this->getMockBuilder('Magento\Framework\Translate\AdapterInterface')->getMockForAbstractClass();
     }
 
     /**
@@ -52,9 +52,7 @@ class ValidatorAbstractTest extends \PHPUnit\Framework\TestCase
     public function testTranslatorGetSetHas()
     {
         /** @var \Magento\Framework\Validator\AbstractValidator $validator */
-        $validator = $this->getMockBuilder(
-            \Magento\Framework\Validator\AbstractValidator::class
-        )->getMockForAbstractClass();
+        $validator = $this->getMockBuilder('Magento\Framework\Validator\AbstractValidator')->getMockForAbstractClass();
         $translator = $this->_getTranslator();
         $validator->setTranslator($translator);
         $this->assertEquals($translator, $validator->getTranslator());
@@ -67,9 +65,7 @@ class ValidatorAbstractTest extends \PHPUnit\Framework\TestCase
     public function testGetTranslatorDefault()
     {
         /** @var \Magento\Framework\Validator\AbstractValidator $validator */
-        $validator = $this->getMockBuilder(
-            \Magento\Framework\Validator\AbstractValidator::class
-        )->getMockForAbstractClass();
+        $validator = $this->getMockBuilder('Magento\Framework\Validator\AbstractValidator')->getMockForAbstractClass();
         $translator = $this->_getTranslator();
         \Magento\Framework\Validator\AbstractValidator::setDefaultTranslator($translator);
         $this->assertEquals($translator, $validator->getTranslator());

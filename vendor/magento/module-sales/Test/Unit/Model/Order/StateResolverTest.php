@@ -6,13 +6,13 @@
  */
 namespace Magento\Sales\Test\Unit\Model\Order;
 
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\StateResolver;
+use Magento\Sales\Model\Order;
 
 /**
  * Class StateCheckerTest
  */
-class StateResolverTest extends \PHPUnit\Framework\TestCase
+class StateResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Order

@@ -5,14 +5,17 @@
  */
 namespace Magento\Ui\Test\Unit\Component\Form\Element\DataType;
 
-use Magento\Framework\Locale\ResolverInterface;
+use Magento\Ui\Component\Form\Element\DataType\Date;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\Context;
+use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\View\Element\UiComponent\Processor;
-use Magento\Ui\Component\Form\Element\DataType\Date;
 
-class DateTest extends \PHPUnit\Framework\TestCase
+/**
+ * Tests Magento\Ui\Test\Unit\Component\Form\Element\DataType Class.
+ */
+class DateTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     private $contextMock;
@@ -34,14 +37,17 @@ class DateTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->contextMock = $this->createMock(Context::class);
-        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
-        $this->localeResolverMock = $this->createMock(ResolverInterface::class);
+        $this->contextMock = $this->getMock(Context::class, [], [], '', false);
+        $this->localeDateMock = $this->getMock(TimezoneInterface::class, [], [], '', false);
+        $this->localeResolverMock = $this->getMock(ResolverInterface::class, [], [], '', false);
         $this->objectManagerHelper = new ObjectManager($this);
-        $this->processorMock = $this->createMock(Processor::class);
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($this->processorMock);
+        $this->processorMock = $this->getMock(Processor::class, [], [], '', false);
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($this->processorMock);
     }
 
+    /**
+     * This test ensures that outputDateFormat is properly saved in the configuration with timeOffset.
+     */
     public function testPrepareWithTimeOffset()
     {
         $this->date = new Date(
@@ -72,6 +78,9 @@ class DateTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($localeDateFormat, $config['options']['dateFormat']);
     }
 
+    /**
+     * This test ensures that outputDateFormat is properly saved in the configuration without timeOffset.
+     */
     public function testPrepareWithoutTimeOffset()
     {
         $defaultDateFormat = 'MM/dd/y';
@@ -111,7 +120,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * This tests ensures that userTimeZone is properly saved in the configuration
+     * This test ensures that userTimeZone is properly saved in the configuration.
      */
     public function testPrepare()
     {

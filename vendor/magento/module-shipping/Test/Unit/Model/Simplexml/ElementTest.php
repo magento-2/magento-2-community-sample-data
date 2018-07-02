@@ -5,7 +5,7 @@
  */
 namespace Magento\Shipping\Test\Unit\Model\Simplexml;
 
-class ElementTest extends \PHPUnit\Framework\TestCase
+class ElementTest extends \PHPUnit_Framework_TestCase
 {
     public function testXmlentities()
     {

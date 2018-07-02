@@ -18,21 +18,21 @@ trait SelectRendererTrait
     protected function getSelectRenderer(\Magento\Framework\TestFramework\Unit\Helper\ObjectManager $objectManager)
     {
         return $objectManager->getObject(
-            \Magento\Framework\DB\Select\SelectRenderer::class,
+            'Magento\Framework\DB\Select\SelectRenderer',
             [
                 'renderers' => [
                     'distinct' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\DistinctRenderer::class
+                            'Magento\Framework\DB\Select\DistinctRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'distinct',
                     ],
                     'columns' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\ColumnsRenderer::class,
+                            'Magento\Framework\DB\Select\ColumnsRenderer',
                             [
-                                'quote' => $objectManager->getObject(\Magento\Framework\DB\Platform\Quote::class)
+                                'quote' => $objectManager->getObject('Magento\Framework\DB\Platform\Quote')
                             ]
                         ),
                         'sort' => 11,
@@ -40,16 +40,16 @@ trait SelectRendererTrait
                     ],
                     'union' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\UnionRenderer::class
+                            'Magento\Framework\DB\Select\UnionRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'union',
                     ],
                     'from' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\FromRenderer::class,
+                            'Magento\Framework\DB\Select\FromRenderer',
                             [
-                                'quote' => $objectManager->getObject(\Magento\Framework\DB\Platform\Quote::class)
+                                'quote' => $objectManager->getObject('Magento\Framework\DB\Platform\Quote')
                             ]
                         ),
                         'sort' => 11,
@@ -57,35 +57,35 @@ trait SelectRendererTrait
                     ],
                     'where' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\WhereRenderer::class
+                            'Magento\Framework\DB\Select\WhereRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'where',
                     ],
                     'group' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\GroupRenderer::class
+                            'Magento\Framework\DB\Select\GroupRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'group',
                     ],
                     'having' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\HavingRenderer::class
+                            'Magento\Framework\DB\Select\HavingRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'having',
                     ],
                     'order' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\OrderRenderer::class
+                            'Magento\Framework\DB\Select\OrderRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'order',
                     ],
                     'limit' => [
                         'renderer' => $objectManager->getObject(
-                            \Magento\Framework\DB\Select\LimitRenderer::class
+                            'Magento\Framework\DB\Select\LimitRenderer'
                         ),
                         'sort' => 11,
                         'part' => 'limitcount',

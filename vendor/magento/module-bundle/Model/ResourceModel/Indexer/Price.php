@@ -15,11 +15,38 @@ use Magento\Catalog\Api\Data\ProductInterface;
 class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice
 {
     /**
-     * @inheritdoc
+     * Reindex temporary (price result data) for all products
+     *
+     * @return $this
+     * @throws \Exception
      */
-    protected function reindex($entityIds = null)
+    public function reindexAll()
+    {
+        $this->tableStrategy->setUseIdxTable(true);
+
+        $this->beginTransaction();
+        try {
+            $this->_prepareBundlePrice();
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Reindex temporary (price result data) for defined product(s)
+     *
+     * @param int|array $entityIds
+     * @return $this
+     */
+    public function reindexEntity($entityIds)
     {
         $this->_prepareBundlePrice($entityIds);
+
+        return $this;
     }
 
     /**

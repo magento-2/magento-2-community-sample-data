@@ -10,7 +10,7 @@ use \Magento\Framework\Css\PreProcessor\File\Collector\Aggregated;
 /**
  * Tests Aggregate
  */
-class AggregatedTest extends \PHPUnit\Framework\TestCase
+class AggregatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\File\FileList\Factory|\PHPUnit_Framework_MockObject_MockObject
@@ -53,21 +53,21 @@ class AggregatedTest extends \PHPUnit\Framework\TestCase
      */
     public function setup()
     {
-        $this->fileListFactoryMock = $this->getMockBuilder(\Magento\Framework\View\File\FileList\Factory::class)
+        $this->fileListFactoryMock = $this->getMockBuilder('Magento\Framework\View\File\FileList\Factory')
             ->disableOriginalConstructor()->getMock();
-        $this->fileListMock = $this->getMockBuilder(\Magento\Framework\View\File\FileList::class)
+        $this->fileListMock = $this->getMockBuilder('Magento\Framework\View\File\FileList')
             ->disableOriginalConstructor()->getMock();
         $this->fileListFactoryMock->expects($this->any())->method('create')
             ->will($this->returnValue($this->fileListMock));
-        $this->libraryFilesMock = $this->getMockBuilder(\Magento\Framework\View\File\CollectorInterface::class)
+        $this->libraryFilesMock = $this->getMockBuilder('Magento\Framework\View\File\CollectorInterface')
             ->getMock();
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
 
-        $this->baseFilesMock = $this->getMockBuilder(\Magento\Framework\View\File\CollectorInterface::class)->getMock();
-        $this->overriddenBaseFilesMock = $this->getMockBuilder(\Magento\Framework\View\File\CollectorInterface::class)
+        $this->baseFilesMock = $this->getMockBuilder('Magento\Framework\View\File\CollectorInterface')->getMock();
+        $this->overriddenBaseFilesMock = $this->getMockBuilder('Magento\Framework\View\File\CollectorInterface')
             ->getMock();
-        $this->themeMock = $this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)->getMock();
+        $this->themeMock = $this->getMockBuilder('\Magento\Framework\View\Design\ThemeInterface')->getMock();
     }
 
     public function testGetFilesEmpty()
@@ -133,7 +133,7 @@ class AggregatedTest extends \PHPUnit\Framework\TestCase
             $this->loggerMock
         );
 
-        $inheritedThemeMock = $this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)->getMock();
+        $inheritedThemeMock = $this->getMockBuilder('\Magento\Framework\View\Design\ThemeInterface')->getMock();
         $this->themeMock->expects($this->any())->method('getInheritedThemes')
             ->will($this->returnValue([$inheritedThemeMock]));
 

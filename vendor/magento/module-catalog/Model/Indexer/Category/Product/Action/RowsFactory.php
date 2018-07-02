@@ -32,7 +32,7 @@ class RowsFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Catalog\Model\Indexer\Category\Product\Action\Rows::class
+        $instanceName = 'Magento\Catalog\Model\Indexer\Category\Product\Action\Rows'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

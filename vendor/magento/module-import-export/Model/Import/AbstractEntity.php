@@ -5,21 +5,15 @@
  */
 namespace Magento\ImportExport\Model\Import;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\ImportExport\Model\Import;
 
 /**
  * Import entity abstract model
- *
- * @api
- *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class AbstractEntity
 {
@@ -63,9 +57,6 @@ abstract class AbstractEntity
     const ERROR_INVALID_ATTRIBUTE_TYPE = 'invalidAttributeType';
     const ERROR_INVALID_ATTRIBUTE_OPTION = 'absentAttributeOption';
 
-    /**
-     * @var array
-     */
     protected $errorMessageTemplates = [
         self::ERROR_CODE_SYSTEM_EXCEPTION => 'General system exception happened',
         self::ERROR_CODE_COLUMN_NOT_FOUND => 'We can\'t find required columns: %s.',
@@ -78,14 +69,19 @@ abstract class AbstractEntity
         self::ERROR_CODE_WRONG_QUOTES => "Curly quotes used instead of straight quotes",
         self::ERROR_CODE_COLUMNS_NUMBER => "Number of columns does not correspond to the number of rows in the header",
         self::ERROR_EXCEEDED_MAX_LENGTH => 'Attribute %s exceeded max length',
-        self::ERROR_INVALID_ATTRIBUTE_TYPE => 'Value for \'%s\' attribute contains incorrect value',
-        self::ERROR_INVALID_ATTRIBUTE_OPTION => "Value for %s attribute contains incorrect value"
-            . ", see acceptable values on settings specified for Admin",
+        self::ERROR_INVALID_ATTRIBUTE_TYPE =>
+            'Value for \'%s\' attribute contains incorrect value',
+        self::ERROR_INVALID_ATTRIBUTE_OPTION =>
+            "Value for %s attribute contains incorrect value, see acceptable values on settings specified for Admin",
     ];
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * DB connection
+     *
+     * @var \Magento\Framework\DB\Adapter\AdapterInterface
+     */
     protected $_connection;
 
     /**
@@ -277,13 +273,6 @@ abstract class AbstractEntity
     protected $countItemsDeleted = 0;
 
     /**
-     * Json Serializer Instance
-     *
-     * @var Json
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\Stdlib\StringUtils $string
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\ImportExport\Model\ImportFactory $importFactory
@@ -459,7 +448,7 @@ abstract class AbstractEntity
                         foreach ($entityGroup as $key => $value) {
                             $bunchRows[$key] = $value;
                         }
-                        $productDataSize = strlen($this->getSerializer()->serialize($bunchRows));
+                        $productDataSize = strlen(serialize($bunchRows));
 
                         /* Check if the new bunch should be started */
                         $isBunchSizeExceeded = ($this->_bunchSize > 0 && count($bunchRows) >= $this->_bunchSize);
@@ -483,22 +472,6 @@ abstract class AbstractEntity
             }
         }
         return $this;
-    }
-
-    /**
-     * Get Serializer instance
-     *
-     * Workaround. Only way to implement dependency and not to break inherited child classes
-     *
-     * @return Json
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if (null === $this->serializer) {
-            $this->serializer = ObjectManager::getInstance()->get(Json::class);
-        }
-        return $this->serializer;
     }
 
     /**
@@ -691,9 +664,8 @@ abstract class AbstractEntity
                 break;
             case 'select':
             case 'multiselect':
-            case 'boolean':
                 $valid = true;
-                foreach (explode($multiSeparator, mb_strtolower($rowData[$attributeCode])) as $value) {
+                foreach (explode($multiSeparator, strtolower($rowData[$attributeCode])) as $value) {
                     $valid = isset($attributeParams['options'][$value]);
                     if (!$valid) {
                         break;

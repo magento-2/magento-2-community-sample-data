@@ -47,7 +47,8 @@ class CanRefund implements ValidatorInterface
      */
     public function validate($entity)
     {
-        if ($entity->getState() == Invoice::STATE_PAID &&
+        if (
+            $entity->getState() == Invoice::STATE_PAID &&
             $this->isGrandTotalEnoughToRefund($entity) &&
             $this->isPaymentAllowRefund($entity)
         ) {

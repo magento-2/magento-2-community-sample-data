@@ -4,15 +4,15 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Usps\Model;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Xml\Security;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Helper\Carrier as CarrierHelper;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Rate\Result;
-use Magento\Usps\Helper\Data as DataHelper;
+use Magento\Framework\Xml\Security;
 
 /**
  * USPS shipping
@@ -21,19 +21,17 @@ use Magento\Usps\Helper\Data as DataHelper;
  */
 class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\Carrier\CarrierInterface
 {
-    /** @deprecated */
+    /**
+     * USPS containers
+     */
     const CONTAINER_VARIABLE = 'VARIABLE';
 
-    /** @deprecated */
     const CONTAINER_FLAT_RATE_BOX = 'FLAT RATE BOX';
 
-    /** @deprecated */
     const CONTAINER_FLAT_RATE_ENVELOPE = 'FLAT RATE ENVELOPE';
 
-    /** @deprecated */
     const CONTAINER_RECTANGULAR = 'RECTANGULAR';
 
-    /** @deprecated */
     const CONTAINER_NONRECTANGULAR = 'NONRECTANGULAR';
 
     /**
@@ -127,11 +125,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
     protected $_debugReplacePrivateDataKeys = [
         'USERID'
     ];
-
-    /**
-     * @var DataHelper
-     */
-    private $dataHelper;
 
     /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -338,8 +331,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
 
         $weight = $this->getTotalNumOfBoxes($request->getPackageWeight());
         $r->setWeightPounds(floor($weight));
-        $ounces = ($weight - floor($weight)) * self::OUNCES_POUND;
-        $r->setWeightOunces(sprintf('%.' . self::$weightPrecision . 'f', $ounces));
+        $r->setWeightOunces(round(($weight - floor($weight)) * self::OUNCES_POUND, self::$weightPrecision));
         if ($request->getFreeMethodWeight() != $request->getPackageWeight()) {
             $r->setFreeMethodWeight($request->getFreeMethodWeight());
         }
@@ -395,8 +387,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
 
         $weight = $this->getTotalNumOfBoxes($r->getFreeMethodWeight());
         $r->setWeightPounds(floor($weight));
-        $ounces = ($weight - floor($weight)) * self::OUNCES_POUND;
-        $r->setWeightOunces(sprintf('%.' . self::$weightPrecision . 'f', $ounces));
+        $r->setWeightOunces(round(($weight - floor($weight)) * self::OUNCES_POUND, self::$weightPrecision));
         $r->setService($freeMethod);
     }
 
@@ -496,10 +487,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             $package->addChild('Length', $length);
             $package->addChild('Height', $height);
             $package->addChild('Girth', $girth);
-
-            $package->addChild('OriginZip', $r->getOrigPostal());
-            $package->addChild('AcceptanceDateTime', date('c'));
-            $package->addChild('DestinationPostalCode', $r->getDestPostal());
 
             $api = 'IntlRateV2';
         }
@@ -828,13 +815,13 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'within_us' => [
                             'method' => [
                                 '13', '27', '16', '22', '17', '28', '2', '3', '1', '33', '34', '35',
-                                '36', '37', '42', '43', '53', '4', '6', '15', '23', '25', '57'
+                                '36', '37', '42', '43', '53', '4', '6', '15', '23', '25', '57',
                             ],
                         ],
                         'from_us' => [
                             'method' => [
                                 'INT_10', 'INT_8', 'INT_11', 'INT_9', 'INT_16', 'INT_20', 'INT_4',
-                                'INT_12', 'INT_1', 'INT_2', 'INT_13', 'INT_14', 'INT_15'
+                                'INT_12', 'INT_1', 'INT_2', 'INT_13', 'INT_14', 'INT_15',
                             ],
                         ],
                     ],
@@ -848,7 +835,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_16', 'INT_24'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['MD FLAT RATE BOX'],
@@ -859,7 +846,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_9', 'INT_24'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['LG FLAT RATE BOX'],
@@ -870,7 +857,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_11', 'INT_24', 'INT_25'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['SM FLAT RATE ENVELOPE'],
@@ -881,7 +868,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_20'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['WINDOW FLAT RATE ENVELOPE'],
@@ -892,7 +879,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_19'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['GIFT CARD FLAT RATE ENVELOPE'],
@@ -903,7 +890,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_18'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['PADDED FLAT RATE ENVELOPE'],
@@ -914,7 +901,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_27', 'INT_23'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['LEGAL FLAT RATE ENVELOPE'],
@@ -925,7 +912,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_17', 'INT_22'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['FLAT RATE ENVELOPE'],
@@ -935,10 +922,11 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         ],
                         'from_us' => [
                             'method' => [
-                                'INT_10', 'INT_8', 'INT_14', 'INT_20', 'INT_17', 'INT_18', 'INT_19', 'INT_22', 'INT_27'
+                                'INT_10', 'INT_8', 'INT_14', 'INT_20', 'INT_17',
+                                'INT_18', 'INT_19', 'INT_22', 'INT_27',
                             ],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['RECTANGULAR'],
@@ -949,7 +937,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_12', 'INT_1', 'INT_2', 'INT_15'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'containers' => ['NONRECTANGULAR'],
@@ -960,7 +948,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         'from_us' => [
                             'method' => ['INT_4', 'INT_1', 'INT_2', 'INT_15'],
                         ],
-                    ]
+                    ],
                 ],
             ],
             'size' => ['REGULAR' => __('Regular'), 'LARGE' => __('Large')],
@@ -1036,7 +1024,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
 
             $api = 'TrackV2';
             $request = $xml->asXML();
-            $debugData = ['request' => $this->filterDebugData($request)];
+            $debugData = ['request' => $request];
 
             try {
                 $url = $this->getConfigData('gateway_url');
@@ -1080,10 +1068,13 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                 if (is_object($xml)) {
                     if (isset($xml->Number) && isset($xml->Description) && (string)$xml->Description != '') {
                         $errorTitle = (string)$xml->Description;
-                    } elseif (isset($xml->TrackInfo)
-                        && isset($xml->TrackInfo->Error)
-                        && isset($xml->TrackInfo->Error->Description)
-                        && (string)$xml->TrackInfo->Error->Description != ''
+                    } elseif (isset(
+                            $xml->TrackInfo
+                        ) && isset(
+                            $xml->TrackInfo->Error
+                        ) && isset(
+                            $xml->TrackInfo->Error->Description
+                        ) && (string)$xml->TrackInfo->Error->Description != ''
                     ) {
                         $errorTitle = (string)$xml->TrackInfo->Error->Description;
                     } else {
@@ -1443,7 +1434,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         if ($packageParams->getWeightUnits() != \Zend_Measure_Weight::OUNCE) {
             $packageWeight = round(
                 $this->_carrierHelper->convertMeasureWeight(
-                    (float)$request->getPackageWeight(),
+                    $request->getPackageWeight(),
                     $packageParams->getWeightUnits(),
                     \Zend_Measure_Weight::OUNCE
                 )
@@ -1537,7 +1528,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         if ($packageParams->getWeightUnits() != \Zend_Measure_Weight::OUNCE) {
             $packageWeight = round(
                 $this->_carrierHelper->convertMeasureWeight(
-                    (float)$request->getPackageWeight(),
+                    $request->getPackageWeight(),
                     $packageParams->getWeightUnits(),
                     \Zend_Measure_Weight::OUNCE
                 )
@@ -1622,7 +1613,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         $packageWeight = $request->getPackageWeight();
         if ($packageParams->getWeightUnits() != \Zend_Measure_Weight::POUND) {
             $packageWeight = $this->_carrierHelper->convertMeasureWeight(
-                (float)$request->getPackageWeight(),
+                $request->getPackageWeight(),
                 $packageParams->getWeightUnits(),
                 \Zend_Measure_Weight::POUND
             );
@@ -1630,21 +1621,21 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         if ($packageParams->getDimensionUnits() != \Zend_Measure_Length::INCH) {
             $length = round(
                 $this->_carrierHelper->convertMeasureDimension(
-                    (float)$packageParams->getLength(),
+                    $packageParams->getLength(),
                     $packageParams->getDimensionUnits(),
                     \Zend_Measure_Length::INCH
                 )
             );
             $width = round(
                 $this->_carrierHelper->convertMeasureDimension(
-                    (float)$packageParams->getWidth(),
+                    $packageParams->getWidth(),
                     $packageParams->getDimensionUnits(),
                     \Zend_Measure_Length::INCH
                 )
             );
             $height = round(
                 $this->_carrierHelper->convertMeasureDimension(
-                    (float)$packageParams->getHeight(),
+                    $packageParams->getHeight(),
                     $packageParams->getDimensionUnits(),
                     \Zend_Measure_Length::INCH
                 )
@@ -1653,7 +1644,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         if ($packageParams->getGirthDimensionUnits() != \Zend_Measure_Length::INCH) {
             $girth = round(
                 $this->_carrierHelper->convertMeasureDimension(
-                    (float)$packageParams->getGirth(),
+                    $packageParams->getGirth(),
                     $packageParams->getGirthDimensionUnits(),
                     \Zend_Measure_Length::INCH
                 )
@@ -1808,10 +1799,10 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             }
             $individualItemWeight = $itemWeight / $ceiledQty;
             $itemDetail->addChild('Quantity', $ceiledQty);
-            $itemDetail->addChild('Value', sprintf('%.2F', $item->getCustomsValue() * $item->getQty()));
+            $itemDetail->addChild('Value', $item->getCustomsValue() * $item->getQty());
             list($individualPoundsWeight, $individualOuncesWeight) = $this->_convertPoundOunces($individualItemWeight);
             $itemDetail->addChild('NetPounds', $individualPoundsWeight);
-            $itemDetail->addChild('NetOunces', sprintf('%.2F', $individualOuncesWeight));
+            $itemDetail->addChild('NetOunces', $individualOuncesWeight);
             $itemDetail->addChild('HSTariffNumber', 0);
             $itemDetail->addChild('CountryOfOrigin', $countryOfManufacture);
 
@@ -1901,7 +1892,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             }
         }
 
-        $debugData = ['request' => $this->filterDebugData($requestXml)];
+        $debugData = ['request' => $requestXml];
         $url = $this->getConfigData('gateway_secure_url');
         if (!$url) {
             $url = $this->_defaultGatewayUrl;
@@ -1914,30 +1905,27 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         $response = $client->request()->getBody();
 
         $response = $this->parseXml($response);
-
-        if ($response !== false) {
-            if ($response->getName() == 'Error') {
-                $debugData['result'] = [
-                    'error' => $response->Description,
-                    'code' => $response->Number,
-                    'xml' => $response->asXML(),
-                ];
-                $this->_debug($debugData);
-                $result->setErrors($debugData['result']['error']);
+        if ($response === false || $response->getName() == 'Error') {
+            $debugData['result'] = [
+                'error' => $response->Description,
+                'code' => $response->Number,
+                'xml' => $response->asXML(),
+            ];
+            $this->_debug($debugData);
+            $result->setErrors($debugData['result']['error']);
+        } else {
+            if ($recipientUSCountry && $service == 'Priority Express') {
+                $labelContent = base64_decode((string)$response->EMLabel);
+                $trackingNumber = (string)$response->EMConfirmationNumber;
+            } elseif ($recipientUSCountry) {
+                $labelContent = base64_decode((string)$response->SignatureConfirmationLabel);
+                $trackingNumber = (string)$response->SignatureConfirmationNumber;
             } else {
-                if ($recipientUSCountry && $service == 'Priority Express') {
-                    $labelContent = base64_decode((string)$response->EMLabel);
-                    $trackingNumber = (string)$response->EMConfirmationNumber;
-                } elseif ($recipientUSCountry) {
-                    $labelContent = base64_decode((string)$response->SignatureConfirmationLabel);
-                    $trackingNumber = (string)$response->SignatureConfirmationNumber;
-                } else {
-                    $labelContent = base64_decode((string)$response->LabelImage);
-                    $trackingNumber = (string)$response->BarcodeNumber;
-                }
-                $result->setShippingLabelContent($labelContent);
-                $result->setTrackingNumber($trackingNumber);
+                $labelContent = base64_decode((string)$response->LabelImage);
+                $trackingNumber = (string)$response->BarcodeNumber;
             }
+            $result->setShippingLabelContent($labelContent);
+            $result->setTrackingNumber($trackingNumber);
         }
 
         $result->setGatewayResponse($response);
@@ -1955,7 +1943,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      */
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
     {
-        if ($params === null) {
+        if (is_null($params)) {
             return $this->_getAllowedContainers();
         }
 
@@ -2005,13 +1993,11 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      * Check whether girth is allowed for the USPS
      *
      * @param null|string $countyDest
-     * @param null|string $carrierMethodCode
      * @return bool
      */
-    public function isGirthAllowed($countyDest = null, $carrierMethodCode = null)
+    public function isGirthAllowed($countyDest = null)
     {
-        return $this->_isUSCountry($countyDest)
-            && $this->getDataHelper()->displayGirthValue($carrierMethodCode) ? false : true;
+        return $this->_isUSCountry($countyDest) ? false : true;
     }
 
     /**
@@ -2076,11 +2062,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      */
     private function isServiceAvailable(\SimpleXMLElement $service)
     {
-        // Allow services which which don't provide any ExtraServices
-        if (empty($service->ExtraServices->children()->count())) {
-            return true;
-        }
-
         foreach ($service->ExtraServices->children() as $child) {
             if (filter_var($child->Available, FILTER_VALIDATE_BOOLEAN)) {
                 return true;
@@ -2117,24 +2098,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                 }
             }
             $data = $xml->asXML();
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) {}
 
         return $data;
-    }
-
-    /**
-     * Gets Data helper object
-     *
-     * @return DataHelper
-     * @deprecated 100.2.0
-     */
-    private function getDataHelper()
-    {
-        if (!$this->dataHelper) {
-            $this->dataHelper = ObjectManager::getInstance()->get(DataHelper::class);
-        }
-
-        return $this->dataHelper;
     }
 }

@@ -8,6 +8,7 @@
 namespace Magento\TestFramework\Dependency;
 
 use Magento\Framework\App\Utility\Files;
+use Magento\TestFramework\Dependency\RuleInterface;
 
 class PhpRule implements RuleInterface
 {
@@ -195,13 +196,14 @@ class PhpRule implements RuleInterface
             : null;
         if ($subject === $dependency) {
             return true;
-        } elseif ($subject) {
+        } else if ($subject) {
             $subjectModule = substr($subject, 0, strpos($subject, '\\', 9)); // (strlen('Magento\\') + 1) === 9
             return strpos($dependency, $subjectModule) === 0;
         } else {
             return false;
         }
     }
+
 
     /**
      * Check get URL method

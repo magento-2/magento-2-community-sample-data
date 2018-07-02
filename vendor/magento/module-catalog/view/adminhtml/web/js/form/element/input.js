@@ -54,16 +54,9 @@ define([
             if (!_.isEmpty(this.suffixName) || _.isNumber(this.suffixName)) {
                 suffixName = '.' + this.suffixName;
             }
+            this.dataScope = 'data.' + this.prefixName + '.' + this.elementName + suffixName;
 
-            this.exportDataLink = 'data.' + this.prefixName + '.' + this.elementName + suffixName;
-            this.exports.value = this.provider + ':' + this.exportDataLink;
-        },
-
-        /** @inheritdoc */
-        destroy: function () {
-            this._super();
-
-            this.source.remove(this.exportDataLink);
+            this.links.value = this.provider + ':' + this.dataScope;
         },
 
         /**

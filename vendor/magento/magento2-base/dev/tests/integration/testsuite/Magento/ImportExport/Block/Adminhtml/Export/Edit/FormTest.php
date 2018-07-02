@@ -9,7 +9,7 @@ namespace Magento\ImportExport\Block\Adminhtml\Export\Edit;
  * Test class for block \Magento\ImportExport\Block\Adminhtml\Export\Edit\Form
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Testing model
@@ -40,9 +40,9 @@ class FormTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\ImportExport\Block\Adminhtml\Export\Edit\Form::class
+            'Magento\ImportExport\Block\Adminhtml\Export\Edit\Form'
         );
     }
 

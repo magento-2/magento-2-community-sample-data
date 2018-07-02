@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Helper;
 
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GoogleOptimizer\Helper\Form
@@ -29,19 +29,31 @@ class FormTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_formMock = $this->createPartialMock(
-            \Magento\Framework\Data\Form::class,
-            ['setFieldNameSuffix', 'addFieldset']
+        $this->_formMock = $this->getMock(
+            'Magento\Framework\Data\Form',
+            ['setFieldNameSuffix', 'addFieldset'],
+            [],
+            '',
+            false
         );
-        $this->_fieldsetMock = $this->createMock(\Magento\Framework\Data\Form\Element\Fieldset::class);
-        $this->_experimentCodeMock = $this->createPartialMock(
-            \Magento\GoogleOptimizer\Model\Code::class,
-            ['getExperimentScript', 'getCodeId', '__wakeup']
+        $this->_fieldsetMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\Fieldset',
+            [],
+            [],
+            '',
+            false
         );
-        $context = $this->createMock(\Magento\Framework\App\Helper\Context::class);
+        $this->_experimentCodeMock = $this->getMock(
+            'Magento\GoogleOptimizer\Model\Code',
+            ['getExperimentScript', 'getCodeId', '__wakeup'],
+            [],
+            '',
+            false
+        );
+        $context = $this->getMock('Magento\Framework\App\Helper\Context', [], [], '', false);
         $data = ['context' => $context];
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_helper = $objectManagerHelper->getObject(\Magento\GoogleOptimizer\Helper\Form::class, $data);
+        $this->_helper = $objectManagerHelper->getObject('Magento\GoogleOptimizer\Helper\Form', $data);
     }
 
     public function testAddFieldsWithExperimentCode()

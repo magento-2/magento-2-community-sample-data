@@ -9,7 +9,6 @@ namespace Magento\Customer\Api\Data;
 /**
  * Customer attribute metadata interface.
  * @api
- * @since 100.0.2
  */
 interface AttributeMetadataInterface extends \Magento\Framework\Api\MetadataObjectInterface
 {

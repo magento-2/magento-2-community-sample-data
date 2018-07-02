@@ -9,7 +9,7 @@ namespace Magento\Framework\Interception;
  * Class GeneralTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class AbstractPlugin extends \PHPUnit\Framework\TestCase
+abstract class AbstractPlugin extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -46,7 +46,7 @@ abstract class AbstractPlugin extends \PHPUnit\Framework\TestCase
         $config = new \Magento\Framework\Interception\ObjectManager\Config\Developer();
         $factory = new \Magento\Framework\ObjectManager\Factory\Dynamic\Developer($config, null);
 
-        $this->_configReader = $this->createMock(\Magento\Framework\Config\ReaderInterface::class);
+        $this->_configReader = $this->getMock('Magento\Framework\Config\ReaderInterface');
         $this->_configReader->expects(
             $this->any()
         )->method(
@@ -55,10 +55,10 @@ abstract class AbstractPlugin extends \PHPUnit\Framework\TestCase
             $this->returnValue($pluginConfig)
         );
 
-        $areaList = $this->createMock(\Magento\Framework\App\AreaList::class);
+        $areaList = $this->getMock('Magento\Framework\App\AreaList', [], [], '', false);
         $areaList->expects($this->any())->method('getCodes')->will($this->returnValue([]));
         $configScope = new \Magento\Framework\Config\Scope($areaList, 'global');
-        $cache = $this->createMock(\Magento\Framework\Config\CacheInterface::class);
+        $cache = $this->getMock('Magento\Framework\Config\CacheInterface');
         $cache->expects($this->any())->method('load')->will($this->returnValue(false));
         $definitions = new \Magento\Framework\ObjectManager\Definition\Runtime();
         $relations = new \Magento\Framework\ObjectManager\Relations\Runtime();
@@ -71,17 +71,15 @@ abstract class AbstractPlugin extends \PHPUnit\Framework\TestCase
             $definitions
         );
         $interceptionDefinitions = new Definition\Runtime();
-        $json = new \Magento\Framework\Serialize\Serializer\Json();
         $sharedInstances = [
-            \Magento\Framework\Config\CacheInterface::class                      => $cache,
-            \Magento\Framework\Config\ScopeInterface::class                      => $configScope,
-            \Magento\Framework\Config\ReaderInterface::class                     => $this->_configReader,
-            \Magento\Framework\ObjectManager\RelationsInterface::class           => $relations,
-            \Magento\Framework\ObjectManager\ConfigInterface::class              => $config,
-            \Magento\Framework\Interception\ObjectManager\ConfigInterface::class => $config,
-            \Magento\Framework\ObjectManager\DefinitionInterface::class          => $definitions,
-            \Magento\Framework\Interception\DefinitionInterface::class           => $interceptionDefinitions,
-            \Magento\Framework\Serialize\SerializerInterface::class              => $json,
+            'Magento\Framework\Config\CacheInterface'                      => $cache,
+            'Magento\Framework\Config\ScopeInterface'                      => $configScope,
+            'Magento\Framework\Config\ReaderInterface'                     => $this->_configReader,
+            'Magento\Framework\ObjectManager\RelationsInterface'           => $relations,
+            'Magento\Framework\ObjectManager\ConfigInterface'              => $config,
+            'Magento\Framework\Interception\ObjectManager\ConfigInterface' => $config,
+            'Magento\Framework\ObjectManager\DefinitionInterface'          => $definitions,
+            'Magento\Framework\Interception\DefinitionInterface'           => $interceptionDefinitions
         ];
         $this->_objectManager = new \Magento\Framework\ObjectManager\ObjectManager(
             $factory,
@@ -94,10 +92,10 @@ abstract class AbstractPlugin extends \PHPUnit\Framework\TestCase
         $config->extend(
             [
                 'preferences' => [
-                    \Magento\Framework\Interception\PluginListInterface::class =>
-                        \Magento\Framework\Interception\PluginList\PluginList::class,
-                    \Magento\Framework\Interception\ChainInterface::class =>
-                        \Magento\Framework\Interception\Chain\Chain::class,
+                    'Magento\Framework\Interception\PluginListInterface' =>
+                        'Magento\Framework\Interception\PluginList\PluginList',
+                    'Magento\Framework\Interception\ChainInterface'      =>
+                        'Magento\Framework\Interception\Chain\Chain',
                 ],
             ]
         );

@@ -15,7 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class AbstractConfigTest
  * @package Magento\Paypal\Test\Unit\Model
  */
-class AbstractConfigTest extends \PHPUnit\Framework\TestCase
+class AbstractConfigTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -30,7 +30,7 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->setMethods(['getValue', 'isSetFlag'])
             ->getMockForAbstractClass();
 
@@ -51,7 +51,7 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
     public function testSetMethodInstance()
     {
         /** @var $methodInterfaceMock MethodInterface */
-        $methodInterfaceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $methodInterfaceMock = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->getMockForAbstractClass();
         $this->assertSame($this->config, $this->config->setMethodInstance($methodInterfaceMock));
     }
@@ -66,7 +66,7 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
     public function setMethodDataProvider()
     {
         /** @var $methodInterfaceMock MethodInterface */
-        $methodInterfaceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $methodInterfaceMock = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->getMockForAbstractClass();
         $methodInterfaceMock->expects($this->once())
             ->method('getCode')
@@ -290,16 +290,12 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
         $this->config->isMethodActive('method');
     }
 
-    /**
-     * Checks a case, when notation code based on Magento edition.
-     */
     public function testGetBuildNotationCode()
     {
-        $productMetadata = $this->getMockBuilder(ProductMetadataInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productMetadata->method('getEdition')
-            ->willReturn('SomeEdition');
+        $productMetadata = $this->getMock(ProductMetadataInterface::class, [], [], '', false);
+        $productMetadata->expects($this->once())
+            ->method('getEdition')
+            ->will($this->returnValue('SomeEdition'));
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $objectManagerHelper->setBackwardCompatibleProperty(
@@ -308,20 +304,6 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
             $productMetadata
         );
 
-        self::assertEquals('Magento_Cart_SomeEdition', $this->config->getBuildNotationCode());
-    }
-
-    /**
-     * Checks a case, when notation code should be provided from configuration.
-     */
-    public function testBuildNotationCodeFromConfig()
-    {
-        $notationCode = 'Magento_Cart_EditionFromConfig';
-
-        $this->scopeConfigMock->method('getValue')
-            ->with(self::equalTo('paypal/notation_code'), self::equalTo('stores'))
-            ->willReturn($notationCode);
-
-        self::assertEquals($notationCode, $this->config->getBuildNotationCode());
+        $this->assertEquals('Magento_Cart_SomeEdition', $this->config->getBuildNotationCode());
     }
 }

@@ -65,6 +65,8 @@ class BackendDecorator implements CurlInterface
     {
         // Perform GET to backend url so form_key is set
         $url = $_ENV['app_backend_url'];
+
+        $this->transport->addOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->transport->write($url, [], CurlInterface::GET);
         $this->read();
 
@@ -76,7 +78,7 @@ class BackendDecorator implements CurlInterface
         ];
         $this->transport->write($url, $data, CurlInterface::POST);
         $response = $this->read();
-        if (strpos($response, 'login-form')) {
+        if (strpos($response, 'page-login')) {
             throw new \Exception(
                 'Admin user cannot be logged in by curl handler!'
             );

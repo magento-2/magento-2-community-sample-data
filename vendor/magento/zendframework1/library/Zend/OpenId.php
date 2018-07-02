@@ -25,9 +25,6 @@
  */
 #require_once "Zend/Controller/Response/Abstract.php";
 
-/** @see Zend_Crypt_Math */
-require_once 'Zend/Crypt/Math.php';
-
 /**
  * Static class that contains common utility functions for
  * {@link Zend_OpenId_Consumer} and {@link Zend_OpenId_Provider}.
@@ -477,7 +474,11 @@ class Zend_OpenId
      */
     static public function randomBytes($len)
     {
-        return (string) Zend_Crypt_Math::randBytes($len);
+        $key = '';
+        for($i=0; $i < $len; $i++) {
+            $key .= chr(mt_rand(0, 255));
+        }
+        return $key;
     }
 
     /**

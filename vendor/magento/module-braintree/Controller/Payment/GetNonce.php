@@ -12,6 +12,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Webapi\Exception;
+use Magento\Theme;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -67,6 +68,7 @@ class GetNonce extends Action
             )
                 ->get();
             $response->setData(['paymentMethodNonce' => $result['paymentMethodNonce']]);
+
         } catch (\Exception $e) {
             $this->logger->critical($e);
             return $this->processBadRequest($response);

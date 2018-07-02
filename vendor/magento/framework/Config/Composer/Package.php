@@ -8,7 +8,6 @@ namespace Magento\Framework\Config\Composer;
 
 /**
  * A model that represents composer package
- * @api
  */
 class Package
 {

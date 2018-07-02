@@ -40,7 +40,7 @@
                     <item name="Authorize.net Direct Post" xsi:type="string"/>
                 </item>
             </data>
-            <data name="tag" xsi:type="string">test_type:3rd_party_test, severity:S2</data>
+            <data name="tag" xsi:type="string">test_type:3rd_party_test</data>
         </variation>
     </testCase>
 </config>

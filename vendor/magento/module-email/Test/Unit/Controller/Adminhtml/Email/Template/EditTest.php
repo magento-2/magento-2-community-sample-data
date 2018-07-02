@@ -7,9 +7,8 @@ namespace Magento\Email\Test\Unit\Controller\Adminhtml\Email\Template;
 
 /**
  * @covers \Magento\Email\Controller\Adminhtml\Email\Template\Edit
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Email\Controller\Adminhtml\Email\Template\Edit
@@ -77,41 +76,41 @@ class EditTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->setMethods(['registry', 'register'])
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->viewMock = $this->getMockBuilder(\Magento\Framework\App\View::class)
+        $this->viewMock = $this->getMockBuilder('Magento\Framework\App\View')
             ->disableOriginalConstructor()
             ->setMethods(['loadLayout', 'getLayout', 'getPage', 'renderLayout'])
             ->getMock();
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->setMethods(['getBlock', 'createBlock', 'setChild'])
             ->getMock();
-        $this->menuBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Menu::class)
+        $this->menuBlockMock = $this->getMockBuilder('\Magento\Backend\Block\Menu')
             ->disableOriginalConstructor()
             ->setMethods(['setActive', 'getMenuModel', 'getParentItems'])
             ->getMock();
-        $this->breadcrumbsBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Breadcrumbs::class)
+        $this->breadcrumbsBlockMock = $this->getMockBuilder('\Magento\Backend\Block\Widget\Breadcrumbs')
             ->disableOriginalConstructor()
             ->setMethods(['addLink'])
             ->getMock();
-        $this->editBlockMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Breadcrumbs::class)
+        $this->editBlockMock = $this->getMockBuilder('\Magento\Backend\Block\Widget\Breadcrumbs')
             ->disableOriginalConstructor()
             ->setMethods(['setEditMode'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->setMethods(['setActiveMenu', 'getConfig', 'addBreadcrumb'])
             ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -144,15 +143,14 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->pageTitleMock);
         $this->layoutMock->expects($this->once())
             ->method('createBlock')
-            ->with(\Magento\Email\Block\Adminhtml\Template\Edit::class, 'template_edit', [])
+            ->with('Magento\Email\Block\Adminhtml\Template\Edit', 'template_edit', [])
             ->willReturn($this->editBlockMock);
         $this->editBlockMock->expects($this->once())
             ->method('setEditMode')
             ->willReturnSelf();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $templateMock = $this->getMockBuilder(\Magento\Email\Model\Template::class)
-            ->setMethods(['getId', 'getTemplateCode', 'load'])
+        $templateMock = $this->getMockBuilder('Magento\Email\Model\Template')
             ->disableOriginalConstructor()
             ->getMock();
         $templateMock->expects($this->once())
@@ -161,18 +159,15 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $templateMock->expects($this->any())
             ->method('getTemplateCode')
             ->willReturn('My Template');
-        $templateMock->expects($this->any())
-            ->method('load')
-            ->willReturnSelf();
-        $objectManagerMock = $this->getMockBuilder(\Magento\Framework\App\ObjectManager::class)
+        $objectManagerMock = $this->getMockBuilder('Magento\Framework\App\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Email\Model\BackendTemplate::class)
+            ->with('Magento\Email\Model\BackendTemplate')
             ->willReturn($templateMock);
         $this->context = $objectManager->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'request' => $this->requestMock,
                 'objectManager' => $objectManagerMock,
@@ -180,7 +175,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $this->editController = $objectManager->getObject(
-            \Magento\Email\Controller\Adminhtml\Email\Template\Edit::class,
+            'Magento\Email\Controller\Adminhtml\Email\Template\Edit',
             [
                 'context' => $this->context,
                 'coreRegistry' => $this->registryMock

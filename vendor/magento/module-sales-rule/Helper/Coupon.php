@@ -11,8 +11,7 @@ namespace Magento\SalesRule\Helper;
 /**
  * Helper for coupon codes creating and managing
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Coupon extends \Magento\Framework\App\Helper\AbstractHelper
 {

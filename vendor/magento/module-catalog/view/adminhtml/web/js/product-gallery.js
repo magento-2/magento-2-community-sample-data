@@ -2,10 +2,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
+/*jshint jquery:true*/
 define([
     'jquery',
     'underscore',
@@ -84,10 +81,6 @@ define([
                 setImageType: '_setImageType',
                 setPosition: '_setPosition',
                 resort: '_resort',
-
-                /**
-                 * @param {jQuery.Event} event
-                 */
                 'mouseup [data-role=delete-button]': function (event) {
                     var $imageContainer;
 
@@ -96,10 +89,6 @@ define([
                     this.element.find('[data-role=dialog]').trigger('close');
                     this.element.trigger('removeItem', $imageContainer.data('imageData'));
                 },
-
-                /**
-                 * @param {jQuery.Event} event
-                 */
                 'mouseup [data-role=make-base-button]': function (event) {
                     var $imageContainer,
                         imageData;
@@ -181,8 +170,8 @@ define([
 
         /**
          * Add image
-         * @param {jQuery.Event} event
-         * @param {Object} imageData
+         * @param event
+         * @param imageData
          * @private
          */
         _addItem: function (event, imageData) {
@@ -191,7 +180,7 @@ define([
                 imgElement;
 
             imageData = $.extend({
-                'file_id': imageData['value_id'] ? imageData['value_id'] : Math.random().toString(33).substr(2, 18),
+                'file_id': imageData.value_id ? imageData.value_id : Math.random().toString(33).substr(2, 18),
                 'disabled': imageData.disabled ? imageData.disabled : 0,
                 'position': count + 1,
                 sizeLabel: bytesToSize(imageData.size)
@@ -298,8 +287,7 @@ define([
 
         /**
          *
-         * @param {jQuery.Event} event
-         * @param {Object} data
+         * @param {Object} imgData
          */
         _updateImageTitle: function (event, data) {
             var imageData = data.imageData,
@@ -319,7 +307,7 @@ define([
         /**
          * Remove Image
          * @param {jQuery.Event} event
-         * @param {Object} imageData
+         * @param imageData
          * @private
          */
         _removeItem: function (event, imageData) {
@@ -333,8 +321,8 @@ define([
 
         /**
          * Set image type
-         * @param {jQuery.Event} event
-         * @param {Obejct} data
+         * @param event
+         * @param data
          * @private
          */
         _setImageType: function (event, data) {
@@ -364,7 +352,7 @@ define([
             this.element.find('.position').each($.proxy(function (index, element) {
                 var value = $(element).val();
 
-                if (value != index) { //eslint-disable-line eqeqeq
+                if (value != index) {
                     this.element.trigger('moveElement', {
                         imageData: $(element).closest(this.options.imageSelector).data('imageData'),
                         position: index
@@ -378,8 +366,8 @@ define([
 
         /**
          * Set image position
-         * @param {jQuery.Event} event
-         * @param {Object} data
+         * @param event
+         * @param data
          * @private
          */
         _setPosition: function (event, data) {
@@ -387,7 +375,7 @@ define([
                 curIndex = this.element.find(this.options.imageSelector).index($element),
                 newPosition = data.position + (curIndex > data.position ? -1 : 0);
 
-            if (data.position != curIndex) { //eslint-disable-line eqeqeq
+            if (data.position != curIndex) {
                 if (data.position === 0) {
                     this.element.prepend($element);
                 } else {
@@ -409,7 +397,6 @@ define([
             dialogContainerTmpl: '[data-role=img-dialog-container-tmpl]'
         },
 
-        /** @inheritdoc */
         _create: function () {
             var template = this.element.find(this.options.dialogTemplate),
                 containerTmpl = this.element.find(this.options.dialogContainerTmpl);
@@ -442,18 +429,11 @@ define([
             events['click [data-role=close-panel]'] = $.proxy(function () {
                 this.element.find('[data-role=dialog]').trigger('close');
             }, this);
-
-            /**
-             * @param {jQuery.Event} event
-             */
             events['click ' + this.options.imageSelector] = function (event) {
-                var imageData, $imageContainer;
-
                 if (!$(event.currentTarget).is('.ui-sortable-helper')) {
                     $(event.currentTarget).addClass('active');
-                    imageData = $(event.currentTarget).data('imageData');
-                    $imageContainer = this.findElement(imageData);
-
+                    var imageData = $(event.currentTarget).data('imageData');
+                    var $imageContainer = this.findElement(imageData);
                     if ($imageContainer.is('.removed')) {
                         return;
                     }
@@ -476,13 +456,9 @@ define([
                 'type': 'slide',
                 title: $.mage.__('Image Detail'),
                 buttons: [],
-
-                /** @inheritdoc */
                 opened: function () {
                     $dialog.trigger('open');
                 },
-
-                /** @inheritdoc */
                 closed: function () {
                     $dialog.trigger('close');
                 }
@@ -511,7 +487,7 @@ define([
                 this.element.trigger('updateVisibility', {
                     disabled: $(e.currentTarget).is(':checked'),
                     imageData: imageData
-                });
+                })
             }, this));
 
             $dialog.on('change', '[data-role="image-description"]', function (e) {
@@ -523,7 +499,7 @@ define([
                 this.element.find('input[type="hidden"][name="' + targetName + '"]').val(desc);
 
                 imageData.label = desc;
-                imageData['label_default'] = desc;
+                imageData.label_default = desc;
 
                 this.element.trigger('updateImageTitle', {
                     imageData: imageData
@@ -533,10 +509,6 @@ define([
             this.$dialog = $dialog;
         },
 
-        /**
-         * @param {Object} imageData
-         * @private
-         */
         _showDialog: function (imageData) {
             var $imageContainer = this.findElement(imageData),
                 $template;
@@ -583,7 +555,7 @@ define([
                     var $checkbox = $(checkbox),
                         parent = $checkbox.closest('.item'),
                         selectedClass = 'selected',
-                        isChecked = this.options.types[$checkbox.val()].value == imageData.file; //eslint-disable-line
+                        isChecked = this.options.types[$checkbox.val()].value == imageData.file;
 
                     $checkbox.prop(
                         'checked',
@@ -597,12 +569,12 @@ define([
          *
          * Click by image handler
          *
-         * @param {jQuery.Event} e
-         * @param {Object} imageData
+         * @param e
+         * @param imageData
          * @private
          */
         _onOpenDialog: function (e, imageData) {
-            if (imageData['media_type'] && imageData['media_type'] != 'image') { //eslint-disable-line eqeqeq
+            if (imageData.media_type && imageData.media_type != 'image') {
                 return;
             }
             this._showDialog(imageData);
@@ -611,16 +583,15 @@ define([
         /**
          * Change visibility
          *
-         * @param {jQuery.Event} event
-         * * @param {Object} data
+         * @param event
          * @private
          */
         _updateVisibility: function (event, data) {
             var imageData = data.imageData,
                 disabled = +data.disabled,
                 $imageContainer = this.findElement(imageData);
-
-            !!disabled ? //eslint-disable-line no-extra-boolean-cast
+            
+            !!disabled ?
                 $imageContainer.addClass('hidden-for-front') :
                 $imageContainer.removeClass('hidden-for-front');
 
@@ -632,7 +603,7 @@ define([
 
         /**
          * Set image
-         * @param {jQuery.Event} event
+         * @param event
          * @private
          */
         _notifyType: function (event) {

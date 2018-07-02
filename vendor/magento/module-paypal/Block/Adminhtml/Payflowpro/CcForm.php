@@ -82,7 +82,7 @@ class CcForm extends \Magento\Payment\Block\Transparent\Form
     /**
      * Get payment data helper instance
      * @return Data
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getPaymentDataHelper()
     {

@@ -6,9 +6,9 @@
 
 namespace Magento\Payment\Test\Unit\Model\Checks;
 
-use Magento\Payment\Model\Checks\CanUseForCountry;
+use \Magento\Payment\Model\Checks\CanUseForCountry;
 
-class CanUseForCountryTest extends \PHPUnit\Framework\TestCase
+class CanUseForCountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Expected country id
@@ -27,8 +27,13 @@ class CanUseForCountryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->countryProvider = $this->createMock(
-            \Magento\Payment\Model\Checks\CanUseForCountry\CountryProvider::class
+        $this->countryProvider = $this->getMock(
+            \Magento\Payment\Model\Checks\CanUseForCountry\CountryProvider::class,
+            [],
+            [],
+            '',
+            false,
+            false
         );
         $this->_model = new CanUseForCountry($this->countryProvider);
     }

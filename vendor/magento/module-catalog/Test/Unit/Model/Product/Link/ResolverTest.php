@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Link;
 
 use Magento\Catalog\Model\Product\Link\Resolver;
 
-class ResolverTest extends \PHPUnit\Framework\TestCase
+class ResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,6 +35,7 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
             ->with('links', [])
             ->willReturn($someLinks);
         $this->assertEquals($someLinks, $this->resolver->getLinks());
+
     }
 
     public function testGetLinksOverridden()
@@ -45,5 +46,6 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->resolver->override($overriddenLinks);
         $this->assertEquals($overriddenLinks, $this->resolver->getLinks());
+
     }
 }

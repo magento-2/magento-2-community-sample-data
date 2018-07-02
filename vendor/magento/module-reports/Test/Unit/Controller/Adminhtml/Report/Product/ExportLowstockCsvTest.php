@@ -27,13 +27,13 @@ class ExportLowstockCsvTest extends \Magento\Reports\Test\Unit\Controller\Adminh
     {
         parent::setUp();
 
-        $this->dateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\Filter\Date::class)
+        $this->dateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\Filter\Date')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->exportLowstockCsv = $objectManager->getObject(
-            \Magento\Reports\Controller\Adminhtml\Report\Product\ExportLowstockCsv::class,
+            'Magento\Reports\Controller\Adminhtml\Report\Product\ExportLowstockCsv',
             [
                 'context' => $this->contextMock,
                 'fileFactory' => $this->fileFactoryMock,

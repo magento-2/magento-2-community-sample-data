@@ -5,8 +5,8 @@
  */
 namespace Magento\Sniffs\Less;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Class SelectorDelimiterSniff
@@ -17,7 +17,7 @@ use PHP_CodeSniffer\Files\File;
  * @link http://devdocs.magento.com/guides/v2.0/coding-standards/code-standard-less.html#selector-delimiters
  *
  */
-class SelectorDelimiterSniff implements Sniff
+class SelectorDelimiterSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * A list of tokenizers this sniff supports.
@@ -37,7 +37,7 @@ class SelectorDelimiterSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -50,12 +50,12 @@ class SelectorDelimiterSniff implements Sniff
     }
 
     /**
-     * @param File $phpcsFile
+     * @param PHP_CodeSniffer_File $phpcsFile
      * @param int $stackPtr
      * @param array $tokens
      * @return void
      */
-    private function validateParenthesis(File $phpcsFile, $stackPtr, array $tokens)
+    private function validateParenthesis(PHP_CodeSniffer_File $phpcsFile, $stackPtr, array $tokens)
     {
         $nextPtr = $stackPtr + 1;
 
@@ -72,6 +72,7 @@ class SelectorDelimiterSniff implements Sniff
 
         // Check that each class declaration goes from new line
         if (($stackLine === $nextClassLine) && ($stackLine === $nextOpenBraceLine)) {
+
             $prevParenthesis = $phpcsFile->findPrevious(T_OPEN_PARENTHESIS, $stackPtr);
             $nextParenthesis = $phpcsFile->findNext(T_OPEN_PARENTHESIS, $stackPtr);
 

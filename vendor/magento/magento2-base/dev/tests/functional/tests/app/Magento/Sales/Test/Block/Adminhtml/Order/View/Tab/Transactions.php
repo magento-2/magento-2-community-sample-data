@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Block\Adminhtml\Order\View\Tab;
 
 use Magento\Backend\Test\Block\Widget\Tab;
 use Magento\Mtf\Client\Locator;
-use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Transactions\Grid;
+use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Shipments\Grid;
 
 /**
  * Transactions tab.
@@ -30,7 +30,7 @@ class Transactions extends Tab
     public function getGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Transactions\Grid::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Transactions\Grid',
             ['element' => $this->_rootElement->find($this->grid, Locator::SELECTOR_XPATH)]
         );
     }

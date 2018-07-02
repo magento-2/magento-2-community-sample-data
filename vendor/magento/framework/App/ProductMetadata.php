@@ -37,7 +37,7 @@ class ProductMetadata implements ProductMetadataInterface
 
     /**
      * @var \Magento\Framework\Composer\ComposerJsonFinder
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected $composerJsonFinder;
 
@@ -97,7 +97,7 @@ class ProductMetadata implements ProductMetadataInterface
      * Get version from system package
      *
      * @return string
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getSystemPackageVersion()
     {
@@ -114,7 +114,7 @@ class ProductMetadata implements ProductMetadataInterface
      * Load composerInformation
      *
      * @return ComposerInformation
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getComposerInformation()
     {

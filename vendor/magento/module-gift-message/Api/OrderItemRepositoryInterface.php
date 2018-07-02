@@ -8,7 +8,6 @@ namespace Magento\GiftMessage\Api;
 /**
  * Interface OrderItemRepositoryInterface
  * @api
- * @since 100.0.2
  */
 interface OrderItemRepositoryInterface
 {

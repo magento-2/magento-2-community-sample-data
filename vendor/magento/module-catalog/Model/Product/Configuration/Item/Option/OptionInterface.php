@@ -11,10 +11,6 @@
  */
 namespace Magento\Catalog\Model\Product\Configuration\Item\Option;
 
-/**
- * Interface \Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface
- *
- */
 interface OptionInterface
 {
     /**

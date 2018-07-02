@@ -5,7 +5,7 @@
  */
 namespace Magento\Theme\Test\Unit\Block\Html;
 
-class FooterTest extends \PHPUnit\Framework\TestCase
+class FooterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Block\Html\Footer
@@ -15,7 +15,7 @@ class FooterTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->block = $objectManager->getObject(\Magento\Theme\Block\Html\Footer::class);
+        $this->block = $objectManager->getObject('Magento\Theme\Block\Html\Footer');
     }
 
     protected function tearDown()

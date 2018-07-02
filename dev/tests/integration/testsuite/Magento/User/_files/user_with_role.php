@@ -9,7 +9,7 @@
  */
 
 /** @var $model \Magento\User\Model\User */
-$model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\User\Model\User::class);
+$model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
 $model->setFirstname("John")
     ->setLastname("Doe")
     ->setUsername('adminUser')

@@ -19,7 +19,7 @@ use Magento\Store\Model\StoreManagerInterface;
 /**
  * Unit test for Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\Import
  */
-class ImportTest extends \PHPUnit\Framework\TestCase
+class ImportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\Import

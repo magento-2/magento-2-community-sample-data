@@ -5,16 +5,22 @@
  */
 namespace Magento\Theme\Test\Unit\Block\Adminhtml\System\Design\Theme\Edit\Form\Element;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetHtmlAttributes()
     {
         /** @var $fileBlock \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\File */
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $collectionFactory = $this->createMock(\Magento\Framework\Data\Form\Element\CollectionFactory::class);
+        $collectionFactory = $this->getMock(
+            'Magento\Framework\Data\Form\Element\CollectionFactory',
+            [],
+            [],
+            '',
+            false
+        );
 
         $fileBlock = $helper->getObject(
-            \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\File::class,
+            'Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\File',
             ['factoryCollection' => $collectionFactory]
         );
 

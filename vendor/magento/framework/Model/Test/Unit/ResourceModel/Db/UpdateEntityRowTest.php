@@ -7,7 +7,7 @@ namespace Magento\Framework\Model\Test\Unit\ResourceModel\Db;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class UpdateEntityRowTest extends \PHPUnit\Framework\TestCase
+class UpdateEntityRowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\ResourceModel\Db\UpdateEntityRow
@@ -22,11 +22,11 @@ class UpdateEntityRowTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->metadataPoolMock = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
+        $this->metadataPoolMock = $this->getMockBuilder('\Magento\Framework\EntityManager\MetadataPool')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = $objectManager->getObject(
-            \Magento\Framework\Model\ResourceModel\Db\UpdateEntityRow::class,
+            'Magento\Framework\Model\ResourceModel\Db\UpdateEntityRow',
             ['metadataPool' => $this->metadataPoolMock]
         );
     }
@@ -50,10 +50,10 @@ class UpdateEntityRowTest extends \PHPUnit\Framework\TestCase
         $output['test_column_name'] = 'test_column_name';
         $expectedResult = true;
 
-        $entityMetadataMock = $this->getMockBuilder(\Magento\Framework\EntityManager\EntityMetadata::class)
+        $entityMetadataMock = $this->getMockBuilder('Magento\Framework\EntityManager\EntityMetadata')
             ->disableOriginalConstructor()
             ->getMock();
-        $connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $connectionMock = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $connectionMock->expects($this->once())

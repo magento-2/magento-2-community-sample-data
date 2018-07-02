@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\DB\Ddl;
 
-/**
- * @api
- */
 class Trigger
 {
     /**#@+
@@ -30,7 +27,11 @@ class Trigger
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * List of times available for trigger
+     *
+     * @var array
+     */
     protected static $listOfTimes = [self::TIME_BEFORE, self::TIME_AFTER];
 
     /**
@@ -186,7 +187,7 @@ class Trigger
                 (string)new \Magento\Framework\Phrase('Trigger table name should be a string')
             );
         }
-        $this->tableName = $name;
+        $this->tableName = strtolower($name);
         return $this;
     }
 

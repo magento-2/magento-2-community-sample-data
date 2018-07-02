@@ -13,7 +13,7 @@ interface DateTimeFormatterInterface
     /**
      * Returns a translated and localized date string
      *
-     * @param \IntlCalendar|\DateTimeInterface $object
+     * @param \IntlCalendar|\DateTime $object
      * @param string|int|array|null $format
      * @param string|null $locale
      * @return string

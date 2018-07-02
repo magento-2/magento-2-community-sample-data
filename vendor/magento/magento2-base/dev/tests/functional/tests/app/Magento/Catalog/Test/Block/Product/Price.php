@@ -41,12 +41,9 @@ class Price extends \Magento\Catalog\Test\Block\AbstractPriceBlock
         'price_including_tax' => [
             'selector' => '.price-including-tax .price'
         ],
-        'old_price_from' => [
-            'selector' => '.price-from .old-price .price-wrapper'
-        ],
-        'old_price_to' => [
-            'selector' => '.price-to .old-price .price-wrapper'
-        ],
+        'minimal_price' => [
+            'selector' => '.minimal-price-link'
+        ]
     ];
 
     /**
@@ -117,18 +114,6 @@ class Price extends \Magento\Catalog\Test\Block\AbstractPriceBlock
     }
 
     /**
-     * Get currency symbol from price block on the product page.
-     *
-     * @return string
-     */
-    public function getCurrencySymbol()
-    {
-        $price = $this->getPrice('');
-        preg_match('`(.*?)\d`', $price, $matches);
-        return $matches[1];
-    }
-
-    /**
      * Get price excluding tax.
      *
      * @param string $currency
@@ -148,28 +133,6 @@ class Price extends \Magento\Catalog\Test\Block\AbstractPriceBlock
     public function getPriceIncludingTax($currency = '$')
     {
         return $this->getTypePrice('price_including_tax', $currency);
-    }
-
-    /**
-     * Get min old price
-     *
-     * @param string $currency
-     * @return string|null
-     */
-    public function getOldPriceFrom($currency = '$')
-    {
-        return $this->getTypePrice('old_price_from', $currency);
-    }
-
-    /**
-     * Get max old price
-     *
-     * @param string $currency
-     * @return string|null
-     */
-    public function getOldPriceTo($currency = '$')
-    {
-        return $this->getTypePrice('old_price_to', $currency);
     }
 
     /**
@@ -200,5 +163,15 @@ class Price extends \Magento\Catalog\Test\Block\AbstractPriceBlock
     public function isOldPriceVisible()
     {
         return $this->getTypePriceElement('old_price')->isVisible();
+    }
+
+    /**
+     * This method returns if the special price is visible.
+     *
+     * @return bool
+     */
+    public function isMinimalPriceVisible()
+    {
+        return $this->getTypePriceElement('minimal_price')->isVisible();
     }
 }

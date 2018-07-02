@@ -19,7 +19,7 @@ use Magento\Framework\ObjectManagerInterface;
  * Tests for \Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CountryWithWebsitesTest extends \PHPUnit\Framework\TestCase
+class CountryWithWebsitesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\ResourceModel\Country\CollectionFactory | \PHPUnit_Framework_MockObject_MockObject
@@ -67,7 +67,7 @@ class CountryWithWebsitesTest extends \PHPUnit\Framework\TestCase
             $this->getMockBuilder(\Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->getMock(StoreManagerInterface::class);
         $this->shareConfigMock = $this->getMockBuilder(Share::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,8 +98,8 @@ class CountryWithWebsitesTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAllOptions()
     {
-        $website1 = $this->createMock(WebsiteInterface::class);
-        $website2 = $this->createMock(WebsiteInterface::class);
+        $website1 = $this->getMock(WebsiteInterface::class);
+        $website2 = $this->getMock(WebsiteInterface::class);
 
         $website1->expects($this->atLeastOnce())
             ->method('getId')

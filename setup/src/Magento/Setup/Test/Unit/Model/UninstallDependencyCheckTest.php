@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\UninstallDependencyCheck;
 
-class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
+class UninstallDependencyCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UninstallDependencyCheck
@@ -37,11 +37,28 @@ class UninstallDependencyCheckTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->composerInfo = $this->createMock(\Magento\Framework\Composer\ComposerInformation::class);
-        $this->packageDependencyChecker = $this->createMock(\Magento\Framework\Composer\DependencyChecker::class);
-        $this->themeDependencyChecker = $this->createMock(\Magento\Theme\Model\Theme\ThemeDependencyChecker::class);
-        $this->themeDependencyCheckerFactory =
-            $this->createMock(\Magento\Setup\Model\ThemeDependencyCheckerFactory::class);
+        $this->composerInfo = $this->getMock('Magento\Framework\Composer\ComposerInformation', [], [], '', false);
+        $this->packageDependencyChecker = $this->getMock(
+            'Magento\Framework\Composer\DependencyChecker',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->themeDependencyChecker = $this->getMock(
+            'Magento\Theme\Model\Theme\ThemeDependencyChecker',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->themeDependencyCheckerFactory = $this->getMock(
+            'Magento\Setup\Model\ThemeDependencyCheckerFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->themeDependencyCheckerFactory->expects($this->any())->method('create')
             ->willReturn($this->themeDependencyChecker);
         $this->uninstallDependencyCheck = new UninstallDependencyCheck(

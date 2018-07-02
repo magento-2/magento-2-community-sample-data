@@ -15,7 +15,7 @@ use Magento\Framework\Event;
  *
  * @package Magento\Framework\Event
  */
-class ObserverTest extends \PHPUnit\Framework\TestCase
+class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Observer
@@ -30,7 +30,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     public function testIsValidFor()
     {
         $eventName = 'eventName';
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('Magento\Framework\Event', ['getName']);
         $eventMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue($eventName));
@@ -102,11 +102,11 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     {
         $eventName = 'eventName';
         $callbackName = 'testCallback';
-        $callbackMock = [$this->createPartialMock(\stdClass::class, [$callbackName]), $callbackName];
+        $callbackMock = [$this->getMock('stdClass', [$callbackName]), $callbackName];
         $callbackMock[0]->expects($this->once())
             ->method('testCallback')
             ->will($this->returnValue(true));
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('Magento\Framework\Event', ['getName']);
         $eventMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue($eventName));
@@ -120,7 +120,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     {
         $eventName = 'eventName';
         $notValidName = 'event_name_2';
-        $eventMock = $this->createPartialMock(\Magento\Framework\Event::class, ['getName']);
+        $eventMock = $this->getMock('Magento\Framework\Event', ['getName']);
         $eventMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue($eventName));

@@ -7,32 +7,23 @@
 namespace Magento\Tax\Model\Rate;
 
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Tax\Model\Rate\Provider;
 
-class SourceTest extends \PHPUnit\Framework\TestCase
+class SourceTest extends \PHPUnit_Framework_TestCase
 {
     public function testToOptionArray()
     {
         /** @var \Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection $collection */
-        $collection = Bootstrap::getObjectManager()->get(
-            \Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection::class
-        );
-
-        $taxRateProvider = Bootstrap::getObjectManager()->get(Provider::class);
+        $collection = Bootstrap::getObjectManager()->get('Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection');
         $expectedResult = [];
         /** @var $taxRate \Magento\Tax\Model\Calculation\Rate */
         foreach ($collection as $taxRate) {
             $expectedResult[] = ['value' => $taxRate->getId(), 'label' => $taxRate->getCode()];
-            if (count($expectedResult) >= $taxRateProvider->getPageSize()) {
-                break;
-            }
         }
-
         /** @var \Magento\Tax\Model\Rate\Source $source */
         if (empty($expectedResult)) {
             $this->fail('Preconditions failed: At least one tax rate should be available.');
         }
-        $source = Bootstrap::getObjectManager()->get(\Magento\Tax\Model\Rate\Source::class);
+        $source = Bootstrap::getObjectManager()->get('Magento\Tax\Model\Rate\Source');
         $this->assertEquals(
             $expectedResult,
             $source->toOptionArray(),

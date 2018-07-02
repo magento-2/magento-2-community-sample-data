@@ -5,19 +5,10 @@
  */
 namespace Magento\Bundle\Model\ResourceModel\Selection;
 
-use Magento\Customer\Api\GroupManagementInterface;
-use Magento\Framework\DataObject;
-use Magento\Framework\DB\Select;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitationFactory;
-use Magento\Framework\App\ObjectManager;
-
 /**
  * Bundle Selections Resource Collection
  *
- * @api
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -27,23 +18,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var string
      */
     protected $_selectionTable;
-
-    /**
-     * @var DataObject
-     */
-    private $itemPrototype = null;
-
-    /**
-     * @var \Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor
-     */
-    private $catalogRuleProcessor = null;
-
-    /**
-     * Is website scope prices joined to collection
-     *
-     * @var bool
-     */
-    private $websiteScopePriceJoined = false;
 
     /**
      * Initialize collection
@@ -109,17 +83,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         );
         $this->getSelect()->joinLeft(
             ['price' => $this->getTable('catalog_product_bundle_selection_price')],
-            'selection.selection_id = price.selection_id AND price.website_id = ' . (int)$websiteId .
-            ' AND selection.parent_product_id = price.parent_product_id',
+            'selection.selection_id = price.selection_id AND price.website_id = ' . (int)$websiteId,
             [
                 'selection_price_type' => $priceType,
                 'selection_price_value' => $priceValue,
-                'parent_product_id' => 'price.parent_product_id',
                 'price_scope' => 'price.website_id'
             ]
         );
-        $this->websiteScopePriceJoined = true;
-
         return $this;
     }
 
@@ -160,121 +130,5 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $this->getSelect()->order('selection.position asc')->order('selection.selection_id asc');
         return $this;
-    }
-
-    /**
-     * Add filtering of products that have 0 items left.
-     *
-     * @return $this
-     * @since 100.2.0
-     */
-    public function addQuantityFilter()
-    {
-        $stockItemTable = $this->getTable('cataloginventory_stock_item');
-        $stockStatusTable = $this->getTable('cataloginventory_stock_status');
-        $this->getSelect()
-            ->joinInner(
-                ['stock' => $stockStatusTable],
-                'selection.product_id = stock.product_id',
-                []
-            )->joinInner(
-                ['stock_item' => $stockItemTable],
-                'selection.product_id = stock_item.product_id',
-                []
-            )
-            ->where(
-                '('
-                . 'selection.selection_can_change_qty'
-                . ' or '
-                . 'selection.selection_qty <= stock.qty'
-                . ' or '
-                .'stock_item.manage_stock = 0'
-                . ') and stock.stock_status = 1'
-            );
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     * @since 100.2.0
-     */
-    public function getNewEmptyItem()
-    {
-        if (null === $this->itemPrototype) {
-            $this->itemPrototype = parent::getNewEmptyItem();
-        }
-        return clone $this->itemPrototype;
-    }
-
-    /**
-     * Add filter by price
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @param bool $searchMin
-     * @param bool $useRegularPrice
-     *
-     * @return $this
-     * @since 100.2.0
-     */
-    public function addPriceFilter($product, $searchMin, $useRegularPrice = false)
-    {
-        if ($product->getPriceType() == \Magento\Bundle\Model\Product\Price::PRICE_TYPE_DYNAMIC) {
-            $this->addPriceData();
-            if ($useRegularPrice) {
-                $minimalPriceExpression = self::INDEX_TABLE_ALIAS . '.price';
-            } else {
-                $this->getCatalogRuleProcessor()->addPriceData($this, 'selection.product_id');
-                $minimalPriceExpression = 'LEAST(minimal_price, IFNULL(catalog_rule_price, minimal_price))';
-            }
-            $orderByValue = new \Zend_Db_Expr(
-                '(' .
-                $minimalPriceExpression .
-                ' * selection.selection_qty' .
-                ')'
-            );
-        } else {
-            $connection = $this->getConnection();
-            $priceType = $connection->getIfNullSql(
-                'price.selection_price_type',
-                'selection.selection_price_type'
-            );
-            $priceValue = $connection->getIfNullSql(
-                'price.selection_price_value',
-                'selection.selection_price_value'
-            );
-            if (!$this->websiteScopePriceJoined) {
-                $websiteId = $this->_storeManager->getStore()->getWebsiteId();
-                $this->getSelect()->joinLeft(
-                    ['price' => $this->getTable('catalog_product_bundle_selection_price')],
-                    'selection.selection_id = price.selection_id AND price.website_id = ' . (int)$websiteId,
-                    []
-                );
-            }
-            $price = $connection->getCheckSql(
-                $priceType . ' = 1',
-                (float) $product->getPrice() . ' * '. $priceValue . ' / 100',
-                $priceValue
-            );
-            $orderByValue = new \Zend_Db_Expr('('. $price. ' * '. 'selection.selection_qty)');
-        }
-
-        $this->getSelect()->reset(Select::ORDER);
-        $this->getSelect()->order(new \Zend_Db_Expr($orderByValue . ($searchMin ? Select::SQL_ASC : Select::SQL_DESC)));
-        $this->getSelect()->limit(1);
-        return $this;
-    }
-
-    /**
-     * @return \Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor
-     * @deprecated 100.2.0
-     */
-    private function getCatalogRuleProcessor()
-    {
-        if (null === $this->catalogRuleProcessor) {
-            $this->catalogRuleProcessor = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor::class);
-        }
-
-        return $this->catalogRuleProcessor;
     }
 }

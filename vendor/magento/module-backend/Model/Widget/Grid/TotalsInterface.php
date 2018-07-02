@@ -5,10 +5,6 @@
  */
 namespace Magento\Backend\Model\Widget\Grid;
 
-/**
- * @api
- * @since 100.0.2
- */
 interface TotalsInterface
 {
     /**

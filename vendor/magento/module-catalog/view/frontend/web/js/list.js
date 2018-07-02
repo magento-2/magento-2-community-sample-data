@@ -2,37 +2,35 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint browser:true jquery:true*/
 define([
-    'jquery',
-    'jquery/ui'
-], function ($) {
-    'use strict';
+    "jquery",
+    "jquery/ui"
+], function($){
+    "use strict";
 
     $.widget('mage.compareList', {
+        _create: function() {
 
-        /** @inheritdoc */
-        _create: function () {
             var elem = this.element,
-                products = $('thead td', elem),
-                headings;
+                products = $('thead td', elem);
 
             if (products.length > this.options.productsInRow) {
-                headings = $('<table/>')
+                var headings = $('<table/>')
                     .addClass('comparison headings data table')
                     .insertBefore(elem.closest('.container'));
-
+                    
                 elem.addClass('scroll');
 
-                $('th', elem).each(function () {
+                $('th', elem).each(function(){
                     var th = $(this),
                         thCopy = th.clone();
 
                     th.animate({
                         top: '+=0'
-                    }, 50, function () {
+                    }, 50, function(){
                         var height = th.height();
-
+                        
                         thCopy.css('height', height)
                             .appendTo(headings)
                             .wrap('<tr />');
@@ -40,7 +38,7 @@ define([
                 });
             }
 
-            $(this.options.windowPrintSelector).on('click', function (e) {
+            $(this.options.windowPrintSelector).on('click', function(e) {
                 e.preventDefault();
                 window.print();
             });

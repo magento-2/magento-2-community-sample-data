@@ -9,7 +9,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Catalog\Ui\AllowedProductTypes;
 use Magento\Catalog\Api\Data\ProductInterface;
 
-class AllowedProductTypesTest extends \PHPUnit\Framework\TestCase
+class AllowedProductTypesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -49,7 +49,7 @@ class AllowedProductTypesTest extends \PHPUnit\Framework\TestCase
     public function testIsAllowedProductType($typeId, $expectedResult)
     {
         $productTypes = ['simple', 'virtual'];
-        $productMock = $this->createMock(ProductInterface::class);
+        $productMock = $this->getMock(ProductInterface::class);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn($typeId);

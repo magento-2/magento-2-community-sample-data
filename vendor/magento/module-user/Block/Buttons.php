@@ -5,10 +5,6 @@
  */
 namespace Magento\User\Block;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Buttons extends \Magento\Backend\Block\Template
 {
     /**
@@ -39,7 +35,7 @@ class Buttons extends \Magento\Backend\Block\Template
     {
         $this->getToolbar()->addChild(
             'backButton',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Back'),
                 'onclick' => 'window.location.href=\'' . $this->getUrl('*/*/') . '\'',
@@ -49,14 +45,14 @@ class Buttons extends \Magento\Backend\Block\Template
 
         $this->getToolbar()->addChild(
             'resetButton',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Reset'), 'onclick' => 'window.location.reload()', 'class' => 'reset']
         );
 
         if (intval($this->getRequest()->getParam('rid'))) {
             $this->getToolbar()->addChild(
                 'deleteButton',
-                \Magento\Backend\Block\Widget\Button::class,
+                'Magento\Backend\Block\Widget\Button',
                 [
                     'label' => __('Delete Role'),
                     'onclick' => 'deleteConfirm(\'' . __(
@@ -72,7 +68,7 @@ class Buttons extends \Magento\Backend\Block\Template
 
         $this->getToolbar()->addChild(
             'saveButton',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Save Role'),
                 'class' => 'save primary save-role',

@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Block\Order;
 
-class CommentsTest extends \PHPUnit\Framework\TestCase
+class CommentsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Order\Comments
@@ -15,9 +15,9 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Sales\Block\Order\Comments::class
+            'Magento\Sales\Block\Order\Comments'
         );
     }
 
@@ -41,16 +41,16 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                \Magento\Sales\Model\Order\Invoice::class,
-                \Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\Collection::class,
+                'Magento\Sales\Model\Order\Invoice',
+                'Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\Collection',
             ],
             [
-                \Magento\Sales\Model\Order\Creditmemo::class,
-                \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\Collection::class
+                'Magento\Sales\Model\Order\Creditmemo',
+                'Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\Collection'
             ],
             [
-                \Magento\Sales\Model\Order\Shipment::class,
-                \Magento\Sales\Model\ResourceModel\Order\Shipment\Comment\Collection::class
+                'Magento\Sales\Model\Order\Shipment',
+                'Magento\Sales\Model\ResourceModel\Order\Shipment\Comment\Collection'
             ]
         ];
     }
@@ -60,9 +60,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCommentsWrongEntityException()
     {
-        $entity = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
-        );
+        $entity = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
         $this->_block->setEntity($entity);
         $this->_block->getComments();
     }

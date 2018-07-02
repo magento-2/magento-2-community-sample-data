@@ -8,10 +8,13 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Option;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Option;
-use \Magento\Catalog\Model\Product\Option\Repository;
-use \Magento\Catalog\Model\Product\Option\SaveHandler;
+use Magento\Catalog\Model\Product\Option\Repository;
+use Magento\Catalog\Model\Product\Option\SaveHandler;
 
-class SaveHandlerTest extends \PHPUnit\Framework\TestCase
+/**
+ * Tests Magento\Catalog\Model\Product\Option\SaveHandler.
+ */
+class SaveHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SaveHandler|\PHPUnit_Framework_MockObject_MockObject

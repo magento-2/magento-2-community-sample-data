@@ -8,7 +8,7 @@ namespace Magento\Theme\Test\Unit\Model\Theme;
 
 use Magento\Theme\Model\Theme\ThemeDependencyChecker;
 
-class ThemeDependencyCheckerTest extends \PHPUnit\Framework\TestCase
+class ThemeDependencyCheckerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ThemeDependencyChecker
@@ -32,9 +32,9 @@ class ThemeDependencyCheckerTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->themePackageInfo = $this->createMock(\Magento\Theme\Model\Theme\ThemePackageInfo::class);
-        $this->themeCollection = $this->createMock(\Magento\Theme\Model\Theme\Data\Collection::class);
-        $this->themeProvider = $this->createMock(\Magento\Theme\Model\Theme\ThemeProvider::class);
+        $this->themePackageInfo = $this->getMock('Magento\Theme\Model\Theme\ThemePackageInfo', [], [], '', false);
+        $this->themeCollection = $this->getMock('Magento\Theme\Model\Theme\Data\Collection', [], [], '', false);
+        $this->themeProvider = $this->getMock('Magento\Theme\Model\Theme\ThemeProvider', [], [], '', false);
 
         $this->themeDependencyChecker = new ThemeDependencyChecker(
             $this->themeCollection,
@@ -63,15 +63,15 @@ class ThemeDependencyCheckerTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteFailedChildThemeCheck($hasVirtual, $hasPhysical, array $input, $expected)
     {
-        $theme = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $theme = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $theme->expects($this->any())->method('hasChildThemes')->willReturn($hasVirtual);
-        $parentThemeA = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $parentThemeA = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $parentThemeA->expects($this->any())->method('getFullPath')->willReturn('frontend/Magento/a');
-        $parentThemeB = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $parentThemeB = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $parentThemeB->expects($this->any())->method('getFullPath')->willReturn('frontend/Magento/b');
-        $childThemeC = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $childThemeC = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $childThemeC->expects($this->any())->method('getFullPath')->willReturn('frontend/Magento/c');
-        $childThemeD = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $childThemeD = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $childThemeD->expects($this->any())->method('getFullPath')->willReturn('frontend/Magento/d');
 
         if ($hasPhysical) {

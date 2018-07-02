@@ -9,11 +9,12 @@ use InvalidArgumentException;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on CreditCards, see {@link https://developers.braintreepayments.com/reference/response/credit-card/php https://developers.braintreepayments.com/reference/response/credit-card/php}<br />
- * For more detailed information on CreditCard verifications, see {@link https://developers.braintreepayments.com/reference/response/credit-card-verification/php https://developers.braintreepayments.com/reference/response/credit-card-verification/php}
+ * For more detailed information on CreditCards, see {@link http://www.braintreepayments.com/gateway/credit-card-api http://www.braintreepaymentsolutions.com/gateway/credit-card-api}<br />
+ * For more detailed information on CreditCard verifications, see {@link http://www.braintreepayments.com/gateway/credit-card-verification-api http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api}
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class CreditCardGateway
 {
@@ -347,27 +348,22 @@ class CreditCardGateway
              'deviceData', 'fraudMerchantId', 'paymentMethodNonce',
              ['options' => $options],
              [
-                 'billingAddress' => self::billingAddressSignature()
+                 'billingAddress' => [
+                     'firstName',
+                     'lastName',
+                     'company',
+                     'countryCodeAlpha2',
+                     'countryCodeAlpha3',
+                     'countryCodeNumeric',
+                     'countryName',
+                     'extendedAddress',
+                     'locality',
+                     'region',
+                     'postalCode',
+                     'streetAddress'
+                 ],
              ],
          ];
-    }
-
-    public static function billingAddressSignature()
-    {
-        return [
-            'firstName',
-            'lastName',
-            'company',
-            'countryCodeAlpha2',
-            'countryCodeAlpha3',
-            'countryCodeNumeric',
-            'countryName',
-            'extendedAddress',
-            'locality',
-            'region',
-            'postalCode',
-            'streetAddress'
-        ];
     }
 
     public static function createSignature()
@@ -381,25 +377,23 @@ class CreditCardGateway
 
     public static function updateSignature()
     {
-        $options = self::baseOptions();
-        $options[] = "failOnDuplicatePaymentMethod";
-        $signature = self::baseSignature($options);
+         $signature = self::baseSignature(self::baseOptions());
 
-        $updateExistingBillingSignature = [
-            [
-                'options' => [
-                    'updateExisting'
-                ]
-            ]
-        ];
+         $updateExistingBillingSignature = [
+             [
+                 'options' => [
+                     'updateExisting'
+                 ]
+             ]
+         ];
 
-        foreach($signature AS $key => $value) {
-            if(is_array($value) and array_key_exists('billingAddress', $value)) {
-                $signature[$key]['billingAddress'] = array_merge_recursive($value['billingAddress'], $updateExistingBillingSignature);
-            }
-        }
+         foreach($signature AS $key => $value) {
+             if(is_array($value) and array_key_exists('billingAddress', $value)) {
+                 $signature[$key]['billingAddress'] = array_merge_recursive($value['billingAddress'], $updateExistingBillingSignature);
+             }
+         }
 
-        return $signature;
+         return $signature;
     }
 
     /**

@@ -7,7 +7,7 @@ namespace Magento\Test\Integrity\Modular;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class ExportConfigFilesTest extends \PHPUnit\Framework\TestCase
+class ExportConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ImportExport\Model\Export\Config\Reader
@@ -18,20 +18,20 @@ class ExportConfigFilesTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $moduleDirSearch \Magento\Framework\Component\DirSearch */
-        $moduleDirSearch = $objectManager->get(\Magento\Framework\Component\DirSearch::class);
-        $fileIteratorFactory = $objectManager->get(\Magento\Framework\Config\FileIteratorFactory::class);
+        $moduleDirSearch = $objectManager->get('Magento\Framework\Component\DirSearch');
+        $fileIteratorFactory = $objectManager->get('Magento\Framework\Config\FileIteratorFactory');
         $xmlFiles = $fileIteratorFactory->create(
             $moduleDirSearch->collectFiles(ComponentRegistrar::MODULE, 'etc/{*/export.xml,export.xml}')
         );
 
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $validationStateMock->expects($this->any())->method('isValidationRequired')->will($this->returnValue(true));
-        $fileResolverMock = $this->createMock(\Magento\Framework\Config\FileResolverInterface::class);
+        $fileResolverMock = $this->getMock('Magento\Framework\Config\FileResolverInterface');
         $fileResolverMock->expects($this->any())->method('get')->will($this->returnValue($xmlFiles));
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         $this->_model = $objectManager->create(
-            \Magento\ImportExport\Model\Export\Config\Reader::class,
+            'Magento\ImportExport\Model\Export\Config\Reader',
             ['fileResolver' => $fileResolverMock, 'validationState' => $validationStateMock]
         );
     }

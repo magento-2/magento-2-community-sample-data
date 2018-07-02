@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Element\Dependency;
 
-class MapperTest extends \PHPUnit\Framework\TestCase
+class MapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Field prefix
@@ -63,17 +63,17 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->_configStructureMock = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure::class
+            'Magento\Config\Model\Config\Structure'
         )->setMethods(
             ['getElement']
         )->disableOriginalConstructor()->getMock();
         $this->_fieldFactoryMock = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\FieldFactory::class
+            'Magento\Config\Model\Config\Structure\Element\Dependency\FieldFactory'
         )->setMethods(
             ['create']
         )->disableOriginalConstructor()->getMock();
         $this->_scopeConfigMock = $this->getMockBuilder(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+            '\Magento\Framework\App\Config\ScopeConfigInterface'
         )->disableOriginalConstructor()->getMock();
         $this->_model = new \Magento\Config\Model\Config\Structure\Element\Dependency\Mapper(
             $this->_configStructureMock,
@@ -207,7 +207,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     protected function _getDependencyField($isValueSatisfy, $isFieldVisible, $fieldId, $mockClassName)
     {
         $field = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\Field::class
+            'Magento\Config\Model\Config\Structure\Element\Dependency\Field'
         )->setMethods(
             ['isValueSatisfy', 'getId']
         )->setMockClassName(
@@ -247,7 +247,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     protected function _getField($isVisible, $path, $mockClassName)
     {
         $field = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Field::class
+            'Magento\Config\Model\Config\Structure\Element\Field'
         )->setMethods(
             ['isVisible', 'getPath']
         )->setMockClassName(

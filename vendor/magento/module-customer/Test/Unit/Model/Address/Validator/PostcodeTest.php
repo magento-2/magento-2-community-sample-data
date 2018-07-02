@@ -5,7 +5,7 @@
  */
 namespace Magento\Customer\Test\Unit\Model\Address\Validator;
 
-class PostcodeTest extends \PHPUnit\Framework\TestCase
+class PostcodeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Check postcode test
@@ -16,7 +16,7 @@ class PostcodeTest extends \PHPUnit\Framework\TestCase
     {
         $countryUs = 'US';
         $countryUa = 'UK';
-        $helperMock = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
+        $helperMock = $this->getMockBuilder('Magento\Directory\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 

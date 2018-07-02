@@ -5,7 +5,6 @@
  */
 namespace Magento\Setup\Test\Unit\Console\Command;
 
-use Magento\Framework\App\Console\MaintenanceModeEnabler;
 use Magento\Setup\Console\Command\ModuleUninstallCommand;
 use Magento\Setup\Model\ModuleUninstaller;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -14,7 +13,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
+class ModuleUninstallCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\DeploymentConfig|\PHPUnit_Framework_MockObject_MockObject
@@ -101,31 +100,32 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $this->fullModuleList = $this->createMock(\Magento\Framework\Module\FullModuleList::class);
-        $this->maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManagerInterface::class,
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $this->fullModuleList = $this->getMock('Magento\Framework\Module\FullModuleList', [], [], '', false);
+        $this->maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface', [], '', false);
+        $this->uninstallCollector = $this->getMock('Magento\Setup\Model\UninstallCollector', [], [], '', false);
+        $this->packageInfo = $this->getMock('Magento\Framework\Module\PackageInfo', [], [], '', false);
+        $packageInfoFactory = $this->getMock('Magento\Framework\Module\PackageInfoFactory', [], [], '', false);
+        $packageInfoFactory->expects($this->once())->method('create')->willReturn($this->packageInfo);
+        $this->dependencyChecker = $this->getMock('Magento\Framework\Module\DependencyChecker', [], [], '', false);
+        $this->backupRollback = $this->getMock('Magento\Framework\Setup\BackupRollback', [], [], '', false);
+        $this->backupRollbackFactory = $this->getMock(
+            'Magento\Framework\Setup\BackupRollbackFactory',
+            [],
             [],
             '',
             false
         );
-        $this->uninstallCollector = $this->createMock(\Magento\Setup\Model\UninstallCollector::class);
-        $this->packageInfo = $this->createMock(\Magento\Framework\Module\PackageInfo::class);
-        $packageInfoFactory = $this->createMock(\Magento\Framework\Module\PackageInfoFactory::class);
-        $packageInfoFactory->expects($this->once())->method('create')->willReturn($this->packageInfo);
-        $this->dependencyChecker = $this->createMock(\Magento\Framework\Module\DependencyChecker::class);
-        $this->backupRollback = $this->createMock(\Magento\Framework\Setup\BackupRollback::class);
-        $this->backupRollbackFactory = $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class);
         $this->backupRollbackFactory->expects($this->any())
             ->method('create')
             ->willReturn($this->backupRollback);
-        $this->cache = $this->createMock(\Magento\Framework\App\Cache::class);
-        $this->cleanupFiles = $this->createMock(\Magento\Framework\App\State\CleanupFiles::class);
+        $this->cache = $this->getMock('Magento\Framework\App\Cache', [], [], '', false);
+        $this->cleanupFiles = $this->getMock('Magento\Framework\App\State\CleanupFiles', [], [], '', false);
         $objectManagerProvider->expects($this->any())->method('get')->willReturn($objectManager);
         $configLoader = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManager\ConfigLoaderInterface::class,
+            'Magento\Framework\ObjectManager\ConfigLoaderInterface',
             [],
             '',
             false
@@ -134,23 +134,26 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $objectManager->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap([
-                [\Magento\Framework\Module\PackageInfoFactory::class, $packageInfoFactory],
-                [\Magento\Framework\Module\DependencyChecker::class, $this->dependencyChecker],
-                [\Magento\Framework\App\Cache::class, $this->cache],
-                [\Magento\Framework\App\State\CleanupFiles::class, $this->cleanupFiles],
-                [
-                    \Magento\Framework\App\State::class,
-                    $this->createMock(\Magento\Framework\App\State::class)
-                ],
-                [\Magento\Framework\Setup\BackupRollbackFactory::class, $this->backupRollbackFactory],
-                [\Magento\Framework\ObjectManager\ConfigLoaderInterface::class, $configLoader],
+                ['Magento\Framework\Module\PackageInfoFactory', $packageInfoFactory],
+                ['Magento\Framework\Module\DependencyChecker', $this->dependencyChecker],
+                ['Magento\Framework\App\Cache', $this->cache],
+                ['Magento\Framework\App\State\CleanupFiles', $this->cleanupFiles],
+                ['Magento\Framework\App\State', $this->getMock('Magento\Framework\App\State', [], [], '', false)],
+                ['Magento\Framework\Setup\BackupRollbackFactory', $this->backupRollbackFactory],
+                ['Magento\Framework\ObjectManager\ConfigLoaderInterface', $configLoader],
             ]));
-        $composer = $this->createMock(\Magento\Framework\Composer\ComposerInformation::class);
+        $composer = $this->getMock('Magento\Framework\Composer\ComposerInformation', [], [], '', false);
         $composer->expects($this->any())
             ->method('getRootRequiredPackages')
             ->willReturn(['magento/package-a', 'magento/package-b']);
-        $this->moduleUninstaller = $this->createMock(\Magento\Setup\Model\ModuleUninstaller::class);
-        $this->moduleRegistryUninstaller = $this->createMock(\Magento\Setup\Model\ModuleRegistryUninstaller::class);
+        $this->moduleUninstaller = $this->getMock('Magento\Setup\Model\ModuleUninstaller', [], [], '', false);
+        $this->moduleRegistryUninstaller = $this->getMock(
+            'Magento\Setup\Model\ModuleRegistryUninstaller',
+            [],
+            [],
+            '',
+            false
+        );
         $this->command = new ModuleUninstallCommand(
             $composer,
             $this->deploymentConfig,
@@ -159,15 +162,14 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
             $objectManagerProvider,
             $this->uninstallCollector,
             $this->moduleUninstaller,
-            $this->moduleRegistryUninstaller,
-            new MaintenanceModeEnabler($this->maintenanceMode)
+            $this->moduleRegistryUninstaller
         );
-        $this->question = $this->createMock(\Symfony\Component\Console\Helper\QuestionHelper::class);
+        $this->question = $this->getMock('Symfony\Component\Console\Helper\QuestionHelper', [], [], '', false);
         $this->question
             ->expects($this->any())
             ->method('ask')
             ->will($this->returnValue(true));
-        $this->helperSet = $this->createMock(\Symfony\Component\Console\Helper\HelperSet::class);
+        $this->helperSet = $this->getMock('Symfony\Component\Console\Helper\HelperSet', [], [], '', false);
         $this->helperSet
             ->expects($this->any())
             ->method('get')
@@ -348,7 +350,7 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
                 ['module' => ['Magento_A']],
                 [
                     "Cannot uninstall module 'Magento_A' because the following module(s) depend on it:" .
-                    PHP_EOL . "\tMagento_D"
+                    PHP_EOL .  "\tMagento_D"
                 ]
             ],
             [
@@ -356,7 +358,7 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
                 ['module' => ['Magento_A', 'Magento_B']],
                 [
                     "Cannot uninstall module 'Magento_A' because the following module(s) depend on it:" .
-                    PHP_EOL . "\tMagento_D"
+                    PHP_EOL .  "\tMagento_D"
                 ]
             ],
             [
@@ -367,9 +369,9 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
                 ['module' => ['Magento_A', 'Magento_B']],
                 [
                     "Cannot uninstall module 'Magento_A' because the following module(s) depend on it:" .
-                    PHP_EOL . "\tMagento_D",
+                    PHP_EOL .  "\tMagento_D",
                     "Cannot uninstall module 'Magento_B' because the following module(s) depend on it:" .
-                    PHP_EOL . "\tMagento_E"
+                    PHP_EOL .  "\tMagento_E"
                 ]
             ],
         ];
@@ -383,6 +385,7 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
             ->willReturn(['Magento_A' => [], 'Magento_B' => []]);
         $this->cache->expects($this->once())->method('clean');
         $this->cleanupFiles->expects($this->once())->method('clearCodeGeneratedClasses');
+
     }
 
     public function testExecute()
@@ -391,13 +394,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->tester->execute($input);
     }
 
@@ -407,13 +410,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->cleanupFiles->expects($this->once())->method('clearMaterializedViewFiles');
         $this->tester->execute($input);
     }
@@ -424,16 +427,16 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallData')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->tester->execute($input);
     }
 
@@ -443,16 +446,16 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallData')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->cleanupFiles->expects($this->once())->method('clearMaterializedViewFiles');
         $this->tester->execute($input);
     }
@@ -463,13 +466,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->backupRollback->expects($this->once())
             ->method('codeBackup')
             ->willReturn($this->backupRollback);
@@ -482,13 +485,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->backupRollback->expects($this->once())
             ->method('codeBackup')
             ->willReturn($this->backupRollback);
@@ -501,13 +504,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->backupRollback->expects($this->once())
             ->method('dbBackup')
             ->willReturn($this->backupRollback);
@@ -520,13 +523,13 @@ class ModuleUninstallCommandTest extends \PHPUnit\Framework\TestCase
         $this->setUpExecute();
         $this->moduleUninstaller->expects($this->once())
             ->method('uninstallCode')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDb')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->moduleRegistryUninstaller->expects($this->once())
             ->method('removeModulesFromDeploymentConfig')
-            ->with($this->isInstanceOf(\Symfony\Component\Console\Output\OutputInterface::class), $input['module']);
+            ->with($this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'), $input['module']);
         $this->question
             ->expects($this->once())
             ->method('ask')

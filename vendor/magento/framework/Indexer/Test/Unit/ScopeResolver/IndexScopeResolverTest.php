@@ -12,7 +12,7 @@ use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Test for \Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver
  */
-class IndexScopeResolverTest extends \PHPUnit\Framework\TestCase
+class IndexScopeResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ScopeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -31,19 +31,21 @@ class IndexScopeResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resource = $this->getMockBuilder('\Magento\Framework\App\ResourceConnection')
             ->setMethods(['getTableName'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->scopeResolver = $this->getMockBuilder(\Magento\Framework\App\ScopeResolverInterface::class)
+
+        $this->scopeResolver = $this->getMockBuilder('Magento\Framework\App\ScopeResolverInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+
 
         $objectManager = new ObjectManager($this);
 
         $this->target = $objectManager->getObject(
-            \Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver::class,
+            '\Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver',
             [
                 'resource' => $this->resource,
                 'scopeResolver' => $this->scopeResolver
@@ -65,7 +67,7 @@ class IndexScopeResolverTest extends \PHPUnit\Framework\TestCase
             },
             $dimensions
         );
-        $scope = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)
+        $scope = $this->getMockBuilder('Magento\Framework\App\ScopeInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -117,7 +119,7 @@ class IndexScopeResolverTest extends \PHPUnit\Framework\TestCase
      */
     private function createDimension($name, $value)
     {
-        $dimension = $this->getMockBuilder(\Magento\Framework\Search\Request\Dimension::class)
+        $dimension = $this->getMockBuilder('\Magento\Framework\Search\Request\Dimension')
             ->setMethods(['getName', 'getValue'])
             ->disableOriginalConstructor()
             ->getMock();

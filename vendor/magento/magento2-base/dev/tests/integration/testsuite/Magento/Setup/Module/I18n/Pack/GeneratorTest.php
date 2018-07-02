@@ -8,7 +8,7 @@ namespace Magento\Setup\Module\I18n\Pack;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Setup\Module\I18n\ServiceLocator;
 
-class GeneratorTest extends \PHPUnit\Framework\TestCase
+class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -67,7 +67,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
 
         \Magento\Framework\System\Dirs::rm($this->_packPath);
 
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $this->backupRegistrar = $paths->getValue();
@@ -77,7 +77,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         \Magento\Framework\System\Dirs::rm($this->_packPath);
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $paths->setValue($this->backupRegistrar);

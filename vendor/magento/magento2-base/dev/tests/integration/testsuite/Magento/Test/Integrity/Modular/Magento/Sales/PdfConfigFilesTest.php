@@ -5,7 +5,7 @@
  */
 namespace Magento\Test\Integrity\Modular\Magento\Sales;
 
-class PdfConfigFilesTest extends \PHPUnit\Framework\TestCase
+class PdfConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $file
@@ -15,11 +15,11 @@ class PdfConfigFilesTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Sales\Model\Order\Pdf\Config\SchemaLocator $schemaLocator */
         $schemaLocator = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Sales\Model\Order\Pdf\Config\SchemaLocator::class
+            'Magento\Sales\Model\Order\Pdf\Config\SchemaLocator'
         );
         $schemaFile = $schemaLocator->getPerFileSchema();
 
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $dom = new \Magento\Framework\Config\Dom(file_get_contents($file), $validationStateMock);
@@ -37,12 +37,12 @@ class PdfConfigFilesTest extends \PHPUnit\Framework\TestCase
 
     public function testMergedFormat()
     {
-        $validationState = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationState = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $validationState->expects($this->any())->method('isValidationRequired')->will($this->returnValue(true));
 
         /** @var \Magento\Sales\Model\Order\Pdf\Config\Reader $reader */
         $reader = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\Order\Pdf\Config\Reader::class,
+            'Magento\Sales\Model\Order\Pdf\Config\Reader',
             ['validationState' => $validationState]
         );
         try {

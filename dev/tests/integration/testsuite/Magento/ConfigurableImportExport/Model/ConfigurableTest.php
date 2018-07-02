@@ -7,8 +7,14 @@ namespace Magento\ConfigurableImportExport\Model;
 
 use Magento\CatalogImportExport\Model\AbstractProductExportImportTestCase;
 
+/**
+ * Configurable product import test.
+ */
 class ConfigurableTest extends AbstractProductExportImportTestCase
 {
+    /**
+     * @return array
+     */
     public function exportImportDataProvider()
     {
         return [
@@ -102,5 +108,20 @@ class ConfigurableTest extends AbstractProductExportImportTestCase
             $data[$key][2] = array_merge($value[2], ['_cache_instance_product_set_attributes']);
         }
         return $data;
+    }
+
+    /**
+     * @magentoAppArea adminhtml
+     * @magentoDbIsolation enabled
+     * @magentoAppIsolation enabled
+     *
+     * @param array $fixtures
+     * @param string[] $skus
+     * @param string[] $skippedAttributes
+     * @dataProvider importReplaceDataProvider
+     */
+    public function testImportReplace($fixtures, $skus, $skippedAttributes = [])
+    {
+        parent::testImportReplace($fixtures, $skus, $skippedAttributes);
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\Rule\Test\Unit\Model\ResourceModel\Rule\Collection;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
+class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -57,24 +57,22 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_entityFactoryMock = $this->createMock(\Magento\Framework\Data\Collection\EntityFactoryInterface::class);
-        $this->_loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $this->_fetchStrategyMock = $this->createMock(
-            \Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class
-        );
-        $this->_managerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $this->_entityFactoryMock = $this->getMock('Magento\Framework\Data\Collection\EntityFactoryInterface');
+        $this->_loggerMock = $this->getMock('Psr\Log\LoggerInterface');
+        $this->_fetchStrategyMock = $this->getMock('Magento\Framework\Data\Collection\Db\FetchStrategyInterface');
+        $this->_managerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
         $this->_db = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\Db\AbstractDb::class,
+            '\Magento\Framework\Model\ResourceModel\Db\AbstractDb',
             [],
             '',
             false,
             false,
             true,
-            ['__sleep', '__wakeup', 'getTable']
+            ['__sleep', '__wakeup']
         );
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->abstractCollection = $this->getMockForAbstractClass(
-            \Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection::class,
+            '\Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection',
             [
                 'entityFactory' => $this->_entityFactoryMock,
                 'logger' => $this->_loggerMock,
@@ -91,7 +89,7 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function addWebsitesToResultDataProvider()
+    public function testAddWebsitesToResultDataProvider()
     {
         return [
             [null, true],
@@ -101,7 +99,7 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider addWebsitesToResultDataProvider
+     * @dataProvider testAddWebsitesToResultDataProvider
      */
     public function testAddWebsitesToResult($flag, $expectedResult)
     {
@@ -116,9 +114,9 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
         $entityInfo['rule_id_field'] = 'rule_id';
         $entityInfo['associations_table'] = 'assoc_table';
 
-        $connection = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
-        $collectionSelect = $this->createMock(\Magento\Framework\DB\Select::class);
+        $connection = $this->getMock('\Magento\Framework\DB\Adapter\AdapterInterface');
+        $select = $this->getMock('\Magento\Framework\DB\Select', [], [], '', false);
+        $collectionSelect = $this->getMock('\Magento\Framework\DB\Select', [], [], '', false);
 
         $connection->expects($this->any())
             ->method('select')
@@ -152,14 +150,14 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
     public function testAddWebsiteFilter()
     {
         $this->_prepareAddFilterStubs();
-        $website = $this->createPartialMock(\Magento\Store\Model\Website::class, ['getId', '__sleep', '__wakeup']);
+        $website = $this->getMock('\Magento\Store\Model\Website', ['getId', '__sleep', '__wakeup'], [], '', false);
 
         $website->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));
 
         $this->assertInstanceOf(
-            \Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection::class,
+            '\Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection',
             $this->abstractCollection->addWebsiteFilter($website)
         );
     }
@@ -191,7 +189,6 @@ class AbstractCollectionTest extends \PHPUnit\Framework\TestCase
     public function testAddFieldToFilter()
     {
         $this->_prepareAddFilterStubs();
-        $result = $this->abstractCollection->addFieldToFilter('website_ids', []);
-        $this->assertNotNull($result);
+        $this->abstractCollection->addFieldToFilter('website_ids', []);
     }
 }

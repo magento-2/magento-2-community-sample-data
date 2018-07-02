@@ -7,8 +7,6 @@ namespace Magento\Backend\Model\Menu\Builder;
 
 /**
  * Menu builder command factory
- * @api
- * @since 100.0.2
  */
 class CommandFactory
 {

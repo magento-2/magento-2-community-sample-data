@@ -7,7 +7,7 @@ namespace Magento\Customer\Model\Metadata;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class FormFactoryTest extends \PHPUnit\Framework\TestCase
+class FormFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var array */
     private $_requestData;
@@ -50,14 +50,14 @@ class FormFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         /** @var FormFactory $formFactory */
-        $formFactory = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Metadata\FormFactory::class);
+        $formFactory = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Metadata\FormFactory');
         $form = $formFactory->create('customer_address', 'customer_address_edit');
 
-        $this->assertInstanceOf(\Magento\Customer\Model\Metadata\Form::class, $form);
+        $this->assertInstanceOf('\Magento\Customer\Model\Metadata\Form', $form);
         $this->assertNotEmpty($form->getAttributes());
 
         /** @var \Magento\Framework\App\RequestInterface $request */
-        $request = Bootstrap::getObjectManager()->get(\Magento\Framework\App\RequestInterface::class);
+        $request = Bootstrap::getObjectManager()->get('Magento\Framework\App\RequestInterface');
         $request->setParams($this->_requestData);
 
         $this->assertEquals($this->_expectedData, $form->restoreData($form->extractData($request)));

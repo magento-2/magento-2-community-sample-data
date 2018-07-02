@@ -69,10 +69,10 @@ class AssertAdvancedSearchProductsResult extends AbstractConstraint
         foreach ($searchResult as $sku => $product) {
             /** @var CatalogProductSimple $product */
             $name = $product->getName();
-            do {
+            $isProductVisible = $resultPage->getListProductBlock()->getProductItem($product)->isVisible();
+            while (!$isProductVisible && $resultPage->getBottomToolbar()->nextPage()) {
                 $isProductVisible = $resultPage->getListProductBlock()->getProductItem($product)->isVisible();
-            } while (!$isProductVisible && $resultPage->getBottomToolbar()->nextPage());
-
+            }
             if (!$isProductVisible) {
                 $errors[] = '- failed to find the product (SKU - "'
                     . $sku . '", name - "' . $name . '") according to the search parameters';

@@ -24,9 +24,9 @@ class Select extends Element implements InputProviderInterface
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'select',
-    ];
+    );
 
     /**
      * @var \Zend\Validator\ValidatorInterface
@@ -48,7 +48,7 @@ class Select extends Element implements InputProviderInterface
     /**
      * @var array
      */
-    protected $valueOptions = [];
+    protected $valueOptions = array();
 
     /**
      * @var bool
@@ -86,7 +86,7 @@ class Select extends Element implements InputProviderInterface
             ) {
                 $validator = $this->validator->getValidator();
             }
-            if (! empty($validator)) {
+            if (!empty($validator)) {
                 $validator->setHaystack($this->getValueOptionsValues());
             }
         }
@@ -218,17 +218,17 @@ class Select extends Element implements InputProviderInterface
      */
     protected function getValidator()
     {
-        if (null === $this->validator && ! $this->disableInArrayValidator()) {
-            $validator = new InArrayValidator([
+        if (null === $this->validator && !$this->disableInArrayValidator()) {
+            $validator = new InArrayValidator(array(
                 'haystack' => $this->getValueOptionsValues(),
                 'strict'   => false
-            ]);
+            ));
 
             if ($this->isMultiple()) {
-                $validator = new ExplodeValidator([
+                $validator = new ExplodeValidator(array(
                     'validator'      => $validator,
                     'valueDelimiter' => null, // skip explode if only one value
-                ]);
+                ));
             }
 
             $this->validator = $validator;
@@ -287,33 +287,33 @@ class Select extends Element implements InputProviderInterface
      */
     public function getInputSpecification()
     {
-        $spec = [
+        $spec = array(
             'name' => $this->getName(),
             'required' => true,
-        ];
+        );
 
         if ($this->useHiddenElement() && $this->isMultiple()) {
             $unselectedValue = $this->getUnselectedValue();
 
             $spec['allow_empty'] = true;
             $spec['continue_if_empty'] = true;
-            $spec['filters'] = [[
+            $spec['filters'] = array(array(
                 'name'    => 'Callback',
-                'options' => [
+                'options' => array(
                     'callback' => function ($value) use ($unselectedValue) {
                         if ($value === $unselectedValue) {
-                            $value = [];
+                            $value = array();
                         }
                         return $value;
                     }
-                ]
-            ]];
+                )
+            ));
         }
 
         if ($validator = $this->getValidator()) {
-            $spec['validators'] = [
+            $spec['validators'] = array(
                 $validator,
-            ];
+            );
         }
 
         return $spec;
@@ -326,7 +326,7 @@ class Select extends Element implements InputProviderInterface
      */
     protected function getValueOptionsValues()
     {
-        $values  = [];
+        $values  = array();
         $options = $this->getValueOptions();
         foreach ($options as $key => $optionSpec) {
             if (is_array($optionSpec) && array_key_exists('options', $optionSpec)) {

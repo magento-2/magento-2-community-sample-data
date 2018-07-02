@@ -6,9 +6,9 @@
  */
 namespace Magento\Catalog\Model\Product\Attribute;
 
-use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Eav\Api\Data\AttributeInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -118,9 +118,6 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
             $attribute->setAttributeId($existingModel->getAttributeId());
             $attribute->setIsUserDefined($existingModel->getIsUserDefined());
             $attribute->setFrontendInput($existingModel->getFrontendInput());
-            if ($attribute->getIsUserDefined()) {
-                $this->processAttributeData($attribute);
-            }
 
             if (is_array($attribute->getFrontendLabels())) {
                 $defaultFrontendLabel = $attribute->getDefaultFrontendLabel();
@@ -159,7 +156,15 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
             $this->validateCode($attribute->getAttributeCode());
             $this->validateFrontendInput($attribute->getFrontendInput());
 
-            $this->processAttributeData($attribute);
+            $attribute->setBackendType(
+                $attribute->getBackendTypeByInput($attribute->getFrontendInput())
+            );
+            $attribute->setSourceModel(
+                $this->productHelper->getAttributeSourceModelByInputType($attribute->getFrontendInput())
+            );
+            $attribute->setBackendModel(
+                $this->productHelper->getAttributeBackendModelByInputType($attribute->getFrontendInput())
+            );
             $attribute->setEntityTypeId(
                 $this->eavConfig
                     ->getEntityType(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE)
@@ -269,24 +274,5 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
         if (!$validator->isValid($frontendInput)) {
             throw InputException::invalidFieldValue('frontend_input', $frontendInput);
         }
-    }
-
-    /**
-     * Process attribute data based on attribute frontend input type.
-     *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
-     * @return void
-     */
-    private function processAttributeData(\Magento\Catalog\Api\Data\ProductAttributeInterface $attribute)
-    {
-        $attribute->setBackendType(
-            $attribute->getBackendTypeByInput($attribute->getFrontendInput())
-        );
-        $attribute->setSourceModel(
-            $this->productHelper->getAttributeSourceModelByInputType($attribute->getFrontendInput())
-        );
-        $attribute->setBackendModel(
-            $this->productHelper->getAttributeBackendModelByInputType($attribute->getFrontendInput())
-        );
     }
 }

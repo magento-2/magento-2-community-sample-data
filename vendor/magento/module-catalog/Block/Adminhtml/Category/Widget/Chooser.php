@@ -73,7 +73,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
         );
 
         $chooser = $this->getLayout()->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Chooser::class
+            'Magento\Widget\Block\Adminhtml\Widget\Chooser'
         )->setElement(
             $element
         )->setConfig(
@@ -121,7 +121,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
                 }
             ';
         } else {
-            $chooserJsObject = $this->escapeJs($this->getId());
+            $chooserJsObject = $this->getId();
             $js = '
                 function (node, e) {
                     ' .

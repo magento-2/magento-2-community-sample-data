@@ -17,9 +17,9 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\TemporaryTableService;
 
 /**
- * Class DataCategoryUrlRewriteDatabaseMapTest
+ * Tests DataCategoryUrlRewriteDatabaseMap class.
  */
-class DataCategoryUrlRewriteDatabaseMapTest extends \PHPUnit\Framework\TestCase
+class DataCategoryUrlRewriteDatabaseMapTest extends \PHPUnit_Framework_TestCase
 {
     /** @var HashMapPool|\PHPUnit_Framework_MockObject_MockObject */
     private $hashMapPoolMock;
@@ -41,11 +41,17 @@ class DataCategoryUrlRewriteDatabaseMapTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
-        $this->dataCategoryMapMock = $this->createMock(DataProductHashMap::class);
-        $this->dataCategoryUsedInProductsMapMock = $this->createMock(DataCategoryUsedInProductsHashMap::class);
-        $this->temporaryTableServiceMock = $this->createMock(TemporaryTableService::class);
-        $this->connectionMock = $this->createMock(ResourceConnection::class);
+        $this->hashMapPoolMock = $this->getMock(HashMapPool::class, [], [], '', false);
+        $this->dataCategoryMapMock = $this->getMock(DataProductHashMap::class, [], [], '', false);
+        $this->dataCategoryUsedInProductsMapMock = $this->getMock(
+            DataCategoryUsedInProductsHashMap::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->temporaryTableServiceMock = $this->getMock(TemporaryTableService::class, [], [], '', false);
+        $this->connectionMock = $this->getMock(ResourceConnection::class, [], [], '', false);
 
         $this->hashMapPoolMock->expects($this->any())
             ->method('getDataMap')
@@ -74,8 +80,8 @@ class DataCategoryUrlRewriteDatabaseMapTest extends \PHPUnit\Framework\TestCase
             '5' => ['store_id' => 2, 'category_id' => 2],
         ];
 
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $selectMock = $this->createMock(Select::class);
+        $connectionMock = $this->getMock(AdapterInterface::class);
+        $selectMock = $this->getMock(Select::class, [], [], '', false);
 
         $this->connectionMock->expects($this->any())
             ->method('getConnection')

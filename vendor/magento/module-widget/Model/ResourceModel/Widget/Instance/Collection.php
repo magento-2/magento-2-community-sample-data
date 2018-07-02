@@ -4,14 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Widget\Model\ResourceModel\Widget\Instance;
-
 /**
  * Widget Instance Collection
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Widget\Model\ResourceModel\Widget\Instance;
+
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
@@ -29,10 +28,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(
-            \Magento\Widget\Model\Widget\Instance::class,
-            \Magento\Widget\Model\ResourceModel\Widget\Instance::class
-        );
+        $this->_init('Magento\Widget\Model\Widget\Instance', 'Magento\Widget\Model\ResourceModel\Widget\Instance');
     }
 
     /**

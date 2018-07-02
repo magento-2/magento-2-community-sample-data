@@ -8,7 +8,7 @@ namespace Magento\Framework\ObjectManager\Test\Unit\Config\Reader;
 
 use \Magento\Framework\ObjectManager\Config\Reader\DomFactory;
 
-class DomFactoryTest extends \PHPUnit\Framework\TestCase
+class DomFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DomFactory
@@ -27,9 +27,14 @@ class DomFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_object = $this->createMock(\Magento\Framework\ObjectManager\Config\Reader\Dom::class);
-        $this->_objectManager =
-            $this->createPartialMock(\Magento\Framework\ObjectManager\ObjectManager::class, ['create']);
+        $this->_object = $this->getMock('Magento\Framework\ObjectManager\Config\Reader\Dom', [], [], '', false);
+        $this->_objectManager = $this->getMock(
+            '\Magento\Framework\ObjectManager\ObjectManager',
+            ['create'],
+            [],
+            '',
+            false
+        );
         $this->_factory = new DomFactory($this->_objectManager);
     }
 
@@ -37,7 +42,7 @@ class DomFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager->expects($this->once())
             ->method('create')
-            ->with(\Magento\Framework\ObjectManager\Config\Reader\Dom::class)
+            ->with('Magento\Framework\ObjectManager\Config\Reader\Dom')
             ->will($this->returnValue($this->_object));
 
         $this->_factory->create([1]);

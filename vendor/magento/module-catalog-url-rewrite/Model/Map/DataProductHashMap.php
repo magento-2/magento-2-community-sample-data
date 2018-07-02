@@ -9,27 +9,35 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 
 /**
- * Map that holds data for products ids from a category and subcategories
+ * Map that holds data for products ids from a category and subcategories.
  */
 class DataProductHashMap implements HashMapInterface
 {
     /**
+     * Holds data for categories and products.
+     *
      * @var int[]
      */
     private $hashMap = [];
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     * Product collection.
+     *
+     * @var CollectionFactory
      */
     private $collectionFactory;
 
     /**
-     * @var \Magento\CatalogUrlRewrite\Model\Map\HashMapPool
+     * Pool for hash maps.
+     *
+     * @var HashMapPool
      */
     private $hashMapPool;
 
     /**
-     * @var \Magento\Framework\App\ResourceConnection
+     * Resource connection.
+     *
+     * @var ResourceConnection
      */
     private $connection;
 
@@ -49,7 +57,7 @@ class DataProductHashMap implements HashMapInterface
     }
 
     /**
-     * Returns an array of ids of all visible products and assigned to a category and all its subcategories
+     * Returns an array of ids of all visible products and assigned to a category and all its subcategories.
      *
      * @param int $categoryId
      * @return array
@@ -77,6 +85,7 @@ class DataProductHashMap implements HashMapInterface
                 )->group('e.entity_id');
             $this->hashMap[$categoryId] = $productsCollection->getAllIds();
         }
+
         return $this->hashMap[$categoryId];
     }
 
@@ -89,6 +98,7 @@ class DataProductHashMap implements HashMapInterface
         if (isset($categorySpecificData[$key])) {
             return $categorySpecificData[$key];
         }
+
         return [];
     }
 

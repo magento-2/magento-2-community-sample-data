@@ -5,7 +5,7 @@
 
 'use strict';
 
-var themes = require('../tools/files-router').get('themes'),
+var themes = require('./themes'),
     _      = require('underscore');
 
 var themeOptions = {};
@@ -21,8 +21,7 @@ _.each(themes, function(theme, name) {
                     "<%= path.tmp %>/cache/**/*",
                     "<%= combo.autopath(\""+name+"\", path.pub ) %>**/*",
                     "<%= combo.autopath(\""+name+"\", path.tmpLess) %>**/*",
-                    "<%= combo.autopath(\""+name+"\", path.tmpSource) %>**/*",
-                    "<%= path.deployedVersion %>"
+                    "<%= combo.autopath(\""+name+"\", path.tmpSource) %>**/*"
                 ]
             }
         ]
@@ -57,8 +56,7 @@ var cleanOptions = {
                 "dot": true,
                 "src": [
                     "<%= path.pub %>frontend/**/*",
-                    "<%= path.pub %>adminhtml/**/*",
-                    "<%= path.deployedVersion %>"
+                    "<%= path.pub %>adminhtml/**/*"
                 ]
             }
         ]
@@ -75,8 +73,7 @@ var cleanOptions = {
                     "<%= path.pub %>frontend/**/*.less",
                     "<%= path.pub %>frontend/**/*.css",
                     "<%= path.pub %>adminhtml/**/*.less",
-                    "<%= path.pub %>adminhtml/**/*.css",
-                    "<%= path.deployedVersion %>"
+                    "<%= path.pub %>adminhtml/**/*.css"
                 ]
             }
         ]
@@ -105,8 +102,7 @@ var cleanOptions = {
                 "src": [
                     "<%= path.pub %>**/*.js",
                     "<%= path.pub %>**/*.html",
-                    "<%= path.pub %>_requirejs/**/*",
-                    "<%= path.deployedVersion %>"
+                    "<%= path.pub %>_requirejs/**/*"
                 ]
             }
         ]

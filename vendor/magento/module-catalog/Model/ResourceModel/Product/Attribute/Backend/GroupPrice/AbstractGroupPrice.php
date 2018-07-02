@@ -22,21 +22,8 @@ abstract class AbstractGroupPrice extends \Magento\Framework\Model\ResourceModel
      */
     public function loadPriceData($productId, $websiteId = null)
     {
-        $select = $this->getSelect($websiteId);
-        $productIdFieldName = $this->getProductIdFieldName();
-        $select->where("{$productIdFieldName} = ?", $productId);
+        $connection = $this->getConnection();
 
-        $this->_loadPriceDataSelect($select);
-
-        return $this->getConnection()->fetchAll($select);
-    }
-
-    /**
-     * @param int|null $websiteId
-     * @return \Magento\Framework\DB\Select
-     */
-    public function getSelect($websiteId = null)
-    {
         $columns = [
             'price_id' => $this->getIdFieldName(),
             'website_id' => 'website_id',
@@ -47,8 +34,12 @@ abstract class AbstractGroupPrice extends \Magento\Framework\Model\ResourceModel
 
         $columns = $this->_loadPriceDataColumns($columns);
 
-        $select = $this->getConnection()->select()
-            ->from($this->getMainTable(), $columns);
+        $productIdFieldName = $this->getProductIdFieldName();
+        $select = $connection->select()
+            ->from($this->getMainTable(), $columns)
+            ->where("{$productIdFieldName} = ?", $productId);
+
+        $this->_loadPriceDataSelect($select);
 
         if ($websiteId !== null) {
             if ($websiteId == '0') {
@@ -57,7 +48,8 @@ abstract class AbstractGroupPrice extends \Magento\Framework\Model\ResourceModel
                 $select->where('website_id IN(?)', [0, $websiteId]);
             }
         }
-        return $select;
+
+        return $connection->fetchAll($select);
     }
 
     /**

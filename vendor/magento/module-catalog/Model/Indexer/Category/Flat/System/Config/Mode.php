@@ -10,14 +10,10 @@ namespace Magento\Catalog\Model\Indexer\Category\Flat\System\Config;
  */
 class Mode extends \Magento\Framework\App\Config\Value
 {
-    /**
-     * @var \Magento\Indexer\Model\Indexer\State
-     */
+    /** @var \Magento\Indexer\Model\Indexer\State */
     protected $indexerState;
 
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**

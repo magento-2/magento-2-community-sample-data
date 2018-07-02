@@ -10,7 +10,7 @@ use Magento\Setup\Console\Command\MaintenanceDisableCommand;
 use Magento\Setup\Validator\IpValidator;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class MaintenanceDisableCommandTest extends \PHPUnit\Framework\TestCase
+class MaintenanceDisableCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\MaintenanceMode|\PHPUnit_Framework_MockObject_MockObject
@@ -29,8 +29,8 @@ class MaintenanceDisableCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
-        $this->ipValidator = $this->createMock(\Magento\Setup\Validator\IpValidator::class);
+        $this->maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
+        $this->ipValidator = $this->getMock('Magento\Setup\Validator\IpValidator', [], [], '', false);
         $this->command = new MaintenanceDisableCommand($this->maintenanceMode, $this->ipValidator);
     }
 
@@ -80,38 +80,6 @@ class MaintenanceDisableCommandTest extends \PHPUnit\Framework\TestCase
                 ['--ip' => ['127.0']],
                 ['Invalid IP 127.0'],
                 'Invalid IP 127.0' . PHP_EOL
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider isSetAddressInfoDataProvider
-     * @param array $ip
-     * @param bool $expected
-     */
-    public function testIsSetAddressInfo($ip, $expected)
-    {
-        $this->maintenanceMode
-            ->expects($this->any())
-            ->method('getAddressInfo')
-            ->willReturn($ip);
-
-        $this->assertEquals($expected, $this->command->isSetAddressInfo());
-    }
-
-    /**
-     * return array
-     */
-    public function isSetAddressInfoDataProvider()
-    {
-        return [
-            [
-                'ip' => ['127.0.0.1', '127.0.0.2'],
-                'expected' => true
-            ],
-            [
-                'ip' => [],
-                'expected' => false
             ],
         ];
     }

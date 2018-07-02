@@ -12,6 +12,7 @@ namespace Magento\Setup\Module\Di\Code\Reader;
  */
 interface ClassesScannerInterface
 {
+
     /**
      * Retrieves list of classes for given path
      *

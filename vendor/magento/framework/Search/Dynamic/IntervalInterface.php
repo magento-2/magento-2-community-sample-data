@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\Search\Dynamic;
 
-/**
- * @api
- */
 interface IntervalInterface
 {
     /**

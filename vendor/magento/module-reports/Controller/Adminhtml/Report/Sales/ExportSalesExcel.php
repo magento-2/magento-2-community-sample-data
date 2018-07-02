@@ -19,7 +19,7 @@ class ExportSalesExcel extends \Magento\Reports\Controller\Adminhtml\Report\Sale
     public function execute()
     {
         $fileName = 'sales.xml';
-        $grid = $this->_view->getLayout()->createBlock(\Magento\Reports\Block\Adminhtml\Sales\Sales\Grid::class);
+        $grid = $this->_view->getLayout()->createBlock('Magento\Reports\Block\Adminhtml\Sales\Sales\Grid');
         $this->_initReportAction($grid);
         return $this->_fileFactory->create($fileName, $grid->getExcelFile($fileName), DirectoryList::VAR_DIR);
     }

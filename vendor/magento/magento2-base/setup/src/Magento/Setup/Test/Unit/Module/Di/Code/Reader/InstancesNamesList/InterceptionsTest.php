@@ -12,7 +12,7 @@ use Magento\Setup\Module\Di\Compiler\Log\Log;
  *
  * @package Magento\Setup\Module\Di\Code\Reader\Decorator
  */
-class InterceptionsTest extends \PHPUnit\Framework\TestCase
+class InterceptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Reader\ClassesScanner | \PHPUnit_Framework_MockObject_MockObject
@@ -39,27 +39,24 @@ class InterceptionsTest extends \PHPUnit\Framework\TestCase
      */
     private $logMock;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->logMock = $this->getMockBuilder(\Magento\Setup\Module\Di\Compiler\Log\Log::class)
+        $this->logMock = $this->getMockBuilder('Magento\Setup\Module\Di\Compiler\Log\Log')
             ->disableOriginalConstructor()
             ->setMethods(['add', 'report'])
             ->getMock();
 
-        $this->classesScanner = $this->getMockBuilder(\Magento\Setup\Module\Di\Code\Reader\ClassesScanner::class)
+        $this->classesScanner = $this->getMockBuilder('\Magento\Setup\Module\Di\Code\Reader\ClassesScanner')
             ->disableOriginalConstructor()
             ->setMethods(['getList'])
             ->getMock();
 
-        $this->classReaderMock = $this->getMockBuilder(\Magento\Framework\Code\Reader\ClassReader::class)
+        $this->classReaderMock = $this->getMockBuilder('\Magento\Framework\Code\Reader\ClassReader')
             ->disableOriginalConstructor()
             ->setMethods(['getParents'])
             ->getMock();
 
-        $this->validatorMock = $this->getMockBuilder(\Magento\Framework\Code\Validator::class)
+        $this->validatorMock = $this->getMockBuilder('\Magento\Framework\Code\Validator')
             ->disableOriginalConstructor()
             ->setMethods(['validate', 'add'])
             ->getMock();
@@ -69,6 +66,7 @@ class InterceptionsTest extends \PHPUnit\Framework\TestCase
             $this->classReaderMock,
             $this->validatorMock,
             new \Magento\Framework\Code\Validator\ConstructorIntegrity(),
+            new \Magento\Framework\Code\Validator\ContextAggregation(),
             $this->logMock
         );
     }
@@ -99,7 +97,7 @@ class InterceptionsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetListNoValidation()
     {
-        $path = '/generated/code';
+        $path = '/var/generation';
 
         $classes = ['NameSpace1\ClassName1', 'NameSpace1\ClassName2'];
 

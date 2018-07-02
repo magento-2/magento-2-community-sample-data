@@ -8,7 +8,7 @@ namespace Magento\Framework\Setup\Test\Unit;
 use \Magento\Framework\Setup\FilePermissions;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class FilePermissionsTest extends \PHPUnit\Framework\TestCase
+class FilePermissionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Filesystem\Directory\Write
@@ -32,14 +32,14 @@ class FilePermissionsTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->directoryWriteMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
-        $this->filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->directoryWriteMock = $this->getMock('Magento\Framework\Filesystem\Directory\Write', [], [], '', false);
+        $this->filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
 
         $this->filesystemMock
             ->expects($this->any())
             ->method('getDirectoryWrite')
             ->will($this->returnValue($this->directoryWriteMock));
-        $this->directoryListMock = $this->createMock(\Magento\Framework\App\Filesystem\DirectoryList::class);
+        $this->directoryListMock = $this->getMock('Magento\Framework\App\Filesystem\DirectoryList', [], [], '', false);
 
         $this->filePermissions = new FilePermissions(
             $this->filesystemMock,
@@ -56,7 +56,6 @@ class FilePermissionsTest extends \PHPUnit\Framework\TestCase
             BP . '/var',
             BP . '/pub/media',
             BP . '/pub/static',
-            BP . '/generated'
         ];
 
         $this->assertEquals($expected, $this->filePermissions->getInstallationWritableDirectories());
@@ -146,7 +145,6 @@ class FilePermissionsTest extends \PHPUnit\Framework\TestCase
             BP . '/var',
             BP . '/pub/media',
             BP . '/pub/static',
-            BP . '/generated'
         ];
 
         $this->assertEquals(
@@ -158,18 +156,6 @@ class FilePermissionsTest extends \PHPUnit\Framework\TestCase
             $expected,
             array_values($this->filePermissions->getMissingWritablePathsForInstallation())
         );
-    }
-
-    public function testGetMissingWritableDirectoriesForDbUpgrade()
-    {
-        $directoryMethods = ['isExist', 'isDirectory', 'isReadable', 'isWritable'];
-        foreach ($directoryMethods as $method) {
-            $this->directoryWriteMock->expects($this->exactly(2))
-                ->method($method)
-                ->willReturn(true);
-        }
-
-        $this->assertEmpty($this->filePermissions->getMissingWritableDirectoriesForDbUpgrade());
     }
 
     /**
@@ -233,11 +219,6 @@ class FilePermissionsTest extends \PHPUnit\Framework\TestCase
             ->method('getPath')
             ->with(DirectoryList::STATIC_VIEW)
             ->will($this->returnValue(BP . '/pub/static'));
-        $this->directoryListMock
-            ->expects($this->at(4))
-            ->method('getPath')
-            ->with(DirectoryList::GENERATED)
-            ->will($this->returnValue(BP . '/generated'));
     }
 
     public function setUpDirectoryWriteInstallation()

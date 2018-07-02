@@ -13,10 +13,6 @@ namespace Magento\Eav\Block\Adminhtml\Attribute\Edit\Options;
 
 use Magento\Store\Model\ResourceModel\Store\Collection;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Options extends \Magento\Backend\Block\Template
 {
     /**
@@ -88,9 +84,8 @@ class Options extends \Magento\Backend\Block\Template
 
     /**
      * Returns stores sorted by Sort Order
-     *
+     * 
      * @return array
-     * @since 100.1.0
      */
     public function getStoresSortedBySortOrder()
     {

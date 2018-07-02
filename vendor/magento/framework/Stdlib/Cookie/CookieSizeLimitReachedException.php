@@ -13,8 +13,6 @@ use Magento\Framework\Exception\LocalizedException;
  *
  * Limits can include the amount of data stored in an individual cookie as well as the number of cookies
  * set for the domain.
- *
- * @api
  */
 class CookieSizeLimitReachedException extends LocalizedException
 {

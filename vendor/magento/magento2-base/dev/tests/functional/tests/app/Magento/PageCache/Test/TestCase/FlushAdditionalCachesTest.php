@@ -22,7 +22,7 @@ class FlushAdditionalCachesTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

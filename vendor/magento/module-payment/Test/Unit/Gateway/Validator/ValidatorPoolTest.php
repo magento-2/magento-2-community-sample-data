@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Gateway\Validator;
 use Magento\Payment\Gateway\Validator\ValidatorInterface;
 use Magento\Payment\Gateway\Validator\ValidatorPool;
 
-class ValidatorPoolTest extends \PHPUnit\Framework\TestCase
+class ValidatorPoolTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
@@ -50,7 +50,7 @@ class ValidatorPoolTest extends \PHPUnit\Framework\TestCase
 
     public function testGetException()
     {
-        $this->expectException(\Magento\Framework\Exception\NotFoundException::class);
+        $this->setExpectedException(\Magento\Framework\Exception\NotFoundException::class);
 
         $tMapFactory = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMapFactory::class)
             ->disableOriginalConstructor()

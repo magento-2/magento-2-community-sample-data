@@ -30,12 +30,12 @@ class Info extends Block
     protected $group = '//th[text()="Customer Group"]/following-sibling::*';
 
     /**
-     * Item Options
+     * Item options.
      *
      * @var string
      */
     protected $itemOptions = '//div[@class=\'product-sku-block\' and contains(normalize-space(.), \'{SKU}\')]'
-    . '/following-sibling::*[@class="item-options"]';
+        . '/following-sibling::*[@class="item-options"]';
 
     /**
      * Get email from the data inside block
@@ -58,9 +58,9 @@ class Info extends Block
     }
 
     /**
-     * Get Product options
+     * Get Product options.
      *
-     * @param int $sku
+     * @param string $sku
      * @return array
      */
     public function getProductOptions($sku)
@@ -68,7 +68,7 @@ class Info extends Block
         $selector = str_replace('{SKU}', $sku, $this->itemOptions);
         $productOption = $this->_rootElement->find($selector, Locator::SELECTOR_XPATH);
         $result = [];
-        if ($productOption->isPresent()) {
+        if ($productOption->isVisible()) {
             $keyItem = $productOption->getElements('dt');
             $valueItem = $productOption->getElements('dd');
             foreach ($keyItem as $key => $item) {
@@ -78,6 +78,7 @@ class Info extends Block
                 }
             }
         }
+
         return $result;
     }
 }

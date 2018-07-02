@@ -15,8 +15,6 @@ abstract class AbstractStockqty extends \Magento\Framework\View\Element\Template
 {
     /**
      * Threshold qty config path
-     * @deprecated
-     * @see \Magento\CatalogInventory\Model\Configuration::XML_PATH_STOCK_THRESHOLD_QTY
      */
     const XML_PATH_STOCK_THRESHOLD_QTY = 'cataloginventory/options/stock_threshold_qty';
 

@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoAppArea adminhtml
  */
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Block\Adminhtml\Integration\Grid
@@ -24,7 +24,7 @@ class GridTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->gridBlock = Bootstrap::getObjectManager()
-            ->create(\Magento\Integration\Block\Adminhtml\Integration\Grid::class);
+            ->create('Magento\Integration\Block\Adminhtml\Integration\Grid');
     }
 
     public function testGetRowClickCallback()

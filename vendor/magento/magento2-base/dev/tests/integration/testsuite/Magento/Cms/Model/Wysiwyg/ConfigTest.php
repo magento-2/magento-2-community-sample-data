@@ -8,7 +8,7 @@ namespace Magento\Cms\Model\Wysiwyg;
 /**
  * @magentoAppArea adminhtml
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Model\Wysiwyg\Config
@@ -18,12 +18,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Config\ScopeInterface::class
+            'Magento\Framework\Config\ScopeInterface'
         )->setCurrentScope(
             \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE
         );
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Cms\Model\Wysiwyg\Config::class
+            'Magento\Cms\Model\Wysiwyg\Config'
         );
     }
 
@@ -33,7 +33,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testGetConfig()
     {
         $config = $this->_model->getConfig();
-        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $config);
+        $this->assertInstanceOf('Magento\Framework\DataObject', $config);
     }
 
     /**

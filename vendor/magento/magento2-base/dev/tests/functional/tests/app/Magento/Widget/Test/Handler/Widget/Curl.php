@@ -27,8 +27,8 @@ class Curl extends AbstractCurl
     protected $mappingData = [
         'code' => [
             'CMS Page Link' => 'cms_page_link',
-            'Recently Viewed Products' => 'recently_viewed',
             'Catalog New Products List' => 'new_products',
+            'Recently Viewed Products' => 'recently_viewed',
         ],
         'block' => [
             'Main Content Area' => 'content',

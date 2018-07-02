@@ -92,7 +92,7 @@ abstract class AbstractContainer extends ArrayObject
      */
     public function __construct()
     {
-        parent::__construct([], parent::ARRAY_AS_PROPS);
+        parent::__construct(array(), parent::ARRAY_AS_PROPS);
     }
 
     /**
@@ -113,14 +113,9 @@ abstract class AbstractContainer extends ArrayObject
      */
     public function toString($indent = null)
     {
-        // If we don't have items - do not show prefix and postfix
-        if (! count($this)) {
-            return '';
-        }
-
-        $indent = ($indent === null)
-            ? $this->getIndent()
-            : $this->getWhitespace($indent);
+        $indent = ($indent !== null)
+            ? $this->getWhitespace($indent)
+            : $this->getIndent();
 
         $items  = $this->getArrayCopy();
         $return = $indent
@@ -174,12 +169,12 @@ abstract class AbstractContainer extends ArrayObject
                 if (null !== $key) {
                     $this[$key] = $data;
                 } else {
-                    $this->exchangeArray([$data]);
+                    $this->exchangeArray(array($data));
                 }
                 break;
             case self::PREPEND:
                 if (null !== $key) {
-                    $array  = [$key => $data];
+                    $array  = array($key => $data);
                     $values = $this->getArrayCopy();
                     $final  = $array + $values;
                     $this->exchangeArray($final);
@@ -256,7 +251,7 @@ abstract class AbstractContainer extends ArrayObject
      */
     public function set($value)
     {
-        $this->exchangeArray([$value]);
+        $this->exchangeArray(array($value));
 
         return $this;
     }
@@ -296,7 +291,7 @@ abstract class AbstractContainer extends ArrayObject
     public function nextIndex()
     {
         $keys = $this->getKeys();
-        if (empty($keys)) {
+        if (0 == count($keys)) {
             return 0;
         }
 

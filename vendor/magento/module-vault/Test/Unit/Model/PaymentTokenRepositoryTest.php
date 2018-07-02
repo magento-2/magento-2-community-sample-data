@@ -13,20 +13,14 @@ use Magento\Vault\Api\Data\PaymentTokenSearchResultsInterfaceFactory;
 use Magento\Vault\Model\PaymentToken;
 use Magento\Vault\Model\PaymentTokenFactory;
 use Magento\Vault\Model\PaymentTokenRepository;
-use Magento\Vault\Model\ResourceModel\PaymentToken as PaymentTokenResourceModel;
 use Magento\Vault\Model\ResourceModel\PaymentToken\Collection;
 use Magento\Vault\Model\ResourceModel\PaymentToken\CollectionFactory;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Vault\Model\ResourceModel\PaymentToken as PaymentTokenResourceModel;
 
-/**
- * Class PaymentTokenRepositoryTest
- * @package Magento\Vault\Test\Unit\Model
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
+class PaymentTokenRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     const PUBLIC_HASH = 'hash';
-
     /**
      * @var \Magento\Vault\Model\PaymentTokenRepository|MockObject resourceModelMock
      */
@@ -83,11 +77,6 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
     protected $collectionMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $collectionProcessor;
-
-    /**
      * @return void
      */
     protected function setUp()
@@ -134,9 +123,7 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->collectionProcessor = $this->createMock(
-            \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface::class
-        );
+
         $this->repositoryModel = $this->getMockBuilder(PaymentTokenRepository::class)
             ->setConstructorArgs([
                 'resourceModel' => $this->resourceModelMock,
@@ -144,8 +131,7 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
                 'filterBuilder' => $this->filterBuilderMock,
                 'searchCriteriaBuilder' => $this->searchCriteriaBuilderMock,
                 'searchResultsFactory' => $this->searchResultsFactoryMock,
-                'collectionFactory' => $this->collectionFactoryMock,
-                'collectionProcessor' => $this->collectionProcessor
+                'collectionFactory' => $this->collectionFactoryMock
             ])
             ->setMethods(null)
             ->getMock();
@@ -163,14 +149,17 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($this->collectionMock);
 
+        $this->searchCriteriaMock->expects($this->once())
+            ->method('getFilterGroups')
+            ->willReturn([]);
+
         $this->searchResultsFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->searchResults);
-        $this->collectionProcessor->expects($this->once())
-            ->method('process')
-            ->with($this->searchCriteriaMock, $this->collectionMock);
+
         $list = $this->repositoryModel->getList($this->searchCriteriaMock);
         $this->assertSame($this->searchResults, $list);
+
         $this->assertSame(
             $this->paymentTokenMock,
             $list->getItems()[0]
@@ -207,6 +196,7 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->paymentTokenMock->setPublicHash('');
         $this->assertFalse($this->repositoryModel->delete($this->paymentTokenMock));
         $this->assertFalse($this->paymentTokenMock->getIsActive());
+
     }
 
     /**

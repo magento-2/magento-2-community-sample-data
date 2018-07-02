@@ -10,7 +10,6 @@
 namespace Zend\Mvc\Router;
 
 use Traversable;
-use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\RequestInterface as Request;
 
@@ -38,7 +37,7 @@ class SimpleRouteStack implements RouteStackInterface
      *
      * @var array
      */
-    protected $defaultParams = [];
+    protected $defaultParams = array();
 
     /**
      * Create a new simple route stack.
@@ -50,7 +49,7 @@ class SimpleRouteStack implements RouteStackInterface
         $this->routes = new PriorityList();
 
         if (null === $routePluginManager) {
-            $routePluginManager = new RoutePluginManager(new ServiceManager());
+            $routePluginManager = new RoutePluginManager();
         }
 
         $this->routePluginManager = $routePluginManager;
@@ -66,7 +65,7 @@ class SimpleRouteStack implements RouteStackInterface
      * @return SimpleRouteStack
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -262,18 +261,14 @@ class SimpleRouteStack implements RouteStackInterface
     {
         if ($specs instanceof Traversable) {
             $specs = ArrayUtils::iteratorToArray($specs);
-        }
-
-        if (! is_array($specs)) {
+        } elseif (!is_array($specs)) {
             throw new Exception\InvalidArgumentException('Route definition must be an array or Traversable object');
         }
 
-        if (! isset($specs['type'])) {
+        if (!isset($specs['type'])) {
             throw new Exception\InvalidArgumentException('Missing "type" option');
-        }
-
-        if (! isset($specs['options'])) {
-            $specs['options'] = [];
+        } elseif (!isset($specs['options'])) {
+            $specs['options'] = array();
         }
 
         $route = $this->getRoutePluginManager()->get($specs['type'], $specs['options']);
@@ -321,7 +316,7 @@ class SimpleRouteStack implements RouteStackInterface
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         if (!isset($options['name'])) {
             throw new Exception\InvalidArgumentException('Missing "name" option');

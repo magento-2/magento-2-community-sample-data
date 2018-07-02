@@ -43,11 +43,23 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $existingOrder = $this->objectManager->create(\Magento\Sales\Model\Order::class)
             ->loadByIncrementId('100000001');
 
+        $serviceInfo = [
+            'rest' => [
+                'resourcePath' => '/V1/order/' . $existingOrder->getId() . '/ship',
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
+            ],
+            'soap' => [
+                'service' => self::SERVICE_READ_NAME,
+                'serviceVersion' => self::SERVICE_VERSION,
+                'operation' => self::SERVICE_READ_NAME . 'execute',
+            ],
+        ];
+
         $requestData = [
             'orderId' => $existingOrder->getId(),
         ];
 
-        $shipmentId = (int)$this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
+        $shipmentId = (int)$this->_webApiCall($serviceInfo, $requestData);
         $this->assertNotEmpty($shipmentId);
 
         try {
@@ -70,6 +82,7 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
             (int)$orderedQty,
             'Failed asserting that quantity of ordered and shipped items is equal'
         );
+
         $this->assertEquals(
             $productsQuantity,
             count($shipment->getItems()),
@@ -85,6 +98,18 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         /** @var \Magento\Sales\Model\Order $existingOrder */
         $existingOrder = $this->objectManager->create(\Magento\Sales\Model\Order::class)
             ->loadByIncrementId('100000001');
+
+        $serviceInfo = [
+            'rest' => [
+                'resourcePath' => '/V1/order/' . $existingOrder->getId() . '/ship',
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
+            ],
+            'soap' => [
+                'service' => self::SERVICE_READ_NAME,
+                'serviceVersion' => self::SERVICE_VERSION,
+                'operation' => self::SERVICE_READ_NAME . 'execute',
+            ],
+        ];
 
         $requestData = [
             'orderId' => $existingOrder->getId(),
@@ -110,7 +135,7 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
             ];
         }
 
-        $result = $this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
+        $result = $this->_webApiCall($serviceInfo, $requestData);
 
         $this->assertNotEmpty($result);
 
@@ -129,86 +154,5 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
             $updatedOrder->getStatus(),
             'Failed asserting that Order status was changed'
         );
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Bundle/_files/order_with_bundle_shipped_separately.php
-     */
-    public function testPartialShipOrderWithBundleShippedSeparately()
-    {
-        /** @var \Magento\Sales\Model\Order $existingOrder */
-        $existingOrder = $this->objectManager->create(\Magento\Sales\Model\Order::class)
-            ->loadByIncrementId('100000001');
-
-        $requestData = [
-            'orderId' => $existingOrder->getId(),
-            'items' => [],
-            'comment' => [
-                'comment' => 'Test Comment',
-                'is_visible_on_front' => 1,
-            ],
-            'tracks' => [
-                [
-                    'track_number' => 'TEST_TRACK_0001',
-                    'title' => 'Simple shipment track',
-                    'carrier_code' => 'UPS'
-                ]
-            ]
-        ];
-
-        $shippedItemId = null;
-        foreach ($existingOrder->getAllItems() as $item) {
-            if ($item->getProductType() == 'simple') {
-                $requestData['items'][] = [
-                    'order_item_id' => $item->getItemId(),
-                    'qty' => $item->getQtyOrdered(),
-                ];
-                $shippedItemId = $item->getItemId();
-                break;
-            }
-        }
-
-        $shipmentId = $this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
-        $this->assertNotEmpty($shipmentId);
-
-        try {
-            $shipment = $this->shipmentRepository->get($shipmentId);
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            $this->fail('Failed asserting that Shipment was created');
-        }
-
-        $this->assertEquals(1, $shipment->getTotalQty());
-
-        /** @var \Magento\Sales\Model\Order $existingOrder */
-        $existingOrder = $this->objectManager->create(\Magento\Sales\Model\Order::class)
-            ->loadByIncrementId('100000001');
-
-        foreach ($existingOrder->getAllItems() as $item) {
-            if ($item->getItemId() == $shippedItemId) {
-                $this->assertEquals(1, $item->getQtyShipped());
-                continue;
-            }
-            $this->assertEquals(0, $item->getQtyShipped());
-        }
-    }
-
-    /**
-     * @param \Magento\Sales\Model\Order $order
-     * @return array
-     */
-    private function getServiceInfo(\Magento\Sales\Model\Order $order)
-    {
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => '/V1/order/' . $order->getId() . '/ship',
-                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
-            ],
-            'soap' => [
-                'service' => self::SERVICE_READ_NAME,
-                'serviceVersion' => self::SERVICE_VERSION,
-                'operation' => self::SERVICE_READ_NAME . 'execute',
-            ],
-        ];
-        return $serviceInfo;
     }
 }

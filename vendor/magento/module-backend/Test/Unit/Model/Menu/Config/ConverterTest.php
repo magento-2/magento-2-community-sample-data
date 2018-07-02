@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Test\Unit\Model\Menu\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Menu\Config\Converter

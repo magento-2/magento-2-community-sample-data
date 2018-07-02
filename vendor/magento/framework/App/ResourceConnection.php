@@ -1,5 +1,7 @@
 <?php
 /**
+ * Resources and connections registry and factory
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -10,11 +12,6 @@ use Magento\Framework\App\ResourceConnection\ConfigInterface as ResourceConfigIn
 use Magento\Framework\Model\ResourceModel\Type\Db\ConnectionFactoryInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
-/**
- * Application provides ability to configure multiple connections to persistent storage.
- * This class provides access to all these connections.
- * @api
- */
 class ResourceConnection
 {
     const AUTO_UPDATE_ONCE = 0;
@@ -98,7 +95,6 @@ class ResourceConnection
     /**
      * @param string $resourceName
      * @return void
-     * @since 100.1.3
      */
     public function closeConnection($resourceName = self::DEFAULT_CONNECTION)
     {
@@ -183,7 +179,6 @@ class ResourceConnection
      *
      * @param string $tableName
      * @return string
-     * @since 100.1.0
      */
     public function getTablePlaceholder($tableName)
     {

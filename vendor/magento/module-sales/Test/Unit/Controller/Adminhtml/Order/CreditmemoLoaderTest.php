@@ -5,12 +5,11 @@
  */
 namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order;
 
+
 /**
  * Class CreditmemoLoaderTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
+class CreditmemoLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader
@@ -70,15 +69,15 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $data = [];
-        $this->creditmemoRepositoryMock = $this->getMockBuilder(\Magento\Sales\Api\CreditmemoRepositoryInterface::class)
+        $this->creditmemoRepositoryMock = $this->getMockBuilder('Magento\Sales\Api\CreditmemoRepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->creditmemoFactoryMock = $this->createMock(\Magento\Sales\Model\Order\CreditmemoFactory::class);
-        $this->orderFactoryMock = $this->getMockBuilder(\Magento\Sales\Model\OrderFactory::class)
+        $this->creditmemoFactoryMock = $this->getMock('Magento\Sales\Model\Order\CreditmemoFactory', [], [], '', false);
+        $this->orderFactoryMock = $this->getMockBuilder('Magento\Sales\Model\OrderFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->invoiceRepositoryMock = $this->getMockBuilder(\Magento\Sales\Api\InvoiceRepositoryInterface::class)
+        $this->invoiceRepositoryMock = $this->getMockBuilder('Magento\Sales\Api\InvoiceRepositoryInterface')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMockForAbstractClass();
@@ -86,24 +85,24 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
+        $this->sessionMock = $this->getMockBuilder('Magento\Backend\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\Manager::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\Manager')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->helperMock = $this->getMockBuilder(\Magento\CatalogInventory\Helper\Data::class)
+        $this->helperMock = $this->getMockBuilder('Magento\CatalogInventory\Helper\Data')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->stockConfiguration = $this->getMockBuilder(\Magento\CatalogInventory\Model\Configuration::class)
+        $this->stockConfiguration = $this->getMockBuilder('Magento\CatalogInventory\Model\Configuration')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -128,7 +127,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->loader->setOrderId(1);
         $this->loader->setCreditmemo('test');
 
-        $creditmemoMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo::class)
+        $creditmemoMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -136,7 +135,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturn($creditmemoMock);
 
-        $this->assertInstanceOf(\Magento\Sales\Model\Order\Creditmemo::class, $this->loader->load());
+        $this->assertInstanceOf('Magento\Sales\Model\Order\Creditmemo', $this->loader->load());
     }
 
     public function testLoadCannotCreditmemo()
@@ -148,7 +147,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->loader->setCreditmemo('test');
         $this->loader->setInvoiceId($invoiceId);
 
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -164,7 +163,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->orderFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($orderMock);
-        $invoiceMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice::class)
+        $invoiceMock = $this->getMockBuilder('Magento\Sales\Model\Order\Invoice')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -193,7 +192,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->loader->setCreditmemo($data);
         $this->loader->setInvoiceId($invoiceId);
 
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -209,7 +208,7 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->orderFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($orderMock);
-        $invoiceMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice::class)
+        $invoiceMock = $this->getMockBuilder('Magento\Sales\Model\Order\Invoice')
             ->disableOriginalConstructor()
             ->getMock();
         $invoiceMock->expects($this->any())
@@ -221,16 +220,16 @@ class CreditmemoLoaderTest extends \PHPUnit\Framework\TestCase
         $this->invoiceRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($invoiceMock);
-        $creditmemoMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo::class)
+        $creditmemoMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $orderItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
+        $orderItemMock = $this->getMockBuilder('Magento\Sales\Model\Order\Item')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $creditmemoItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo\Item::class)
+        $creditmemoItemMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo\Item')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();

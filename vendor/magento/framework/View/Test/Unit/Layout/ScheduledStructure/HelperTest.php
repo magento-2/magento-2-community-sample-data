@@ -13,7 +13,7 @@ use Magento\Framework\App\State;
  * Class HelperTest
  * @covers \Magento\Framework\View\Layout\ScheduledStructure\Helper
  */
-class HelperTest extends \PHPUnit\Framework\TestCase
+class HelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Layout\ScheduledStructure|\PHPUnit_Framework_MockObject_MockObject
@@ -45,18 +45,18 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->scheduledStructureMock = $this->getMockBuilder(\Magento\Framework\View\Layout\ScheduledStructure::class)
+        $this->scheduledStructureMock = $this->getMockBuilder('Magento\Framework\View\Layout\ScheduledStructure')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataStructureMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Data\Structure::class)
+        $this->dataStructureMock = $this->getMockBuilder('Magento\Framework\View\Layout\Data\Structure')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $this->stateMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->loggerMock = $this->getMock('Psr\Log\LoggerInterface');
+        $this->stateMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
 
         $helperObjectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->helper = $helperObjectManager->getObject(
-            \Magento\Framework\View\Layout\ScheduledStructure\Helper::class,
+            'Magento\Framework\View\Layout\ScheduledStructure\Helper',
             [
                 'logger' => $this->loggerMock,
                 'state' => $this->stateMock

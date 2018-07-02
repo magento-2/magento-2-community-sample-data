@@ -9,7 +9,6 @@ namespace Magento\Catalog\Api;
 /**
  * Interface Product links handling interface
  * @api
- * @since 100.0.2
  */
 interface ProductLinkRepositoryInterface
 {
@@ -18,7 +17,6 @@ interface ProductLinkRepositoryInterface
      *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
      * @return \Magento\Catalog\Api\Data\ProductLinkInterface[]
-     * @since 101.0.0
      */
     public function getList(\Magento\Catalog\Api\Data\ProductInterface $product);
 

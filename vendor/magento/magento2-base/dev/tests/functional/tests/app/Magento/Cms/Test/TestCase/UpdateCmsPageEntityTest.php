@@ -24,14 +24,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click 'Save' CMS Page.
  * 6. Perform asserts.
  *
- * @group CMS_Content
+ * @group CMS_Content_(PS)
  * @ZephyrId MAGETWO-25186
  */
 class UpdateCmsPageEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

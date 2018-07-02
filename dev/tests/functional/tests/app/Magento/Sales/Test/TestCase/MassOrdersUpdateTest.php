@@ -6,10 +6,10 @@
 
 namespace Magento\Sales\Test\TestCase;
 
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
 use Magento\Sales\Test\Fixture\OrderInjectable;
 use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
+use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Precondition:
@@ -22,13 +22,14 @@ use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
  * 4. Submit.
  * 5. Perform Asserts.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-27897
  */
 class MassOrdersUpdateTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -111,18 +112,12 @@ class MassOrdersUpdateTest extends Injectable
      */
     protected function processSteps(OrderInjectable $order, $steps)
     {
-        $products = $order->getEntityId()['products'];
-        $cart['data']['items'] = ['products' => $products];
-        $cart = $this->fixtureFactory->createByCode('cart', $cart);
         $steps = array_diff(explode(',', $steps), ['-']);
         foreach ($steps as $step) {
             $action = str_replace(' ', '', ucwords($step));
             $methodAction = (($action != 'OnHold') ? 'Create' : '') . $action . 'Step';
             $path = 'Magento\Sales\Test\TestStep';
-            $processStep = $this->objectManager->create(
-                $path . '\\' . $methodAction,
-                ['order' => $order, 'cart' => $cart]
-            );
+            $processStep = $this->objectManager->create($path . '\\' . $methodAction, ['order' => $order]);
             $processStep->run();
         }
     }

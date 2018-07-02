@@ -8,6 +8,8 @@ namespace Magento\Newsletter\Model;
 /**
  * Template model
  *
+ * @method \Magento\Newsletter\Model\ResourceModel\Template _getResource()
+ * @method \Magento\Newsletter\Model\ResourceModel\Template getResource()
  * @method string getTemplateCode()
  * @method \Magento\Newsletter\Model\Template setTemplateCode(string $value)
  * @method \Magento\Newsletter\Model\Template setTemplateText(string $value)
@@ -31,9 +33,6 @@ namespace Magento\Newsletter\Model;
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Template extends \Magento\Email\Model\AbstractTemplate
 {
@@ -128,7 +127,7 @@ class Template extends \Magento\Email\Model\AbstractTemplate
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Newsletter\Model\ResourceModel\Template::class);
+        $this->_init('Magento\Newsletter\Model\ResourceModel\Template');
     }
 
     /**
@@ -175,8 +174,7 @@ class Template extends \Magento\Email\Model\AbstractTemplate
     public function beforeSave()
     {
         $this->validate();
-        parent::beforeSave();
-        return $this;
+        return parent::beforeSave();
     }
 
     /**
@@ -234,7 +232,7 @@ class Template extends \Magento\Email\Model\AbstractTemplate
     }
 
     /**
-     * Check if template can be added to newsletter queue
+     * Check if template can be added to newsletter queue.
      *
      * @return boolean
      */

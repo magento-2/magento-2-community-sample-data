@@ -8,8 +8,7 @@ namespace Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option;
 /**
  * Bundle option checkbox type renderer
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Checkbox extends \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option
 {

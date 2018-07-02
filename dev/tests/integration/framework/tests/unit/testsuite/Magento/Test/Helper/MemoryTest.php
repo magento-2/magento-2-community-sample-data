@@ -5,7 +5,7 @@
  */
 namespace Magento\Test\Helper;
 
-class MemoryTest extends \PHPUnit\Framework\TestCase
+class MemoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -14,7 +14,7 @@ class MemoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_shell = $this->createPartialMock(\Magento\Framework\Shell::class, ['execute']);
+        $this->_shell = $this->getMock('Magento\Framework\Shell', ['execute'], [], '', false);
     }
 
     public function testGetRealMemoryUsageUnix()

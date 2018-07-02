@@ -6,7 +6,6 @@
 namespace Magento\Setup\Module\Di\Code\Reader\Decorator;
 
 use Magento\Setup\Module\Di\Compiler\Log\Log;
-use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Class Interceptions
@@ -40,6 +39,7 @@ class Interceptions implements \Magento\Setup\Module\Di\Code\Reader\ClassesScann
      * @param \Magento\Framework\Code\Reader\ClassReader $classReader
      * @param \Magento\Framework\Code\Validator $validator
      * @param \Magento\Framework\Code\Validator\ConstructorIntegrity $constructorIntegrityValidator
+     * @param \Magento\Framework\Code\Validator\ContextAggregation $contextAggregationValidator
      * @param Log $log
      */
     public function __construct(
@@ -47,6 +47,7 @@ class Interceptions implements \Magento\Setup\Module\Di\Code\Reader\ClassesScann
         \Magento\Framework\Code\Reader\ClassReader $classReader,
         \Magento\Framework\Code\Validator $validator,
         \Magento\Framework\Code\Validator\ConstructorIntegrity $constructorIntegrityValidator,
+        \Magento\Framework\Code\Validator\ContextAggregation $contextAggregationValidator,
         Log $log
     ) {
         $this->classReader = $classReader;
@@ -55,6 +56,7 @@ class Interceptions implements \Magento\Setup\Module\Di\Code\Reader\ClassesScann
         $this->log = $log;
 
         $this->validator->add($constructorIntegrityValidator);
+        $this->validator->add($contextAggregationValidator);
     }
 
     /**
@@ -69,9 +71,7 @@ class Interceptions implements \Magento\Setup\Module\Di\Code\Reader\ClassesScann
         $nameList = [];
         foreach ($this->classesScanner->getList($path) as $className) {
             try {
-                // validate all classes except classes in generated/code dir
-                $generatedCodeDir = DirectoryList::getDefaultConfig()[DirectoryList::GENERATED_CODE];
-                if (!strpos($path, $generatedCodeDir[DirectoryList::PATH])) {
+                if (!strpos($path, 'generation')) { // validate all classes except classes in var/generation dir
                     $this->validator->validate($className);
                 }
                 $nameList[] = $className;

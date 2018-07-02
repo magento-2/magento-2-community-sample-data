@@ -9,7 +9,7 @@ namespace Magento\Sales\Test\Unit\Model\Order;
  * Unit test for shipment factory class.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
+class ShipmentFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Subject of testing.
@@ -40,23 +40,35 @@ class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->converter = $this->createPartialMock(
-            \Magento\Sales\Model\Convert\Order::class,
-            ['toShipment', 'itemToShipmentItem']
+        $this->converter = $this->getMock(
+            'Magento\Sales\Model\Convert\Order',
+            ['toShipment', 'itemToShipmentItem'],
+            [],
+            '',
+            false
         );
 
-        $convertOrderFactory = $this->createPartialMock(\Magento\Sales\Model\Convert\OrderFactory::class, ['create']);
+        $convertOrderFactory = $this->getMock(
+            'Magento\Sales\Model\Convert\OrderFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
         $convertOrderFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->converter);
 
-        $this->trackFactory = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\TrackFactory::class,
-            ['create']
+        $this->trackFactory = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\TrackFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $this->subject = $objectManager->getObject(
-            \Magento\Sales\Model\Order\ShipmentFactory::class,
+            'Magento\Sales\Model\Order\ShipmentFactory',
             [
                 'convertOrderFactory' => $convertOrderFactory,
                 'trackFactory' => $this->trackFactory
@@ -71,9 +83,12 @@ class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate($tracks)
     {
-        $orderItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Item::class,
-            ['getId', 'getQtyOrdered', 'getParentItemId', 'getIsVirtual']
+        $orderItem = $this->getMock(
+            'Magento\Sales\Model\Order\Item',
+            ['getId', 'getQtyOrdered', 'getParentItemId', 'getIsVirtual'],
+            [],
+            '',
+            false
         );
         $orderItem->expects($this->any())
             ->method('getId')
@@ -81,30 +96,38 @@ class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
         $orderItem->expects($this->any())
             ->method('getQtyOrdered')
             ->willReturn(5);
+
         $orderItem->expects($this->any())->method('getParentItemId')->willReturn(false);
         $orderItem->expects($this->any())->method('getIsVirtual')->willReturn(false);
-
-        $shipmentItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\Item::class,
-            ['setQty', 'getOrderItem', 'getQty']
+        
+        $shipmentItem = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\Item',
+            ['setQty'],
+            [],
+            '',
+            false
         );
         $shipmentItem->expects($this->once())
             ->method('setQty')
             ->with(5);
-        $shipmentItem->expects($this->once())
-            ->method('getQty')
-            ->willReturn(5);
 
-        $shipmentItem->expects($this->atLeastOnce())->method('getOrderItem')->willReturn($orderItem);
-
-        $order = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['getAllItems']);
+        $order = $this->getMock(
+            'Magento\Sales\Model\Order',
+            ['getAllItems'],
+            [],
+            '',
+            false
+        );
         $order->expects($this->any())
             ->method('getAllItems')
             ->willReturn([$orderItem]);
 
-        $shipment = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment::class,
-            ['addItem', 'setTotalQty', 'addTrack']
+        $shipment = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment',
+            ['addItem', 'setTotalQty', 'addTrack'],
+            [],
+            '',
+            false
         );
         $shipment->expects($this->once())
             ->method('addItem')
@@ -124,7 +147,13 @@ class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturn($shipmentItem);
 
         if ($tracks) {
-            $shipmentTrack = $this->createPartialMock(\Magento\Sales\Model\Order\Shipment\Track::class, ['addData']);
+            $shipmentTrack = $this->getMock(
+                'Magento\Sales\Model\Order\Shipment\Track',
+                ['addData'],
+                [],
+                '',
+                false
+            );
 
             if (empty($tracks[0]['number'])) {
                 $shipmentTrack->expects($this->never())
@@ -136,8 +165,8 @@ class ShipmentFactoryTest extends \PHPUnit\Framework\TestCase
                 $shipment->expects($this->never())
                     ->method('addTrack');
 
-                $this->expectException(
-                    \Magento\Framework\Exception\LocalizedException::class
+                $this->setExpectedException(
+                    'Magento\Framework\Exception\LocalizedException'
                 );
             } else {
                 $shipmentTrack->expects($this->once())

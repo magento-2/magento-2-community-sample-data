@@ -5,10 +5,12 @@
  */
 namespace Magento\Customer\Test\Unit\Model;
 
+use Magento\Framework\App\ResourceConnection;
+
 /**
  * Customer log data logger test.
  */
-class LoggerTest extends \PHPUnit\Framework\TestCase
+class LoggerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Customer log data logger.
@@ -41,17 +43,20 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->connection = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'insertOnDuplicate', 'fetchRow']
+        $this->connection = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['select', 'insertOnDuplicate', 'fetchRow'],
+            [],
+            '',
+            false
         );
-        $this->resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->logFactory = $this->createPartialMock(\Magento\Customer\Model\LogFactory::class, ['create']);
+        $this->resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
+        $this->logFactory = $this->getMock('\Magento\Customer\Model\LogFactory', ['create'], [], '', false);
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->logger = $objectManagerHelper->getObject(
-            \Magento\Customer\Model\Logger::class,
+            '\Magento\Customer\Model\Logger',
             [
                 'resource' => $this->resource,
                 'logFactory' => $this->logFactory
@@ -62,7 +67,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param int $customerId
      * @param array $data
-     * @dataProvider logDataProvider
+     * @dataProvider testLogDataProvider
      * @return void
      */
     public function testLog($customerId, $data)
@@ -71,8 +76,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $data = array_filter($data);
 
         if (!$data) {
-            $this->expectException('\InvalidArgumentException');
-            $this->expectExceptionMessage('Log data is empty');
+            $this->setExpectedException('\InvalidArgumentException', 'Log data is empty');
             $this->logger->log($customerId, $data);
             return;
         }
@@ -94,7 +98,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function logDataProvider()
+    public function testLogDataProvider()
     {
         return [
             [235, ['last_login_at' => '2015-03-04 12:00:00']],
@@ -105,7 +109,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param int $customerId
      * @param array $data
-     * @dataProvider getDataProvider
+     * @dataProvider testGetDataProvider
      * @return void
      */
     public function testGet($customerId, $data)
@@ -117,7 +121,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
             'lastVisitAt' => $data['last_visit_at']
         ];
 
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
 
         $select->expects($this->any())->method('from')->willReturnSelf();
         $select->expects($this->any())->method('joinLeft')->willReturnSelf();
@@ -137,9 +141,11 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
             ->with($select)
             ->willReturn($data);
 
-        $log = $this->getMockBuilder(\Magento\Customer\Model\Log::class)
-            ->setConstructorArgs($logArguments)
-            ->getMock();
+        $log = $this->getMock(
+            'Magento\Customer\Model\Log',
+            [],
+            $logArguments
+        );
 
         $this->logFactory->expects($this->any())
             ->method('create')
@@ -152,7 +158,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function getDataProvider()
+    public function testGetDataProvider()
     {
         return [
             [

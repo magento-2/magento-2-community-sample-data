@@ -11,10 +11,10 @@ namespace Magento\Backend\Test\Unit\Block\Page\System\Config\Robots;
 
 /**
  * Class ResetTest
- * @deprecated
+ * @deprecated 
  * @package Magento\Backend\Test\Unit\Block\Page\System\Config\Robots
  */
-class ResetTest extends \PHPUnit\Framework\TestCase
+class ResetTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Page\System\Config\Robots\Reset
@@ -28,11 +28,11 @@ class ResetTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->configMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $context = $objectHelper->getObject(
-            \Magento\Backend\Block\Template\Context::class,
+            'Magento\Backend\Block\Template\Context',
             ['scopeConfig' => $this->configMock]
         );
 

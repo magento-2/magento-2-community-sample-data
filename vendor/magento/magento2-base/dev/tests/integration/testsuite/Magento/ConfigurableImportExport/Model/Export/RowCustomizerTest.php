@@ -5,10 +5,13 @@
  */
 namespace Magento\ConfigurableImportExport\Model\Export;
 
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+
 /**
  * @magentoAppArea adminhtml
  */
-class RowCustomizerTest extends \PHPUnit\Framework\TestCase
+class RowCustomizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableImportExport\Model\Export\RowCustomizer
@@ -24,7 +27,7 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->model = $this->objectManager->create(
-            \Magento\ConfigurableImportExport\Model\Export\RowCustomizer::class
+            'Magento\ConfigurableImportExport\Model\Export\RowCustomizer'
         );
     }
 
@@ -33,20 +36,19 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepareData()
     {
-        $collection = $this->objectManager->get(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $productRepository = Bootstrap::getObjectManager()->create(ProductRepositoryInterface::class);
+        $product = $productRepository->get('configurable');
+
+        $collection = $this->objectManager->get('Magento\Catalog\Model\ResourceModel\Product\Collection');
         $select = (string)$collection->getSelect();
-        $this->model->prepareData($collection, [1, 2, 3, 4]);
+        $this->model->prepareData($collection, [$product->getId(), 2, 3, 4]);
         $this->assertEquals($select, (string)$collection->getSelect());
-        $result = $this->model->addData([], 1);
+        $result = $this->model->addData([], $product->getId());
         $this->assertArrayHasKey('configurable_variations', $result);
         $this->assertArrayHasKey('configurable_variation_labels', $result);
         $this->assertEquals(
             'sku=simple_10,test_configurable=Option 1|sku=simple_20,test_configurable=Option 2',
             $result['configurable_variations']
-        );
-        $this->assertEquals(
-            'test_configurable=Test Configurable',
-            $result['configurable_variation_labels']
         );
     }
 }

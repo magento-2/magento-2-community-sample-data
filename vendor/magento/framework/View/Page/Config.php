@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -134,13 +134,13 @@ class Config
      *
      * @return \Magento\Framework\App\State
      *
-     * @deprecated 100.0.7
+     * @deprecated
      */
     private function getAreaResolver()
     {
         if ($this->areaResolver === null) {
             $this->areaResolver = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\App\State::class);
+                ->get('Magento\Framework\App\State');
         }
         return $this->areaResolver;
     }
@@ -173,7 +173,7 @@ class Config
         $this->setElementAttribute(
             self::ELEMENT_TYPE_HTML,
             self::HTML_ATTRIBUTE_LANG,
-            strstr($this->localeResolver->getLocale(), '_', true)
+            str_replace('_', '-', $this->localeResolver->getLocale())
         );
     }
 

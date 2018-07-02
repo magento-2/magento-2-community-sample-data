@@ -122,6 +122,7 @@ class Labels extends \Magento\Shipping\Model\Shipping
             || !$storeInfo->getName()
             || !$storeInfo->getPhone()
             || !$originStreet1
+            || !$shipperRegionCode
             || !$this->_scopeConfig->getValue(
                 Shipment::XML_PATH_STORE_CITY,
                 ScopeInterface::SCOPE_STORE,

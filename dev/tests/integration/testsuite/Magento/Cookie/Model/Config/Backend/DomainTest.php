@@ -12,7 +12,7 @@ use Magento\Framework\Exception\LocalizedException;
  *
  * @magentoAppArea adminhtml
  */
-class DomainTest extends \PHPUnit\Framework\TestCase
+class DomainTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $value
@@ -24,7 +24,7 @@ class DomainTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $domain \Magento\Cookie\Model\Config\Backend\Domain */
         $domain = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Cookie\Model\Config\Backend\Domain::class
+            'Magento\Cookie\Model\Config\Backend\Domain'
         );
         $domain->setValue($value);
         $domain->setPath('path');

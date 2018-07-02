@@ -13,8 +13,7 @@ use Magento\Downloadable\Model\ResourceModel\Sample;
 /**
  * Downloadable Product Samples part block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Samples extends \Magento\Catalog\Block\Product\AbstractProduct
 {

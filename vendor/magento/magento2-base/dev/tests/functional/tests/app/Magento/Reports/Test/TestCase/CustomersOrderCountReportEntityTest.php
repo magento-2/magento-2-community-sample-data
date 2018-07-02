@@ -24,14 +24,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click button Refresh
  * 5. Perform all assertions
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-28521
  */
 class CustomersOrderCountReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const STABLE = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

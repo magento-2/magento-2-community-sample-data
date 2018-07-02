@@ -5,17 +5,17 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Eav\Plugin;
 
-class ImportTest extends \PHPUnit\Framework\TestCase
+class ImportTest extends \PHPUnit_Framework_TestCase
 {
     public function testAfterImportSource()
     {
-        $eavProcessorMock = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Product\Eav\Processor::class)
+        $eavProcessorMock = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Product\Eav\Processor')
             ->disableOriginalConstructor()
             ->getMock();
         $eavProcessorMock->expects($this->once())
             ->method('markIndexerAsInvalid');
 
-        $subjectMock = $this->getMockBuilder(\Magento\ImportExport\Model\Import::class)
+        $subjectMock = $this->getMockBuilder('Magento\ImportExport\Model\Import')
             ->disableOriginalConstructor()
             ->getMock();
         $import = new \stdClass();

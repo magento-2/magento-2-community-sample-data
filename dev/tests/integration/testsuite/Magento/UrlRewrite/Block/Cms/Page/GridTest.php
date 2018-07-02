@@ -9,7 +9,7 @@ namespace Magento\UrlRewrite\Block\Cms\Page;
  * Test for \Magento\UrlRewrite\Block\Cms\Page\Grid
  * @magentoAppArea adminhtml
  */
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test prepare grid
@@ -18,15 +18,15 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\UrlRewrite\Block\Cms\Page\Grid $gridBlock */
         $gridBlock = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\UrlRewrite\Block\Cms\Page\Grid::class
+            'Magento\UrlRewrite\Block\Cms\Page\Grid'
         );
         $gridBlock->toHtml();
 
         foreach (['title', 'identifier', 'is_active'] as $key) {
             $this->assertInstanceOf(
-                \Magento\Backend\Block\Widget\Grid\Column::class,
+                'Magento\Backend\Block\Widget\Grid\Column',
                 $gridBlock->getColumn($key),
                 'Column with key "' . $key . '" is invalid'
             );
@@ -54,13 +54,13 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\UrlRewrite\Block\Cms\Page\Grid $gridBlock */
         $gridBlock = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\UrlRewrite\Block\Cms\Page\Grid::class
+            'Magento\UrlRewrite\Block\Cms\Page\Grid'
         );
         $gridBlock->toHtml();
         $this->assertInstanceOf(
-            \Magento\Backend\Block\Widget\Grid\Column::class,
+            'Magento\Backend\Block\Widget\Grid\Column',
             $gridBlock->getColumn('store_id'),
             'When there is more than one store column with key "store_id" should be present'
         );

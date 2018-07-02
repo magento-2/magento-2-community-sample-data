@@ -86,7 +86,7 @@ class Head implements Layout\ReaderInterface
                     break;
 
                 case self::HEAD_TITLE:
-                    $pageConfigStructure->setTitle(new \Magento\Framework\Phrase($node));
+                    $pageConfigStructure->setTitle($node);
                     break;
 
                 case self::HEAD_META:

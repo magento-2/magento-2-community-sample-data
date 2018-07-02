@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Model\Order;
 
-class InvoiceTest extends \PHPUnit\Framework\TestCase
+class InvoiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Collection
@@ -15,7 +15,7 @@ class InvoiceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\ResourceModel\Order\Collection::class
+            'Magento\Sales\Model\ResourceModel\Order\Collection'
         );
     }
 

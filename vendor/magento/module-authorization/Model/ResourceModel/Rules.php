@@ -4,9 +4,9 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Authorization\Model\ResourceModel;
+// @codingStandardsIgnoreFile
 
-use Magento\Framework\App\ObjectManager;
+namespace Magento\Authorization\Model\ResourceModel;
 
 /**
  * Admin rule resource model
@@ -21,6 +21,13 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $_rootResource;
 
     /**
+     * Acl object cache
+     *
+     * @var \Magento\Framework\Acl\CacheInterface
+     */
+    protected $_aclCache;
+
+    /**
      * @var \Magento\Framework\Acl\Builder
      */
     protected $_aclBuilder;
@@ -31,33 +38,26 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $_logger;
 
     /**
-     * @var \Magento\Framework\Acl\Data\CacheInterface
-     */
-    private $aclDataCache;
-
-    /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Framework\Acl\Builder $aclBuilder
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Acl\RootResource $rootResource
+     * @param \Magento\Framework\Acl\CacheInterface $aclCache
      * @param string $connectionName
-     * @param \Magento\Framework\Acl\Data\CacheInterface $aclDataCache
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Acl\Builder $aclBuilder,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Acl\RootResource $rootResource,
-        $connectionName = null,
-        \Magento\Framework\Acl\Data\CacheInterface $aclDataCache = null
+        \Magento\Framework\Acl\CacheInterface $aclCache,
+        $connectionName = null
     ) {
         $this->_aclBuilder = $aclBuilder;
         parent::__construct($context, $connectionName);
         $this->_rootResource = $rootResource;
+        $this->_aclCache = $aclCache;
         $this->_logger = $logger;
-        $this->aclDataCache = $aclDataCache ?: ObjectManager::getInstance()->get(
-            \Magento\Framework\Acl\Data\CacheInterface::class
-        );
     }
 
     /**
@@ -79,8 +79,8 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function saveRel(\Magento\Authorization\Model\Rules $rule)
     {
-        $connection = $this->getConnection();
         try {
+            $connection = $this->getConnection();
             $connection->beginTransaction();
             $roleId = $rule->getRoleId();
 
@@ -99,10 +99,7 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
                 // If all was selected save it only and nothing else.
                 if ($postedResources === [$this->_rootResource->getId()]) {
-                    $insertData = $this->_prepareDataForTable(
-                        new \Magento\Framework\DataObject($row),
-                        $this->getMainTable()
-                    );
+                    $insertData = $this->_prepareDataForTable(new \Magento\Framework\DataObject($row), $this->getMainTable());
 
                     $connection->insert($this->getMainTable(), $insertData);
                 } else {
@@ -114,17 +111,14 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                         $row['permission'] = in_array($resourceId, $postedResources) ? 'allow' : 'deny';
                         $row['resource_id'] = $resourceId;
 
-                        $insertData = $this->_prepareDataForTable(
-                            new \Magento\Framework\DataObject($row),
-                            $this->getMainTable()
-                        );
+                        $insertData = $this->_prepareDataForTable(new \Magento\Framework\DataObject($row), $this->getMainTable());
                         $connection->insert($this->getMainTable(), $insertData);
                     }
                 }
             }
 
             $connection->commit();
-            $this->aclDataCache->clean();
+            $this->_aclCache->clean();
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $connection->rollBack();
             throw $e;

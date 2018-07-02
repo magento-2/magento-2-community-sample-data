@@ -2,7 +2,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint browser:true */
+/*global console:true*/
 define([
     'jquery',
     'mage/template',
@@ -140,9 +141,6 @@ define([
             loadingClass: 'ajax-loading'
         },
 
-        /**
-         * @private
-         */
         _create: function () {
             this._bind();
             // There should only be one instance of this widget, and it should be attached
@@ -152,9 +150,6 @@ define([
             }
         },
 
-        /**
-         * @private
-         */
         _bind: function () {
             $(document).on({
                 'ajaxSend': this._onAjaxSend.bind(this),
@@ -162,14 +157,8 @@ define([
             });
         },
 
-        /**
-         * @param {Object} loaderContext
-         * @return {*}
-         * @private
-         */
         _getJqueryObj: function (loaderContext) {
             var ctx;
-
             // Check to see if context is jQuery object or not.
             if (loaderContext) {
                 if (loaderContext.jquery) {
@@ -184,23 +173,15 @@ define([
             return ctx;
         },
 
-        /**
-         * @param {jQuery.Event} e
-         * @param {Object} jqxhr
-         * @param {Object} settings
-         * @private
-         */
         _onAjaxSend: function (e, jqxhr, settings) {
-            var ctx;
-
             $(this.options.defaultContainer)
                 .addClass(this.options.loadingClass)
                 .attr({
                     'aria-busy': true
-                });
+                })
 
             if (settings && settings.showLoader) {
-                ctx = this._getJqueryObj(settings.loaderContext);
+                var ctx = this._getJqueryObj(settings.loaderContext);
                 ctx.trigger('processStart');
 
                 // Check to make sure the loader is there on the page if not report it on the console.
@@ -212,12 +193,6 @@ define([
             }
         },
 
-        /**
-         * @param {jQuery.Event} e
-         * @param {Object} jqxhr
-         * @param {Object} settings
-         * @private
-         */
         _onAjaxComplete: function (e, jqxhr, settings) {
             $(this.options.defaultContainer)
                 .removeClass(this.options.loadingClass)

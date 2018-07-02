@@ -12,6 +12,6 @@ namespace JsonSchema\Exception;
 /**
  * Wrapper for the InvalidArgumentException
  */
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException
 {
 }

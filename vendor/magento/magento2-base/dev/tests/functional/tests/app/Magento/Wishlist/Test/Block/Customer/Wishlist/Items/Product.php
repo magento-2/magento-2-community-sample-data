@@ -79,27 +79,6 @@ class Product extends Form
     protected $price = '.price';
 
     /**
-     * Locator value for item Price in Product Grid.
-     *
-     * @var string
-     */
-    protected $priceInGrid = '.products-grid .price';
-
-    /**
-     * Locator value for item Regular Price.
-     *
-     * @var string
-     */
-    private $regularPrice = '.old-price [data-price-type="oldPrice"] .price';
-
-    /**
-     * Locator value for item Regular Price Label.
-     *
-     * @var string
-     */
-    private $regularPriceLabel = '.old-price .price-label';
-
-    /**
      * Fill item with details.
      *
      * @param array $fields
@@ -180,7 +159,7 @@ class Product extends Form
      */
     public function hoverProductBlock()
     {
-        $this->_rootElement->find($this->priceInGrid)->hover();
+        $this->_rootElement->find($this->price)->hover();
     }
 
     /**
@@ -191,41 +170,8 @@ class Product extends Form
      */
     public function getPrice($currency = '$')
     {
-        return $this->getPriceBySelector($this->price, $currency);
-    }
-
-    /**
-     * Returns product regular price.
-     *
-     * @param string $currency
-     * @return string
-     */
-    public function getRegularPrice($currency = '$')
-    {
-        return $this->getPriceBySelector($this->regularPrice, $currency);
-    }
-
-    /**
-     * Returns product price by selector.
-     *
-     * @param string $selector
-     * @param string $currency
-     * @return string
-     */
-    private function getPriceBySelector(string $selector, $currency = '$')
-    {
-        $price = $this->_rootElement->find($selector)->getText();
+        $price = $this->_rootElement->find($this->price)->getText();
         return str_replace($currency, '', $price);
-    }
-
-    /**
-     * Returns product regular price label.
-     *
-     * @return string
-     */
-    public function getPriceLabel()
-    {
-        return (string)$this->_rootElement->find($this->regularPriceLabel)->getText();
     }
 
     /**

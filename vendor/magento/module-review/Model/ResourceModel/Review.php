@@ -9,9 +9,6 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Review resource model
- *
- * @api
- * @since 100.0.2
  */
 class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

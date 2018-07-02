@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -21,7 +21,7 @@ class RuntimeDefinition implements DefinitionInterface
     /**
      * @var array
      */
-    protected $classes = [];
+    protected $classes = array();
 
     /**
      * @var bool
@@ -36,12 +36,12 @@ class RuntimeDefinition implements DefinitionInterface
     /**
      * @var array
      */
-    protected $injectionMethods = [];
+    protected $injectionMethods = array();
 
     /**
      * @var array
      */
-    protected $processedClass = [];
+    protected $processedClass = array();
 
     /**
      * Constructor
@@ -201,12 +201,12 @@ class RuntimeDefinition implements DefinitionInterface
         $matches = null; // used for regex below
 
         // setup the key in classes
-        $this->classes[$className] = [
-            'supertypes'   => [],
+        $this->classes[$className] = array(
+            'supertypes'   => array(),
             'instantiator' => null,
-            'methods'      => [],
-            'parameters'   => []
-        ];
+            'methods'      => array(),
+            'parameters'   => array()
+        );
 
         $def = &$this->classes[$className]; // localize for brevity
 
@@ -221,7 +221,7 @@ class RuntimeDefinition implements DefinitionInterface
         }
 
         $rTarget = $rClass;
-        $supertypes = [];
+        $supertypes = array();
         do {
             $supertypes = array_merge($supertypes, $rTarget->getInterfaceNames());
             if (!($rTargetParent = $rTarget->getParentClass())) {
@@ -319,7 +319,7 @@ class RuntimeDefinition implements DefinitionInterface
 
         // @todo annotations here for alternate names?
 
-        $def['parameters'][$methodName] = [];
+        $def['parameters'][$methodName] = array();
 
         foreach ($rMethod->getParameters() as $p) {
             /** @var $p \ReflectionParameter  */
@@ -327,7 +327,7 @@ class RuntimeDefinition implements DefinitionInterface
 
             $fqName = $rClass->getName() . '::' . $rMethod->getName() . ':' . $p->getPosition();
 
-            $def['parameters'][$methodName][$fqName] = [];
+            $def['parameters'][$methodName][$fqName] = array();
 
             // set the class name, if it exists
             $def['parameters'][$methodName][$fqName][] = $actualParamName;

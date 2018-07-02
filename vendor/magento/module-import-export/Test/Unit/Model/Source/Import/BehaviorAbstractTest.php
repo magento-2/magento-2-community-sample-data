@@ -33,7 +33,7 @@ class BehaviorAbstractTest extends \Magento\ImportExport\Test\Unit\Model\Source\
         parent::setUp();
 
         $model = $this->getMockForAbstractClass(
-            \Magento\ImportExport\Model\Source\Import\AbstractBehavior::class,
+            'Magento\ImportExport\Model\Source\Import\AbstractBehavior',
             [[]],
             '',
             false,

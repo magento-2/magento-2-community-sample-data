@@ -20,29 +20,19 @@ use Magento\Framework\Config\Theme;
  */
 class Registration
 {
-    /**
-     * @var \Magento\Theme\Model\Theme\Registration
-     */
+    /** @var ThemeRegistration */
     protected $themeRegistration;
 
-    /**
-     * @var \Magento\Theme\Model\Theme\Collection
-     */
+    /** @var ThemeCollection */
     protected $themeCollection;
 
-    /**
-     * @var \Magento\Theme\Model\ResourceModel\Theme\Collection
-     */
+    /** @var ThemeLoader */
     protected $themeLoader;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
+    /** @var LoggerInterface */
     protected $logger;
 
-    /**
-     * @var \Magento\Framework\App\State
-     */
+    /** @var AppState */
     protected $appState;
 
     /**

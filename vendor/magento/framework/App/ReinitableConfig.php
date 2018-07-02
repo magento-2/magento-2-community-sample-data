@@ -9,7 +9,6 @@ use Magento\Framework\App\Config\ReinitableConfigInterface;
 
 /**
  * @inheritdoc
- * @deprecated 100.2.0
  */
 class ReinitableConfig extends MutableScopeConfig implements ReinitableConfigInterface
 {
@@ -18,6 +17,7 @@ class ReinitableConfig extends MutableScopeConfig implements ReinitableConfigInt
      */
     public function reinit()
     {
+        $this->_scopePool->clean();
         $this->clean();
         return $this;
     }

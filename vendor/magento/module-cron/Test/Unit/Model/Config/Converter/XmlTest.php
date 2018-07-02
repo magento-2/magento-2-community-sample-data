@@ -5,7 +5,7 @@
  */
 namespace Magento\Cron\Test\Unit\Model\Config\Converter;
 
-class XmlTest extends \PHPUnit\Framework\TestCase
+class XmlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cron\Model\Config\Converter\Xml

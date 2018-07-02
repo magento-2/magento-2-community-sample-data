@@ -72,7 +72,7 @@ class RemoveTaxRule extends Curl
             return null;
         }
         foreach ($result[1] as $taxRuleId) {
-            $this->_deleteTaxRuleRequest((int)$taxRuleId);
+            $this->deleteTaxRuleRequest((int)$taxRuleId);
             break;
         }
 

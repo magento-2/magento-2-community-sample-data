@@ -3,27 +3,24 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\Multishipping\Model\Checkout\Type;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Quote\Api\Data\CartExtensionFactory;
+use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\ObjectManager;
-use Magento\Directory\Model\AllowedCountries;
-use Psr\Log\LoggerInterface;
 
 /**
  * Multishipping checkout model
- *
- * @api
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @codingStandardsIgnoreFile
- * @since 100.0.2
  */
 class Multishipping extends \Magento\Framework\DataObject
 {
@@ -146,33 +143,16 @@ class Multishipping extends \Magento\Framework\DataObject
     protected $totalsCollector;
 
     /**
-     * @var \Magento\Quote\Api\Data\CartExtensionFactory
+     * @var CartExtensionFactory
      */
     private $cartExtensionFactory;
 
     /**
-     * @var AllowedCountries
-     */
-    private $allowedCountryReader;
-
-    /**
-     * @var \Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor
+     * @var ShippingAssignmentProcessor
      */
     private $shippingAssignmentProcessor;
 
     /**
-     * @var Multishipping\PlaceOrderFactory
-     */
-    private $placeOrderFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * Constructor
-     *
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Sales\Model\OrderFactory $orderFactory
@@ -195,11 +175,10 @@ class Multishipping extends \Magento\Framework\DataObject
      * @param \Magento\Framework\Api\FilterBuilder $filterBuilder
      * @param \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector
      * @param array $data
-     * @param \Magento\Quote\Api\Data\CartExtensionFactory|null $cartExtensionFactory
-     * @param AllowedCountries|null $allowedCountryReader
-     * @param Multishipping\PlaceOrderFactory $placeOrderFactory
-     * @param LoggerInterface $logger
+     * @param CartExtensionFactory|null $cartExtensionFactory
+     * @param ShippingAssignmentProcessor|null $shippingAssignmentProcessor
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
@@ -224,10 +203,8 @@ class Multishipping extends \Magento\Framework\DataObject
         \Magento\Framework\Api\FilterBuilder $filterBuilder,
         \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector,
         array $data = [],
-        \Magento\Quote\Api\Data\CartExtensionFactory $cartExtensionFactory = null,
-        AllowedCountries $allowedCountryReader = null,
-        Multishipping\PlaceOrderFactory $placeOrderFactory = null,
-        LoggerInterface $logger = null
+        CartExtensionFactory $cartExtensionFactory = null,
+        ShippingAssignmentProcessor $shippingAssignmentProcessor = null
     ) {
         $this->_eventManager = $eventManager;
         $this->_scopeConfig = $scopeConfig;
@@ -250,16 +227,16 @@ class Multishipping extends \Magento\Framework\DataObject
         $this->quotePaymentToOrderPayment = $quotePaymentToOrderPayment;
         $this->quoteAddressToOrderAddress = $quoteAddressToOrderAddress;
         $this->totalsCollector = $totalsCollector;
-        $this->cartExtensionFactory = $cartExtensionFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\Quote\Api\Data\CartExtensionFactory::class);
-        $this->allowedCountryReader = $allowedCountryReader ?: ObjectManager::getInstance()
-            ->get(AllowedCountries::class);
-        $this->placeOrderFactory = $placeOrderFactory ?: ObjectManager::getInstance()
-            ->get(Multishipping\PlaceOrderFactory::class);
-        $this->logger = $logger ?: ObjectManager::getInstance()
-            ->get(LoggerInterface::class);
         parent::__construct($data);
         $this->_init();
+        if (!$cartExtensionFactory) {
+            $cartExtensionFactory = ObjectManager::getInstance()->get(CartExtensionFactory::class);
+        }
+        $this->cartExtensionFactory = $cartExtensionFactory;
+        if (!$shippingAssignmentProcessor) {
+            $shippingAssignmentProcessor = ObjectManager::getInstance()->get(ShippingAssignmentProcessor::class);
+        }
+        $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
     }
 
     /**
@@ -733,18 +710,6 @@ class Multishipping extends \Magento\Framework\DataObject
                     __('Please specify shipping methods for all addresses.')
                 );
             }
-
-            // Checks if a country id present in the allowed countries list.
-            if (
-                !in_array(
-                    $address->getCountryId(),
-                    $this->allowedCountryReader->getAllowedCountries()
-                )
-            ) {
-                throw new \Magento\Framework\Exception\LocalizedException(
-                    __('Some addresses cannot be used due to country-specific configurations.')
-                );
-            }
         }
         $addressValidation = $quote->getBillingAddress()->validate();
         if ($addressValidation !== true) {
@@ -781,48 +746,21 @@ class Multishipping extends \Magento\Framework\DataObject
                 );
             }
 
-            $paymentProviderCode = $this->getQuote()->getPayment()->getMethod();
-            $placeOrderService = $this->placeOrderFactory->create($paymentProviderCode);
-            $exceptionList = $placeOrderService->place($orders);
-            $this->logExceptions($exceptionList);
-
-            /** @var OrderInterface[] $failedOrders */
-            $failedOrders = [];
-            /** @var OrderInterface[] $successfulOrders */
-            $successfulOrders = [];
             foreach ($orders as $order) {
-                if (isset($exceptionList[$order->getIncrementId()])) {
-                    $failedOrders[] = $order;
-                } else {
-                    $successfulOrders[] = $order;
-                }
-            }
-
-            $placedAddressItems = [];
-            foreach ($successfulOrders as $order) {
-                $orderIds[$order->getId()] = $order->getIncrementId();
+                $order->place();
+                $order->save();
                 if ($order->getCanSendNewEmailFlag()) {
                     $this->orderSender->send($order);
                 }
-                $placedAddressItems = array_merge($placedAddressItems, $this->getQuoteAddressItems($order));
-            }
-
-            $addressErrors = [];
-            if (!empty($failedOrders)) {
-                $this->removePlacedItemsFromQuote($shippingAddresses, $placedAddressItems);
-                $addressErrors = $this->getQuoteAddressErrors(
-                    $failedOrders,
-                    $shippingAddresses,
-                    $exceptionList
-                );
-            } else {
-                $this->_checkoutSession->setLastQuoteId($this->getQuote()->getId());
-                $this->getQuote()->setIsActive(false);
-                $this->quoteRepository->save($this->getQuote());
+                $orderIds[$order->getId()] = $order->getIncrementId();
             }
 
             $this->_session->setOrderIds($orderIds);
-            $this->_session->setAddressErrors($addressErrors);
+            $this->_checkoutSession->setLastQuoteId($this->getQuote()->getId());
+
+            $this->getQuote()->setIsActive(false);
+            $this->quoteRepository->save($this->getQuote());
+
             $this->_eventManager->dispatch(
                 'checkout_submit_all_after',
                 ['orders' => $orders, 'quote' => $this->getQuote()]
@@ -832,19 +770,6 @@ class Multishipping extends \Magento\Framework\DataObject
         } catch (\Exception $e) {
             $this->_eventManager->dispatch('checkout_multishipping_refund_all', ['orders' => $orders]);
             throw $e;
-        }
-    }
-
-    /**
-     * Logs exceptions.
-     *
-     * @param \Exception[] $exceptionList
-     * @return void
-     */
-    private function logExceptions(array $exceptionList)
-    {
-        foreach ($exceptionList as $exception) {
-            $this->logger->critical($exception);
         }
     }
 
@@ -878,21 +803,13 @@ class Multishipping extends \Magento\Framework\DataObject
      */
     public function validateMinimumAmount()
     {
-        $minimumOrderActive = $this->_scopeConfig->isSetFlag(
+        return !($this->_scopeConfig->isSetFlag(
             'sales/minimum_order/active',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-
-        if ($this->_scopeConfig->isSetFlag(
+        ) && $this->_scopeConfig->isSetFlag(
             'sales/minimum_order/multi_address',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE)
-        ) {
-            $result = !($minimumOrderActive && !$this->getQuote()->validateMinimumAmount());
-        } else {
-            $result = !($minimumOrderActive && !$this->validateMinimumAmountForAddressItems());
-        }
-
-        return $result;
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) && !$this->getQuote()->validateMinimumAmount());
     }
 
     /**
@@ -942,10 +859,7 @@ class Multishipping extends \Magento\Framework\DataObject
     public function getOrderIds($asAssoc = false)
     {
         $idsAssoc = $this->_session->getOrderIds();
-        if ($idsAssoc !== null) {
-            return $asAssoc ? $idsAssoc : array_keys($idsAssoc);
-        }
-        return [];
+        return $asAssoc ? $idsAssoc : array_keys($idsAssoc);
     }
 
     /**
@@ -1083,169 +997,12 @@ class Multishipping extends \Magento\Framework\DataObject
             $cartExtension = $this->cartExtensionFactory->create();
         }
         /** @var \Magento\Quote\Api\Data\ShippingAssignmentInterface $shippingAssignment */
-        $shippingAssignment = $this->getShippingAssignmentProcessor()->create($quote);
+        $shippingAssignment = $this->shippingAssignmentProcessor->create($quote);
         $shipping = $shippingAssignment->getShipping();
 
         $shipping->setMethod(null);
         $shippingAssignment->setShipping($shipping);
         $cartExtension->setShippingAssignments([$shippingAssignment]);
         return $quote->setExtensionAttributes($cartExtension);
-    }
-
-    /**
-     * @return \Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor
-     */
-    private function getShippingAssignmentProcessor()
-    {
-        if (!$this->shippingAssignmentProcessor) {
-            $this->shippingAssignmentProcessor = ObjectManager::getInstance()
-                ->get(\Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor::class);
-        }
-        return $this->shippingAssignmentProcessor;
-    }
-
-    /**
-     * Validate minimum amount for "Checkout with Multiple Addresses" when
-     * "Validate Each Address Separately in Multi-address Checkout" is No.
-     *
-     * @return bool
-     */
-    private function validateMinimumAmountForAddressItems()
-    {
-        $result = true;
-        $storeId = $this->getQuote()->getStoreId();
-
-        $minAmount = $this->_scopeConfig->getValue(
-            'sales/minimum_order/amount',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-        $taxInclude = $this->_scopeConfig->getValue(
-            'sales/minimum_order/tax_including',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-
-        $addresses = $this->getQuote()->getAllAddresses();
-
-        $baseTotal = 0;
-        foreach ($addresses as $address) {
-            $taxes = $taxInclude ? $address->getBaseTaxAmount() : 0;
-            $baseTotal += $address->getBaseSubtotalWithDiscount() + $taxes;
-        }
-
-        if ($baseTotal < $minAmount) {
-            $result = false;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Remove successfully placed items from quote.
-     *
-     * @param \Magento\Quote\Model\Quote\Address[] $shippingAddresses
-     * @param int[] $placedAddressItems
-     * @return void
-     */
-    private function removePlacedItemsFromQuote(array $shippingAddresses, array $placedAddressItems)
-    {
-        foreach ($shippingAddresses as $address) {
-            foreach ($address->getAllItems() as $addressItem) {
-                if (in_array($addressItem->getId(), $placedAddressItems)) {
-                    if ($addressItem->getProduct()->getIsVirtual()) {
-                        $addressItem->isDeleted(true);
-                    } else {
-                        $address->isDeleted(true);
-                    }
-
-                    $this->decreaseQuoteItemQty($addressItem->getQuoteItemId(), $addressItem->getQty());
-                }
-            }
-        }
-        $this->save();
-    }
-
-    /**
-     * Decrease quote item quantity.
-     *
-     * @param int $quoteItemId
-     * @param int $qty
-     * @return void
-     */
-    private function decreaseQuoteItemQty(int $quoteItemId, int $qty)
-    {
-        $quoteItem = $this->getQuote()->getItemById($quoteItemId);
-        if ($quoteItem) {
-            $newItemQty = $quoteItem->getQty() - $qty;
-            if ($newItemQty > 0) {
-                $quoteItem->setQty($newItemQty);
-            } else {
-                $this->getQuote()->removeItem($quoteItem->getId());
-                $this->getQuote()->setIsMultiShipping(1);
-            }
-        }
-    }
-
-    /**
-     * Returns quote address id that was assigned to order.
-     *
-     * @param OrderInterface $order
-     * @param \Magento\Quote\Model\Quote\Address[] $addresses
-     *
-     * @return int
-     * @throws NotFoundException
-     */
-    private function searchQuoteAddressId(OrderInterface $order, array $addresses): int
-    {
-        $items = $order->getItems();
-        $item = array_pop($items);
-        foreach ($addresses as $address) {
-            foreach ($address->getAllItems() as $addressItem) {
-                if ($addressItem->getId() == $item->getQuoteItemId()) {
-                    return (int)$address->getId();
-                }
-            }
-        }
-
-        throw new NotFoundException(__('Quote address for failed order not found.'));
-    }
-
-    /**
-     * @param OrderInterface[] $orders
-     * @param \Magento\Quote\Model\Quote\Address[] $addresses
-     * @param \Exception[] $exceptionList
-     *
-     * @return string[]
-     * @throws NotFoundException
-     */
-    private function getQuoteAddressErrors(array $orders, array $addresses, array $exceptionList): array
-    {
-        $addressErrors = [];
-        foreach ($orders as $failedOrder) {
-            if (!isset($exceptionList[$failedOrder->getIncrementId()])) {
-                throw new NotFoundException(__('Exception for failed order not found.'));
-            }
-            $addressId = $this->searchQuoteAddressId($failedOrder, $addresses);
-            $addressErrors[$addressId] = $exceptionList[$failedOrder->getIncrementId()]->getMessage();
-        }
-
-        return $addressErrors;
-    }
-
-    /**
-     * Returns quote address item id.
-     *
-     * @param OrderInterface $order
-     * @return array
-     */
-    private function getQuoteAddressItems(OrderInterface $order): array
-    {
-        $placedAddressItems = [];
-        foreach ($order->getItems() as $orderItem) {
-            $placedAddressItems[] = $orderItem->getQuoteItemId();
-        }
-
-        return $placedAddressItems;
     }
 }

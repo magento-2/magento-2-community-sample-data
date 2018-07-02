@@ -32,9 +32,7 @@ class ShipmentGetTest extends WebapiAbstract
     public function testShipmentGet()
     {
         /** @var \Magento\Sales\Model\Order\Shipment $shipment */
-        $shipmentCollection = $this->objectManager->get(
-            \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection::class
-        );
+        $shipmentCollection = $this->objectManager->get('Magento\Sales\Model\ResourceModel\Order\Shipment\Collection');
         $shipment = $shipmentCollection->getFirstItem();
         $shipment->load($shipment->getId());
         $serviceInfo = [
@@ -60,14 +58,14 @@ class ShipmentGetTest extends WebapiAbstract
                 $this->assertEquals($shipment->getData($key), $value, $key);
             }
         }
-        $shipmentItem = $this->objectManager->get(\Magento\Sales\Model\Order\Shipment\Item::class);
+        $shipmentItem = $this->objectManager->get('Magento\Sales\Model\Order\Shipment\Item');
         foreach ($result['items'] as $item) {
             $shipmentItem->load($item['entity_id']);
             foreach ($item as $key => $value) {
                 $this->assertEquals($shipmentItem->getData($key), $value, $key);
             }
         }
-        $shipmentTrack = $this->objectManager->get(\Magento\Sales\Model\Order\Shipment\Track::class);
+        $shipmentTrack = $this->objectManager->get('Magento\Sales\Model\Order\Shipment\Track');
         foreach ($result['tracks'] as $item) {
             $shipmentTrack->load($item['entity_id']);
             foreach ($item as $key => $value) {

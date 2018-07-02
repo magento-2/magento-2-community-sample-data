@@ -28,12 +28,10 @@ class ImportExport extends \Magento\TaxImportExport\Controller\Adminhtml\Rate
 
         $resultPage->setActiveMenu('Magento_TaxImportExport::system_convert_tax');
         $resultPage->addContent(
-            $resultPage->getLayout()->createBlock(
-                \Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExportHeader::class
-            )
+            $resultPage->getLayout()->createBlock('Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExportHeader')
         );
         $resultPage->addContent(
-            $resultPage->getLayout()->createBlock(\Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport::class)
+            $resultPage->getLayout()->createBlock('Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport')
         );
         $resultPage->getConfig()->getTitle()->prepend(__('Tax Zones and Rates'));
         $resultPage->getConfig()->getTitle()->prepend(__('Import and Export Tax Rates'));

@@ -9,8 +9,6 @@ namespace Magento\Framework\Session;
 
 /**
  * Session Manager Interface
- *
- * @api
  */
 interface SessionManagerInterface
 {

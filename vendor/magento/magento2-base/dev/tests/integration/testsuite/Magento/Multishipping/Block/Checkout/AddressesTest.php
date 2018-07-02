@@ -10,7 +10,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * @magentoAppArea frontend
  */
-class AddressesTest extends \PHPUnit\Framework\TestCase
+class AddressesTest extends \PHPUnit_Framework_TestCase
 {
     const FIXTURE_CUSTOMER_ID = 1;
 
@@ -29,26 +29,26 @@ class AddressesTest extends \PHPUnit\Framework\TestCase
         $this->_objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
         $customerRepository = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
         $customerData = $customerRepository->getById(self::FIXTURE_CUSTOMER_ID);
 
         /** @var \Magento\Customer\Model\Session $customerSession */
-        $customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        $customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
         $customerSession->setCustomerData($customerData);
 
         /** @var \Magento\Quote\Model\ResourceModel\Quote\Collection $quoteCollection */
-        $quoteCollection = $this->_objectManager->get(\Magento\Quote\Model\ResourceModel\Quote\Collection::class);
+        $quoteCollection = $this->_objectManager->get('Magento\Quote\Model\ResourceModel\Quote\Collection');
         /** @var $quote \Magento\Quote\Model\Quote */
         $quote = $quoteCollection->getLastItem();
 
         /** @var $checkoutSession \Magento\Checkout\Model\Session */
-        $checkoutSession = $this->_objectManager->get(\Magento\Checkout\Model\Session::class);
+        $checkoutSession = $this->_objectManager->get('Magento\Checkout\Model\Session');
         $checkoutSession->setQuoteId($quote->getId());
         $checkoutSession->setLoadInactive(true);
 
         $this->_addresses = $this->_objectManager->create(
-            \Magento\Multishipping\Block\Checkout\Addresses::class
+            'Magento\Multishipping\Block\Checkout\Addresses'
         );
     }
 

@@ -8,7 +8,7 @@ namespace Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main;
 /**
  * @magentoAppArea adminhtml
  */
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout
@@ -20,22 +20,20 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout::class,
+            'Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Main\Layout',
             '',
             [
                 'data' => [
                     'widget_instance' => \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                        \Magento\Widget\Model\Widget\Instance::class
+                        'Magento\Widget\Model\Widget\Instance'
                     ),
                 ]
             ]
         );
         $this->_block->setLayout(
-            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
-            )
+            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\View\LayoutInterface')
         );
     }
 
@@ -45,12 +43,12 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
     public function testGetLayoutsChooser()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\State::class
+            'Magento\Framework\App\State'
         )->setAreaCode(
             \Magento\Framework\App\Area::AREA_FRONTEND
         );
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->setDefaultDesignTheme();
 
         $actualHtml = $this->_block->getLayoutsChooser();

@@ -7,10 +7,6 @@ namespace Magento\Search\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
-/**
- * @api
- * @since 100.1.0
- */
 class SynonymGroup extends AbstractDb
 {
     /**
@@ -19,7 +15,6 @@ class SynonymGroup extends AbstractDb
      * @param int $websiteId
      * @param int $storeId
      * @return string[]
-     * @since 100.1.0
      */
     public function getByScope($websiteId, $storeId)
     {
@@ -39,7 +34,6 @@ class SynonymGroup extends AbstractDb
      * Init resource data
      *
      * @return void
-     * @since 100.1.0
      */
     protected function _construct()
     {

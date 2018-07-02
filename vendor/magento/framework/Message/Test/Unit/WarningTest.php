@@ -10,7 +10,7 @@ use Magento\Framework\Message\MessageInterface;
 /**
  * \Magento\Framework\Message\Warning test case
  */
-class WarningTest extends \PHPUnit\Framework\TestCase
+class WarningTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Message\Warning
@@ -20,7 +20,7 @@ class WarningTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\Framework\Message\Warning::class);
+        $this->model = $objectManager->getObject('Magento\Framework\Message\Warning');
     }
 
     public function testGetType()

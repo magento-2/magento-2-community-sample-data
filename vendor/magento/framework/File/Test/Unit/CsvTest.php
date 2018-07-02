@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\File\Test\Unit;
 
 use Magento\Framework\Filesystem\Driver\File;
@@ -11,7 +13,7 @@ use Magento\Framework\Filesystem\Driver\File;
 /**
  * Test class for \Magento\Framework\File\Csv.
  */
-class CsvTest extends \PHPUnit\Framework\TestCase
+class CsvTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Csv model
@@ -34,7 +36,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
     {
         $expected = 4;
         $this->_model->setLineLength($expected);
-        $lineLengthProperty = new \ReflectionProperty(\Magento\Framework\File\Csv::class, '_lineLength');
+        $lineLengthProperty = new \ReflectionProperty(
+            'Magento\Framework\File\Csv', '_lineLength'
+        );
         $lineLengthProperty->setAccessible(true);
         $actual = $lineLengthProperty->getValue($this->_model);
         $this->assertEquals($expected, $actual);
@@ -42,12 +46,12 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
     public function testSetDelimiter()
     {
-        $this->assertInstanceOf(\Magento\Framework\File\Csv::class, $this->_model->setDelimiter(','));
+        $this->assertInstanceOf('\Magento\Framework\File\Csv', $this->_model->setDelimiter(','));
     }
 
     public function testSetEnclosure()
     {
-        $this->assertInstanceOf(\Magento\Framework\File\Csv::class, $this->_model->setEnclosure('"'));
+        $this->assertInstanceOf('\Magento\Framework\File\Csv', $this->_model->setEnclosure('"'));
     }
 
     /**

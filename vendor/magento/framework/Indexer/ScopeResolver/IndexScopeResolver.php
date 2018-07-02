@@ -52,7 +52,6 @@ class IndexScopeResolver implements IndexScopeResolverInterface
                     $tableNameParts[] = $dimension->getName() . $dimension->getValue();
             }
         }
-
         return $this->resource->getTableName(implode('_', $tableNameParts));
     }
 
@@ -64,12 +63,10 @@ class IndexScopeResolver implements IndexScopeResolverInterface
      */
     private function getScopeId($dimension)
     {
-        $scopeId = $dimension->getValue();
-
-        if (!is_numeric($scopeId)) {
-            $scopeId = $this->scopeResolver->getScope($scopeId)->getId();
+        if (is_numeric($dimension->getValue())) {
+            return $dimension->getValue();
+        } else {
+            return $this->scopeResolver->getScope($dimension->getValue())->getId();
         }
-
-        return $scopeId;
     }
 }

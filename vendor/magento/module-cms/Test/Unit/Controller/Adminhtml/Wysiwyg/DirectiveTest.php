@@ -9,7 +9,7 @@ namespace Magento\Cms\Test\Unit\Controller\Adminhtml\Wysiwyg;
  * @covers \Magento\Cms\Controller\Adminhtml\Wysiwyg\Directive
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DirectiveTest extends \PHPUnit\Framework\TestCase
+class DirectiveTest extends \PHPUnit_Framework_TestCase
 {
     const IMAGE_PATH = 'pub/media/wysiwyg/image.jpg';
 
@@ -80,25 +80,25 @@ class DirectiveTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->actionContextMock = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->actionContextMock = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlDecoderMock = $this->getMockBuilder(\Magento\Framework\Url\DecoderInterface::class)
+        $this->urlDecoderMock = $this->getMockBuilder('Magento\Framework\Url\DecoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->templateFilterMock = $this->getMockBuilder(\Magento\Cms\Model\Template\Filter::class)
+        $this->templateFilterMock = $this->getMockBuilder('Magento\Cms\Model\Template\Filter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->imageAdapterFactoryMock = $this->getMockBuilder(\Magento\Framework\Image\AdapterFactory::class)
+        $this->imageAdapterFactoryMock = $this->getMockBuilder('Magento\Framework\Image\AdapterFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->imageAdapterMock = $this->getMockBuilder(\Magento\Framework\Image\Adapter\AdapterInterface::class)
+        $this->imageAdapterMock = $this->getMockBuilder('Magento\Framework\Image\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -117,21 +117,21 @@ class DirectiveTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\ResponseInterface')
             ->disableOriginalConstructor()
             ->setMethods(['setHeader', 'setBody', 'sendResponse'])
             ->getMock();
-        $this->wysiwygConfigMock = $this->getMockBuilder(\Magento\Cms\Model\Wysiwyg\Config::class)
+        $this->wysiwygConfigMock = $this->getMockBuilder('Magento\Cms\Model\Wysiwyg\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->rawFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\RawFactory::class)
+        $this->rawFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\Result\RawFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->rawMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Raw::class)
+        $this->rawMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Raw')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -147,7 +147,7 @@ class DirectiveTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->wysiwygDirective = $objectManager->getObject(
-            \Magento\Cms\Controller\Adminhtml\Wysiwyg\Directive::class,
+            'Magento\Cms\Controller\Adminhtml\Wysiwyg\Directive',
             [
                 'context' => $this->actionContextMock,
                 'urlDecoder' => $this->urlDecoderMock,
@@ -255,7 +255,7 @@ class DirectiveTest extends \PHPUnit\Framework\TestCase
             ->willReturn($directive);
         $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Cms\Model\Template\Filter::class)
+            ->with('Magento\Cms\Model\Template\Filter')
             ->willReturn($this->templateFilterMock);
         $this->templateFilterMock->expects($this->once())
             ->method('filter')
@@ -265,9 +265,9 @@ class DirectiveTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [\Magento\Framework\Image\AdapterFactory::class, $this->imageAdapterFactoryMock],
-                    [\Magento\Cms\Model\Wysiwyg\Config::class, $this->wysiwygConfigMock],
-                    [\Psr\Log\LoggerInterface::class, $this->loggerMock]
+                    ['Magento\Framework\Image\AdapterFactory', $this->imageAdapterFactoryMock],
+                    ['Magento\Cms\Model\Wysiwyg\Config', $this->wysiwygConfigMock],
+                    ['Psr\Log\LoggerInterface', $this->loggerMock]
                 ]
             );
         $this->imageAdapterFactoryMock->expects($this->once())

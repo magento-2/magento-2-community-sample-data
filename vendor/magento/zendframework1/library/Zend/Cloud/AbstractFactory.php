@@ -30,6 +30,8 @@ class Zend_Cloud_AbstractFactory
 {
     /**
      * Constructor
+     *
+     * @return void
      */
     private function __construct()
     {

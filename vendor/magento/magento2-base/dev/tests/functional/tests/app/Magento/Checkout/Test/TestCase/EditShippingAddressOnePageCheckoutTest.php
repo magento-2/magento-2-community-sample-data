@@ -29,7 +29,7 @@ use Magento\Mtf\TestCase\Scenario;
  * 12. Perform all assertions.
  *
  * @group Checkout
- * @ZephyrId MAGETWO-67837
+ * @ZephyrId MAGETWO-71053
  */
 class EditShippingAddressOnePageCheckoutTest extends Scenario
 {

@@ -5,13 +5,13 @@
  */
 namespace Magento\Framework\Test\Unit\DB\Query;
 
-use Magento\Framework\DB\Query\BatchIterator;
+use Magento\Framework\DB\Query\Generator;
 use Magento\Framework\DB\Query\BatchIteratorFactory;
 use Magento\Framework\DB\Query\BatchRangeIteratorFactory;
-use Magento\Framework\DB\Query\Generator;
 use Magento\Framework\DB\Select;
+use Magento\Framework\DB\Query\BatchIterator;
 
-class GeneratorTest extends \PHPUnit\Framework\TestCase
+class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Generator
@@ -43,10 +43,10 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->factoryMock = $this->createMock(BatchIteratorFactory::class);
-        $this->rangeFactoryMock = $this->createPartialMock(BatchRangeIteratorFactory::class, ['create']);
-        $this->selectMock = $this->createMock(Select::class);
-        $this->iteratorMock = $this->createMock(BatchIterator::class);
+        $this->factoryMock = $this->getMock(BatchIteratorFactory::class, [], [], '', false, false);
+        $this->rangeFactoryMock = $this->getMock(BatchRangeIteratorFactory::class, ['create'], [], '', false, false);
+        $this->selectMock = $this->getMock(Select::class, [], [], '', false, false);
+        $this->iteratorMock = $this->getMock(BatchIterator::class, [], [], '', false, false);
         $this->model = new Generator($this->factoryMock, $this->rangeFactoryMock);
     }
 
@@ -193,7 +193,9 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
+
         $this->selectMock->expects($this->exactly(2))->method('getPart')->willReturnMap($map);
+
         $this->factoryMock->expects($this->once())->method('create')->with(
             [
                 'select' => $this->selectMock,
@@ -203,6 +205,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
                 'rangeFieldAlias' => 'product_id'
             ]
         )->willReturn($this->iteratorMock);
+
         $this->assertEquals(
             $this->iteratorMock,
             $this->model->generate('entity_id', $this->selectMock, 100, 'non_unique')

@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class ViewTest
  * @package Magento\Customer\Block\Adminhtml\Edit\Tab
  */
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Block\Adminhtml\Edit\Tab\View
@@ -20,11 +20,11 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $registry = $this->createMock(\Magento\Framework\Registry::class);
+        $registry = $this->getMock('Magento\Framework\Registry');
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->view = $objectManagerHelper->getObject(
-            \Magento\Customer\Block\Adminhtml\Edit\Tab\View::class,
+            'Magento\Customer\Block\Adminhtml\Edit\Tab\View',
             [
                 'registry' => $registry
             ]

@@ -98,7 +98,7 @@ class Flat implements \Magento\Framework\Indexer\ActionInterface, \Magento\Frame
      * Get cache context
      *
      * @return \Magento\Framework\Indexer\CacheContext
-     * @deprecated 100.0.11
+     * @deprecated
      */
     protected function getCacheContext()
     {

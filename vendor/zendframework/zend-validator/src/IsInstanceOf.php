@@ -19,18 +19,18 @@ class IsInstanceOf extends AbstractValidator
      *
      * @var array
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::NOT_INSTANCE_OF => "The input is not an instance of '%className%'",
-    ];
+    );
 
     /**
      * Additional variables available for validation failure messages
      *
      * @var array
      */
-    protected $messageVariables = [
+    protected $messageVariables = array(
         'className' => 'className'
-    ];
+    );
 
     /**
      * Class name
@@ -52,16 +52,16 @@ class IsInstanceOf extends AbstractValidator
         }
 
         // If argument is not an array, consider first argument as class name
-        if (! is_array($options)) {
+        if (!is_array($options)) {
             $options = func_get_args();
 
-            $tmpOptions = [];
+            $tmpOptions = array();
             $tmpOptions['className'] = array_shift($options);
 
             $options = $tmpOptions;
         }
 
-        if (! array_key_exists('className', $options)) {
+        if (!array_key_exists('className', $options)) {
             throw new Exception\InvalidArgumentException('Missing option "className"');
         }
 

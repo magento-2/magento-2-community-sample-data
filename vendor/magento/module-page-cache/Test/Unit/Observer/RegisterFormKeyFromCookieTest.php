@@ -12,7 +12,7 @@ use Magento\Framework\Session\Config\ConfigInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\PageCache\Observer\RegisterFormKeyFromCookie;
 
-class RegisterFormKeyFromCookieTest extends \PHPUnit\Framework\TestCase
+class RegisterFormKeyFromCookieTest extends \PHPUnit_Framework_TestCase
 {
     /** @var RegisterFormKeyFromCookie */
     protected $observer;
@@ -47,30 +47,30 @@ class RegisterFormKeyFromCookieTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->cookieFormKey = $this->getMockBuilder(
-            \Magento\Framework\App\PageCache\FormKey::class
+            'Magento\Framework\App\PageCache\FormKey'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->escaper = $this->getMockBuilder(
-            \Magento\Framework\Escaper::class
+            'Magento\Framework\Escaper'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->sessionFormKey = $this->getMockBuilder(
-            \Magento\Framework\Data\Form\FormKey::class
+            'Magento\Framework\Data\Form\FormKey'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->cookieMetadataFactory = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+            'Magento\Framework\Stdlib\Cookie\CookieMetadataFactory'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionConfig = $this->createMock(
-            \Magento\Framework\Session\Config\ConfigInterface::class
+        $this->sessionConfig = $this->getMock(
+            'Magento\Framework\Session\Config\ConfigInterface'
         );
 
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer');
 
         $this->observer = new RegisterFormKeyFromCookie(
             $this->cookieFormKey,
@@ -103,7 +103,7 @@ class RegisterFormKeyFromCookieTest extends \PHPUnit\Framework\TestCase
         $cookieLifetime = 3600;
 
         $cookieMetadata = $this->getMockBuilder(
-            \Magento\Framework\Stdlib\Cookie\PublicCookieMetadata::class
+            'Magento\Framework\Stdlib\Cookie\PublicCookieMetadata'
         )
             ->disableOriginalConstructor()
             ->getMock();

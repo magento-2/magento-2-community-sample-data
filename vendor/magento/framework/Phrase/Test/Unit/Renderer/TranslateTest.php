@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Phrase\Test\Unit\Renderer;
 
-class TranslateTest extends \PHPUnit\Framework\TestCase
+class TranslateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Translate|\PHPUnit_Framework_MockObject_MockObject
@@ -24,13 +24,13 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_translator = $this->createMock(\Magento\Framework\TranslateInterface::class);
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->_translator = $this->getMock('Magento\Framework\TranslateInterface', [], [], '', false);
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_renderer = $objectManagerHelper->getObject(
-            \Magento\Framework\Phrase\Renderer\Translate::class,
+            'Magento\Framework\Phrase\Renderer\Translate',
             [
                 'translator' => $this->_translator,
                 'logger' => $this->loggerMock
@@ -91,8 +91,7 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willThrowException($exception);
 
-        $this->expectException('Exception');
-        $this->expectExceptionMessage($message);
+        $this->setExpectedException('Exception', $message);
         $this->_renderer->render(['text'], []);
     }
 }

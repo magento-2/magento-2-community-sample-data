@@ -11,7 +11,7 @@ use \Magento\Setup\Fixtures\CatalogPriceRulesFixture;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
+class CatalogPriceRulesFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel
@@ -25,19 +25,19 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock(\Magento\Setup\Fixtures\FixtureModel::class, [], [], '', false);
 
         $this->model = new CatalogPriceRulesFixture($this->fixtureModelMock);
     }
 
     public function testExecute()
     {
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
         $storeMock->expects($this->once())
             ->method('getRootCategoryId')
             ->will($this->returnValue(2));
 
-        $websiteMock = $this->createMock(\Magento\Store\Model\Website::class);
+        $websiteMock = $this->getMock(\Magento\Store\Model\Website::class, [], [], '', false);
         $websiteMock->expects($this->once())
             ->method('getGroups')
             ->will($this->returnValue([$storeMock]));
@@ -45,12 +45,12 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->will($this->returnValue('website_id'));
 
-        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
+        $storeManagerMock = $this->getMock(\Magento\Store\Model\StoreManager::class, [], [], '', false);
         $storeManagerMock->expects($this->once())
             ->method('getWebsites')
             ->will($this->returnValue([$websiteMock]));
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock(\Magento\Framework\Model\ResourceModel\Db\Context::class, [], [], '', false);
         $abstractDbMock = $this->getMockForAbstractClass(
             \Magento\Framework\Model\ResourceModel\Db\AbstractDb::class,
             [$contextMock],
@@ -64,7 +64,7 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getAllChildren')
             ->will($this->returnValue([1]));
 
-        $categoryMock = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $categoryMock = $this->getMock(\Magento\Catalog\Model\Category::class, [], [], '', false);
         $categoryMock->expects($this->once())
             ->method('getResource')
             ->will($this->returnValue($abstractDbMock));
@@ -75,9 +75,9 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->will($this->returnValue('category_id'));
 
-        $modelMock = $this->createMock(\Magento\CatalogRule\Model\Rule::class);
-        $metadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
-        $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
+        $modelMock = $this->getMock(\Magento\CatalogRule\Model\Rule::class, [], [], '', false);
+        $metadataMock = $this->getMock(\Magento\Framework\EntityManager\EntityMetadata::class, [], [], '', false);
+        $metadataPoolMock = $this->getMock(\Magento\Framework\EntityManager\MetadataPool::class, [], [], '', false);
         $metadataMock->expects($this->once())
             ->method('getLinkField')
             ->will($this->returnValue('Field Id Name'));
@@ -92,7 +92,7 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getMetadata')
             ->with(\Magento\CatalogRule\Api\Data\RuleInterface::class)
             ->willReturn($metadataMock);
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->once())
             ->method('create')
             ->will($this->returnValue($storeManagerMock));
@@ -114,10 +114,10 @@ class CatalogPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function testNoFixtureConfigValue()
     {
-        $ruleMock = $this->createMock(\Magento\SalesRule\Model\Rule::class);
+        $ruleMock = $this->getMock(\Magento\SalesRule\Model\Rule::class, [], [], '', false);
         $ruleMock->expects($this->never())->method('save');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->never())
             ->method('get')
             ->with($this->equalTo(\Magento\SalesRule\Model\Rule::class))

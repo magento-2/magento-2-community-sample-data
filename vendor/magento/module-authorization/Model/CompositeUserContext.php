@@ -9,13 +9,7 @@ namespace Magento\Authorization\Model;
 use Magento\Framework\ObjectManager\Helper\Composite as CompositeHelper;
 
 /**
- * User context.
- *
- * This class is not implementing standard composite pattern and will not invoke all of its children.
- * Instead, it will try to find the first suitable child and return its result.
- *
- * @api
- * @since 100.0.2
+ * Composite user context (implements composite pattern).
  */
 class CompositeUserContext implements \Magento\Authorization\Model\UserContextInterface
 {

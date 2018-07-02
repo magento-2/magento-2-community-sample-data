@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Mapper\Helper;
 
-class RelativePathConverterTest extends \PHPUnit\Framework\TestCase
+class RelativePathConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Mapper\Helper\RelativePathConverter
@@ -24,25 +24,23 @@ class RelativePathConverterTest extends \PHPUnit\Framework\TestCase
 
         $exceptionMessage = sprintf('Invalid relative path %s in %s node', $relativePath, $nodePath);
 
-        $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage($exceptionMessage);
+        $this->setExpectedException('InvalidArgumentException', $exceptionMessage);
         $this->_sut->convert($nodePath, $relativePath);
     }
 
     /**
-     * @dataProvider convertWithInvalidArgumentsDataProvider
+     * @dataProvider testConvertWithInvalidArgumentsDataProvider
      * @param string $nodePath
      * @param string $relativePath
      */
     public function testConvertWithInvalidArguments($nodePath, $relativePath)
     {
-        $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Invalid arguments');
+        $this->setExpectedException('InvalidArgumentException', 'Invalid arguments');
         $this->_sut->convert($nodePath, $relativePath);
     }
 
     /**
-     * @dataProvider convertDataProvider
+     * @dataProvider testConvertDataProvider
      * @param string $nodePath
      * @param string $relativePath
      * @param string $result
@@ -52,12 +50,12 @@ class RelativePathConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $this->_sut->convert($nodePath, $relativePath));
     }
 
-    public function convertWithInvalidArgumentsDataProvider()
+    public function testConvertWithInvalidArgumentsDataProvider()
     {
         return [['', ''], ['some/node', ''], ['', 'some/node']];
     }
 
-    public function convertDataProvider()
+    public function testConvertDataProvider()
     {
         return [
             ['currentNode', 'relativeNode', 'relativeNode'],

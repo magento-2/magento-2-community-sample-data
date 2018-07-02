@@ -9,7 +9,7 @@ namespace Magento\Backend\Block\System\Design\Edit\Tab;
  * Test class for \Magento\Backend\Block\System\Design\Edit\Tab\General
  * @magentoAppArea adminhtml
  */
-class GeneralTest extends \PHPUnit\Framework\TestCase
+class GeneralTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -18,20 +18,20 @@ class GeneralTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $objectManager->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->setArea(
             \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE
         )->setDefaultDesignTheme();
         $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->register(
             'design',
-            $objectManager->create(\Magento\Framework\App\DesignInterface::class)
+            $objectManager->create('Magento\Framework\App\DesignInterface')
         );
-        $layout = $objectManager->create(\Magento\Framework\View\Layout::class);
-        $block = $layout->addBlock(\Magento\Backend\Block\System\Design\Edit\Tab\General::class);
+        $layout = $objectManager->create('Magento\Framework\View\Layout');
+        $block = $layout->addBlock('Magento\Backend\Block\System\Design\Edit\Tab\General');
         $prepareFormMethod = new \ReflectionMethod(
-            \Magento\Backend\Block\System\Design\Edit\Tab\General::class,
+            'Magento\Backend\Block\System\Design\Edit\Tab\General',
             '_prepareForm'
         );
         $prepareFormMethod->setAccessible(true);

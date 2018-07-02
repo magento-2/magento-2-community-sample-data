@@ -1,4 +1,3 @@
-.vagrant
 tests/Zend/Db/Table/_files/cachefiles/*
 tests/Zend/Auth/Adapter/OpenId/_files/*
 tests/Zend/Filter/_files/Compress/*

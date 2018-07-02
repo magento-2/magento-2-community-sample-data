@@ -12,9 +12,6 @@ use Magento\Framework\EntityManager\MetadataPool;
  * Wishlist item collection
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -140,7 +137,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
     /**
      * @var MetadataPool
-     * @since 100.1.0
      */
     protected $metadataPool;
 
@@ -208,7 +204,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function _construct()
     {
-        $this->_init(\Magento\Wishlist\Model\Item::class, \Magento\Wishlist\Model\ResourceModel\Item::class);
+        $this->_init('Magento\Wishlist\Model\Item', 'Magento\Wishlist\Model\ResourceModel\Item');
         $this->addFilterToMap('store_id', 'main_table.store_id');
     }
 
@@ -216,13 +212,12 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Get metadata pool object
      *
      * @return MetadataPool
-     * @since 100.1.0
      */
     protected function getMetadataPool()
     {
         if ($this->metadataPool == null) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }
@@ -289,10 +284,20 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $productCollection->setVisibility($this->_productVisibility->getVisibleInSiteIds());
         }
 
+        $attributesToSelect = [
+            'name',
+            'visibility',
+            'small_image',
+            'thumbnail',
+            'links_purchased_separately',
+            'links_title',
+            'price_type',
+        ];
+
         $productCollection->addPriceData()
             ->addTaxPercents()
             ->addIdFilter($this->_productIds)
-            ->addAttributeToSelect($this->_wishlistConfig->getProductAttributes())
+            ->addAttributeToSelect($attributesToSelect)
             ->addOptionsToResult()
             ->addUrlRewrite();
 

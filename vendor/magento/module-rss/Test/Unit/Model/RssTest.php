@@ -6,10 +6,9 @@
 
 namespace Magento\Rss\Test\Unit\Model;
 
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class RssTest extends \PHPUnit\Framework\TestCase
+class RssTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Rss\Model\Rss
@@ -41,77 +40,55 @@ class RssTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \Magento\Framework\App\CacheInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $cacheMock;
-
-    /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
+    protected $cacheInterface;
 
     protected function setUp()
     {
-        $this->cacheMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
-        $this->serializerMock = $this->createMock(SerializerInterface::class);
+        $this->cacheInterface = $this->getMock('Magento\Framework\App\CacheInterface');
+
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->rss = $this->objectManagerHelper->getObject(
-            \Magento\Rss\Model\Rss::class,
+            'Magento\Rss\Model\Rss',
             [
-                'cache' => $this->cacheMock,
-                'serializer' => $this->serializerMock
+                'cache' => $this->cacheInterface
             ]
         );
     }
 
     public function testGetFeeds()
     {
-        $dataProvider = $this->createMock(\Magento\Framework\App\Rss\DataProviderInterface::class);
+        $dataProvider = $this->getMock('Magento\Framework\App\Rss\DataProviderInterface');
         $dataProvider->expects($this->any())->method('getCacheKey')->will($this->returnValue('cache_key'));
         $dataProvider->expects($this->any())->method('getCacheLifetime')->will($this->returnValue(100));
         $dataProvider->expects($this->any())->method('getRssData')->will($this->returnValue($this->feedData));
 
         $this->rss->setDataProvider($dataProvider);
 
-        $this->cacheMock->expects($this->once())
-            ->method('load')
-            ->with('cache_key')
-            ->will($this->returnValue(false));
-        $this->cacheMock->expects($this->once())
-            ->method('save')
-            ->with('serializedData')
-            ->will($this->returnValue(true));
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->with($this->feedData)
-            ->willReturn('serializedData');
+        $this->cacheInterface->expects($this->once())->method('load')->will($this->returnValue(false));
+        $this->cacheInterface->expects($this->once())->method('save')->will($this->returnValue(true));
 
         $this->assertEquals($this->feedData, $this->rss->getFeeds());
     }
 
     public function testGetFeedsWithCache()
     {
-        $dataProvider = $this->createMock(\Magento\Framework\App\Rss\DataProviderInterface::class);
+        $dataProvider = $this->getMock('Magento\Framework\App\Rss\DataProviderInterface');
         $dataProvider->expects($this->any())->method('getCacheKey')->will($this->returnValue('cache_key'));
         $dataProvider->expects($this->any())->method('getCacheLifetime')->will($this->returnValue(100));
         $dataProvider->expects($this->never())->method('getRssData');
 
         $this->rss->setDataProvider($dataProvider);
 
-        $this->cacheMock->expects($this->once())
-            ->method('load')
-            ->with('cache_key')
-            ->will($this->returnValue('serializedData'));
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with('serializedData')
-            ->willReturn($this->feedData);
-        $this->cacheMock->expects($this->never())->method('save');
+        $this->cacheInterface->expects($this->once())->method('load')
+            ->will($this->returnValue(serialize($this->feedData)));
+        $this->cacheInterface->expects($this->never())->method('save');
 
         $this->assertEquals($this->feedData, $this->rss->getFeeds());
     }
 
     public function testCreateRssXml()
     {
-        $dataProvider = $this->createMock(\Magento\Framework\App\Rss\DataProviderInterface::class);
+        $dataProvider = $this->getMock('Magento\Framework\App\Rss\DataProviderInterface');
         $dataProvider->expects($this->any())->method('getCacheKey')->will($this->returnValue('cache_key'));
         $dataProvider->expects($this->any())->method('getCacheLifetime')->will($this->returnValue(100));
         $dataProvider->expects($this->any())->method('getRssData')->will($this->returnValue($this->feedData));

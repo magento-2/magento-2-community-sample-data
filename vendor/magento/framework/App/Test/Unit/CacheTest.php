@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Test\Unit;
 
-class CacheTest extends \PHPUnit\Framework\TestCase
+class CacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Cache
@@ -27,7 +27,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
         $this->_initCacheTypeMocks();
 
         $this->_cacheFrontendMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Cache\FrontendInterface::class,
+            'Magento\Framework\Cache\FrontendInterface',
             [],
             '',
             true,
@@ -36,7 +36,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
             ['clean']
         );
 
-        $frontendPoolMock = $this->createMock(\Magento\Framework\App\Cache\Frontend\Pool::class);
+        $frontendPoolMock = $this->getMock('Magento\Framework\App\Cache\Frontend\Pool', [], [], '', false);
         $frontendPoolMock->expects($this->any())->method('valid')->will($this->onConsecutiveCalls(true, false));
 
         $frontendPoolMock->expects(
@@ -65,19 +65,15 @@ class CacheTest extends \PHPUnit\Framework\TestCase
     protected function _initCacheTypeMocks()
     {
         $cacheTypes = [
-            \Magento\Framework\Cache\Frontend\Decorator\TagScope::class,
-            \Magento\Framework\Cache\Frontend\Decorator\Bare::class,
+            'Magento\Framework\Cache\Frontend\Decorator\TagScope',
+            'Magento\Framework\Cache\Frontend\Decorator\Bare',
         ];
         foreach ($cacheTypes as $type) {
-            $this->_cacheTypeMocks[$type] = $this->getMockBuilder($type)
-                ->setMethods(['clean'])
-                ->setConstructorArgs(
-                    [
-                        $this->getMockForAbstractClass(\Magento\Framework\Cache\FrontendInterface::class), '
-                        FIXTURE_TAG'
-                    ]
-                )
-                ->getMock();
+            $this->_cacheTypeMocks[$type] = $this->getMock(
+                $type,
+                ['clean'],
+                [$this->getMockForAbstractClass('Magento\Framework\Cache\FrontendInterface'), 'FIXTURE_TAG']
+            );
         }
     }
 

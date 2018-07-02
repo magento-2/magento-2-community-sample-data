@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Submit form
  * 6. Perform all assertions
  *
- * @group Search_Terms
+ * @group Search_Terms_(MX)
  * @ZephyrId MAGETWO-26599
  */
 class MassDeleteSearchTermEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

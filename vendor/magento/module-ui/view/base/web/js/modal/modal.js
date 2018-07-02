@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'jquery',
     'underscore',
@@ -45,7 +42,6 @@ define([
      */
     $.widget('mage.modal', {
         options: {
-            id: null,
             type: 'popup',
             title: '',
             subTitle: '',
@@ -125,7 +121,6 @@ define([
                 'closeModal'
             );
 
-            this.options.id = this.uuid;
             this.options.transitionEvent = transitionEvent;
             this._createWrapper();
             this._renderModal();
@@ -201,7 +196,7 @@ define([
          */
         setSubTitle: function (subTitle) {
             this.options.subTitle = subTitle;
-            this.modal.find(this.options.modalSubTitle).html(subTitle);
+            this.modal.find(this.options.modalSubTitle).text(subTitle);
         },
 
         /**

@@ -1,5 +1,6 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -40,13 +41,12 @@ class Builder
     protected $storeFactory;
 
     /**
-     * Constructor
-     *
      * @param ProductFactory $productFactory
      * @param Logger $logger
      * @param Registry $registry
      * @param WysiwygModel\Config $wysiwygConfig
      * @param StoreFactory|null $storeFactory
+     * @throws \RuntimeException
      */
     public function __construct(
         ProductFactory $productFactory,
@@ -59,8 +59,11 @@ class Builder
         $this->logger = $logger;
         $this->registry = $registry;
         $this->wysiwygConfig = $wysiwygConfig;
-        $this->storeFactory = $storeFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Store\Model\StoreFactory::class);
+        if (null === $storeFactory) {
+            $storeFactory = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(StoreFactory::class);
+        }
+        $this->storeFactory = $storeFactory;
     }
 
     /**

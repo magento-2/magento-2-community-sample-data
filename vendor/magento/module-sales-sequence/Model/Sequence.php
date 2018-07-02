@@ -10,9 +10,6 @@ use Magento\Framework\DB\Sequence\SequenceInterface;
 
 /**
  * Class Sequence represents sequence in logic
- *
- * @api
- * @since 100.0.2
  */
 class Sequence implements SequenceInterface
 {

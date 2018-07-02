@@ -18,7 +18,7 @@ class Edit extends \Magento\Backend\Controller\Adminhtml\System\Design
         $resultPage->setActiveMenu('Magento_Backend::system_design_schedule');
         $resultPage->getConfig()->getTitle()->prepend(__('Store Design'));
         $id = (int)$this->getRequest()->getParam('id');
-        $design = $this->_objectManager->create(\Magento\Framework\App\DesignInterface::class);
+        $design = $this->_objectManager->create('Magento\Framework\App\DesignInterface');
 
         if ($id) {
             $design->load($id);
@@ -30,11 +30,9 @@ class Edit extends \Magento\Backend\Controller\Adminhtml\System\Design
 
         $this->_coreRegistry->register('design', $design);
 
-        $resultPage->addContent($resultPage->getLayout()->createBlock(
-            \Magento\Backend\Block\System\Design\Edit::class
-        ));
+        $resultPage->addContent($resultPage->getLayout()->createBlock('Magento\Backend\Block\System\Design\Edit'));
         $resultPage->addLeft(
-            $resultPage->getLayout()->createBlock(\Magento\Backend\Block\System\Design\Edit\Tabs::class, 'design_tabs')
+            $resultPage->getLayout()->createBlock('Magento\Backend\Block\System\Design\Edit\Tabs', 'design_tabs')
         );
 
         return $resultPage;

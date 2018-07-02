@@ -8,7 +8,7 @@ namespace Magento\Reports\Test\Unit\Helper;
 
 use Magento\Reports\Helper\Data;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Helper\Data
@@ -30,10 +30,10 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->itemFactoryMock = $this->getMockBuilder(\Magento\Reports\Model\ItemFactory::class)
+        $this->itemFactoryMock = $this->getMockBuilder('Magento\Reports\Model\ItemFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,12 +67,12 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepareIntervalsCollection($from, $to, $period, $results)
     {
-        $collection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
+        $collection = $this->getMockBuilder('Magento\Framework\Data\Collection')
             ->disableOriginalConstructor()
             ->setMethods(['addItem'])
             ->getMock();
 
-        $item = $this->getMockBuilder(\Magento\Reports\Model\Item::class)
+        $item = $this->getMockBuilder('Magento\Reports\Model\Item')
             ->disableOriginalConstructor()
             ->setMethods(['setPeriod', 'setIsEmpty'])
             ->getMock();

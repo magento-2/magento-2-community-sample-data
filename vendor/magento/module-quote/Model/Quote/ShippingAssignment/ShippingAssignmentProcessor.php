@@ -5,15 +5,14 @@
  */
 namespace Magento\Quote\Model\Quote\ShippingAssignment;
 
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Quote\Model\ShippingAssignmentFactory;
-use Magento\Quote\Model\Quote\Item\CartItemPersister;
 use Magento\Customer\Api\AddressRepositoryInterface;
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\ObjectManager;
 
 class ShippingAssignmentProcessor
 {
@@ -28,11 +27,13 @@ class ShippingAssignmentProcessor
     protected $shippingProcessor;
 
     /**
-     * @var CartItemPersister
+     * @var \Magento\Quote\Model\Quote\Item\CartItemPersister
      */
     protected $cartItemPersister;
 
     /**
+     * Customer address CRUD interface.
+     *
      * @var AddressRepositoryInterface
      */
     private $addressRepository;
@@ -40,13 +41,13 @@ class ShippingAssignmentProcessor
     /**
      * @param ShippingAssignmentFactory $shippingAssignmentFactory
      * @param ShippingProcessor $shippingProcessor
-     * @param CartItemPersister $cartItemPersister
+     * @param \Magento\Quote\Model\Quote\Item\CartItemPersister $cartItemPersister
      * @param AddressRepositoryInterface $addressRepository
      */
     public function __construct(
         ShippingAssignmentFactory $shippingAssignmentFactory,
         ShippingProcessor $shippingProcessor,
-        CartItemPersister $cartItemPersister,
+        \Magento\Quote\Model\Quote\Item\CartItemPersister $cartItemPersister,
         AddressRepositoryInterface $addressRepository = null
     ) {
         $this->shippingAssignmentFactory = $shippingAssignmentFactory;
@@ -57,9 +58,10 @@ class ShippingAssignmentProcessor
     }
 
     /**
-     * Create shipping assignment
+     * Create shipping assignment.
      *
      * @param CartInterface $quote
+     *
      * @return \Magento\Quote\Api\Data\ShippingAssignmentInterface
      */
     public function create(CartInterface $quote)
@@ -76,11 +78,13 @@ class ShippingAssignmentProcessor
     }
 
     /**
-     * Save shipping assignment
+     * Save shipping assignment.
      *
      * @param ShippingAssignmentInterface $shippingAssignment
      * @param CartInterface $quote
+     *
      * @return void
+     *
      * @throws InputException|LocalizedException
      */
     public function save(CartInterface $quote, ShippingAssignmentInterface $shippingAssignment)

@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Image\Adapter;
 
-/**
- * Interface \Magento\Framework\Image\Adapter\AdapterInterface
- *
- */
 interface AdapterInterface
 {
     /**

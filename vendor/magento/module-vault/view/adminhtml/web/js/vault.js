@@ -4,7 +4,6 @@
  */
 /*browser:true*/
 /*global define*/
-/* @api */
 define([
     'jquery',
     'uiComponent'
@@ -72,7 +71,7 @@ define([
         },
 
         /**
-         * Get payment method code
+         * Get Vault Payment method code
          * @returns {String}
          */
         getCode: function () {

@@ -12,23 +12,17 @@ namespace Magento\Downloadable\Model\Product;
 /**
  * Test for \Magento\Downloadable\Model\Product\Type
  */
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Downloadable\Model\Product\Type
      */
     protected $_model;
 
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
-
     protected function setUp()
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_model = $this->objectManager->create(
-            \Magento\Downloadable\Model\Product\Type::class
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Downloadable\Model\Product\Type'
         );
     }
 
@@ -39,7 +33,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
     public function testDeleteTypeSpecificData()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(1);
         $product->setOrigData();
@@ -62,7 +56,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
         $product->setDownloadableData($downloadableData);
         $this->_model->deleteTypeSpecificData($product);
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(1);
 
@@ -83,7 +77,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(1);
         $product->setOrigData();
@@ -113,8 +107,8 @@ class TypeTest extends \PHPUnit\Framework\TestCase
         }
 
         $product->setDownloadableData($downloadableData);
-        $sampleFactory = $objectManager->create(\Magento\Downloadable\Api\Data\SampleInterfaceFactory::class);
-        $linkFactory = $objectManager->create(\Magento\Downloadable\Api\Data\LinkInterfaceFactory::class);
+        $sampleFactory = $objectManager->create('Magento\Downloadable\Api\Data\SampleInterfaceFactory');
+        $linkFactory = $objectManager->create('Magento\Downloadable\Api\Data\LinkInterfaceFactory');
         $extension = $product->getExtensionAttributes();
         $expectedLink = [
             'is_shareable' => '2',
@@ -188,7 +182,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
         $product->save();
         /** @var \Magento\Catalog\Model\Product $product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(1);
 
@@ -221,38 +215,5 @@ class TypeTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey($key, $sample);
             $this->assertEquals($value, $sample[$key]);
         }
-    }
-
-    /**
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
-     * @magentoDataFixture Magento/Downloadable/_files/product_downloadable.php
-     * @covers \Magento\Downloadable\Model\Product\Type::checkProductBuyState()
-     */
-    public function testCheckProductBuyState()
-    {
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository =$this->objectManager->create(
-            \Magento\Catalog\Api\ProductRepositoryInterface::class
-        );
-        $product = $productRepository->get('downloadable-product');
-        $product->setLinksPurchasedSeparately(false);
-        $productRepository->save($product);
-        /** @var \Magento\Quote\Model\Quote\Item\Option $option */
-        $option = $this->objectManager->create(
-            \Magento\Quote\Model\Quote\Item\Option::class,
-            ['data' => ['code' => 'info_buyRequest', 'value' => '{"qty":23}']]
-        );
-        $option->setProduct($product);
-        $product->setCustomOptions(['info_buyRequest' => $option]);
-
-        $this->_model->checkProductBuyState($product);
-        $linksFactory = $this->objectManager
-            ->get(\Magento\Downloadable\Model\ResourceModel\Link\CollectionFactory::class);
-        $allLinksIds = $linksFactory->create()->addProductToFilter($product->getEntityId())->getAllIds();
-        $this->assertEquals(
-            '{"qty":23,"links":["' . implode('","', $allLinksIds). '"]}',
-            $product->getCustomOption('info_buyRequest')->getValue()
-        );
     }
 }

@@ -7,6 +7,7 @@
 namespace Magento\Sales\Test\Block\Adminhtml\Order\Create;
 
 use Magento\Mtf\Block\Block;
+use Magento\Mtf\Client\Locator;
 
 /**
  * Class Totals
@@ -23,25 +24,18 @@ class Totals extends Block
     protected $submitOrder = '.order-totals-actions button';
 
     /**
-     * Order Totals rows locator.
+     * Order totals table.
      *
      * @var string
      */
-    private $totalsRowsLocator = '.data-table tr';
+    protected $totalsTable = '.data-table';
 
     /**
-     * Order Totals Item label locator.
+     * Total row label selector.
      *
      * @var string
      */
-    private $totalsRowKeyLocator = '.admin__total-mark';
-
-    /**
-     * Order Totals Item amount locator.
-     *
-     * @var string
-     */
-    private $totalsRowValueLocator = '.price';
+    protected $totalLabelLocator = './/tr[normalize-space(td)="%s"]';
 
     /**
      * Click 'Submit Order' button
@@ -52,21 +46,16 @@ class Totals extends Block
     }
 
     /**
-     * Get Order totals.
+     * Return total presence by label.
      *
-     * @return array
+     * @param string $total
+     * @return bool
      */
-    public function getOrderTotals()
+    public function isTotalPresent($total)
     {
-        $totals = [];
-        $elements = $this->_rootElement->getElements($this->totalsRowsLocator);
-        foreach ($elements as $row) {
-            if ($row->isVisible()) {
-                $key = trim($row->find($this->totalsRowKeyLocator)->getText());
-                $value = $row->find($this->totalsRowValueLocator)->getText();
-                $totals[$key] = $value;
-            }
-        }
-        return $totals;
+        $totalsTable = $this->_rootElement->find($this->totalsTable);
+        $totalRow = $totalsTable->find(sprintf($this->totalLabelLocator, $total), Locator::SELECTOR_XPATH);
+        
+        return $totalRow->isVisible();
     }
 }

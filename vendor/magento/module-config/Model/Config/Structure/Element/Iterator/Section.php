@@ -5,10 +5,6 @@
  */
 namespace Magento\Config\Model\Config\Structure\Element\Iterator;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Section extends \Magento\Config\Model\Config\Structure\Element\Iterator
 {
     /**

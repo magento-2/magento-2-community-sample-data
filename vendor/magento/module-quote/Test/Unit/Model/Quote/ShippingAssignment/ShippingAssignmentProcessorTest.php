@@ -18,7 +18,12 @@ use Magento\Quote\Api\Data\ShippingInterface;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-class ShippingAssignmentProcessorTest extends \PHPUnit\Framework\TestCase
+/**
+ * ShippingAssignmentProcessor test.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class ShippingAssignmentProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ShippingAssignmentProcessor
@@ -116,6 +121,9 @@ class ShippingAssignmentProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * Tests save() method with deleted cart items.
+     */
     public function testSaveWithDeletedCartItems()
     {
         $quoteItemId = 1;
@@ -141,6 +149,9 @@ class ShippingAssignmentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->shippingAssignmentProcessor->save($this->quoteMock, $this->shippingAssignmentMock);
     }
 
+    /**
+     * Tests save() method with not existing customer address.
+     */
     public function testSaveWithNotExistingCustomerAddress()
     {
         $customerAddressId = 11;
@@ -167,10 +178,11 @@ class ShippingAssignmentProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Create quote item mock
+     * Create quote item mock.
      *
      * @param int|string $id
      * @param bool $isDeleted
+     *
      * @return QuoteItem|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createQuoteItemMock($id, $isDeleted)

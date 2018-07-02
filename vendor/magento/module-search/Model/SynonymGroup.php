@@ -17,7 +17,7 @@ class SynonymGroup extends AbstractModel implements SynonymGroupInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Search\Model\ResourceModel\SynonymGroup::class);
+        $this->_init('Magento\Search\Model\ResourceModel\SynonymGroup');
     }
 
     /**

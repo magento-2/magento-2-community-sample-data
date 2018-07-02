@@ -12,20 +12,17 @@ namespace Magento\CustomerImportExport\Model\Import;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\ImportExport\Model\Import as ImportModel;
-use Magento\ImportExport\Model\Import\Adapter as ImportAdapter;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\ImportExport\Model\Import\Adapter as ImportAdapter;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tested class name
      *
      * @var string
      */
-    protected $_testClassName = \Magento\CustomerImportExport\Model\Import\Address::class;
+    protected $_testClassName = 'Magento\CustomerImportExport\Model\Import\Address';
 
     /**
      * Fixture key from fixture
@@ -91,7 +88,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Product $productResource */
         $this->customerResource = Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Model\ResourceModel\Customer::class
+            'Magento\Customer\Model\ResourceModel\Customer'
         );
         $this->_entityAdapter = Bootstrap::getObjectManager()->create(
             $this->_testClassName
@@ -139,7 +136,11 @@ class AddressTest extends \PHPUnit\Framework\TestCase
             $this->_entityAdapter,
             'Addresses must be an array.'
         );
-        $this->assertAttributeNotEmpty('_addresses', $this->_entityAdapter, 'Addresses must not be empty');
+        $this->assertAttributeEmpty(
+            '_addresses',
+            $this->_entityAdapter,
+            'Addresses must not be loaded in constructor'
+        );
 
         // check country regions and regions
         $this->assertAttributeInternalType(
@@ -155,62 +156,6 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test _initAddresses
-     *
-     * @magentoDataFixture Magento/Customer/_files/import_export/customer_with_addresses.php
-     */
-    public function testInitAddresses()
-    {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
-        $objectManager = Bootstrap::getObjectManager();
-
-        // get addressed from fixture
-        $customers = $objectManager->get(\Magento\Framework\Registry::class)->registry($this->_fixtureKey);
-        $correctAddresses = [];
-        /** @var $customer \Magento\Customer\Model\Customer */
-        foreach ($customers as $customer) {
-            $correctAddresses[$customer->getId()] = [];
-            /** @var $address \Magento\Customer\Model\Address */
-            foreach ($customer->getAddressesCollection() as $address) {
-                $correctAddresses[$customer->getId()][] = $address->getId();
-            }
-        }
-
-        // invoke _initAddresses
-        $initAddresses = new \ReflectionMethod($this->_testClassName, '_initAddresses');
-        $initAddresses->setAccessible(true);
-        $initAddresses->invoke($this->_entityAdapter);
-
-        // check addresses
-        $this->assertAttributeInternalType(
-            'array',
-            '_addresses',
-            $this->_entityAdapter,
-            'Addresses must be an array.'
-        );
-        $this->assertAttributeNotEmpty('_addresses', $this->_entityAdapter, 'Addresses must not be empty');
-
-        $addressesReflection = new \ReflectionProperty($this->_testClassName, '_addresses');
-        $addressesReflection->setAccessible(true);
-        $testAddresses = $addressesReflection->getValue($this->_entityAdapter);
-
-        $correctCustomerIds = array_keys($correctAddresses);
-        $testCustomerIds = array_keys($testAddresses);
-        sort($correctCustomerIds);
-        sort($testCustomerIds);
-        $this->assertEquals($correctCustomerIds, $testCustomerIds, 'Incorrect customer IDs in addresses array.');
-
-        foreach ($correctCustomerIds as $customerId) {
-            $this->assertInternalType('array', $correctAddresses[$customerId], 'Addresses must be an array.');
-            $correctAddressIds = $correctAddresses[$customerId];
-            $testAddressIds = $testAddresses[$customerId];
-            sort($correctAddressIds);
-            sort($testAddressIds);
-            $this->assertEquals($correctAddressIds, $testAddressIds, 'Incorrect addresses IDs.');
-        }
-    }
-
-    /**
      * Test _saveAddressEntity
      *
      * @magentoDataFixture Magento/Customer/_files/import_export/customer_with_addresses.php
@@ -222,7 +167,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
 
         // check DB
         $testAddress = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Address::class
+            'Magento\Customer\Model\Address'
         );
         $testAddress->load($addressId);
         $this->assertEquals($addressId, $testAddress->getId(), 'Incorrect address ID.');
@@ -240,17 +185,17 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
 
-        $customers = $objectManager->get(\Magento\Framework\Registry::class)->registry($this->_fixtureKey);
+        $customers = $objectManager->get('Magento\Framework\Registry')->registry($this->_fixtureKey);
         /** @var $customer \Magento\Customer\Model\Customer */
         $customer = reset($customers);
         $customerId = $customer->getId();
 
         /** @var $addressModel \Magento\Customer\Model\Address */
         $addressModel = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Address::class
+            'Magento\Customer\Model\Address'
         );
         $tableName = $addressModel->getResource()->getEntityTable();
-        $addressId = $objectManager->get(\Magento\ImportExport\Model\ResourceModel\Helper::class)
+        $addressId = $objectManager->get('Magento\ImportExport\Model\ResourceModel\Helper')
             ->getNextAutoincrement($tableName);
 
         $newEntityData = [
@@ -306,7 +251,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         // check DB
         /** @var $testAddress \Magento\Customer\Model\Address */
         $testAddress = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Address::class
+            'Magento\Customer\Model\Address'
         );
         $testAddress->load($addressId);
         $this->assertEquals($addressId, $testAddress->getId(), 'Incorrect address ID.');
@@ -324,7 +269,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
 
         // get not default address
-        $customers = $objectManager->get(\Magento\Framework\Registry::class)->registry($this->_fixtureKey);
+        $customers = $objectManager->get('Magento\Framework\Registry')->registry($this->_fixtureKey);
         /** @var $notDefaultAddress \Magento\Customer\Model\Address */
         $notDefaultAddress = null;
         /** @var $addressCustomer \Magento\Customer\Model\Customer */
@@ -364,7 +309,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         // check DB
         /** @var $testCustomer \Magento\Customer\Model\Customer */
         $testCustomer = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Customer::class
+            'Magento\Customer\Model\Customer'
         );
         $testCustomer->load($customerId);
         $this->assertEquals($customerId, $testCustomer->getId(), 'Customer must exists.');
@@ -399,7 +344,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
-        $filesystem = $objectManager->create(Filesystem::class);
+        $filesystem = $objectManager->create('Magento\Framework\Filesystem');
 
         $directoryWrite = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
 
@@ -424,7 +369,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
 
         // get addresses
         $addressCollection = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\ResourceModel\Address\Collection::class
+            'Magento\Customer\Model\ResourceModel\Address\Collection'
         );
         $addressCollection->addAttributeToSelect($requiredAttributes);
         $addresses = [];
@@ -465,7 +410,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         // are default billing/shipping addresses have new value
         /** @var $customer \Magento\Customer\Model\Customer */
         $customer = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Customer::class
+            'Magento\Customer\Model\Customer'
         );
         $customer->setWebsiteId(0);
         $customer->loadByEmail('BetsyParker@example.com');
@@ -490,14 +435,16 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     public function testImportDataDelete()
     {
         // set behaviour
-        $this->_entityAdapter->setParameters(['behavior' => ImportModel::BEHAVIOR_DELETE]);
+        $this->_entityAdapter->setParameters([
+            'behavior' => ImportModel::BEHAVIOR_DELETE
+        ]);
 
         // set fixture CSV file
         $sourceFile = __DIR__ . '/_files/address_import_delete.csv';
 
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
-        $filesystem = $objectManager->create(Filesystem::class);
+        $filesystem = $objectManager->create('Magento\Framework\Filesystem');
         $directoryWrite = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
         $result = $this->_entityAdapter->setSource(
             ImportAdapter::findAdapterFor($sourceFile, $directoryWrite)
@@ -513,7 +460,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         // get addresses
         /** @var $addressCollection \Magento\Customer\Model\ResourceModel\Address\Collection */
         $addressCollection = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\ResourceModel\Address\Collection::class
+            'Magento\Customer\Model\ResourceModel\Address\Collection'
         );
         $addressCollection->addAttributeToSelect($keyAttribute);
         $addresses = [];

@@ -7,7 +7,7 @@ namespace Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter;
 
 use \Magento\Framework\View\Layout\Argument\Interpreter\NamedParams;
 
-class NamedParamsTest extends \PHPUnit\Framework\TestCase
+class NamedParamsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Argument\InterpreterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -21,9 +21,7 @@ class NamedParamsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_interpreter = $this->getMockForAbstractClass(
-            \Magento\Framework\Data\Argument\InterpreterInterface::class
-        );
+        $this->_interpreter = $this->getMockForAbstractClass('Magento\Framework\Data\Argument\InterpreterInterface');
         $this->_model = new NamedParams($this->_interpreter);
     }
 
@@ -62,8 +60,7 @@ class NamedParamsTest extends \PHPUnit\Framework\TestCase
      */
     public function testEvaluateWrongParam($input, $expectedExceptionMessage)
     {
-        $this->expectException('\InvalidArgumentException');
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->setExpectedException('\InvalidArgumentException', $expectedExceptionMessage);
         $this->_model->evaluate($input);
     }
 

@@ -11,7 +11,7 @@ class FactoryDecorator implements \Magento\Framework\ObjectManager\FactoryInterf
     /**
      * Name of the class that generates logging wrappers
      */
-    const GENERATOR_NAME = \Magento\Framework\ObjectManager\Profiler\Code\Generator\Logger::class;
+    const GENERATOR_NAME = 'Magento\Framework\ObjectManager\Profiler\Code\Generator\Logger';
 
     /**
      * @var \Magento\Framework\ObjectManager\FactoryInterface

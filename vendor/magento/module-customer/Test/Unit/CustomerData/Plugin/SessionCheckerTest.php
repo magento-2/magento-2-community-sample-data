@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\CustomerData\Plugin;
 
 use Magento\Customer\CustomerData\Plugin\SessionChecker;
 
-class SessionCheckerTest extends \PHPUnit\Framework\TestCase
+class SessionCheckerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SessionChecker
@@ -36,16 +36,16 @@ class SessionCheckerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->cookieManager = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\PhpCookieManager::class)
+        $this->cookieManager = $this->getMockBuilder('Magento\Framework\Stdlib\Cookie\PhpCookieManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->metadataFactory = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class)
+        $this->metadataFactory = $this->getMockBuilder('Magento\Framework\Stdlib\Cookie\CookieMetadataFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->metadata = $this->getMockBuilder(\Magento\Framework\Stdlib\Cookie\CookieMetadata::class)
+        $this->metadata = $this->getMockBuilder('Magento\Framework\Stdlib\Cookie\CookieMetadata')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionManager = $this->getMockBuilder(\Magento\Framework\Session\SessionManager::class)
+        $this->sessionManager = $this->getMockBuilder('Magento\Framework\Session\SessionManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,7 +56,7 @@ class SessionCheckerTest extends \PHPUnit\Framework\TestCase
      * @param bool $result
      * @param string $callCount
      * @return void
-     * @dataProvider beforeStartDataProvider
+     * @dataProvider testBeforeStartDataProvider
      */
     public function testBeforeStart($result, $callCount)
     {
@@ -86,7 +86,7 @@ class SessionCheckerTest extends \PHPUnit\Framework\TestCase
         $this->plugin->beforeStart($this->sessionManager);
     }
 
-    public function beforeStartDataProvider()
+    public function testBeforeStartDataProvider()
     {
         return [
             [true, 'once'],

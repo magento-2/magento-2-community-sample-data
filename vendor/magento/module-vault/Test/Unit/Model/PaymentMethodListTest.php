@@ -13,7 +13,7 @@ use Magento\Vault\Model\VaultPaymentInterface;
 use Magento\Vault\Model\PaymentMethodList;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class PaymentMethodListTest extends \PHPUnit\Framework\TestCase
+class PaymentMethodListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentMethodListInterface|MockObject
@@ -32,7 +32,7 @@ class PaymentMethodListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodList = $this->createMock(PaymentMethodListInterface::class);
+        $this->paymentMethodList = $this->getMock(PaymentMethodListInterface::class);
         $this->instanceFactory = $this->getMockBuilder(InstanceFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
@@ -47,9 +47,9 @@ class PaymentMethodListTest extends \PHPUnit\Framework\TestCase
     public function testGetActivePaymentList()
     {
         $storeId = 1;
-        $vaultPayment = $this->createMock(VaultPaymentInterface::class);
-        $paymentMethodInterface1 = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethodInterface2 = $this->createMock(PaymentMethodInterface::class);
+        $vaultPayment = $this->getMock(VaultPaymentInterface::class);
+        $paymentMethodInterface1 = $this->getMock(PaymentMethodInterface::class);
+        $paymentMethodInterface2 = $this->getMock(PaymentMethodInterface::class);
         $activePayments = [
             $paymentMethodInterface1,
             $paymentMethodInterface2
@@ -63,7 +63,7 @@ class PaymentMethodListTest extends \PHPUnit\Framework\TestCase
         $this->instanceFactory->expects(static::exactly(2))
             ->method('create')
             ->willReturnMap([
-                [$paymentMethodInterface1, $this->createMock(MethodInterface::class)],
+                [$paymentMethodInterface1, $this->getMock(MethodInterface::class)],
                 [$paymentMethodInterface2, $vaultPayment]
             ]);
 

@@ -11,7 +11,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 /**
  * Sales Order Create Form Abstract Block
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractForm extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
 {
@@ -69,19 +69,19 @@ abstract class AbstractForm extends \Magento\Sales\Block\Adminhtml\Order\Create\
 
         \Magento\Framework\Data\Form::setElementRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Element::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Element',
                 $this->getNameInLayout() . '_element'
             )
         );
         \Magento\Framework\Data\Form::setFieldsetRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Fieldset::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Fieldset',
                 $this->getNameInLayout() . '_fieldset'
             )
         );
         \Magento\Framework\Data\Form::setFieldsetElementRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element',
                 $this->getNameInLayout() . '_fieldset_element'
             )
         );
@@ -118,9 +118,9 @@ abstract class AbstractForm extends \Magento\Sales\Block\Adminhtml\Order\Create\
     protected function _getAdditionalFormElementTypes()
     {
         return [
-            'file' => \Magento\Customer\Block\Adminhtml\Form\Element\File::class,
-            'image' => \Magento\Customer\Block\Adminhtml\Form\Element\Image::class,
-            'boolean' => \Magento\Customer\Block\Adminhtml\Form\Element\Boolean::class
+            'file' => 'Magento\Customer\Block\Adminhtml\Form\Element\File',
+            'image' => 'Magento\Customer\Block\Adminhtml\Form\Element\Image',
+            'boolean' => 'Magento\Customer\Block\Adminhtml\Form\Element\Boolean'
         ];
     }
 
@@ -132,9 +132,7 @@ abstract class AbstractForm extends \Magento\Sales\Block\Adminhtml\Order\Create\
     protected function _getAdditionalFormElementRenderers()
     {
         return [
-            'region' => $this->getLayout()->createBlock(
-                \Magento\Customer\Block\Adminhtml\Edit\Renderer\Region::class
-            )
+            'region' => $this->getLayout()->createBlock('Magento\Customer\Block\Adminhtml\Edit\Renderer\Region')
         ];
     }
 
@@ -194,17 +192,12 @@ abstract class AbstractForm extends \Magento\Sales\Block\Adminhtml\Order\Create\
                 if ($inputType == 'select' || $inputType == 'multiselect') {
                     $options = [];
                     foreach ($attribute->getOptions() as $optionData) {
-                        $data = $this->dataObjectProcessor->buildOutputDataArray(
-                            $optionData,
-                            \Magento\Customer\Api\Data\OptionInterface::class
+                        $options[] = ConvertArray::toFlatArray(
+                            $this->dataObjectProcessor->buildOutputDataArray(
+                                $optionData,
+                                '\Magento\Customer\Api\Data\OptionInterface'
+                            )
                         );
-                        foreach ($data as $key => $value) {
-                            if (is_array($value)) {
-                                unset($data[$key]);
-                                $data['value'] = $value;
-                            }
-                        }
-                        $options[] = $data;
                     }
                     $element->setValues($options);
                 } elseif ($inputType == 'date') {

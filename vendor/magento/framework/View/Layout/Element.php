@@ -7,8 +7,6 @@ namespace Magento\Framework\View\Layout;
 
 /**
  * Class Element
- *
- * @api
  */
 class Element extends \Magento\Framework\Simplexml\Element
 {

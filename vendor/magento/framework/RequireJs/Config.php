@@ -8,7 +8,6 @@ namespace Magento\Framework\RequireJs;
 use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\Filesystem\File\ReadFactory;
 use Magento\Framework\View\Asset\Minification;
-use Magento\Framework\View\Asset\RepositoryMap;
 
 /**
  * Provider of RequireJs config information
@@ -17,8 +16,6 @@ class Config
 {
     /**
      * Name of sub-directory where generated RequireJs config is placed
-     *
-     * @deprecated since 2.2.0 RequireJS Configuration file is moved into package directory
      */
     const DIR_NAME = '_requirejs';
 
@@ -40,22 +37,12 @@ class Config
     /**
      * File name of StaticJs
      */
-    const STATIC_FILE_NAME = 'mage/requirejs/static.js';
+    const STATIC_FILE_NAME = 'mage\requirejs\static.js';
 
     /**
      * File name of minified files resolver
      */
     const MIN_RESOLVER_FILENAME = 'requirejs-min-resolver.js';
-
-    /**
-     * File name of RequireJs mixins
-     */
-    const MAP_FILE_NAME = 'requirejs-map.js';
-
-    /**
-     * File name of BaseUrlInterceptorJs
-     */
-    const URL_RESOLVER_FILE_NAME = 'mage/requirejs/baseUrlResolver.js';
 
     /**
      * File name of StaticJs
@@ -115,18 +102,12 @@ config;
     private $minification;
 
     /**
-     * @var RepositoryMap
-     */
-    private $repositoryMap;
-
-    /**
      * @param \Magento\Framework\RequireJs\Config\File\Collector\Aggregated $fileSource
      * @param \Magento\Framework\View\DesignInterface $design
      * @param ReadFactory $readFactory
      * @param \Magento\Framework\View\Asset\Repository $assetRepo
      * @param \Magento\Framework\Code\Minifier\AdapterInterface $minifyAdapter
      * @param Minification $minification
-     * @param RepositoryMap $repositoryMap
      */
     public function __construct(
         \Magento\Framework\RequireJs\Config\File\Collector\Aggregated $fileSource,
@@ -134,8 +115,7 @@ config;
         ReadFactory $readFactory,
         \Magento\Framework\View\Asset\Repository $assetRepo,
         \Magento\Framework\Code\Minifier\AdapterInterface $minifyAdapter,
-        Minification $minification,
-        RepositoryMap $repositoryMap
+        Minification $minification
     ) {
         $this->fileSource = $fileSource;
         $this->design = $design;
@@ -143,7 +123,6 @@ config;
         $this->staticContext = $assetRepo->getStaticViewFileContext();
         $this->minifyAdapter = $minifyAdapter;
         $this->minification = $minification;
-        $this->repositoryMap = $repositoryMap;
     }
 
     /**
@@ -186,7 +165,7 @@ config;
      */
     public function getConfigFileRelativePath()
     {
-        return $this->staticContext->getConfigPath() . '/' . $this->getConfigFileName();
+        return self::DIR_NAME . '/' . $this->staticContext->getConfigPath() . '/' . $this->getConfigFileName();
     }
 
     /**
@@ -196,17 +175,7 @@ config;
      */
     public function getMixinsFileRelativePath()
     {
-        $map = $this->getRepositoryFilesMap(Config::MIXINS_FILE_NAME, [
-            'area' => $this->staticContext->getAreaCode(),
-            'theme' => $this->staticContext->getThemePath(),
-            'locale' => $this->staticContext->getLocale(),
-        ]);
-        if ($map) {
-            $relativePath = implode('/', $map) . '/' . Config::MIXINS_FILE_NAME;
-        } else {
-            $relativePath = $this->staticContext->getPath() . '/' . self::MIXINS_FILE_NAME;
-        }
-        return $relativePath;
+        return $this->staticContext->getPath() . '/' . self::MIXINS_FILE_NAME;
     }
 
     /**
@@ -248,36 +217,6 @@ config;
     }
 
     /**
-     * Get path to URL map resover file
-     *
-     * @return string
-     */
-    public function getUrlResolverFileRelativePath()
-    {
-        $map = $this->getRepositoryFilesMap(Config::URL_RESOLVER_FILE_NAME, [
-            'area' => $this->staticContext->getAreaCode(),
-            'theme' => $this->staticContext->getThemePath(),
-            'locale' => $this->staticContext->getLocale(),
-        ]);
-        if ($map) {
-            $relativePath = implode('/', $map) . '/' . Config::URL_RESOLVER_FILE_NAME;
-        } else {
-            $relativePath = $this->staticContext->getPath() . '/' . self::URL_RESOLVER_FILE_NAME;
-        }
-        return $relativePath;
-    }
-
-    /**
-     * Get path to map file
-     *
-     * @return string
-     */
-    public function getMapFileRelativePath()
-    {
-        return $this->minification->addMinifiedSign($this->staticContext->getPath() . '/' . self::MAP_FILE_NAME);
-    }
-
-    /**
      * @return string
      */
     protected function getConfigFileName()
@@ -297,16 +236,15 @@ config;
         $excludesCode = empty($excludes) ? 'true' : implode('&&', $excludes);
 
         $result = <<<code
-    var ctx = require.s.contexts._,
-        origNameToUrl = ctx.nameToUrl;
-
-    ctx.nameToUrl = function() {
-        var url = origNameToUrl.apply(ctx, arguments);
-        if ({$excludesCode}) {
-            url = url.replace(/(\.min)?\.js$/, '.min.js');
+    if (!require.s.contexts._.__load) {
+        require.s.contexts._.__load = require.s.contexts._.load;
+        require.s.contexts._.load = function(id, url) {
+            if ({$excludesCode}) {
+                url = url.replace(/(\.min)?\.js$/, '.min.js');
+            }
+            return require.s.contexts._.__load.apply(require.s.contexts._, [id, url]);
         }
-        return url;
-    };
+    }
 
 code;
 
@@ -314,15 +252,5 @@ code;
             $result = $this->minifyAdapter->minify($result);
         }
         return $result;
-    }
-
-    /**
-     * @param string $fileId
-     * @param array $params
-     * @return array
-     */
-    private function getRepositoryFilesMap($fileId, array $params)
-    {
-        return $this->repositoryMap->getMap($fileId, $params);
     }
 }

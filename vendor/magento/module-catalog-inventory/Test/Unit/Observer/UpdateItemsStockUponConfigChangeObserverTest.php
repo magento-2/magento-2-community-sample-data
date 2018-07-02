@@ -7,7 +7,7 @@ namespace Magento\CatalogInventory\Test\Unit\Observer;
 
 use Magento\CatalogInventory\Observer\UpdateItemsStockUponConfigChangeObserver;
 
-class UpdateItemsStockUponConfigChangeObserverTest extends \PHPUnit\Framework\TestCase
+class UpdateItemsStockUponConfigChangeObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UpdateItemsStockUponConfigChangeObserver
@@ -31,14 +31,14 @@ class UpdateItemsStockUponConfigChangeObserverTest extends \PHPUnit\Framework\Te
 
     protected function setUp()
     {
-        $this->resourceStock = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock::class);
+        $this->resourceStock = $this->getMock('Magento\CatalogInventory\Model\ResourceModel\Stock', [], [], '', false);
 
-        $this->event = $this->getMockBuilder(\Magento\Framework\Event::class)
+        $this->event = $this->getMockBuilder('Magento\Framework\Event')
             ->disableOriginalConstructor()
             ->setMethods(['getWebsite'])
             ->getMock();
 
-        $this->eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $this->eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->setMethods(['getEvent'])
             ->getMock();
@@ -48,7 +48,7 @@ class UpdateItemsStockUponConfigChangeObserverTest extends \PHPUnit\Framework\Te
             ->will($this->returnValue($this->event));
 
         $this->observer = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\CatalogInventory\Observer\UpdateItemsStockUponConfigChangeObserver::class,
+            'Magento\CatalogInventory\Observer\UpdateItemsStockUponConfigChangeObserver',
             [
                 'resourceStock' => $this->resourceStock,
             ]

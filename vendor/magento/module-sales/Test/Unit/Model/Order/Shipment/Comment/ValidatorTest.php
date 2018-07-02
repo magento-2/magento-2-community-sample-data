@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Shipment\Comment;
 /**
  * Class ValidatorTest
  */
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Shipment\Comment\Validator
@@ -25,9 +25,12 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->commentModelMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\Comment::class,
-            ['hasData', 'getData', '__wakeup']
+        $this->commentModelMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\Comment',
+            ['hasData', 'getData', '__wakeup'],
+            [],
+            '',
+            false
         );
         $this->validator = new \Magento\Sales\Model\Order\Shipment\Comment\Validator();
     }

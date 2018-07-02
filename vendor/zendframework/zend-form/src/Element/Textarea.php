@@ -18,7 +18,7 @@ class Textarea extends Element
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'textarea',
-    ];
+    );
 }

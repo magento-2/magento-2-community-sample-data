@@ -10,7 +10,6 @@ use Magento\Framework\Escaper;
 /**
  * Form select element
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Select extends AbstractElement

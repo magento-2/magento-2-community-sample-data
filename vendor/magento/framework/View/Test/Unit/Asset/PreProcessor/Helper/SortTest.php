@@ -12,7 +12,7 @@ use Magento\Framework\View\Asset\PreProcessor\Helper\Sort;
  *
  * @see \Magento\Framework\View\Asset\PreProcessor\Helper\Sorter2
  */
-class SortTest extends \PHPUnit\Framework\TestCase
+class SortTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $arrayData

@@ -13,11 +13,7 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options;
 
 use Magento\Backend\Block\Widget;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Api\Data\ProductCustomOptionInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Option extends Widget
 {
     /**
@@ -210,7 +206,7 @@ class Option extends Widget
     public function getTypeSelectHtml()
     {
         $select = $this->getLayout()->createBlock(
-            \Magento\Framework\View\Element\Html\Select::class
+            'Magento\Framework\View\Element\Html\Select'
         )->setData(
             [
                 'id' => $this->getFieldId() . '_<%- data.id %>_type',
@@ -231,7 +227,7 @@ class Option extends Widget
     public function getRequireSelectHtml()
     {
         $select = $this->getLayout()->createBlock(
-            \Magento\Framework\View\Element\Html\Select::class
+            'Magento\Framework\View\Element\Html\Select'
         )->setData(
             ['id' => $this->getFieldId() . '_<%- data.id %>_is_require', 'class' => 'select']
         )->setName(
@@ -313,12 +309,12 @@ class Option extends Widget
                     $value['checkboxScopeTitle'] = $this->getCheckboxScopeHtml(
                         $option->getOptionId(),
                         'title',
-                        $option->getStoreTitle() === null
+                        is_null($option->getStoreTitle())
                     );
-                    $value['scopeTitleDisabled'] = $option->getStoreTitle() === null ? 'disabled' : null;
+                    $value['scopeTitleDisabled'] = is_null($option->getStoreTitle()) ? 'disabled' : null;
                 }
 
-                if ($option->getGroupByType() == ProductCustomOptionInterface::OPTION_GROUP_SELECT) {
+                if ($option->getGroupByType() == \Magento\Catalog\Model\Product\Option::OPTION_GROUP_SELECT) {
                     $i = 0;
                     $itemCount = 0;
                     foreach ($option->getValues() as $_value) {
@@ -341,22 +337,22 @@ class Option extends Widget
                             $value['optionValues'][$i]['checkboxScopeTitle'] = $this->getCheckboxScopeHtml(
                                 $_value->getOptionId(),
                                 'title',
-                                $_value->getStoreTitle() === null,
+                                is_null($_value->getStoreTitle()),
                                 $_value->getOptionTypeId()
                             );
-                            $value['optionValues'][$i]['scopeTitleDisabled'] = (
-                                $_value->getStoreTitle() === null
+                            $value['optionValues'][$i]['scopeTitleDisabled'] = is_null(
+                                $_value->getStoreTitle()
                             ) ? 'disabled' : null;
                             if ($scope == \Magento\Store\Model\Store::PRICE_SCOPE_WEBSITE) {
                                 $value['optionValues'][$i]['checkboxScopePrice'] = $this->getCheckboxScopeHtml(
                                     $_value->getOptionId(),
                                     'price',
-                                    $_value->getstorePrice() === null,
+                                    is_null($_value->getstorePrice()),
                                     $_value->getOptionTypeId(),
                                     ['$(this).up(1).previous()']
                                 );
-                                $value['optionValues'][$i]['scopePriceDisabled'] = (
-                                    $_value->getStorePrice() === null
+                                $value['optionValues'][$i]['scopePriceDisabled'] = is_null(
+                                    $_value->getStorePrice()
                                 ) ? 'disabled' : null;
                             }
                         }
@@ -379,9 +375,9 @@ class Option extends Widget
                         $value['checkboxScopePrice'] = $this->getCheckboxScopeHtml(
                             $option->getOptionId(),
                             'price',
-                            $option->getStorePrice() === null
+                            is_null($option->getStorePrice())
                         );
-                        $value['scopePriceDisabled'] = $option->getStorePrice() === null ? 'disabled' : null;
+                        $value['scopePriceDisabled'] = is_null($option->getStorePrice()) ? 'disabled' : null;
                     }
                 }
                 $values[] = new \Magento\Framework\DataObject($value);

@@ -12,12 +12,10 @@ namespace Magento\ConfigurableImportExport\Model\Import\Product\Type;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
-use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Importing configurable products
- *
+ * @package Magento\ConfigurableImportExport\Model\Import\Product\Type
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -35,24 +33,16 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
 
     const ERROR_DUPLICATED_VARIATIONS = 'duplicatedVariations';
 
-    const ERROR_UNIDENTIFIABLE_VARIATION = 'unidentifiableVariation';
-
     /**
      * Validation failure message template definitions
      *
      * @var array
      */
     protected $_messageTemplates = [
-        self::ERROR_ATTRIBUTE_CODE_IS_NOT_SUPER =>
-            'Attribute with code "%s" is not super',
-        self::ERROR_INVALID_OPTION_VALUE =>
-            'Invalid option value for attribute "%s"',
-        self::ERROR_INVALID_WEBSITE =>
-            'Invalid website code for super attribute',
-        self::ERROR_DUPLICATED_VARIATIONS =>
-            'SKU %s contains duplicated variations',
-        self::ERROR_UNIDENTIFIABLE_VARIATION =>
-            'Configurable variation "%s" is unidentifiable',
+        self::ERROR_ATTRIBUTE_CODE_IS_NOT_SUPER => 'Attribute with this code is not super',
+        self::ERROR_INVALID_OPTION_VALUE => 'Invalid option value',
+        self::ERROR_INVALID_WEBSITE => 'Invalid website code for super attribute',
+        self::ERROR_DUPLICATED_VARIATIONS => 'SKU %s contains duplicated variations',
     ];
 
     /**
@@ -150,7 +140,6 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
      * Instance of database adapter.
      *
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     * @deprecated 100.2.0
      */
     protected $_connection;
 
@@ -211,7 +200,6 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
      * @param \Magento\Catalog\Model\ProductTypes\ConfigInterface $productTypesConfig
      * @param \Magento\ImportExport\Model\ResourceModel\Helper $resourceHelper
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac
-     * @param MetadataPool $metadataPool
      */
     public function __construct(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFac,
@@ -220,12 +208,12 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         array $params,
         \Magento\Catalog\Model\ProductTypes\ConfigInterface $productTypesConfig,
         \Magento\ImportExport\Model\ResourceModel\Helper $resourceHelper,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac,
-        MetadataPool $metadataPool = null
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac
     ) {
-        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params, $metadataPool);
+        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params);
         $this->_productTypesConfig = $productTypesConfig;
         $this->_resourceHelper = $resourceHelper;
+        $this->_resource = $resource;
         $this->_productColFac = $_productColFac;
         $this->_connection = $this->_entityModel->getConnection();
     }
@@ -300,12 +288,12 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
 
             if (!$this->_isAttributeSuper($superAttrCode)) {
                 // check attribute superity
-                $this->_entityModel->addRowError(self::ERROR_ATTRIBUTE_CODE_IS_NOT_SUPER, $rowNum, $superAttrCode);
+                $this->_entityModel->addRowError(self::ERROR_ATTRIBUTE_CODE_IS_NOT_SUPER, $rowNum);
                 return false;
             } elseif (isset($rowData['_super_attribute_option']) && strlen($rowData['_super_attribute_option'])) {
                 $optionKey = strtolower($rowData['_super_attribute_option']);
                 if (!isset($this->_superAttributes[$superAttrCode]['options'][$optionKey])) {
-                    $this->_entityModel->addRowError(self::ERROR_INVALID_OPTION_VALUE, $rowNum, $superAttrCode);
+                    $this->_entityModel->addRowError(self::ERROR_INVALID_OPTION_VALUE, $rowNum);
                     return false;
                 }
             }
@@ -381,7 +369,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         $oldSku = $this->_entityModel->getOldSku();
         $productIds = [];
         foreach ($bunch as $rowData) {
-            $sku = strtolower($rowData[ImportProduct::COL_SKU]);
+            $sku = $rowData[ImportProduct::COL_SKU];
             $productData = isset($newSku[$sku]) ? $newSku[$sku] : $oldSku[$sku];
             $productIds[] = $productData[$this->getProductEntityLinkField()];
         }
@@ -391,23 +379,23 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         if (!empty($productIds)) {
             $mainTable = $this->_resource->getTableName('catalog_product_super_attribute');
             $optionTable = $this->_resource->getTableName('eav_attribute_option');
-            $select = $this->connection->select()->from(
+            $select = $this->_connection->select()->from(
                 ['m' => $mainTable],
                 ['product_id', 'attribute_id', 'product_super_attribute_id']
             )->joinLeft(
                 ['o' => $optionTable],
-                $this->connection->quoteIdentifier(
-                    'm.attribute_id'
-                ) . ' = ' . $this->connection->quoteIdentifier(
+                $this->_connection->quoteIdentifier(
+                    'o.attribute_id'
+                ) . ' = ' . $this->_connection->quoteIdentifier(
                     'o.attribute_id'
                 ),
                 ['option_id']
             )->where(
-                'm.product_id IN ( ? )',
+                'product_id IN ( ? )',
                 $productIds
             );
 
-            foreach ($this->connection->fetchAll($select) as $row) {
+            foreach ($this->_connection->fetchAll($select) as $row) {
                 $attrId = $row['attribute_id'];
                 $productId = $row['product_id'];
                 if ($row['option_id']) {
@@ -460,8 +448,8 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
                     'product_id' => $this->_productSuperData['assoc_entity_ids'][$assocId],
                     'parent_id' => $this->_productSuperData['product_id'],
                 ];
-                $subEntityId = $this->connection->fetchOne(
-                    $this->connection->select()->from(
+                $subEntityId = $this->_connection->fetchOne(
+                    $this->_connection->select()->from(
                         ['cpe' => $this->_resource->getTableName('catalog_product_entity')], ['entity_id']
                     )->where($metadata->getLinkField() . ' = ?', $assocId)
                 );
@@ -480,22 +468,14 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
      * @param array $rowData
      *
      * @return array
-     * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _parseVariations($rowData)
     {
         $additionalRows = [];
-        if (empty($rowData['configurable_variations'])) {
+        if (!isset($rowData['configurable_variations'])) {
             return $additionalRows;
-        } elseif(!empty($rowData['store_view_code'])) {
-            throw new LocalizedException(
-                __(
-                    'Product with assigned super attributes should not have specified "%1" value',
-                    'store_view_code'
-                )
-            );
         }
         $variations = explode(ImportProduct::PSEUDO_MULTI_LINE_SEPARATOR, $rowData['configurable_variations']);
         foreach ($variations as $variation) {
@@ -506,10 +486,8 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
             foreach ($fieldAndValuePairsText as $nameAndValue) {
                 $nameAndValue = explode(ImportProduct::PAIR_NAME_VALUE_SEPARATOR, $nameAndValue);
                 if (!empty($nameAndValue)) {
-                    $value = isset($nameAndValue[1]) ?
-                        trim($nameAndValue[1]) : '';
-                    //Ignoring field names' case.
-                    $fieldName  = strtolower(trim($nameAndValue[0]));
+                    $value = isset($nameAndValue[1]) ? trim($nameAndValue[1]) : '';
+                    $fieldName  = trim($nameAndValue[0]);
                     if ($fieldName) {
                         $fieldAndValuePairs[$fieldName] = $value;
                     }
@@ -518,7 +496,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
 
             if (!empty($fieldAndValuePairs['sku'])) {
                 $position = 0;
-                $additionalRow['_super_products_sku'] = strtolower($fieldAndValuePairs['sku']);
+                $additionalRow['_super_products_sku'] = $fieldAndValuePairs['sku'];
                 unset($fieldAndValuePairs['sku']);
                 $additionalRow['display'] = isset($fieldAndValuePairs['display']) ? $fieldAndValuePairs['display'] : 1;
                 unset($fieldAndValuePairs['display']);
@@ -530,19 +508,8 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
                     $additionalRow = [];
                     $position += 1;
                 }
-            } else {
-                $errorCode = self::ERROR_UNIDENTIFIABLE_VARIATION;
-                throw new LocalizedException(
-                    __(
-                        sprintf(
-                            $this->_messageTemplates[$errorCode],
-                            $variation
-                        )
-                    )
-                );
             }
         }
-
         return $additionalRows;
     }
 
@@ -593,10 +560,10 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
             && !empty($this->_productSuperData['product_id'])
             && !empty($this->_simpleIdsToDelete)
         ) {
-            $quoted = $this->connection->quoteInto('IN (?)', [$this->_productSuperData['product_id']]);
-            $quotedChildren = $this->connection->quoteInto('IN (?)', $this->_simpleIdsToDelete);
-            $this->connection->delete($linkTable, "parent_id {$quoted} AND product_id {$quotedChildren}");
-            $this->connection->delete($relationTable, "parent_id {$quoted} AND child_id {$quotedChildren}");
+            $quoted = $this->_connection->quoteInto('IN (?)', [$this->_productSuperData['product_id']]);
+            $quotedChildren = $this->_connection->quoteInto('IN (?)', $this->_simpleIdsToDelete);
+            $this->_connection->delete($linkTable, "parent_id {$quoted} AND product_id {$quotedChildren}");
+            $this->_connection->delete($relationTable, "parent_id {$quoted} AND child_id {$quotedChildren}");
         }
         return $this;
     }
@@ -623,16 +590,16 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
             }
         }
         if ($mainData) {
-            $this->connection->insertOnDuplicate($mainTable, $mainData);
+            $this->_connection->insertOnDuplicate($mainTable, $mainData);
         }
         if ($this->_superAttributesData['labels']) {
-            $this->connection->insertOnDuplicate($labelTable, $this->_superAttributesData['labels']);
+            $this->_connection->insertOnDuplicate($labelTable, $this->_superAttributesData['labels']);
         }
         if ($this->_superAttributesData['super_link']) {
-            $this->connection->insertOnDuplicate($linkTable, $this->_superAttributesData['super_link']);
+            $this->_connection->insertOnDuplicate($linkTable, $this->_superAttributesData['super_link']);
         }
         if ($this->_superAttributesData['relation']) {
-            $this->connection->insertOnDuplicate($relationTable, $this->_superAttributesData['relation']);
+            $this->_connection->insertOnDuplicate($relationTable, $this->_superAttributesData['relation']);
         }
         return $this;
     }
@@ -750,7 +717,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         $label = isset($variationLabels[$data['_super_attribute_code']])
                 ? $variationLabels[$data['_super_attribute_code']]
                 : $attrParams['frontend_label'];
-        $this->_superAttributesData['labels'][$productSuperAttrId] = [
+        $this->_superAttributesData['labels'][] = [
             'product_super_attribute_id' => $productSuperAttrId,
             'store_id' => 0,
             'use_default' => $label ? 0 : 1,
@@ -798,10 +765,12 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
                 }
                 // remember SCOPE_DEFAULT row data
                 $scope = $this->_entityModel->getRowScope($rowData);
-                if (ImportProduct::SCOPE_DEFAULT == $scope &&
-                    !empty($rowData[ImportProduct::COL_SKU])) {
-                    $sku = strtolower($rowData[ImportProduct::COL_SKU]);
-                    $this->_productData = isset($newSku[$sku]) ? $newSku[$sku] : $oldSku[$sku];
+                if ((\Magento\CatalogImportExport\Model\Import\Product::SCOPE_DEFAULT == $scope) &&
+                    !empty($rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU])) {
+
+                    $this->_productData = isset($newSku[$rowData[ImportProduct::COL_SKU]])
+                                        ? $newSku[$rowData[ImportProduct::COL_SKU]]
+                                        : $oldSku[$rowData[ImportProduct::COL_SKU]];
 
                     if ($this->_type != $this->_productData['type_id']) {
                         $this->_productData = null;
@@ -831,7 +800,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
     {
         $newSku = $this->_entityModel->getNewSku();
         foreach ($bunch as $rowNum => $rowData) {
-            $productData = $newSku[strtolower($rowData[ImportProduct::COL_SKU])];
+            $productData = $newSku[$rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU]];
             if (($this->_type == $productData['type_id']) &&
                 ($rowData == $this->_entityModel->isRowAllowedToImport($rowData, $rowNum))
             ) {
@@ -853,14 +822,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
     public function isRowValid(array $rowData, $rowNum, $isNewProduct = true)
     {
         $error = false;
-        try {
-            $dataWithExtraVirtualRows = $this->_parseVariations($rowData);
-        } catch (LocalizedException $exception) {
-            $this->_entityModel->addRowError($exception->getMessage(), $rowNum);
-
-            return false;
-        }
-
+        $dataWithExtraVirtualRows = $this->_parseVariations($rowData);
         $skus = [];
         $rowData['price'] = isset($rowData['price']) && $rowData['price'] ? $rowData['price'] : '0.00';
         if (!empty($dataWithExtraVirtualRows)) {
@@ -878,7 +840,6 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
             }
             $error |= !parent::isRowValid($option, $rowNum, $isNewProduct);
         }
-
         return !$error;
     }
 

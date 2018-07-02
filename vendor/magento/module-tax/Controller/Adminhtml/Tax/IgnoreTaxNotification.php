@@ -43,7 +43,7 @@ class IgnoreTaxNotification extends \Magento\Tax\Controller\Adminhtml\Tax
         if ($section) {
             try {
                 $path = 'tax/notification/ignore_' . $section;
-                $this->_objectManager->get(\Magento\Config\Model\ResourceModel\Config::class)
+                $this->_objectManager->get('Magento\Config\Model\ResourceModel\Config')
                     ->saveConfig($path, 1, ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 0);
             } catch (\Exception $e) {
                 $this->messageManager->addError($e->getMessage());
@@ -51,8 +51,8 @@ class IgnoreTaxNotification extends \Magento\Tax\Controller\Adminhtml\Tax
         }
 
         // clear the block html cache
-        $this->_cacheTypeList->cleanType('config');
-        $this->_eventManager->dispatch('adminhtml_cache_refresh_type', ['type' => 'config']);
+        $this->_cacheTypeList->cleanType('block_html');
+        $this->_eventManager->dispatch('adminhtml_cache_refresh_type', ['type' => 'block_html']);
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);

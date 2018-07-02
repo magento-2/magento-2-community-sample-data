@@ -18,23 +18,15 @@ class CartPlugin
     private $checkoutSession;
 
     /**
-     * @var \Magento\Customer\Api\AddressRepositoryInterface
-     */
-    private $addressRepository;
-
-    /**
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
      */
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->cartRepository = $cartRepository;
         $this->checkoutSession = $checkoutSession;
-        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -50,20 +42,15 @@ class CartPlugin
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $this->checkoutSession->getQuote();
 
-        // Clear shipping addresses and item assignments after MultiShipping flow
+        // Clear shipping addresses and item assignments after Multishipping flow
         if ($quote->isMultipleShippingAddresses()) {
             foreach ($quote->getAllShippingAddresses() as $address) {
                 $quote->removeAddress($address->getId());
             }
+            $quote->getShippingAddress();
+            $quote->setIsMultiShipping(false);
+            $quote->collectTotals();
 
-            $shippingAddress = $quote->getShippingAddress();
-            $defaultShipping = $quote->getCustomer()->getDefaultShipping();
-            if ($defaultShipping) {
-                $defaultCustomerAddress = $this->addressRepository->getById(
-                    $defaultShipping
-                );
-                $shippingAddress->importCustomerAddressData($defaultCustomerAddress);
-            }
             $this->cartRepository->save($quote);
         }
     }

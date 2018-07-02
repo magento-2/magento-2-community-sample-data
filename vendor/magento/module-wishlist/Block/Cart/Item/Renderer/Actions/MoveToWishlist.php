@@ -9,10 +9,6 @@ use Magento\Checkout\Block\Cart\Item\Renderer\Actions\Generic;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
 
-/**
- * @api
- * @since 100.0.2
- */
 class MoveToWishlist extends Generic
 {
     /**

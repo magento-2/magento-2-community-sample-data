@@ -150,7 +150,7 @@ abstract class Onepage extends Action
         }
 
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->_objectManager->get(\Magento\Checkout\Model\Session::class)->getQuote();
+        $quote = $this->_objectManager->get('Magento\Checkout\Model\Session')->getQuote();
         if ($quote->isMultipleShippingAddresses()) {
             $quote->removeAllAddresses();
         }
@@ -184,7 +184,7 @@ abstract class Onepage extends Action
             return true;
         }
         $action = $this->getRequest()->getActionName();
-        if ($this->_objectManager->get(\Magento\Checkout\Model\Session::class)->getCartWasUpdated(true)
+        if ($this->_objectManager->get('Magento\Checkout\Model\Session')->getCartWasUpdated(true)
             &&
             !in_array($action, ['index', 'progress'])
         ) {
@@ -258,7 +258,7 @@ abstract class Onepage extends Action
      */
     public function getOnepage()
     {
-        return $this->_objectManager->get(\Magento\Checkout\Model\Type\Onepage::class);
+        return $this->_objectManager->get('Magento\Checkout\Model\Type\Onepage');
     }
 
     /**
@@ -269,13 +269,13 @@ abstract class Onepage extends Action
     protected function _canShowForUnregisteredUsers()
     {
         return $this->_objectManager->get(
-            \Magento\Customer\Model\Session::class
+            'Magento\Customer\Model\Session'
         )->isLoggedIn() || $this->getRequest()->getActionName() == 'index' || $this->_objectManager->get(
-            \Magento\Checkout\Helper\Data::class
+            'Magento\Checkout\Helper\Data'
         )->isAllowedGuestCheckout(
             $this->getOnepage()->getQuote()
         ) || !$this->_objectManager->get(
-            \Magento\Checkout\Helper\Data::class
+            'Magento\Checkout\Helper\Data'
         )->isCustomerMustBeLogged();
     }
 }

@@ -10,7 +10,6 @@ use Magento\Framework\Api\CustomAttributesDataInterface;
 /**
  * Additional data that is provided with quote address information
  * @api
- * @since 100.0.2
  */
 interface AddressAdditionalDataInterface extends CustomAttributesDataInterface
 {

@@ -7,7 +7,7 @@ namespace Magento\MediaStorage\Test\Unit\Helper\File;
 
 use Magento\MediaStorage\Helper\File\Storage;
 
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -32,7 +32,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $className = \Magento\MediaStorage\Helper\File\Storage::class;
+        $className = 'Magento\MediaStorage\Helper\File\Storage';
         $arguments = $this->objectManager->getConstructArguments($className);
         /** @var \Magento\Framework\App\Helper\Context $context */
         $context = $arguments['context'];
@@ -88,7 +88,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetStorageModel()
     {
-        $storageModelMock = $this->getMockBuilder(\Magento\Framework\Model\AbstractModel::class)
+        $storageModelMock = $this->getMockBuilder('Magento\Framework\Model\AbstractModel')
             ->disableOriginalConstructor()
             ->getMock();
         $this->storageMock->expects($this->once())
@@ -119,14 +119,14 @@ class StorageTest extends \PHPUnit\Framework\TestCase
             ->with($filename)
             ->will($this->returnValue($relativePath));
 
-        $storageModelMock = $this->getMockBuilder(\Magento\Framework\Model\AbstractModel::class)
+        $storageModelMock = $this->getMockBuilder('Magento\Framework\Model\AbstractModel')
             ->disableOriginalConstructor()
             ->setMethods(['loadByFileName', '__wakeup'])
             ->getMock();
         $this->storageMock->expects($this->exactly($callNum))
             ->method('getStorageModel')
             ->will($this->returnValue($storageModelMock));
-        $fileMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Storage\Database::class)
+        $fileMock = $this->getMockBuilder('Magento\MediaStorage\Model\File\Storage\Database')
             ->disableOriginalConstructor()
             ->setMethods(['getId', '__wakeup'])
             ->getMock();

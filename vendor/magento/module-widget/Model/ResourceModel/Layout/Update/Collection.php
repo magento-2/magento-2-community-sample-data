@@ -59,10 +59,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(
-            \Magento\Widget\Model\Layout\Update::class,
-            \Magento\Widget\Model\ResourceModel\Layout\Update::class
-        );
+        $this->_init('Magento\Widget\Model\Layout\Update', 'Magento\Widget\Model\ResourceModel\Layout\Update');
     }
 
     /**

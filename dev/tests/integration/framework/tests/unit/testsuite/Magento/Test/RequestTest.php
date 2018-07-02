@@ -7,7 +7,7 @@ namespace Magento\Test;
 
 use Zend\Stdlib\Parameters;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Request
@@ -17,11 +17,11 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = new \Magento\TestFramework\Request(
-            $this->createMock(\Magento\Framework\Stdlib\Cookie\CookieReaderInterface::class),
-            $this->createMock(\Magento\Framework\Stdlib\StringUtils::class),
-            $this->createMock(\Magento\Framework\App\Route\ConfigInterface\Proxy::class),
-            $this->createMock(\Magento\Framework\App\Request\PathInfoProcessorInterface::class),
-            $this->createMock(\Magento\Framework\ObjectManagerInterface::class)
+            $this->getMock('Magento\Framework\Stdlib\Cookie\CookieReaderInterface'),
+            $this->getMock('Magento\Framework\Stdlib\StringUtils'),
+            $this->getMock('Magento\Framework\App\Route\ConfigInterface\Proxy', [], [], '', false),
+            $this->getMock('Magento\Framework\App\Request\PathInfoProcessorInterface'),
+            $this->getMock('Magento\Framework\ObjectManagerInterface')
         );
     }
 

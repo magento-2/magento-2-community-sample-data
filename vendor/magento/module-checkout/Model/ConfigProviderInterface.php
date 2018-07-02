@@ -11,6 +11,7 @@ namespace Magento\Checkout\Model;
  */
 interface ConfigProviderInterface
 {
+
     /**
      * Retrieve assoc array of checkout configuration
      *

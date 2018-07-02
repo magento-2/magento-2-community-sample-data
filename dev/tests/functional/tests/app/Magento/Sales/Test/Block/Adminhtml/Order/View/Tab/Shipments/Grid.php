@@ -6,7 +6,6 @@
 
 namespace Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Shipments;
 
-use Magento\Mtf\Client\Locator;
 use Magento\Ui\Test\Block\Adminhtml\DataGrid;
 
 /**
@@ -22,18 +21,11 @@ class Grid extends DataGrid
     protected $editLink = '[data-column="real_shipment_id"]';
 
     /**
-     * Css selector for shipment ids.
+     * Locator for shipment ids.
      *
      * @var string
      */
     protected $shipmentId = 'tbody td:nth-child(2)';
-
-    /**
-     * Shipments data grid loader Xpath locator.
-     *
-     * @var string
-     */
-    protected $loader = '//div[contains(@data-component, "sales_order_view_shipment_grid")]';
 
     /**
      * Filters array mapping.
@@ -59,9 +51,8 @@ class Grid extends DataGrid
      */
     public function getIds()
     {
-        $this->resetFilter();
+        $this->waitLoader();
         $result = [];
-        $this->waitForElementNotVisible($this->loader, Locator::SELECTOR_XPATH);
         $shipmentIds = $this->_rootElement->getElements($this->shipmentId);
         foreach ($shipmentIds as $shipmentId) {
             $result[] = trim($shipmentId->getText());

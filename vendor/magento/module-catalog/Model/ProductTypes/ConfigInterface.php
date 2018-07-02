@@ -5,12 +5,6 @@
  */
 namespace Magento\Catalog\Model\ProductTypes;
 
-/**
- * Provides product types configuration
- *
- * @api
- * @since 100.0.2
- */
 interface ConfigInterface
 {
     /**

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Security\Test\Unit\Model\Plugin;
 
 use Magento\Customer\Model\AccountManagement;
@@ -15,7 +14,7 @@ use Magento\Security\Model\PasswordResetRequestEvent;
 /**
  * Test class for \Magento\Security\Model\Plugin\AccountManagement testing
  */
-class AccountManagementTest extends \PHPUnit\Framework\TestCase
+class AccountManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var  \Magento\Security\Model\Plugin\AccountManagement
@@ -55,15 +54,19 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->request = $this->getMock(\Magento\Framework\App\RequestInterface::class);
 
-        $this->securityManager = $this->createPartialMock(
-            \Magento\Security\Model\SecurityManager::class,
+        $this->securityManager = $this->getMockBuilder(
+            \Magento\Security\Model\SecurityManager::class
+        )->setMethods(
             ['performSecurityCheck']
-        );
+        )->disableOriginalConstructor()->getMock();
 
-        $this->accountManagement = $this->createMock(AccountManagement::class);
-        $this->scope = $this->createMock(ScopeInterface::class);
+        $this->accountManagement = $this->getMockBuilder(
+            AccountManagement::class
+        )->disableOriginalConstructor()->getMock();
+
+        $this->scope = $this->getMock(ScopeInterface::class);
     }
 
     /**

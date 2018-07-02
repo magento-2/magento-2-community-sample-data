@@ -54,7 +54,7 @@ class ConfigBasedIntegrationManager
      *
      * @param array $integrationNames
      * @return array
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function processIntegrationConfig(array $integrationNames)
     {

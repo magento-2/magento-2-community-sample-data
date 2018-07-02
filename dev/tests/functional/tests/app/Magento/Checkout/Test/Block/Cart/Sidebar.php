@@ -23,6 +23,13 @@ class Sidebar extends Block
     private $subtotal = '.subtotal .price';
 
     /**
+     * Quantity input selector.
+     *
+     * @var string
+     */
+    private $qty = '//*[@class="product"]/*[@title="%s"]/following-sibling::*//*[contains(@class,"item-qty")]';
+
+    /**
      * Mini cart link selector.
      *
      * @var string
@@ -37,7 +44,7 @@ class Sidebar extends Block
     protected $braintreePaypalCheckoutButton = './/button[contains(@id, "braintree-paypal-mini-cart")]';
 
     /**
-     * Locator value for "Proceed to Checkout" button.
+     * Locator value for "Proceed to Checkout".
      *
      * @var string
      */
@@ -51,9 +58,11 @@ class Sidebar extends Block
     protected $productCounter = './/*[@class="counter-number"]';
 
     /**
+     * Visible minicart items quantity.
+     * 
      * @var string
      */
-    protected $visibleProductCounter = './/*[@class="items-total"]';
+    private $visibleProductCounter = './/*[@class="items-total"]';
 
     /**
      * Empty minicart message
@@ -187,9 +196,23 @@ class Sidebar extends Block
     }
 
     /**
-     * Returns message with count of visible items
+     * Get product quantity.
      *
+     * @param string $productName
      * @return string
+     */
+    public function getProductQty($productName)
+    {
+        $this->openMiniCart();
+        $productQty = sprintf($this->qty, $productName);
+
+        return $this->_rootElement->find($productQty, Locator::SELECTOR_XPATH)->getValue();
+    }
+
+    /**
+     * Returns message with count of visible items.
+     *
+     * @return array|string
      */
     public function getVisibleItemsCounter()
     {
@@ -272,7 +295,7 @@ class Sidebar extends Block
      * @param string $currency [optional]
      * @return string
      */
-    protected function escapeCurrency($price, $currency = '$')
+    private function escapeCurrency($price, $currency = '$')
     {
         return str_replace($currency, '', $price);
     }

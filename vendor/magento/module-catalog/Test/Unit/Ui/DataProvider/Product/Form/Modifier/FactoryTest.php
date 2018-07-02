@@ -13,7 +13,7 @@ use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 /**
  * Class FactoryTest
  */
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModifierFactory
@@ -44,10 +44,9 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->model = $this->objectManager->getObject(
-            \Magento\Ui\DataProvider\Modifier\ModifierFactory::class,
-            ['objectManager' => $this->objectManagerMock]
-        );
+        $this->model = $this->objectManager->getObject(\Magento\Ui\DataProvider\Modifier\ModifierFactory::class, [
+            'objectManager' => $this->objectManagerMock,
+        ]);
     }
 
     public function testCreate()

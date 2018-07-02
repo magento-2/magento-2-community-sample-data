@@ -28,13 +28,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click on the "Delete Attribute" button.
  * 6. Perform asserts.
  *
- * @group Product_Attributes
+ * @group Product_Attributes_(MX)
  * @ZephyrId MAGETWO-26652
  */
 class DeleteUsedInConfigurableProductAttributeTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Model\Config;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Indexer\Model\Config\Data
@@ -37,16 +37,11 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected $indexers = ['indexer1' => [], 'indexer3' => []];
 
-    /**
-     * @var \Magento\Framework\Serialize\SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
     protected function setUp()
     {
-        $this->reader = $this->createPartialMock(\Magento\Framework\Indexer\Config\Reader::class, ['read']);
+        $this->reader = $this->getMock('Magento\Framework\Indexer\Config\Reader', ['read'], [], '', false);
         $this->cache = $this->getMockForAbstractClass(
-            \Magento\Framework\Config\CacheInterface::class,
+            'Magento\Framework\Config\CacheInterface',
             [],
             '',
             false,
@@ -54,26 +49,27 @@ class DataTest extends \PHPUnit\Framework\TestCase
             true,
             ['test', 'load', 'save']
         );
-        $this->stateCollection = $this->createPartialMock(
-            \Magento\Indexer\Model\ResourceModel\Indexer\State\Collection::class,
-            ['getItems']
+        $this->stateCollection = $this->getMock(
+            'Magento\Indexer\Model\ResourceModel\Indexer\State\Collection',
+            ['getItems'],
+            [],
+            '',
+            false
         );
-        $this->serializerMock = $this->createMock(\Magento\Framework\Serialize\SerializerInterface::class);
     }
 
     public function testConstructorWithCache()
     {
-        $serializedData = 'serialized data';
         $this->cache->expects($this->once())->method('test')->with($this->cacheId)->will($this->returnValue(true));
-        $this->cache->expects($this->once())
-            ->method('load')
-            ->with($this->cacheId)
-            ->willReturn($serializedData);
-
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedData)
-            ->willReturn($this->indexers);
+        $this->cache->expects(
+            $this->once()
+        )->method(
+            'load'
+        )->with(
+            $this->cacheId
+        )->will(
+            $this->returnValue(serialize($this->indexers))
+        );
 
         $this->stateCollection->expects($this->never())->method('getItems');
 
@@ -81,8 +77,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             $this->reader,
             $this->cache,
             $this->stateCollection,
-            $this->cacheId,
-            $this->serializerMock
+            $this->cacheId
         );
     }
 
@@ -93,16 +88,22 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
         $this->reader->expects($this->once())->method('read')->will($this->returnValue($this->indexers));
 
-        $stateExistent = $this->createPartialMock(
-            \Magento\Indexer\Model\Indexer\State::class,
-            ['getIndexerId', '__wakeup', 'delete']
+        $stateExistent = $this->getMock(
+            'Magento\Indexer\Model\Indexer\State',
+            ['getIndexerId', '__wakeup', 'delete'],
+            [],
+            '',
+            false
         );
         $stateExistent->expects($this->once())->method('getIndexerId')->will($this->returnValue('indexer1'));
         $stateExistent->expects($this->never())->method('delete');
 
-        $stateNonexistent = $this->createPartialMock(
-            \Magento\Indexer\Model\Indexer\State::class,
-            ['getIndexerId', '__wakeup', 'delete']
+        $stateNonexistent = $this->getMock(
+            'Magento\Indexer\Model\Indexer\State',
+            ['getIndexerId', '__wakeup', 'delete'],
+            [],
+            '',
+            false
         );
         $stateNonexistent->expects($this->once())->method('getIndexerId')->will($this->returnValue('indexer2'));
         $stateNonexistent->expects($this->once())->method('delete');
@@ -115,8 +116,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             $this->reader,
             $this->cache,
             $this->stateCollection,
-            $this->cacheId,
-            $this->serializerMock
+            $this->cacheId
         );
     }
 }

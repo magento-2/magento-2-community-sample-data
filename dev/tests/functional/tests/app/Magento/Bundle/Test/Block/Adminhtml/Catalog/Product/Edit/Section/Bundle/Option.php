@@ -51,7 +51,7 @@ class Option extends Form
     protected function getSearchGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Bundle\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Bundle\Option\Search\Grid::class,
+            'Magento\Bundle\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Bundle\Option\Search\Grid',
             ['element' => $this->browser->find($this->searchGridBlock)]
         );
     }
@@ -65,7 +65,7 @@ class Option extends Form
     protected function getSelectionBlock($rowIndex)
     {
         return $this->blockFactory->create(
-            \Magento\Bundle\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Bundle\Option\Selection::class,
+            'Magento\Bundle\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Bundle\Option\Selection',
             ['element' => $this->_rootElement->find(sprintf($this->selectionBlock, ++$rowIndex))]
         );
     }

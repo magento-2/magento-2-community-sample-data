@@ -8,14 +8,14 @@ return [
         'config' => [
             'name' => 'config',
             'translate' => 'label,description',
-            'instance' => \Magento\Framework\App\Cache\Type\Config::class,
+            'instance' => 'Magento\Framework\App\Cache\Type\Config',
             'label' => 'Configuration',
             'description' => 'Cache Description',
         ],
         'layout' => [
             'name' => 'layout',
             'translate' => 'label,description',
-            'instance' => \Magento\Framework\App\Cache\Type\Layout::class,
+            'instance' => 'Magento\Framework\App\Cache\Type\Layout',
             'label' => 'Layouts',
             'description' => 'Layout building instructions',
         ],

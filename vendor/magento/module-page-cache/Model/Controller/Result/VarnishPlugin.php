@@ -5,12 +5,7 @@
  */
 namespace Magento\PageCache\Model\Controller\Result;
 
-use Magento\PageCache\Model\Config;
-use Magento\Framework\App\PageCache\Version;
-use Magento\Framework\App\State as AppState;
-use Magento\Framework\Registry;
 use Magento\Framework\App\Response\Http as ResponseHttp;
-use Magento\Framework\Controller\ResultInterface;
 
 /**
  * Plugin for processing varnish cache
@@ -18,61 +13,74 @@ use Magento\Framework\Controller\ResultInterface;
 class VarnishPlugin
 {
     /**
-     * @var Config
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    private $config;
+    protected $config;
 
     /**
-     * @var Version
+     * @var \Magento\Framework\App\PageCache\Version
      */
-    private $version;
+    protected $version;
 
     /**
-     * @var AppState
+     * @var \Magento\Framework\App\PageCache\Kernel
      */
-    private $state;
+    protected $kernel;
 
     /**
-     * @var Registry
+     * @var \Magento\Framework\App\State
      */
-    private $registry;
+    protected $state;
 
     /**
-     * @param Config $config
-     * @param Version $version
-     * @param AppState $state
-     * @param Registry $registry
+     * @var \Magento\Framework\Registry
      */
-    public function __construct(Config $config, Version $version, AppState $state, Registry $registry)
-    {
+    protected $registry;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\PageCache\Model\Config $config
+     * @param \Magento\Framework\App\PageCache\Version $version
+     * @param \Magento\Framework\App\PageCache\Kernel $kernel
+     * @param \Magento\Framework\App\State $state
+     * @param \Magento\Framework\Registry $registry
+     */
+    public function __construct(
+        \Magento\PageCache\Model\Config $config,
+        \Magento\Framework\App\PageCache\Version $version,
+        \Magento\Framework\App\PageCache\Kernel $kernel,
+        \Magento\Framework\App\State $state,
+        \Magento\Framework\Registry $registry
+    ) {
         $this->config = $config;
         $this->version = $version;
+        $this->kernel = $kernel;
         $this->state = $state;
         $this->registry = $registry;
     }
 
     /**
-     * Perform result postprocessing
-     *
-     * @param ResultInterface $subject
-     * @param ResultInterface $result
+     * @param \Magento\Framework\Controller\ResultInterface $subject
+     * @param callable $proceed
      * @param ResponseHttp $response
-     * @return ResultInterface
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function afterRenderResult(ResultInterface $subject, ResultInterface $result, ResponseHttp $response)
-    {
+    public function aroundRenderResult(
+        \Magento\Framework\Controller\ResultInterface $subject,
+        \Closure $proceed,
+        ResponseHttp $response
+    ) {
+        $proceed($response);
         $usePlugin = $this->registry->registry('use_page_cache_plugin');
-
-        if ($this->config->getType() == Config::VARNISH && $this->config->isEnabled() && $usePlugin) {
+        if ($this->config->getType() == \Magento\PageCache\Model\Config::VARNISH && $this->config->isEnabled()
+            && $usePlugin) {
             $this->version->process();
-
-            if ($this->state->getMode() == AppState::MODE_DEVELOPER) {
+            if ($this->state->getMode() == \Magento\Framework\App\State::MODE_DEVELOPER) {
                 $response->setHeader('X-Magento-Debug', 1);
             }
         }
 
-        return $result;
+        return $subject;
     }
 }

@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Search\SearchEngine;
 
-/**
- * Interface \Magento\Framework\Search\SearchEngine\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**

@@ -7,7 +7,7 @@ namespace Magento\Bundle\Test\Unit\Block\Adminhtml\Catalog\Product\Composite\Fie
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CheckboxTest extends \PHPUnit\Framework\TestCase
+class CheckboxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Checkbox
@@ -17,9 +17,7 @@ class CheckboxTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->block = (new ObjectManager($this))
-            ->getObject(
-                \Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Checkbox::class
-            );
+            ->getObject('Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Checkbox');
     }
 
     public function testSetValidationContainer()

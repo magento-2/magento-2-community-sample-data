@@ -16,12 +16,11 @@ use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorI
 /**
  * Import model
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  *
  * @method string getBehavior() getBehavior()
  * @method \Magento\ImportExport\Model\Import setEntity() setEntity(string $value)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Import extends \Magento\ImportExport\Model\AbstractModel
 {
@@ -104,7 +103,11 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Entity adapter.
+     *
+     * @var \Magento\ImportExport\Model\Import\Entity\AbstractEntity
+     */
     protected $_entityAdapter;
 
     /**
@@ -218,6 +221,7 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
      */
     protected function _getEntityAdapter()
     {
+
         if (!$this->_entityAdapter) {
             $entities = $this->_importConfig->getEntities();
             if (isset($entities[$this->getEntity()])) {
@@ -234,7 +238,9 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
                 ) {
                     throw new \Magento\Framework\Exception\LocalizedException(
                         __(
-                            'The entity adapter object must be an instance of %1 or %2.', \Magento\ImportExport\Model\Import\Entity\AbstractEntity::class, \Magento\ImportExport\Model\Import\AbstractEntity::class
+                            'The entity adapter object must be an instance of %1 or %2.',
+                            'Magento\ImportExport\Model\Import\Entity\AbstractEntity',
+                            'Magento\ImportExport\Model\Import\AbstractEntity'
                         )
                     );
                 }
@@ -429,16 +435,34 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
             $this->importHistoryModel->invalidateReport($this);
         }
 
+
         return $result;
     }
 
     /**
      * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function processImport()
     {
-        return $this->_getEntityAdapter()->importData();
+        $errorAggregator = $this->_getEntityAdapter()->getErrorAggregator();
+        $errorAggregator->initValidationStrategy(
+            $this->getData(self::FIELD_NAME_VALIDATION_STRATEGY),
+            $this->getData(self::FIELD_NAME_ALLOWED_ERROR_COUNT)
+        );
+        try {
+            $this->_getEntityAdapter()->importData();
+        } catch (\Exception $e) {
+            $errorAggregator->addError(
+                \Magento\ImportExport\Model\Import\Entity\AbstractEntity::ERROR_CODE_SYSTEM_EXCEPTION,
+                ProcessingError::ERROR_LEVEL_CRITICAL,
+                null,
+                null,
+                null,
+                $e->getMessage()
+            );
+        }
+
+        return !$errorAggregator->hasToBeTerminated();
     }
 
     /**
@@ -567,6 +591,7 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
                 ProcessingError::ERROR_LEVEL_CRITICAL,
                 null,
                 null,
+                null,
                 $e->getMessage()
             );
         }
@@ -596,7 +621,6 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
         foreach (array_keys($relatedIndexers) as $indexerId) {
             try {
                 $indexer = $this->indexerRegistry->get($indexerId);
-
                 if (!$indexer->isScheduled()) {
                     $indexer->invalidate();
                 }
@@ -734,6 +758,7 @@ class Import extends \Magento\ImportExport\Model\AbstractModel
         }
         return $this;
     }
+
 
     /**
      * Get count of created items

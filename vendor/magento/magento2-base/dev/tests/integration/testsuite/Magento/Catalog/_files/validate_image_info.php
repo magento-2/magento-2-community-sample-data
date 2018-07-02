@@ -7,10 +7,10 @@
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var \Magento\Framework\Filesystem $filesystem */
-$filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
+$filesystem = $objectManager->get('Magento\Framework\Filesystem');
 
 /** @var Magento\Catalog\Model\Product\Media\Config $config */
-$config = $objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+$config = $objectManager->get('Magento\Catalog\Model\Product\Media\Config');
 
 /** @var $tmpDirectory \Magento\Framework\Filesystem\Directory\WriteInterface */
 $tmpDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);

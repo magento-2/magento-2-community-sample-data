@@ -9,11 +9,10 @@ use Magento\Catalog\Model\Category;
 
 /**
  * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
- * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_products.php
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     const DEFAULT_ROOT_CATEGORY = 2;
 
@@ -42,7 +41,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppArea adminhtml
+     * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
+     * @magentoDbIsolation enabled
      */
     public function testReindexAll()
     {
@@ -81,6 +81,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoAppArea adminhtml
+     * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      */
     public function testCategoryMove()
     {
@@ -97,8 +100,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         /** @var Category $categorySecond */
         $categorySecond = $categories[1];
-        $categorySecond->setIsAnchor(true);
-        $categorySecond->save();
 
         /** @var Category $categoryThird */
         $categoryThird = $categories[2];
@@ -109,7 +110,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->indexer->reindexAll();
 
         /**
-         * Move $categoryFourth from $categoryThird to $categorySecond
+         * Move category from $categoryThird to $categorySecond
          */
         $categoryFourth->move($categorySecond->getId(), null);
 
@@ -165,8 +166,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $categorySecond->setIsAnchor(0);
         $categorySecond->save();
 
-        /** @var Category $categoryFourth */
-        $categoryFourth = end($categories);
+        /** @var Category $categoryFifth */
+        $categoryFifth = end($categories);
 
         /** @var Category $categorySixth */
         $categorySixth = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
@@ -175,7 +176,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $categorySixth->setName(
             'Category 6'
         )->setPath(
-            $categoryFourth->getPath()
+            $categoryFifth->getPath()
         )->setAvailableSortBy(
             'name'
         )->setDefaultSortBy(
@@ -189,7 +190,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $productThird->setCategoryIds([$categorySixth->getId()]);
         $productThird->save();
 
-        $categories = [self::DEFAULT_ROOT_CATEGORY, $categorySixth->getId(), $categoryFourth->getId()];
+        $categories = [self::DEFAULT_ROOT_CATEGORY, $categorySixth->getId(), $categoryFifth->getId()];
         foreach ($categories as $categoryId) {
             $this->assertTrue((bool)$this->productResource->canBeShowInCategory($productThird, $categoryId));
         }
@@ -211,7 +212,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             \Magento\Catalog\Model\Category::class
         );
 
-        $result = $category->getCollection()->addAttributeToSelect('name')->getItems();
+        $result = $category->getCollection()->getItems();
         $result = array_slice($result, 2);
 
         return array_slice($result, 0, $count);

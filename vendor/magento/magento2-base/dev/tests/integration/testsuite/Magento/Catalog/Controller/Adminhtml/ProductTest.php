@@ -5,6 +5,8 @@
  */
 namespace Magento\Catalog\Controller\Adminhtml;
 
+use Magento\Catalog\Model\ProductRepository;
+
 /**
  * @magentoAppArea adminhtml
  */
@@ -27,7 +29,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndNew()
     {
         $this->getRequest()->setPostValue(['back' => 'new']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/new/'));
@@ -43,7 +45,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndDuplicate()
     {
         $this->getRequest()->setPostValue(['back' => 'duplicate']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/'));
@@ -69,36 +71,28 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
         $this->dispatch('backend/catalog/product');
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]',
-                $body
-            ),
+            $body,
             '"Add Product" button container should be present on Manage Products page, if the limit is not  reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button"]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be present on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button.disabled',
             0,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button" and contains(@class,"disabled")]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be enabled on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product .action-toggle',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]/*[contains(@class,"action-toggle")]',
-                $body
-            ),
+            $body,
             '"Add Product" button split should be present on Manage Products page, if the limit is not reached'
         );
     }
@@ -108,36 +102,50 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
      */
     public function testEditAction()
     {
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/edit/id/' . $product->getEntityId());
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount('#save-button', 1, $body, '"Save" button isn\'t present on Edit Product page');
+        $this->assertSelectCount(
+            '#save_and_new',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save-button"]',
-                $body
-            ),
-            '"Save" button isn\'t present on Edit Product page'
-        );
-
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_new"]',
-                $body
-            ),
+            $body,
             '"Save & New" button isn\'t present on Edit Product page'
         );
-
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#save_and_duplicate',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_duplicate"]',
-                $body
-            ),
+            $body,
             '"Save & Duplicate" button isn\'t present on Edit Product page'
+        );
+    }
+
+    /**
+     * Tests Validate product action.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/products_with_multiselect_attribute.php
+     *
+     * @return void
+     */
+    public function testValidateAction()
+    {
+        $expectedResult = json_encode(['error' => false]);
+
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple_ms_2');
+        $data = $product->getData();
+        unset($data['multiselect_attribute']);
+
+        $this->getRequest()->setPostValue(['product' => $data]);
+        $this->dispatch('backend/catalog/product/validate');
+        $response = $this->getResponse()->getBody();
+
+        $this->assertJsonStringEqualsJsonString(
+            $expectedResult,
+            $response,
+            'Validate action returned incorrect result.'
         );
     }
 }

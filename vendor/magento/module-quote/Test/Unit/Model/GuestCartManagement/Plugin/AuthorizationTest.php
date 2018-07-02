@@ -8,7 +8,7 @@ namespace Magento\Quote\Test\Unit\Model\GuestCartManagement\Plugin;
 
 use Magento\Quote\Model\GuestCartManagement\Plugin\Authorization;
 
-class AuthorizationTest extends \PHPUnit\Framework\TestCase
+class AuthorizationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Authorization
@@ -27,8 +27,14 @@ class AuthorizationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->userContextMock = $this->createMock(\Magento\Authorization\Model\UserContextInterface::class);
-        $this->quoteManagementMock = $this->createMock(\Magento\Quote\Model\GuestCart\GuestCartManagement::class);
+        $this->userContextMock = $this->getMock('Magento\Authorization\Model\UserContextInterface');
+        $this->quoteManagementMock = $this->getMock(
+            'Magento\Quote\Model\GuestCart\GuestCartManagement',
+            [],
+            [],
+            '',
+            false
+        );
         $this->plugin = new Authorization(
             $this->userContextMock
         );

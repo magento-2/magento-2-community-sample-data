@@ -16,7 +16,12 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     protected $isRedirect = false;
 
     /**
-     * {@inheritdoc}
+     * Get header value by name.
+     * Returns first found header by passed name.
+     * If header with specified name was not found returns false.
+     *
+     * @param string $name
+     * @return \Zend\Http\Header\HeaderInterface|bool
      */
     public function getHeader($name)
     {
@@ -40,7 +45,8 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $value
+     * @return $this
      */
     public function appendBody($value)
     {
@@ -50,7 +56,8 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $value
+     * @return $this
      */
     public function setBody($value)
     {
@@ -69,7 +76,15 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * Set a header
+     *
+     * If $replace is true, replaces any headers already defined with that
+     * $name.
+     *
+     * @param string $name
+     * @param string $value
+     * @param boolean $replace
+     * @return $this
      */
     public function setHeader($name, $value, $replace = false)
     {
@@ -84,7 +99,10 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * Remove header by name from header stack
+     *
+     * @param string $name
+     * @return $this
      */
     public function clearHeader($name)
     {
@@ -99,7 +117,6 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
 
     /**
      * Remove all headers
-     *
      * @return $this
      */
     public function clearHeaders()
@@ -111,7 +128,14 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * Set redirect URL
+     *
+     * Sets Location header and response code. Forces replacement of any prior
+     * redirects.
+     *
+     * @param string $url
+     * @param int $code
+     * @return $this
      */
     public function setRedirect($url, $code = 302)
     {
@@ -122,7 +146,10 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * Set HTTP response code to use with headers
+     *
+     * @param int $code
+     * @return $this
      */
     public function setHttpResponseCode($code)
     {
@@ -137,7 +164,10 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * @param int|string $httpCode
+     * @param null|int|string $version
+     * @param null|string $phrase
+     * @return $this
      */
     public function setStatusHeader($httpCode, $version = null, $phrase = null)
     {
@@ -152,7 +182,9 @@ class Response extends \Zend\Http\PhpEnvironment\Response implements \Magento\Fr
     }
 
     /**
-     * {@inheritdoc}
+     * Get response code
+     *
+     * @return int
      */
     public function getHttpResponseCode()
     {

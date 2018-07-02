@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Mview\View;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Indexer\ConfigInterface;
-use Magento\Framework\Indexer\IndexerInterface;
-
 class Collection extends \Magento\Framework\Data\Collection implements CollectionInterface
 {
     /**
@@ -16,7 +12,7 @@ class Collection extends \Magento\Framework\Data\Collection implements Collectio
      *
      * @var string
      */
-    protected $_itemObjectClass = \Magento\Framework\Mview\ViewInterface::class;
+    protected $_itemObjectClass = 'Magento\Framework\Mview\ViewInterface';
 
     /**
      * @var \Magento\Framework\Mview\ConfigInterface
@@ -29,25 +25,17 @@ class Collection extends \Magento\Framework\Data\Collection implements Collectio
     protected $statesFactory;
 
     /**
-     * @var ConfigInterface
-     */
-    private $indexerConfig;
-
-    /**
      * @param \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory
      * @param \Magento\Framework\Mview\ConfigInterface $config
      * @param State\CollectionFactory $statesFactory
-     * @param ConfigInterface $indexerConfig
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
         \Magento\Framework\Mview\ConfigInterface $config,
-        \Magento\Framework\Mview\View\State\CollectionFactory $statesFactory,
-        ConfigInterface $indexerConfig = null
+        \Magento\Framework\Mview\View\State\CollectionFactory $statesFactory
     ) {
         $this->config = $config;
         $this->statesFactory = $statesFactory;
-        $this->indexerConfig = $indexerConfig ?: ObjectManager::getInstance()->get(ConfigInterface::class);
         parent::__construct($entityFactory);
     }
 
@@ -64,10 +52,10 @@ class Collection extends \Magento\Framework\Data\Collection implements Collectio
     {
         if (!$this->isLoaded()) {
             $states = $this->statesFactory->create();
-            foreach ($this->getOrderedViewIds() as $viewId) {
+            foreach (array_keys($this->config->getViews()) as $viewId) {
                 /** @var \Magento\Framework\Mview\ViewInterface $view */
                 $view = $this->getNewEmptyItem();
-                $view = $view->load($viewId);
+                $view->load($viewId);
                 foreach ($states->getItems() as $state) {
                     /** @var \Magento\Framework\Mview\View\StateInterface $state */
                     if ($state->getViewId() == $viewId) {
@@ -80,25 +68,6 @@ class Collection extends \Magento\Framework\Data\Collection implements Collectio
             $this->_setIsLoaded(true);
         }
         return $this;
-    }
-
-    /**
-     * Return the list of ordered view Ids according to dependencies of Indexers.
-     *
-     * @return array
-     */
-    private function getOrderedViewIds()
-    {
-        $orderedViewIds = [];
-        /** @var IndexerInterface $indexer */
-        foreach (array_keys($this->indexerConfig->getIndexers()) as $indexerId) {
-            $indexer = $this->_entityFactory->create(IndexerInterface::class);
-            $orderedViewIds[] = $indexer->load($indexerId)->getViewId();
-        }
-        $orderedViewIds = array_filter($orderedViewIds);
-        $orderedViewIds += array_diff(array_keys($this->config->getViews()), $orderedViewIds);
-
-        return $orderedViewIds;
     }
 
     /**

@@ -7,7 +7,7 @@
 
 namespace Magento\Persistent\Test\Unit\Observer;
 
-class SynchronizePersistentOnLogoutObserverTest extends \PHPUnit\Framework\TestCase
+class SynchronizePersistentOnLogoutObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\SynchronizePersistentOnLogoutObserver
@@ -34,6 +34,7 @@ class SynchronizePersistentOnLogoutObserverTest extends \PHPUnit\Framework\TestC
      */
     protected $observerMock;
 
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -41,12 +42,12 @@ class SynchronizePersistentOnLogoutObserverTest extends \PHPUnit\Framework\TestC
 
     protected function setUp()
     {
-        $this->helperMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
+        $this->helperMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
+        $this->sessionHelperMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
         $this->sessionFactoryMock =
-            $this->createPartialMock(\Magento\Persistent\Model\SessionFactory::class, ['create']);
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $this->sessionMock = $this->createMock(\Magento\Persistent\Model\Session::class);
+            $this->getMock('Magento\Persistent\Model\SessionFactory', ['create'], [], '', false);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
+        $this->sessionMock = $this->getMock('Magento\Persistent\Model\Session', [], [], '', false);
         $this->model = new \Magento\Persistent\Observer\SynchronizePersistentOnLogoutObserver(
             $this->helperMock,
             $this->sessionHelperMock,

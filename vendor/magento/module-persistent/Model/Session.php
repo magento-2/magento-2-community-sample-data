@@ -8,11 +8,9 @@ namespace Magento\Persistent\Model;
 /**
  * Persistent Session Model
  *
- * @api
  * @method int getCustomerId()
  * @method Session setCustomerId()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Session extends \Magento\Framework\Model\AbstractModel
 {
@@ -156,7 +154,7 @@ class Session extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Persistent\Model\ResourceModel\Session::class);
+        $this->_init('Magento\Persistent\Model\ResourceModel\Session');
     }
 
     /**
@@ -402,13 +400,13 @@ class Session extends \Magento\Framework\Model\AbstractModel
      * Get request object
      *
      * @return \Magento\Framework\App\Request\Http
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getRequest()
     {
         if ($this->request == null) {
             $this->request = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\App\Request\Http::class);
+                ->get('\Magento\Framework\App\Request\Http');
         }
         return $this->request;
     }
@@ -417,7 +415,6 @@ class Session extends \Magento\Framework\Model\AbstractModel
      * Set `updated_at` to be always changed
      *
      * @return $this
-     * @since 100.1.0
      */
     public function save()
     {

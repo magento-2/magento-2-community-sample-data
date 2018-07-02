@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Json\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Json\Helper\Data
@@ -15,7 +15,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Json\Helper\Data::class
+            'Magento\Framework\Json\Helper\Data'
         );
     }
 

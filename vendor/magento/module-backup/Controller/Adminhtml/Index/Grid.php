@@ -6,17 +6,16 @@
  */
 namespace Magento\Backup\Controller\Adminhtml\Index;
 
-use Magento\Framework\Controller\ResultFactory;
-
 class Grid extends \Magento\Backup\Controller\Adminhtml\Index
 {
     /**
      * Backup list action
      *
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return void
      */
     public function execute()
     {
-        return $this->resultFactory->create(ResultFactory::TYPE_PAGE);
+        $this->_view->loadLayout();
+        $this->_view->renderLayout();
     }
 }

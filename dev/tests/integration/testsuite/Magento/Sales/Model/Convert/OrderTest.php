@@ -11,14 +11,14 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Class OrderTest
  */
-class OrderTest extends \PHPUnit\Framework\TestCase
+class OrderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Order */
     protected $_model;
 
     protected function setUp()
     {
-        $this->_model = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Convert\Order::class);
+        $this->_model = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Convert\Order');
     }
 
     /**
@@ -27,7 +27,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     public function testConvertToCreditmemo()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $order = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001');
         //MAGETWO-45612 fix
         $order->setBaseShippingAmount(5);

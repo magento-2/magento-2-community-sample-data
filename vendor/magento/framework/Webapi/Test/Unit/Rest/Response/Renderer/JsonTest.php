@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Webapi\Test\Unit\Rest\Response\Renderer;
 
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Webapi\Rest\Response\Renderer\Json */
     protected $_restJsonRenderer;
@@ -18,7 +18,7 @@ class JsonTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** Prepare mocks and objects for SUT constructor. */
-        $this->encoderMock = $this->getMockBuilder(\Magento\Framework\Json\Encoder::class)
+        $this->encoderMock = $this->getMockBuilder('Magento\Framework\Json\Encoder')
             ->disableOriginalConstructor()
             ->setMethods(['encode'])
             ->getMock();

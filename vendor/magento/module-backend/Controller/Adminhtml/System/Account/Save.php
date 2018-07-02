@@ -12,9 +12,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Security\Model\SecurityCookie;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Save extends \Magento\Backend\Controller\Adminhtml\System\Account
 {
     /**
@@ -26,7 +23,7 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account
      * Get security cookie
      *
      * @return SecurityCookie
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getSecurityCookie()
     {
@@ -45,24 +42,24 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account
      */
     public function execute()
     {
-        $userId = $this->_objectManager->get(\Magento\Backend\Model\Auth\Session::class)->getUser()->getId();
+        $userId = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser()->getId();
         $password = (string)$this->getRequest()->getParam('password');
         $passwordConfirmation = (string)$this->getRequest()->getParam('password_confirmation');
         $interfaceLocale = (string)$this->getRequest()->getParam('interface_locale', false);
 
         /** @var $user \Magento\User\Model\User */
-        $user = $this->_objectManager->create(\Magento\User\Model\User::class)->load($userId);
+        $user = $this->_objectManager->create('Magento\User\Model\User')->load($userId);
 
         $user->setId($userId)
-            ->setUserName($this->getRequest()->getParam('username', false))
-            ->setFirstName($this->getRequest()->getParam('firstname', false))
-            ->setLastName($this->getRequest()->getParam('lastname', false))
+            ->setUsername($this->getRequest()->getParam('username', false))
+            ->setFirstname($this->getRequest()->getParam('firstname', false))
+            ->setLastname($this->getRequest()->getParam('lastname', false))
             ->setEmail(strtolower($this->getRequest()->getParam('email', false)));
 
-        if ($this->_objectManager->get(\Magento\Framework\Validator\Locale::class)->isValid($interfaceLocale)) {
+        if ($this->_objectManager->get('Magento\Framework\Validator\Locale')->isValid($interfaceLocale)) {
             $user->setInterfaceLocale($interfaceLocale);
             /** @var \Magento\Backend\Model\Locale\Manager $localeManager */
-            $localeManager = $this->_objectManager->get(\Magento\Backend\Model\Locale\Manager::class);
+            $localeManager = $this->_objectManager->get('Magento\Backend\Model\Locale\Manager');
             $localeManager->switchBackendInterfaceLocale($interfaceLocale);
         }
         /** Before updating admin user data, ensure that password of current admin user is entered and is correct */

@@ -11,7 +11,7 @@ use Magento\Braintree\Gateway\Config\Config;
 use Magento\Braintree\Observer\DataAssignObserver;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Braintree\Gateway\Request\KountPaymentDataBuilder;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
@@ -19,7 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @see \Magento\Braintree\Gateway\Request\KountPaymentDataBuilder
  */
-class KountPaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
+class KountPaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     const DEVICE_DATA = '{"test": "test"}';
 
@@ -45,7 +45,7 @@ class KountPaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
         $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -79,7 +79,7 @@ class KountPaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             KountPaymentDataBuilder::DEVICE_DATA => self::DEVICE_DATA,
         ];
 
-        $order = $this->createMock(OrderAdapterInterface::class);
+        $order = $this->getMockForAbstractClass(OrderAdapterInterface::class);
         $this->paymentDO->method('getOrder')
             ->willReturn($order);
 

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -36,27 +36,27 @@ class FileReflection implements ReflectionInterface
     /**
      * @var string[]
      */
-    protected $namespaces = [];
+    protected $namespaces = array();
 
     /**
      * @var string[]
      */
-    protected $uses = [];
+    protected $uses = array();
 
     /**
      * @var string[]
      */
-    protected $requiredFiles = [];
+    protected $requiredFiles = array();
 
     /**
      * @var ClassReflection[]
      */
-    protected $classes = [];
+    protected $classes = array();
 
     /**
      * @var FunctionReflection[]
      */
-    protected $functions = [];
+    protected $functions = array();
 
     /**
      * @var string
@@ -195,7 +195,7 @@ class FileReflection implements ReflectionInterface
      */
     public function getClasses()
     {
-        $classes = [];
+        $classes = array();
         foreach ($this->classes as $class) {
             $classes[] = new ClassReflection($class);
         }
@@ -210,7 +210,7 @@ class FileReflection implements ReflectionInterface
      */
     public function getFunctions()
     {
-        $functions = [];
+        $functions = array();
         foreach ($this->functions as $function) {
             $functions[] = new FunctionReflection($function);
         }

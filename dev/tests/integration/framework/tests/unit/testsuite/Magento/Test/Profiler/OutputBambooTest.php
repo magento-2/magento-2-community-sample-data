@@ -9,7 +9,7 @@ namespace Magento\Test\Profiler;
  * Test class for \Magento\TestFramework\Profiler\OutputBamboo.
  */
 require_once __DIR__ . '/OutputBambooTestFilter.php';
-class OutputBambooTest extends \PHPUnit\Framework\TestCase
+class OutputBambooTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Profiler\OutputBamboo
@@ -18,7 +18,7 @@ class OutputBambooTest extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass()
     {
-        stream_filter_register('dataCollectorFilter', \Magento\Test\Profiler\OutputBambooTestFilter::class);
+        stream_filter_register('dataCollectorFilter', 'Magento\Test\Profiler\OutputBambooTestFilter');
     }
 
     /**

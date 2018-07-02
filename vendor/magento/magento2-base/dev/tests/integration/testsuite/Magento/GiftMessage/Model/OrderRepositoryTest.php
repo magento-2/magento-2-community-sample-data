@@ -5,7 +5,7 @@
  */
 namespace Magento\GiftMessage\Model;
 
-class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
+class OrderRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
@@ -20,21 +20,19 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->message = $this->objectManager->create(\Magento\GiftMessage\Model\Message::class);
+        $this->message = $this->objectManager->create('Magento\GiftMessage\Model\Message');
         $this->message->setSender('Romeo');
         $this->message->setRecipient('Mercutio');
         $this->message->setMessage('I thought all for the best.');
 
-        $this->giftMessageOrderRepository = $this->objectManager->create(
-            \Magento\GiftMessage\Model\OrderRepository::class
-        );
+        $this->giftMessageOrderRepository = $this->objectManager->create('Magento\GiftMessage\Model\OrderRepository');
     }
 
     protected function tearDown()
     {
-        $this->objectManager = null;
-        $this->message = null;
-        $this->giftMessageOrderRepository = null;
+        unset($this->objectManager);
+        unset($this->message);
+        unset($this->giftMessageOrderRepository);
     }
 
     /**
@@ -44,7 +42,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testGet()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $message = $this->giftMessageOrderRepository->get($order->getEntityId());
@@ -60,7 +58,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSave()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $result = $this->giftMessageOrderRepository->save($order->getEntityId(), $this->message);
@@ -82,7 +80,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSaveMessageIsNotAvailable()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $this->giftMessageOrderRepository->save($order->getEntityId(), $this->message);
@@ -97,7 +95,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSaveMessageIsVirtual()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $this->giftMessageOrderRepository->save($order->getEntityId(), $this->message);
@@ -112,7 +110,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSaveMessageIsEmpty()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $this->giftMessageOrderRepository->save($order->getEntityId(), $this->message);
@@ -127,7 +125,7 @@ class OrderRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSaveMessageNoProvidedItemId()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId('100000001');
+        $order = $this->objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
 
         /** @var \Magento\GiftMessage\Api\Data\MessageInterface $message */
         $this->giftMessageOrderRepository->save($order->getEntityId() * 10, $this->message);

@@ -11,7 +11,7 @@ namespace Magento\PageCache\Test\Unit\Model\Layout;
 /**
  * Class DepersonalizePluginTest
  */
-class DepersonalizePluginTest extends \PHPUnit\Framework\TestCase
+class DepersonalizePluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\PageCache\Model\Layout\DepersonalizePlugin
@@ -43,10 +43,21 @@ class DepersonalizePluginTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->layoutMock = $this->createMock(\Magento\Framework\View\Layout::class);
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $this->messageSessionMock = $this->createPartialMock(\Magento\Framework\Message\Session::class, ['clearStorage']);
-        $this->depersonalizeCheckerMock = $this->createMock(\Magento\PageCache\Model\DepersonalizeChecker::class);
+        $this->layoutMock = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
+        $this->eventManagerMock = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
+        $this->messageSessionMock = $this->getMock('Magento\Framework\Message\Session',
+            ['clearStorage'],
+            [],
+            '',
+            false
+        );
+        $this->depersonalizeCheckerMock = $this->getMock(
+            'Magento\PageCache\Model\DepersonalizeChecker',
+            [],
+            [],
+            '',
+            false
+        );
         $this->plugin = new \Magento\PageCache\Model\Layout\DepersonalizePlugin(
             $this->depersonalizeCheckerMock,
             $this->eventManagerMock,
@@ -56,7 +67,7 @@ class DepersonalizePluginTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterGenerateXml()
     {
-        $expectedResult = $this->createMock(\Magento\Framework\View\Layout::class);
+        $expectedResult = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
 
         $this->eventManagerMock->expects($this->once())
             ->method('dispatch')
@@ -75,7 +86,7 @@ class DepersonalizePluginTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch');
         $this->messageSessionMock->expects($this->never())->method('clearStorage');
 
-        $expectedResult = $this->createMock(\Magento\Framework\View\Layout::class);
+        $expectedResult = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
         $actualResult = $this->plugin->afterGenerateXml($this->layoutMock, $expectedResult);
         $this->assertEquals($expectedResult, $actualResult);
     }

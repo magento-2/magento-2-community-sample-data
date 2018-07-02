@@ -9,7 +9,7 @@ namespace Magento\Test\Integrity\Layout;
 
 use Magento\Framework\App\Utility\Files;
 
-class BlocksTest extends \PHPUnit\Framework\TestCase
+class BlocksTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -55,7 +55,7 @@ class BlocksTest extends \PHPUnit\Framework\TestCase
              *
              * @param string $alias
              * @param string $file
-             * @throws \Exception|PHPUnit\Framework\ExpectationFailedException
+             * @throws \Exception|PHPUnit_Framework_ExpectationFailedException
              */
             function ($alias, $file) {
                 if (isset(self::$_containerAliases[$alias])) {

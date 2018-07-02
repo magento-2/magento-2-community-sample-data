@@ -27,7 +27,7 @@ class Float extends IsFloat
      * @param array|Traversable $options
      * @throws Exception\ExtensionNotLoadedException if ext/intl is not present
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
         trigger_error(
             sprintf(

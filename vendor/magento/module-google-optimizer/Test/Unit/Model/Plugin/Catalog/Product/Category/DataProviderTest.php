@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Model\Plugin\Catalog\Product\Category;
 
-class DataProviderTest extends \PHPUnit\Framework\TestCase
+class DataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GoogleOptimizer\Model\Plugin\Catalog\Product\Category\DataProvider
@@ -25,14 +25,18 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->helper = $this->getMockBuilder(\Magento\GoogleOptimizer\Helper\Data::class)
+        $this->helper = $this->getMockBuilder('\Magento\GoogleOptimizer\Helper\Data')
             ->setMethods(['isGoogleExperimentActive'])
             ->disableOriginalConstructor()->getMock();
-        $this->subject = $this->createMock(
-            \Magento\Catalog\Ui\DataProvider\Product\Form\NewCategoryDataProvider::class
+        $this->subject = $this->getMock(
+            '\Magento\Catalog\Ui\DataProvider\Product\Form\NewCategoryDataProvider',
+            [],
+            [],
+            '',
+            false
         );
         $this->plugin = $objectManager->getObject(
-            \Magento\GoogleOptimizer\Model\Plugin\Catalog\Product\Category\DataProvider::class,
+            '\Magento\GoogleOptimizer\Model\Plugin\Catalog\Product\Category\DataProvider',
             [
                 'helper' => $this->helper
             ]

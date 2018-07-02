@@ -9,7 +9,6 @@
 
 namespace Zend\Crypt\Symmetric;
 
-use Interop\Container\ContainerInterface;
 use Traversable;
 use Zend\Stdlib\ArrayUtils;
 
@@ -62,7 +61,7 @@ class Mcrypt implements SymmetricInterface
     /**
      * Padding plugins
      *
-     * @var Interop\Container\ContainerInterface
+     * @var PaddingPluginManager
      */
     protected static $paddingPlugins = null;
 
@@ -71,7 +70,7 @@ class Mcrypt implements SymmetricInterface
      *
      * @var array
      */
-    protected $supportedAlgos = [
+    protected $supportedAlgos = array(
         'aes'          => 'rijndael-128',
         'blowfish'     => 'blowfish',
         'des'          => 'des',
@@ -85,21 +84,21 @@ class Mcrypt implements SymmetricInterface
         'saferplus'    => 'saferplus',
         'serpent'      => 'serpent',
         'twofish'      => 'twofish'
-    ];
+    );
 
     /**
      * Supported encryption modes
      *
      * @var array
      */
-    protected $supportedModes = [
+    protected $supportedModes = array(
         'cbc'  => 'cbc',
         'cfb'  => 'cfb',
         'ctr'  => 'ctr',
         'ofb'  => 'ofb',
         'nofb' => 'nofb',
         'ncfb' => 'ncfb'
-    ];
+    );
 
     /**
      * Constructor
@@ -108,25 +107,13 @@ class Mcrypt implements SymmetricInterface
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
         if (!extension_loaded('mcrypt')) {
             throw new Exception\RuntimeException(
                 'You cannot use ' . __CLASS__ . ' without the Mcrypt extension'
             );
         }
-        $this->setOptions($options);
-        $this->setDefaultOptions($options);
-    }
-
-    /**
-     * Set default options
-     *
-     * @param  array $options
-     * @return void
-     */
-    public function setOptions($options)
-    {
         if (!empty($options)) {
             if ($options instanceof Traversable) {
                 $options = ArrayUtils::iteratorToArray($options);
@@ -159,6 +146,7 @@ class Mcrypt implements SymmetricInterface
                 }
             }
         }
+        $this->setDefaultOptions($options);
     }
 
     /**
@@ -167,7 +155,7 @@ class Mcrypt implements SymmetricInterface
      * @param  array $options
      * @return void
      */
-    protected function setDefaultOptions($options = [])
+    protected function setDefaultOptions($options = array())
     {
         if (!isset($options['padding'])) {
             $plugins       = static::getPaddingPluginManager();
@@ -179,7 +167,7 @@ class Mcrypt implements SymmetricInterface
     /**
      * Returns the padding plugin manager.  If it doesn't exist it's created.
      *
-     * @return ContainerInterface
+     * @return PaddingPluginManager
      */
     public static function getPaddingPluginManager()
     {
@@ -193,24 +181,25 @@ class Mcrypt implements SymmetricInterface
     /**
      * Set the padding plugin manager
      *
-     * @param  string|ContainerInterface $plugins
+     * @param  string|PaddingPluginManager        $plugins
      * @throws Exception\InvalidArgumentException
      * @return void
      */
     public static function setPaddingPluginManager($plugins)
     {
         if (is_string($plugins)) {
-            if (! class_exists($plugins) || ! is_subclass_of($plugins, ContainerInterface::class)) {
+            if (!class_exists($plugins)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    'Unable to locate padding plugin manager via class "%s"; class does not exist or does not implement ContainerInterface',
+                    'Unable to locate padding plugin manager via class "%s"; class does not exist',
                     $plugins
                 ));
             }
             $plugins = new $plugins();
         }
-        if (!$plugins instanceof ContainerInterface) {
+        if (!$plugins instanceof PaddingPluginManager) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Padding plugins must implements Interop\Container\ContainerInterface; received "%s"',
+                'Padding plugins must extend %s\PaddingPluginManager; received "%s"',
+                __NAMESPACE__,
                 (is_object($plugins) ? get_class($plugins) : gettype($plugins))
             ));
         }

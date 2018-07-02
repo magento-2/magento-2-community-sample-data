@@ -7,27 +7,21 @@
 namespace Magento\Framework\Controller\Result;
 
 use Magento\Framework\App;
-use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\Controller\AbstractResult;
-use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Framework\UrlInterface;
 
 /**
  * In many cases controller actions may result in a redirect
  * so this is a result object that implements all necessary properties of a HTTP redirect
- *
- * @api
  */
 class Redirect extends AbstractResult
 {
-
     /**
-     * @var RedirectInterface
+     * @var \Magento\Framework\App\Response\RedirectInterface
      */
     protected $redirect;
 
     /**
-     * @var UrlInterface
+     * @var \Magento\Framework\UrlInterface
      */
     protected $urlBuilder;
 
@@ -40,11 +34,11 @@ class Redirect extends AbstractResult
      * Constructor
      *
      * @param App\Response\RedirectInterface $redirect
-     * @param UrlInterface $urlBuilder
+     * @param \Magento\Framework\UrlInterface $urlBuilder
      */
     public function __construct(
         App\Response\RedirectInterface $redirect,
-        UrlInterface $urlBuilder
+        \Magento\Framework\UrlInterface $urlBuilder
     ) {
         $this->redirect = $redirect;
         $this->urlBuilder = $urlBuilder;
@@ -73,7 +67,6 @@ class Redirect extends AbstractResult
     }
 
     /**
-     * URL Setter
      * @param string $url
      * @return $this
      */
@@ -99,13 +92,9 @@ class Redirect extends AbstractResult
     /**
      * {@inheritdoc}
      */
-    protected function render(HttpResponseInterface $response)
+    protected function render(App\ResponseInterface $response)
     {
-        if (empty($this->httpResponseCode)) {
-            $response->setRedirect($this->url);
-        } else {
-            $response->setRedirect($this->url, $this->httpResponseCode);
-        }
+        $response->setRedirect($this->url);
         return $this;
     }
 }

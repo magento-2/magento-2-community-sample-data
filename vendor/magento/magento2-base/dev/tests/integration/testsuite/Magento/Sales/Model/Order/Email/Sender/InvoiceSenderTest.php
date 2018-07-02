@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Model\Order\Email\Sender;
 
-class InvoiceSenderTest extends \PHPUnit\Framework\TestCase
+class InvoiceSenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Sales/_files/order.php
@@ -15,18 +15,18 @@ class InvoiceSenderTest extends \PHPUnit\Framework\TestCase
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
         $order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Sales\Model\Order::class);
+            ->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001');
         $order->setCustomerEmail('customer@example.com');
 
         $invoice = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\Order\Invoice::class
+            'Magento\Sales\Model\Order\Invoice'
         );
         $invoice->setOrder($order);
 
         /** @var InvoiceSender $invoiceSender */
         $invoiceSender = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Sales\Model\Order\Email\Sender\InvoiceSender::class);
+            ->create('Magento\Sales\Model\Order\Email\Sender\InvoiceSender');
 
         $this->assertEmpty($invoice->getEmailSent());
         $result = $invoiceSender->send($invoice, true);

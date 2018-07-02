@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\App\Router;
 
-/**
- * Interface \Magento\Framework\App\Router\PathConfigInterface
- *
- */
 interface PathConfigInterface
 {
     /**

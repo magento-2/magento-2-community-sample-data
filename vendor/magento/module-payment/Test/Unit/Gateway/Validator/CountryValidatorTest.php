@@ -5,7 +5,7 @@
  */
 namespace Magento\Payment\Test\Unit\Gateway\Validator;
 
-class CountryValidatorTest extends \PHPUnit\Framework\TestCase
+class CountryValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Payment\Gateway\Validator\CountryValidator */
     protected $model;

@@ -5,12 +5,6 @@
  */
 namespace Magento\CatalogImportExport\Model\Import\Product;
 
-/**
- * Class CategoryProcessor
- *
- * @api
- * @since 100.0.2
- */
 class CategoryProcessor
 {
     /**
@@ -48,7 +42,6 @@ class CategoryProcessor
      * Failed categories during creation
      *
      * @var array
-     * @since 100.1.0
      */
     protected $failedCategories = [];
 
@@ -86,10 +79,7 @@ class CategoryProcessor
                     for ($i = 1; $i < $pathSize; $i++) {
                         $path[] = $collection->getItemById((int)$structure[$i])->getName();
                     }
-                    /** @var string $index */
-                    $index = $this->standardizeString(
-                        implode(self::DELIMITER_CATEGORY, $path)
-                    );
+                    $index = implode(self::DELIMITER_CATEGORY, $path);
                     $this->categories[$index] = $category->getId();
                 }
             }
@@ -118,15 +108,12 @@ class CategoryProcessor
         $category->setIsActive(true);
         $category->setIncludeInMenu(true);
         $category->setAttributeSetId($category->getDefaultAttributeSetId());
-        try {
-            $category->save();
-            $this->categoriesCache[$category->getId()] = $category;
-        } catch (\Exception $e) {
-            $this->addFailedCategory($category, $e);
-        }
+        $category->save();
+        $this->categoriesCache[$category->getId()] = $category;
 
         return $category->getId();
     }
+
 
     /**
      * Returns ID of category by string path creating nonexistent ones.
@@ -137,16 +124,13 @@ class CategoryProcessor
      */
     protected function upsertCategory($categoryPath)
     {
-        /** @var string $index */
-        $index = $this->standardizeString($categoryPath);
-
-        if (!isset($this->categories[$index])) {
+        if (!isset($this->categories[$categoryPath])) {
             $pathParts = explode(self::DELIMITER_CATEGORY, $categoryPath);
             $parentId = \Magento\Catalog\Model\Category::TREE_ROOT_ID;
             $path = '';
 
             foreach ($pathParts as $pathPart) {
-                $path .= $this->standardizeString($pathPart);
+                $path .= $pathPart;
                 if (!isset($this->categories[$path])) {
                     $this->categories[$path] = $this->createCategory($pathPart, $parentId);
                 }
@@ -155,7 +139,7 @@ class CategoryProcessor
             }
         }
 
-        return $this->categories[$index];
+        return $this->categories[$categoryPath];
     }
 
     /**
@@ -188,7 +172,7 @@ class CategoryProcessor
      * @param string $category
      * @param \Magento\Framework\Exception\AlreadyExistsException $exception
      *
-     * @return $this
+     * @return array
      */
     private function addFailedCategory($category, $exception)
     {
@@ -204,23 +188,10 @@ class CategoryProcessor
      * Return failed categories
      *
      * @return array
-     * @since 100.1.0
      */
     public function getFailedCategories()
     {
-        return $this->failedCategories;
-    }
-
-    /**
-     * Resets failed categories' array
-     *
-     * @return $this
-     * @since 100.2.0
-     */
-    public function clearFailedCategories()
-    {
-        $this->failedCategories = [];
-        return $this;
+        return  $this->failedCategories;
     }
 
     /**
@@ -233,18 +204,5 @@ class CategoryProcessor
     public function getCategoryById($categoryId)
     {
         return isset($this->categoriesCache[$categoryId]) ? $this->categoriesCache[$categoryId] : null;
-    }
-
-    /**
-     * Standardize a string.
-     * For now it performs only a lowercase action, this method is here to include more complex checks in the future
-     * if needed.
-     *
-     * @param string $string
-     * @return string
-     */
-    private function standardizeString($string)
-    {
-        return mb_strtolower($string);
     }
 }

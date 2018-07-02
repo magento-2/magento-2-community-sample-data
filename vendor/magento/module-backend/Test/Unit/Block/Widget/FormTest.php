@@ -10,7 +10,7 @@ use Magento\Backend\Block\Widget\Form;
 use Magento\Framework\Data\Form as DataForm;
 use Magento\Framework\UrlInterface;
 
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  Form */
     protected $model;
@@ -28,7 +28,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     {
         $this->prepareContext();
 
-        $this->dataForm = $this->getMockBuilder(\Magento\Framework\Data\Form::class)
+        $this->dataForm = $this->getMockBuilder('Magento\Framework\Data\Form')
             ->disableOriginalConstructor()
             ->setMethods([
                 'setParent',
@@ -44,10 +44,10 @@ class FormTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareContext()
     {
-        $this->urlBuilder = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->urlBuilder = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->getMock();
 
-        $this->context = $this->getMockBuilder(\Magento\Backend\Block\Template\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\Block\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->any())

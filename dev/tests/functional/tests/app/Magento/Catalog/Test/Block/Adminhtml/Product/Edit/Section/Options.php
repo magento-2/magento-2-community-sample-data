@@ -8,6 +8,7 @@ namespace Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section;
 
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid;
+use Magento\Mtf\ObjectManager;
 use Magento\Mtf\Client\ElementInterface;
 use Magento\Mtf\Client\Locator;
 use Magento\Ui\Test\Block\Adminhtml\Section;
@@ -19,6 +20,12 @@ use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Row;
  */
 class Options extends Section
 {
+    /**#@+
+     * Determines if we need update option or add new one.
+     */
+    const ACTION_ADD = 'add';
+    /**#@-*/
+
     /**
      * Custom option row.
      *
@@ -110,24 +117,8 @@ class Options extends Section
                 $this->importOptions($field['products']);
                 continue;
             }
-            $options = null;
-            $this->_rootElement->find($this->buttonAddOption)->click();
-            if (!empty($field['options'])) {
-                $options = $field['options'];
-                unset($field['options']);
-            }
 
-            $rootElement = $this->_rootElement->find(
-                sprintf($this->newCustomOptionRow, $keyRoot + 1),
-                Locator::SELECTOR_XPATH
-            );
-            $data = $this->dataMapping($field);
-            $this->_fill($data, $rootElement);
-
-            // Fill subform
-            if (isset($field['type']) && !empty($options)) {
-                $this->setOptionTypeData($options, $field['type'], $rootElement);
-            }
+            $this->processField($keyRoot, $field);
         }
 
         return $this;
@@ -157,7 +148,7 @@ class Options extends Section
     protected function getSearchGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid',
             ['element' => $this->browser->find($this->importGrid)]
         );
     }
@@ -173,7 +164,7 @@ class Options extends Section
     {
         $element = $element ?: $this->_rootElement;
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Row::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Row',
             ['element' => $element->find(sprintf($this->dynamicDataRow, ++$index))]
         );
     }
@@ -203,6 +194,11 @@ class Options extends Section
             } else {
                 $currentSortOrder = 0;
             }
+
+            if (!isset($option['action_type'])) {
+                $option['action_type'] = self::ACTION_ADD;
+            }
+
             $optionsForm->fillOptions(
                 $option,
                 $element->find(sprintf($context, $key + 1))
@@ -265,6 +261,10 @@ class Options extends Section
             if (!empty($field['options'])) {
                 $options = $field['options'];
                 unset($field['options']);
+            }
+
+            if (isset($field['action_type'])) {
+                unset($field['action_type']);
             }
 
             $rootLocator = sprintf($this->customOptionRow, $field['title']);
@@ -355,42 +355,39 @@ class Options extends Section
     }
 
     /**
-     * Get values data for option as array.
+     * Process field data.
      *
-     * @param array $options
-     * @param string $optionType
-     * @param string $optionTitle
-     * @return array
+     * @param string|int $keyRoot
+     * @param array $field
+     * @return void
      */
-    public function getValuesDataForOption(array $options, string $optionType, string $optionTitle)
+    private function processField($keyRoot, array $field)
     {
-        $rootLocator = sprintf($this->customOptionRow, $optionTitle);
-        $rootElement = $this->_rootElement->find($rootLocator, Locator::SELECTOR_XPATH);
+        $options = null;
 
-        $formDataItem = [];
-        /** @var AbstractOptions $optionsForm */
-        $optionsForm = $this->blockFactory->create(
-            __NAMESPACE__ . '\Options\Type\\' . $this->optionNameConvert($optionType),
-            ['element' => $rootElement]
-        );
-        $context = $rootElement->find($this->addValue)->isVisible()
-            ? $this->dynamicDataRow
-            : $this->staticDataRow;
-        foreach (array_keys($options) as $key) {
-            $element = $rootElement->find(sprintf($context, $key + 1));
+        $actionType = isset($field['action_type']) ? $field['action_type'] : self::ACTION_ADD;
+        unset($field['action_type']);
 
-            $dataOptions = $optionsForm->getDataOptions(null, $element);
-
-            $addBefore = $optionsForm->getTextForOptionValues(
-                [
-                    'add_before' => []
-                ],
-                $element
-            );
-            $formDataItem[$key] = array_merge($dataOptions, $addBefore);
+        if ($actionType == self::ACTION_ADD) {
+            $this->_rootElement->find($this->buttonAddOption)->click();
         }
 
-        return $formDataItem;
+        if (!empty($field['options'])) {
+            $options = $field['options'];
+            unset($field['options']);
+        }
+
+        $rootElement = $this->_rootElement->find(
+            sprintf($this->newCustomOptionRow, $keyRoot + 1),
+            Locator::SELECTOR_XPATH
+        );
+        $data = $this->dataMapping($field);
+        $this->_fill($data, $rootElement);
+
+        // Fill subform
+        if (isset($field['type']) && !empty($options)) {
+            $this->setOptionTypeData($options, $field['type'], $rootElement);
+        }
     }
 
     /**

@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Price\Action;
 /**
  * Class RowsTest
  */
-class RowsTest extends \PHPUnit\Framework\TestCase
+class RowsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -23,10 +23,10 @@ class RowsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Indexer\Product\Price\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Price\Processor'
         );
     }
 
@@ -38,22 +38,20 @@ class RowsTest extends \PHPUnit\Framework\TestCase
     public function testProductsUpdate()
     {
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Product::class
-        );
+        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Catalog\Model\Product');
         /** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $linkManagment */
         $linkManagment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Api\CategoryLinkManagementInterface::class
+            'Magento\Catalog\Api\CategoryLinkManagementInterface'
         );
         $this->_product = $product->load(1);
         $linkManagment->assignProductToCategories($this->_product->getSku(), [9]);
         $this->_processor->reindexList([$this->_product->getId()]);
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(9);

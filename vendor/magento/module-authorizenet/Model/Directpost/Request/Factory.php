@@ -20,7 +20,7 @@ class Factory extends AuthorizenetRequestFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Authorizenet\Model\Directpost\Request::class
+        $instanceName = 'Magento\Authorizenet\Model\Directpost\Request'
     ) {
         parent::__construct($objectManager, $instanceName);
     }

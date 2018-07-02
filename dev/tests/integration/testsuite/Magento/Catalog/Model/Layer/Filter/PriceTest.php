@@ -12,7 +12,7 @@ namespace Magento\Catalog\Model\Layer\Filter;
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\Price
@@ -27,16 +27,16 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $category->load(4);
         $layer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Catalog\Model\Layer\Category::class);
+            ->get('Magento\Catalog\Model\Layer\Category');
         $layer->setCurrentCategory($category);
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Filter\Price::class, ['layer' => $layer]);
+            ->create('Magento\Catalog\Model\Layer\Filter\Price', ['layer' => $layer]);
         $this->groupManagement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Customer\Api\GroupManagementInterface::class);
+            ->get('Magento\Customer\Api\GroupManagementInterface');
     }
 
     public function testApplyNothing()
@@ -45,13 +45,13 @@ class PriceTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $this->_model->apply(
             $request,
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
+                'Magento\Framework\View\LayoutInterface'
             )->createBlock(
-                \Magento\Framework\View\Element\Text::class
+                'Magento\Framework\View\Element\Text'
             )
         );
 
@@ -64,14 +64,14 @@ class PriceTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('price', 'non-numeric');
         $this->_model->apply(
             $request,
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
+                'Magento\Framework\View\LayoutInterface'
             )->createBlock(
-                \Magento\Framework\View\Element\Text::class
+                'Magento\Framework\View\Element\Text'
             )
         );
 
@@ -86,14 +86,14 @@ class PriceTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('price', '10-20');
         $this->_model->apply(
             $request,
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
+                'Magento\Framework\View\LayoutInterface'
             )->createBlock(
-                \Magento\Framework\View\Element\Text::class
+                'Magento\Framework\View\Element\Text'
             )
         );
     }

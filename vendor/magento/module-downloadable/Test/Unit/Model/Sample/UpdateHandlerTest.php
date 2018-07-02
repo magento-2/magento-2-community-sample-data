@@ -12,7 +12,7 @@ use Magento\Downloadable\Api\SampleRepositoryInterface;
 use Magento\Downloadable\Model\Sample\UpdateHandler;
 use Magento\Downloadable\Model\Product\Type;
 
-class UpdateHandlerTest extends \PHPUnit\Framework\TestCase
+class UpdateHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var UpdateHandler */
     protected $model;

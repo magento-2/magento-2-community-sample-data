@@ -9,8 +9,6 @@ namespace Magento\Framework\Webapi;
 
 /**
  * Interface for data conversion based on data type.
- *
- * @api
  */
 interface ServicePayloadConverterInterface
 {

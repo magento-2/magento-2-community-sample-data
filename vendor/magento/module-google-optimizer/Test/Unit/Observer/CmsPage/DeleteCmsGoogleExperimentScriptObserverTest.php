@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Observer\CmsPage;
 
-class DeleteCmsGoogleExperimentScriptObserverTest extends \PHPUnit\Framework\TestCase
+class DeleteCmsGoogleExperimentScriptObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -24,19 +24,19 @@ class DeleteCmsGoogleExperimentScriptObserverTest extends \PHPUnit\Framework\Tes
 
     protected function setUp()
     {
-        $this->_codeMock = $this->createMock(\Magento\GoogleOptimizer\Model\Code::class);
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->_codeMock = $this->getMock('Magento\GoogleOptimizer\Model\Code', [], [], '', false);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\RequestInterface', [], [], '', false);
 
-        $page = $this->createMock(\Magento\Cms\Model\Page::class);
+        $page = $this->getMock('Magento\Cms\Model\Page', [], [], '', false);
         $page->expects($this->once())->method('getId')->will($this->returnValue(3));
-        $event = $this->createPartialMock(\Magento\Framework\Event::class, ['getObject']);
+        $event = $this->getMock('Magento\Framework\Event', ['getObject'], [], '', false);
         $event->expects($this->once())->method('getObject')->will($this->returnValue($page));
-        $this->_eventObserverMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $this->_eventObserverMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $this->_eventObserverMock->expects($this->once())->method('getEvent')->will($this->returnValue($event));
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_model = $objectManagerHelper->getObject(
-            \Magento\GoogleOptimizer\Observer\CmsPage\DeleteCmsGoogleExperimentScriptObserver::class,
+            'Magento\GoogleOptimizer\Observer\CmsPage\DeleteCmsGoogleExperimentScriptObserver',
             ['modelCode' => $this->_codeMock]
         );
     }

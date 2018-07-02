@@ -5,10 +5,8 @@
  */
 namespace Magento\Deploy\Console\Command\App;
 
-use Magento\Deploy\Model\DeploymentConfig\Hash;
 use Magento\Framework\App\Config\ConfigSourceInterface;
 use Magento\Framework\App\DeploymentConfig\Writer;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Console\Cli;
 use Symfony\Component\Console\Command\Command;
@@ -31,30 +29,22 @@ class ApplicationDumpCommand extends Command
     private $sources;
 
     /**
-     * @var Hash
-     */
-    private $configHash;
-
-    /**
-     * ApplicationDumpCommand constructor
+     * ApplicationDumpCommand constructor.
      *
      * @param Writer $writer
      * @param array $sources
-     * @param Hash $configHash
      */
     public function __construct(
         Writer $writer,
-        array $sources,
-        Hash $configHash = null
+        array $sources
     ) {
         parent::__construct();
         $this->writer = $writer;
         $this->sources = $sources;
-        $this->configHash = $configHash ?: ObjectManager::getInstance()->get(Hash::class);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -73,58 +63,30 @@ class ApplicationDumpCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->groupSourcesByPool();
-
-        foreach ($this->sources as $pool => $sources) {
-            $dump = [];
-            $comments = [];
-            foreach ($sources as $sourceData) {
-                /** @var ConfigSourceInterface $source */
-                $source = $sourceData['source'];
-                $namespace = $sourceData['namespace'];
-                $dump[$namespace] = $source->get();
-                if (!empty($sourceData['comment'])) {
-                    $comments[$namespace] = is_string($sourceData['comment'])
-                        ? $sourceData['comment']
-                        : $sourceData['comment']->get();
-                }
+        $dump = [];
+        $comments = [];
+        foreach ($this->sources as $sourceData) {
+            /** @var ConfigSourceInterface $source */
+            $source = $sourceData['source'];
+            $namespace = $sourceData['namespace'];
+            $dump[$namespace] = $source->get();
+            if (!empty($sourceData['comment'])) {
+                $comments[$namespace] = is_string($sourceData['comment'])
+                    ? $sourceData['comment']
+                    : $sourceData['comment']->get();
             }
-            $this->writer->saveConfig(
-                [$pool => $dump],
+        }
+        $this->writer
+            ->saveConfig(
+                [ConfigFilePool::APP_CONFIG => $dump],
                 true,
-                null,
+                ConfigFilePool::LOCAL,
                 $comments
             );
-            if (!empty($comments)) {
-                $output->writeln($comments);
-            }
+        if (!empty($comments)) {
+            $output->writeln($comments);
         }
-
-        // Generate and save new hash of deployment configuration.
-        $this->configHash->regenerate();
-
         $output->writeln('<info>Done.</info>');
         return Cli::RETURN_SUCCESS;
-    }
-
-    /**
-     * Groups sources by theirs pool.
-     *
-     * If source doesn't have pool option puts him into APP_CONFIG pool.
-     *
-     * @return void
-     */
-    private function groupSourcesByPool()
-    {
-        $sources = [];
-        foreach ($this->sources as $sourceData) {
-            if (!isset($sourceData['pool'])) {
-                $sourceData['pool'] = ConfigFilePool::APP_CONFIG;
-            }
-
-            $sources[$sourceData['pool']][] = $sourceData;
-        }
-
-        $this->sources = $sources;
     }
 }

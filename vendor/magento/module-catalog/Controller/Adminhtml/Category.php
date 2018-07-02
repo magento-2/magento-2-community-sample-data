@@ -18,21 +18,9 @@ abstract class Category extends \Magento\Backend\App\Action
     const ADMIN_RESOURCE = 'Magento_Catalog::categories';
 
     /**
-     * @var \Magento\Framework\Stdlib\DateTime\Filter\Date
+     * @var \Magento\Framework\Stdlib\DateTime\Filter\DateTime
      */
-    protected $dateFilter;
-
-    /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date|null $dateFilter
-     */
-    public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter = null
-    ) {
-        $this->dateFilter = $dateFilter;
-        parent::__construct($context);
-    }
+    private $dateTimeFilter;
 
     /**
      * Initialize requested category and put it into registry.
@@ -75,7 +63,7 @@ abstract class Category extends \Magento\Backend\App\Action
     }
 
     /**
-     * Resolve Category Id (from get or from post)
+     * Resolve Category Id (from get or from post).
      *
      * @return int
      */
@@ -94,7 +82,7 @@ abstract class Category extends \Magento\Backend\App\Action
      *
      * @return \Magento\Framework\Controller\Result\Json
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     protected function ajaxRequestResponse($category, $resultPage)
     {
@@ -138,6 +126,20 @@ abstract class Category extends \Magento\Backend\App\Action
     }
 
     /**
+     * @return \Magento\Framework\Stdlib\DateTime\Filter\DateTime
+     *
+     * @deprecated
+     */
+    private function getDateTimeFilter()
+    {
+        if ($this->dateTimeFilter === null) {
+            $this->dateTimeFilter = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\Stdlib\DateTime\Filter\DateTime::class);
+        }
+        return $this->dateTimeFilter;
+    }
+
+    /**
      * Datetime data preprocessing
      *
      * @param \Magento\Catalog\Model\Category $category
@@ -152,7 +154,7 @@ abstract class Category extends \Magento\Backend\App\Action
         foreach ($attributes as $attrKey => $attribute) {
             if ($attribute->getBackend()->getType() == 'datetime') {
                 if (array_key_exists($attrKey, $postData) && $postData[$attrKey] != '') {
-                    $dateFieldFilters[$attrKey] = $this->dateFilter;
+                    $dateFieldFilters[$attrKey] = $this->getDateTimeFilter();
                 }
             }
         }

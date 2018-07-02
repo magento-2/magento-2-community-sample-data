@@ -12,10 +12,7 @@ namespace Magento\Test\Integrity\Magento\Payment;
 use Magento\Framework\App\State;
 use Magento\TestFramework\Helper\Bootstrap;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class MethodsTest extends \PHPUnit\Framework\TestCase
+class MethodsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $methodClass
@@ -32,10 +29,10 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
         Bootstrap::getObjectManager()->configure($this->getTestConfiguration());
         /** @var $blockFactory \Magento\Framework\View\Element\BlockFactory */
         $blockFactory = Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\Element\BlockFactory::class
+            'Magento\Framework\View\Element\BlockFactory'
         );
         $storeId = Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore()->getId();
         /** @var $model \Magento\Payment\Model\MethodInterface */
         if (empty($methodClass)) {
@@ -47,7 +44,7 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
         $model = Bootstrap::getObjectManager()->create($methodClass);
         if ($code == \Magento\Payment\Model\Method\Substitution::CODE) {
             $paymentInfo = $this->getMockBuilder(
-                \Magento\Payment\Model\Info::class
+                'Magento\Payment\Model\Info'
             )->disableOriginalConstructor()->setMethods(
                 []
             )->getMock();
@@ -60,7 +57,7 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
             );
             $model->setInfoInstance($paymentInfo);
         }
-        Bootstrap::getObjectManager()->get(\Magento\Framework\App\State::class)
+        Bootstrap::getObjectManager()->get('Magento\Framework\App\State')
             ->setMode(State::MODE_DEVELOPER);
         $this->assertNotEmpty($model->getTitle());
         foreach ([$model->getFormBlockType(), $model->getInfoBlockType()] as $blockClass) {
@@ -72,20 +69,20 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
             if ($model->canUseInternal()) {
                 try {
                     Bootstrap::getObjectManager()->get(
-                        \Magento\Store\Model\StoreManagerInterface::class
+                        'Magento\Store\Model\StoreManagerInterface'
                     )->getStore()->setId(
                         \Magento\Store\Model\Store::DEFAULT_STORE_ID
                     );
                     $block->setArea('adminhtml');
                     $this->assertFileExists((string)$block->getTemplateFile(), $message);
                     Bootstrap::getObjectManager()->get(
-                        \Magento\Store\Model\StoreManagerInterface::class
+                        'Magento\Store\Model\StoreManagerInterface'
                     )->getStore()->setId(
                         $storeId
                     );
                 } catch (\Exception $e) {
                     Bootstrap::getObjectManager()->get(
-                        \Magento\Store\Model\StoreManagerInterface::class
+                        'Magento\Store\Model\StoreManagerInterface'
                     )->getStore()->setId(
                         $storeId
                     );
@@ -93,7 +90,7 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
                 }
             }
         }
-        Bootstrap::getObjectManager()->get(\Magento\Framework\App\State::class)
+        Bootstrap::getObjectManager()->get('Magento\Framework\App\State')
             ->setMode(State::MODE_DEFAULT);
     }
 
@@ -103,7 +100,7 @@ class MethodsTest extends \PHPUnit\Framework\TestCase
     public function paymentMethodDataProvider()
     {
         /** @var $helper \Magento\Payment\Helper\Data */
-        $helper = Bootstrap::getObjectManager()->get(\Magento\Payment\Helper\Data::class);
+        $helper = Bootstrap::getObjectManager()->get('Magento\Payment\Helper\Data');
         $result = [];
         foreach ($helper->getPaymentMethods() as $code => $method) {
             $result[] = [$code, $method['model']];

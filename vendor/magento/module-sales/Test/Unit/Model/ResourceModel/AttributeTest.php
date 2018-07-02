@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel;
 /**
  * Class AttributeTest
  */
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Attribute|\PHPUnit_Framework_MockObject_MockObject
@@ -37,9 +37,15 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->appResourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->appResourceMock = $this->getMock(
+            'Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $this->eventManagerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false,
@@ -48,7 +54,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             []
         );
         $this->modelMock = $this->getMockForAbstractClass(
-            \Magento\Sales\Model\AbstractModel::class,
+            'Magento\Sales\Model\AbstractModel',
             [],
             '',
             false,
@@ -56,9 +62,12 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
             true,
             ['__wakeup', 'getId', 'getEventPrefix', 'getEventObject']
         );
-        $this->connectionMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['describeTable', 'insert', 'lastInsertId', 'beginTransaction', 'rollback', 'commit']
+        $this->connectionMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['describeTable', 'insert', 'lastInsertId', 'beginTransaction', 'rollback', 'commit'],
+            [],
+            '',
+            false
         );
         $this->connectionMock->expects($this->any())
             ->method('describeTable')

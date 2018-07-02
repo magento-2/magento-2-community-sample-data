@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Layer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Layer\State
@@ -21,12 +21,12 @@ class StateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->item = $this->getMockBuilder(\Magento\Catalog\Model\Layer\Filter\Item::class)
+        $this->item = $this->getMockBuilder('Magento\Catalog\Model\Layer\Filter\Item')
             ->disableOriginalConstructor()
             ->getMock();
 
         $helper = new ObjectManager($this);
-        $this->model = $helper->getObject(\Magento\Catalog\Model\Layer\State::class);
+        $this->model = $helper->getObject('Magento\Catalog\Model\Layer\State');
     }
 
     /**

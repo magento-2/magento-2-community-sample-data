@@ -40,7 +40,7 @@ class DirectoryResolver
     {
         $realPath = realpath($path);
         $root = $this->directoryList->getPath($directoryConfig);
-        
+
         return strpos($realPath, $root) === 0;
     }
 }

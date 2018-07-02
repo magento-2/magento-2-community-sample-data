@@ -5,15 +5,13 @@
  */
 
 /** @var \Magento\Catalog\Setup\CategorySetup $installer */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 require __DIR__ . '/categories.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 $categoryLinkRepository = $objectManager->create(
-    \Magento\Catalog\Api\CategoryLinkRepositoryInterface::class,
+    'Magento\Catalog\Api\CategoryLinkRepositoryInterface',
     [
         'productRepository' => $productRepository
     ]
@@ -21,7 +19,7 @@ $categoryLinkRepository = $objectManager->create(
 
 /** @var Magento\Catalog\Api\CategoryLinkManagementInterface $linkManagement */
 $categoryLinkManagement = $objectManager->create(
-    \Magento\Catalog\Api\CategoryLinkManagementInterface::class,
+    'Magento\Catalog\Api\CategoryLinkManagementInterface',
     [
         'productRepository' => $productRepository,
         'categoryLinkRepository' => $categoryLinkRepository
@@ -29,7 +27,7 @@ $categoryLinkManagement = $objectManager->create(
 );
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setAttributeSetId($installer->getAttributeSetId('catalog_product', 'Default'))
     ->setStoreId(1)
@@ -44,7 +42,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->save();
 $categoryLinkManagement->assignProductToCategories($product->getSku(), [2, 3, 4]);
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setAttributeSetId($installer->getAttributeSetId('catalog_product', 'Default'))
     ->setStoreId(1)

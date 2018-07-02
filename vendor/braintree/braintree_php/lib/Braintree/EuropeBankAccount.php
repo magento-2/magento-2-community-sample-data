@@ -11,6 +11,7 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $account-holder-name
  * @property-read string $bic

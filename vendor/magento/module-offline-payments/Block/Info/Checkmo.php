@@ -49,7 +49,7 @@ class Checkmo extends \Magento\Payment\Block\Info
     }
 
     /**
-     * @deprecated 100.1.1
+     * @deprecated
      * @return $this
      */
     protected function _convertAdditionalData()

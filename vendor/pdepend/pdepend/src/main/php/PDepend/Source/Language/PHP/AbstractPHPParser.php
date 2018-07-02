@@ -48,7 +48,6 @@ use PDepend\Source\AST\AbstractASTType;
 use PDepend\Source\AST\ASTAllocationExpression;
 use PDepend\Source\AST\ASTArguments;
 use PDepend\Source\AST\ASTArray;
-use PDepend\Source\AST\ASTCatchStatement;
 use PDepend\Source\AST\ASTClass;
 use PDepend\Source\AST\ASTDeclareStatement;
 use PDepend\Source\AST\ASTExpression;
@@ -841,21 +840,21 @@ abstract class AbstractPHPParser
     /**
      * Parses a class/interface/trait body.
      *
-     * @param \PDepend\Source\AST\AbstractASTClassOrInterface $classOrInterface
-     * @return \PDepend\Source\AST\AbstractASTClassOrInterface
+     * @param \PDepend\Source\AST\AbstractASTType $type
+     * @return \PDepend\Source\AST\AbstractASTType
      * @throws \PDepend\Source\Parser\UnexpectedTokenException
      * @throws \PDepend\Source\Parser\TokenStreamEndException
      */
-    protected function parseTypeBody(AbstractASTClassOrInterface $classOrInterface)
+    protected function parseTypeBody(AbstractASTType $type)
     {
-        $this->classOrInterface = $classOrInterface;
+        $this->classOrInterface = $type;
 
         // Consume comments and read opening curly brace
         $this->consumeComments();
         $this->consumeToken(Tokens::T_CURLY_BRACE_OPEN);
 
         $defaultModifier = State::IS_PUBLIC;
-        if ($classOrInterface instanceof ASTInterface) {
+        if ($type instanceof ASTInterface) {
             $defaultModifier |= State::IS_ABSTRACT;
         }
         $this->reset();
@@ -878,13 +877,13 @@ abstract class AbstractPHPParser
                     );
 
                     if ($methodOrProperty instanceof \PDepend\Source\AST\ASTNode) {
-                        $classOrInterface->addChild($methodOrProperty);
+                        $type->addChild($methodOrProperty);
                     }
 
                     $this->reset();
                     break;
                 case Tokens::T_CONST:
-                    $classOrInterface->addChild($this->parseConstantDefinition());
+                    $type->addChild($this->parseConstantDefinition());
                     $this->reset();
                     break;
                 case Tokens::T_CURLY_BRACE_CLOSE:
@@ -896,7 +895,7 @@ abstract class AbstractPHPParser
                     $this->classOrInterface = null;
 
                     // Stop processing
-                    return $classOrInterface;
+                    return $type;
                 case Tokens::T_COMMENT:
                     $token = $this->consumeToken(Tokens::T_COMMENT);
 
@@ -908,7 +907,7 @@ abstract class AbstractPHPParser
                         $token->endColumn
                     );
 
-                    $classOrInterface->addChild($comment);
+                    $type->addChild($comment);
                     break;
                 case Tokens::T_DOC_COMMENT:
                     $token = $this->consumeToken(Tokens::T_DOC_COMMENT);
@@ -921,12 +920,12 @@ abstract class AbstractPHPParser
                         $token->endColumn
                     );
 
-                    $classOrInterface->addChild($comment);
+                    $type->addChild($comment);
 
                     $this->docComment = $token->image;
                     break;
                 case Tokens::T_USE:
-                    $classOrInterface->addChild($this->parseTraitUseStatement());
+                    $type->addChild($this->parseTraitUseStatement());
                     break;
                 default:
                     $this->throwUnexpectedTokenException();
@@ -988,7 +987,7 @@ abstract class AbstractPHPParser
 
                     return $declaration;
                 default:
-                    return $this->parseUnknownDeclaration($tokenType, $modifiers);
+                    break 2;
             }
 
             $this->consumeToken($tokenType);
@@ -997,17 +996,6 @@ abstract class AbstractPHPParser
             $tokenType = $this->tokenizer->peek();
         }
 
-        $this->throwUnexpectedTokenException();
-    }
-
-    /**
-     * Override this in later PHPParserVersions as necessary
-     * @param integer $tokenType
-     * @param integer $modifiers
-     * @throws UnexpectedTokenException
-     */
-    protected function parseUnknownDeclaration($tokenType, $modifiers)
-    {
         $this->throwUnexpectedTokenException();
     }
 
@@ -1176,16 +1164,16 @@ abstract class AbstractPHPParser
 
         // First check for an existing namespace
         if ($this->namespaceName !== null) {
-            $namespaceName = $this->namespaceName;
+            $packageName = $this->namespaceName;
         } elseif ($this->packageName !== Builder::DEFAULT_NAMESPACE) {
-            $namespaceName = $this->packageName;
+            $packageName = $this->packageName;
         } else {
-            $namespaceName = $this->globalPackageName;
+            $packageName = $this->globalPackageName;
         }
 
-        $namespace = $this->builder->buildNamespace($namespaceName);
-        $namespace->setPackageAnnotation(null === $this->namespaceName);
-        $namespace->addFunction($function);
+        $this->builder
+            ->buildNamespace($packageName)
+            ->addFunction($function);
 
         // Store function in source file, because we need them during the file's
         // __wakeup() phase for function declarations within another function or
@@ -3274,7 +3262,11 @@ abstract class AbstractPHPParser
         $this->consumeComments();
         $this->consumeToken(Tokens::T_PARENTHESIS_OPEN);
 
-        $this->parseCatchExceptionClass($catch);
+        $catch->addChild(
+            $this->builder->buildAstClassOrInterfaceReference(
+                $this->parseQualifiedName()
+            )
+        );
 
         $this->consumeComments();
         $catch->addChild($this->parseVariable());
@@ -3287,20 +3279,6 @@ abstract class AbstractPHPParser
         return $this->setNodePositionsAndReturn($catch);
     }
 
-    /**
-     * This method parses class references in catch statement.
-     * 
-     * @param \PDepend\Source\AST\ASTCatchStatement $stmt The owning catch statement.
-     */
-    protected function parseCatchExceptionClass(ASTCatchStatement $stmt)
-    {
-        $stmt->addChild(
-            $this->builder->buildAstClassOrInterfaceReference(
-                $this->parseQualifiedName()
-            )
-        );
-    }
-    
     /**
      * This method parses a finally-statement.
      *
@@ -3986,8 +3964,10 @@ abstract class AbstractPHPParser
         $tokenType = $this->tokenizer->peek();
 
         switch ($tokenType) {
-            case ($this->isMethodName($tokenType)):
-                $child = $this->parseIdentifier($tokenType);
+            case Tokens::T_CALLABLE:
+                /* Fixme */
+            case Tokens::T_STRING:
+                $child = $this->parseIdentifier();
                 $child = $this->parseOptionalIndexExpression($child);
 
                 // TODO: Move this in a separate method
@@ -4889,13 +4869,12 @@ abstract class AbstractPHPParser
      * Parses a static identifier expression, as it is used for method and
      * function names.
      *
-     * @param integer $tokenType
      * @return \PDepend\Source\AST\ASTIdentifier
      * @since 0.9.12
      */
-    protected function parseIdentifier($tokenType = Tokens::T_STRING)
+    protected function parseIdentifier()
     {
-        $token = $this->consumeToken($tokenType);
+        $token = $this->consumeToken(Tokens::T_STRING);
 
         $node = $this->builder->buildAstIdentifier($token->image);
         $node->configureLinesAndColumns(
@@ -5316,7 +5295,7 @@ abstract class AbstractPHPParser
      * @return \PDepend\Source\AST\ASTFormalParameter
      * @since 0.9.6
      */
-    protected function parseFormalParameterOrTypeHintOrByReference()
+    private function parseFormalParameterOrTypeHintOrByReference()
     {
         $this->consumeComments();
         $tokenType = $this->tokenizer->peek();
@@ -6144,7 +6123,7 @@ abstract class AbstractPHPParser
      * @return \PDepend\Source\AST\ASTConstantDefinition
      * @since 0.9.6
      */
-    protected function parseConstantDefinition()
+    private function parseConstantDefinition()
     {
         $this->tokenStack->push();
 
@@ -6591,10 +6570,7 @@ abstract class AbstractPHPParser
      */
     private function getNamespaceOrPackage()
     {
-        $namespace = $this->builder->buildNamespace($this->getNamespaceOrPackageName());
-        $namespace->setPackageAnnotation(null === $this->namespaceName);
-
-        return $namespace;
+        return $this->builder->buildNamespace($this->getNamespaceOrPackageName());
     }
 
     /**

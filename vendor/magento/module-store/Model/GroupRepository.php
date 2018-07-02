@@ -104,7 +104,7 @@ class GroupRepository implements \Magento\Store\Api\GroupRepositoryInterface
     /**
      * Retrieve application config.
      *
-     * @deprecated 100.1.3
+     * @deprecated
      * @return Config
      */
     private function getAppConfig()

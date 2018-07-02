@@ -8,9 +8,6 @@ namespace Magento\Wishlist\Block\Customer\Wishlist;
 
 /**
  * Wishlist block customer items
- *
- * @api
- * @since 100.0.2
  */
 class Items extends \Magento\Framework\View\Element\Template
 {

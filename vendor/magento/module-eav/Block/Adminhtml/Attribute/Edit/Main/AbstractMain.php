@@ -112,7 +112,6 @@ abstract class AbstractMain extends \Magento\Backend\Block\Widget\Form\Generic
 
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
-            
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
         );
 
@@ -290,8 +289,7 @@ abstract class AbstractMain extends \Magento\Backend\Block\Widget\Form\Generic
      */
     protected function _afterToHtml($html)
     {
-        $jsScripts = $this->getLayout()->createBlock(\Magento\Eav\Block\Adminhtml\Attribute\Edit\Js::class)
-            ->toHtml();
+        $jsScripts = $this->getLayout()->createBlock('Magento\Eav\Block\Adminhtml\Attribute\Edit\Js')->toHtml();
         return $html . $jsScripts;
     }
 }

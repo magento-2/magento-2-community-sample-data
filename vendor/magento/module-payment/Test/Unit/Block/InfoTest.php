@@ -7,7 +7,7 @@ namespace Magento\Payment\Test\Unit\Block;
 
 use Magento\Framework\DataObject;
 
-class InfoTest extends \PHPUnit\Framework\TestCase
+class InfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -42,7 +42,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         )->setMethods(
             ['dispatch']
         )->disableOriginalConstructor()->getMock();
-        $this->_escaper = $helper->getObject(\Magento\Framework\Escaper::class);
+        $this->_escaper = $this->getMock(\Magento\Framework\Escaper::class, null, [], '', true);
         $context = $helper->getObject(
             \Magento\Framework\View\Element\Template\Context::class,
             [
@@ -136,8 +136,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->_object->setData('info', $paymentInfo);
-        $result = $this->_object->getSpecificInformation();
-        $this->assertNotNull($result);
+        $this->_object->getSpecificInformation();
     }
 
     /**
@@ -145,8 +144,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetValueAsArray($value, $escapeHtml, $expected)
     {
-        $result = $this->_object->getValueAsArray($value, $escapeHtml);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $this->_object->getValueAsArray($value, $escapeHtml));
     }
 
     /**

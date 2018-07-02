@@ -9,13 +9,9 @@ use Magento\Framework\Config\SchemaLocatorInterface;
 
 class SchemaLocator implements SchemaLocatorInterface
 {
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver
-     */
+    /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolver;
 
-    /**
-     */
     public function __construct(\Magento\Framework\Config\Dom\UrnResolver $urnResolver)
     {
         $this->urnResolver = $urnResolver;

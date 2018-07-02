@@ -7,7 +7,7 @@ namespace Magento\Eav\Test\Unit\Block\Adminhtml\Attribute;
 
 use Magento\Eav\Block\Adminhtml\Attribute\PropertyLocker;
 
-class PropertyLockerTest extends \PHPUnit\Framework\TestCase
+class PropertyLockerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PropertyLocker */
     protected $object;
@@ -23,23 +23,23 @@ class PropertyLockerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
+        $this->attributeMock = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\AbstractAttribute')
             ->setMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $registryMock = $this->getMockBuilder('\Magento\Framework\Registry')
             ->setMethods(['registry'])
             ->disableOriginalConstructor()
             ->getMock();
         $registryMock->expects($this->atLeastOnce())->method('registry')->willReturn($this->attributeMock);
 
-        $this->attributeConfigMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\Config::class)
+        $this->attributeConfigMock = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\Config')
             ->setMethods(['getLockedFields'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formMock = $this->getMockBuilder(\Magento\Framework\Data\Form::class)
+        $this->formMock = $this->getMockBuilder('Magento\Framework\Data\Form')
             ->setMethods(['getElement'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -59,7 +59,7 @@ class PropertyLockerTest extends \PHPUnit\Framework\TestCase
         $this->attributeMock->expects($this->once())->method('getId')->willReturn(1);
         $this->attributeConfigMock->expects($this->once())->method('getLockedFields')->willReturn($lockedFields);
 
-        $elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+        $elementMock = $this->getMockBuilder('\Magento\Framework\Data\Form\Element\AbstractElement')
             ->setMethods(['setDisabled', 'setReadonly'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();

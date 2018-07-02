@@ -7,7 +7,7 @@ namespace Magento\Theme\Test\Unit\Model\Design\Config;
 
 use Magento\Theme\Model\Design\Config\ValueChecker;
 
-class ValueCheckerTest extends \PHPUnit\Framework\TestCase
+class ValueCheckerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\ScopeFallbackResolverInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $fallbackResolver;
@@ -24,13 +24,13 @@ class ValueCheckerTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->fallbackResolver = $this->getMockForAbstractClass(
-            \Magento\Framework\App\ScopeFallbackResolverInterface::class,
+            'Magento\Framework\App\ScopeFallbackResolverInterface',
             [],
             '',
             false
         );
-        $this->appConfig = $this->createMock(\Magento\Framework\App\Config::class);
-        $this->valueProcessor = $this->getMockBuilder(\Magento\Theme\Model\Design\Config\ValueProcessor::class)
+        $this->appConfig = $this->getMock('Magento\Framework\App\Config', [], [], '', false);
+        $this->valueProcessor = $this->getMockBuilder('Magento\Theme\Model\Design\Config\ValueProcessor')
             ->disableOriginalConstructor()
             ->getMock();
 

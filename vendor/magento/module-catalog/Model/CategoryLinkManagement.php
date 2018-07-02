@@ -120,7 +120,7 @@ class CategoryLinkManagement implements \Magento\Catalog\Api\CategoryLinkManagem
     {
         if (null === $this->productRepository) {
             $this->productRepository = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+                ->get('Magento\Catalog\Api\ProductRepositoryInterface');
         }
         return $this->productRepository;
     }
@@ -134,7 +134,7 @@ class CategoryLinkManagement implements \Magento\Catalog\Api\CategoryLinkManagem
     {
         if (null === $this->productResource) {
             $this->productResource = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\ResourceModel\Product::class);
+                ->get('Magento\Catalog\Model\ResourceModel\Product');
         }
         return $this->productResource;
     }
@@ -148,7 +148,7 @@ class CategoryLinkManagement implements \Magento\Catalog\Api\CategoryLinkManagem
     {
         if (null === $this->categoryLinkRepository) {
             $this->categoryLinkRepository = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Api\CategoryLinkRepositoryInterface::class);
+                ->get('Magento\Catalog\Api\CategoryLinkRepositoryInterface');
         }
         return $this->categoryLinkRepository;
     }
@@ -162,7 +162,7 @@ class CategoryLinkManagement implements \Magento\Catalog\Api\CategoryLinkManagem
     {
         if (null === $this->indexerRegistry) {
             $this->indexerRegistry = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Indexer\IndexerRegistry::class);
+                ->get('Magento\Framework\Indexer\IndexerRegistry');
         }
         return $this->indexerRegistry;
     }

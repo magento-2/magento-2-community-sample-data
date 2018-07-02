@@ -32,7 +32,7 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
      *
      * @var string
      */
-    protected $_eventPrefix = 'cataloginventory_stock_item';
+    protected $eventPrefix = 'cataloginventory_stock_item';
 
     const WEBSITE_ID = 'website_id';
 
@@ -43,7 +43,7 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
      *
      * @var string
      */
-    protected $_eventObject = 'item';
+    protected $eventObject = 'item';
 
     /**
      * Store model manager
@@ -143,7 +143,7 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class);
+        $this->_init('Magento\CatalogInventory\Model\ResourceModel\Stock\Item');
     }
 
     /**
@@ -291,7 +291,6 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
     {
         return (bool) $this->_getData(static::USE_CONFIG_MIN_SALE_QTY);
     }
-
     /**
      * Retrieve Minimum Qty Allowed in Shopping Cart or NULL when there is no limitation
      *
@@ -557,7 +556,6 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * @param int $itemId
      * @return $this
@@ -833,6 +831,5 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

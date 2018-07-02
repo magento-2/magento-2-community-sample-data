@@ -88,7 +88,7 @@ abstract class AbstractWishlistTest extends Injectable
     protected function loginCustomer(Customer $customer)
     {
         $loginCustomerOnFrontendStep = $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         );
         $loginCustomerOnFrontendStep->run();
@@ -103,7 +103,7 @@ abstract class AbstractWishlistTest extends Injectable
     protected function createProducts($products)
     {
         $createProductsStep = $this->objectManager->create(
-            \Magento\Catalog\Test\TestStep\CreateProductsStep::class,
+            'Magento\Catalog\Test\TestStep\CreateProductsStep',
             ['products' => $products]
         );
 
@@ -120,7 +120,7 @@ abstract class AbstractWishlistTest extends Injectable
     protected function addToWishlist(array $products, $configure = false)
     {
         $this->objectManager->create(
-            \Magento\Wishlist\Test\TestStep\AddProductsToWishlistStep::class,
+            'Magento\Wishlist\Test\TestStep\AddProductsToWishlistStep',
             ['products' => $products, 'configure' => $configure]
         )->run();
     }

@@ -7,12 +7,16 @@
 namespace Magento\Checkout\Block\Cart;
 
 /**
- * Class GridTest
  * Test to verify default config value for
- * Store->Configuration->Sales->Checkout->Shopping Cart->Number of items to display pager
+ * Store->Configuration->Sales->Checkout->Shopping Cart->Number of items to display pager.
  */
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Test to verify default config value for number of items to display pager.
+     *
+     * @return void
+     */
     public function testGetDefaultConfig()
     {
         $configValue = 20;
@@ -25,7 +29,8 @@ class GridTest extends \PHPUnit\Framework\TestCase
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
         $errorMessage = 'Default Config value for Store->Configuration->Sales->Checkout->Shopping Cart->'
-        . 'Number of items to display pager shouold be ' . $configValue;
+            . 'Number of items to display pager shouold be ' . $configValue;
+        
         $this->assertEquals($configValue, $defaultConfigValue, $errorMessage);
     }
 }

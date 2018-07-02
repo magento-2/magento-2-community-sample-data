@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -17,7 +17,7 @@ use Magento\Tax\Model\ResourceModel\Calculation\Rate\CollectionFactory;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TaxRulesFixtureTest extends \PHPUnit\Framework\TestCase
+class TaxRulesFixtureTest extends \PHPUnit_Framework_TestCase
 {
 
     /**

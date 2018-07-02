@@ -9,9 +9,9 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\NewFolder class.
+ * Tests Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\NewFolder.
  */
-class NewFolderTest extends \PHPUnit\Framework\TestCase
+class NewFolderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\NewFolder
@@ -31,7 +31,7 @@ class NewFolderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    private $dirName= 'NewDirectory';
+    private $dirName = 'NewDirectory';
 
     /**
      * @inheritdoc
@@ -60,9 +60,7 @@ class NewFolderTest extends \PHPUnit\Framework\TestCase
         $this->model->execute();
         $this->assertTrue(
             $this->mediaDirectory->isExist(
-                $this->mediaDirectory->getRelativePath(
-                    $this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->dirName
-                )
+                $this->mediaDirectory->getRelativePath($this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->dirName)
             )
         );
     }

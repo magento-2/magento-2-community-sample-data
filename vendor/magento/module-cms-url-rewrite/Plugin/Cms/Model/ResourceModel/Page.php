@@ -9,8 +9,6 @@ use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator;
 use Magento\CmsUrlRewrite\Model\CmsPageUrlRewriteGenerator;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
-use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
  * Before save and around delete plugin for \Magento\Cms\Model\ResourceModel\Page:
@@ -65,16 +63,18 @@ class Page
      * On delete handler to remove related url rewrites
      *
      * @param \Magento\Cms\Model\ResourceModel\Page $subject
-     * @param AbstractDb $result
-     * @param AbstractModel $page
-     * @return AbstractDb
+     * @param \Closure $proceed
+     * @param \Magento\Framework\Model\AbstractModel $page
+     * @return \Magento\Cms\Model\ResourceModel\Page
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterDelete(
+    public function aroundDelete(
         \Magento\Cms\Model\ResourceModel\Page $subject,
-        AbstractDb $result,
-        AbstractModel $page
+        \Closure $proceed,
+        \Magento\Framework\Model\AbstractModel $page
     ) {
+        $result = $proceed($page);
         if ($page->isDeleted()) {
             $this->urlPersist->deleteByData(
                 [

@@ -5,7 +5,7 @@
  */
 namespace Magento\Robots\Test\Unit\Model\Config;
 
-class ValueTest extends \PHPUnit\Framework\TestCase
+class ValueTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Robots\Model\Config\Value

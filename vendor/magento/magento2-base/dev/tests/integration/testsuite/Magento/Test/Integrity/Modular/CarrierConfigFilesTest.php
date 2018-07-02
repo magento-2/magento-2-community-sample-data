@@ -9,7 +9,7 @@ namespace Magento\Test\Integrity\Modular;
 
 use Magento\Framework\Module\Dir;
 
-class CarrierConfigFilesTest extends \PHPUnit\Framework\TestCase
+class CarrierConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Reader
@@ -21,7 +21,7 @@ class CarrierConfigFilesTest extends \PHPUnit\Framework\TestCase
         $urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
         $schemaFile = $urnResolver->getRealPath('urn:magento:module:Magento_Config:etc/system.xsd');
         $this->_reader = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Config\Model\Config\Structure\Reader::class,
+            'Magento\Config\Model\Config\Structure\Reader',
             ['perFileSchema' => $schemaFile, 'isValidated' => true]
         );
     }

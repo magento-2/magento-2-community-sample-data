@@ -161,13 +161,6 @@ class AssertCategoryPage extends AbstractConstraint
     {
         $errorMessage = [];
 
-        if (!$this->categoryViewPage->getViewBlock()->isVisible()) {
-            $errorMessage[] =
-                'Category Content is not visible.'
-                 . "Skipped verifying Content settings for category {$categoryData['name']}.";
-            return $errorMessage;
-        }
-
         if (isset($categoryData['description'])) {
             $description = $this->categoryViewPage->getViewBlock()->getDescription();
             if ($categoryData['description'] != $description) {
@@ -177,7 +170,8 @@ class AssertCategoryPage extends AbstractConstraint
             }
         }
 
-        if (isset($categoryData['landing_page'])
+        if (
+            isset($categoryData['landing_page'])
             && isset($categoryData['display_mode'])
             && in_array($categoryData['display_mode'], $this->visibleCmsBlockMode)
         ) {
@@ -260,7 +254,7 @@ class AssertCategoryPage extends AbstractConstraint
             $errorMessage[] = 'Wrong page URL.'
                 . "\nExpected: " . $categoryUrl
                 . "\nActual: " . $this->browser->getUrl();
-        }
+        };
 
         if (isset($categoryData['meta_title'])) {
             $actual = $this->browser->getTitle();
@@ -268,7 +262,7 @@ class AssertCategoryPage extends AbstractConstraint
                 $errorMessage[] = 'Wrong page title.'
                     . "\nExpected: " . $categoryData['meta_title']
                     . "\nActual: " . $actual;
-            }
+            };
         }
 
         return $errorMessage;

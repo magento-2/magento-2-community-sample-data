@@ -13,19 +13,13 @@ use Magento\Framework\Indexer\StateInterface;
 
 class Filter
 {
-    /**
-     * @var resource
-     */
+    /** @var Resource */
     protected $resource;
 
-    /**
-     * @var \Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver
-     */
+    /** @var FlatScopeResolver  */
     protected $flatScopeResolver;
 
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**

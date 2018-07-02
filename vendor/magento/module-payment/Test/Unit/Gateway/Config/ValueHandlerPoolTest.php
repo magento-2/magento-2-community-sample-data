@@ -8,11 +8,11 @@ namespace Magento\Payment\Test\Unit\Gateway\Config;
 use Magento\Payment\Gateway\Config\ValueHandlerInterface;
 use Magento\Payment\Gateway\Config\ValueHandlerPool;
 
-class ValueHandlerPoolTest extends \PHPUnit\Framework\TestCase
+class ValueHandlerPoolTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructorException()
     {
-        $this->expectException('LogicException');
+        $this->setExpectedException('LogicException');
         $tMapFactory = $this->getMockBuilder(\Magento\Framework\ObjectManager\TMapFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])

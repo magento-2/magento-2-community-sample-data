@@ -9,7 +9,7 @@ use Magento\Authorizenet\Model\Directpost\Session;
 use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SessionTest extends \PHPUnit\Framework\TestCase
+class SessionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -29,13 +29,13 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->storageMock = $this
-            ->getMockBuilder(\Magento\Framework\Session\StorageInterface::class)
+            ->getMockBuilder('Magento\Framework\Session\StorageInterface')
             ->setMethods(['setQuoteId'])
             ->getMockForAbstractClass();
 
         $this->objectManager = new ObjectManager($this);
         $this->session = $this->objectManager->getObject(
-            \Magento\Authorizenet\Model\Directpost\Session::class,
+            'Magento\Authorizenet\Model\Directpost\Session',
             [
                 'storage' => $this->storageMock,
             ]
@@ -51,7 +51,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
             ->with($quoteId);
 
         $this->assertInstanceOf(
-            \Magento\Authorizenet\Model\Directpost\Session::class,
+            'Magento\Authorizenet\Model\Directpost\Session',
             $this->session->setQuoteId($quoteId)
         );
     }

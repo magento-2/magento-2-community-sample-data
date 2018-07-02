@@ -9,7 +9,7 @@ use Magento\CatalogSearch\Model\Adapter\Options;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -25,13 +25,13 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->setMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->options = $helper->getObject(
-            \Magento\CatalogSearch\Model\Adapter\Options::class,
+            'Magento\CatalogSearch\Model\Adapter\Options',
             [
                 'scopeConfig' => $this->scopeConfig
             ]

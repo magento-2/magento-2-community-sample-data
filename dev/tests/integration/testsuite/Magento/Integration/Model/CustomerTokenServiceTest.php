@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test class for \Magento\Integration\Model\CustomerTokenService.
  */
-class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
+class CustomerTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CustomerTokenServiceInterface
@@ -36,13 +36,11 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->tokenService = Bootstrap::getObjectManager()->get(
-            \Magento\Integration\Model\CustomerTokenService::class
-        );
+        $this->tokenService = Bootstrap::getObjectManager()->get('Magento\Integration\Model\CustomerTokenService');
         $this->accountManagement = Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
-        $this->tokenModel = Bootstrap::getObjectManager()->get(\Magento\Integration\Model\Oauth\Token::class);
+        $this->tokenModel = Bootstrap::getObjectManager()->get('Magento\Integration\Model\Oauth\Token');
     }
 
     /**
