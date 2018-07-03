@@ -62,16 +62,16 @@ class Link extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
             $contentType,
             true
         );
+
         if ($fileSize = $helper->getFileSize()) {
             $response->setHeader('Content-Length', $fileSize);
         }
-        $response->setHeader(
-            'Content-Disposition',
-            'attachment; filename=' . $fileName
-        );
+
+        $response->setHeader('Content-Disposition', 'attachment; filename=' . $fileName);
         //Rendering
         $response->clearBody();
         $response->sendHeaders();
+        
         $helper->output();
     }
 

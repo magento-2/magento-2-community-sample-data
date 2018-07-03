@@ -6,8 +6,6 @@
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Magento\AdminNotification\Block\Grid\Renderer;
 
 class Actions extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
@@ -39,16 +37,15 @@ class Actions extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstrac
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        $readDetailsHtml = $row->getUrl() ? '<a class="action-details" target="_blank" href="' . $row->getUrl() . '">' . __(
-            'Read Details'
-        ) . '</a> | ' : '';
+        $readDetailsHtml = $row->getUrl() ? '<a class="action-details" target="_blank" href="' . $row->getUrl() . '">' .
+            __('Read Details') . '</a>' : '';
 
         $markAsReadHtml = !$row->getIsRead() ? '<a class="action-mark" href="' . $this->getUrl(
             '*/*/markAsRead/',
             ['_current' => true, 'id' => $row->getId()]
         ) . '">' . __(
             'Mark as Read'
-        ) . '</a> | ' : '';
+        ) . '</a>' : '';
 
         $encodedUrl = $this->_urlHelper->getEncodedUrl();
         return sprintf(

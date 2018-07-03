@@ -6,11 +6,11 @@
  */
 namespace Magento\Framework\App\ObjectManager\ConfigLoader;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManager\ConfigLoaderInterface;
+use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
-/**
- * Class Compiled returns configuration cache information
- */
 class Compiled implements ConfigLoaderInterface
 {
     /**
@@ -28,22 +28,20 @@ class Compiled implements ConfigLoaderInterface
         if (isset($this->configCache[$area])) {
             return $this->configCache[$area];
         }
-        $filePath = self::getFilePath($area);
-        if (\file_exists($filePath)) {
-            $this->configCache[$area] = \unserialize(\file_get_contents($filePath));
-            return $this->configCache[$area];
-        }
-        return [];
+        $diConfiguration = include(self::getFilePath($area));
+        $this->configCache[$area] = $diConfiguration;
+        return $this->configCache[$area];
     }
 
     /**
-     * Returns path to cached configuration
+     * Returns path to compiled configuration
      *
      * @param string $area
      * @return string
      */
     public static function getFilePath($area)
     {
-        return BP . '/var/di/' . $area . '.ser';
+        $diPath = DirectoryList::getDefaultConfig()[DirectoryList::GENERATED_METADATA][DirectoryList::PATH];
+        return BP . '/' . $diPath . '/' . $area . '.php';
     }
 }

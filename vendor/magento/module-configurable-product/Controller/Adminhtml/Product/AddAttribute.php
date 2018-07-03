@@ -12,7 +12,7 @@ use Magento\Framework\Controller\ResultFactory;
 class AddAttribute extends Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

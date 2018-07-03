@@ -12,11 +12,17 @@
 namespace Magento\Eav\Model\Entity\Attribute\Frontend;
 
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\Serialize\Serializer\Json as Serializer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Eav\Model\Cache\Type as CacheType;
 use Magento\Eav\Model\Entity\Attribute;
+use Magento\Eav\Model\Entity\Attribute\Source\BooleanFactory;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\Frontend\FrontendInterface
 {
     /**
@@ -37,6 +43,11 @@ abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\F
     private $storeManager;
 
     /**
+     * @var Serializer
+     */
+    private $serializer;
+
+    /**
      * @var array
      */
     private $cacheTags;
@@ -49,30 +60,33 @@ abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\F
     protected $_attribute;
 
     /**
-     * @var \Magento\Eav\Model\Entity\Attribute\Source\BooleanFactory
+     * @var BooleanFactory
      */
     protected $_attrBooleanFactory;
 
     /**
-     * @param \Magento\Eav\Model\Entity\Attribute\Source\BooleanFactory $attrBooleanFactory
+     * @param BooleanFactory $attrBooleanFactory
      * @param CacheInterface $cache
-     * @param $storeResolver @deprecated
+     * @param null $storeResolver @deprecated
      * @param array $cacheTags
      * @param StoreManagerInterface $storeManager
+     * @param Serializer $serializer
      * @codeCoverageIgnore
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
-        \Magento\Eav\Model\Entity\Attribute\Source\BooleanFactory $attrBooleanFactory,
+        BooleanFactory $attrBooleanFactory,
         CacheInterface $cache = null,
         $storeResolver = null,
-        array $cacheTags = [],
-        StoreManagerInterface $storeManager = null
+        array $cacheTags = null,
+        StoreManagerInterface $storeManager = null,
+        Serializer $serializer = null
     ) {
         $this->_attrBooleanFactory = $attrBooleanFactory;
         $this->cache = $cache ?: ObjectManager::getInstance()->get(CacheInterface::class);
-        $this->cacheTags = !empty($cacheTags) ? $cacheTags : self::$defaultCacheTags;
+        $this->cacheTags = $cacheTags ?: self::$defaultCacheTags;
         $this->storeManager = $storeManager ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Serializer::class);
     }
 
     /**
@@ -196,11 +210,13 @@ abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\F
         if ($inputRuleClass) {
             $out[] = $inputRuleClass;
         }
-        if (!empty($out)) {
-            $out = implode(' ', $out);
-        } else {
-            $out = '';
+
+        $textLengthValidateClasses = $this->getTextLengthValidateClasses();
+        if (!empty($textLengthValidateClasses)) {
+            $out = array_merge($out, $textLengthValidateClasses);
         }
+
+        $out = !empty($out) ? implode(' ', array_unique(array_filter($out))) : '';
         return $out;
     }
 
@@ -230,12 +246,40 @@ abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\F
                 case 'url':
                     $class = 'validate-url';
                     break;
+                case 'length':
+                    $class = 'validate-length';
+                    break;
                 default:
                     $class = false;
                     break;
             }
         }
         return $class;
+    }
+
+    /**
+     * Retrieve validation classes by min_text_length and max_text_length rules
+     *
+     * @return array
+     */
+    private function getTextLengthValidateClasses()
+    {
+        $classes = [];
+
+        if ($this->_getInputValidateClass()) {
+            $validateRules = $this->getAttribute()->getValidateRules();
+            if (!empty($validateRules['min_text_length'])) {
+                $classes[] = 'minimum-length-' . $validateRules['min_text_length'];
+            }
+            if (!empty($validateRules['max_text_length'])) {
+                $classes[] = 'maximum-length-' . $validateRules['max_text_length'];
+            }
+            if (!empty($classes)) {
+                $classes[] = 'validate-length';
+            }
+        }
+
+        return $classes;
     }
 
     /**
@@ -264,12 +308,12 @@ abstract class AbstractFrontend implements \Magento\Eav\Model\Entity\Attribute\F
         if (false === $optionString) {
             $options = $this->getAttribute()->getSource()->getAllOptions();
             $this->cache->save(
-                json_encode($options),
+                $this->serializer->serialize($options),
                 $cacheKey,
                 $this->cacheTags
             );
         } else {
-            $options = json_decode($optionString, true);
+            $options = $this->serializer->unserialize($optionString);
         }
         return $options;
     }

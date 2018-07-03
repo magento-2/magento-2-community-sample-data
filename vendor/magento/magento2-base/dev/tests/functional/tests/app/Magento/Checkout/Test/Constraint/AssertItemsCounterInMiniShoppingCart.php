@@ -10,7 +10,7 @@ use Magento\Mtf\Constraint\AbstractConstraint;
 use Magento\Cms\Test\Page\CmsIndex;
 
 /**
- * Assert that item quantity in mini shopping cart is equal to fixture value.
+ * Assert that item quantity in mini shopping cart is equal to fixture value
  */
 class AssertItemsCounterInMiniShoppingCart extends AbstractConstraint
 {
@@ -34,7 +34,9 @@ class AssertItemsCounterInMiniShoppingCart extends AbstractConstraint
     }
 
     /**
-     * {@inheritdoc}
+     * Returns a string representation of the object.
+     *
+     * @return string
      */
     public function toString()
     {

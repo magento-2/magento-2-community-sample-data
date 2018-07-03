@@ -7,19 +7,19 @@ namespace Magento\Framework\ObjectManager\Test\Unit;
 
 require __DIR__ . '/_files/Proxy.php';
 
-class InterceptableValidatorTest extends \PHPUnit_Framework_TestCase
+class InterceptableValidatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidate()
     {
         $interceptableValidator = new \Magento\Framework\ObjectManager\InterceptableValidator();
         $this->assertFalse(
             $interceptableValidator->validate(
-                'Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Interceptor'
+                \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\Interceptor::class
             )
         );
         $this->assertFalse(
             $interceptableValidator->validate(
-                'Magento\Test\Di\Proxy'
+                \Magento\Test\Di\Proxy::class
             )
         );
     }

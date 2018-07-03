@@ -9,6 +9,9 @@ use Magento\Customer\Controller\RegistryConstants;
 
 /**
  * Adminhtml customer view wishlist block
+ *
+ * @api
+ * @since 100.0.2
  */
 class Wishlist extends \Magento\Backend\Block\Widget\Grid\Extended
 {
@@ -97,7 +100,7 @@ class Wishlist extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header' => __('Product'),
                 'index' => 'product_name',
-                'renderer' => 'Magento\Customer\Block\Adminhtml\Edit\Tab\View\Grid\Renderer\Item'
+                'renderer' => \Magento\Customer\Block\Adminhtml\Edit\Tab\View\Grid\Renderer\Item::class
             ]
         );
 

@@ -5,17 +5,17 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Category\Product\Plugin;
 
-class ImportTest extends \PHPUnit_Framework_TestCase
+class ImportTest extends \PHPUnit\Framework\TestCase
 {
     public function testAfterImportSource()
     {
-        $processorMock = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Category\Product\Processor')
+        $processorMock = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Category\Product\Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
         $processorMock->expects($this->once())
             ->method('markIndexerAsInvalid');
 
-        $subjectMock = $this->getMockBuilder('Magento\ImportExport\Model\Import')
+        $subjectMock = $this->getMockBuilder(\Magento\ImportExport\Model\Import::class)
             ->disableOriginalConstructor()
             ->getMock();
 

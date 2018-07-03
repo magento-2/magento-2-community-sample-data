@@ -5,9 +5,7 @@
  */
 namespace Magento\Robots\Test\Unit\Block;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
-
-class DataTest extends \PHPUnit_Framework_TestCase
+class DataTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Robots\Block\Data
@@ -30,18 +28,21 @@ class DataTest extends \PHPUnit_Framework_TestCase
     private $storeResolver;
 
     /**
-     * @var ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $scopeConfigMock;
-
-    /**
      * @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $eventManagerMock;
 
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $scopeConfigMock;
+
     protected function setUp()
     {
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+            ->getMockForAbstractClass();
+
+        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
             ->getMockForAbstractClass();
 
         $this->context = $this->getMockBuilder(\Magento\Framework\View\Element\Context::class)
@@ -52,8 +53,6 @@ class DataTest extends \PHPUnit_Framework_TestCase
             ->method('getEventManager')
             ->willReturn($this->eventManagerMock);
 
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
         $this->context->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
@@ -82,14 +81,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
 
         $this->initEventManagerMock($data);
 
-        $this->scopeConfigMock->expects($this->once())
-            ->method('getValue')
-            ->with(
-                'advanced/modules_disable_output/Magento_Robots',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                null
-            )
-            ->willReturn(false);
+        $this->scopeConfigMock->expects($this->once())->method('getValue')->willReturn(false);
 
         $this->robots->expects($this->once())
             ->method('getData')

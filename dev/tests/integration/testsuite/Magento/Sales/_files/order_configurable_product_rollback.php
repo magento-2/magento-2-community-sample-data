@@ -4,4 +4,4 @@
  * See COPYING.txt for license details.
  */
 
-require __DIR__ . '/order_rollback.php';
+require 'order_rollback.php';

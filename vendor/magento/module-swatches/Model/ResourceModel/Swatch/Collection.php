@@ -7,7 +7,9 @@ namespace Magento\Swatches\Model\ResourceModel\Swatch;
 
 /**
  * @codeCoverageIgnore
- * Swatch Collection
+ * Swatch Resource Collection
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -18,7 +20,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Swatches\Model\Swatch', 'Magento\Swatches\Model\ResourceModel\Swatch');
+        $this->_init(\Magento\Swatches\Model\Swatch::class, \Magento\Swatches\Model\ResourceModel\Swatch::class);
     }
 
     /**

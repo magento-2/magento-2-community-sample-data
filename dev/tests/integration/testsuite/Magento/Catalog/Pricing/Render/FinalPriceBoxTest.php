@@ -21,7 +21,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FinalPriceBoxTest extends \PHPUnit_Framework_TestCase
+class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductInterface
@@ -88,7 +88,9 @@ class FinalPriceBoxTest extends \PHPUnit_Framework_TestCase
         $enginesReflection->setAccessible(true);
         $enginesReflection->setValue($this->templateEnginePool, ['phtml' => $this->phtml]);
 
-        $this->rendererPool = $this->objectManager->create(RendererPool::class);
+        $this->rendererPool = $this->objectManager->create(
+            RendererPool::class
+        );
 
         $this->rendererPool->setData(
             [

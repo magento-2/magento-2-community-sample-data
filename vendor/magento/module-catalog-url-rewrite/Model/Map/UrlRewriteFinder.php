@@ -5,50 +5,39 @@
  */
 namespace Magento\CatalogUrlRewrite\Model\Map;
 
+use Magento\Catalog\Model\Product;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
 
 /**
- * Finds specific queried url rewrites identified by specific fields.
+ * Finds specific queried url rewrites identified by specific fields
  *
- * A group of identifiers specifies a query consumed by the client to retrieve existing url rewrites from the database.
- * Clients will query a map of DatabaseMapInterface type through this class resulting into
- * a set of url rewrites results.
- * Each map type will fallback to a UrlFinderInterface by identifiers for unmapped values.
+ * A group of identifiers specifies a query consumed by the client to retrieve existing url rewrites from the database
+ * Clients will query a map of DatabaseMapInterface type through this class resulting into a set of url rewrites results
+ * Each map type will fallback to a UrlFinderInterface by identifiers for unmapped values
  */
 class UrlRewriteFinder
 {
-    /** Category entity type name */
     const ENTITY_TYPE_CATEGORY = 'category';
-
-    /** Product entity type name */
     const ENTITY_TYPE_PRODUCT = 'product';
 
     /**
-     * Pool for database maps.
-     *
-     * @var DatabaseMapPool
+     * @var \Magento\CatalogUrlRewrite\Model\Map\DatabaseMapPool
      */
     private $databaseMapPool;
 
     /**
-     * Url Finder Interface.
-     *
-     * @var UrlFinderInterface
+     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
      */
     private $urlFinder;
 
     /**
-     * Class for url storage.
-     *
-     * @var UrlRewrite
+     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewrite
      */
     private $urlRewritePrototype;
 
     /**
-     * UrlRewrite class names array.
-     *
      * @var array
      */
     private $urlRewriteClassNames = [];
@@ -72,8 +61,8 @@ class UrlRewriteFinder
     }
 
     /**
-     * Retrieves existing url rewrites filtered by identifiers from prebuild database maps.
-     * This method will fall-back to by using UrlFinderInterface when map type is not found in configured list.
+     * Retrieves existing url rewrites filtered by identifiers from prebuild database maps
+     * This method will fall-back to by using UrlFinderInterface when map type is not found in configured list
      *
      * @param int $entityId
      * @param int $storeId
@@ -92,7 +81,6 @@ class UrlRewriteFinder
             $map = $this->databaseMapPool->getDataMap($this->urlRewriteClassNames[$entityType], $rootCategoryId);
             if ($map) {
                 $key = $storeId . '_' . $entityId;
-
                 return $this->arrayToUrlRewriteObject($map->getData($rootCategoryId, $key));
             }
         }
@@ -107,7 +95,7 @@ class UrlRewriteFinder
     }
 
     /**
-     * Transfers an array values to url rewrite object values.
+     * Transfers an array values to url rewrite object values
      *
      * @param array $data
      * @return UrlRewrite[]
@@ -117,12 +105,11 @@ class UrlRewriteFinder
         foreach ($data as $key => $array) {
             $data[$key] = $this->createUrlRewrite($array);
         }
-
         return $data;
     }
 
     /**
-     * Creates url rewrite object and sets $data to its properties by key->value.
+     * Creates url rewrite object and sets $data to its properties by key->value
      *
      * @param array $data
      * @return UrlRewrite

@@ -7,7 +7,7 @@
 namespace Magento\Sales\Model;
 
 /**
- * This class uses for checking if reserved order id was already used for some order.
+ * This class uses for checking if reserved order id was already used for some order
  */
 class OrderIncrementIdChecker
 {
@@ -41,8 +41,8 @@ class OrderIncrementIdChecker
         /** @var \Magento\Framework\DB\Select $select */
         $select = $adapter->select();
         $select->from($this->resourceModel->getMainTable(), 'entity_id')->where('increment_id = :increment_id');
-        $entityId = $adapter->fetchOne($select, $bind);
-        if ($entityId > 0) {
+        $entity_id = $adapter->fetchOne($select, $bind);
+        if ($entity_id > 0) {
             return true;
         }
 

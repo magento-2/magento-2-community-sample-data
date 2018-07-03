@@ -5,10 +5,10 @@
  */
 namespace Magento\Framework\Test\Unit\Message;
 
-use Magento\Framework\Message\PhraseFactory;
 use Magento\Framework\Message\Error;
+use Magento\Framework\Message\PhraseFactory;
 
-class PhraseFactoryTest extends \PHPUnit_Framework_TestCase
+class PhraseFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PhraseFactory
@@ -52,5 +52,4 @@ class PhraseFactoryTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-
 }

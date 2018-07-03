@@ -15,37 +15,6 @@ use Magento\Catalog\Api\Data\ProductInterface;
 class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice
 {
     /**
-     * Reindex temporary (price result data) for all products
-     *
-     * @throws \Exception
-     * @return $this
-     */
-    public function reindexAll()
-    {
-        $this->tableStrategy->setUseIdxTable(true);
-        $this->beginTransaction();
-        try {
-            $this->reindex();
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            throw $e;
-        }
-        return $this;
-    }
-
-    /**
-     * Reindex temporary (price result data) for defined product(s)
-     *
-     * @param int|array $entityIds
-     * @return $this
-     */
-    public function reindexEntity($entityIds)
-    {
-        return $this->reindex($entityIds);
-    }
-
-    /**
      * @param null|int|array $entityIds
      * @return \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice
      */
@@ -93,6 +62,7 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
     {
         $connection = $this->getConnection();
         $table = $this->_getDownloadableLinkPriceTable();
+        $finalPriceTable = $this->_getDefaultFinalPriceTable();
 
         $this->_prepareDownloadableLinkPriceTable();
 
@@ -102,7 +72,7 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
         $ifPrice = $connection->getIfNullSql('dlpw.price_id', 'dlpd.price');
 
         $select = $connection->select()->from(
-            ['i' => $this->_getDefaultFinalPriceTable()],
+            ['i' => $finalPriceTable],
             ['entity_id', 'customer_group_id', 'website_id']
         )->join(
             ['dl' => $dlType->getBackend()->getTable()],
@@ -150,7 +120,7 @@ class Price extends \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\D
             ]
         );
 
-        $query = $select->crossUpdateFromSelect(['i' => $this->_getDefaultFinalPriceTable()]);
+        $query = $select->crossUpdateFromSelect(['i' => $finalPriceTable]);
         $connection->query($query);
 
         $connection->delete($table);

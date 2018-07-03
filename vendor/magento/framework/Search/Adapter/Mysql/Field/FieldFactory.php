@@ -6,7 +6,9 @@
 
 namespace Magento\Framework\Search\Adapter\Mysql\Field;
 
-
+/**
+ * @api
+ */
 class FieldFactory
 {
     /**
@@ -31,7 +33,7 @@ class FieldFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = 'Magento\Framework\Search\Adapter\Mysql\Field\FieldInterface'
+        $instanceName = \Magento\Framework\Search\Adapter\Mysql\Field\FieldInterface::class
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

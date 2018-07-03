@@ -8,8 +8,9 @@ namespace Magento\Framework\App\Utility;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Component\DirSearch;
-use Magento\Framework\Filesystem\Glob;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Design\Theme\ThemePackageList;
+use Magento\Framework\Filesystem\Glob;
 
 /**
  * A helper to gather specific kind of files in Magento application
@@ -90,6 +91,11 @@ class Files
     private $themePackageList;
 
     /**
+     * @var Json
+     */
+    private $serializer;
+
+    /**
      * @var RegexIteratorFactory
      */
     private $regexIteratorFactory;
@@ -100,18 +106,21 @@ class Files
      * @param ComponentRegistrar $componentRegistrar
      * @param DirSearch $dirSearch
      * @param ThemePackageList $themePackageList
+     * @param Json|null $serializer
      * @param RegexIteratorFactory|null $regexIteratorFactory
-     * @throws \RuntimeException
      */
     public function __construct(
         ComponentRegistrar $componentRegistrar,
         DirSearch $dirSearch,
         ThemePackageList $themePackageList,
+        Json $serializer = null,
         RegexIteratorFactory $regexIteratorFactory = null
     ) {
         $this->componentRegistrar = $componentRegistrar;
         $this->dirSearch = $dirSearch;
         $this->themePackageList = $themePackageList;
+        $this->serializer = $serializer ?: ObjectManager::getInstance()
+            ->get(Json::class);
         $this->regexIteratorFactory = $regexIteratorFactory ?: ObjectManager::getInstance()
             ->get(RegexIteratorFactory::class);
     }
@@ -406,7 +415,7 @@ class Files
         $excludedFileNames = ['wsdl.xml', 'wsdl2.xml', 'wsi.xml'],
         $asDataSet = true
     ) {
-        $cacheKey = __METHOD__ . '|' . json_encode([$fileNamePattern, $excludedFileNames, $asDataSet]);
+        $cacheKey = __METHOD__ . '|' . $this->serializer->serialize([$fileNamePattern, $excludedFileNames, $asDataSet]);
         if (!isset(self::$_cache[$cacheKey])) {
             $files = $this->dirSearch->collectFiles(ComponentRegistrar::MODULE, "/etc/{$fileNamePattern}");
             $files = array_filter(
@@ -438,7 +447,7 @@ class Files
         $excludedFileNames = [],
         $asDataSet = true
     ) {
-        $cacheKey = __METHOD__ . '|' . json_encode([$fileNamePattern, $excludedFileNames, $asDataSet]);
+        $cacheKey = __METHOD__ . '|' . $this->serializer->serialize([$fileNamePattern, $excludedFileNames, $asDataSet]);
         if (!isset(self::$_cache[$cacheKey])) {
             $files = $this->getFilesSubset(
                 $this->componentRegistrar->getPaths(ComponentRegistrar::MODULE),
@@ -546,6 +555,29 @@ class Files
     public function getPageLayoutFiles($incomingParams = [], $asDataSet = true)
     {
         return $this->getLayoutXmlFiles('page_layout', $incomingParams, $asDataSet);
+    }
+
+    /**
+     * Returns list of UI Component files, used by Magento application
+     *
+     * An incoming array can contain the following items
+     * array (
+     *     'namespace'      => 'namespace_name',
+     *     'module'         => 'module_name',
+     *     'area'           => 'area_name',
+     *     'theme'          => 'theme_name',
+     *     'include_code'   => true|false,
+     *     'include_design' => true|false,
+     *     'with_metainfo'  => true|false,
+     * )
+     *
+     * @param array $incomingParams
+     * @param bool $asDataSet
+     * @return array
+     */
+    public function getUiComponentXmlFiles($incomingParams = [], $asDataSet = true)
+    {
+        return $this->getLayoutXmlFiles('ui_component', $incomingParams, $asDataSet);
     }
 
     /**
@@ -993,8 +1025,12 @@ class Files
     protected function _parseModuleStatic($file)
     {
         foreach ($this->componentRegistrar->getPaths(ComponentRegistrar::MODULE) as $moduleName => $modulePath) {
-            $pattern = '/^' . preg_quote("{$modulePath}/", '/') . 'view\/([a-z]+)\/web\/(.+)$/i';
-            if (preg_match($pattern, $file, $matches) === 1) {
+            if (preg_match(
+                '/^' . preg_quote("{$modulePath}/", '/') . 'view\/([a-z]+)\/web\/(.+)$/i',
+                $file,
+                $matches
+            ) === 1
+            ) {
                 list(, $area, $filePath) = $matches;
                 return [$area, '', '', $moduleName, $filePath, $file];
             }
@@ -1378,7 +1414,8 @@ class Files
             $fileContent = file_get_contents($fullPath);
             if (strpos($fileContent, 'namespace ' . $namespace) !== false
                 && (strpos($fileContent, 'class ' . $className) !== false
-                    || strpos($fileContent, 'interface ' . $className) !== false)
+                    || strpos($fileContent, 'interface ' . $className) !== false
+                    || strpos($fileContent, 'trait ' . $className) !== false)
             ) {
                 return true;
             }
@@ -1418,7 +1455,7 @@ class Files
     public function getModuleFile($namespace, $module, $file)
     {
         return $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, $namespace . '_' . $module) .
-            '/' . $file;
+        '/' . $file;
     }
 
     /**

@@ -9,6 +9,9 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Adminhtml sales order create form block
+ *
+ * @api
+ * @since 100.0.2
  */
 class Form extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
 {
@@ -168,23 +171,10 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
             $addresses = $this->customerRepository->getById($this->getCustomerId())->getAddresses();
 
             foreach ($addresses as $address) {
-                $addressArray = $this->addressMapper->toFlatArray($address);
-
-                foreach ($addressArray as $key => $value) {
-                    if (gettype($value) === 'string') {
-                        $escapedValue = htmlspecialchars(
-                            (string)$value,
-                            ENT_QUOTES | ENT_SUBSTITUTE,
-                            'UTF-8',
-                            false
-                        );
-                        $addressArray[$key] = $escapedValue;
-                    }
-                }
                 $addressForm = $this->_customerFormFactory->create(
                     'customer_address',
                     'adminhtml_customer_address',
-                    $addressArray
+                    $this->addressMapper->toFlatArray($address)
                 );
                 $data['addresses'][$address->getId()] = $addressForm->outputData(
                     \Magento\Eav\Model\AttributeDataFactory::OUTPUT_FORMAT_JSON

@@ -14,7 +14,7 @@ use Magento\Customer\Model\Url;
 use Magento\Customer\Model\Form;
 use Magento\Store\Model\ScopeInterface;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ConfigProvider
@@ -78,10 +78,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
             ['getBaseUrl']
         );
 
-        $this->customerUrl = $this->getMockBuilder(\Magento\Customer\Model\Url::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getLoginUrl'])
-            ->getMock();
+        $this->customerUrl = $this->createMock(\Magento\Customer\Model\Url::class);
 
         $this->provider = new ConfigProvider(
             $this->urlBuilder,

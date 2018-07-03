@@ -28,9 +28,7 @@ class Soap implements \Magento\Framework\App\FrontControllerInterface
 
     /**#@-*/
 
-    /**
-     * @var \Magento\Webapi\Model\Soap\Server
-     */
+    /**#@-*/
     protected $_soapServer;
 
     /**
@@ -132,7 +130,7 @@ class Soap implements \Magento\Framework\App\FrontControllerInterface
                 );
                 $this->_setResponseContentType(self::CONTENT_TYPE_WSDL_REQUEST);
                 $this->_setResponseBody($responseBody);
-            } else if ($this->_isWsdlListRequest()) {
+            } elseif ($this->_isWsdlListRequest()) {
                 $servicesList = [];
                 foreach ($this->_wsdlGenerator->getListOfServices() as $serviceName) {
                     $servicesList[$serviceName]['wsdl_endpoint'] = $this->_soapServer->getEndpointUri()

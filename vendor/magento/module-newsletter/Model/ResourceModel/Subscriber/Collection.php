@@ -11,6 +11,9 @@ use Magento\Newsletter\Model\Queue as ModelQueue;
  * Newsletter subscribers collection
  *
  * @author      Magento Core Team <core@magentocommerce.com>
+ *
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -87,7 +90,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init('Magento\Newsletter\Model\Subscriber', 'Magento\Newsletter\Model\ResourceModel\Subscriber');
+        $this->_init(
+            \Magento\Newsletter\Model\Subscriber::class,
+            \Magento\Newsletter\Model\ResourceModel\Subscriber::class
+        );
         $this->_queueLinkTable = $this->getTable('newsletter_queue_link');
         $this->_storeTable = $this->getTable('store');
 

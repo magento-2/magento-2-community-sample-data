@@ -6,20 +6,19 @@
  */
 namespace Magento\Catalog\Model;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\Product\Gallery\MimeTypeExtensionMap;
-use Magento\Framework\Api\Data\ImageContentInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Framework\Api\Data\ImageContentInterfaceFactory;
 use Magento\Framework\Api\ImageContentValidatorInterface;
 use Magento\Framework\Api\ImageProcessorInterface;
-use Magento\Framework\Api\SortOrder;
-use Magento\Framework\Exception\InputException;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\DB\Adapter\ConnectionException;
+use Magento\Framework\DB\Adapter\DeadlockException;
+use Magento\Framework\DB\Adapter\LockWaitException;
+use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\StateException;
 use Magento\Framework\Exception\ValidatorException;
-use Magento\Framework\Exception\CouldNotSaveException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -113,11 +112,15 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     protected $fileSystem;
 
     /**
+     * @deprecated
+     * @see \Magento\Catalog\Model\MediaGalleryProcessor
      * @var ImageContentInterfaceFactory
      */
     protected $contentFactory;
 
     /**
+     * @deprecated
+     * @see \Magento\Catalog\Model\MediaGalleryProcessor
      * @var ImageProcessorInterface
      */
     protected $imageProcessor;
@@ -128,9 +131,24 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     protected $extensionAttributesJoinProcessor;
 
     /**
-     * @var \Magento\Catalog\Model\Product\Gallery\Processor
+     * @var ProductRepository\MediaGalleryProcessor
      */
     protected $mediaGalleryProcessor;
+
+    /**
+     * @var CollectionProcessorInterface
+     */
+    private $collectionProcessor;
+
+    /**
+     * @var int
+     */
+    private $cacheLimit = 0;
+
+    /**
+     * @var \Magento\Framework\Serialize\Serializer\Json
+     */
+    private $serializer;
 
     /**
      * ProductRepository constructor.
@@ -154,6 +172,9 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
      * @param MimeTypeExtensionMap $mimeTypeExtensionMap
      * @param ImageProcessorInterface $imageProcessor
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
+     * @param CollectionProcessorInterface $collectionProcessor [optional]
+     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
+     * @param int $cacheLimit [optional]
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -177,7 +198,10 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         ImageContentInterfaceFactory $contentFactory,
         MimeTypeExtensionMap $mimeTypeExtensionMap,
         ImageProcessorInterface $imageProcessor,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
+        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
+        CollectionProcessorInterface $collectionProcessor = null,
+        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        $cacheLimit = 1000
     ) {
         $this->productFactory = $productFactory;
         $this->collectionFactory = $collectionFactory;
@@ -196,6 +220,10 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $this->contentFactory = $contentFactory;
         $this->imageProcessor = $imageProcessor;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
+        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
+        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->cacheLimit = (int)$cacheLimit;
     }
 
     /**
@@ -218,8 +246,10 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
                 $product->setData('store_id', $storeId);
             }
             $product->load($productId);
-            $this->instances[$sku][$cacheKey] = $product;
-            $this->instancesById[$product->getId()][$cacheKey] = $product;
+            $this->cacheProduct($cacheKey, $product);
+        }
+        if (!isset($this->instances[$sku])) {
+            $sku = trim($sku);
         }
         return $this->instances[$sku][$cacheKey];
     }
@@ -242,8 +272,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             if (!$product->getId()) {
                 throw new NoSuchEntityException(__('Requested product doesn\'t exist'));
             }
-            $this->instancesById[$productId][$cacheKey] = $product;
-            $this->instances[$product->getSku()][$cacheKey] = $product;
+            $this->cacheProduct($cacheKey, $product);
         }
         return $this->instancesById[$productId][$cacheKey];
     }
@@ -264,8 +293,27 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
                 $serializeData[$key] = $value;
             }
         }
+        $serializeData = $this->serializer->serialize($serializeData);
+        return sha1($serializeData);
+    }
 
-        return md5(serialize($serializeData));
+    /**
+     * Add product to internal cache and truncate cache if it has more than cacheLimit elements.
+     *
+     * @param string $cacheKey
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @return void
+     */
+    private function cacheProduct($cacheKey, \Magento\Catalog\Api\Data\ProductInterface $product)
+    {
+        $this->instancesById[$product->getId()][$cacheKey] = $product;
+        $this->instances[$product->getSku()][$cacheKey] = $product;
+
+        if ($this->cacheLimit && count($this->instances) > $this->cacheLimit) {
+            $offset = round($this->cacheLimit / -2);
+            $this->instancesById = array_slice($this->instancesById, $offset, null, true);
+            $this->instances = array_slice($this->instances, $offset, null, true);
+        }
     }
 
     /**
@@ -281,12 +329,20 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         unset($productData['media_gallery']);
         if ($createNew) {
             $product = $this->productFactory->create();
+            if (isset($productData['price']) && !isset($productData['product_type'])) {
+                $product->setTypeId(Product\Type::TYPE_SIMPLE);
+            }
             if ($this->storeManager->hasSingleStore()) {
                 $product->setWebsiteIds([$this->storeManager->getStore(true)->getWebsiteId()]);
             }
         } else {
-            unset($this->instances[$productData['sku']]);
-            $product = $this->get($productData['sku']);
+            if (!empty($productData['id'])) {
+                unset($this->instancesById[$productData['id']]);
+                $product = $this->getById($productData['id']);
+            } else {
+                unset($this->instances[$productData['sku']]);
+                $product = $this->get($productData['sku']);
+            }
         }
 
         foreach ($productData as $key => $value) {
@@ -299,14 +355,14 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
 
     /**
      * @param \Magento\Catalog\Model\Product $product
-     * @param  bool $createNew
+     * @param bool $createNew
      * @return void
      */
     private function assignProductToWebsites(\Magento\Catalog\Model\Product $product, $createNew)
     {
         $websiteIds = $product->getWebsiteIds();
 
-        if ($createNew && !$this->storeManager->hasSingleStore()) {
+        if (!$this->storeManager->hasSingleStore()) {
             $websiteIds = array_unique(
                 array_merge(
                     $websiteIds,
@@ -320,53 +376,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         }
 
         $product->setWebsiteIds($websiteIds);
-    }
-
-    /**
-     * @param ProductInterface $product
-     * @param array $newEntry
-     * @return $this
-     * @throws InputException
-     * @throws StateException
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    protected function processNewMediaGalleryEntry(
-        ProductInterface $product,
-        array  $newEntry
-    ) {
-        /** @var ImageContentInterface $contentDataObject */
-        $contentDataObject = $newEntry['content'];
-
-        /** @var \Magento\Catalog\Model\Product\Media\Config $mediaConfig */
-        $mediaConfig = $product->getMediaConfig();
-        $mediaTmpPath = $mediaConfig->getBaseTmpMediaPath();
-
-        $relativeFilePath = $this->imageProcessor->processImageContent($mediaTmpPath, $contentDataObject);
-        $tmpFilePath = $mediaConfig->getTmpMediaShortUrl($relativeFilePath);
-
-        if (!$product->hasGalleryAttribute()) {
-            throw new StateException(__('Requested product does not support images.'));
-        }
-
-        $imageFileUri = $this->getMediaGalleryProcessor()->addImage(
-            $product,
-            $tmpFilePath,
-            isset($newEntry['types']) ? $newEntry['types'] : [],
-            true,
-            isset($newEntry['disabled']) ? $newEntry['disabled'] : true
-        );
-        // Update additional fields that are still empty after addImage call
-        $this->getMediaGalleryProcessor()->updateImage(
-            $product,
-            $imageFileUri,
-            [
-                'label' => $newEntry['label'],
-                'position' => $newEntry['position'],
-                'disabled' => $newEntry['disabled'],
-                'media_type' => $newEntry['media_type'],
-            ]
-        );
-        return $this;
     }
 
     /**
@@ -428,83 +437,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     }
 
     /**
-     * Process Media gallery data before save product.
-     *
-     * Compare Media Gallery Entries Data with existing Media Gallery
-     * * If Media entry has not value_id set it as new
-     * * If Existing entry 'value_id' absent in Media Gallery set 'removed' flag
-     * * Merge Existing and new media gallery
-     *
-     * @param ProductInterface $product contains only existing media gallery items
-     * @param array $mediaGalleryEntries array which contains all media gallery items
-     * @return $this
-     * @throws InputException
-     * @throws StateException
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    protected function processMediaGallery(ProductInterface $product, $mediaGalleryEntries)
-    {
-        $existingMediaGallery = $product->getMediaGallery('images');
-        $newEntries = [];
-        $entriesById = [];
-        if (!empty($existingMediaGallery)) {
-            foreach ($mediaGalleryEntries as $entry) {
-                if (isset($entry['value_id'])) {
-                    $entriesById[$entry['value_id']] = $entry;
-                } else {
-                    $newEntries[] = $entry;
-                }
-            }
-            foreach ($existingMediaGallery as $key => &$existingEntry) {
-                if (isset($entriesById[$existingEntry['value_id']])) {
-                    $updatedEntry = $entriesById[$existingEntry['value_id']];
-                    if ($updatedEntry['file'] === null) {
-                        unset($updatedEntry['file']);
-                    }
-                    $existingMediaGallery[$key] = array_merge($existingEntry, $updatedEntry);
-                } else {
-                    //set the removed flag
-                    $existingEntry['removed'] = true;
-                }
-            }
-            $product->setData('media_gallery', ["images" => $existingMediaGallery]);
-        } else {
-            $newEntries = $mediaGalleryEntries;
-        }
-
-        $this->getMediaGalleryProcessor()->clearMediaAttribute($product, array_keys($product->getMediaAttributes()));
-        $images = $product->getMediaGallery('images');
-        if ($images) {
-            foreach ($images as $image) {
-                if (!isset($image['removed']) && !empty($image['types'])) {
-                    $this->getMediaGalleryProcessor()->setMediaAttribute($product, $image['types'], $image['file']);
-                }
-            }
-        }
-
-        foreach ($newEntries as $newEntry) {
-            if (!isset($newEntry['content'])) {
-                throw new InputException(__('The image content is not valid.'));
-            }
-            /** @var ImageContentInterface $contentDataObject */
-            $contentDataObject = $this->contentFactory->create()
-                ->setName($newEntry['content']['data'][ImageContentInterface::NAME])
-                ->setBase64EncodedData($newEntry['content']['data'][ImageContentInterface::BASE64_ENCODED_DATA])
-                ->setType($newEntry['content']['data'][ImageContentInterface::TYPE]);
-            $newEntry['content'] = $contentDataObject;
-            $this->processNewMediaGalleryEntry($product, $newEntry);
-
-            $finalGallery = $product->getData('media_gallery');
-            $newEntryId = key(array_diff_key($product->getData('media_gallery')['images'], $entriesById));
-            $newEntry = array_replace_recursive($newEntry, $finalGallery['images'][$newEntryId]);
-            $entriesById[$newEntryId] = $newEntry;
-            $finalGallery['images'][$newEntryId] = $newEntry;
-            $product->setData('media_gallery', $finalGallery);
-        }
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -514,12 +446,15 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $tierPrices = $product->getData('tier_price');
 
         try {
-            $existingProduct = $this->get($product->getSku());
+            $existingProduct = $product->getId() ? $this->getById($product->getId()) : $this->get($product->getSku());
 
             $product->setData(
                 $this->resourceModel->getLinkField(),
                 $existingProduct->getData($this->resourceModel->getLinkField())
             );
+            if (!$product->hasData(Product::STATUS)) {
+                $product->setStatus($existingProduct->getStatus());
+            }
         } catch (NoSuchEntityException $e) {
             $existingProduct = null;
         }
@@ -532,12 +467,17 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         if (!$ignoreLinksFlag && $ignoreLinksFlag !== null) {
             $productLinks = $product->getProductLinks();
         }
-        $productDataArray['store_id'] = (int)$this->storeManager->getStore()->getId();
+        if (!isset($productDataArray['store_id'])) {
+            $productDataArray['store_id'] = (int)$this->storeManager->getStore()->getId();
+        }
         $product = $this->initializeProductData($productDataArray, empty($existingProduct));
 
         $this->processLinks($product, $productLinks);
-        if (isset($productDataArray['media_gallery'])) {
-            $this->processMediaGallery($product, $productDataArray['media_gallery']['images']);
+        if (isset($productDataArray['media_gallery_entries'])) {
+            $this->getMediaGalleryProcessor()->processMediaGallery(
+                $product,
+                $productDataArray['media_gallery_entries']
+            );
         }
 
         if (!$product->getOptionsReadonly()) {
@@ -558,6 +498,24 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             unset($this->instances[$product->getSku()]);
             unset($this->instancesById[$product->getId()]);
             $this->resourceModel->save($product);
+        } catch (ConnectionException $exception) {
+            throw new \Magento\Framework\Exception\TemporaryState\CouldNotSaveException(
+                __('Database connection error'),
+                $exception,
+                $exception->getCode()
+            );
+        } catch (DeadlockException $exception) {
+            throw new \Magento\Framework\Exception\TemporaryState\CouldNotSaveException(
+                __('Database deadlock found when trying to get lock'),
+                $exception,
+                $exception->getCode()
+            );
+        } catch (LockWaitException $exception) {
+            throw new \Magento\Framework\Exception\TemporaryState\CouldNotSaveException(
+                __('Database lock wait timeout exceeded'),
+                $exception,
+                $exception->getCode()
+            );
         } catch (\Magento\Eav\Model\Entity\Attribute\Exception $exception) {
             throw \Magento\Framework\Exception\InputException::invalidFieldValue(
                 $exception->getAttributeCode(),
@@ -569,11 +527,11 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         } catch (LocalizedException $e) {
             throw $e;
         } catch (\Exception $e) {
-            throw new \Magento\Framework\Exception\CouldNotSaveException(__('Unable to save product'));
+            throw new \Magento\Framework\Exception\CouldNotSaveException(__('Unable to save product'), $e);
         }
         unset($this->instances[$product->getSku()]);
         unset($this->instancesById[$product->getId()]);
-        return $this->get($product->getSku());
+        return $this->get($product->getSku(), false, $product->getStoreId());
     }
 
     /**
@@ -617,39 +575,39 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $collection = $this->collectionFactory->create();
         $this->extensionAttributesJoinProcessor->process($collection);
 
-        foreach ($this->metadataService->getList($this->searchCriteriaBuilder->create())->getItems() as $metadata) {
-            $collection->addAttributeToSelect($metadata->getAttributeCode());
-        }
+        $collection->addAttributeToSelect('*');
         $collection->joinAttribute('status', 'catalog_product/status', 'entity_id', null, 'inner');
         $collection->joinAttribute('visibility', 'catalog_product/visibility', 'entity_id', null, 'inner');
 
-        //Add filters from root filter group to the collection
-        foreach ($searchCriteria->getFilterGroups() as $group) {
-            $this->addFilterGroupToCollection($group, $collection);
-        }
-        /** @var SortOrder $sortOrder */
-        foreach ((array)$searchCriteria->getSortOrders() as $sortOrder) {
-            $field = $sortOrder->getField();
-            $collection->addOrder(
-                $field,
-                ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-            );
-        }
-        $collection->setCurPage($searchCriteria->getCurrentPage());
-        $collection->setPageSize($searchCriteria->getPageSize());
-        $collection->load();
-        $collection->addCategoryIds();
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
+        $collection->load();
+
+        $collection->addCategoryIds();
         $searchResult = $this->searchResultsFactory->create();
         $searchResult->setSearchCriteria($searchCriteria);
         $searchResult->setItems($collection->getItems());
         $searchResult->setTotalCount($collection->getSize());
+
+        foreach ($collection->getItems() as $product) {
+            $this->cacheProduct(
+                $this->getCacheKey(
+                    [
+                        false,
+                        $product->hasData(\Magento\Catalog\Model\Product::STORE_ID) ? $product->getStoreId() : null
+                    ]
+                ),
+                $product
+            );
+        }
+
         return $searchResult;
     }
 
     /**
      * Helper function that adds a FilterGroup to the collection.
      *
+     * @deprecated 101.1.0
      * @param \Magento\Framework\Api\Search\FilterGroup $filterGroup
      * @param Collection $collection
      * @return void
@@ -659,52 +617,24 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         Collection $collection
     ) {
         $fields = [];
-
+        $categoryFilter = [];
         foreach ($filterGroup->getFilters() as $filter) {
-            $conditionType = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-            $isApplied = $this->applyCustomFilter($collection, $filter, $conditionType);
+            $conditionType = $filter->getConditionType() ?: 'eq';
 
-            if (!$isApplied) {
-                $fields[] = ['attribute' => $filter->getField(), $conditionType => $filter->getValue()];
+            if ($filter->getField() == 'category_id') {
+                $categoryFilter[$conditionType][] = $filter->getValue();
+                continue;
             }
+            $fields[] = ['attribute' => $filter->getField(), $conditionType => $filter->getValue()];
+        }
+
+        if ($categoryFilter) {
+            $collection->addCategoriesFilter($categoryFilter);
         }
 
         if ($fields) {
             $collection->addFieldToFilter($fields);
         }
-    }
-
-    /**
-     * Apply custom filters to product collection.
-     *
-     * @param Collection $collection
-     * @param \Magento\Framework\Api\Filter $filter
-     * @param string $conditionType
-     * @return bool
-     */
-    private function applyCustomFilter(Collection $collection, \Magento\Framework\Api\Filter $filter, $conditionType)
-    {
-        if ($filter->getField() == 'category_id') {
-            $categoryFilter[$conditionType][] = $filter->getValue();
-            $collection->addCategoriesFilter($categoryFilter);
-            return true;
-        }
-
-        if ($filter->getField() == 'store') {
-            $collection->addStoreFilter($filter->getValue());
-            return true;
-        }
-
-        if ($filter->getField() == 'website_id') {
-            $value = $filter->getValue();
-            if (strpos($value, ',') !== false) {
-                $value = explode(',', $value);
-            }
-            $collection->addWebsiteFilter($value);
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -719,14 +649,30 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     }
 
     /**
-     * @return Product\Gallery\Processor
+     * @return ProductRepository\MediaGalleryProcessor
      */
     private function getMediaGalleryProcessor()
     {
         if (null === $this->mediaGalleryProcessor) {
             $this->mediaGalleryProcessor = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Product\Gallery\Processor::class);
+                ->get(ProductRepository\MediaGalleryProcessor::class);
         }
         return $this->mediaGalleryProcessor;
+    }
+
+    /**
+     * Retrieve collection processor
+     *
+     * @deprecated 101.1.0
+     * @return CollectionProcessorInterface
+     */
+    private function getCollectionProcessor()
+    {
+        if (!$this->collectionProcessor) {
+            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                'Magento\Catalog\Model\Api\SearchCriteria\ProductCollectionProcessor'
+            );
+        }
+        return $this->collectionProcessor;
     }
 }

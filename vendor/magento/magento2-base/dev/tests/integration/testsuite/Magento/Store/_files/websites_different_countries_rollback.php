@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -13,56 +12,47 @@ use Magento\Config\Model\Config\Factory as ConfigFactory;
 use Magento\CatalogSearch\Model\Indexer\Fulltext as FulltextIndex;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 
+$objectManager = Bootstrap::getObjectManager();
 //Deleting second website's store.
-$store = Bootstrap::getObjectManager()->create(Store::class);
+$store = $objectManager->create(Store::class);
 if ($store->load('fixture_second_store', 'code')->getId()) {
     $store->delete();
 }
 
-//Deleting the second site.
+//Deleting the second website.
 /** @var Registry $registry */
-$registry = Bootstrap::getObjectManager()->get(Registry::class);
+$registry = $objectManager->get(Registry::class);
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
+
+$configResource = $objectManager->get(\Magento\Config\Model\ResourceModel\Config::class);
+//Restoring allowed countries.
+$configResource->deleteConfig(
+    'general/country/allow',
+    \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES,
+    1
+);
 /** @var Website $website */
-$website = Bootstrap::getObjectManager()->create(Website::class);
+$website = $objectManager->create(Website::class);
 $website->load('test');
 if ($website->getId()) {
+    $configResource->deleteConfig(
+        'general/country/allow',
+        \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES,
+        $website->getId()
+    );
     $website->delete();
 }
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', false);
 
-//Restoring allowed countries.
-/** @var ConfigFactory $configFactory */
-$configFactory = Bootstrap::getObjectManager()->get(ConfigFactory::class);
-//Allowed countries for default website.
-$configData = [
-    'section' => 'general',
-    'website' => 1,
-    'store'   => null,
-    'groups'  => [
-        'country' => [
-            'fields' => [
-                'default' => ['inherit' => 1],
-                'allow'   => ['inherit' => 1],
-            ],
-        ],
-    ],
-];
-$configModel = $configFactory->create(['data' => $configData]);
-$configModel->save();
-
 /* Refresh stores memory cache */
 /** @var \Magento\Store\Model\StoreManagerInterface $storeManager */
-$storeManager = Bootstrap::getObjectManager()->get(
-    \Magento\Store\Model\StoreManagerInterface::class
-);
+$storeManager = $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class);
 $storeManager->reinitStores();
 /* Refresh CatalogSearch index */
 /** @var \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry */
-$indexerRegistry = Bootstrap::getObjectManager()
-    ->create(\Magento\Framework\Indexer\IndexerRegistry::class);
+$indexerRegistry = $objectManager->create(\Magento\Framework\Indexer\IndexerRegistry::class);
 $indexerRegistry->get(FulltextIndex::INDEXER_ID)->reindexAll();
 //Clear config cache.
-Bootstrap::getObjectManager()->get(ReinitableConfigInterface::class)->reinit();
+$objectManager->get(ReinitableConfigInterface::class)->reinit();

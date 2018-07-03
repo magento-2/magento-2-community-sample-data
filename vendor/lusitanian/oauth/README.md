@@ -63,7 +63,10 @@ Included service implementations
     - BitLy
     - Bitrix24
     - Box
+    - Buffer
     - Dailymotion
+    - Delicious
+    - Deezer
     - DeviantArt
     - Dropbox
     - Eve Online
@@ -79,6 +82,7 @@ Included service implementations
     - LinkedIn
     - Mailchimp
     - Microsoft
+    - Mondo
     - Nest
     - Netatmo
     - Parrot Flower Power
@@ -87,12 +91,14 @@ Included service implementations
     - Pocket
     - Reddit
     - RunKeeper
+    - Salesforce
     - SoundCloud
     - Spotify
     - Strava
     - Ustream
     - Vimeo
     - Vkontakte
+    - Yahoo
     - Yammer
 - more to come!
 
@@ -108,6 +114,8 @@ Framework Integration
 ---------------------
 * Lithium: Sébastien Charrier has written [an adapter](https://github.com/scharrier/li3_socialauth) for the library.
 * Laravel 4: Dariusz Prząda has written [a service provider](https://github.com/artdarek/oauth-4-laravel) for the library.
+* Laravel 5: Valentin Ivaşcu ported Dariusz Prząda's Laravel 4 library to [Laravel 5](https://github.com/oriceon/oauth-5-laravel).
+* Symfony: Alexander Pinnecke has written [a Symfony Bundle](https://github.com/apinnecke/OAuthBundle) for the library.
 
 Extensions
 ----------

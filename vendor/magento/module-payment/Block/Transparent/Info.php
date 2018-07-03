@@ -7,7 +7,9 @@ namespace Magento\Payment\Block\Transparent;
 
 /**
  * Class Info. Payment Information block used for transparent redirect feature
- * @package Magento\Payment\Block\Transparent
+ *
+ * @api
+ * @since 100.0.2
  */
 class Info extends \Magento\Framework\View\Element\Template
 {

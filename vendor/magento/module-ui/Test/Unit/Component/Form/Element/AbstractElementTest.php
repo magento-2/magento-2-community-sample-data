@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 /**
  * Class AbstractElementTest
  */
-abstract class AbstractElementTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractElementTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManager
@@ -38,15 +38,7 @@ abstract class AbstractElementTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
-        $this->processorMock = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->contextMock->expects($this->any())
-            ->method('getProcessor')
-            ->willReturn($this->processorMock);
+        $this->contextMock = $this->getMockBuilder(ContextInterface::class)->getMockForAbstractClass();
     }
 
     /**

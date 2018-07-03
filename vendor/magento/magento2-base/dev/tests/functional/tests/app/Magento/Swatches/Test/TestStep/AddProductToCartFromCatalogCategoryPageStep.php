@@ -6,14 +6,12 @@
 
 namespace Magento\Swatches\Test\TestStep;
 
+use Magento\Mtf\TestStep\TestStepInterface;
+use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Swatches\Test\Block\Product\ProductList\ProductItem;
+use Magento\Mtf\Fixture\InjectableFixture;
 use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 use Magento\Cms\Test\Page\CmsIndex;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\Fixture\InjectableFixture;
-use Magento\Mtf\TestStep\TestStepInterface;
-use Magento\Swatches\Test\Block\Product\ListProduct;
-use Magento\Swatches\Test\Block\Product\ProductList\ProductItem;
-use Magento\Swatches\Test\Fixture\ConfigurableProduct;
 
 /**
  * Add configurable product to cart.
@@ -23,7 +21,7 @@ class AddProductToCartFromCatalogCategoryPageStep implements TestStepInterface
     /**
      * Fixture of configurable product with swatches configuration.
      *
-     * @var ConfigurableProduct
+     * @var \Magento\Swatches\Test\Fixture\ConfigurableProduct
      */
     private $product;
 
@@ -49,32 +47,22 @@ class AddProductToCartFromCatalogCategoryPageStep implements TestStepInterface
     private $cmsIndex;
 
     /**
-     * Flag wait success added product to cart message or not.
-     *
-     * @var bool
-     */
-    private $waitSuccessMessage;
-
-    /**
      * @constructor
      * @param FixtureFactory $fixtureFactory
      * @param CmsIndex $cmsIndex
-     * @param CatalogCategoryView $categoryView
      * @param InjectableFixture $product
-     * @param bool $waitSuccessMessage
+     * @param CatalogCategoryView $categoryView
      */
     public function __construct(
         FixtureFactory $fixtureFactory,
         CmsIndex $cmsIndex,
         CatalogCategoryView $categoryView,
-        InjectableFixture $product,
-        $waitSuccessMessage = true
+        InjectableFixture $product
     ) {
         $this->fixtureFactory = $fixtureFactory;
         $this->cmsIndex = $cmsIndex;
         $this->categoryView = $categoryView;
         $this->product = $product;
-        $this->waitSuccessMessage = $waitSuccessMessage;
     }
 
     /**
@@ -84,33 +72,27 @@ class AddProductToCartFromCatalogCategoryPageStep implements TestStepInterface
      */
     public function run()
     {
-        /** @var string $categoryName */
         $categoryName = $this->product->getCategoryIds()[0];
-
         $this->cmsIndex->open();
         $this->cmsIndex->getTopmenu()->selectCategoryByName($categoryName);
-
-        /** @var  ListProduct $productsList */
+        /** @var  \Magento\Swatches\Test\Block\Product\ListProduct $productsList */
         $productsList = $this->categoryView->getListSwatchesProductBlock();
-
         /** @var ProductItem $productItemBlock */
         $productItemBlock = $productsList->getProductItem($this->product);
         $productItemBlock->fillData($this->product);
         $productItemBlock->clickAddToCart();
+        $this->categoryView->getMessagesBlock()->waitSuccessMessage();
+
         $cart = [
             'data' => [
                 'items' => [
-                    'products' => [$this->product],
-                ],
-            ],
+                    'products' => [$this->product]
+                ]
+            ]
         ];
 
-        if ($this->waitSuccessMessage) {
-            $this->categoryView->getMessagesBlock()->waitSuccessMessage();
-        }
-
         return [
-            'cart' => $this->fixtureFactory->createByCode('cart', $cart),
+            'cart' => $this->fixtureFactory->createByCode('cart', $cart)
         ];
     }
 }

@@ -31,6 +31,7 @@ class AssertOrderItemsPagerDisplayedOnFrontend extends AbstractConstraint
      * @param OrderHistory $orderHistory
      * @param CustomerOrderView $customerOrderView
      * @param string $orderId
+     * @internal param OrderView $orderView
      */
     public function processAssert(
         OrderInjectable $order,
@@ -59,7 +60,9 @@ class AssertOrderItemsPagerDisplayedOnFrontend extends AbstractConstraint
     }
 
     /**
-     * {@inheritdoc}
+     * Returns a string representation of the object.
+     *
+     * @return string
      */
     public function toString()
     {

@@ -10,16 +10,11 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * An advanced context that contains information necessary for view files fallback system
+ *
+ * @api
  */
 class FallbackContext extends Context
 {
-    /**
-     * Secure path
-     *
-     * @deprecated
-     */
-    const SECURE_PATH = 'secure';
-
     /**
      * @var string
      */
@@ -36,25 +31,16 @@ class FallbackContext extends Context
     private $locale;
 
     /**
-     * @var bool
-     *
-     * @deprecated
-     */
-    private $isSecure;
-
-    /**
      * @param string $baseUrl
      * @param string $areaType
      * @param string $themePath
      * @param string $localeCode
-     * @param bool $isSecure
      */
-    public function __construct($baseUrl, $areaType, $themePath, $localeCode, $isSecure = false)
+    public function __construct($baseUrl, $areaType, $themePath, $localeCode)
     {
         $this->area = $areaType;
         $this->theme = $themePath;
         $this->locale = $localeCode;
-        $this->isSecure = $isSecure;
         parent::__construct($baseUrl, DirectoryList::STATIC_VIEW, $this->generatePath());
     }
 

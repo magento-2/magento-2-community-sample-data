@@ -7,8 +7,6 @@ use InvalidArgumentException;
 /**
  * Braintree Utility methods
  * PHP version 5
- *
- * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 
 class Util
@@ -65,6 +63,9 @@ class Util
             break;
         case 426:
             throw new Exception\UpgradeRequired();
+            break;
+        case 429:
+            throw new Exception\TooManyRequests();
             break;
         case 500:
             throw new Exception\ServerError();
@@ -132,6 +133,12 @@ class Util
             'Braintree_Discount' => 'discount',
             'Braintree\DiscountGateway' => 'discount',
             'Braintree_DiscountGateway' => 'discount',
+            'Braintree\Dispute' => 'dispute',
+            'Braintree_Dispute' => 'dispute',
+            'Braintree\Dispute\EvidenceDetails' => 'evidence',
+            'Braintree_Dispute_EvidenceDetails' => 'evidence',
+            'Braintree\DocumentUpload' => 'documentUpload',
+            'Braintree_DocumentUpload' => 'doumentUpload',
             'Braintree\Plan' => 'plan',
             'Braintree_Plan' => 'plan',
             'Braintree\PlanGateway' => 'plan',
@@ -154,6 +161,8 @@ class Util
             'Braintree_MerchantAccountGateway' => 'merchantAccount',
             'Braintree\OAuthCredentials' => 'credentials',
             'Braintree_OAuthCredentials' => 'credentials',
+            'Braintree\OAuthResult' => 'result',
+            'Braintree_OAuthResult' => 'result',
             'Braintree\PayPalAccount' => 'paypalAccount',
             'Braintree_PayPalAccount' => 'paypalAccount',
             'Braintree\PayPalAccountGateway' => 'paypalAccount',
@@ -173,6 +182,8 @@ class Util
         $responseKeysToClassNames = [
             'creditCard' => 'Braintree\CreditCard',
             'customer' => 'Braintree\Customer',
+            'dispute' => 'Braintree\Dispute',
+            'documentUpload' => 'Braintree\DocumentUpload',
             'subscription' => 'Braintree\Subscription',
             'transaction' => 'Braintree\Transaction',
             'verification' => 'Braintree\CreditCardVerification',
@@ -197,12 +208,11 @@ class Util
      */
     public static function delimiterToCamelCase($string, $delimiter = '[\-\_]')
     {
-        // php doesn't garbage collect functions created by create_function()
-        // so use a static variable to avoid adding a new function to memory
-        // every time this function is called.
         static $callback = null;
         if ($callback === null) {
-            $callback = create_function('$matches', 'return strtoupper($matches[1]);');
+            $callback = function ($matches) {
+                return strtoupper($matches[1]);
+            };
         }
 
         return preg_replace_callback('/' . $delimiter . '(\w)/', $callback, $string);

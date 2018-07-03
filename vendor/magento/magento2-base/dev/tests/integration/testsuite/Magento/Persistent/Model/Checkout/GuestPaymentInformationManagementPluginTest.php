@@ -7,80 +7,79 @@
 namespace Magento\Persistent\Model\Checkout;
 
 /**
- * Test for Magento\Persistent\Model\Checkout\GuestPaymentInformationManagementPlugin class.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class GuestPaymentInformationManagementPluginTest extends \PHPUnit_Framework_TestCase
+class GuestPaymentInformationManagementPluginTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Persistent\Helper\Session
      */
-    private $persistentSessionHelper;
+    protected $persistentSessionHelper;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    private $customerSession;
+    protected $customerSession;
 
     /**
      * @var \Magento\Checkout\Model\Session
      */
-    private $checkoutSession;
+    protected $checkoutSession;
 
     /**
      * @var \Magento\Quote\Api\CartRepositoryInterface
      */
-    private $cartRepository;
+    protected $cartRepository;
 
     /**
      * @var \Magento\Quote\Api\CartManagementInterface
      */
-    private $cartManagement;
+    protected $cartManagement;
 
     /**
      * @var \Magento\Customer\Api\CustomerRepositoryInterface
      */
-    private $customerFactory;
+    protected $customerFactory;
 
     /**
      * @var \Magento\Quote\Api\CartItemRepositoryInterface
      */
-    private $cartItemRepository;
+    protected $cartItemRepository;
 
     /**
      * @var \Magento\Quote\Model\QuoteIdMask
      */
-    private $quoteIdMaskFactory;
+    protected $quoteIdMaskFactory;
 
     /**
      * @var \Magento\Quote\Api\PaymentMethodManagementInterface
      */
-    private $paymentMethodManagement;
+    protected $paymentMethodManagement;
 
     /**
      * @var \Magento\Quote\Api\BillingAddressManagementInterface
      */
-    private $billingAddressManagement;
+    protected $billingAddressManagement;
 
     /**
      * @var \Magento\Quote\Model\ShippingAddressManagementInterface
      */
-    private $shippingAddressManagement;
+    protected $shippingAddressManagement;
 
     /**
      * @var \Magento\Quote\Api\ShippingMethodManagementInterface
      */
-    private $shippingEstimateManagement;
+    protected $shippingEstimateManagement;
 
     /**
      * @var \Magento\Checkout\Api\TotalsInformationManagementInterface
      */
-    private $totalsInformationManagement;
+    protected $totalsInformationManagement;
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     public function setUp()
     {

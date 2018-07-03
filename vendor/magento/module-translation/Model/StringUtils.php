@@ -7,8 +7,6 @@
 /**
  * String translation model
  *
- * @method \Magento\Translation\Model\ResourceModel\StringUtils _getResource()
- * @method \Magento\Translation\Model\ResourceModel\StringUtils getResource()
  * @method int getStoreId()
  * @method \Magento\Translation\Model\StringUtils setStoreId(int $value)
  * @method string getTranslate()
@@ -25,7 +23,7 @@ class StringUtils extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Magento\Translation\Model\ResourceModel\StringUtils');
+        $this->_init(\Magento\Translation\Model\ResourceModel\StringUtils::class);
     }
 
     /**

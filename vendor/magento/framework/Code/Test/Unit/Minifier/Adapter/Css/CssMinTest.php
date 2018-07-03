@@ -5,11 +5,11 @@
  */
 namespace Magento\Framework\Code\Test\Unit\Minifier\Adapter\Css;
 
-class CssMinTest extends \PHPUnit_Framework_TestCase
+class CssMinTest extends \PHPUnit\Framework\TestCase
 {
     public function testMinify()
     {
-        $cssMinMock = $this->getMockBuilder(\CSSmin::class)
+        $cssMinMock = $this->getMockBuilder(\tubalmartin\CssMin\Minifier::class)
             ->disableOriginalConstructor()
             ->getMock();
         $cssMinAdapter = new \Magento\Framework\Code\Minifier\Adapter\Css\CSSmin($cssMinMock);

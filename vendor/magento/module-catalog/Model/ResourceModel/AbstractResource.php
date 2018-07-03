@@ -12,7 +12,11 @@ use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 
 /**
  * Catalog entity abstract model
+ *
+ * @api
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
 {
@@ -54,7 +58,7 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     protected function _getDefaultAttributeModel()
     {
-        return 'Magento\Catalog\Model\ResourceModel\Eav\Attribute';
+        return \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class;
     }
 
     /**
@@ -173,7 +177,10 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
     protected function _saveAttributeValue($object, $attribute, $value)
     {
         $connection = $this->getConnection();
-        $storeId = (int) $this->_storeManager->getStore($object->getStoreId())->getId();
+        $hasSingleStore = $this->_storeManager->hasSingleStore();
+        $storeId = $hasSingleStore
+            ? $this->getDefaultStoreId()
+            : (int) $this->_storeManager->getStore($object->getStoreId())->getId();
         $table = $attribute->getBackend()->getTable();
 
         /**
@@ -182,15 +189,18 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
          * In this case we clear all not default values
          */
         $entityIdField = $this->getLinkField();
-        if ($this->_storeManager->hasSingleStore()) {
-            $storeId = $this->getDefaultStoreId();
+        $conditions = [
+            'attribute_id = ?' => $attribute->getAttributeId(),
+            "{$entityIdField} = ?" => $object->getData($entityIdField),
+            'store_id <> ?' => $storeId
+        ];
+        if ($hasSingleStore
+            && !$object->isObjectNew()
+            && $this->isAttributePresentForNonDefaultStore($attribute, $conditions)
+        ) {
             $connection->delete(
                 $table,
-                [
-                    'attribute_id = ?' => $attribute->getAttributeId(),
-                    "{$entityIdField} = ?" => $object->getData($entityIdField),
-                    'store_id <> ?' => $storeId
-                ]
+                $conditions
             );
         }
 
@@ -227,6 +237,27 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
         }
 
         return $this;
+    }
+
+    /**
+     * Check if attribute present for non default Store View.
+     * Prevent "delete" query locking in a case when nothing to delete
+     *
+     * @param AbstractAttribute $attribute
+     * @param array $conditions
+     *
+     * @return boolean
+     */
+    private function isAttributePresentForNonDefaultStore($attribute, $conditions)
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()->from($attribute->getBackend()->getTable());
+        foreach ($conditions as $condition => $conditionValue) {
+            $select->where($condition, $conditionValue);
+        }
+        $select->limit(1);
+
+        return !empty($connection->fetchRow($select));
     }
 
     /**
@@ -502,7 +533,7 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
                 $staticTable,
                 $staticAttributes
             )->join(
-                ['e' => $this->getTable('catalog_product_entity')],
+                ['e' => $this->getTable($this->getEntityTable())],
                 'e.' . $this->getLinkField() . ' = ' . $staticTable . '.' . $this->getLinkField()
             )->where(
                 'e.entity_id = :entity_id'
@@ -523,7 +554,7 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
                 $select = $connection->select()
                     ->from(['default_value' => $table], ['attribute_id'])
                     ->join(
-                        ['e' => $this->getTable('catalog_product_entity')],
+                        ['e' => $this->getTable($this->getEntityTable())],
                         'e.' . $this->getLinkField() . ' = ' . 'default_value.' . $this->getLinkField(),
                         ''
                     )->where('default_value.attribute_id IN (?)', array_keys($_attributes))
@@ -563,11 +594,10 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
             }
         }
 
-        if (sizeof($attributesData) == 1) {
-            $_data = each($attributesData);
-            $attributesData = $_data[1];
+        if (is_array($attributesData) && sizeof($attributesData) == 1) {
+            $attributesData = array_shift($attributesData);
         }
 
-        return $attributesData ? $attributesData : false;
+        return $attributesData === false ? false : $attributesData;
     }
 }

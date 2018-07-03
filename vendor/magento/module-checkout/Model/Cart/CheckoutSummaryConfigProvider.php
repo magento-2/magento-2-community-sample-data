@@ -12,20 +12,16 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Class CheckoutSummaryConfigProvider provides configuration for checkout summary block.
+ * Class CheckoutSummaryConfigProvider provides configuration for checkout summary block
  */
 class CheckoutSummaryConfigProvider implements ConfigProviderInterface
 {
     /**
-     * Url builder interface.
-     *
      * @var UrlInterface
      */
     private $urlBuilder;
 
     /**
-     * Scope config data interface.
-     *
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -54,8 +50,8 @@ class CheckoutSummaryConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * Returns maximum cart items to display.
-     * This setting regulates how many items will be displayed in checkout summary block.
+     * Returns maximum cart items to display
+     * This setting regulates how many items will be displayed in checkout summary block
      *
      * @return int
      */

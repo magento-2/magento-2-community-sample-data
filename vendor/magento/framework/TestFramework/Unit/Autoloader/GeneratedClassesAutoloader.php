@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ *  Copyright © Magento, Inc. All rights reserved.
+ *  See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\TestFramework\Unit\Autoloader;
@@ -57,7 +57,6 @@ class GeneratedClassesAutoloader
             include $classSourceFile;
             return true;
         } else {
-
             foreach ($this->generators as $generator) {
                 $content = $generator->generate($className);
                 if ($content) {
@@ -67,7 +66,6 @@ class GeneratedClassesAutoloader
                     return true;
                 }
             };
-
         }
 
         return false;

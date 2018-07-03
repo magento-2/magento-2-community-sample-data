@@ -8,7 +8,8 @@ namespace Magento\Sales\Block\Adminhtml\Order\View;
 /**
  * Order history block
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class History extends \Magento\Backend\Block\Template
 {
@@ -60,7 +61,7 @@ class History extends \Magento\Backend\Block\Template
     {
         $onclick = "submitAndReloadArea($('order_history_block').parentNode, '" . $this->getSubmitUrl() . "')";
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->setData(
             ['label' => __('Submit Comment'), 'class' => 'action-save action-secondary', 'onclick' => $onclick]
         );

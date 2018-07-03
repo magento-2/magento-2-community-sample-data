@@ -6,10 +6,10 @@
 namespace Magento\Swatches\Model\Plugin;
 
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Framework\Exception\InputException;
-use Magento\Swatches\Model\Swatch;
-use Magento\Framework\Unserialize\SecureUnserializer;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Swatches\Model\Swatch;
 
 /**
  * Plugin model for Catalog Resource Attribute
@@ -53,27 +53,28 @@ class EavAttribute
     protected $isSwatchExists;
 
     /**
-     * @var SecureUnserializer
+     * Serializer from arrays to string.
+     *
+     * @var Json
      */
-    private $secureUnserializer;
+    private $serializer;
 
     /**
      * @param \Magento\Swatches\Model\ResourceModel\Swatch\CollectionFactory $collectionFactory
      * @param \Magento\Swatches\Model\SwatchFactory $swatchFactory
      * @param \Magento\Swatches\Helper\Data $swatchHelper
-     * @param SecureUnserializer|null $secureUnserializer
+     * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Swatches\Model\ResourceModel\Swatch\CollectionFactory $collectionFactory,
         \Magento\Swatches\Model\SwatchFactory $swatchFactory,
         \Magento\Swatches\Helper\Data $swatchHelper,
-        SecureUnserializer $secureUnserializer = null
+        Json $serializer = null
     ) {
         $this->swatchCollectionFactory = $collectionFactory;
         $this->swatchFactory = $swatchFactory;
         $this->swatchHelper = $swatchHelper;
-        $this->secureUnserializer = $secureUnserializer
-            ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->create(Json::class);
     }
 
     /**
@@ -154,10 +155,10 @@ class EavAttribute
         if ($attribute->getData(Swatch::SWATCH_INPUT_TYPE_KEY) == Swatch::SWATCH_INPUT_TYPE_DROPDOWN) {
             $additionalData = $attribute->getData('additional_data');
             if (!empty($additionalData)) {
-                $additionalData = $this->secureUnserializer->unserialize($additionalData);
+                $additionalData = $this->serializer->unserialize($additionalData);
                 if (is_array($additionalData) && isset($additionalData[Swatch::SWATCH_INPUT_TYPE_KEY])) {
                     unset($additionalData[Swatch::SWATCH_INPUT_TYPE_KEY]);
-                    $attribute->setData('additional_data', serialize($additionalData));
+                    $attribute->setData('additional_data', $this->serializer->serialize($additionalData));
                 }
             }
         }
@@ -193,7 +194,9 @@ class EavAttribute
     {
         if (isset($optionsArray['value']) && is_array($optionsArray['value'])) {
             foreach (array_keys($optionsArray['value']) as $optionId) {
-                if (isset($optionsArray['delete'][$optionId]) && $optionsArray['delete'][$optionId] == 1) {
+                if (isset($optionsArray['delete']) && isset($optionsArray['delete'][$optionId])
+                    && $optionsArray['delete'][$optionId] == 1
+                ) {
                     unset($optionsArray['value'][$optionId]);
                 }
             }
@@ -296,7 +299,11 @@ class EavAttribute
                     //option was deleted by button with basket
                     continue;
                 }
+                $defaultSwatchValue = reset($storeValues);
                 foreach ($storeValues as $storeId => $value) {
+                    if (!$value) {
+                        $value = $defaultSwatchValue;
+                    }
                     $swatch = $this->loadSwatchIfExists($optionId, $storeId);
                     $swatch->isDeleted($isOptionForDelete);
                     $this->saveSwatchData(
@@ -400,8 +407,7 @@ class EavAttribute
             /** @var \Magento\Swatches\Model\Swatch $swatch */
             $swatch = $this->swatchFactory->create();
             // created and removed on frontend option not exists in dependency array
-            if (
-                substr($defaultValue, 0, 6) == self::BASE_OPTION_TITLE &&
+            if (substr($defaultValue, 0, 6) == self::BASE_OPTION_TITLE &&
                 isset($this->dependencyArray[$defaultValue])
             ) {
                 $defaultValue = $this->dependencyArray[$defaultValue];
@@ -426,7 +432,7 @@ class EavAttribute
             $options = $attribute->getData('optiontext');
         }
         if ($options && !$this->isOptionsValid($options, $attribute)) {
-            throw new InputException(__('Admin is a required field in the each row'));
+            throw new InputException(__('Admin is a required field in each row'));
         }
         return true;
     }
@@ -453,5 +459,18 @@ class EavAttribute
             }
         }
         return true;
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @param bool $result
+     * @return bool
+     */
+    public function afterUsesSource(Attribute $attribute, $result)
+    {
+        if ($this->swatchHelper->isSwatchAttribute($attribute)) {
+            return true;
+        }
+        return $result;
     }
 }

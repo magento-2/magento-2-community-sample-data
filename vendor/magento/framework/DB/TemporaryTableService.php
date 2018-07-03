@@ -6,48 +6,36 @@
 namespace Magento\Framework\DB;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Select;
 
 /**
  * Class TemporaryTableService creates a temporary table in mysql from a Magento\Framework\DB\Select.
- * Use this class to create an index with that that you want to query later for quick data access.
+ * Use this class to create an index with that that you want to query later for quick data access
  *
  * @api
+ * @since 100.2.0
  */
 class TemporaryTableService
 {
-    /**
-     * Default index method.
-     */
     const INDEX_METHOD_HASH = 'HASH';
-
-    /**
-     * Default engine.
-     */
     const DB_ENGINE_INNODB = 'INNODB';
 
     /**
-     * Allowed index methods array.
-     *
      * @var string[]
      */
     private $allowedIndexMethods;
 
     /**
-     * Allowed engines array.
-     *
      * @var string[]
      */
     private $allowedEngines;
 
     /**
-     * Random data generator.
-     *
      * @var \Magento\Framework\Math\Random
      */
     private $random;
 
     /**
-     * ASrray of Magento Database Adapter Interface.
      * @var AdapterInterface[]
      */
     private $createdTableAdapters = [];
@@ -56,6 +44,7 @@ class TemporaryTableService
      * @param \Magento\Framework\Math\Random $random
      * @param string[] $allowedIndexMethods
      * @param string[] $allowedEngines
+     * @since 100.2.0
      */
     public function __construct(
         \Magento\Framework\Math\Random $random,
@@ -68,10 +57,10 @@ class TemporaryTableService
     }
 
     /**
-     * Creates a temporary table from select removing duplicate rows if you have a union in your select.
-     * This method should always be paired with dropTable to ensure cleanup.
-     * Make sure you index your data so you can query it fast.
-     * You can choose from memory or file table and provide indexes to ensure fast data query.
+     * Creates a temporary table from select removing duplicate rows if you have a union in your select
+     * This method should always be paired with dropTable to ensure cleanup
+     * Make sure you index your data so you can query it fast
+     * You can choose from memory or file table and provide indexes to ensure fast data query
      *
      * Example: createFromSelect(
      *           $selectObject,
@@ -82,7 +71,7 @@ class TemporaryTableService
      *              'UNQ_some_multiple_field_index' => ['field1', 'field2'],
      *           ]
      *          )
-     * Note that indexes names with UNQ_ prefix, will be created as unique.
+     * Note that indexes names with UNQ_ prefix, will be created as unique
      *
      * @param Select $select
      * @param AdapterInterface $adapter
@@ -91,6 +80,7 @@ class TemporaryTableService
      * @param string $dbEngine
      * @return string
      * @throws \InvalidArgumentException
+     * @since 100.2.0
      */
     public function createFromSelect(
         Select $select,
@@ -151,16 +141,17 @@ class TemporaryTableService
     }
 
     /**
-     * Method used to drop a table by name.
+     * Method used to drop a table by name
      * This class will hold all temporary table names in createdTableAdapters array
-     * so we can dispose them once we're finished.
+     * so we can dispose them once we're finished
      *
      * Example: dropTable($name)
      * where $name is a variable that holds the name for a previously created temporary  table
-     * by using "createFromSelect" method.
+     * by using "createFromSelect" method
      *
      * @param string $name
      * @return bool
+     * @since 100.2.0
      */
     public function dropTable($name)
     {
@@ -169,11 +160,9 @@ class TemporaryTableService
                 $adapter = $this->createdTableAdapters[$name];
                 $adapter->dropTemporaryTable($name);
                 unset($this->createdTableAdapters[$name]);
-
                 return true;
             }
         }
-
         return false;
     }
 }

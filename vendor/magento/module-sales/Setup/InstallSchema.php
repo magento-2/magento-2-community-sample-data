@@ -2091,7 +2091,7 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'cc_number_enc',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            32,
+            128,
             [],
             'Cc Number Enc'
         )->addColumn(
@@ -5569,6 +5569,5 @@ class InstallSchema implements InstallSchemaInterface
         $installer->getConnection()->createTable($table);
 
         $installer->endSetup();
-
     }
 }

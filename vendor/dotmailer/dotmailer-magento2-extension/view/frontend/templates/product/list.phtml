@@ -1,0 +1,135 @@
+<?php
+/** @var \Dotdigitalgroup\Email\Block\Recommended\Mostviewed $block */
+// @codingStandardsIgnoreFile
+?>
+<?php
+$i = 0;
+$mode = $block->getMode();
+$products = $block->getLoadedProductCollection();
+?>
+
+<?php if (!empty($products)) : ?>
+    <?php
+    $dynamicStyle = $block->helper->getDynamicStyles();
+    ?>
+    <style>
+        .product-name{
+            color: <?= $block->escapeHtml($dynamicStyle['nameColor']);?>;
+            font-size: <?= $block->escapeHtml($dynamicStyle['fontSize']);?>;
+        <?php if (in_array('bold', $dynamicStyle['nameStyle'])) : ?>
+            font-weight: bold;
+        <?php endif; ?><?php if (in_array('italic', $dynamicStyle['nameStyle'])) : ?>
+            font-style: italic;
+        <?php endif; ?><?php if (in_array('underline', $dynamicStyle['nameStyle'])) : ?>
+            text-decoration: underline;
+        <?php endif; ?>
+        }
+        .product-price{
+            color: <?= $block->escapeHtml($dynamicStyle['priceColor']);?>;
+            font-size: <?= $block->escapeHtml($dynamicStyle['priceFontSize']);?>;
+        <?php if (in_array('bold', $dynamicStyle['priceStyle'])) : ?>
+            font-weight: bold;
+        <?php endif; ?><?php if (in_array('italic', $dynamicStyle['priceStyle'])) : ?>
+            font-style: italic;
+        <?php endif; ?><?php if (in_array('underline', $dynamicStyle['priceStyle'])) : ?>
+            text-decoration: underline;
+        <?php endif; ?>
+        }
+        .proudct-url{
+            color: <?= $block->escapeHtml($dynamicStyle['urlColor']);?>;
+            font-size: <?= $block->escapeHtml($dynamicStyle['urlFontSize']);?>;
+        <?php if (in_array('bold', $dynamicStyle['linkStyle'])) : ?>
+            font-weight: bold;
+        <?php endif; ?><?php if (in_array('italic', $dynamicStyle['linkStyle'])) : ?>
+            font-style: italic;
+        <?php endif; ?><?php if (in_array('underline', $dynamicStyle['linkStyle'])) : ?>
+            text-decoration: underline;
+        <?php endif; ?>
+        }
+        .product-table{
+            font-family: <?= $block->escapeHtml($dynamicStyle['docFont']);?>;
+            background-color: <?= $block->escapeHtml($dynamicStyle['docBackgroundColor']);?>;
+            width: 100% !important;
+        }
+        .product-table img{
+            display: block;
+            margin-left: auto;
+            margin-right: auto
+        }
+        .product-table td{
+            width: 25%;
+            padding-bottom: 10px;
+        }
+        /** Styling from config field **/
+        <?= $block->escapeHtml($dynamicStyle['dynamicStyling']);?>
+        /** Responsive  **/
+        @media (max-width: 760px) {
+            /* Force table to not be like tables anymore */
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            .product-table td{
+                width: 172px !important;
+            }
+            .product-table {
+                width: auto !important;
+            }
+        }
+    </style>
+<?php endif; ?>
+
+<?php foreach ($products as $key => $_product) :?>
+    <?php if ($i == 0) : ?>
+        <table class="product-table" border="0" width="147" cellpadding="0" cellspacing="0"
+        style='border-collapse: collapse; font-size:12px';><tr>
+    <?php endif;?>
+    <?php if ($mode == 'list') :?>
+        </tr><tr>
+    <?php endif;?>
+
+    <td style="vertical-align: text-top; padding-right: 2px;">
+        <a href="<?= $block->escapeHtml($_product->getProductUrl()) ?>"
+           title="<?= $block->escapeHtml(
+               $block->stripTags(
+                   $block->getImageLabel(
+                       $_product,
+                       'small_image'
+                   ),
+                   null,
+                   true
+               )
+           ); ?>"
+           class="product-image"><?= $block->getImage($_product, 'product_small_image')->toHtml(); ?>
+            </a>
+        <div class="product-name" align="center"><b><?= $block->escapeHtml(
+                mb_substr(
+                    $_product->getName(),
+                    0,
+                    40
+                )
+            );
+        ?></b></div>
+        <div class="product-price" align="center">
+            <?php $productPriceHtml = $block->getLayout()->getBlock('ddg.product.price.render.default')
+                ->render('final_price', $_product, []) ?>
+            <?= /* @noEscape */ $productPriceHtml; ?>
+        </div>
+        <div align="center">
+            <a class="proudct-url" href="<?= $block->escapeHtml($_product->getProductUrl()); ?>">
+                <?php if ($urlText = $block->getTextForUrl($_product->getStoreId())) : ?>
+                    <?= $block->escapeHtml($urlText); ?>
+                <?php else : ?>
+                    <?= $block->escapehtml(__('View Now')); ?>
+                <?php endif;?>
+            </a>
+        </div>
+    </td>
+
+    <?php if ($i++ % 4 == 3 && $mode == 'grid') : ?>
+        </tr><tr>
+    <?php endif;?>
+<?php endforeach; ?>
+<?php if ($i > 0) : ?>
+    </table>
+<?php endif;
+

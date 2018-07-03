@@ -26,23 +26,13 @@ class BraintreeAdapter
     private $config;
 
     /**
-     * All arguments have `null` values to provide backward compatibility. This class MUST be initialized only
-     * via BraintreeAdapterFactory.
-     *
-     * @param Config|null $config
-     * @param string|null $merchantId
-     * @param string|null $publicKey
-     * @param string|null $privateKey
-     * @param string|null $environment
+     * @param string $merchantId
+     * @param string $publicKey
+     * @param string $privateKey
+     * @param string $environment
      */
-    public function __construct(
-        Config $config = null,
-        $merchantId = null,
-        $publicKey = null,
-        $privateKey = null,
-        $environment = null
-    ) {
-        $this->config = $config;
+    public function __construct($merchantId, $publicKey, $privateKey, $environment)
+    {
         $this->merchantId($merchantId);
         $this->publicKey($publicKey);
         $this->privateKey($privateKey);
@@ -58,6 +48,7 @@ class BraintreeAdapter
      * Initializes credentials.
      *
      * @return void
+     * @deprecated 100.2.2 is not used anymore
      */
     protected function initCredentials()
     {

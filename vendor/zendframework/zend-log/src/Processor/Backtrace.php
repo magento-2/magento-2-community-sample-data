@@ -1,11 +1,11 @@
 <?php
 /**
  * Zend Framework (http://framework.zend.com/)
-*
-* @link      http://github.com/zendframework/zf2 for the canonical source repository
-* @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
-* @license   http://framework.zend.com/license/new-bsd New BSD License
-*/
+ *
+ * @link      http://github.com/zendframework/zend-log for the canonical source repository
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ */
 
 namespace Zend\Log\Processor;
 
@@ -43,12 +43,12 @@ class Backtrace implements ProcessorInterface
             $i++;
         }
 
-        $origin = array(
-            'file'     => isset($trace[$i-1]['file'])   ? $trace[$i-1]['file']   : null,
-            'line'     => isset($trace[$i-1]['line'])   ? $trace[$i-1]['line']   : null,
-            'class'    => isset($trace[$i]['class'])    ? $trace[$i]['class']    : null,
+        $origin = [
+            'file'     => isset($trace[$i - 1]['file']) ? $trace[$i - 1]['file'] : null,
+            'line'     => isset($trace[$i - 1]['line']) ? $trace[$i - 1]['line'] : null,
+            'class'    => isset($trace[$i]['class']) ? $trace[$i]['class'] : null,
             'function' => isset($trace[$i]['function']) ? $trace[$i]['function'] : null,
-        );
+        ];
 
         $extra = $origin;
         if (isset($event['extra'])) {
@@ -66,10 +66,6 @@ class Backtrace implements ProcessorInterface
      */
     protected function getBacktrace()
     {
-        if (PHP_VERSION_ID >= 50400) {
-            return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->traceLimit);
-        }
-
-        return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->traceLimit);
     }
 }

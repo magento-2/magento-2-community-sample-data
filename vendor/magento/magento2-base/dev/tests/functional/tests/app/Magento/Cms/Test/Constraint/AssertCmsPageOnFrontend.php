@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Cms\Test\Constraint;
 
 use Magento\Cms\Test\Fixture\CmsPage;
@@ -21,7 +22,7 @@ class AssertCmsPageOnFrontend extends AbstractConstraint
      * @param CmsPage $cms
      * @param FrontCmsPage $frontCmsPage,
      * @param BrowserInterface $browser
-     * @param string|null $displayContent
+     * @param string $displayContent
      * @return void
      */
     public function processAssert(
@@ -46,6 +47,6 @@ class AssertCmsPageOnFrontend extends AbstractConstraint
      */
     public function toString()
     {
-        return "CMS Page content isn't displayed on frontend.";
+        return 'CMS Page content equals to data from fixture.';
     }
 }

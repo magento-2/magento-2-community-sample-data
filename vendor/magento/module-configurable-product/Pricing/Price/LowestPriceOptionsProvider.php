@@ -42,7 +42,7 @@ class LowestPriceOptionsProvider implements LowestPriceOptionsProviderInterface
      *
      * @var array
      */
-    private $productsMap;
+    private $linkedProductMap;
 
     /**
      * @param ResourceConnection $resourceConnection
@@ -69,18 +69,18 @@ class LowestPriceOptionsProvider implements LowestPriceOptionsProviderInterface
     public function getProducts(ProductInterface $product)
     {
         $key = $this->storeManager->getStore()->getId() . '-' . $product->getId();
-        if (!isset($this->productsMap[$key])) {
+        if (!isset($this->linkedProductMap[$key])) {
             $productIds = $this->resource->getConnection()->fetchCol(
                 '(' . implode(') UNION (', $this->linkedProductSelectBuilder->build($product->getId())) . ')'
             );
 
-            $this->productsMap[$key] = $this->collectionFactory->create()
+            $this->linkedProductMap[$key] = $this->collectionFactory->create()
                 ->addAttributeToSelect(
                     ['price', 'special_price', 'special_from_date', 'special_to_date', 'tax_class_id']
                 )
                 ->addIdFilter($productIds)
                 ->getItems();
         }
-        return $this->productsMap[$key];
+        return $this->linkedProductMap[$key];
     }
 }

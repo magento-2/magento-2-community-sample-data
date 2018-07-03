@@ -246,7 +246,6 @@ class Rsa
      *
      * @param  string          $data
      * @param  Rsa\AbstractKey $key
-     * @param  null|int        $padding An OPENSSL_*_PADDING constant value.
      * @return string
      * @throws Rsa\Exception\InvalidArgumentException
      */
@@ -284,7 +283,6 @@ class Rsa
      * @param  string          $data
      * @param  Rsa\AbstractKey $key
      * @param  int             $mode Input encoding
-     * @param  null|int        $padding An OPENSSL_*_PADDING constant value.
      * @return string
      * @throws Rsa\Exception\InvalidArgumentException
      * @see Rsa::MODE_AUTO
@@ -323,8 +321,9 @@ class Rsa
 
         if (null === $padding) {
             return $key->decrypt($data);
+        } else {
+            return $key->decrypt($data, $padding);
         }
-        return $key->decrypt($data, $padding);
     }
 
     /**
@@ -335,7 +334,7 @@ class Rsa
      * @return Rsa
      * @throws Rsa\Exception\RuntimeException
      */
-    public function generateKeys(array $opensslConfig = array())
+    public function generateKeys(array $opensslConfig = [])
     {
         $this->options->generateKeys($opensslConfig);
         return $this;

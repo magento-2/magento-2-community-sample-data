@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Temando_Shipping::static/css/main.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Temando\Shipping\Block\Adminhtml\ComponentContainer" name="admin.temando.location.edit">
+                <arguments>
+                    <argument name="template" xsi:type="string">Temando_Shipping::components/configuration/location/edit.phtml</argument>
+                    <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Location\LocationEdit</argument>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="temando-componentry" xsi:type="array">
+                                <item name="component" xsi:type="string">uiComponent</item>
+                                <item name="config" xsi:type="array">
+                                    <item name="template" xsi:type="string">Temando_Shipping/components/init</item>
+                                </item>
+                                <item name="children" xsi:type="array">
+                                    <item name="init" xsi:type="array">
+                                        <item name="sortOrder" xsi:type="string">1</item>
+                                        <item name="component" xsi:type="string">Temando_Shipping/js/view/components/init</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="page.actions.toolbar">
+            <block class="Magento\Backend\Block\Template" name="admin.temando.location.head-action" before="-">
+                <arguments>
+                    <argument name="template" xsi:type="string">Temando_Shipping::components/configuration/action-buttons.phtml</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

@@ -11,94 +11,62 @@ use Magento\Store\Model\Store;
 use Magento\CatalogSearch\Model\Indexer\Fulltext as FulltextIndex;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 
+$objectManager = Bootstrap::getObjectManager();
 //Creating second website with a store.
-$website = Bootstrap::getObjectManager()->create(Website::class);
 /** @var $website \Magento\Store\Model\Website */
-if (!$website->load('test', 'code')->getId()) {
+$website = $objectManager->create(Website::class);
+$website->load('test', 'code');
+
+if (!$website->getId()) {
     $website->setData([
         'code' => 'test',
         'name' => 'Test Website',
         'default_group_id' => '1',
-        'is_default' => '0'
+        'is_default' => '0',
     ]);
     $website->save();
 }
+
 $websiteId = $website->getId();
-$store = Bootstrap::getObjectManager()->create(Store::class);
-if (!$store->load('fixture_second_store', 'code')->getId()) {
-    $groupId = Bootstrap::getObjectManager()->get(
-        \Magento\Store\Model\StoreManagerInterface::class
-    )->getWebsite()->getDefaultGroupId();
-    $store->setCode(
-        'fixture_second_store'
-    )->setWebsiteId(
-        $websiteId
-    )->setGroupId(
-        $groupId
-    )->setName(
-        'Fixture Second Store'
-    )->setSortOrder(
-        10
-    )->setIsActive(
-        1
-    );
+$store = $objectManager->create(Store::class);
+$store->load('fixture_second_store', 'code');
+
+if (!$store->getId()) {
+    $groupId = $website->getDefaultGroupId();
+    $store->setData([
+        'code' => 'fixture_second_store',
+        'website_id' => $websiteId,
+        'group_id' => $groupId,
+        'name' => 'Fixture Second Store',
+        'sort_order' => 10,
+        'is_active' => 1,
+    ]);
     $store->save();
 }
+
 /* Refresh stores memory cache */
-Bootstrap::getObjectManager()->get(
-    \Magento\Store\Model\StoreManagerInterface::class
-)->reinitStores();
-/* Refresh CatalogSearch index */
-/** @var \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry */
-$indexerRegistry = Bootstrap::getObjectManager()
-    ->create(\Magento\Framework\Indexer\IndexerRegistry::class);
-$indexerRegistry->get(FulltextIndex::INDEXER_ID)->reindexAll();
+$objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)->reinitStores();
 
 //Setting up allowed countries
-/** @var ConfigFactory $configFactory */
-$configFactory = Bootstrap::getObjectManager()->get(ConfigFactory::class);
+$configResource = $objectManager->get(\Magento\Config\Model\ResourceModel\Config::class);
 //Allowed countries for default website.
-$configData = [
-    'section' => 'general',
-    'website' => 1,
-    'store'   => null,
-    'groups'  => [
-        'country' => [
-            'fields' => [
-                'default' => ['inherit' => 1],
-                'allow'   => ['value' => ['FR']],
-            ],
-        ],
-    ],
-];
-$configModel = $configFactory->create(['data' => $configData]);
-$configModel->save();
-//Allowed countries for second website
-$configData = [
-    'section' => 'general',
-    'website' => $websiteId,
-    'store'   => null,
-    'groups'  => [
-        'country' => [
-            'fields' => [
-                'default' => ['inherit' => 1],
-                'allow'   => ['value' => ['ES']],
-            ],
-        ],
-    ],
-];
-$configModel = $configFactory->create(['data' => $configData]);
-$configModel->save();
-/* Refresh stores memory cache */
-/** @var \Magento\Store\Model\StoreManagerInterface $storeManager */
-$storeManager = Bootstrap::getObjectManager()->get(
-    \Magento\Store\Model\StoreManagerInterface::class
+$configResource->saveConfig(
+    'general/country/allow',
+    'FR',
+    \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES,
+    1
 );
-$storeManager->reinitStores();
+//Allowed countries for second website
+$configResource->saveConfig(
+    'general/country/allow',
+    'ES',
+    \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES,
+    $websiteId
+);
+
 /* Refresh CatalogSearch index */
 /** @var \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry */
-$indexerRegistry = Bootstrap::getObjectManager()
-    ->create(\Magento\Framework\Indexer\IndexerRegistry::class);
+$indexerRegistry = $objectManager->create(\Magento\Framework\Indexer\IndexerRegistry::class);
 $indexerRegistry->get(FulltextIndex::INDEXER_ID)->reindexAll();
 //Clear config cache.
-Bootstrap::getObjectManager()->get(ReinitableConfigInterface::class)->reinit();
+$objectManager->get(ReinitableConfigInterface::class)->reinit();

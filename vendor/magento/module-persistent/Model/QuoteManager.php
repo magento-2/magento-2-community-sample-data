@@ -62,7 +62,7 @@ class QuoteManager
     }
 
     /**
-     * Clear cart of customer data if exists and reset guest information, remove persistent session.
+     * Clear cart of customer data if exists and reset guest information, remove persistent session
      *
      * @param bool $checkQuote Check quote to be persistent (not stolen)
      * @return void
@@ -99,10 +99,10 @@ class QuoteManager
     }
 
     /**
-     * Emulate guest cart with persistent cart.
+     * Emulate guest cart with persistent cart
      *
      * Converts persistent cart tied to logged out customer to a guest cart, retaining customer information required for
-     * checkout.
+     * checkout
      *
      * @return void
      */
@@ -127,7 +127,7 @@ class QuoteManager
             $this->quoteRepository->save($quote);
         }
     }
-    
+
     /**
      * Expire persistent quote
      *

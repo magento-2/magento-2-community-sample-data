@@ -14,10 +14,6 @@ use Magento\Integration\Model\ResourceModel\Oauth\Token\Collection as TokenColle
  * oAuth token model
  *
  * @method string getName() Consumer name (joined from consumer table)
- * @method TokenCollection getCollection()
- * @method TokenCollection getResourceCollection()
- * @method \Magento\Integration\Model\ResourceModel\Oauth\Token getResource()
- * @method \Magento\Integration\Model\ResourceModel\Oauth\Token _getResource()
  * @method int getConsumerId()
  * @method Token setConsumerId() setConsumerId(int $consumerId)
  * @method int getAdminId()
@@ -41,6 +37,8 @@ use Magento\Integration\Model\ResourceModel\Oauth\Token\Collection as TokenColle
  * @method int getAuthorized()
  * @method Token setAuthorized() setAuthorized(int $authorized)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 100.0.2
  */
 class Token extends \Magento\Framework\Model\AbstractModel
 {
@@ -55,9 +53,7 @@ class Token extends \Magento\Framework\Model\AbstractModel
 
     /**#@- */
 
-    /**
-     * @var OauthHelper
-     */
+    /**#@- */
     protected $_oauthHelper;
 
     /**
@@ -122,7 +118,7 @@ class Token extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Magento\Integration\Model\ResourceModel\Oauth\Token');
+        $this->_init(\Magento\Integration\Model\ResourceModel\Oauth\Token::class);
     }
 
     /**

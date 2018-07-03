@@ -11,7 +11,7 @@ use Magento\Framework\Api\SortOrder;
 /**
  * @covers \Magento\Framework\Api\SortOrder
  */
-class SortOrderTest extends \PHPUnit_Framework_TestCase
+class SortOrderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SortOrder
@@ -89,24 +89,11 @@ class SortOrderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\InputException
-     * @expectedExceptionMessage Sort order field invalid field (value); contains restricted symbols
-     */
-    public function testSetFieldValidateException()
-    {
-        $this->sortOrder = new SortOrder([
-            SortOrder::FIELD => 'value',
-        ]);
-        $this->sortOrder->setField('invalid field (value);');
-    }
-
-    /**
-     * @expectedException \Magento\Framework\Exception\InputException
-     * @expectedExceptionMessage Sort order field invalid field (value); contains restricted symbols
      */
     public function testValidateField()
     {
         $this->sortOrder = new SortOrder([
-            SortOrder::FIELD => 'invalid field (value);',
+            SortOrder::FIELD => 'invalid field (value);'
         ]);
     }
 }

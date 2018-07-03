@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!-- Managing Delivery Option Selection in Checkout -->
+    <route url="/V1/carts/mine/delivery-option" method="POST">
+        <service class="Temando\Shipping\Api\Quote\CartDeliveryOptionManagementInterface" method="save"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/guest-carts/:cartId/delivery-option" method="POST">
+        <service class="Temando\Shipping\Api\Quote\GuestCartDeliveryOptionManagementInterface" method="save"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <!-- Managing Temando RMA Return Shipments -->
+    <route url="/V1/temando/rma/:rmaId/shipments" method="PUT">
+        <service class="Temando\Shipping\Api\Rma\RmaShipmentManagementInterface" method="assignShipmentIds"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+
+    <!-- Managing Search for Collection Points (Guest Checkout) -->
+    <route method="PUT" url="/V1/guest-carts/:cartId/collection-point/search-request">
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="saveSearchRequest"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <route method="DELETE" url="/V1/guest-carts/:cartId/collection-point/search-request">
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="deleteSearchRequest"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <route method="GET" url="/V1/guest-carts/:cartId/collection-point/search-result">
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="getCollectionPoints"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <route method="POST" url="/V1/guest-carts/:cartId/collection-point/select">
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="selectCollectionPoint"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <!-- Managing Search for Collection Points (Logged-In Checkout) -->
+    <route method="PUT" url="/V1/carts/mine/collection-point/search-request">
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="saveSearchRequest"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route method="DELETE" url="/V1/carts/mine/collection-point/search-request">
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="deleteSearchRequest"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route method="GET" url="/V1/carts/mine/collection-point/search-result">
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="getCollectionPoints"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route method="POST" url="/V1/carts/mine/collection-point/select">
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="selectCollectionPoint"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <!-- Managing Service Fields in Checkout (guest checkout)-->
+    <route url="/V1/guest-carts/:cartId/checkout-fields" method="POST">
+        <service class="Temando\Shipping\Api\Quote\GuestCartCheckoutFieldManagementInterface" method="saveCheckoutFields"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <!-- Managing Service Fields in Checkout (Logged in customer) -->
+    <route url="/V1/carts/mine/checkout-fields" method="POST">
+        <service class="Temando\Shipping\Api\Quote\CartCheckoutFieldManagementInterface" method="saveCheckoutFields"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+</routes>

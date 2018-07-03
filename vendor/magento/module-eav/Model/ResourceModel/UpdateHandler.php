@@ -5,12 +5,12 @@
  */
 namespace Magento\Eav\Model\ResourceModel;
 
-use Magento\Eav\Api\AttributeRepositoryInterface as AttributeRepository;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\Operation\AttributeInterface;
+use Magento\Eav\Api\AttributeRepositoryInterface as AttributeRepository;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Model\Entity\ScopeResolver;
+use Magento\Framework\EntityManager\Operation\AttributeInterface;
 
 /**
  * Class UpdateHandler
@@ -139,13 +139,17 @@ class UpdateHandler implements AttributeInterface
 
                 if (array_key_exists($code, $snapshot)) {
                     $snapshotValue = $snapshot[$code];
-                    /** 'FALSE' value for attributes can't be update or delete */
+                    /**
+                     * 'FALSE' value for attributes can't be update or delete
+                     */
                     if ($snapshotValue === false) {
                         continue;
                     }
 
                     if (!$isValueEmpty || $isAllowedEmptyStringValue) {
-                        /** NOT Updated value for attributes not need to update */
+                        /**
+                         * NOT Updated value for attributes not need to update
+                         */
                         if ($snapshotValue === $newValue) {
                             continue;
                         }
@@ -164,7 +168,9 @@ class UpdateHandler implements AttributeInterface
                         );
                     }
                 } else {
-                    /** Only not empty value of attribute is insertable */
+                    /**
+                     * Only not empty value of attribute is insertable
+                     */
                     if (!$isValueEmpty || $isAllowedEmptyStringValue) {
                         $this->attributePersistor->registerInsert(
                             $entityType,
@@ -177,13 +183,14 @@ class UpdateHandler implements AttributeInterface
             }
             $this->attributePersistor->flush($entityType, $context);
         }
+
         return $this->getReadHandler()->execute($entityType, $entityData, $arguments);
     }
 
     /**
      * Get read handler
      *
-     * @deprecated
+     * @deprecated 100.1.0
      *
      * @return ReadHandler
      */
@@ -192,6 +199,7 @@ class UpdateHandler implements AttributeInterface
         if (!$this->readHandler) {
             $this->readHandler = ObjectManager::getInstance()->get(ReadHandler::class);
         }
+
         return $this->readHandler;
     }
 }

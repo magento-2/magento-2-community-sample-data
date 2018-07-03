@@ -14,11 +14,9 @@ use Magento\CatalogUrlRewrite\Model\Category\Product;
 use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product as ProductResourceModel;
 
 /**
- * Tests CategoryStoragePlugin class.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class StorageTest extends \PHPUnit_Framework_TestCase
+class StorageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CategoryStoragePlugin
@@ -77,11 +75,9 @@ class StorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Covers afterReplace() method.
-     *
-     * @return void
+     * test AfterReplace method
      */
-    public function testAroundReplace()
+    public function testAfterReplace()
     {
         $this->urlRewrite->expects(static::any())->method('getMetadata')->willReturn(['category_id' => '5']);
         $this->urlRewrite->expects(static::once())->method('getEntityTYpe')->willReturn('product');
@@ -96,20 +92,11 @@ class StorageTest extends \PHPUnit_Framework_TestCase
 
         $this->productResourceModel->expects(static::once())->method('saveMultiple')->willReturnSelf();
 
-        $className = 'Magento\UrlRewrite\Model\StorageInterface';
-        /** @var \Magento\SalesRule\Model\Rule|\PHPUnit_Framework_MockObject_MockObject $subject */
-        $subject = $this->getMock($className, [], [], '', false);
-        $closureMock = function () use ($subject) {
-            return $subject;
-        };
-
-        $this->plugin->aroundReplace($this->storage, $closureMock, $productUrls);
+        $this->plugin->afterReplace($this->storage, $productUrls, $productUrls);
     }
 
     /**
-     * Covers beforeDeleteByData() method.
-     *
-     * @return void
+     * test BeforeDeleteByData method
      */
     public function testBeforeDeleteByData()
     {

@@ -7,6 +7,8 @@ namespace Magento\ConfigurableProduct\Pricing\Render;
 
 /**
  * Responsible for displaying tier price box on configurable product page.
+ *
+ * @package Magento\ConfigurableProduct\Pricing\Render
  */
 class TierPriceBox extends FinalPriceBox
 {

@@ -8,7 +8,7 @@ namespace Magento\Store\Test\Unit\Block;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SwitcherTest extends \PHPUnit_Framework_TestCase
+class SwitcherTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\Store\Block\Switcher */
     protected $switcher;
@@ -27,16 +27,14 @@ class SwitcherTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')->getMock();
-        $this->urlBuilder = $this->getMockBuilder('Magento\Framework\UrlInterface')->getMock();
-        $this->context = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)->getMock();
+        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
         $this->context->expects($this->any())->method('getStoreManager')->will($this->returnValue($this->storeManager));
         $this->context->expects($this->any())->method('getUrlBuilder')->will($this->returnValue($this->urlBuilder));
-        $this->corePostDataHelper = $this->getMock('Magento\Framework\Data\Helper\PostHelper', [], [], '', false);
+        $this->corePostDataHelper = $this->createMock(\Magento\Framework\Data\Helper\PostHelper::class);
         $this->switcher = (new ObjectManager($this))->getObject(
-            'Magento\Store\Block\Switcher',
+            \Magento\Store\Block\Switcher::class,
             [
                 'context' => $this->context,
                 'postDataHelper' => $this->corePostDataHelper,
@@ -53,9 +51,9 @@ class SwitcherTest extends \PHPUnit_Framework_TestCase
             ->method('getCode')
             ->willReturn('new-store');
         $storeSwitchUrl = 'http://domain.com/stores/store/switch';
-        $store->expects($this->once())
+        $store->expects($this->atLeastOnce())
             ->method('getCurrentUrl')
-            ->with(false)
+            ->with(true)
             ->willReturn($storeSwitchUrl);
         $this->corePostDataHelper->expects($this->any())
             ->method('getPostData')
@@ -65,11 +63,11 @@ class SwitcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testIsStoreInUrlDataProvider
+     * @dataProvider isStoreInUrlDataProvider
      */
     public function testIsStoreInUrl($isUseStoreInUrl)
     {
-        $storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
+        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
 
         $storeMock->expects($this->once())->method('isUseStoreInUrl')->will($this->returnValue($isUseStoreInUrl));
 
@@ -83,7 +81,7 @@ class SwitcherTest extends \PHPUnit_Framework_TestCase
      * @see self::testIsStoreInUrlDataProvider()
      * @return array
      */
-    public function testIsStoreInUrlDataProvider()
+    public function isStoreInUrlDataProvider()
     {
         return [[true], [false]];
     }

@@ -36,7 +36,7 @@ class Repository
 
     /**
      * @var \Magento\Framework\View\Design\Theme\ListInterface
-     * @deprecated
+     * @deprecated 100.1.1
      */
     private $themeList;
 
@@ -168,7 +168,6 @@ class Repository
 
     /**
      * @return ThemeProviderInterface
-     * @deprecated
      */
     private function getThemeProvider()
     {
@@ -205,6 +204,14 @@ class Repository
         if (!$module && $params['module']) {
             $module = $params['module'];
         }
+
+        if (!isset($params['publish'])) {
+            $map = $this->getRepositoryFilesMap($fileId, $params);
+            if ($map) {
+                $params = array_replace($params, $map);
+            }
+        }
+
         $isSecure = isset($params['_secure']) ? (bool) $params['_secure'] : null;
         $themePath = isset($params['theme']) ? $params['theme'] : $this->design->getThemePath($params['themeModel']);
         $context = $this->getFallbackContext(
@@ -228,7 +235,7 @@ class Repository
     /**
      * Get current context for static view files
      *
-     * @return \Magento\Framework\View\Asset\ContextInterface
+     * @return \Magento\Framework\View\Asset\File\FallbackContext
      */
     public function getStaticViewFileContext()
     {
@@ -269,7 +276,7 @@ class Repository
                     'baseUrl' => $url,
                     'areaType' => $area,
                     'themePath' => $themePath,
-                    'localeCode' => $locale,
+                    'localeCode' => $locale
                 ]
             );
         }
@@ -430,5 +437,16 @@ class Repository
             );
         }
         return [$result[0], $result[1]];
+    }
+
+    /**
+     * @param string $fileId
+     * @param array $params
+     * @return RepositoryMap
+     */
+    private function getRepositoryFilesMap($fileId, array $params)
+    {
+        $repositoryMap = ObjectManager::getInstance()->get(RepositoryMap::class);
+        return $repositoryMap->getMap($fileId, $params);
     }
 }

@@ -14,9 +14,27 @@ use Magento\ImportExport\Model\Import;
 class RowCustomizer implements RowCustomizerInterface
 {
     /**
+     * Header column for Configurable Product variations
+     */
+    const CONFIGURABLE_VARIATIONS_COLUMN = 'configurable_variations';
+
+    /**
+     * Header column for Configurable Product variation labels
+     */
+    const CONFIGURABLE_VARIATIONS_LABELS_COLUMN = 'configurable_variation_labels';
+
+    /**
      * @var array
      */
     protected $configurableData = [];
+
+    /**
+     * @var string[]
+     */
+    private $configurableColumns = [
+        self::CONFIGURABLE_VARIATIONS_COLUMN,
+        self::CONFIGURABLE_VARIATIONS_LABELS_COLUMN
+    ];
 
     /**
      * Prepare configurable data for export
@@ -39,24 +57,26 @@ class RowCustomizer implements RowCustomizerInterface
 
             foreach ($productAttributesOptions as $productAttributeOption) {
                 foreach ($productAttributeOption as $optValues) {
-                    $variations[$optValues['sku']][] =
-                        $optValues['attribute_code'] . '=' . $optValues['option_title'];
+                    $variations[$optValues['sku']][] = $optValues['attribute_code'] . '=' . $optValues['option_title'];
+
                     if (!empty($optValues['super_attribute_label'])) {
-                        $variationsLabels[$optValues['attribute_code']] =
-                            $optValues['attribute_code'] . '=' . $optValues['super_attribute_label'];
+                        $variationsLabels[$optValues['attribute_code']] = $optValues['attribute_code'] . '='
+                            . $optValues['super_attribute_label'];
                     }
                 }
             }
 
             foreach ($variations as $sku => $values) {
-                $variations[$sku] =
-                    'sku=' . $sku . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
+                $variations[$sku] = 'sku=' . $sku . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
                     . implode(Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR, $values);
             }
 
             $this->configurableData[$product->getId()] = [
-                'configurable_variations' => implode(ImportProduct::PSEUDO_MULTI_LINE_SEPARATOR, $variations),
-                'configurable_variation_labels' => implode(
+                self::CONFIGURABLE_VARIATIONS_COLUMN => implode(
+                    ImportProduct::PSEUDO_MULTI_LINE_SEPARATOR,
+                    $variations
+                ),
+                self::CONFIGURABLE_VARIATIONS_LABELS_COLUMN => implode(
                     Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR,
                     $variationsLabels
                 )
@@ -72,17 +92,7 @@ class RowCustomizer implements RowCustomizerInterface
      */
     public function addHeaderColumns($columns)
     {
-        // have we merge configurable products data
-        if (!empty($this->configurableData)) {
-            $columns = array_merge(
-                $columns,
-                [
-                    'configurable_variations',
-                    'configurable_variation_labels',
-                ]
-            );
-        }
-        return $columns;
+        return array_merge($columns, $this->configurableColumns);
     }
 
     /**

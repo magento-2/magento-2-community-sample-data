@@ -6,11 +6,15 @@
 
 namespace Magento\SalesRule\Model\ResourceModel\Rule;
 
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Address;
 
 /**
  * Sales Rules resource collection model.
+ *
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\AbstractCollection
 {
@@ -23,6 +27,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
 
     /**
      * @var \Magento\SalesRule\Model\ResourceModel\Rule\DateApplier
+     * @since 100.1.0
      */
     protected $dateApplier;
 
@@ -32,6 +37,11 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
     protected $_date;
 
     /**
+     * @var Json $serializer
+     */
+    private $serializer;
+
+    /**
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -39,6 +49,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $date
      * @param mixed $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
+     * @param Json $serializer Optional parameter for backward compatibility
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -47,10 +58,12 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $date,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
+        Json $serializer = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
         $this->_date = $date;
+        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Json::class);
         $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
     }
 
@@ -61,7 +74,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      */
     protected function _construct()
     {
-        $this->_init('Magento\SalesRule\Model\Rule', 'Magento\SalesRule\Model\ResourceModel\Rule');
+        $this->_init(\Magento\SalesRule\Model\Rule::class, \Magento\SalesRule\Model\ResourceModel\Rule::class);
         $this->_map['fields']['rule_id'] = 'main_table.rule_id';
     }
 
@@ -70,6 +83,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      * @param string $objectField
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return void
+     * @since 100.1.0
      */
     protected function mapAssociatedEntities($entityType, $objectField)
     {
@@ -101,6 +115,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
     /**
      * @return $this
      * @throws \Exception
+     * @since 100.1.0
      */
     protected function _afterLoad()
     {
@@ -203,7 +218,6 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
                 );
             }
             $this->setOrder('sort_order', self::SORT_ORDER_ASC);
-            $this->setOrder('main_table.rule_id', self::SORT_ORDER_ASC);
             $this->setFlag('validation_filter', true);
         }
 
@@ -281,7 +295,23 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      */
     public function addAttributeInConditionFilter($attributeCode)
     {
-        $match = sprintf('%%%s%%', substr(serialize(['attribute' => $attributeCode]), 5, -1));
+        $match = sprintf('%%%s%%', substr($this->serializer->serialize(['attribute' => $attributeCode]), 1, -1));
+        /**
+         * Information about conditions and actions stored in table as JSON encoded array
+         * in fields conditions_serialized and actions_serialized.
+         * If you want to find rules that contains some particular attribute, the easiest way to do so is serialize
+         * attribute code in the same way as it stored in the serialized columns and execute SQL search
+         * with like condition.
+         * Table
+         * +-------------------------------------------------------------------+
+         * |     conditions_serialized       |         actions_serialized      |
+         * +-------------------------------------------------------------------+
+         * | {..."attribute":"attr_name"...} | {..."attribute":"attr_name"...} |
+         * +---------------------------------|---------------------------------+
+         * From attribute code "attr_code", will be generated such SQL:
+         * `condition_serialized` LIKE '%"attribute":"attr_name"%'
+         *      OR `actions_serialized` LIKE '%"attribute":"attr_name"%'
+         */
         $field = $this->_getMappedField('conditions_serialized');
         $cCond = $this->_getConditionSql($field, ['like' => $match]);
         $field = $this->_getMappedField('actions_serialized');
@@ -313,6 +343,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      *
      * @param int $customerGroupId
      * @return $this
+     * @since 100.1.0
      */
     public function addCustomerGroupFilter($customerGroupId)
     {
@@ -333,13 +364,13 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
 
     /**
      * @return array
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getAssociatedEntitiesMap()
     {
         if (!$this->_associatedEntitiesMap) {
             $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap')
+                ->get(\Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap::class)
                 ->getData();
         }
         return $this->_associatedEntitiesMap;
@@ -347,7 +378,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
 
     /**
      * @return DateApplier
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getDateApplier()
     {

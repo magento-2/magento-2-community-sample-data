@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Block\Backend\Grid\Column\Renderer;
 
-class ScheduledTest extends \PHPUnit_Framework_TestCase
+class ScheduledTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param bool $rowValue
@@ -18,7 +18,7 @@ class ScheduledTest extends \PHPUnit_Framework_TestCase
         $html = '<span class="' . $class . '"><span>' . $text . '</span></span>';
         $row = new \Magento\Framework\DataObject();
         $column = new \Magento\Framework\DataObject();
-        $context = $this->getMockBuilder('\Magento\Backend\Block\Context')
+        $context = $this->getMockBuilder(\Magento\Backend\Block\Context::class)
             ->disableOriginalConstructor()
             ->getMock();
 

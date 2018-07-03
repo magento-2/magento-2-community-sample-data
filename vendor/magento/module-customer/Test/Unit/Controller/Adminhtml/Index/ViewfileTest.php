@@ -9,7 +9,7 @@ namespace Magento\Customer\Test\Unit\Controller\Adminhtml\Index;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ViewfileTest extends \PHPUnit_Framework_TestCase
+class ViewfileTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Controller\Result\RawFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -69,33 +69,24 @@ class ViewfileTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->requestMock = $this->getMock(\Magento\Framework\App\RequestInterface::class, [], [], '', false);
-        $this->responseMock = $this->getMock(\Magento\Framework\App\ResponseInterface::class, [], [], '', false);
-        $this->directoryMock = $this->getMock(
-            \Magento\Framework\Filesystem\Directory\ReadInterface::class,
-            [],
-            [],
-            '',
-            false
-        );
-        $this->fileSystemMock = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
-        $this->storage = $this->getMock(\Magento\MediaStorage\Helper\File\Storage::class, [], [], '', false);
-        $this->objectManagerMock = $this->getMock(\Magento\Framework\ObjectManagerInterface::class, [], [], '', false);
+        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\ResponseInterface::class);
+        $this->directoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
+        $this->fileSystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->storage = $this->createMock(\Magento\MediaStorage\Helper\File\Storage::class);
+        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
 
-        $this->contextMock = $this->getMock(\Magento\Backend\App\Action\Context::class, [], [], '', false);
+        $this->contextMock = $this->createMock(\Magento\Backend\App\Action\Context::class);
         $this->contextMock->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
         $this->contextMock->expects($this->any())->method('getResponse')->willReturn($this->responseMock);
         $this->contextMock->expects($this->any())->method('getObjectManager')->willReturn($this->objectManagerMock);
 
-        $this->urlDecoderMock = $this->getMock(\Magento\Framework\Url\DecoderInterface::class, [], [], '', false);
-        $this->resultRawMock = $this->getMock(\Magento\Framework\Controller\Result\Raw::class, [], [], '', false);
+        $this->urlDecoderMock = $this->createMock(\Magento\Framework\Url\DecoderInterface::class);
+        $this->resultRawMock = $this->createMock(\Magento\Framework\Controller\Result\Raw::class);
 
-        $this->resultRawFactoryMock = $this->getMock(
+        $this->resultRawFactoryMock = $this->createPartialMock(
             \Magento\Framework\Controller\Result\RawFactory::class,
-            ['create'],
-            [],
-            '',
-            false
+            ['create']
         );
     }
 
@@ -114,14 +105,14 @@ class ViewfileTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Magento\Framework\Exception\NotFoundException
      * @expectedExceptionMessage Page not found.
      */
-    public function testExecuteInvaliFile()
+    public function testExecuteInvalidFile()
     {
         $file = '../../../app/etc/env.php';
-        $decodedFile = base64_encode($file);
+        $encodedFile = base64_encode($file);
         $fileName = 'customer/' . $file;
         $path = 'path';
 
-        $this->requestMock->expects($this->atLeastOnce())->method('getParam')->with('file')->willReturn($decodedFile);
+        $this->requestMock->expects($this->atLeastOnce())->method('getParam')->with('file')->willReturn($encodedFile);
 
         $this->directoryMock->expects($this->once())->method('getAbsolutePath')->with($fileName)->willReturn($path);
 
@@ -139,8 +130,8 @@ class ViewfileTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->urlDecoderMock->expects($this->once())->method('decode')->with($decodedFile)->willReturn($file);
-        $fileFactoryMock = $this->getMock(\Magento\Framework\App\Response\Http\FileFactory::class, [], [], '', false);
+        $this->urlDecoderMock->expects($this->once())->method('decode')->with($encodedFile)->willReturn($file);
+        $fileFactoryMock = $this->createMock(\Magento\Framework\App\Response\Http\FileFactory::class);
 
         $controller = $this->objectManager->getObject(
             \Magento\Customer\Controller\Adminhtml\Index\Viewfile::class,
@@ -180,8 +171,8 @@ class ViewfileTest extends \PHPUnit_Framework_TestCase
 
         $this->urlDecoderMock->expects($this->once())->method('decode')->with($decodedFile)->willReturn($file);
 
-        $fileResponse = $this->getMock(\Magento\Framework\App\ResponseInterface::class, [], [], '', false);
-        $fileFactoryMock = $this->getMock(\Magento\Framework\App\Response\Http\FileFactory::class, [], [], '', false);
+        $fileResponse = $this->createMock(\Magento\Framework\App\ResponseInterface::class);
+        $fileFactoryMock = $this->createMock(\Magento\Framework\App\Response\Http\FileFactory::class);
         $fileFactoryMock->expects($this->once())->method('create')->with(
             $path,
             ['type' => 'filename', 'value' => $fileName],
@@ -241,12 +232,9 @@ class ViewfileTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->resultRawFactoryMock = $this->getMock(
+        $this->resultRawFactoryMock = $this->createPartialMock(
             \Magento\Framework\Controller\Result\RawFactory::class,
-            ['create'],
-            [],
-            '',
-            false
+            ['create']
         );
         $this->resultRawFactoryMock->expects($this->once())->method('create')->willReturn($this->resultRawMock);
 

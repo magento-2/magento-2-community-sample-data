@@ -6,11 +6,10 @@
 
 namespace Magento\Framework\App\Test\Unit\Config;
 
-
 use Magento\Framework\App\Config\InitialConfigSource;
 use Magento\Framework\App\DeploymentConfig\Reader;
 
-class InitialConfigSourceTest extends \PHPUnit_Framework_TestCase
+class InitialConfigSourceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Reader|\PHPUnit_Framework_MockObject_MockObject
@@ -23,11 +22,6 @@ class InitialConfigSourceTest extends \PHPUnit_Framework_TestCase
     private $configType;
 
     /**
-     * @var string
-     */
-    private $fileKey;
-
-    /**
      * @var InitialConfigSource
      */
     private $source;
@@ -38,8 +32,7 @@ class InitialConfigSourceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->configType = 'configType';
-        $this->fileKey = 'file.php';
-        $this->source = new InitialConfigSource($this->reader, $this->configType, $this->fileKey);
+        $this->source = new InitialConfigSource($this->reader, $this->configType);
     }
 
     public function testGet()
@@ -47,8 +40,7 @@ class InitialConfigSourceTest extends \PHPUnit_Framework_TestCase
         $path = 'path';
         $this->reader->expects($this->once())
             ->method('load')
-            ->with($this->fileKey)
             ->willReturn([$this->configType => [$path => 'value']]);
-        $this->assertEquals([$path => 'value'], $this->source->get());
+        $this->assertEquals('value', $this->source->get($path));
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Model;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
-class UrlRewriteBunchReplacerTest extends \PHPUnit_Framework_TestCase
+class UrlRewriteBunchReplacerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UrlPersistInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -22,17 +22,12 @@ class UrlRewriteBunchReplacerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->urlPersistMock = $this->getMock(UrlPersistInterface::class);
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
         $this->urlRewriteBunchReplacer = new UrlRewriteBunchReplacer(
             $this->urlPersistMock
         );
     }
 
-    /**
-     * Covers doBunchReplace() method.
-     *
-     * @return void
-     */
     public function testDoBunchReplace()
     {
         $urls = [[1], [2]];

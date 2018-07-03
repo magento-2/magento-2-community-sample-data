@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- API Preferences -->
+    <preference for="Vertex\Tax\Api\Data\LogEntryInterface" type="Vertex\Tax\Model\Data\LogEntry"/>
+    <preference for="Vertex\Tax\Api\Data\LogEntrySearchResultsInterface"
+                type="Magento\Framework\Api\SearchResultsInterface"/>
+    <preference for="Vertex\Tax\Api\LogEntryRepositoryInterface" type="Vertex\Tax\Model\Repository\LogEntryRepository"/>
+    <preference for="Vertex\Tax\Api\ClientInterface" type="Vertex\Tax\Model\ApiClient"/>
+    <preference for="Vertex\Tax\Model\TaxRegistry\StorageInterface" type="Vertex\Tax\Model\TaxRegistry\GenericStorage" />
+
+    <!-- SoapFault Conversion -->
+    <preference for="Vertex\Tax\Model\ApiClient\SoapFaultConverterInterface"
+                type="Vertex\Tax\Model\ApiClient\PooledSoapFaultConverter" />
+    <type name="Vertex\Tax\Model\ApiClient\PooledSoapFaultConverter">
+        <arguments>
+            <argument name="converters" xsi:type="array">
+                <item name="connectionFailure" xsi:type="object">Vertex\Tax\Model\ApiClient\ConnectionFailureConverter</item>
+                <item name="authFailure" xsi:type="object">Vertex\Tax\Model\ApiClient\AuthenticationFailureConverter</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Workaround for issue discovered in Magento 2.1.8 where preference doesn't exist for CustomerExtensionInterface -->
+    <preference for="Magento\Customer\Api\Data\CustomerExtensionInterface" type="Magento\Customer\Api\Data\CustomerExtension"/>
+
+    <!-- Plugins -->
+    <type name="Magento\Customer\Api\CustomerRepositoryInterface">
+        <plugin name="extensionAttributeVertexCustomerCode" type="Vertex\Tax\Model\Plugin\CustomerRepositoryPlugin" />
+    </type>
+    <type name="Magento\Tax\Model\System\Config\Source\Algorithm">
+        <plugin name="addVertexCalculationMethod" type="Vertex\Tax\Model\Plugin\AlgorithmPlugin" sortOrder="1"/>
+    </type>
+
+    <type name="Magento\Tax\Model\Sales\Total\Quote\Tax">
+        <plugin name="collectVertexTaxes" type="Vertex\Tax\Model\Plugin\QuoteTaxCollectorPlugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Tax\Model\Calculation\CalculatorFactory">
+        <plugin name="provideVertexCalculator" type="Vertex\Tax\Model\Plugin\CalculatorFactoryPlugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Tax\Model\Sales\Total\Quote\Subtotal">
+        <plugin name="addVertexCalculationItemSku" type="Vertex\Tax\Model\Plugin\SubtotalPlugin" sortOrder="10" />
+    </type>
+
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Form">
+        <plugin name="PrepareVertexResponseMessages" type="Vertex\Tax\Block\Plugin\OrderCreateFormPlugin" sortOrder="1" />
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Totals">
+        <plugin name="PrepareVertexResponseMessages" type="Vertex\Tax\Block\Plugin\OrderCreateTotalsPlugin" sortOrder="1" />
+    </type>
+</config>

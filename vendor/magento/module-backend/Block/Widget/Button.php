@@ -8,7 +8,10 @@ namespace Magento\Backend\Block\Widget;
 /**
  * Button widget
  *
+ * @api
  * @author     Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Button extends \Magento\Backend\Block\Widget
 {
@@ -113,7 +116,7 @@ class Button extends \Magento\Backend\Block\Widget
             if ($attributeValue === null || $attributeValue == '') {
                 continue;
             }
-            $html .= $attributeKey . '="' . $this->escapeHtml($attributeValue) . '" ';
+            $html .= $attributeKey . '="' . $this->escapeHtmlAttr($attributeValue, false) . '" ';
         }
 
         return $html;

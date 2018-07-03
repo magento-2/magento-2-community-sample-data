@@ -15,6 +15,7 @@ namespace Composer\Test;
 use Composer\Installer;
 use Composer\Console\Application;
 use Composer\Json\JsonFile;
+use Composer\Util\Filesystem;
 use Composer\Repository\ArrayRepository;
 use Composer\Repository\RepositoryManager;
 use Composer\Repository\InstalledArrayRepository;
@@ -34,6 +35,7 @@ use Composer\IO\BufferIO;
 class InstallerTest extends TestCase
 {
     protected $prevCwd;
+    protected $tempComposerHome;
 
     public function setUp()
     {
@@ -44,6 +46,10 @@ class InstallerTest extends TestCase
     public function tearDown()
     {
         chdir($this->prevCwd);
+        if (is_dir($this->tempComposerHome)) {
+            $fs = new Filesystem;
+            $fs->removeDirectory($this->tempComposerHome);
+        }
     }
 
     /**
@@ -76,8 +82,8 @@ class InstallerTest extends TestCase
         $result = $installer->run();
         $this->assertSame(0, $result);
 
-        $expectedInstalled   = isset($options['install']) ? $options['install'] : array();
-        $expectedUpdated     = isset($options['update']) ? $options['update'] : array();
+        $expectedInstalled = isset($options['install']) ? $options['install'] : array();
+        $expectedUpdated = isset($options['update']) ? $options['update'] : array();
         $expectedUninstalled = isset($options['uninstall']) ? $options['uninstall'] : array();
 
         $installed = $installationManager->getInstalledPackages();
@@ -159,6 +165,7 @@ class InstallerTest extends TestCase
 
         // Create Composer mock object according to configuration
         $composer = FactoryMock::create($io, $composerConfig);
+        $this->tempComposerHome = $composer->getConfig()->get('home');
 
         $jsonMock = $this->getMockBuilder('Composer\Json\JsonFile')->disableOriginalConstructor()->getMock();
         $jsonMock->expects($this->any())
@@ -191,7 +198,7 @@ class InstallerTest extends TestCase
         }
 
         $contents = json_encode($composerConfig);
-        $locker   = new Locker($io, $lockJsonMock, $repositoryManager, $composer->getInstallationManager(), $contents);
+        $locker = new Locker($io, $lockJsonMock, $repositoryManager, $composer->getInstallationManager(), $contents);
         $composer->setLocker($locker);
 
         $eventDispatcher = $this->getMockBuilder('Composer\EventDispatcher\EventDispatcher')->disableOriginalConstructor()->getMock();
@@ -338,7 +345,7 @@ class InstallerTest extends TestCase
             'CONDITION' => false,
             'COMPOSER' => true,
             'LOCK' => false,
-            'INSTALLED'  => false,
+            'INSTALLED' => false,
             'RUN' => true,
             'EXPECT-LOCK' => false,
             'EXPECT-OUTPUT' => false,

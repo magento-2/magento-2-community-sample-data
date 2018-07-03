@@ -8,17 +8,23 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\Quote\Model\Quote\Address\RateCollectorInterface" type="Magento\Shipping\Model\Shipping" />
     <preference for="Magento\Shipping\Model\CarrierFactoryInterface" type="Magento\Shipping\Model\CarrierFactory" />
-    <preference for="Magento\Shipping\Model\Carrier\Source\GenericInterface" type="\Magento\Shipping\Model\Carrier\Source\GenericDefault" />
-    <type name="Magento\Config\Model\Config\Export\ExcludeList">
+    <preference for="Magento\Shipping\Model\Carrier\Source\GenericInterface" type="Magento\Shipping\Model\Carrier\Source\GenericDefault" />
+
+    <virtualType name="Magento\Shipping\Model\Carrier\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
         <arguments>
-            <argument name="configs" xsi:type="array">
-                <item name="shipping/origin/country_id" xsi:type="string">1</item>
-                <item name="shipping/origin/region_id" xsi:type="string">1</item>
-                <item name="shipping/origin/postcode" xsi:type="string">1</item>
-                <item name="shipping/origin/city" xsi:type="string">1</item>
-                <item name="shipping/origin/street_line1" xsi:type="string">1</item>
-                <item name="shipping/origin/street_line2" xsi:type="string">1</item>
+            <argument name="fileName" xsi:type="string">/var/log/shipping.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Shipping\Model\Method\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Magento\Shipping\Model\Carrier\VirtualDebug</item>
             </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Shipping\Model\Carrier\AbstractCarrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magento\Shipping\Model\Method\VirtualLogger</argument>
         </arguments>
     </type>
 </config>

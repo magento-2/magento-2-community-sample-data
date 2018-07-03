@@ -63,11 +63,14 @@ class Collection extends AbstractCollection implements OrderPaymentSearchResultI
      */
     protected function _construct()
     {
-        $this->_init('Magento\Sales\Model\Order\Payment', 'Magento\Sales\Model\ResourceModel\Order\Payment');
+        $this->_init(
+            \Magento\Sales\Model\Order\Payment::class,
+            \Magento\Sales\Model\ResourceModel\Order\Payment::class
+        );
     }
 
     /**
-     * Unserialize additional_information in each item.
+     * Unserialize additional_information in each item
      *
      * @return $this
      */
@@ -76,7 +79,6 @@ class Collection extends AbstractCollection implements OrderPaymentSearchResultI
         foreach ($this->_items as $item) {
             $this->getResource()->unserializeFields($item);
         }
-
         return parent::_afterLoad();
     }
 }

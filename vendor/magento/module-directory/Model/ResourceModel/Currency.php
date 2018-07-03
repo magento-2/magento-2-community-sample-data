@@ -4,11 +4,14 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * Directory Currency Resource Model
- */
 namespace Magento\Directory\Model\ResourceModel;
 
+/**
+ * Currency Resource Model
+ *
+ * @api
+ * @since 100.0.2
+ */
 class Currency extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -162,6 +165,8 @@ class Currency extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param string $path
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @deprecated because doesn't take into consideration scopes and system config values.
+     * @see \Magento\Directory\Model\CurrencyConfig::getConfigCurrencies()
      */
     public function getConfigCurrencies($model, $path)
     {

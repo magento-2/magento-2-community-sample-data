@@ -1,0 +1,66 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Shipping\View\ExportDetails $block */ ?>
+<?php $exportDeclaration = $block->getExportDeclaration() ?>
+<?php if ($exportDeclaration) : ?>
+    <div class="admin__page-section-item order-shipping-export-details">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('International Shipment Details')) ?></span>
+        </div>
+        <table class="data-table admin__table-secondary order-shipping-export-details-table">
+            <tr>
+                <th><?= $block->escapeHtml(__('Signatory Title')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getSignatoryPersonTitle()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Signatory First Name')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getSignatoryPersonFirstName()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Signatory Last Name')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getSignatoryPersonLastName()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('International Commercial Terms (Incoterm)')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getIncoterm()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Export Reason')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getExportReason()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Export Category')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getExportCategory()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Dutiable Shipment')) ?></th>
+                <td>
+                    <?php if ($exportDeclaration->isDutiable()) : ?>
+                        <?= $block->escapeHtml(__('Yes')) ?>
+                    <?php else : ?>
+                        <?= $block->escapeHtml(__('No')) ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('EDN')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getEdn()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('EEL')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getEel()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('EEI')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getEei()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('ITN')) ?></th>
+                <td><?= $block->escapeHtml($exportDeclaration->getItn()) ?></td>
+            </tr>
+        </table>
+    </div>
+<?php endif; ?>

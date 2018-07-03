@@ -11,7 +11,9 @@ use Magento\Sales\Model\ResourceModel\Order\Comment\Collection\AbstractCollectio
 /**
  * Flat sales order invoice comment collection
  *
+ * @api
  * @author      Magento Core Team <core@magentocommerce.com>
+ * @since 100.0.2
  */
 class Collection extends AbstractCollection implements InvoiceCommentSearchResultInterface
 {
@@ -38,8 +40,8 @@ class Collection extends AbstractCollection implements InvoiceCommentSearchResul
     {
         parent::_construct();
         $this->_init(
-            'Magento\Sales\Model\Order\Invoice\Comment',
-            'Magento\Sales\Model\ResourceModel\Order\Invoice\Comment'
+            \Magento\Sales\Model\Order\Invoice\Comment::class,
+            \Magento\Sales\Model\ResourceModel\Order\Invoice\Comment::class
         );
     }
 

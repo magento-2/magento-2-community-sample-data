@@ -10,17 +10,13 @@
     <preference for="Magento\Framework\Shell\CommandRendererInterface" type="Magento\Framework\Shell\CommandRenderer" />
     <preference for="Magento\Framework\Crontab\CrontabManagerInterface" type="Magento\Framework\Crontab\CrontabManager" />
     <preference for="Magento\Framework\Crontab\TasksProviderInterface" type="Magento\Framework\Crontab\TasksProvider" />
-    <type name="Magento\Cron\Model\Config\Reader\Db">
-        <arguments>
-            <argument name="defaultReader" xsi:type="object">DefaultScopeReader</argument>
-        </arguments>
-    </type>
     <type name="Magento\Config\Model\Config\Structure\Converter">
         <plugin name="cron_backend_config_structure_converter_plugin" type="Magento\Cron\Model\Backend\Config\Structure\Converter" />
     </type>
     <type name="Magento\Framework\App\Config\Initial\Converter">
         <plugin name="cron_system_config_initial_converter_plugin" type="Magento\Cron\Model\System\Config\Initial\Converter" />
     </type>
+    <!-- @api -->
     <virtualType name="shellBackground" type="Magento\Framework\Shell">
         <arguments>
             <argument name="commandRenderer" xsi:type="object">Magento\Framework\Shell\CommandRendererBackground</argument>

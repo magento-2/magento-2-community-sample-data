@@ -14,7 +14,7 @@ use Magento\SalesInventory\Model\Order\ReturnValidator;
 use Magento\Sales\Model\ValidatorResultInterface;
 
 /**
- * Class InvoiceRefundCreationArguments
+ * Class CreditmemoCreationArguments
  */
 class InvoiceRefundCreationArguments
 {
@@ -35,7 +35,7 @@ class InvoiceRefundCreationArguments
 
     /**
      * @param RefundInvoiceInterface $refundInvoiceValidator
-     * @param \Closure $proceed
+     * @param ValidatorResultInterface $validationResults
      * @param InvoiceInterface $invoice
      * @param OrderInterface $order
      * @param CreditmemoInterface $creditmemo
@@ -49,9 +49,9 @@ class InvoiceRefundCreationArguments
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
-    public function aroundValidate(
+    public function afterValidate(
         RefundInvoiceInterface $refundInvoiceValidator,
-        \Closure $proceed,
+        ValidatorResultInterface $validationResults,
         InvoiceInterface $invoice,
         OrderInterface $order,
         CreditmemoInterface $creditmemo,
@@ -62,17 +62,6 @@ class InvoiceRefundCreationArguments
         \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface $comment = null,
         \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface $arguments = null
     ) {
-        $validationResults = $proceed(
-            $invoice,
-            $order,
-            $creditmemo,
-            $items,
-            $isOnline,
-            $notify,
-            $appendComment,
-            $comment,
-            $arguments
-        );
         if ($this->isReturnToStockItems($arguments)) {
             return $validationResults;
         }

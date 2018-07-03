@@ -8,15 +8,13 @@ namespace Magento\Checkout\Model\Adminhtml;
 use Magento\Framework\Option\ArrayInterface;
 
 /**
- * BillingAddressDisplayOptions gets list of configuration options for billing
- * address displaying on the Payment step on checkout
+ * BillingAddressDisplayOptions gets list of configuration options for billing address displaying on
+ * the Payment step on checkout
  */
 class BillingAddressDisplayOptions implements ArrayInterface
 {
-
     /**
-     * Return array of options for billing address displaying on checkout
-     * payment step
+     * Return array of options for billing address displaying on checkout payment step
      *
      * @return array:
      * [
@@ -29,12 +27,12 @@ class BillingAddressDisplayOptions implements ArrayInterface
         return [
             [
                 'label' => __('Payment Method'),
-                'value' => 0,
+                'value' => 0
             ],
             [
                 'label' => __('Payment Page'),
-                'value' => 1,
-            ],
+                'value' => 1
+            ]
         ];
     }
 }

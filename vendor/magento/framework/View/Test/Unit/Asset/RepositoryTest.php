@@ -11,16 +11,21 @@ use Magento\Framework\View\Asset\Repository;
 use Magento\Framework\View\Design\Theme\ThemeProviderInterface;
 
 /**
- * Unit test for Magento\Framework\View\Asset\Repository.
+ * Unit test for Magento\Framework\View\Asset\Repository
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RepositoryTest extends \PHPUnit_Framework_TestCase
+class RepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\View\Asset\Repository
      */
     private $repository;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $objectManagerMock;
 
     /**
      * @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -33,7 +38,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
     private $designMock;
 
     /**
-     * @var \Magento\Framework\View\Design\Theme\ListInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ThemeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $themeProvider;
 
@@ -72,15 +77,17 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->objectManagerMock = $this->createPartialMock(
+            \Magento\Framework\ObjectManager\ObjectManager::class,
+            ['create', 'get']
+        );
         $this->urlMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->designMock = $this->getMockBuilder(\Magento\Framework\View\DesignInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->themeProvider = $this->getMockBuilder(ThemeProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->themeProvider = $this->createMock(ThemeProviderInterface::class);
         $this->sourceMock = $this->getMockBuilder(\Magento\Framework\View\Asset\Source::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,6 +111,13 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
+
+        $repositoryMapMock = $this->createPartialMock(\Magento\Framework\View\Asset\File::class, ['getMap']);
+        $repositoryMapMock->method('getMap')->willReturn([]);
+        $this->objectManagerMock->method('get')
+            ->with(\Magento\Framework\View\Asset\RepositoryMap::class)
+            ->willReturn($repositoryMapMock);
+        \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerMock);
 
         $this->repository = (new ObjectManager($this))->getObject(Repository::class, [
             'baseUrl' => $this->urlMock,
@@ -187,7 +201,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
                     'baseUrl' => '',
                     'areaType' => '',
                     'themePath' => 'Default',
-                    'localeCode' => '',
+                    'localeCode' => ''
                 ]
             )
             ->willReturn($fallbackContextMock);
@@ -221,7 +235,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStaticViewFileContext()
     {
-        $themeMock = $this->getMock(\Magento\Framework\View\Design\ThemeInterface::class, [], [], '', false);
+        $themeMock = $this->createMock(\Magento\Framework\View\Design\ThemeInterface::class);
         $this->designMock
             ->expects($this->any())
             ->method('getDesignParams')
@@ -236,6 +250,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getThemeByFullPath')
             ->willReturnArgument(0);
+        $this->httpMock
+            ->expects($this->any())
+            ->method('isSecure')
+            ->willReturn(false);
 
         $fallbackContextMock = $this->getMockBuilder(\Magento\Framework\View\Asset\File\FallbackContex::class)
             ->disableOriginalConstructor()
@@ -248,7 +266,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
                     'baseUrl' => '',
                     'areaType' => 'area',
                     'themePath' => '',
-                    'localeCode' => 'locale',
+                    'localeCode' => 'locale'
                 ]
             )
             ->willReturn($fallbackContextMock);
@@ -373,7 +391,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUrl()
     {
-        $themeMock = $this->getMock(\Magento\Framework\View\Design\ThemeInterface::class, [], [], '', false);
+        $themeMock = $this->createMock(\Magento\Framework\View\Design\ThemeInterface::class);
         $this->designMock
             ->expects($this->any())
             ->method('getDesignParams')

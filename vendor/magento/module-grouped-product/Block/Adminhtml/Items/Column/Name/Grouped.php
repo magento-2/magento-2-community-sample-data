@@ -7,8 +7,14 @@
  */
 namespace Magento\GroupedProduct\Block\Adminhtml\Items\Column\Name;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Grouped extends \Magento\Sales\Block\Adminhtml\Items\Column\Name
 {
+    const COLUMN_NAME = 'name';
+
     /**
      * Prepare item html
      *
@@ -24,8 +30,13 @@ class Grouped extends \Magento\Sales\Block\Adminhtml\Items\Column\Name
             $item = $this->getItem();
         }
         if ($productType = $item->getRealProductType()) {
-            $renderer = $this->getRenderedBlock()->getColumnHtml($this->getItem(), $productType);
-            return $renderer;
+            $renderer = $this->getRenderedBlock()->getColumnRenderer(self::COLUMN_NAME, $productType);
+            if ($renderer) {
+                $renderer->setItem($item);
+                $renderer->setField(self::COLUMN_NAME);
+                return $renderer->toHtml();
+            }
+            return '&nbsp;';
         }
         return parent::_toHtml();
     }

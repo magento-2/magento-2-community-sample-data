@@ -10,14 +10,16 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * @magentoAppArea adminhtml
  */
-class HeaderTest extends \PHPUnit_Framework_TestCase
+class HeaderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\Create\Header */
     protected $_block;
 
     protected function setUp()
     {
-        $this->_block = Bootstrap::getObjectManager()->create('Magento\Sales\Block\Adminhtml\Order\Create\Header');
+        $this->_block = Bootstrap::getObjectManager()->create(
+            \Magento\Sales\Block\Adminhtml\Order\Create\Header::class
+        );
         parent::setUp();
     }
 
@@ -31,7 +33,7 @@ class HeaderTest extends \PHPUnit_Framework_TestCase
     public function testToHtml($customerId, $storeId, $expectedResult)
     {
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->get('Magento\Backend\Model\Session\Quote');
+        $session = Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session\Quote::class);
         $session->setCustomerId($customerId);
         $session->setStoreId($storeId);
         $this->assertEquals($expectedResult, $this->_block->toHtml());

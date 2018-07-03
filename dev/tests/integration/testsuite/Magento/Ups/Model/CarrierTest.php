@@ -5,7 +5,7 @@
  */
 namespace Magento\Ups\Model;
 
-class CarrierTest extends \PHPUnit_Framework_TestCase
+class CarrierTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Ups\Model\Carrier
@@ -15,7 +15,7 @@ class CarrierTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->carrier = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Ups\Model\Carrier'
+            \Magento\Ups\Model\Carrier::class
         );
     }
 

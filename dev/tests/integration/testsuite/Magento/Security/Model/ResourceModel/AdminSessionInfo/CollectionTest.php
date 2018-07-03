@@ -8,7 +8,7 @@ namespace Magento\Security\Model\ResourceModel\AdminSessionInfo;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection
@@ -27,7 +27,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->collectionModel = $this->objectManager
-            ->create('Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection');
+            ->create(\Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection::class);
     }
 
     /**

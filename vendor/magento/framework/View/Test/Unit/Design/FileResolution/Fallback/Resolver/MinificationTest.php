@@ -12,7 +12,7 @@ use Magento\Framework\View\Design\FileResolution\Fallback\ResolverInterface;
 /**
  * Unit test for Magento\Framework\View\Design\FileResolution\Fallback\Resolver\Minification
  */
-class MinificationTest extends \PHPUnit_Framework_TestCase
+class MinificationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\View\Design\FileResolution\Fallback\Resolver\Minification
@@ -35,11 +35,11 @@ class MinificationTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->resolverMock = $this
-            ->getMockBuilder('Magento\Framework\View\Design\FileResolution\Fallback\ResolverInterface')
+            ->getMockBuilder(\Magento\Framework\View\Design\FileResolution\Fallback\ResolverInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assetMinificationMock = $this->getMockBuilder('Magento\Framework\View\Asset\Minification')
+        $this->assetMinificationMock = $this->getMockBuilder(\Magento\Framework\View\Asset\Minification::class)
             ->disableOriginalConstructor()
             ->getMock();
 

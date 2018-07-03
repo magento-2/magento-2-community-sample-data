@@ -140,13 +140,12 @@ class Url
     public function getLoginPostUrl()
     {
         $params = [];
-        $referrer = $this->getRequestReferrer();
-        if ($referrer) {
+        $referer = $this->getRequestReferrer();
+        if ($referer) {
             $params = [
-                self::REFERER_QUERY_PARAM_NAME => $referrer,
+                self::REFERER_QUERY_PARAM_NAME => $referer,
             ];
         }
-
         return $this->urlBuilder->getUrl('customer/account/loginPost', $params);
     }
 
@@ -242,20 +241,14 @@ class Url
     }
 
     /**
-     * Returns request referrer.
-     *
-     * Will return referrer in case referrer from the same origin.
-     * Otherwise NULL will be returned.
-     *
-     * @return string|null
+     * @return mixed|null
      */
     private function getRequestReferrer()
     {
-        $referrer = $this->request->getParam(self::REFERER_QUERY_PARAM_NAME);
-        if ($referrer && $this->hostChecker->isOwnOrigin($this->urlDecoder->decode($referrer))) {
-            return $referrer;
+        $referer = $this->request->getParam(self::REFERER_QUERY_PARAM_NAME);
+        if ($referer && $this->hostChecker->isOwnOrigin($this->urlDecoder->decode($referer))) {
+            return $referer;
         }
-
         return null;
     }
 }

@@ -14,7 +14,7 @@ use Magento\Shipping\Model\ResourceModel\Order\Track\CollectionFactory;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class InfoTest extends \PHPUnit_Framework_TestCase
+class InfoTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Info
@@ -249,11 +249,11 @@ class InfoTest extends \PHPUnit_Framework_TestCase
     public function testLoadByHashWithTrackId()
     {
         $hash = base64_encode('hash');
-            $decodedHash = [
-                'key' => 'track_id',
-                'id' => 1,
-                'hash' => 'protected_code',
-            ];
+        $decodedHash = [
+            'key' => 'track_id',
+            'id' => 1,
+            'hash' => 'protected_code',
+        ];
         $trackDetails = 'track_details';
         $this->helper->expects($this->atLeastOnce())
             ->method('decodeTrackingHash')

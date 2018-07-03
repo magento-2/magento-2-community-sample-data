@@ -13,8 +13,9 @@ use Magento\Framework\Reflection\DataObjectProcessor;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class SaveTest extends \PHPUnit_Framework_TestCase
+class SaveTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Save */
     protected $controller;
@@ -178,7 +179,7 @@ class SaveTest extends \PHPUnit_Framework_TestCase
             ->with('Exception');
         $this->dataObjectProcessorMock->expects($this->once())
             ->method('buildOutputDataArray')
-            ->with($this->group, '\Magento\Customer\Api\Data\GroupInterface')
+            ->with($this->group, \Magento\Customer\Api\Data\GroupInterface::class)
             ->willReturn(['code' => $code]);
         $this->session->expects($this->once())
             ->method('setCustomerGroupData')

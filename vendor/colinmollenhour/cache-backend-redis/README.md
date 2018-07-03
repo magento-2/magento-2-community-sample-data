@@ -49,7 +49,8 @@ Works with any Zend Framework project including all versions of Magento!
             <compress_tags>1</compress_tags>  <!-- 0-9 for compression level, recommended: 0 or 1 -->
             <compress_threshold>20480</compress_threshold>  <!-- Strings below this size will not be compressed -->
             <compression_lib>gzip</compression_lib> <!-- Supports gzip, lzf, lz4 (as l4z) and snappy -->
-            <use_lua>0</use_lua> <!-- Set to 1 if Lua scripts should be used for some operations -->
+            <use_lua>0</use_lua> <!-- Set to 1 if Lua scripts should be used for some operations (recommended) -->
+            <load_from_slave>tcp://redis-slave:6379</load_from_slave> <!-- Perform reads from a different server --> 
           </backend_options>
         </cache>
 
@@ -70,6 +71,88 @@ Works with any Zend Framework project including all versions of Magento!
             <auto_expire_refresh_on_load></auto_expire_refresh_on_load> <!-- Refresh keys when loaded (Keeps cache primed frequently requested resources) -->
           </backend_options>
         </full_page_cache>
+
+## High Availability and Load Balancing Support
+
+There are two supported methods of achieving High Availability and Load Balancing with Cm_Cache_Backend_Redis.
+
+### Redis Sentinel
+
+You may achieve high availability and load balancing using [Redis Sentinel](http://redis.io/topics/sentinel). To enable use of Redis Sentinel the `server`
+specified should be a comma-separated list of Sentinel servers and the `sentinel_master` option should be specified
+to indicate the name of the sentinel master set (e.g. 'mymaster'). If using `sentinel_master` you may also specify
+`load_from_slaves` in which case a random slave will be chosen for performing reads in order to load balance across multiple Redis instances.
+Using the value '1' indicates to only load from slaves and '2' to include the master in the random read slave selection.
+
+Example configuration:
+
+        <!-- This is a child node of config/global -->
+        <cache>
+          <backend>Cm_Cache_Backend_Redis</backend>
+          <backend_options>
+            <server>tcp://10.0.0.1:26379,tcp://10.0.0.2:26379,tcp://10.0.0.3:26379</server>
+            <timeout>0.5</timeout>
+            <sentinel_master>mymaster</sentinel_master>
+            <sentinel_master_verify>1</sentinel_master_verify>
+            <load_from_slaves>1</load_from_slaves>
+          </backend_options>
+        </cache>
+
+### Load Balancer or Service Discovery
+
+It is also possible to achieve high availability by using other methods where you can specify separate connection addresses for the
+master and slave(s). The `load_from_slave` option has been added for this purpose and this option does *not*
+connect to a Sentinel server as the example above, although you probably would benefit from still having a Sentinel setup purely for
+the easier replication and failover.
+
+Examples would be to use a TCP load balancer (e.g. HAProxy) with separate ports for master and slaves, or a DNS-based system that
+uses service discovery health checks to expose master and slaves via different DNS names. 
+
+Example configuration:
+
+        <!-- This is a child node of config/global -->
+        <cache>
+          <backend>Cm_Cache_Backend_Redis</backend>
+          <backend_options>
+            <server>tcp://redis-master:6379</server>
+            <load_from_slave>tcp://redis-slaves:6379</load_from_slave>
+            <timeout>0.5</timeout>
+          </backend_options>
+        </cache>
+
+## ElastiCache
+
+The following example configuration lets you use ElastiCache Redis (cluster mode disabled) where the writes are sent to the Primary node and reads are sent to the replicas. This lets you distribute the read traffic between the different nodes.  
+
+The instructions to find the primary and read replica endpoints are [here](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Endpoints.html#Endpoints.Find.Redis).
+
+        <!-- This is a child node of config/global/cache -->
+        <backend_options>
+          <server>primary-endpoint.0001.euw1.cache.amazonaws.com</server>
+          <port>6379</port>
+          <database>0</database>        <!-- Make sure database is 0 -->
+          .
+          . <!-- Other settings -->
+          .
+          <cluster>
+            <master>
+              <node-001>
+                <server>primary-endpoint.0001.euw1.cache.amazonaws.com</server>
+                <port>6379</port>
+              </node-001>
+            </master>
+            <slave>
+              <node-001>
+                <server>replica-endpoint-1.jwbaun.0001.euw1.cache.amazonaws.com</server>
+                <port>6379</port>
+              </node-001>
+              <node-002>
+                <server>replica-endpoint-2.jwbaun.0001.euw1.cache.amazonaws.com</server>
+                <port>6379</port>
+              </node-002>
+            </slave>
+          </cluster>
+        </backend_options>
 
 ## RELATED / TUNING
 
@@ -106,6 +189,8 @@ Works with any Zend Framework project including all versions of Magento!
 
 ## Release Notes
 
+ - March 2017: Added support for Redis Sentinel and loading from slaves. Thanks @Xon for the help!
+ - Sometime in 2013: Ceased updating these release notes...
  - November 19, 2012: Added read_timeout option. (Feature only supported in standalone mode, will be supported by phpredis when pull request #260 is merged)
  - October 29, 2012: Added support for persistent connections. (Thanks samm-git!)
  - October 12, 2012: Improved memory usage and efficiency of garbage collection and updated recommendation.

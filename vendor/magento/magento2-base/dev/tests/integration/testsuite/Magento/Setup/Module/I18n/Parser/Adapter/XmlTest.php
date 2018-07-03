@@ -9,7 +9,7 @@ namespace Magento\Setup\Module\I18n\Parser\Adapter;
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Xml
  *
  */
-class XmlTest extends \PHPUnit_Framework_TestCase
+class XmlTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Xml
@@ -20,7 +20,7 @@ class XmlTest extends \PHPUnit_Framework_TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->xmlPhraseCollector = $objectManager->create(
-            'Magento\Setup\Module\I18n\Parser\Adapter\Xml'
+            \Magento\Setup\Module\I18n\Parser\Adapter\Xml::class
         );
     }
 

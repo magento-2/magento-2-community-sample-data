@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
-class MultiselectTest extends \PHPUnit_Framework_TestCase
+class MultiselectTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Data\Form\Element\Multiselect
@@ -15,7 +15,7 @@ class MultiselectTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $testHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_model = $testHelper->getObject('Magento\Framework\Data\Form\Element\Editablemultiselect');
+        $this->_model = $testHelper->getObject(\Magento\Framework\Data\Form\Element\Editablemultiselect::class);
         $this->_model->setForm(new \Magento\Framework\DataObject());
     }
 
@@ -27,10 +27,15 @@ class MultiselectTest extends \PHPUnit_Framework_TestCase
     public function testHiddenFieldPresentInMultiSelect()
     {
         $fieldName = 'fieldName';
+        $fieldId = 'fieldId';
         $this->_model->setCanBeEmpty(true);
         $this->_model->setName($fieldName);
+        $this->_model->setId($fieldId);
         $elementHtml = $this->_model->getElementHtml();
-        $this->assertContains('<input type="hidden" name="' . $fieldName . '"', $elementHtml);
+        $this->assertContains(
+            '<input type="hidden" id="' . $fieldId . '_hidden" name="' . $fieldName . '"',
+            $elementHtml
+        );
     }
 
     /**

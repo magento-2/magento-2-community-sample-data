@@ -18,7 +18,6 @@ class AssertPagersPresentInShoppingCart extends AbstractConstraint
      * Verify that pagers are visible on the shopping cart page.
      *
      * @param CheckoutCart $checkoutCart
-     * @return void
      */
     public function processAssert(CheckoutCart $checkoutCart)
     {

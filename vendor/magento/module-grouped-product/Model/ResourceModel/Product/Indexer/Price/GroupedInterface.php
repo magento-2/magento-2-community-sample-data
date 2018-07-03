@@ -6,7 +6,8 @@
 namespace Magento\GroupedProduct\Model\ResourceModel\Product\Indexer\Price;
 
 /**
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.1.1
  */
 interface GroupedInterface
 {
@@ -14,6 +15,7 @@ interface GroupedInterface
      * Reindex for all products
      *
      * @return $this
+     * @since 100.1.1
      */
     public function reindexAll();
 
@@ -22,6 +24,7 @@ interface GroupedInterface
      *
      * @param int|array $entityIds
      * @return $this
+     * @since 100.1.1
      */
     public function reindexEntity($entityIds);
 }

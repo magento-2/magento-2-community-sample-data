@@ -8,6 +8,7 @@ namespace Magento\Quote\Api;
 /**
  * Cart Item repository interface for guest carts.
  * @api
+ * @since 100.0.2
  */
 interface GuestCartItemRepositoryInterface
 {
@@ -21,7 +22,7 @@ interface GuestCartItemRepositoryInterface
     public function getList($cartId);
 
     /**
-     * Add the specified item to the specified cart.
+     * Add/update the specified cart item.
      *
      * @param \Magento\Quote\Api\Data\CartItemInterface $cartItem The item.
      * @return \Magento\Quote\Api\Data\CartItemInterface Item.

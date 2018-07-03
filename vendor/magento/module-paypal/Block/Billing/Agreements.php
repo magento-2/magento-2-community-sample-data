@@ -7,6 +7,9 @@ namespace Magento\Paypal\Block\Billing;
 
 /**
  * Customer account billing agreements block
+ *
+ * @api
+ * @since 100.0.2
  */
 class Agreements extends \Magento\Framework\View\Element\Template
 {
@@ -69,7 +72,7 @@ class Agreements extends \Magento\Framework\View\Element\Template
     {
         parent::_prepareLayout();
         $pager = $this->getLayout()->createBlock(
-            'Magento\Theme\Block\Html\Pager'
+            \Magento\Theme\Block\Html\Pager::class
         )->setCollection(
             $this->getBillingAgreements()
         )->setIsOutputRequired(

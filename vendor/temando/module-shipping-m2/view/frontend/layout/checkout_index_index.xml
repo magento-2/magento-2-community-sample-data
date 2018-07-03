@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.root">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="step-config" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="shipping-rates-validation" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="temando-rates-validation" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Temando_Shipping/js/view/shipping-rates-validation/temando</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                                <item name="shippingAddress" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="deliveryOptions" xsi:type="array">
+                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                            <item name="displayArea" xsi:type="string">before-shipping-method-form</item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="delivery-options-container" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping/delivery-options</item>
+                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                    <item name="config" xsi:type="array">
+                                                                        <item name="template" xsi:type="string">Temando_Shipping/checkout/shipping/delivery-options</item>
+                                                                    </item>
+                                                                    <item name="children"  xsi:type="array">
+                                                                        <item name="collection-points-container" xsi:type="array">
+                                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                                            <item name="displayArea" xsi:type="string">collection-points-form</item>
+                                                                            <item name="children" xsi:type="array">
+                                                                                <item name="collection-points-block-container" xsi:type="array">
+                                                                                    <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping/collection-points-form</item>
+                                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                                    <item name="config" xsi:type="array">
+                                                                                        <item name="template" xsi:type="string">Temando_Shipping/checkout/shipping/collection-points-form</item>
+                                                                                    </item>
+                                                                                </item>
+                                                                            </item>
+                                                                        </item>
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                        <item name="checkoutFields" xsi:type="array">
+                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                            <item name="displayArea" xsi:type="string">before-shipping-method-form</item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="services-block-container" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping/checkout-fields</item>
+                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                    <item name="config" xsi:type="array">
+                                                                        <item name="template" xsi:type="string">Temando_Shipping/checkout/shipping/checkout-fields</item>
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                                <item name="sidebar" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-information" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="ship-to" xsi:type="array">
+                                                    <item name="rendererTemplates" xsi:type="array">
+                                                        <item name="customer-address" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping-information/address-renderer/shipping</item>
+                                                        </item>
+                                                        <item name="new-customer-address" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping-information/address-renderer/shipping</item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

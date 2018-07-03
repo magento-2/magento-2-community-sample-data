@@ -1,0 +1,6 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="layout_generate_blocks_after">
+        <observer name="temando_replace_order_info_template" instance="Temando\Shipping\Observer\PrepareMyOrderInfoObserver"/>
+        <observer name="temando_replace_shipment_info_template" instance="Temando\Shipping\Observer\PrepareMyShipmentInfoObserver"/>
+    </event>
+</config>

@@ -5,6 +5,8 @@
  */
 namespace Magento\Catalog\Model\Indexer\Product\Price;
 
+use Magento\Framework\App\ObjectManager;
+
 /**
  * Abstract action reindex class
  *
@@ -71,6 +73,11 @@ abstract class AbstractAction
     protected $_indexers;
 
     /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\TierPrice
+     */
+    private $tierPriceIndexResource;
+
+    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $config
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
@@ -79,6 +86,7 @@ abstract class AbstractAction
      * @param \Magento\Catalog\Model\Product\Type $catalogProductType
      * @param \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\Factory $indexerPriceFactory
      * @param \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice $defaultIndexerResource
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\TierPrice $tierPriceIndexResource
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
@@ -88,7 +96,8 @@ abstract class AbstractAction
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Catalog\Model\Product\Type $catalogProductType,
         \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\Factory $indexerPriceFactory,
-        \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice $defaultIndexerResource
+        \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice $defaultIndexerResource,
+        \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\TierPrice $tierPriceIndexResource = null
     ) {
         $this->_config = $config;
         $this->_storeManager = $storeManager;
@@ -99,6 +108,9 @@ abstract class AbstractAction
         $this->_indexerPriceFactory = $indexerPriceFactory;
         $this->_defaultIndexerResource = $defaultIndexerResource;
         $this->_connection = $this->_defaultIndexerResource->getConnection();
+        $this->tierPriceIndexResource = $tierPriceIndexResource ?: ObjectManager::getInstance()->get(
+            \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\TierPrice::class
+        );
     }
 
     /**
@@ -119,7 +131,7 @@ abstract class AbstractAction
     {
         // delete invalid rows
         $select = $this->_connection->select()->from(
-            ['index_price' => $this->_defaultIndexerResource->getTable('catalog_product_index_price')],
+            ['index_price' => $this->getIndexTargetTable()],
             null
         )->joinLeft(
             ['ip_tmp' => $this->_defaultIndexerResource->getIdxTable()],
@@ -136,7 +148,7 @@ abstract class AbstractAction
 
         $this->_insertFromTable(
             $this->_defaultIndexerResource->getIdxTable(),
-            $this->_defaultIndexerResource->getTable('catalog_product_index_price')
+            $this->getIndexTargetTable()
         );
         return $this;
     }
@@ -210,48 +222,7 @@ abstract class AbstractAction
      */
     protected function _prepareTierPriceIndex($entityIds = null)
     {
-        $table = $this->_defaultIndexerResource->getTable('catalog_product_index_tier_price');
-        $this->_emptyTable($table);
-
-        $websiteExpression = $this->_connection->getCheckSql(
-            'tp.website_id = 0',
-            'ROUND(tp.value * cwd.rate, 4)',
-            'tp.value'
-        );
-        $linkField = $this->getProductIdFieldName();
-        $select = $this->_connection->select()->from(
-            ['cpe' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
-            ['cpe.entity_id']
-        )->join(
-            ['tp' => $this->_defaultIndexerResource->getTable(['catalog_product_entity', 'tier_price'])],
-            'tp.' . $linkField . ' = cpe.' . $linkField,
-            []
-        )->join(
-            ['cg' => $this->_defaultIndexerResource->getTable('customer_group')],
-            'tp.all_groups = 1 OR (tp.all_groups = 0 AND tp.customer_group_id = cg.customer_group_id)',
-            ['customer_group_id']
-        )->join(
-            ['cw' => $this->_defaultIndexerResource->getTable('store_website')],
-            'tp.website_id = 0 OR tp.website_id = cw.website_id',
-            ['website_id']
-        )->join(
-            ['cwd' => $this->_defaultIndexerResource->getTable('catalog_product_index_website')],
-            'cw.website_id = cwd.website_id',
-            []
-        )->where(
-            'cw.website_id != 0'
-        )->columns(
-            new \Zend_Db_Expr("MIN({$websiteExpression})")
-        )->group(
-            ['cpe.entity_id', 'cg.customer_group_id', 'cw.website_id']
-        );
-
-        if (!empty($entityIds)) {
-            $select->where("cpe.entity_id IN(?)", $entityIds);
-        }
-
-        $query = $select->insertFromSelect($table);
-        $this->_connection->query($query);
+        $this->tierPriceIndexResource->reindexEntity((array) $entityIds);
 
         return $this;
     }
@@ -343,30 +314,17 @@ abstract class AbstractAction
      *
      * @param array $changedIds
      * @return array Affected ids
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _reindexRows($changedIds = [])
     {
         $this->_emptyTable($this->_defaultIndexerResource->getIdxTable());
         $this->_prepareWebsiteDateTable();
 
-        $select = $this->_connection->select()->from(
-            $this->_defaultIndexerResource->getTable('catalog_product_entity'),
-            ['entity_id', 'type_id']
-        )->where(
-            'entity_id IN(?)',
-            $changedIds
-        );
-        $pairs = $this->_connection->fetchPairs($select);
-        $byType = [];
-        foreach ($pairs as $productId => $productType) {
-            $byType[$productType][$productId] = $productId;
-        }
-
+        $productsTypes = $this->getProductsTypes($changedIds);
         $compositeIds = [];
         $notCompositeIds = [];
 
-        foreach ($byType as $productType => $entityIds) {
+        foreach ($productsTypes as $productType => $entityIds) {
             $indexer = $this->_getIndexer($productType);
             if ($indexer->getIsComposite()) {
                 $compositeIds += $entityIds;
@@ -376,24 +334,11 @@ abstract class AbstractAction
         }
 
         if (!empty($notCompositeIds)) {
-            $select = $this->_connection->select()->from(
-                ['l' => $this->_defaultIndexerResource->getTable('catalog_product_relation')],
-                ''
-            )->join(
-                ['e' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
-                'e.' . $this->getProductIdFieldName() . ' = l.parent_id',
-                ['e.entity_id as parent_id', 'type_id']
-            )->where(
-                'l.child_id IN(?)',
-                $notCompositeIds
-            );
-            $pairs = $this->_connection->fetchPairs($select);
-            foreach ($pairs as $productId => $productType) {
-                if (!in_array($productId, $changedIds)) {
-                    $changedIds[] = (string) $productId;
-                    $byType[$productType][$productId] = $productId;
-                    $compositeIds[$productId] = $productId;
-                }
+            $parentProductsTypes = $this->getParentProductsTypes($notCompositeIds);
+            $productsTypes = array_merge_recursive($productsTypes, $parentProductsTypes);
+            foreach ($parentProductsTypes as $parentProductsIds) {
+                $compositeIds = $compositeIds + $parentProductsIds;
+                $changedIds = array_merge($changedIds, $parentProductsIds);
             }
         }
 
@@ -402,11 +347,9 @@ abstract class AbstractAction
         }
         $this->_prepareTierPriceIndex($compositeIds + $notCompositeIds);
 
-        $indexers = $this->getTypeIndexers();
-        foreach ($indexers as $indexer) {
-            if (!empty($byType[$indexer->getTypeId()])) {
-                $indexer->reindexEntity($byType[$indexer->getTypeId()]);
-            }
+        foreach ($productsTypes as $productType => $entityIds) {
+            $indexer = $this->_getIndexer($productType);
+            $indexer->reindexEntity($entityIds);
         }
         $this->_syncData($changedIds);
 
@@ -428,7 +371,8 @@ abstract class AbstractAction
             ['child_id']
         )->join(
             ['e' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
-            'e.' . $linkField . ' = parent_id'
+            'e.' . $linkField . ' = parent_id',
+            []
         )->where(
             'e.entity_id IN(?)',
             $parentIds
@@ -441,7 +385,7 @@ abstract class AbstractAction
 
         if ($children) {
             $select = $this->_connection->select()->from(
-                $this->_defaultIndexerResource->getTable('catalog_product_index_price')
+                $this->getIndexTargetTable()
             )->where(
                 'entity_id IN(?)',
                 $children
@@ -454,6 +398,18 @@ abstract class AbstractAction
     }
 
     /**
+     * Retrieve index table that will be used for write operations.
+     *
+     * This method is used during both partial and full reindex to identify the table.
+     *
+     * @return string
+     */
+    protected function getIndexTargetTable()
+    {
+        return $this->_defaultIndexerResource->getTable('catalog_product_index_price');
+    }
+
+    /**
      * @return string
      */
     protected function getProductIdFieldName()
@@ -461,5 +417,59 @@ abstract class AbstractAction
         $table = $this->_defaultIndexerResource->getTable('catalog_product_entity');
         $indexList = $this->_connection->getIndexList($table);
         return $indexList[$this->_connection->getPrimaryKeyName($table)]['COLUMNS_LIST'][0];
+    }
+
+    /**
+     * Get products types.
+     *
+     * @param array $changedIds
+     * @return array
+     */
+    private function getProductsTypes(array $changedIds = [])
+    {
+        $select = $this->_connection->select()->from(
+            $this->_defaultIndexerResource->getTable('catalog_product_entity'),
+            ['entity_id', 'type_id']
+        );
+        if ($changedIds) {
+            $select->where('entity_id IN (?)', $changedIds);
+        }
+        $pairs = $this->_connection->fetchPairs($select);
+
+        $byType = [];
+        foreach ($pairs as $productId => $productType) {
+            $byType[$productType][$productId] = $productId;
+        }
+
+        return $byType;
+    }
+
+    /**
+     * Get parent products types.
+     *
+     * @param array $productsIds
+     * @return array
+     */
+    private function getParentProductsTypes(array $productsIds)
+    {
+        $select = $this->_connection->select()->from(
+            ['l' => $this->_defaultIndexerResource->getTable('catalog_product_relation')],
+            ''
+        )->join(
+            ['e' => $this->_defaultIndexerResource->getTable('catalog_product_entity')],
+            'e.' . $this->getProductIdFieldName() . ' = l.parent_id',
+            ['e.entity_id as parent_id', 'type_id']
+        )->where(
+            'l.child_id IN(?)',
+            $productsIds
+        );
+        $pairs = $this->_connection->fetchPairs($select);
+
+        $byType = [];
+        foreach ($pairs as $productId => $productType) {
+            $byType[$productType][$productId] = $productId;
+        }
+
+        return $byType;
     }
 }

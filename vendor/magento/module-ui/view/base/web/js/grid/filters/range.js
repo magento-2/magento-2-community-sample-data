@@ -2,12 +2,17 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/**
+ * @api
+ */
 define([
     'underscore',
     'uiLayout',
     'mageUtils',
-    'Magento_Ui/js/form/components/group'
-], function (_, layout, utils, Group) {
+    'Magento_Ui/js/form/components/group',
+    'mage/translate'
+], function (_, layout, utils, Group, $t) {
     'use strict';
 
     return Group.extend({
@@ -29,11 +34,11 @@ define([
                 },
                 ranges: {
                     from: {
-                        label: 'from',
+                        label: $t('from'),
                         dataScope: 'from'
                     },
                     to: {
-                        label: 'to',
+                        label: $t('to'),
                         dataScope: 'to'
                     }
                 }

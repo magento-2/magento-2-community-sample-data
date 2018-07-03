@@ -9,6 +9,9 @@ namespace Magento\Newsletter\Model\ResourceModel;
  * Newsletter problem resource model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
+ *
+ * @api
+ * @since 100.0.2
  */
 class Problem extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

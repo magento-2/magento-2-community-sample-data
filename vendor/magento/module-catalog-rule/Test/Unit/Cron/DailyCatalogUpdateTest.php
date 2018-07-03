@@ -8,7 +8,7 @@ namespace Magento\CatalogRule\Test\Unit\Cron;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DailyCatalogUpdateTest extends \PHPUnit_Framework_TestCase
+class DailyCatalogUpdateTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Processor
@@ -26,16 +26,12 @@ class DailyCatalogUpdateTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->ruleProductProcessor = $this->getMock(
-            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
-            [],
-            [],
-            '',
-            false
+        $this->ruleProductProcessor = $this->createMock(
+            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class
         );
 
         $this->cron = (new ObjectManager($this))->getObject(
-            'Magento\CatalogRule\Cron\DailyCatalogUpdate',
+            \Magento\CatalogRule\Cron\DailyCatalogUpdate::class,
             [
                 'ruleProductProcessor' => $this->ruleProductProcessor,
             ]

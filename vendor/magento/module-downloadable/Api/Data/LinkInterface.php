@@ -8,10 +8,10 @@ namespace Magento\Downloadable\Api\Data;
 /**
  * @codeCoverageIgnore
  * @api
+ * @since 100.0.2
  */
 interface LinkInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-
     /**
      * @return int|null Sample(or link) id
      */

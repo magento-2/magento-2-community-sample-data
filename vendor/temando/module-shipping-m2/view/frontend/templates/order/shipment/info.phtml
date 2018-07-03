@@ -1,0 +1,92 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+    /** @var $block \Magento\Sales\Block\Order\Info */
+    $_order = $block->getOrder();
+    /** @var \Temando\Shipping\ViewModel\Shipment\Location $viewModel */
+    $viewModel = $block->getData('viewModel');
+?>
+<div class="block block-order-details-view">
+    <div class="block-title">
+        <strong><?= $block->escapeHtml(__('Order Information')); ?></strong>
+    </div>
+    <div class="block-content">
+        <?php if (!$_order->getIsVirtual()): ?>
+            <div class="box box-order-shipping-address">
+                <strong class="box-title"><span><?= $block->escapeHtml(__('Shipping Address')) ?></span></strong>
+                <?php
+                    /* Shipping Address */
+                    $destinationAddressHtml = $viewModel->getShipToAddressHtml();
+                    $finalRecipientAddressHtml = $viewModel->getFinalRecipientAddressHtml();
+                ?>
+                <?php if (!$destinationAddressHtml && !$finalRecipientAddressHtml) : ?>
+                    <?php // render original shipping address ?>
+                    <div class="box-content">
+                        <address>
+                            <?= /* @noEscape */ $block->getFormattedAddress($_order->getShippingAddress()) ?>
+                        </address>
+                    </div>
+                <?php elseif ($finalRecipientAddressHtml) : ?>
+                    <?php // render delivery point and destination address ?>
+                    <div class="box-subtitle order-shipping-primary-address">
+                        <?= $block->escapeHtml(__('Collection Point')) ?>
+                    </div>
+                    <div class="box-content">
+                        <address>
+                            <?= /* @noEscape */ $destinationAddressHtml ?>
+                        </address>
+                    </div>
+
+                    <div class="box-subtitle order-shipping-secondary-address">
+                        <?= $block->escapeHtml(__('Recipient Address')) ?>
+                    </div>
+                    <div class="box-content">
+                        <address>
+                            <?= /* @noEscape */ $finalRecipientAddressHtml ?>
+                        </address>
+                    </div>
+                <?php else : ?>
+                    <?php // render destination address ?>
+                    <div class="box-content">
+                        <address>
+                            <?= /* @noEscape */ $destinationAddressHtml ?>
+                        </address>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="box box-order-shipping-method">
+                <strong class="box-title">
+                    <span><?= $block->escapeHtml(__('Shipping Method')) ?></span>
+                </strong>
+                <div class="box-content">
+                <?php if ($_order->getShippingDescription()): ?>
+                    <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('No shipping information available')) ?>
+                <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="box box-order-billing-address">
+            <strong class="box-title">
+                <span><?= $block->escapeHtml(__('Billing Address')); ?></span>
+            </strong>
+            <div class="box-content">
+                <address><?= /* @noEscape */ $block->getFormattedAddress($_order->getBillingAddress()) ?></address>
+            </div>
+        </div>
+        <div class="box box-order-billing-method">
+            <strong class="box-title">
+                <span><?= $block->escapeHtml(__('Payment Method')) ?></span>
+            </strong>
+            <div class="box-content">
+                <?= /* @noEscape */ $block->getPaymentInfoHtml() ?>
+            </div>
+        </div>
+    </div>
+</div>

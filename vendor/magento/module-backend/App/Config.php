@@ -6,26 +6,16 @@
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Magento\Backend\App;
 
 use Magento\Config\App\Config\Type\System;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Backend config accessor.
  */
 class Config implements ConfigInterface
 {
-    /**
-     * @var \Magento\Framework\App\Config\ScopePool
-     *
-     * @deprecated
-     */
-    protected $_scopePool;
-
     /**
      * @var \Magento\Framework\App\Config
      */
@@ -37,17 +27,12 @@ class Config implements ConfigInterface
     private $data;
 
     /**
-     * @param \Magento\Framework\App\Config\ScopePool $scopePool
-     * @param \Magento\Framework\App\Config|null $appConfig
+     * @param \Magento\Framework\App\Config $appConfig
+     * @return void
      */
-    public function __construct(
-        \Magento\Framework\App\Config\ScopePool $scopePool,
-        \Magento\Framework\App\Config $appConfig = null
-    ) {
-        $this->_scopePool = $scopePool;
-        $this->appConfig = $appConfig ?: ObjectManager::getInstance()->get(
-            \Magento\Framework\App\Config::class
-        );
+    public function __construct(\Magento\Framework\App\Config $appConfig)
+    {
+        $this->appConfig = $appConfig;
     }
 
     /**

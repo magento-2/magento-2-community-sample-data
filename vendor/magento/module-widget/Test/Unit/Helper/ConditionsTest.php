@@ -6,13 +6,13 @@
 
 namespace Magento\Widget\Test\Unit\Helper;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\Unserialize\SecureUnserializer;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Data\Wysiwyg\Normalizer;
 
 /**
  * Class ConditionsTest
  */
-class ConditionsTest extends \PHPUnit_Framework_TestCase
+class ConditionsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Widget\Helper\Conditions
@@ -20,58 +20,52 @@ class ConditionsTest extends \PHPUnit_Framework_TestCase
     protected $conditions;
 
     /**
-     * @var SecureUnserializer
+     * @var \Magento\Framework\Serialize\Serializer\Json|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $unserializerMock;
+    private $serializer;
 
     /**
-     * @inheritdoc
+     * @var Normalizer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $normalizer;
+
+    /**
+     * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->unserializerMock = $this->getMockBuilder(SecureUnserializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->conditions = $objectManagerHelper->getObject(
+        $this->serializer = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->normalizer = $this->createMock(Normalizer::class);
+        $this->conditions = (new ObjectManager($this))->getObject(
             \Magento\Widget\Helper\Conditions::class,
             [
-                'unserializer' => $this->unserializerMock,
+                'serializer' => $this->serializer,
+                'normalizer' => $this->normalizer
             ]
         );
     }
 
-    /**
-     * @return void
-     */
     public function testEncodeDecode()
     {
-        $value = [
-            '1' => [
-                "type" => "Magento\\CatalogWidget\\Model\\Rule\\Condition\\Combine",
-                "aggregator" => "all",
-                "value" => "1",
-                "new_child" => "",
-            ],
-            '1--1' => [
-                "type" => "Magento\\CatalogWidget\\Model\\Rule\\Condition\\Product",
-                "attribute" => "attribute_set_id",
-                "value" => "4",
-                "operator" => "==",
-            ],
-            '1--2' => [
-                "type" => "Magento\\CatalogWidget\\Model\\Rule\\Condition\\Product",
-                "attribute" => "category_ids",
-                "value" => "2",
-                "operator" => "==",
-            ],
-        ];
-
-        $this->unserializerMock->expects($this->once())
+        $value = ['string'];
+        $serializedValue = 'serializedString';
+        $normalizedValue = 'normalizedValue';
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with($value)
+            ->willReturn($serializedValue);
+        $this->serializer->expects($this->once())
             ->method('unserialize')
+            ->with($serializedValue)
             ->willReturn($value);
-
+        $this->normalizer->expects($this->once())
+            ->method('replaceReservedCharacters')
+            ->with($serializedValue)
+            ->willReturn($normalizedValue);
+        $this->normalizer->expects($this->once())
+            ->method('restoreReservedCharacters')
+            ->with($normalizedValue)
+            ->willReturn($serializedValue);
         $encoded = $this->conditions->encode($value);
         $this->assertEquals($value, $this->conditions->decode($encoded));
     }

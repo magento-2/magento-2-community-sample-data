@@ -4,8 +4,6 @@
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
-
 /**
  * HTTP CURL Adapter
  *
@@ -20,7 +18,15 @@ class Curl implements \Zend_Http_Client_Adapter_Interface
      *
      * @var array
      */
-    protected $_config = [];
+    protected $_config = [
+        'protocols' => (CURLPROTO_HTTP
+            | CURLPROTO_HTTPS
+            | CURLPROTO_FTP
+            | CURLPROTO_FTPS
+        ),
+        'verifypeer' => true,
+        'verifyhost' => 2
+    ];
 
     /**
      * Curl handle
@@ -45,6 +51,7 @@ class Curl implements \Zend_Http_Client_Adapter_Interface
         'protocols'    => CURLOPT_PROTOCOLS,
         'verifypeer'   => CURLOPT_SSL_VERIFYPEER,
         'verifyhost'   => CURLOPT_SSL_VERIFYHOST,
+        'sslversion'   => CURLOPT_SSLVERSION,
     ];
 
     /**
@@ -53,14 +60,6 @@ class Curl implements \Zend_Http_Client_Adapter_Interface
      * @var array
      */
     protected $_options = [];
-
-    public function __construct()
-    {
-        // as we support PHP 5.5.x in Magento 2.0.x we can't do this in declaration
-        $this->_config['protocols'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS |  CURLPROTO_FTP | CURLPROTO_FTPS);
-        $this->_config['verifypeer'] = true;
-        $this->_config['verifyhost'] = 2;
-    }
 
     /**
      * Apply current configuration array to transport resource
@@ -174,9 +173,14 @@ class Curl implements \Zend_Http_Client_Adapter_Interface
         curl_setopt($this->_getResource(), CURLOPT_RETURNTRANSFER, true);
         if ($method == \Zend_Http_Client::POST) {
             curl_setopt($this->_getResource(), CURLOPT_POST, true);
+            curl_setopt($this->_getResource(), CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($this->_getResource(), CURLOPT_POSTFIELDS, $body);
+        } elseif ($method == \Zend_Http_Client::PUT) {
+            curl_setopt($this->_getResource(), CURLOPT_CUSTOMREQUEST, 'PUT');
             curl_setopt($this->_getResource(), CURLOPT_POSTFIELDS, $body);
         } elseif ($method == \Zend_Http_Client::GET) {
             curl_setopt($this->_getResource(), CURLOPT_HTTPGET, true);
+            curl_setopt($this->_getResource(), CURLOPT_CUSTOMREQUEST, 'GET');
         }
 
         if (is_array($headers)) {
@@ -234,7 +238,7 @@ class Curl implements \Zend_Http_Client_Adapter_Interface
      */
     protected function _getResource()
     {
-        if (is_null($this->_resource)) {
+        if ($this->_resource === null) {
             $this->_resource = curl_init();
         }
         return $this->_resource;

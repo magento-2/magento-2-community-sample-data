@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Customer\Controller\Adminhtml;
 
 use Magento\Customer\Api\AccountManagementInterface;
@@ -14,7 +15,6 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * @magentoAppArea adminhtml
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendController
@@ -206,8 +206,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
 
-        /** Check that customer id set and addresses saved */
-        /** @var $registry \Magento\Framework\Registry */
+        /**
+         * Check that customer id set and addresses saved
+         */
         $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
         $customerId = $registry->registry(RegistryConstants::CURRENT_CUSTOMER_ID);
         $customer = $this->customerRepository->getById($customerId);
@@ -223,6 +224,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
             'back/1',
         ];
         $urlPattern = '/^' . str_replace('/', '\/', implode('(/.*/)|/', $urlPatternParts)) . '/';
+
         $this->assertRedirect(
             $this->matchesRegularExpression($urlPattern)
         );
@@ -302,7 +304,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         );
 
         /** Check that customer id set and addresses saved */
-        /** @var $registry \Magento\Framework\Registry */
         $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
         $customerId = $registry->registry(RegistryConstants::CURRENT_CUSTOMER_ID);
         $customer = $this->customerRepository->getById($customerId);
@@ -320,6 +321,8 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertEquals(2, count($addresses));
         $updatedAddress = $this->addressRepository->getById(1);
         $this->assertEquals('update firstname', $updatedAddress->getFirstname());
+        $this->assertTrue($updatedAddress->isDefaultBilling());
+        $this->assertEquals($updatedAddress->getId(), $customer->getDefaultBilling());
         $newAddress = $this->accountManagement->getDefaultShippingAddress($customerId);
         $this->assertEquals('new firstname', $newAddress->getFirstname());
 
@@ -352,6 +355,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
                 'email' => 'customer@example.com',
                 'firstname' => 'test firstname',
                 'lastname' => 'test lastname',
+                'sendemail_store_id' => 1
             ],
             'subscription' => '0'
         ];
@@ -391,13 +395,17 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $transportBuilderMock = $this->prepareEmailMock(
             2,
             'change_email_template',
-            'support',
+            [
+                'name' => 'CustomerSupport',
+                'email' => 'support@example.com'
+            ],
             $customerId,
             $newEmail
         );
         $this->addEmailMockToClass($transportBuilderMock, EmailNotification::class);
         $post = [
-            'customer' => ['entity_id' => $customerId,
+            'customer' => [
+                'entity_id' => $customerId,
                 'middlename' => 'test middlename',
                 'group_id' => 1,
                 'website_id' => 1,
@@ -437,7 +445,10 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $transportBuilderMock = $this->prepareEmailMock(
             2,
             'change_email_template',
-            'support',
+            [
+                'name' => 'CustomerSupport',
+                'email' => 'support@example.com'
+            ],
             $customerId,
             $newEmail
         );
@@ -509,26 +520,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
 
         // verify
         $this->assertContains('<h1 class="page-title">test firstname test lastname</h1>', $body);
-
-        // assert disclosure of sensitive fields from the database
-        $blacklistFields = [
-            '"password_hash":',
-            '"rp_token":',
-            '"confirmation":',
-        ];
-        foreach ($blacklistFields as $blacklistField) {
-            $this->assertNotContains($blacklistField, $body);
-        }
-
-        // assert valid data provider fields
-        $whitelistFields = [
-            '"customer_form_data_source":',
-            '"middlename":',
-            '"gender":',
-        ];
-        foreach ($whitelistFields as $whitelistField) {
-            $this->assertContains($whitelistField, $body);
-        }
     }
 
     public function testNewAction()
@@ -774,7 +765,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
      *
      * @param int $occurrenceNumber
      * @param string $templateId
-     * @param string $sender
+     * @param array $sender
      * @param int $customerId
      * @param string|null $newEmail
      * @return \PHPUnit_Framework_MockObject_MockObject
@@ -786,10 +777,10 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $customer = $this->customerRepository->getById($customerId);
         $storeId = $customer->getStoreId();
         $name = $this->customerViewHelper->getCustomerName($customer);
-        $transportMock = $this->getMock(
-            \Magento\Framework\Mail\TransportInterface::class,
-            ['sendMessage']
-        );
+
+        $transportMock = $this->getMockBuilder(\Magento\Framework\Mail\TransportInterface::class)
+            ->setMethods(['sendMessage'])
+            ->getMockForAbstractClass();
         $transportMock->expects($this->exactly($occurrenceNumber))
             ->method('sendMessage');
         $transportBuilderMock = $this->getMockBuilder(\Magento\Framework\Mail\Template\TransportBuilder::class)

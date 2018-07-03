@@ -5,72 +5,30 @@
  */
 namespace Magento\Paypal\Controller;
 
-use Magento\Checkout\Model\Session;
-use Magento\Paypal\Model\Config;
-use Magento\Quote\Model\Quote;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
-
 /**
  * @magentoDataFixture Magento/Sales/_files/order.php
  */
 class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractController
 {
-    /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
-     * @var CartRepositoryInterface
-     */
-    private $quoteRepository;
-
-    /**
-     * @var OrderInterface
-     */
-    private $order;
-
     protected function setUp()
     {
-        parent::setup();
+        parent::setUp();
 
-        /** @var FilterBuilder $filterBuilder */
-        $filterBuilder = $this->_objectManager->get(FilterBuilder::class);
-        $filters = [
-            $filterBuilder->setField(OrderInterface::INCREMENT_ID)
-                ->setValue('100000001')
-                ->create()
-        ];
+        $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class);
+        $order->load('100000001', 'increment_id');
+        $order->getPayment()->setMethod(\Magento\Paypal\Model\Config::METHOD_PAYFLOWADVANCED);
 
-        /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-        $searchCriteriaBuilder = $this->_objectManager->get(SearchCriteriaBuilder::class);
-        $searchCriteria = $searchCriteriaBuilder->addFilters($filters)
-            ->create();
+        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Quote\Model\Quote::class
+        )->setStoreId(
+            $order->getStoreId()
+        )->save();
 
-        $this->orderRepository = $this->_objectManager->get(OrderRepositoryInterface::class);
-        $orders = $this->orderRepository->getList($searchCriteria)
-            ->getItems();
+        $order->setQuoteId($quote->getId());
+        $order->save();
 
-        /** @var OrderInterface $order */
-        $this->order = array_pop($orders);
-        $this->order->getPayment()->setMethod(Config::METHOD_PAYFLOWLINK);
-
-        /** @var $quote \Magento\Quote\Model\Quote */
-        $quote = $this->_objectManager->create(Quote::class)
-            ->setStoreid($this->order->getStoreid());
-
-        $this->quoteRepository = $this->_objectManager->get(CartRepositoryInterface::class);
-        $this->quoteRepository->save($quote);
-
-        $this->order->setQuoteId($quote->getId());
-        $this->orderRepository->save($this->order);
-
-        $session = $this->_objectManager->get(Session::class);
-        $session->setLastRealOrderId($this->order->getRealOrderId())->setLastQuoteId($this->order->getQuoteId());
+        $session = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        $session->setLastRealOrderId($order->getRealOrderId())->setLastQuoteId($order->getQuoteId());
     }
 
     public function testCancelPaymentActionIsContentGenerated()
@@ -81,7 +39,7 @@ class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractContro
 
     public function testReturnurlActionIsContentGenerated()
     {
-        $checkoutHelper = $this->_objectManager->create('Magento\Paypal\Helper\Checkout');
+        $checkoutHelper = $this->_objectManager->create(\Magento\Paypal\Helper\Checkout::class);
         $checkoutHelper->cancelCurrentOrder('test');
         $this->dispatch('paypal/payflowadvanced/returnurl');
         $this->assertContains("goToSuccessPage = ''", $this->getResponse()->getBody());
@@ -97,25 +55,23 @@ class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractContro
     }
 
     /**
+     * @magentoDataFixture Magento/Sales/_files/order.php
      * @magentoConfigFixture current_store payment/paypal_payflow/active 1
      * @magentoConfigFixture current_store paypal/general/business_account merchant_2012050718_biz@example.com
      */
     public function testCancelAction()
     {
-        $orderId = $this->order->getEntityId();
+        $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class);
+        $session = $this->_objectManager->get(\Magento\Checkout\Model\Session::class);
 
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->orderRepository->get($orderId);
-
-        /** @var $quote \Magento\Quote\Model\Quote */
-        $quote = $this->quoteRepository->get($order->getQuoteId());
-
-        $session = $this->_objectManager->get(Session::class);
+        $quote = $this->_objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote->load('test02', 'reserved_order_id');
+        $order->load('100000001', 'increment_id')->setQuoteId($quote->getId())->save();
         $session->setQuoteId($quote->getId());
         $session->setPaypalStandardQuoteId($quote->getId())->setLastRealOrderId('100000001');
         $this->dispatch('paypal/payflow/cancelpayment');
 
-        $order = $this->_objectManager->create(OrderRepositoryInterface::class)->get($orderId);
+        $order->load('100000001', 'increment_id');
         $this->assertEquals('canceled', $order->getState());
         $this->assertEquals($session->getQuote()->getGrandTotal(), $quote->getGrandTotal());
         $this->assertEquals($session->getQuote()->getItemsCount(), $quote->getItemsCount());

@@ -7,6 +7,8 @@ namespace Magento\AdminNotification\Model\System;
 
 /**
  * @codeCoverageIgnore
+ * @api
+ * @since 100.0.2
  */
 class Message extends \Magento\Framework\Model\AbstractModel implements \Magento\Framework\Notification\MessageInterface
 {
@@ -15,7 +17,7 @@ class Message extends \Magento\Framework\Model\AbstractModel implements \Magento
      */
     protected function _construct()
     {
-        $this->_init('Magento\AdminNotification\Model\ResourceModel\System\Message');
+        $this->_init(\Magento\AdminNotification\Model\ResourceModel\System\Message::class);
     }
 
     /**

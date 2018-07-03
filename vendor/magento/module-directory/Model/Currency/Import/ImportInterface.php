@@ -4,11 +4,14 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * Import currency model interface
- */
 namespace Magento\Directory\Model\Currency\Import;
 
+/**
+ * Import currency model interface
+ *
+ * @api
+ * @since 100.0.2
+ */
 interface ImportInterface
 {
     /**

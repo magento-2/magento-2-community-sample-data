@@ -5,66 +5,72 @@
  */
 namespace Magento\Ui\Test\Unit\Component\MassAction;
 
-use Magento\Framework\Data\Collection;
-use Magento\Ui\Component\MassAction\Filter;
 use Magento\Framework\Api\Filter as ApiFilter;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\Api\Search\SearchResultInterface;
-use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponentInterface;
+use Magento\Ui\Component\MassAction\Filter;
 
 /**
+ * Class FilterTest
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FilterTest extends \PHPUnit_Framework_TestCase
+class FilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $requestMock;
 
     /**
-     * @var UiComponentFactory|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $uiComponentFactoryMock;
 
     /**
-     * @var FilterBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $filterBuilderMock;
 
-    /** @var Filter */
+    /** @var \Magento\Ui\Component\MassAction\Filter */
     private $filter;
 
     /**
-     * @var ObjectManager
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     private $objectManager;
 
     /**
-     * @var DataProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $dataProviderMock;
 
     /**
-     * @var AbstractDb|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $abstractDbMock;
 
     /**
-     * @var SearchResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $searchResultMock;
 
     /**
-     * @var UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * \PHPUnit_Framework_MockObject_MockObject
      */
     private $uiComponentMock;
+
+    /**
+     * \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $contextMock;
 
     /**
      * Set up
@@ -72,14 +78,18 @@ class FilterTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->uiComponentFactoryMock = $this->getMock(UiComponentFactory::class, [], [], '', false);
-        $this->filterBuilderMock = $this->getMock(FilterBuilder::class, [], [], '', false);
-        $this->requestMock = $this->getMock(RequestInterface::class);
-        $this->dataProviderMock = $this->getMock(DataProviderInterface::class);
-        $this->uiComponentMock = $this->getMock(UiComponentInterface::class);
-        $this->abstractDbMock = $this->getMock(AbstractDb::class, [], [], '', false);
-        $contextMock = $this->getMock(ContextInterface::class);
-        $uiComponentMockTwo = $this->getMock(UiComponentInterface::class);
+        $this->uiComponentFactoryMock = $this->createMock(UiComponentFactory::class);
+        $this->filterBuilderMock = $this->createPartialMock(
+            FilterBuilder::class,
+            ['value', 'setConditionType', 'create', 'setField']
+        );
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->dataProviderMock = $this->createMock(DataProviderInterface::class);
+        $this->uiComponentMock = $this->createMock(UiComponentInterface::class);
+        $this->abstractDbMock = $this->createMock(AbstractDb::class);
+        $this->contextMock = $this->createMock(ContextInterface::class);
+        $this->searchResultMock = $this->createMock(SearchResultInterface::class);
+        $uiComponentMockTwo = $this->createMock(UiComponentInterface::class);
         $this->filter = $this->objectManager->getObject(
             Filter::class,
             [
@@ -99,65 +109,7 @@ class FilterTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
         $this->uiComponentMock->expects($this->any())
             ->method('getContext')
-            ->willReturn($contextMock);
-        $contextMock->expects($this->any())
-            ->method('getDataProvider')
-            ->willReturn($this->dataProviderMock);
-        $this->dataProviderMock->expects($this->any())
-            ->method('setLimit');
-    }
-
-    /**
-     * This tests the method getComponent()
-     */
-    public function testGetComponent()
-    {
-        $this->requestMock->expects($this->at(0))
-            ->method('getParam')
-            ->with('namespace')
-            ->willReturn('');
-        $this->assertEquals($this->uiComponentMock, $this->filter->getComponent());
-    }
-
-    /**
-     * Run test for getCollection method
-     *
-     * @param int[]|bool $selectedIds
-     * @param int[]|bool $excludedIds
-     * @param int $filterExpected
-     * @param string $conditionExpected
-     * @param string $collectionClass
-     * @dataProvider applySelectionOnTargetProviderDataProvider
-     */
-    public function testGetCollection($selectedIds, $excludedIds, $filterExpected, $conditionExpected, $collectionClass)
-    {
-        $this->setUpApplySelection($selectedIds, $excludedIds, $filterExpected, $conditionExpected);
-        $this->requestMock->expects($this->at(4))
-            ->method('getParam')
-            ->with('namespace')
-            ->willReturn('');
-        $this->requestMock->expects($this->at(2))
-            ->method('getParam')
-            ->with(Filter::SELECTED_PARAM)
-            ->willReturn($selectedIds);
-        $this->requestMock->expects($this->at(3))
-            ->method('getParam')
-            ->with(Filter::EXCLUDED_PARAM)
-            ->willReturn($excludedIds);
-        $this->searchResultMock = $this->getMockBuilder($collectionClass)
-            ->disableOriginalConstructor()
-            ->setMethods(['getItems', 'getAllIds'])
-            ->getMockForAbstractClass();
-        $this->searchResultMock->expects($this->any())
-            ->method('getItems')
-            ->willReturn([]);
-        $this->dataProviderMock->expects($this->any())
-            ->method('getSearchResult')
-            ->willReturn($this->searchResultMock);
-        $this->searchResultMock->expects($this->any())
-            ->method('getAllIds')
-            ->willReturn([]);
-        $this->assertEquals($this->abstractDbMock, $this->filter->getCollection($this->abstractDbMock));
+            ->willReturn($this->contextMock);
     }
 
     /**
@@ -181,14 +133,10 @@ class FilterTest extends \PHPUnit_Framework_TestCase
     public function applySelectionOnTargetProviderDataProvider()
     {
         return [
-            [[1, 2, 3], 'false' , 0, 'in', SearchResultInterface::class],
-            [[1, 2, 3], [1, 2, 3] , 1, 'nin', SearchResultInterface::class],
-            ['false', [1, 2, 3] , 1, 'nin', SearchResultInterface::class],
-            ['false', 'false' , 0, '', SearchResultInterface::class],
-            [[1, 2, 3], 'false' , 0, 'in', Collection::class],
-            [[1, 2, 3], [1, 2, 3] , 1, 'nin', Collection::class],
-            ['false', [1, 2, 3] , 1, 'nin', Collection::class],
-            ['false', 'false' , 0, '', Collection::class]
+            [[1, 2, 3], 'false' , 0, 'in'],
+            [[1, 2, 3], [1, 2, 3] , 1, 'nin'],
+            ['false', [1, 2, 3] , 1, 'nin'],
+            ['false', 'false' , 0, '']
         ];
     }
 
@@ -198,7 +146,19 @@ class FilterTest extends \PHPUnit_Framework_TestCase
      */
     public function testApplySelectionOnTargetProviderException()
     {
-        $filterMock = $this->getMock(ApiFilter::class, [], [], '', false);
+        $this->contextMock->expects($this->any())
+            ->method('getDataProvider')
+            ->willReturn($this->dataProviderMock);
+        $this->dataProviderMock->expects($this->any())
+            ->method('setLimit');
+        $this->dataProviderMock->expects($this->any())
+            ->method('getSearchResult')
+            ->willReturn($this->searchResultMock);
+        $this->searchResultMock->expects($this->any())
+            ->method('getItems')
+            ->willReturn([]);
+
+        $filterMock = $this->createMock(ApiFilter::class);
         $this->filterBuilderMock->expects($this->any())
             ->method('setConditionType')
             ->willReturn($this->filterBuilderMock);
@@ -224,11 +184,83 @@ class FilterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Run test for getCollection method with SearchResultInterface
+     *
+     * @param int[]|bool $selectedIds
+     * @param int[]|bool $excludedIds
+     * @param int $filterExpected
+     * @param string $conditionExpected
+     * @dataProvider applySelectionOnTargetProviderDataProvider
+     */
+    public function testGetCollection($selectedIds, $excludedIds, $filterExpected, $conditionExpected)
+    {
+        $this->setUpApplySelection($selectedIds, $excludedIds, $filterExpected, $conditionExpected);
+        $this->requestMock->expects($this->at(4))
+            ->method('getParam')
+            ->with('namespace')
+            ->willReturn('');
+        $this->requestMock->expects($this->at(2))
+            ->method('getParam')
+            ->with(Filter::SELECTED_PARAM)
+            ->willReturn($selectedIds);
+        $this->requestMock->expects($this->at(3))
+            ->method('getParam')
+            ->with(Filter::EXCLUDED_PARAM)
+            ->willReturn($excludedIds);
+        $this->assertEquals($this->abstractDbMock, $this->filter->getCollection($this->abstractDbMock));
+    }
+
+    /**
+     * Run test for getCollection method with collection
+     *
+     * @param int[]|bool $selectedIds
+     * @param int[]|bool $excludedIds
+     * @param int $filterExpected
+     * @param string $conditionExpected
+     * @dataProvider applySelectionOnTargetProviderDataProvider
+     */
+    public function testGetCollectionWithCollection($selectedIds, $excludedIds, $filterExpected, $conditionExpected)
+    {
+        $this->dataProviderMock = $this->createMock(\Magento\Ui\DataProvider\AbstractDataProvider::class);
+        $this->contextMock->expects($this->any())
+            ->method('getDataProvider')
+            ->willReturn($this->dataProviderMock);
+        $this->dataProviderMock->expects($this->any())
+            ->method('getAllIds')
+            ->willReturn([1, 2, 3]);
+
+        $this->setUpApplySelection($selectedIds, $excludedIds, $filterExpected, $conditionExpected);
+
+        $this->requestMock->expects($this->any())
+            ->method('getParam')
+            ->willReturnMap([
+                ['namespace', null, ''],
+                [Filter::SELECTED_PARAM, null, $selectedIds],
+                [Filter::EXCLUDED_PARAM, null, $excludedIds],
+            ]);
+
+        $this->assertEquals($this->abstractDbMock, $this->filter->getCollection($this->abstractDbMock));
+    }
+
+    /**
      * This tests the method prepareComponent()
      */
     public function testPrepareComponent()
     {
-        $this->filter->prepareComponent($this->uiComponentMock);
+        $result = $this->filter->prepareComponent($this->uiComponentMock);
+        $this->assertNull($result);
+    }
+
+    /**
+     * This tests the method getComponent()
+     */
+    public function testGetComponent()
+    {
+        $this->requestMock->expects($this->at(0))
+            ->method('getParam')
+            ->with('namespace')
+            ->willReturn('');
+        $this->assertEquals($this->uiComponentMock, $this->filter->getComponent());
     }
 
     /**
@@ -236,6 +268,9 @@ class FilterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetComponentRefererUrlIsNotNull()
     {
+        $this->contextMock->expects($this->any())
+            ->method('getDataProvider')
+            ->willReturn($this->dataProviderMock);
         $returnArray = [
             'referer_url' => 'referer_url'
         ];
@@ -250,6 +285,9 @@ class FilterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetComponentRefererUrlIsNull()
     {
+        $this->contextMock->expects($this->any())
+            ->method('getDataProvider')
+            ->willReturn($this->dataProviderMock);
         $this->assertNull($this->filter->getComponentRefererUrl());
     }
 
@@ -263,7 +301,18 @@ class FilterTest extends \PHPUnit_Framework_TestCase
      */
     private function setUpApplySelection($selectedIds, $excludedIds, $filterExpected, $conditionExpected)
     {
-        $filterMock = $this->getMock(ApiFilter::class, [], [], '', false);
+        $this->contextMock->expects($this->any())
+            ->method('getDataProvider')
+            ->willReturn($this->dataProviderMock);
+        $this->dataProviderMock->expects($this->any())
+            ->method('setLimit');
+        $this->dataProviderMock->expects($this->any())
+            ->method('getSearchResult')
+            ->willReturn($this->searchResultMock);
+        $this->searchResultMock->expects($this->any())
+            ->method('getItems')
+            ->willReturn([new \Magento\Framework\DataObject(['id' => 1])]);
+        $filterMock = $this->createMock(ApiFilter::class);
         $this->requestMock->expects($this->at(0))
             ->method('getParam')
             ->with(Filter::SELECTED_PARAM)
@@ -275,6 +324,7 @@ class FilterTest extends \PHPUnit_Framework_TestCase
         $this->dataProviderMock->expects($this->exactly($filterExpected))
             ->method('addFilter')
             ->with($filterMock);
+
         $this->filterBuilderMock->expects($this->exactly($filterExpected))
             ->method('setConditionType')
             ->with($conditionExpected)

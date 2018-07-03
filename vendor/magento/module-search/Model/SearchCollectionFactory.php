@@ -6,6 +6,10 @@
 
 namespace Magento\Search\Model;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class SearchCollectionFactory
 {
     /**
@@ -30,7 +34,7 @@ class SearchCollectionFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = 'Magento\Search\Model\SearchCollectionInterface'
+        $instanceName = \Magento\Search\Model\SearchCollectionInterface::class
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

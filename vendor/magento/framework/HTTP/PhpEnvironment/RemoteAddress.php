@@ -8,19 +8,19 @@ namespace Magento\Framework\HTTP\PhpEnvironment;
 use Magento\Framework\App\RequestInterface;
 
 /**
- * Library for working with client ip address.
+ * Library for working with client ip address
  */
 class RemoteAddress
 {
     /**
-     * Request object.
+     * Request object
      *
      * @var RequestInterface
      */
     protected $request;
 
     /**
-     * Remote address cache.
+     * Remote address cache
      *
      * @var string
      */
@@ -74,12 +74,10 @@ class RemoteAddress
     }
 
     /**
-     * Filter addresses by trusted proxies list.
-     *
      * @param string $remoteAddress
      * @return string|null
      */
-    private function filterAddress($remoteAddress)
+    private function filterAddress(string $remoteAddress)
     {
         if (strpos($remoteAddress, ',') !== false) {
             $ipList = explode(',', $remoteAddress);
@@ -88,14 +86,14 @@ class RemoteAddress
         }
         $ipList = array_filter(
             $ipList,
-            function ($ip) {
+            function (string $ip) {
                 return filter_var(trim($ip), FILTER_VALIDATE_IP);
             }
         );
         if ($this->trustedProxies !== null) {
             $ipList = array_filter(
                 $ipList,
-                function ($ip) {
+                function (string $ip) {
                     return !in_array(trim($ip), $this->trustedProxies, true);
                 }
             );
@@ -122,23 +120,22 @@ class RemoteAddress
         if ($this->remoteAddress !== null) {
             return $this->remoteAddress;
         }
-        
+
         $remoteAddress = $this->readAddress();
         if (!$remoteAddress) {
             $this->remoteAddress = false;
-
             return false;
         }
         $remoteAddress = $this->filterAddress($remoteAddress);
 
         if (!$remoteAddress) {
             $this->remoteAddress = false;
-
             return false;
         } else {
             $this->remoteAddress = $remoteAddress;
 
-            return $ipToLong ? ip2long($this->remoteAddress) : $this->remoteAddress;
+            return $ipToLong ? ip2long($this->remoteAddress)
+                : $this->remoteAddress;
         }
     }
 

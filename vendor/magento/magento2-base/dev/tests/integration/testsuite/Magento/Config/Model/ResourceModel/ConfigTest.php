@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Model\ResourceModel;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Config\Model\ResourceModel\Config
@@ -15,7 +15,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Config\Model\ResourceModel\Config'
+            \Magento\Config\Model\ResourceModel\Config::class
         );
     }
 

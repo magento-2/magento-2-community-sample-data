@@ -259,7 +259,6 @@ class DefaultConfigProvider implements ConfigProviderInterface
         $output['selectedShippingMethod'] = $this->getSelectedShippingMethod();
         $output['storeCode'] = $this->getStoreCode();
         $output['isGuestCheckoutAllowed'] = $this->isGuestCheckoutAllowed();
-        $output['isCustomerLoginRequired'] = $this->isCustomerLoginRequired();
         $output['registerUrl'] = $this->getRegisterUrl();
         $output['checkoutUrl'] = $this->getCheckoutUrl();
         $output['defaultSuccessPageUrl'] = $this->getDefaultSuccessPageUrl();
@@ -293,9 +292,7 @@ class DefaultConfigProvider implements ConfigProviderInterface
         $output['originCountryCode'] = $this->getOriginCountryCode();
         $output['paymentMethods'] = $this->getPaymentMethods();
         $output['autocomplete'] = $this->isAutocompleteEnabled();
-        $output['displayBillingOnPaymentMethod'] =
-            $this->checkoutHelper->isDisplayBillingOnPaymentMethodAvailable();
-
+        $output['displayBillingOnPaymentMethod'] = $this->checkoutHelper->isDisplayBillingOnPaymentMethodAvailable();
         return $output;
     }
 
@@ -307,10 +304,10 @@ class DefaultConfigProvider implements ConfigProviderInterface
      */
     private function isAutocompleteEnabled()
     {
-         return $this->scopeConfig->getValue(
-             \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE,
-             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-         ) ? 'on' : 'off';
+        return $this->scopeConfig->getValue(
+            \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ? 'on' : 'off';
     }
 
     /**
@@ -367,7 +364,6 @@ class DefaultConfigProvider implements ConfigProviderInterface
                     'quote_id'
                 )->getMaskedId();
             }
-
         }
         return $quoteData;
     }
@@ -514,17 +510,6 @@ class DefaultConfigProvider implements ConfigProviderInterface
     private function isCustomerLoggedIn()
     {
         return (bool)$this->httpContext->getValue(CustomerContext::CONTEXT_AUTH);
-    }
-
-    /**
-     * Check if customer must be logged in to proceed with checkout
-     *
-     * @return bool
-     * @codeCoverageIgnore
-     */
-    private function isCustomerLoginRequired()
-    {
-        return $this->checkoutHelper->isCustomerMustBeLogged();
     }
 
     /**

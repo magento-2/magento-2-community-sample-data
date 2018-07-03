@@ -24,7 +24,7 @@ use Magento\Framework\EntityManager\HydratorInterface;
  * Class CreditmemoDocumentFactoryTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
+class CreditmemoDocumentFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManager
@@ -102,9 +102,10 @@ class CreditmemoDocumentFactoryTest extends \PHPUnit_Framework_TestCase
         $this->creditmemoFactoryMock = $this->getMockBuilder(CreditmemoFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->commentFactoryMock = $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentFactoryMock =
+            $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
+                ->disableOriginalConstructor()
+                ->getMock();
         $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
             ->disableOriginalConstructor()
             ->getMock();

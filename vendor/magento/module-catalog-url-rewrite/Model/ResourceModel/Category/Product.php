@@ -52,12 +52,11 @@ class Product extends AbstractDb
         foreach ($data as $insertData) {
             $totalCount += $connection->insertMultiple($this->getTable(self::TABLE_NAME), $insertData);
         }
-
         return $totalCount;
     }
 
     /**
-     * Removes data by primary key.
+     * Removes data by primary key
      *
      * @param array $removeData
      * @return int
@@ -71,7 +70,7 @@ class Product extends AbstractDb
     }
 
     /**
-     * Removes multiple entities from url_rewrite table using entities from catalog_url_rewrite_product_category.
+     * Removes multiple entities from url_rewrite table using entities from catalog_url_rewrite_product_category
      * Example: $filter = ['category_id' => [1, 2, 3], 'product_id' => [1, 2, 3]]
      *
      * @param array $filter
@@ -86,7 +85,7 @@ class Product extends AbstractDb
     }
 
     /**
-     * Prepare select statement for specific filter.
+     * Prepare select statement for specific filter
      *
      * @param array $data
      * @return \Magento\Framework\DB\Select
@@ -99,7 +98,6 @@ class Product extends AbstractDb
         foreach ($data as $column => $value) {
             $select->where($this->getConnection()->quoteIdentifier($column) . ' IN (?)', $value);
         }
-
         return $select;
     }
 }

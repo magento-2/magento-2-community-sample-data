@@ -5,10 +5,7 @@
  */
 namespace Magento\CmsUrlRewrite\Test\Unit\Model;
 
-/**
- * Test for \Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator class.
- */
-class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
+class CmsPageUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -55,7 +52,7 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
             [
                 'storeManager' => $this->storeManager,
                 'urlRewriteFactory' => $this->urlRewriteFactory,
-                'cmsPageUrlPathGenerator' => $this->urlPathGenerator,
+                'cmsPageUrlPathGenerator' => $this->urlPathGenerator
             ]
         );
     }
@@ -64,7 +61,6 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $initializesStores = [0];
         $cmsPageId = 1;
-        /** @var \Magento\Cms\Model\Page|\PHPUnit_Framework_MockObject_MockObject $cmsPage */
         $cmsPage = $this->getMockBuilder(\Magento\Cms\Model\Page::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -79,9 +75,7 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->urlRewriteFactory->expects($this->any())->method('create')->willReturn($urlRewrite);
         $cmsPage->expects($this->any())->method('getId')->willReturn($cmsPageId);
         $cmsPage->expects($this->any())->method('getIdentifier')->willReturn('request_path');
-        $this->urlPathGenerator->expects($this->any())
-            ->method('getCanonicalUrlPath')
-            ->with($cmsPage)
+        $this->urlPathGenerator->expects($this->any())->method('getCanonicalUrlPath')->with($cmsPage)
             ->willReturn('cms/page/view/page_id/' . $cmsPageId);
 
         $urls = $this->urlRewriteGenerator->generate($cmsPage);
@@ -93,11 +87,9 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $initializesStores = [1, 2];
         $cmsPageId = 1;
-        /** @var \Magento\Cms\Model\Page|\PHPUnit_Framework_MockObject_MockObject $cmsPage */
         $cmsPage = $this->getMockBuilder(\Magento\Cms\Model\Page::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $cmsPage->expects($this->any())->method('getStores')->willReturn($initializesStores);
         $firstStore = $this->getMockBuilder(\Magento\Store\Api\Data\StoreInterface::class)
             ->setMethods(['getStoreId'])
@@ -105,14 +97,12 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
         $secondStore = $this->getMockBuilder(\Magento\Store\Api\Data\StoreInterface::class)
             ->setMethods(['getStoreId'])
             ->getMockForAbstractClass();
-        $this->storeManager->expects($this->any())
-            ->method('getStores')
-            ->willReturn(
-                [
-                    1 => $firstStore,
-                    2 => $secondStore,
-                ]
-            );
+        $this->storeManager->expects($this->any())->method('getStores')->willReturn(
+            [
+                1 => $firstStore,
+                2 => $secondStore
+            ]
+        );
         $firstStore->expects($this->any())->method('getStoreId')->willReturn($initializesStores[0]);
         $secondStore->expects($this->any())->method('getStoreId')->willReturn($initializesStores[1]);
 
@@ -131,7 +121,7 @@ class CmsPageUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 $initializesStores[0],
-                $initializesStores[1],
+                $initializesStores[1]
             ],
             [
                 $urls[0]->getStoreId(),

@@ -16,7 +16,7 @@ use Magento\Cms\Model\ResourceModel\Page\CollectionFactory;
 class MassEnable extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

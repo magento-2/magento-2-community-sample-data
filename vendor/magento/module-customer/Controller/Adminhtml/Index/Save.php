@@ -41,7 +41,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
             ];
 
             $customerData = $this->_extractData(
-                $this->getRequest(),
                 'adminhtml_customer',
                 CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
                 $additionalAttributes,
@@ -62,30 +61,25 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
     /**
      * Perform customer data filtration based on form code and form object
      *
-     * @param \Magento\Framework\App\RequestInterface $request
      * @param string $formCode The code of EAV form to take the list of attributes from
      * @param string $entityType entity type for the form
      * @param string[] $additionalAttributes The list of attribute codes to skip filtration for
      * @param string $scope scope of the request
-     * @param \Magento\Customer\Model\Metadata\Form $metadataForm to use for extraction
-     * @return array Filtered customer data
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @return array
      */
     protected function _extractData(
-        \Magento\Framework\App\RequestInterface $request,
         $formCode,
         $entityType,
         $additionalAttributes = [],
-        $scope = null,
-        \Magento\Customer\Model\Metadata\Form $metadataForm = null
+        $scope = null
     ) {
-        $metadataForm = $metadataForm ? $metadataForm : $this->getMetadataForm($entityType, $formCode, $scope);
-        $formData = $metadataForm->extractData($request, $scope);
+        $metadataForm = $this->getMetadataForm($entityType, $formCode, $scope);
+        $formData = $metadataForm->extractData($this->getRequest(), $scope);
         $formData = $metadataForm->compactData($formData);
 
         // Initialize additional attributes
         /** @var \Magento\Framework\DataObject $object */
-        $object = $this->_objectFactory->create(['data' => $request->getPostValue()]);
+        $object = $this->_objectFactory->create(['data' => $this->getRequest()->getPostValue()]);
         $requestData = $object->getData($scope);
         foreach ($additionalAttributes as $attributeCode) {
             $formData[$attributeCode] = isset($requestData[$attributeCode]) ? $requestData[$attributeCode] : false;
@@ -125,7 +119,6 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
         foreach ($addressIdList as $addressId) {
             $scope = sprintf('address/%s', $addressId);
             $addressData = $this->_extractData(
-                $this->getRequest(),
                 'adminhtml_customer_address',
                 AddressMetadataInterface::ENTITY_TYPE_ADDRESS,
                 ['default_billing', 'default_shipping'],
@@ -278,6 +271,15 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
                 $this->_addSessionErrorMessages($messages);
                 $this->_getSession()->setCustomerFormData($originalRequestData);
                 $returnToEdit = true;
+            } catch (\Magento\Framework\Exception\AbstractAggregateException $exception) {
+                $errors = $exception->getErrors();
+                $messages = [];
+                foreach ($errors as $error) {
+                    $messages[] = $error->getMessage();
+                }
+                $this->_addSessionErrorMessages($messages);
+                $this->_getSession()->setCustomerFormData($originalRequestData);
+                $returnToEdit = true;
             } catch (LocalizedException $exception) {
                 $this->_addSessionErrorMessages($exception->getMessage());
                 $this->_getSession()->setCustomerFormData($originalRequestData);
@@ -311,7 +313,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index
      * Get email notification
      *
      * @return EmailNotificationInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getEmailNotification()
     {

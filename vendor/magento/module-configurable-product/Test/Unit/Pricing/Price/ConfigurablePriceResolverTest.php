@@ -8,7 +8,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Pricing\Price;
 use Magento\ConfigurableProduct\Pricing\Price\LowestPriceOptionsProviderInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ConfigurablePriceResolverTest extends \PHPUnit_Framework_TestCase
+class ConfigurablePriceResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LowestPriceOptionsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -33,12 +33,12 @@ class ConfigurablePriceResolverTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $className = \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class;
-        $this->configurable = $this->getMock($className, ['getUsedProducts'], [], '', false);
+        $this->configurable = $this->createPartialMock($className, ['getUsedProducts']);
 
         $className = \Magento\ConfigurableProduct\Pricing\Price\PriceResolverInterface::class;
         $this->priceResolver = $this->getMockForAbstractClass($className, [], '', false, true, true, ['resolvePrice']);
 
-        $this->lowestPriceOptionsProvider = $this->getMock(LowestPriceOptionsProviderInterface::class);
+        $this->lowestPriceOptionsProvider = $this->createMock(LowestPriceOptionsProviderInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->resolver = $objectManager->getObject(
@@ -52,25 +52,9 @@ class ConfigurablePriceResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * situation: There are no used products, thus there are no prices
-     */
-    public function testResolvePriceWithNoPrices()
-    {
-        $product = $this->getMockBuilder(
-            \Magento\Catalog\Model\Product::class
-        )->disableOriginalConstructor()->getMock();
-
-        $product->expects($this->never())->method('getSku');
-
-        $this->lowestPriceOptionsProvider->expects($this->once())->method('getProducts')->willReturn([]);
-
-        $this->assertNull($this->resolver->resolvePrice($product));
-    }
-
-    /**
      * situation: one product is supplying the price, which could be a price of zero (0)
      *
-     * @dataProvider testResolvePriceDataProvider
+     * @dataProvider resolvePriceDataProvider
      */
     public function testResolvePrice($expectedValue)
     {
@@ -94,7 +78,7 @@ class ConfigurablePriceResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testResolvePriceDataProvider()
+    public function resolvePriceDataProvider()
     {
         return [
             'price of zero' => [0.00],

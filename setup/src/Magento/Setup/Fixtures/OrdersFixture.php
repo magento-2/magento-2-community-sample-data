@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2018 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -147,6 +147,11 @@ class OrdersFixture extends Fixture
     private $linkManagement;
 
     /**
+     * @var \Magento\Framework\Serialize\SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * Flag specifies if inactive quotes should be generated for orders.
      *
      * @var bool
@@ -159,6 +164,7 @@ class OrdersFixture extends Fixture
      * @param \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
      * @param \Magento\ConfigurableProduct\Api\OptionRepositoryInterface $optionRepository
      * @param \Magento\ConfigurableProduct\Api\LinkManagementInterface $linkManagement
+     * @param \Magento\Framework\Serialize\SerializerInterface $serializer
      * @param FixtureModel $fixtureModel
      */
     public function __construct(
@@ -167,6 +173,7 @@ class OrdersFixture extends Fixture
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\ConfigurableProduct\Api\OptionRepositoryInterface $optionRepository,
         \Magento\ConfigurableProduct\Api\LinkManagementInterface $linkManagement,
+        \Magento\Framework\Serialize\SerializerInterface $serializer,
         FixtureModel $fixtureModel
     ) {
         $this->storeManager = $storeManager;
@@ -174,6 +181,7 @@ class OrdersFixture extends Fixture
         $this->productRepository = $productRepository;
         $this->optionRepository = $optionRepository;
         $this->linkManagement = $linkManagement;
+        $this->serializer = $serializer;
         parent::__construct($fixtureModel);
     }
 
@@ -223,6 +231,12 @@ class OrdersFixture extends Fixture
         if ($requestedOrders - $entityId < 1) {
             return;
         }
+
+        $ruleId = $this->getMaxEntityId(
+            'salesrule',
+            \Magento\SalesRule\Model\ResourceModel\Rule::class,
+            'rule_id'
+        );
 
         $maxItemId = $this->getMaxEntityId(
             'sales_order_item',
@@ -322,6 +336,7 @@ class OrdersFixture extends Fixture
                 '%productStoreId%' => $productStoreId($entityId),
                 '%productStoreName%' => $productStoreName($entityId),
                 '%entityId%' => $entityId,
+                '%ruleId%' => $ruleId,
             ];
             $shippingAddress = ['%orderAddressId%' => $entityId * 2 - 1, '%addressType%' => 'shipping'];
             $billingAddress = ['%orderAddressId%' => $entityId * 2, '%addressType%' => 'billing'];
@@ -355,7 +370,7 @@ class OrdersFixture extends Fixture
                     $this->query('quote_item', $order, $itemData);
                     $this->query('quote_item_option', $order, $itemData, [
                         '%code%' => 'info_buyRequest',
-                        '%value%' => serialize([
+                        '%value%' => $this->serializer->serialize([
                             'product' => $productId($entityId, $i, Type::TYPE_SIMPLE),
                             'qty' => "1",
                             'uenc' => 'aHR0cDovL21hZ2UyLmNvbS9jYXRlZ29yeS0xLmh0bWw'
@@ -597,7 +612,7 @@ class OrdersFixture extends Fixture
             $productsResult[$key]['id'] = $simpleId;
             $productsResult[$key]['sku'] = $simpleProduct->getSku();
             $productsResult[$key]['name'] = $simpleProduct->getName();
-            $productsResult[$key]['buyRequest'] = serialize([
+            $productsResult[$key]['buyRequest'] = $this->serializer->serialize([
                 "info_buyRequest" => [
                     "uenc" => "aHR0cDovL21hZ2VudG8uZGV2L2NvbmZpZ3VyYWJsZS1wcm9kdWN0LTEuaHRtbA,,",
                     "product" => $simpleId,
@@ -673,13 +688,13 @@ class OrdersFixture extends Fixture
             $productsResult[$key]['name'] = $configurableProduct->getName();
             $productsResult[$key]['childId'] = $simpleId;
             $productsResult[$key]['buyRequest'] = [
-                'order' => serialize($configurableBuyRequest),
-                'quote' => serialize($quoteConfigurableBuyRequest),
-                'super_attribute' => serialize($superAttribute)
+                'order' => $this->serializer->serialize($configurableBuyRequest),
+                'quote' => $this->serializer->serialize($quoteConfigurableBuyRequest),
+                'super_attribute' => $this->serializer->serialize($superAttribute)
             ];
             $productsResult[$key]['childBuyRequest'] = [
-                'order' => serialize($simpleBuyRequest),
-                'quote' => serialize($quoteSimpleBuyRequest),
+                'order' => $this->serializer->serialize($simpleBuyRequest),
+                'quote' => $this->serializer->serialize($quoteSimpleBuyRequest),
             ];
         }
         return $productsResult;

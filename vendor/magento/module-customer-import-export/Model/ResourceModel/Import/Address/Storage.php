@@ -3,6 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
+
 namespace Magento\CustomerImportExport\Model\ResourceModel\Import\Address;
 
 use Magento\Customer\Model\ResourceModel\Address\CollectionFactory as AddressCollectionFactory;
@@ -35,7 +37,7 @@ class Storage
      *
      * @var CollectionIterator
      */
-    protected $collectionIterator;
+    private $collectionIterator;
 
     /**
      * @var ScopeConfigInterface
@@ -65,7 +67,7 @@ class Storage
      *
      * @return void
      */
-    private function addRecord($customerId, $addressId)
+    private function addRecord(string $customerId, string $addressId)
     {
         if (!$customerId || !$addressId) {
             return;
@@ -115,7 +117,7 @@ class Storage
      * @param string $forCustomerId
      * @return bool
      */
-    public function doesExist($addressId, $forCustomerId)
+    public function doesExist(string $addressId, string $forCustomerId): bool
     {
         return array_key_exists($forCustomerId, $this->addresses)
             && in_array(

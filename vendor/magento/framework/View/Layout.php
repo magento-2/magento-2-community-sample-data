@@ -5,14 +5,16 @@
  */
 namespace Magento\Framework\View;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State as AppState;
 use Magento\Framework\Cache\FrontendInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Layout\Element;
 use Magento\Framework\View\Layout\ScheduledStructure;
-use Magento\Framework\App\State as AppState;
 use Psr\Log\LoggerInterface as Logger;
-use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Layout model
@@ -166,6 +168,11 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     protected $logger;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * @param Layout\ProcessorFactory $processorFactory
      * @param ManagerInterface $eventManager
      * @param Layout\Data\Structure $structure
@@ -179,6 +186,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
      * @param \Magento\Framework\App\State $appState
      * @param \Psr\Log\LoggerInterface $logger
      * @param bool $cacheable
+     * @param SerializerInterface|null $serializer
      */
     public function __construct(
         Layout\ProcessorFactory $processorFactory,
@@ -193,10 +201,12 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         Layout\Generator\ContextFactory $generatorContextFactory,
         AppState $appState,
         Logger $logger,
-        $cacheable = true
+        $cacheable = true,
+        SerializerInterface $serializer = null
     ) {
-        $this->_elementClass = 'Magento\Framework\View\Layout\Element';
+        $this->_elementClass = \Magento\Framework\View\Layout\Element::class;
         $this->_renderingOutput = new \Magento\Framework\DataObject();
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
 
         $this->_processorFactory = $processorFactory;
         $this->_eventManager = $eventManager;
@@ -308,12 +318,19 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $cacheId = 'structure_' . $this->getUpdate()->getCacheId();
         $result = $this->cache->load($cacheId);
         if ($result) {
-            $this->readerContext = unserialize($result);
+            $data = $this->serializer->unserialize($result);
+            $this->getReaderContext()->getPageConfigStructure()->populateWithArray($data['pageConfigStructure']);
+            $this->getReaderContext()->getScheduledStructure()->populateWithArray($data['scheduledStructure']);
         } else {
             \Magento\Framework\Profiler::start('build_structure');
             $this->readerPool->interpret($this->getReaderContext(), $this->getNode());
             \Magento\Framework\Profiler::stop('build_structure');
-            $this->cache->save(serialize($this->getReaderContext()), $cacheId, $this->getUpdate()->getHandles());
+
+            $data = [
+                'pageConfigStructure' => $this->getReaderContext()->getPageConfigStructure()->__toArray(),
+                'scheduledStructure'  => $this->getReaderContext()->getScheduledStructure()->__toArray(),
+            ];
+            $this->cache->save($this->serializer->serialize($data), $cacheId, $this->getUpdate()->getHandles());
         }
 
         $generatorContext = $this->generatorContextFactory->create(
@@ -495,7 +512,6 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $display = $this->structure->getAttribute($name, 'display');
         if ($display === '' || $display === false || $display === null
             || filter_var($display, FILTER_VALIDATE_BOOLEAN)) {
-
             return true;
         }
         return false;
@@ -517,7 +533,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
             } elseif ($this->isBlock($name)) {
                 $result = $this->_renderBlock($name);
             } else {
-                $result = $this->_renderContainer($name);
+                $result = $this->_renderContainer($name, false);
             }
         } catch (\Exception $e) {
             if ($this->appState->getMode() === AppState::MODE_DEVELOPER) {
@@ -559,14 +575,15 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
      * Gets HTML of container element
      *
      * @param string $name
+     * @param bool $useCache
      * @return string
      */
-    protected function _renderContainer($name)
+    protected function _renderContainer($name, $useCache = true)
     {
         $html = '';
         $children = $this->getChildNames($name);
         foreach ($children as $child) {
-            $html .= $this->renderElement($child);
+            $html .= $this->renderElement($child, $useCache);
         }
         if ($html == '' || !$this->structure->getAttribute($name, Element::CONTAINER_OPT_HTML_TAG)) {
             return $html;
@@ -952,7 +969,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         if ($block) {
             return $block;
         }
-        return $this->createBlock('Magento\Framework\View\Element\Messages', 'messages');
+        return $this->createBlock(\Magento\Framework\View\Element\Messages::class, 'messages');
     }
 
     /**

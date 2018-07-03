@@ -1,0 +1,11 @@
+<?php
+/** @var \Dotdigitalgroup\Email\Block\Feefo $block */
+$data = $block->getServiceScoreLogo();
+$vendorUrl = $data['vendorUrl'];
+$fullUrl = $data['fullUrl'];
+?>
+<a href="<?= $block->escapeUrl($vendorUrl)?>" target='_blank'>
+    <img alt='Feefo logo' border='0' src="<?= $block->escapeUrl($fullUrl)?>"
+         title="<?= $block->escapeHtml(__('See what our customers say about us')); ?>"
+    >
+</a>

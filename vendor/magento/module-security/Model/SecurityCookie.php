@@ -7,6 +7,12 @@ namespace Magento\Security\Model;
 
 use Magento\Framework\Stdlib\Cookie\CookieReaderInterface;
 
+/**
+ * Manager for a cookie with logout reason
+ *
+ * @api
+ * @since 100.1.0
+ */
 class SecurityCookie
 {
     /**
@@ -56,6 +62,7 @@ class SecurityCookie
      * Get cookie with logout reason code
      *
      * @return string|int
+     * @since 100.1.0
      */
     public function getLogoutReasonCookie()
     {
@@ -67,6 +74,7 @@ class SecurityCookie
      *
      * @param int $status
      * @return $this
+     * @since 100.1.0
      */
     public function setLogoutReasonCookie($status)
     {
@@ -86,6 +94,7 @@ class SecurityCookie
      * Delete cookie with reason of logout
      *
      * @return $this
+     * @since 100.1.0
      */
     public function deleteLogoutReasonCookie()
     {

@@ -8,7 +8,7 @@ namespace Magento\Cms\Helper\Wysiwyg;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Wysiwyg Images Helper
+ * Wysiwyg Images Helper.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -156,7 +156,7 @@ class Images extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function isUsingStaticUrlsAllowed()
     {
-        $checkResult = new \StdClass();
+        $checkResult = new \stdClass();
         $checkResult->isAllowed = false;
         $this->_eventManager->dispatch(
             'cms_wysiwyg_images_static_urls_allowed',
@@ -261,7 +261,7 @@ class Images extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Revert operation to idEncode
+     * Revert opration to idEncode
      *
      * @param string $string
      * @return string

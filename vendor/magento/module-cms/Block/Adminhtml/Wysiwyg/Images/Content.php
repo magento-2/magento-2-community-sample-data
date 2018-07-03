@@ -5,9 +5,11 @@
  */
 namespace Magento\Cms\Block\Adminhtml\Wysiwyg\Images;
 
-
 /**
  * Wysiwyg Images content block
+ *
+ * @api
+ * @since 100.0.2
  */
 class Content extends \Magento\Backend\Block\Widget\Container
 {

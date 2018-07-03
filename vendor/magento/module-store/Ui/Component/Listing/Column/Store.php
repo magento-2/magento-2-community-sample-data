@@ -140,13 +140,13 @@ class Store extends Column
      *
      * @return StoreManager
      *
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getStoreManager()
     {
         if ($this->storeManager === null) {
             $this->storeManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\Store\Model\StoreManagerInterface');
+                ->get(\Magento\Store\Model\StoreManagerInterface::class);
         }
         return $this->storeManager;
     }

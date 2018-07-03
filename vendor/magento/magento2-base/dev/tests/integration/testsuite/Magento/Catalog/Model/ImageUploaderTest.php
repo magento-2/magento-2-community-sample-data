@@ -3,15 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
 
 namespace Magento\Catalog\Model;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Tests for the \Magento\Catalog\Model\ImageUploader class.
+ * Tests for the \Magento\Catalog\Model\ImageUploader class
  */
-class ImageUploaderTest extends \PHPUnit_Framework_TestCase
+class ImageUploaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -33,9 +34,6 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
      */
     private $mediaDirectory;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
@@ -48,14 +46,11 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
             [
                 'baseTmpPath' => $this->mediaDirectory->getRelativePath('tmp'),
                 'basePath' => __DIR__,
-                'allowedExtensions' => ['jpg', 'jpeg', 'gif', 'png'],
+                'allowedExtensions' => ['jpg', 'jpeg', 'gif', 'png']
             ]
         );
     }
 
-    /**
-     * @return void
-     */
     public function testSaveFileToTmpDir()
     {
         $fileName = 'magento_small_image.jpg';
@@ -78,7 +73,6 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @expectedExceptionMessage File validation failed.
      */
@@ -104,7 +98,6 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @expectedExceptionMessage File validation failed.
      */

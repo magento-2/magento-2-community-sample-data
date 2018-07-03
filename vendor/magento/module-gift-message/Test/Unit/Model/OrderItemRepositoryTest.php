@@ -11,10 +11,9 @@ use Magento\Framework\Exception\CouldNotSaveException;
 
 /**
  * Test class for \Magento\GiftMessage\Model\OrderItemRepository
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
+class OrderItemRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\GiftMessage\Model\OrderItemRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -104,8 +103,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::get
-     *
-     * @return void
      */
     public function testGet()
     {
@@ -150,8 +147,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::get
-     *
-     * @return void
      */
     public function testGetNoSuchEntityExceptionOnGetItemById()
     {
@@ -180,8 +175,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::get
-     *
-     * @return void
      */
     public function testGetNoSuchEntityExceptionOnIsMessageAllowed()
     {
@@ -221,8 +214,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::get
-     *
-     * @return void
      */
     public function testGetNoSuchEntityExceptionOnGetGiftMessageId()
     {
@@ -233,6 +224,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getGiftMessageId'])
             ->getMock();
+
         $this->orderFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->orderMock);
@@ -262,8 +254,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::save
-     *
-     * @return void
      */
     public function testSave()
     {
@@ -282,6 +272,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
         $messageMock = $this->getMockBuilder(\Magento\GiftMessage\Api\Data\MessageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->orderFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderMock);
@@ -319,8 +310,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::save
-     *
-     * @return void
      */
     public function testSaveNoSuchEntityException()
     {
@@ -329,6 +318,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
         $messageMock = $this->getMockBuilder(\Magento\GiftMessage\Api\Data\MessageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->orderFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderMock);
@@ -352,8 +342,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::save
-     *
-     * @return void
      */
     public function testSaveInvalidTransitionException()
     {
@@ -366,6 +354,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
         $messageMock = $this->getMockBuilder(\Magento\GiftMessage\Api\Data\MessageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->orderFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderMock);
@@ -392,8 +381,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::save
-     *
-     * @return void
      */
     public function testSaveCouldNotSaveException()
     {
@@ -406,6 +393,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
         $messageMock = $this->getMockBuilder(\Magento\GiftMessage\Api\Data\MessageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->orderFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderMock);
@@ -436,8 +424,6 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Magento\GiftMessage\Model\OrderItemRepository::save
-     *
-     * @return void
      */
     public function testSaveCouldNotSaveExceptionOnSaveAllInOrder()
     {
@@ -457,6 +443,7 @@ class OrderItemRepositoryTest extends \PHPUnit_Framework_TestCase
         $messageMock = $this->getMockBuilder(\Magento\GiftMessage\Api\Data\MessageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->orderFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderMock);

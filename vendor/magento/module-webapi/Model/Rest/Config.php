@@ -34,10 +34,12 @@ class Config
     const KEY_PARAMETERS = 'parameters';
     /*#@-*/
 
-    /** @var ModelConfig */
+    /*#@-*/
     protected $_config;
 
-    /** @var \Magento\Framework\Controller\Router\Route\Factory */
+    /**
+     * @var \Magento\Framework\Controller\Router\Route\Factory
+     */
     protected $_routeFactory;
 
     /**
@@ -56,7 +58,7 @@ class Config
      * @param array $routeData Expected format:
      *  <pre>array(
      *      'routePath' => '/categories/:categoryId',
-     *      'class' => 'Magento\Catalog\Api\CategoryRepositoryInterface',
+     *      'class' => \Magento\Catalog\Api\CategoryRepositoryInterface::class,
      *      'serviceMethod' => 'item'
      *      'secure' => true
      *  );</pre>
@@ -66,7 +68,7 @@ class Config
     {
         /** @var $route \Magento\Webapi\Controller\Rest\Router\Route */
         $route = $this->_routeFactory->createRoute(
-            'Magento\Webapi\Controller\Rest\Router\Route',
+            \Magento\Webapi\Controller\Rest\Router\Route::class,
             $routeData[self::KEY_ROUTE_PATH]
         );
 

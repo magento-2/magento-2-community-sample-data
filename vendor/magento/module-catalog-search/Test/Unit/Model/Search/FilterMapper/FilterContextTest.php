@@ -16,12 +16,7 @@ use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Search\Request\FilterInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * Tests FilterContext class.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class FilterContextTest extends \PHPUnit_Framework_TestCase
+class FilterContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FilterContext|\PHPUnit_Framework_MockObject_MockObject
@@ -58,6 +53,9 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
      */
     private $select;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp()
     {
         $this->eavConfig = $this->getMockBuilder(\Magento\Eav\Model\Config::class)
@@ -99,9 +97,6 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Tests apply() method on exclusion filter.
-     */
     public function testApplyOnExclusionFilter()
     {
         $filter = $this->createFilterMock();
@@ -110,13 +105,9 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->with($filter, $this->select)
             ->willReturn(true);
         $this->eavConfig->expects($this->never())->method('getAttribute');
-
         $this->assertTrue($this->filterContext->apply($filter, $this->select));
     }
 
-    /**
-     * Tests apply() method without attribute.
-     */
     public function testApplyFilterWithoutAttribute()
     {
         $filter = $this->createFilterMock('some_field');
@@ -128,13 +119,9 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->method('getAttribute')
             ->with(\Magento\Catalog\Model\Product::ENTITY, 'some_field')
             ->willReturn(null);
-
         $this->assertFalse($this->filterContext->apply($filter, $this->select));
     }
 
-    /**
-     * Tests apply() method on term filter by select attribute.
-     */
     public function testApplyOnTermFilterBySelect()
     {
         $filter = $this->createFilterMock('select_field', FilterInterface::TYPE_TERM);
@@ -147,17 +134,13 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(false);
-        $this->termDropdownStrategy->expects($this->once())
+        $this->termDropdownStrategy->expects($this->never())
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(true);
-
-        $this->assertTrue($this->filterContext->apply($filter, $this->select));
+        $this->assertFalse($this->filterContext->apply($filter, $this->select));
     }
 
-    /**
-     * Tests apply() method on term filter by multiselect attribute.
-     */
     public function testApplyOnTermFilterByMultiSelect()
     {
         $filter = $this->createFilterMock('multiselect_field', FilterInterface::TYPE_TERM);
@@ -170,17 +153,13 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(false);
-        $this->termDropdownStrategy->expects($this->once())
+        $this->termDropdownStrategy->expects($this->never())
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(true);
-
-        $this->assertTrue($this->filterContext->apply($filter, $this->select));
+        $this->assertFalse($this->filterContext->apply($filter, $this->select));
     }
 
-    /**
-     * Tests apply() method on term filter by static attribute.
-     */
     public function testApplyOnTermFilterByStaticAttribute()
     {
         $filter = $this->createFilterMock('multiselect_field', FilterInterface::TYPE_TERM);
@@ -197,13 +176,9 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(true);
-
         $this->assertTrue($this->filterContext->apply($filter, $this->select));
     }
 
-    /**
-     * Tests apply() method on term filter by unknown attribute type.
-     */
     public function testApplyOnTermFilterByUnknownAttributeType()
     {
         $filter = $this->createFilterMock('multiselect_field', FilterInterface::TYPE_TERM);
@@ -216,16 +191,12 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
             ->method('apply')
             ->with($filter, $this->select)
             ->willReturn(false);
-
         $this->assertFalse($this->filterContext->apply($filter, $this->select));
     }
 
     /**
-     * Creates filter mock.
-     *
      * @param string $field
      * @param string $type
-     *
      * @return FilterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createFilterMock($field = null, $type = null)
@@ -244,11 +215,8 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Creaates attribute mock.
-     *
      * @param string|null $frontendInput
      * @param string|null $backendType
-     *
      * @return Attribute|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createAttributeMock($frontendInput = null, $backendType = null)
@@ -263,7 +231,6 @@ class FilterContextTest extends \PHPUnit_Framework_TestCase
         $attribute->expects($this->any())
             ->method('getBackendType')
             ->willReturn($backendType);
-
         return $attribute;
     }
 }

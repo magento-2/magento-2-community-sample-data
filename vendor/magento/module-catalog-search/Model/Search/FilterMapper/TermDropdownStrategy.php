@@ -17,42 +17,30 @@ use Magento\Store\Model\StoreManagerInterface;
  * This strategy handles attributes which comply with two criteria:
  *   - The filter for dropdown or multi-select attribute
  *   - The filter is Term filter
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class TermDropdownStrategy implements FilterStrategyInterface
 {
     /**
-     * Resolving table alias for Search Request filter.
-     *
      * @var AliasResolver
      */
     private $aliasResolver;
 
     /**
-     * Store manager.
-     *
      * @var StoreManagerInterface
      */
     private $storeManager;
 
     /**
-     * Eav attributes config.
-     *
      * @var EavConfig
      */
     private $eavConfig;
 
     /**
-     * Resource connection.
-     *
      * @var ResourceConnection
      */
     private $resourceConnection;
 
     /**
-     * Scope config.
-     *
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -63,6 +51,7 @@ class TermDropdownStrategy implements FilterStrategyInterface
      * @param EavConfig $eavConfig
      * @param ScopeConfigInterface $scopeConfig
      * @param AliasResolver $aliasResolver
+     * @SuppressWarnings(Magento.TypeDuplication)
      */
     public function __construct(
         StoreManagerInterface $storeManager,
@@ -79,13 +68,7 @@ class TermDropdownStrategy implements FilterStrategyInterface
     }
 
     /**
-     * Applies filter.
-     *
-     * @param \Magento\Framework\Search\Request\FilterInterface $filter
-     * @param \Magento\Framework\DB\Select $select
-     *
-     * @return bool is filter was applied
-     *
+     * {@inheritDoc}
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function apply(
@@ -98,18 +81,19 @@ class TermDropdownStrategy implements FilterStrategyInterface
             'search_index.entity_id = %1$s.entity_id AND %1$s.attribute_id = %2$d AND %1$s.store_id = %3$d',
             $alias,
             $attribute->getId(),
-            $this->storeManager->getWebsite()->getId()
+            $this->storeManager->getStore()->getId()
         );
         $select->joinLeft(
             [$alias => $this->resourceConnection->getTableName('catalog_product_index_eav')],
             $joinCondition,
             []
         );
-
         if ($this->isAddStockFilter()) {
             $stockAlias = $alias . AliasResolver::STOCK_FILTER_SUFFIX;
             $select->joinLeft(
-                [$stockAlias => $this->resourceConnection->getTableName('cataloginventory_stock_status')],
+                [
+                    $stockAlias => $this->resourceConnection->getTableName('cataloginventory_stock_status'),
+                ],
                 sprintf('%2$s.product_id = %1$s.source_id', $alias, $stockAlias),
                 []
             );
@@ -119,12 +103,8 @@ class TermDropdownStrategy implements FilterStrategyInterface
     }
 
     /**
-     * Returns attribute by attribute code.
-     *
      * @param string $field
-     *
      * @return \Magento\Catalog\Model\ResourceModel\Eav\Attribute
-     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function getAttributeByCode($field)
@@ -133,8 +113,6 @@ class TermDropdownStrategy implements FilterStrategyInterface
     }
 
     /**
-     * Check if it is necessary to show out of stock products.
-     *
      * @return bool
      */
     private function isAddStockFilter()

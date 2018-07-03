@@ -15,17 +15,16 @@ use Magento\Framework\Api\AttributeValue;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Phrase;
-use Magento\Sales\Model\Order\Invoice;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Class DocumentTest
- * 
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DocumentTest extends \PHPUnit_Framework_TestCase
+class DocumentTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var GroupRepositoryInterface|MockObject
@@ -60,9 +59,9 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->initAttributeValueFactoryMock();
-        
+
         $this->groupRepository = $this->getMockForAbstractClass(GroupRepositoryInterface::class);
-        
+
         $this->customerMetadata = $this->getMockForAbstractClass(CustomerMetadataInterface::class);
 
         $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);

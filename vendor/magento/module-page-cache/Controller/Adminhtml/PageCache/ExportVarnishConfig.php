@@ -11,9 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportVarnishConfig extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
-     *
-     * @see _isAllowed()
+     * Authorization level of a basic admin session
      */
     const ADMIN_RESOURCE = 'Magento_Backend::system';
 
@@ -52,8 +50,8 @@ class ExportVarnishConfig extends \Magento\Backend\App\Action
         $fileName = 'varnish.vcl';
         $varnishVersion = $this->getRequest()->getParam('varnish');
         switch ($varnishVersion) {
-            case 3:
-                $content = $this->config->getVclFile(\Magento\PageCache\Model\Config::VARNISH_3_CONFIGURATION_PATH);
+            case 5:
+                $content = $this->config->getVclFile(\Magento\PageCache\Model\Config::VARNISH_5_CONFIGURATION_PATH);
                 break;
             default:
                 $content = $this->config->getVclFile(\Magento\PageCache\Model\Config::VARNISH_4_CONFIGURATION_PATH);

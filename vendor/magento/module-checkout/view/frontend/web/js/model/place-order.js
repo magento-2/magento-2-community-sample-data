@@ -2,6 +2,9 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+/**
+ * @api
+ */
 define(
     [
         'mage/storage',
@@ -19,6 +22,9 @@ define(
             ).fail(
                 function (response) {
                     errorProcessor.process(response, messageContainer);
+                }
+            ).always(
+                function () {
                     fullScreenLoader.stopLoader();
                 }
             );

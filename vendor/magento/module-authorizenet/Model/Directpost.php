@@ -5,13 +5,10 @@
  */
 namespace Magento\Authorizenet\Model;
 
-use Magento\Authorizenet\Model\TransactionService;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\TransparentInterface;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Magento\Sales\Api\PaymentFailuresInterface;
 
 /**
  * Authorize.net DirectPost payment method model.
@@ -26,12 +23,12 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
     /**
      * @var string
      */
-    protected $_formBlockType = 'Magento\Payment\Block\Transparent\Info';
+    protected $_formBlockType = \Magento\Payment\Block\Transparent\Info::class;
 
     /**
      * @var string
      */
-    protected $_infoBlockType = 'Magento\Payment\Block\Info';
+    protected $_infoBlockType = \Magento\Payment\Block\Info::class;
 
     /**
      * Payment Method feature
@@ -127,16 +124,6 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
     private $psrLogger;
 
     /**
-     * @var PaymentFailuresInterface
-     */
-    private $paymentFailures;
-
-    /**
-     * @var \Magento\Sales\Model\Order
-     */
-    private $order;
-
-    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -159,7 +146,6 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param PaymentFailuresInterface|null $paymentFailures
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -184,8 +170,7 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
         \Magento\Sales\Api\TransactionRepositoryInterface $transactionRepository,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
-        PaymentFailuresInterface $paymentFailures = null
+        array $data = []
     ) {
         $this->orderFactory = $orderFactory;
         $this->storeManager = $storeManager;
@@ -194,8 +179,6 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
         $this->orderSender = $orderSender;
         $this->transactionRepository = $transactionRepository;
         $this->_code = static::METHOD_CODE;
-        $this->paymentFailures = $paymentFailures ? : ObjectManager::getInstance()
-            ->get(PaymentFailuresInterface::class);
 
         parent::__construct(
             $context,
@@ -297,15 +280,14 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
         switch ($result->getXResponseCode()) {
             case self::RESPONSE_CODE_APPROVED:
             case self::RESPONSE_CODE_HELD:
-                if (
-                    in_array(
-                        $result->getXResponseReasonCode(),
-                        [
+                if (in_array(
+                    $result->getXResponseReasonCode(),
+                    [
                             self::RESPONSE_REASON_CODE_APPROVED,
                             self::RESPONSE_REASON_CODE_PENDING_REVIEW,
                             self::RESPONSE_REASON_CODE_PENDING_REVIEW_AUTHORIZED
                         ]
-                    )
+                )
                 ) {
                     if (!$payment->getParentTransactionId()
                         || $result->getXTransId() != $payment->getParentTransactionId()
@@ -550,8 +532,7 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
     {
         $response = $this->getResponse();
         //md5 check
-        if (
-            !$this->getConfigData('trans_md5')
+        if (!$this->getConfigData('trans_md5')
             || !$this->getConfigData('login')
             || !$response->isValidHash($this->getConfigData('trans_md5'), $this->getConfigData('login'))
         ) {
@@ -580,10 +561,13 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
         $this->validateResponse();
 
         $response = $this->getResponse();
+        //operate with order
+        $orderIncrementId = $response->getXInvoiceNum();
         $responseText = $this->dataHelper->wrapGatewayError($response->getXResponseReasonText());
         $isError = false;
-        if ($this->getOrderIncrementId()) {
-            $order = $this->getOrderFromResponse();
+        if ($orderIncrementId) {
+            /* @var $order \Magento\Sales\Model\Order */
+            $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
             //check payment method
             $payment = $order->getPayment();
             if (!$payment || $payment->getMethod() != $this->getCode()) {
@@ -648,10 +632,9 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
                 return true;
             case self::RESPONSE_CODE_DECLINED:
             case self::RESPONSE_CODE_ERROR:
-                $errorMessage = $this->dataHelper->wrapGatewayError($this->getResponse()->getXResponseReasonText());
-                $order = $this->getOrderFromResponse();
-                $this->paymentFailures->handle($order->getQuoteId(), $errorMessage);
-                throw new \Magento\Framework\Exception\LocalizedException($errorMessage);
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    $this->dataHelper->wrapGatewayError($this->getResponse()->getXResponseReasonText())
+                );
             default:
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('There was a payment authorization error.')
@@ -820,8 +803,7 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
     {
         try {
             $response = $this->getResponse();
-            if (
-                $voidPayment && $response->getXTransId() && strtoupper($response->getXType())
+            if ($voidPayment && $response->getXTransId() && strtoupper($response->getXType())
                 == self::REQUEST_TYPE_AUTH_ONLY
             ) {
                 $order->getPayment()->setTransactionId(null)->setParentTransactionId($response->getXTransId())->void();
@@ -1001,43 +983,15 @@ class Directpost extends \Magento\Authorizenet\Model\Authorizenet implements Tra
     /**
      * @return \Psr\Log\LoggerInterface
      *
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getPsrLogger()
     {
         if (null === $this->psrLogger) {
-            $this->psrLogger = ObjectManager::getInstance()
+            $this->psrLogger = \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Psr\Log\LoggerInterface::class);
         }
         return $this->psrLogger;
-    }
-
-    /**
-     * Fetch order by increment id from response.
-     *
-     * @return \Magento\Sales\Model\Order
-     */
-    private function getOrderFromResponse()
-    {
-        if (!$this->order) {
-            $this->order = $this->orderFactory->create();
-
-            if ($incrementId = $this->getOrderIncrementId()) {
-                $this->order = $this->order->loadByIncrementId($incrementId);
-            }
-        }
-
-        return $this->order;
-    }
-
-    /**
-     * Fetch order increment id from response.
-     *
-     * @return string
-     */
-    private function getOrderIncrementId()
-    {
-        return $this->getResponse()->getXInvoiceNum();
     }
 
     /**

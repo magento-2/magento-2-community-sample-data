@@ -8,7 +8,7 @@ namespace Magento\Framework\Search\Test\Unit\Request\Aggregation;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class StatusTest extends \PHPUnit_Framework_TestCase
+class StatusTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\Framework\Search\Request\Aggregation\Status */
     private $status;
@@ -20,7 +20,9 @@ class StatusTest extends \PHPUnit_Framework_TestCase
     {
         
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->status = $this->objectManagerHelper->getObject('Magento\Framework\Search\Request\Aggregation\Status');
+        $this->status = $this->objectManagerHelper->getObject(
+            \Magento\Framework\Search\Request\Aggregation\Status::class
+        );
     }
 
     public function testIsEnabled()

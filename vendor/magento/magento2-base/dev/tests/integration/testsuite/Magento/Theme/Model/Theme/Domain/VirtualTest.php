@@ -7,10 +7,7 @@ namespace Magento\Theme\Model\Theme\Domain;
 
 use Magento\Framework\View\Design\ThemeInterface;
 
-/**
- * Virtual theme test
- */
-class VirtualTest extends \PHPUnit_Framework_TestCase
+class VirtualTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array
@@ -96,7 +93,7 @@ class VirtualTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->_physicalThemeId);
-        unset($this->_virtualThemeId);
+        $this->_physicalThemeId = null;
+        $this->_virtualThemeId = null;
     }
 }

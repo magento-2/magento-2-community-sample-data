@@ -62,7 +62,6 @@ class Addresses extends Block
     public function isNewAddressButtonVisible()
     {
         $button = $this->_rootElement->find($this->newAddressButton);
-        
         return $button->isVisible();
     }
 

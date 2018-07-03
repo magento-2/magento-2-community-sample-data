@@ -7,11 +7,11 @@ namespace Magento\Framework\DB\Test\Unit\Sql;
 
 use Magento\Framework\DB\Select;
 
-class UnionExpressionTest extends \PHPUnit_Framework_TestCase
+class UnionExpressionTest extends \PHPUnit\Framework\TestCase
 {
     public function testToString()
     {
-        $sqlMock = $this->getMockBuilder('Magento\Framework\DB\Select')
+        $sqlMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
             ->disableOriginalConstructor()
             ->getMock();
         $sqlMock->expects($this->once())

@@ -5,10 +5,15 @@
  */
 namespace Magento\Theme\Block\Html;
 
+use Magento\Framework\View\Element\Template;
+
 /**
  * Html page welcome block
+ *
+ * @api
+ * @since 100.0.2
  */
-class Welcome extends \Magento\Framework\View\Element\Template
+class Welcome extends Template
 {
     /**
      * Get block message

@@ -5,7 +5,7 @@
  */
 namespace Magento\AdminNotification\Model\ResourceModel\Inbox\Collection;
 
-class CriticalTest extends \PHPUnit_Framework_TestCase
+class CriticalTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Critical
@@ -15,7 +15,7 @@ class CriticalTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Critical'
+            \Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Critical::class
         );
     }
 

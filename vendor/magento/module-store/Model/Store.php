@@ -22,6 +22,7 @@ use Magento\Store\Api\Data\StoreInterface;
 /**
  * Store model
  *
+ * @api
  * @method Store setGroupId($value)
  * @method int getSortOrder()
  * @method int getStoreId()
@@ -32,6 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @since 100.0.2
  */
 class Store extends AbstractExtensibleModel implements
     AppScopeInterface,
@@ -418,8 +420,10 @@ class Store extends AbstractExtensibleModel implements
     {
         parent::__wakeup();
         $this->_coreFileStorageDatabase = ObjectManager::getInstance()
-            ->get('Magento\MediaStorage\Helper\File\Storage\Database');
-        $this->_config = ObjectManager::getInstance()->get('Magento\Framework\App\Config\ReinitableConfigInterface');
+            ->get(\Magento\MediaStorage\Helper\File\Storage\Database::class);
+        $this->_config = ObjectManager::getInstance()->get(
+            \Magento\Framework\App\Config\ReinitableConfigInterface::class
+        );
     }
 
     /**
@@ -429,7 +433,7 @@ class Store extends AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init('Magento\Store\Model\ResourceModel\Store');
+        $this->_init(\Magento\Store\Model\ResourceModel\Store::class);
     }
 
     /**
@@ -1037,8 +1041,9 @@ class Store extends AbstractExtensibleModel implements
     /**
      * Reinit Stores on after save
      *
-     * @deprecated
+     * @deprecated 100.1.3
      * @return $this
+     * @since 100.1.3
      */
     public function afterSave()
     {
@@ -1110,6 +1115,7 @@ class Store extends AbstractExtensibleModel implements
      * Check if store is default
      *
      * @return boolean
+     * @since 100.1.0
      */
     public function isDefault()
     {
@@ -1130,7 +1136,14 @@ class Store extends AbstractExtensibleModel implements
     public function getCurrentUrl($fromStore = true)
     {
         $sidQueryParam = $this->_sidResolver->getSessionIdQueryParam($this->_getSession());
-        $requestString = $this->_url->escape(ltrim($this->_request->getRequestString(), '/'));
+        /** @var string $requestString Request path without query parameters */
+        $requestString = $this->_url->escape(
+            preg_replace(
+                '/\?.*?$/',
+                '',
+                ltrim($this->_request->getRequestString(), '/')
+            )
+        );
 
         $storeUrl = $this->getUrl('', ['_secure' => $this->_storeManager->getStore()->isCurrentlySecure()]);
 
@@ -1307,6 +1320,7 @@ class Store extends AbstractExtensibleModel implements
 
     /**
      * {@inheritdoc}
+     * @since 100.1.0
      */
     public function getScopeType()
     {
@@ -1315,6 +1329,7 @@ class Store extends AbstractExtensibleModel implements
 
     /**
      * {@inheritdoc}
+     * @since 100.1.0
      */
     public function getScopeTypeName()
     {
@@ -1342,13 +1357,13 @@ class Store extends AbstractExtensibleModel implements
      * Gets URL modifier.
      *
      * @return \Magento\Framework\Url\ModifierInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getUrlModifier()
     {
         if ($this->urlModifier === null) {
             $this->urlModifier = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                'Magento\Framework\Url\ModifierInterface'
+                \Magento\Framework\Url\ModifierInterface::class
             );
         }
 

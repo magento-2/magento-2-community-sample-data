@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Session\Config\Validator;
 
-class CookieDomainValidatorTest extends \PHPUnit_Framework_TestCase
+class CookieDomainValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  \Magento\Framework\Session\Config\Validator\CookieDomainValidator   */
     private $model;
@@ -15,7 +15,7 @@ class CookieDomainValidatorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->model = $objectManager->create('Magento\Framework\Session\Config\Validator\CookieDomainValidator');
+        $this->model = $objectManager->create(\Magento\Framework\Session\Config\Validator\CookieDomainValidator::class);
     }
 
     public function testEmptyString()

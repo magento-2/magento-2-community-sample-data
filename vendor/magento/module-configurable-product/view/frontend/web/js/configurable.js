@@ -2,7 +2,9 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-/*jshint browser:true jquery:true*/
+/**
+ * @api
+ */
 define([
     'jquery',
     'underscore',
@@ -535,9 +537,9 @@ define([
                 }
             });
 
-            if (shouldBeShown
-                && this.options.spConfig.optionPrices[optionId].oldPrice.amount
-                !== this.options.spConfig.optionPrices[optionId].finalPrice.amount
+            if (shouldBeShown &&
+                this.options.spConfig.optionPrices[optionId].oldPrice.amount !==
+                this.options.spConfig.optionPrices[optionId].finalPrice.amount
             ) {
                 $(this.options.slyOldPriceSelector).show();
             } else {

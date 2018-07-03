@@ -13,6 +13,9 @@ use Magento\Store\Model\ScopeInterface;
  * Payment configuration model
  *
  * Used for retrieving configuration data by payment models
+ *
+ * @api
+ * @since 100.0.2
  */
 class Config
 {

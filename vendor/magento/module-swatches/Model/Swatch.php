@@ -6,7 +6,8 @@
 namespace Magento\Swatches\Model;
 
 /**
- * Swatch Model
+ * @api
+ * @since 100.0.2
  */
 class Swatch extends \Magento\Framework\Model\AbstractModel
 {
@@ -58,6 +59,6 @@ class Swatch extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Magento\Swatches\Model\ResourceModel\Swatch');
+        $this->_init(\Magento\Swatches\Model\ResourceModel\Swatch::class);
     }
 }

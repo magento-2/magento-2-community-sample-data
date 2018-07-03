@@ -11,6 +11,7 @@ use Magento\Framework\ObjectManagerInterface;
  * TemporaryStorage Factory
  *
  * @codeCoverageIgnore
+ * @api
  */
 class TemporaryStorageFactory
 {
@@ -36,7 +37,7 @@ class TemporaryStorageFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = 'Magento\Framework\Search\Adapter\Mysql\TemporaryStorage'
+        $instanceName = \Magento\Framework\Search\Adapter\Mysql\TemporaryStorage::class
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

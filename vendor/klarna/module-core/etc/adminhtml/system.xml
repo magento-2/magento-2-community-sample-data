@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna Core module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="klarna_section" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Klarna</label>
+                <group id="klarna" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1"
+                       translate="label">
+                    <!--<attribute type="displayIn">bundled_payment_methods</attribute>-->
+                    <fieldset_css>complex klarna-section</fieldset_css>
+                    <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
+                    <label>Smoooth Payments</label>
+                    <group id="api" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1"
+                           translate="label">
+                        <label>Klarna API</label>
+                        <field id="api_version" sortOrder="10" translate="label" type="select" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="0">
+                            <label>API Version</label>
+                            <config_path>klarna/api/api_version</config_path>
+                            <source_model>Klarna\Core\Model\System\Config\Source\Version</source_model>
+                        </field>
+                        <field id="merchant_id" sortOrder="20" translate="label" type="text" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Merchant ID/EID</label>
+                            <config_path>klarna/api/merchant_id</config_path>
+                        </field>
+                        <field id="shared_secret" sortOrder="30" translate="label" type="obscure" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Password/Shared secret</label>
+                            <config_path>klarna/api/shared_secret</config_path>
+                            <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                        </field>
+                        <field id="test_mode" sortOrder="40" translate="label" type="select" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Test Mode</label>
+                            <config_path>klarna/api/test_mode</config_path>
+                            <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                        </field>
+                        <field id="debug" sortOrder="50" translate="label comment" type="select" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Debug Mode</label>
+                            <config_path>klarna/api/debug</config_path>
+                            <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                            <comment>Should not be enabled in production. Sensitive information is logged.</comment>
+                        </field>
+                    </group>
+                </group>
+            </group>
+        </section>
+
+    </system>
+</config>

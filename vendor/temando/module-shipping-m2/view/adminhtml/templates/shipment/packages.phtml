@@ -1,0 +1,66 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+    /** @var \Magento\Backend\Block\Template $block */
+    /** @var \Temando\Shipping\ViewModel\Shipment\ShipmentDetails $viewModel */
+    $viewModel = $block->getData('viewModel');
+    /** @var \Temando\Shipping\Model\Shipment\PackageInterface[] $packages */
+    $packages = $viewModel->getPackages();
+?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Packages')) ?></span>
+    </div>
+
+    <div class="admin__table-wrapper shipment-packaging">
+        <?php if (!empty($packages)) : ?>
+            <table class="data-table admin__table-primary packages">
+                <thead>
+                    <tr class="headings">
+                        <th class="col-length"><span><?= $block->escapeHtml(__('Length')) ?></span></th>
+                        <th class="col-width"><span><?= $block->escapeHtml(__('Width')) ?></span></th>
+                        <th class="col-height"><span><?= $block->escapeHtml(__('Height')) ?></span></th>
+                        <th class="col-weight"><span><?= $block->escapeHtml(__('Weight')) ?></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($packages as $package) : ?>
+                        <tr class="package-head">
+                            <td><?= $block->escapeHtml($package->getLength()) ?></td>
+                            <td><?= $block->escapeHtml($package->getWidth()) ?></td>
+                            <td><?= $block->escapeHtml($package->getHeight()) ?></td>
+                            <td><?= $block->escapeHtml($package->getWeight()) ?></td>
+                        </tr>
+                        <?php if (!empty($package->getItems())) : ?>
+                            <tr class="package-items">
+                                <th><?= $block->escapeHtml(__('Contents:')) ?></th>
+                                <td colspan="3">
+                                    <?php foreach ($package->getItems() as $packageItem) : ?>
+                                        <div class="package-item">
+                                            <?php if ($packageItem->getDescription()) : ?>
+                                                <?= $block->escapeHtml($packageItem->getDescription()) ?>
+                                            <?php else : ?>
+                                                <?= $block->escapeHtml(__('No Description')) ?>
+                                            <?php endif; ?>
+                                            <?= $block->escapeHtml(' x ');?>
+                                            <?= $block->escapeHtml($packageItem->getQty());?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                        <tr class="package-foot">
+                            <td colspan="4"></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <?= $block->escapeHtml(__('No packages found.')) ?>
+        <?php endif; ?>
+    </div>
+</section>

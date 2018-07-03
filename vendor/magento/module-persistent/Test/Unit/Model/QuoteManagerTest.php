@@ -9,9 +9,9 @@
 
 namespace Magento\Persistent\Test\Unit\Model;
 
-use \Magento\Persistent\Model\QuoteManager;
+use Magento\Persistent\Model\QuoteManager;
 
-class QuoteManagerTest extends \PHPUnit_Framework_TestCase
+class QuoteManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuoteManager
@@ -55,10 +55,9 @@ class QuoteManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->persistentSessionMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
+        $this->persistentSessionMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
         $this->sessionMock =
-            $this->getMock('Magento\Persistent\Model\Session',
-                [
+            $this->createPartialMock(\Magento\Persistent\Model\Session::class, [
                     'setLoadInactive',
                     'setCustomerData',
                     'clearQuote',
@@ -66,19 +65,15 @@ class QuoteManagerTest extends \PHPUnit_Framework_TestCase
                     'getQuote',
                     'removePersistentCookie',
                     '__wakeup',
-                ],
-                [],
-                '',
-                false);
-        $this->persistentDataMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
-        $this->checkoutSessionMock = $this->getMock('Magento\Checkout\Model\Session', [], [], '', false);
+                ]);
+        $this->persistentDataMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
+        $this->checkoutSessionMock = $this->createMock(\Magento\Checkout\Model\Session::class);
 
         $this->abstractCollectionMock =
-            $this->getMock('Magento\Eav\Model\Entity\Collection\AbstractCollection', [], [], '', false);
+            $this->createMock(\Magento\Eav\Model\Entity\Collection\AbstractCollection::class);
 
-        $this->quoteRepositoryMock = $this->getMock('\Magento\Quote\Api\CartRepositoryInterface');
-        $this->quoteMock = $this->getMock('Magento\Quote\Model\Quote',
-            [
+        $this->quoteRepositoryMock = $this->createMock(\Magento\Quote\Api\CartRepositoryInterface::class);
+        $this->quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, [
                 'getId',
                 'getIsPersistent',
                 'getPaymentsCollection',
@@ -97,10 +92,7 @@ class QuoteManagerTest extends \PHPUnit_Framework_TestCase
                 'getIsActive',
                 'getCustomerId',
                 '__wakeup'
-            ],
-            [],
-            '',
-            false);
+            ]);
 
         $this->model = new QuoteManager(
             $this->persistentSessionMock,
@@ -183,7 +175,7 @@ class QuoteManagerTest extends \PHPUnit_Framework_TestCase
             ->method('setIsPersistent')->with(false)->will($this->returnValue($this->quoteMock));
         $this->quoteMock->expects($this->once())
             ->method('removeAllAddresses')->will($this->returnValue($this->quoteMock));
-        $quoteAddressMock = $this->getMock('Magento\Quote\Model\Quote\Address', [], [], '', false);
+        $quoteAddressMock = $this->createMock(\Magento\Quote\Model\Quote\Address::class);
         $this->quoteMock->expects($this->once())
             ->method('getShippingAddress')->will($this->returnValue($quoteAddressMock));
         $this->quoteMock->expects($this->once())
@@ -308,7 +300,7 @@ class QuoteManagerTest extends \PHPUnit_Framework_TestCase
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuote')->willReturn($this->quoteMock);
         $this->quoteMock->expects($this->once())->method('getId')->willReturn(1);
-        $quoteWithNoId = $this->quoteMock = $this->getMock(\Magento\Quote\Model\Quote::class, [], [], '', false);
+        $quoteWithNoId = $this->quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
         $quoteWithNoId->expects($this->once())->method('getId')->willReturn(null);
         $this->quoteRepositoryMock->expects($this->once())->method('get')->with(1)->willReturn($quoteWithNoId);
         $this->model->convertCustomerCartToGuest();

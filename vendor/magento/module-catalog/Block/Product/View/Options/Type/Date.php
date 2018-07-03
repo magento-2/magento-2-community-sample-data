@@ -5,11 +5,11 @@
  */
 namespace Magento\Catalog\Block\Product\View\Options\Type;
 
-
 /**
  * Product options text type block
  *
- * @SuppressWarnings(PHPMD.LongVariable)
+ * @api
+ * @since 100.0.2
  */
 class Date extends \Magento\Catalog\Block\Product\View\Options\AbstractOptions
 {
@@ -83,10 +83,10 @@ class Date extends \Magento\Catalog\Block\Product\View\Options\AbstractOptions
         $yearEnd = $this->_catalogProductOptionTypeDate->getYearEnd();
 
         $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
-        /** Escape invisible characters which are present in some locales and may corrupt formatting */
+        /** Escape RTL characters which are present in some locales and corrupt formatting */
         $escapedDateFormat = preg_replace('/[^MmDdYy\/\.\-]/', '', $dateFormat);
         $calendar = $this->getLayout()->createBlock(
-            'Magento\Framework\View\Element\Html\Date'
+            \Magento\Framework\View\Element\Html\Date::class
         )->setId(
             'options_' . $this->getOption()->getId() . '_date'
         )->setName(
@@ -188,7 +188,7 @@ class Date extends \Magento\Catalog\Block\Product\View\Options\AbstractOptions
         // $require = $this->getOption()->getIsRequire() ? ' required-entry' : '';
         $require = '';
         $select = $this->getLayout()->createBlock(
-            'Magento\Framework\View\Element\Html\Select'
+            \Magento\Framework\View\Element\Html\Select::class
         )->setId(
             'options_' . $this->getOption()->getId() . '_' . $name
         )->setClass(

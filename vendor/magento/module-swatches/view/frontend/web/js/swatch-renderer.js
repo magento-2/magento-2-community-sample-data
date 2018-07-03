@@ -315,7 +315,7 @@ define([
          */
         _sortAttributes: function () {
             this.options.jsonConfig.attributes = _.sortBy(this.options.jsonConfig.attributes, function (attribute) {
-                return attribute.position;
+                return parseInt(attribute.position, 10);
             });
         },
 
@@ -356,7 +356,7 @@ define([
                 isInProductView = false;
 
             productId = this.element.parents('.product-item-details')
-                .find('.price-box.price-final_price').attr('data-product-id');
+                    .find('.price-box.price-final_price').attr('data-product-id');
 
             if (!productId) {
                 // Check individual product.
@@ -399,8 +399,8 @@ define([
 
                 if ($widget.options.enableControlLabel) {
                     label +=
-                        '<span id="' + controlLabelId + '"class="' + classes.attributeLabelClass + '">' +
-                        item.label +
+                        '<span id="' + controlLabelId + '" class="' + classes.attributeLabelClass + '">' +
+                            item.label +
                         '</span>' +
                         '<span class="' + classes.attributeSelectedOptionLabelClass + '"></span>';
                 }
@@ -748,7 +748,7 @@ define([
          */
         _toggleCheckedAttributes: function ($this, $wrapper) {
             $wrapper.attr('aria-activedescendant', $this.attr('id'))
-                .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
+                    .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
             $this.attr('aria-checked', true);
         },
 

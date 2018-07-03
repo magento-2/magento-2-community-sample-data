@@ -5,7 +5,10 @@
  */
 namespace Magento\Downloadable\Test\Unit\Model\Sales\Order\Pdf\Items;
 
-class CreditmemoTest extends \PHPUnit_Framework_TestCase
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class CreditmemoTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo
@@ -32,34 +35,26 @@ class CreditmemoTest extends \PHPUnit_Framework_TestCase
             ->method('formatPriceTxt')
             ->will($this->returnCallback([$this, 'formatPrice']));
 
-        $this->pdf = $this->getMock(
+        $this->pdf = $this->createPartialMock(
             \Magento\Sales\Model\Order\Pdf\AbstractPdf::class,
-            ['drawLineBlocks', 'getPdf'],
-            [],
-            '',
-            false,
-            false
+            ['drawLineBlocks', 'getPdf']
         );
 
-        $filterManager = $this->getMock(
-            'Magento\Framework\Filter\FilterManager',
-            ['stripTags'],
-            [],
-            '',
-            false
+        $filterManager = $this->createPartialMock(
+            \Magento\Framework\Filter\FilterManager::class,
+            ['stripTags']
         );
         $filterManager->expects($this->any())->method('stripTags')->will($this->returnArgument(0));
 
         $modelConstructorArgs = $objectManager->getConstructArguments(
-            'Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo',
+            \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class,
             ['string' => new \Magento\Framework\Stdlib\StringUtils(), 'filterManager' => $filterManager]
         );
 
-        $this->model = $this->getMock(
-            \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class,
-            ['getLinks', 'getLinksTitle'],
-            $modelConstructorArgs
-        );
+        $this->model = $this->getMockBuilder(\Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class)
+            ->setMethods(['getLinks', 'getLinksTitle'])
+            ->setConstructorArgs($modelConstructorArgs)
+            ->getMock();
 
         $this->model->setOrder($this->order);
         $this->model->setPdf($this->pdf);

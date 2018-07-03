@@ -3,58 +3,55 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+namespace Magento\Catalog\Model\Category\Attribute\Backend;
 
 /**
  * Catalog category image attribute backend model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
-namespace Magento\Catalog\Model\Category\Attribute\Backend;
-
 class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
     /**
      * @var \Magento\MediaStorage\Model\File\UploaderFactory
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     protected $_uploaderFactory;
 
     /**
-     * Filesystem facade
-     *
      * @var \Magento\Framework\Filesystem
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     protected $_filesystem;
 
     /**
-     * File Uploader factory
-     *
      * @var \Magento\MediaStorage\Model\File\UploaderFactory
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     protected $_fileUploaderFactory;
 
     /**
      * @var \Psr\Log\LoggerInterface
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     protected $_logger;
 
     /**
-     * Image uploader
-     *
      * @var \Magento\Catalog\Model\ImageUploader
      */
     private $imageUploader;
 
     /**
-     * Image constructor.
-     *
+     * @var string
+     */
+    private $additionalData = '_additional_data_';
+
+    /**
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Filesystem $filesystem
      * @param \Magento\MediaStorage\Model\File\UploaderFactory $fileUploaderFactory
@@ -70,30 +67,8 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
     }
 
     /**
-     * Avoiding saving potential upload data to DB.
-     * Will set empty image attribute value if image was not uploaded.
-     *
-     * @param \Magento\Framework\DataObject $object
-     * @return $this
-     */
-    public function beforeSave($object)
-    {
-        $attributeName = $this->getAttribute()->getName();
-        $value = $object->getData($attributeName);
-        $imageName = $this->getUploadedImageName($value);
-
-        if ($imageName) {
-            $object->setData($attributeName, $imageName);
-        } else if (!is_string($value)) {
-            $object->setData($attributeName, '');
-        }
-
-        return parent::beforeSave($object);
-    }
-
-    /**
      * Gets image name from $value array.
-     * Will return empty string in case $value is not an array.
+     * Will return empty string in a case when $value is not an array
      *
      * @param array $value Attribute value
      * @return string
@@ -108,11 +83,32 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
     }
 
     /**
-     * Get image uploader.
+     * Avoiding saving potential upload data to DB
+     * Will set empty image attribute value if image was not uploaded
      *
+     * @param \Magento\Framework\DataObject $object
+     * @return $this
+     * @since 101.0.8
+     */
+    public function beforeSave($object)
+    {
+        $attributeName = $this->getAttribute()->getName();
+        $value = $object->getData($attributeName);
+
+        if ($imageName = $this->getUploadedImageName($value)) {
+            $object->setData($this->additionalData . $attributeName, $value);
+            $object->setData($attributeName, $imageName);
+        } elseif (!is_string($value)) {
+            $object->setData($attributeName, '');
+        }
+
+        return parent::beforeSave($object);
+    }
+
+    /**
      * @return \Magento\Catalog\Model\ImageUploader
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     private function getImageUploader()
     {
@@ -125,15 +121,27 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
     }
 
     /**
-     * Save uploaded file and set its name to category.
+     * Check if temporary file is available for new image upload.
+     *
+     * @param array $value
+     * @return bool
+     */
+    private function isTmpFileAvailable($value)
+    {
+        return is_array($value) && isset($value[0]['tmp_name']);
+    }
+
+    /**
+     * Save uploaded file and set its name to category
      *
      * @param \Magento\Framework\DataObject $object
      * @return \Magento\Catalog\Model\Category\Attribute\Backend\Image
      */
     public function afterSave($object)
     {
-        $imageName = $object->getData($this->getAttribute()->getName(), null);
-        if ($imageName) {
+        $value = $object->getData($this->additionalData . $this->getAttribute()->getName());
+
+        if ($this->isTmpFileAvailable($value) && $imageName = $this->getUploadedImageName($value)) {
             try {
                 $this->getImageUploader()->moveFileFromTmp($imageName);
             } catch (\Exception $e) {

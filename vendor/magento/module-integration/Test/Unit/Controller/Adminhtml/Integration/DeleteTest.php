@@ -12,9 +12,6 @@ use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Integration\Model\Integration as IntegrationModel;
 use Magento\Framework\Exception\IntegrationException;
 
-/**
- * Class DeleteTest.
- */
 class DeleteTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     /**

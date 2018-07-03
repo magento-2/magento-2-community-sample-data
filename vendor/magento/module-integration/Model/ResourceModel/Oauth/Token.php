@@ -105,15 +105,15 @@ class Token extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Delete expired tokens for the specified user types.
+     * Delete expired tokens for the specified user types
      *
      * @param int $hours token lifetime
-     * @param array $userTypes @see \Magento\Authorization\Model\UserContextInterface
+     * @param int[] $userTypes @see \Magento\Authorization\Model\UserContextInterface
      * @return int number of deleted tokens
      */
-    public function deleteExpiredTokens($hours, array $userTypes)
+    public function deleteExpiredTokens($hours, $userTypes)
     {
-        if ($hours > 0 && !empty($userTypes)) {
+        if ($hours > 0) {
             $connection = $this->getConnection();
 
             $userTypeCondition = $connection->quoteInto('user_type IN (?)', $userTypes);
@@ -121,7 +121,6 @@ class Token extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 'created_at <= ?',
                 $this->_dateTime->formatDate($this->date->gmtTimestamp() - $hours * 60 * 60)
             );
-
             return $connection->delete(
                 $this->getMainTable(),
                 $userTypeCondition . ' AND ' . $createdAtCondition

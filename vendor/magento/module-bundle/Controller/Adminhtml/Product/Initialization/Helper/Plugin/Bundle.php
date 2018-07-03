@@ -105,13 +105,8 @@ class Bundle
             if ($result['bundle_options'] && !$compositeReadonly) {
                 $product->setBundleOptionsData($result['bundle_options']);
             }
-
             $this->processBundleOptionsData($product);
             $this->processDynamicOptionsData($product);
-        } elseif (!$compositeReadonly) {
-            $extension = $product->getExtensionAttributes();
-            $extension->setBundleProductOptions([]);
-            $product->setExtensionAttributes($extension);
         }
 
         $affectProductSelections = (bool)$this->request->getPost('affect_bundle_product_selections');
@@ -132,11 +127,12 @@ class Bundle
         }
         $options = [];
         foreach ($bundleOptionsData as $key => $optionData) {
+            if (!empty($optionData['delete'])) {
+                continue;
+            }
+
             $option = $this->optionFactory->create(['data' => $optionData]);
             $option->setSku($product->getSku());
-            if (!$option->getOptionId()) {
-                $option->setOptionId(null);
-            }
 
             $links = [];
             $bundleLinks = $product->getBundleSelectionsData();
@@ -145,28 +141,13 @@ class Bundle
             }
 
             foreach ($bundleLinks[$key] as $linkData) {
-                if ((bool)$linkData['delete']) {
+                if (!empty($linkData['delete'])) {
                     continue;
                 }
-                $link = $this->linkFactory->create(['data' => $linkData]);
-
-                if ((int)$product->getPriceType() !== \Magento\Bundle\Model\Product\Price::PRICE_TYPE_DYNAMIC) {
-                    if (array_key_exists('selection_price_value', $linkData)) {
-                        $link->setPrice($linkData['selection_price_value']);
-                    }
-                    if (array_key_exists('selection_price_type', $linkData)) {
-                        $link->setPriceType($linkData['selection_price_type']);
-                    }
+                if (!empty($linkData['selection_id'])) {
+                    $linkData['id'] = $linkData['selection_id'];
                 }
-
-                $linkProduct = $this->productRepository->getById($linkData['product_id']);
-                $link->setSku($linkProduct->getSku());
-                $link->setQty($linkData['selection_qty']);
-
-                if (array_key_exists('selection_can_change_qty', $linkData)) {
-                    $link->setCanChangeQuantity($linkData['selection_can_change_qty']);
-                }
-                $links[] = $link;
+                $links[] = $this->buildLink($product, $linkData);
             }
             $option->setProductLinks($links);
             $options[] = $option;
@@ -206,9 +187,40 @@ class Bundle
             }
             $customOption = $this->customOptionFactory->create(['data' => $customOptionData]);
             $customOption->setProductSku($product->getSku());
-            $customOption->setOptionId(null);
             $newOptions[] = $customOption;
         }
         $product->setOptions($newOptions);
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @param array $linkData
+     *
+     * @return \Magento\Bundle\Api\Data\LinkInterface
+     */
+    private function buildLink(
+        \Magento\Catalog\Model\Product $product,
+        array $linkData
+    ) {
+        $link = $this->linkFactory->create(['data' => $linkData]);
+
+        if ((int)$product->getPriceType() !== \Magento\Bundle\Model\Product\Price::PRICE_TYPE_DYNAMIC) {
+            if (array_key_exists('selection_price_value', $linkData)) {
+                $link->setPrice($linkData['selection_price_value']);
+            }
+            if (array_key_exists('selection_price_type', $linkData)) {
+                $link->setPriceType($linkData['selection_price_type']);
+            }
+        }
+
+        $linkProduct = $this->productRepository->getById($linkData['product_id']);
+        $link->setSku($linkProduct->getSku());
+        $link->setQty($linkData['selection_qty']);
+
+        if (array_key_exists('selection_can_change_qty', $linkData)) {
+            $link->setCanChangeQuantity($linkData['selection_can_change_qty']);
+        }
+
+        return $link;
     }
 }

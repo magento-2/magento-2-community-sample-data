@@ -7,7 +7,7 @@ namespace Magento\CatalogImportExport\Test\Unit\Model\Indexer\Product\Flat\Plugi
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ImportTest extends \PHPUnit_Framework_TestCase
+class ImportTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Flat\Processor|\PHPUnit_Framework_MockObject_MockObject
@@ -31,32 +31,22 @@ class ImportTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->processorMock = $this->getMock(
-            'Magento\Catalog\Model\Indexer\Product\Flat\Processor',
-            ['markIndexerAsInvalid', 'isIndexerScheduled'],
-            [],
-            '',
-            false
-        );
+        $this->processorMock = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Product\Flat\Processor::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['markIndexerAsInvalid', 'isIndexerScheduled'])
+            ->getMock();
 
-        $this->flatStateMock = $this->getMock(
-            '\Magento\Catalog\Model\Indexer\Product\Flat\State',
-            ['isFlatEnabled'],
-            [],
-            '',
-            false
-        );
+        $this->flatStateMock = $this->getMockBuilder(\Magento\Catalog\Model\Indexer\Product\Flat\State::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isFlatEnabled'])
+            ->getMock();
 
-        $this->subjectMock = $this->getMock(
-            'Magento\ImportExport\Model\Import',
-            [],
-            [],
-            '',
-            false
-        );
+        $this->subjectMock = $this->getMockBuilder(\Magento\ImportExport\Model\Import::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = (new ObjectManager($this))->getObject(
-            'Magento\CatalogImportExport\Model\Indexer\Product\Flat\Plugin\Import',
+            \Magento\CatalogImportExport\Model\Indexer\Product\Flat\Plugin\Import::class,
             [
                 'productFlatIndexerProcessor' => $this->processorMock,
                 'flatState' => $this->flatStateMock
@@ -75,13 +65,13 @@ class ImportTest extends \PHPUnit_Framework_TestCase
 
     public function testAfterImportSourceWithFlatDisabledAndIndexerScheduledDisabled()
     {
-
         $this->flatStateMock->expects($this->once())->method('isFlatEnabled')->willReturn(false);
         $this->processorMock->expects($this->never())->method('isIndexerScheduled')->willReturn(false);
         $this->processorMock->expects($this->never())->method('markIndexerAsInvalid');
         $someData = [1, 2, 3];
         $this->assertEquals($someData, $this->model->afterImportSource($this->subjectMock, $someData));
     }
+
     public function testAfterImportSourceWithFlatEnabledAndIndexerScheduledEnabled()
     {
         $this->flatStateMock->expects($this->once())->method('isFlatEnabled')->willReturn(true);

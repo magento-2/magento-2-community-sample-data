@@ -8,7 +8,6 @@ namespace Magento\CatalogRule\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 use Magento\Backend\Block\Widget\Form;
 use Magento\Backend\Block\Widget\Form\Generic;
 use Magento\Ui\Component\Layout\Tabs\TabInterface;
-use Magento\CatalogRule\Api\Data\RuleInterface;
 use Magento\Rule\Model\Condition\AbstractCondition;
 
 class Conditions extends Generic implements TabInterface
@@ -136,7 +135,7 @@ class Conditions extends Generic implements TabInterface
     }
 
     /**
-     * @param RuleInterface $model
+     * @param \Magento\CatalogRule\Api\Data\RuleInterface $model
      * @param string $fieldsetId
      * @param string $formName
      * @return \Magento\Framework\Data\Form
@@ -148,14 +147,16 @@ class Conditions extends Generic implements TabInterface
         $form = $this->_formFactory->create();
         $form->setHtmlIdPrefix('rule_');
 
+        $conditionsFieldSetId = $model->getConditionsFieldSetId($formName);
+
         $newChildUrl = $this->getUrl(
-            'catalog_rule/promo_catalog/newConditionHtml/form/' . $model->getConditionsFieldSetId($formName),
+            'catalog_rule/promo_catalog/newConditionHtml/form/' . $conditionsFieldSetId,
             ['form_namespace' => $formName]
         );
 
         $renderer = $this->_rendererFieldset->setTemplate('Magento_CatalogRule::promo/fieldset.phtml')
             ->setNewChildUrl($newChildUrl)
-            ->setFieldSetId($model->getConditionsFieldSetId($formName));
+            ->setFieldSetId($conditionsFieldSetId);
 
         $fieldset = $form->addFieldset(
             $fieldsetId,
@@ -177,30 +178,24 @@ class Conditions extends Generic implements TabInterface
             ->setRenderer($this->_conditions);
 
         $form->setValues($model->getData());
-        $this->setConditionFormName($model, $model->getConditions(), $formName);
+        $this->setConditionFormName($model->getConditions(), $formName, $conditionsFieldSetId);
         return $form;
     }
 
     /**
-     * @param RuleInterface $rule
      * @param AbstractCondition $conditions
      * @param string $formName
+     * @param string $jsFormName
      * @return void
      */
-    private function setConditionFormName(
-        RuleInterface $rule,
-        AbstractCondition $conditions,
-        $formName
-    ) {
+    private function setConditionFormName(AbstractCondition $conditions, $formName, $jsFormName)
+    {
         $conditions->setFormName($formName);
-        //For every fieldset there's a different form object.
-        $conditions->setJsFormObject(
-            $rule->getConditionsFieldSetId($formName)
-        );
-        $childConditions = $conditions->getCondition();
-        if ($childConditions && is_array($childConditions)) {
+        $conditions->setJsFormObject($jsFormName);
+
+        if ($conditions->getConditions() && is_array($conditions->getConditions())) {
             foreach ($conditions->getConditions() as $condition) {
-                $this->setConditionFormName($rule, $condition, $formName);
+                $this->setConditionFormName($condition, $formName, $jsFormName);
             }
         }
     }

@@ -7,21 +7,34 @@ namespace Magento\Variable\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class VariableTest extends \PHPUnit_Framework_TestCase
+/**
+ * Unit test for class Magento\Variable\Model\Variable.
+ */
+class VariableTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  \Magento\Variable\Model\Variable */
+    /**
+     * @var \Magento\Variable\Model\Variable
+     */
     private $model;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     private $escaperMock;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     private $resourceMock;
 
-    /** @var  \Magento\Framework\Phrase */
+    /**
+     * @var \Magento\Framework\Phrase
+     */
     private $validationFailedPhrase;
 
-    /** @var  \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
+    /**
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     */
     private $objectManager;
 
     protected function setUp()
@@ -37,7 +50,7 @@ class VariableTest extends \PHPUnit_Framework_TestCase
             \Magento\Variable\Model\Variable::class,
             [
                 'escaper' => $this->escaperMock,
-                'resource' => $this->resourceMock,
+                'resource' => $this->resourceMock
             ]
         );
         $this->validationFailedPhrase = __('Validation has failed.');
@@ -81,7 +94,6 @@ class VariableTest extends \PHPUnit_Framework_TestCase
     {
         $this->model->setCode($code)->setName($name);
         $this->assertEquals($this->validationFailedPhrase, $this->model->validate());
-
     }
 
     /**

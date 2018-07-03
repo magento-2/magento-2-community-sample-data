@@ -9,6 +9,7 @@ namespace Magento\Customer\Api;
 /**
  * Interface for retrieval information about customer address attributes metadata.
  * @api
+ * @since 100.0.2
  */
 interface AddressMetadataInterface extends MetadataInterface
 {
@@ -16,5 +17,5 @@ interface AddressMetadataInterface extends MetadataInterface
 
     const ENTITY_TYPE_ADDRESS = 'customer_address';
 
-    const DATA_INTERFACE_NAME = 'Magento\Customer\Api\Data\AddressInterface';
+    const DATA_INTERFACE_NAME = \Magento\Customer\Api\Data\AddressInterface::class;
 }

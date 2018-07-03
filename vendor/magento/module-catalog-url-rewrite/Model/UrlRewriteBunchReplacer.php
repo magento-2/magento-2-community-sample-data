@@ -7,14 +7,9 @@ namespace Magento\CatalogUrlRewrite\Model;
 
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
-/**
- * Url Rewrite Replacer based on bunches.
- */
 class UrlRewriteBunchReplacer
 {
     /**
-     * Url Persist Interface.
-     *
      * @var UrlPersistInterface
      */
     private $urlPersist;
@@ -28,7 +23,7 @@ class UrlRewriteBunchReplacer
     }
 
     /**
-     * Do Bunch Replace, with default bunch value = 10000.
+     * Do Bunch Replace, with default bunch value = 10000
      *
      * @param array $urls
      * @param int $bunchSize

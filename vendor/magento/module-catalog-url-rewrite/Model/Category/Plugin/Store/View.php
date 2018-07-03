@@ -18,24 +18,34 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
  * Plugin which is listening store resource model and on save or on delete replace catalog url rewrites
  *
  * @see \Magento\Store\Model\ResourceModel\Store
- * @package Magento\CatalogUrlRewrite\Model\Category\Plugin\Store
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @package Magento\CatalogUrlRewrite\Model\Category\Plugin\Store
  */
 class View
 {
-    /** @var UrlPersistInterface */
+    /**
+     * @var \Magento\UrlRewrite\Model\UrlPersistInterface
+     */
     protected $urlPersist;
 
-    /** @var CategoryFactory */
+    /**
+     * @var \Magento\Catalog\Model\CategoryFactory
+     */
     protected $categoryFactory;
 
-    /** @var ProductFactory */
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
     protected $productFactory;
 
-    /** @var CategoryUrlRewriteGenerator */
+    /**
+     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator
+     */
     protected $categoryUrlRewriteGenerator;
 
-    /** @var ProductUrlRewriteGenerator */
+    /**
+     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator
+     */
     protected $productUrlRewriteGenerator;
 
     /**
@@ -160,19 +170,21 @@ class View
     }
 
     /**
-     * @param \Magento\Store\Model\ResourceModel\Store $object
-     * @param callable $proceed
+     * Delete unused url rewrites
+     *
+     * @param \Magento\Store\Model\ResourceModel\Store $subject
+     * @param \Magento\Store\Model\ResourceModel\Store $result
      * @param AbstractModel $store
-     * @return mixed
+     * @return \Magento\Store\Model\ResourceModel\Store
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundDelete(
-        \Magento\Store\Model\ResourceModel\Store $object,
-        \Closure $proceed,
+    public function afterDelete(
+        \Magento\Store\Model\ResourceModel\Store $subject,
+        \Magento\Store\Model\ResourceModel\Store $result,
         AbstractModel $store
     ) {
-        $result = $proceed($store);
         $this->urlPersist->deleteByData([UrlRewrite::STORE_ID => $store->getId()]);
+
         return $result;
     }
 }

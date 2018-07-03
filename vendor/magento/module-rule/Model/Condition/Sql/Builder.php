@@ -17,8 +17,6 @@ use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 
 /**
  * Class SQL Builder
- *
- * @package Magento\Rule\Model\Condition\Sql
  */
 class Builder
 {
@@ -52,13 +50,6 @@ class Builder
      * @var AttributeRepositoryInterface
      */
     private $attributeRepository;
-
-    /**
-     * EAV collection
-     *
-     * @var AbstractCollection
-     */
-    private $eavCollection;
 
     /**
      * @param ExpressionFactory $expressionFactory
@@ -112,12 +103,12 @@ class Builder
     /**
      * Join tables from conditions combination to collection
      *
-     * @param \Magento\Eav\Model\Entity\Collection\AbstractCollection $collection
+     * @param AbstractCollection $collection
      * @param Combine $combine
      * @return $this
      */
     protected function _joinTablesToCollection(
-        \Magento\Eav\Model\Entity\Collection\AbstractCollection $collection,
+        AbstractCollection $collection,
         Combine $combine
     ) {
         foreach ($this->_getCombineTablesToJoin($combine) as $alias => $joinTable) {
@@ -132,48 +123,55 @@ class Builder
     }
 
     /**
+     * Returns sql expression based on rule condition.
+     *
      * @param AbstractCondition $condition
      * @param string $value
+     * @param bool $isDefaultStoreUsed
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function _getMappedSqlCondition(AbstractCondition $condition, $value = '')
+    protected function _getMappedSqlCondition(AbstractCondition $condition, $value = '', $isDefaultStoreUsed = true)
     {
         $argument = $condition->getMappedSqlField();
-        if ($argument) {
-            $conditionOperator = $condition->getOperatorForValidate();
 
-            if (!isset($this->_conditionOperatorMap[$conditionOperator])) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('Unknown condition operator'));
-            }
-
-            $defaultValue = 0;
-            // Check if attribute has a table with default value and add it to the query
-            if ($this->canAttributeHaveDefaultValue($condition->getAttribute())) {
-                $defaultField = 'at_' . $condition->getAttribute() . '_default.value';
-                $defaultValue = $this->_connection->quoteIdentifier($defaultField);
-            }
-
-            $sql = str_replace(
-                ':field',
-                $this->_connection->getIfNullSql($this->_connection->quoteIdentifier($argument), $defaultValue),
-                $this->_conditionOperatorMap[$conditionOperator]
-            );
-
-            return $this->_expressionFactory->create(
-                ['expression' => $value . $this->_connection->quoteInto($sql, $condition->getBindArgumentValue())]
-            );
+        // If rule hasn't valid argument - create negative expression to prevent incorrect rule behavior.
+        if (empty($argument)) {
+            return $this->_expressionFactory->create(['expression' => '1 = -1']);
         }
-        return '';
+
+        $conditionOperator = $condition->getOperatorForValidate();
+
+        if (!isset($this->_conditionOperatorMap[$conditionOperator])) {
+            throw new \Magento\Framework\Exception\LocalizedException(__('Unknown condition operator'));
+        }
+
+        $defaultValue = 0;
+        // Check if attribute has a table with default value and add it to the query
+        if ($this->canAttributeHaveDefaultValue($condition->getAttribute(), $isDefaultStoreUsed)) {
+            $defaultField = 'at_' . $condition->getAttribute() . '_default.value';
+            $defaultValue = $this->_connection->quoteIdentifier($defaultField);
+        }
+
+        $sql = str_replace(
+            ':field',
+            $this->_connection->getIfNullSql($this->_connection->quoteIdentifier($argument), $defaultValue),
+            $this->_conditionOperatorMap[$conditionOperator]
+        );
+
+        return $this->_expressionFactory->create(
+            ['expression' => $value . $this->_connection->quoteInto($sql, $condition->getBindArgumentValue())]
+        );
     }
 
     /**
      * @param Combine $combine
      * @param string $value
+     * @param bool $isDefaultStoreUsed
      * @return string
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _getMappedSqlCombination(Combine $combine, $value = '')
+    protected function _getMappedSqlCombination(Combine $combine, $value = '', $isDefaultStoreUsed = true)
     {
         $out = (!empty($value) ? $value : '');
         $value = ($combine->getValue() ? '' : ' NOT ');
@@ -184,9 +182,9 @@ class Builder
             $con = ($getAggregator == 'any' ? Select::SQL_OR : Select::SQL_AND);
             $con = (isset($conditions[$key+1]) ? $con : '');
             if ($condition instanceof Combine) {
-                $out .= $this->_getMappedSqlCombination($condition, $value);
+                $out .= $this->_getMappedSqlCombination($condition, $value, $isDefaultStoreUsed);
             } else {
-                $out .= $this->_getMappedSqlCondition($condition, $value);
+                $out .= $this->_getMappedSqlCondition($condition, $value, $isDefaultStoreUsed);
             }
             $out .=  $out ? (' ' . $con) : '';
         }
@@ -196,44 +194,55 @@ class Builder
     /**
      * Attach conditions filter to collection
      *
-     * @param \Magento\Eav\Model\Entity\Collection\AbstractCollection $collection
+     * @param AbstractCollection $collection
      * @param Combine $combine
-     *
      * @return void
      */
     public function attachConditionToCollection(
-        \Magento\Eav\Model\Entity\Collection\AbstractCollection $collection,
+        AbstractCollection $collection,
         Combine $combine
     ) {
         $this->_connection = $collection->getResource()->getConnection();
-        $this->eavCollection = $collection;
         $this->_joinTablesToCollection($collection, $combine);
-        $whereExpression = (string)$this->_getMappedSqlCombination($combine);
+        $isDefaultStoreUsed = $this->checkIsDefaultStoreUsed($collection);
+        $whereExpression = (string)$this->_getMappedSqlCombination($combine, '', $isDefaultStoreUsed);
         if (!empty($whereExpression)) {
             // Select ::where method adds braces even on empty expression
             $collection->getSelect()->where($whereExpression);
         }
-        $this->eavCollection = null;
+    }
+
+    /**
+     * Check is default store used
+     *
+     * @param AbstractCollection $collection
+     * @return bool
+     */
+    private function checkIsDefaultStoreUsed(AbstractCollection $collection): bool
+    {
+        return (int)$collection->getStoreId() === (int)$collection->getDefaultStoreId();
     }
 
     /**
      * Check if attribute can have default value
      *
      * @param string $attributeCode
+     * @param bool $isDefaultStoreUsed
      * @return bool
      */
-    private function canAttributeHaveDefaultValue($attributeCode)
+    private function canAttributeHaveDefaultValue(string $attributeCode, bool $isDefaultStoreUsed): bool
     {
+        if ($isDefaultStoreUsed) {
+            return false;
+        }
+
         try {
             $attribute = $this->attributeRepository->get(Product::ENTITY, $attributeCode);
         } catch (NoSuchEntityException $e) {
             // It's not exceptional case as we want to check if we have such attribute or not
-            $attribute = null;
+            return false;
         }
-        $isNotDefaultStoreUsed = $this->eavCollection !== null
-            ? (int)$this->eavCollection->getStoreId() !== (int) $this->eavCollection->getDefaultStoreId()
-            : false;
 
-        return $isNotDefaultStoreUsed && $attribute !== null && !$attribute->isScopeGlobal();
+        return !$attribute->isScopeGlobal();
     }
 }

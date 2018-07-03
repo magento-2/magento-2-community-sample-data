@@ -39,13 +39,10 @@ class SaveHandler implements ExtensionInterface
         $optionIds = [];
 
         if ($options) {
-            $optionIds = array_map(
-                function ($option) {
-                    /** @var \Magento\Catalog\Model\Product\Option $option */
-                    return $option->getOptionId();
-                },
-                $options
-            );
+            $optionIds = array_map(function ($option) {
+                /** @var \Magento\Catalog\Model\Product\Option $option */
+                return $option->getOptionId();
+            }, $options);
         }
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface $entity */
@@ -54,7 +51,6 @@ class SaveHandler implements ExtensionInterface
                 $this->optionRepository->delete($option);
             }
         }
-
         if ($options) {
             foreach ($options as $option) {
                 $this->optionRepository->save($option);

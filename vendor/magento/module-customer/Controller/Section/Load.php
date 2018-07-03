@@ -9,7 +9,6 @@ use Magento\Customer\CustomerData\Section\Identifier;
 use Magento\Customer\CustomerData\SectionPoolInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\Escaper;
 
 /**
  * Customer section controller
@@ -23,6 +22,7 @@ class Load extends \Magento\Framework\App\Action\Action
 
     /**
      * @var Identifier
+     * @deprecated 100.2.0
      */
     protected $sectionIdentifier;
 
@@ -32,7 +32,7 @@ class Load extends \Magento\Framework\App\Action\Action
     protected $sectionPool;
 
     /**
-     * @var  Escaper
+     * @var \Magento\Framework\Escaper
      */
     private $escaper;
 
@@ -41,26 +41,31 @@ class Load extends \Magento\Framework\App\Action\Action
      * @param JsonFactory $resultJsonFactory
      * @param Identifier $sectionIdentifier
      * @param SectionPoolInterface $sectionPool
+     * @param Escaper $escaper
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         Identifier $sectionIdentifier,
-        SectionPoolInterface $sectionPool
+        SectionPoolInterface $sectionPool,
+        \Magento\Framework\Escaper $escaper = null
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->sectionIdentifier = $sectionIdentifier;
         $this->sectionPool = $sectionPool;
+        $this->escaper = $escaper ?: $this->_objectManager->get(\Magento\Framework\Escaper::class);
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\Result\Redirect
+     * @return \Magento\Framework\Controller\Result\Json
      */
     public function execute()
     {
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
+        $resultJson->setHeader('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store', true);
+        $resultJson->setHeader('Pragma', 'no-cache', true);
         try {
             $sectionNames = $this->getRequest()->getParam('sections');
             $sectionNames = $sectionNames ? array_unique(\explode(',', $sectionNames)) : null;
@@ -76,21 +81,9 @@ class Load extends \Magento\Framework\App\Action\Action
                 \Zend\Http\AbstractMessage::VERSION_11,
                 'Bad Request'
             );
-            $response = ['message' => $this->getEscaper()->escapeHtml($e->getMessage())];
+            $response = ['message' => $this->escaper->escapeHtml($e->getMessage())];
         }
 
         return $resultJson->setData($response);
-    }
-
-    /**
-     * @deprecated
-     * @return Escaper
-     */
-    private function getEscaper()
-    {
-        if ($this->escaper == null) {
-            $this->escaper = $this->_objectManager->get(Escaper::class);
-        }
-        return $this->escaper;
     }
 }

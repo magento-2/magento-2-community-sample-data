@@ -9,6 +9,7 @@ namespace Magento\SalesRule\Api\Data;
  * Interface ConditionInterface
  *
  * @api
+ * @since 100.0.2
  */
 interface ConditionInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -27,7 +28,6 @@ interface ConditionInterface extends \Magento\Framework\Api\ExtensibleDataInterf
      * @return $this
      */
     public function setConditionType($conditionType);
-
 
     /**
      * Return list of conditions

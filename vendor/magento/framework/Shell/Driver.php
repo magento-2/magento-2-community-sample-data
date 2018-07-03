@@ -12,7 +12,9 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class Driver
 {
-    /** @var CommandRendererInterface */
+    /**
+     * @var \Magento\Framework\Shell\CommandRendererInterface
+     */
     private $commandRenderer;
 
     /**
@@ -31,7 +33,6 @@ class Driver
      * @return Response
      * @throws LocalizedException
      */
-
     public function execute($command, $arguments)
     {
         $disabled = explode(',', str_replace(' ', ',', ini_get('disable_functions')));

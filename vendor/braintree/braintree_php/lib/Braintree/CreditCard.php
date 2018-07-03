@@ -7,12 +7,11 @@ namespace Braintree;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on CreditCards, see {@link http://www.braintreepayments.com/gateway/credit-card-api http://www.braintreepaymentsolutions.com/gateway/credit-card-api}<br />
- * For more detailed information on CreditCard verifications, see {@link http://www.braintreepayments.com/gateway/credit-card-verification-api http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api}
+ * For more detailed information on CreditCards, see {@link https://developers.braintreepayments.com/reference/response/credit-card/php https://developers.braintreepayments.com/reference/response/credit-card/php}<br />
+ * For more detailed information on CreditCard verifications, see {@link https://developers.braintreepayments.com/reference/response/credit-card-verification/php https://developers.braintreepayments.com/reference/response/credit-card-verification/php}
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $billingAddress
  * @property-read string $bin
@@ -40,6 +39,7 @@ class CreditCard extends Base
     const JCB = 'JCB';
     const LASER = 'Laser';
     const MAESTRO = 'Maestro';
+    const UK_MAESTRO = 'UK Maestro';
     const MASTER_CARD = 'MasterCard';
     const SOLO = 'Solo';
     const SWITCH_TYPE = 'Switch';
@@ -47,8 +47,8 @@ class CreditCard extends Base
     const UNKNOWN = 'Unknown';
 
     // Credit card origination location
-	const INTERNATIONAL = "international";
-	const US            = "us";
+    const INTERNATIONAL = "international";
+    const US = "us";
 
     const PREPAID_YES = 'Yes';
     const PREPAID_NO = 'No';
@@ -76,6 +76,7 @@ class CreditCard extends Base
 
     const COUNTRY_OF_ISSUANCE_UNKNOWN = "Unknown";
     const ISSUING_BANK_UNKNOWN = "Unknown";
+    const PRODUCT_ID_UNKNOWN = "Unknown";
 
     /* instance methods */
     /**

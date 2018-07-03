@@ -14,26 +14,29 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
 /**
- * Advanced search result.
+ * Advanced search result
+ *
+ * @api
+ * @since 100.0.2
  */
 class Result extends Template
 {
     /**
-     * Url factory.
+     * Url factory
      *
      * @var UrlFactory
      */
     protected $_urlFactory;
 
     /**
-     * Catalog layer.
+     * Catalog layer
      *
      * @var \Magento\Catalog\Model\Layer
      */
     protected $_catalogLayer;
 
     /**
-     * Catalog search advanced.
+     * Catalog search advanced
      *
      * @var Advanced
      */
@@ -82,12 +85,11 @@ class Result extends Template
                 ['label' => __('Results')]
             );
         }
-
         return parent::_prepareLayout();
     }
 
     /**
-     * Get page title.
+     * Get page title
      *
      * @return \Magento\Framework\Phrase
      */
@@ -97,7 +99,7 @@ class Result extends Template
     }
 
     /**
-     * Set order options.
+     * Set order options
      *
      * @return void
      */
@@ -113,7 +115,7 @@ class Result extends Template
     }
 
     /**
-     * Set view mode options.
+     * Set view mode options
      *
      * @return void
      */
@@ -123,8 +125,6 @@ class Result extends Template
     }
 
     /**
-     * Set search result collection.
-     *
      * @return void
      */
     public function setListCollection()
@@ -133,8 +133,6 @@ class Result extends Template
     }
 
     /**
-     * Return product collection.
-     *
      * @return Collection
      */
     protected function _getProductCollection()
@@ -143,8 +141,6 @@ class Result extends Template
     }
 
     /**
-     * Return search model.
-     *
      * @return Advanced
      */
     public function getSearchModel()
@@ -153,8 +149,6 @@ class Result extends Template
     }
 
     /**
-     * Return results count.
-     *
      * @return mixed
      */
     public function getResultCount()
@@ -163,13 +157,10 @@ class Result extends Template
             $size = $this->getSearchModel()->getProductCollection()->getSize();
             $this->setResultCount($size);
         }
-        
         return $this->getData('result_count');
     }
 
     /**
-     * Return search product listing html.
-     *
      * @return string
      */
     public function getProductListHtml()
@@ -178,8 +169,6 @@ class Result extends Template
     }
 
     /**
-     * Return form url.
-     *
      * @return string
      */
     public function getFormUrl()
@@ -193,8 +182,6 @@ class Result extends Template
     }
 
     /**
-     * Return search criteria.
-     *
      * @return array
      */
     public function getSearchCriterias()

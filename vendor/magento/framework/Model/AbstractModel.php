@@ -10,6 +10,7 @@ use Magento\Framework\Phrase;
 /**
  * Abstract model class
  *
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -161,11 +162,11 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     protected $storedData = [];
 
     /**
-     * @param \Magento\Framework\Model\Context                        $context
-     * @param \Magento\Framework\Registry                             $registry
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
-     * @param array                                                   $data
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param array $data
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -244,9 +245,9 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     public function __wakeup()
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $this->_registry = $objectManager->get('Magento\Framework\Registry');
+        $this->_registry = $objectManager->get(\Magento\Framework\Registry::class);
 
-        $context = $objectManager->get('Magento\Framework\Model\Context');
+        $context = $objectManager->get(\Magento\Framework\Model\Context::class);
         if ($context instanceof \Magento\Framework\Model\Context) {
             $this->_appState = $context->getAppState();
             $this->_eventManager = $context->getEventDispatcher();
@@ -336,9 +337,8 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * If $key is an array, it will overwrite all the data in the object.
      *
-     * @param string|array $key
-     * @param mixed        $value
-     *
+     * @param string|array  $key
+     * @param mixed         $value
      * @return $this
      */
     public function setData($key, $value = null)
@@ -415,7 +415,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      * @FIXME changing original data can't be available as public interface
      *
      * @param string $key
-     * @param mixed  $data
+     * @param mixed $data
      * @return $this
      */
     public function setOrigData($key = null, $data = null)
@@ -446,7 +446,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * If collection name is omitted, resource name will be used with _collection appended
      *
-     * @param string      $resourceName
+     * @param string $resourceName
      * @param string|null $collectionName
      * @return void
      */
@@ -464,6 +464,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return \Magento\Framework\Model\ResourceModel\Db\AbstractDb
+     * @deprecated 101.0.0 because resource models should be used directly
      */
     protected function _getResource()
     {
@@ -492,6 +493,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      * @TODO MAGETWO-23541: Incorrect dependencies between Model\AbstractModel and Data\Collection\Db from Framework
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+     * @deprecated 101.0.0 because collections should be used directly via factory
      */
     public function getResourceCollection()
     {
@@ -512,6 +514,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * @TODO MAGETWO-23541: Incorrect dependencies between Model\AbstractModel and Data\Collection\Db from Framework
      * @return \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+     * @deprecated 101.0.0 because collections should be used directly via factory
      */
     public function getCollection()
     {
@@ -521,21 +524,16 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     /**
      * Load object data
      *
-     * @param integer     $modelId
+     * @param integer $modelId
      * @param null|string $field
      * @return $this
-     * @deprecated because entities must not be responsible for their own loading.
+     * @deprecated 100.1.0 because entities must not be responsible for their own loading.
      * Service contracts should persist entities. Use resource model "load" or collections to implement
      * service contract model loading operations.
      */
     public function load($modelId, $field = null)
     {
-        $this->_beforeLoad($modelId, $field);
         $this->_getResource()->load($this, $modelId, $field);
-        $this->_afterLoad();
-        $this->setOrigData();
-        $this->_hasDataChanges = false;
-        $this->updateStoredData();
         return $this;
     }
 
@@ -547,7 +545,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     protected function _getEventData()
     {
         return [
-            'data_object'       => $this,
+            'data_object' => $this,
             $this->_eventObject => $this,
         ];
     }
@@ -555,7 +553,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     /**
      * Processing object before load data
      *
-     * @param int         $modelId
+     * @param int $modelId
      * @param null|string $field
      * @return $this
      */
@@ -581,13 +579,25 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
     }
 
     /**
+     * Process operation before object load
+     *
+     * @param string $identifier
+     * @param string|null $field
+     * @return void
+     * @since 100.2.0
+     */
+    public function beforeLoad($identifier, $field = null)
+    {
+        $this->_beforeLoad($identifier, $field);
+    }
+
+    /**
      * Object after load processing. Implemented as public interface for supporting objects after load in collections
      *
      * @return $this
      */
     public function afterLoad()
     {
-        $this->getResource()->afterLoad($this);
         $this->_afterLoad();
         $this->updateStoredData();
         return $this;
@@ -627,7 +637,8 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * @return $this
      * @throws \Exception
-     * @deprecated because entities must not be responsible for their own persistence.
+     *
+     * @deprecated 100.1.0 because entities must not be responsible for their own persistence.
      * Service contracts should persist entities. Use resource model "save" to implement
      * service contract persistence operations.
      */
@@ -814,7 +825,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      *
      * @return $this
      * @throws \Exception
-     * @deprecated because entities must not be responsible for their own deletion.
+     * @deprecated 100.1.0 because entities must not be responsible for their own deletion.
      * Service contracts should delete entities. Use resource model "delete" method to implement
      * service contract persistence operations.
      */
@@ -874,6 +885,7 @@ abstract class AbstractModel extends \Magento\Framework\DataObject
      * Retrieve model resource
      *
      * @return \Magento\Framework\Model\ResourceModel\Db\AbstractDb
+     * @deprecated 101.0.0 because resource models should be used directly
      */
     public function getResource()
     {

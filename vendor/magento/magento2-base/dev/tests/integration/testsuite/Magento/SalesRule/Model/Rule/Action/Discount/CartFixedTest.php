@@ -8,13 +8,16 @@ namespace Magento\SalesRule\Model\Rule\Action\Discount;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Api\GuestCartTotalRepositoryInterface;
-use Magento\Quote\Api\GuestCouponManagementInterface;
 use Magento\Quote\Api\GuestCartItemRepositoryInterface;
 use Magento\Quote\Api\GuestCartManagementInterface;
+use Magento\Quote\Api\GuestCartTotalRepositoryInterface;
+use Magento\Quote\Api\GuestCouponManagementInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CartFixedTest extends \PHPUnit_Framework_TestCase
+/**
+ * Tests for Magento\SalesRule\Model\Rule\Action\Discount\CartFixed.
+ */
+class CartFixedTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var GuestCartManagementInterface
@@ -31,6 +34,9 @@ class CartFixedTest extends \PHPUnit_Framework_TestCase
      */
     private $couponManagement;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         $this->cartManagement = Bootstrap::getObjectManager()->create(GuestCartManagementInterface::class);
@@ -42,6 +48,7 @@ class CartFixedTest extends \PHPUnit_Framework_TestCase
      * Applies fixed discount amount on whole cart.
      *
      * @param array $productPrices
+     * @return void
      * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/SalesRule/_files/coupon_cart_fixed_discount.php
      * @dataProvider applyFixedDiscountDataProvider

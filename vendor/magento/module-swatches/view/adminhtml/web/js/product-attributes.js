@@ -2,6 +2,10 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/**
+ * @api
+ */
 define([
     'jquery',
     'Magento_Ui/js/modal/alert',
@@ -178,6 +182,7 @@ define([
                         useProductImageForSwatch = false,
                         defaultValueUpdateImage = false,
                         optionDefaultInputType = '',
+                        isFrontTabHidden = false,
                         thing = this;
 
                     if (!this.frontendInput.length) {
@@ -242,6 +247,7 @@ define([
                             switch (option) {
                                 case '_front_fieldset':
                                     thing.tabsFront.hide();
+                                    isFrontTabHidden = true;
                                     break;
 
                                 case '_default_value':
@@ -258,6 +264,11 @@ define([
                                     thing.setRowVisibility($('#' + option), false);
                             }
                         });
+
+                        if (!isFrontTabHidden) {
+                            thing.tabsFront.show();
+                        }
+
                     } else {
                         this.tabsFront.show();
                         this.showDefaultRows();

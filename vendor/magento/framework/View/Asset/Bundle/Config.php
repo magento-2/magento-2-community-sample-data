@@ -13,6 +13,11 @@ use Magento\Framework\View\Design\Theme\ListInterface;
 use Magento\Framework\View\Asset\File\FallbackContext;
 use Magento\Framework\View\Design\Theme\ThemeProviderInterface;
 
+/**
+ * Class Config
+ * @deprecated 100.2.0
+ * @see \Magento\Deploy\Config\BundleConfig
+ */
 class Config implements Bundle\ConfigInterface
 {
     /**#@+
@@ -22,9 +27,7 @@ class Config implements Bundle\ConfigInterface
     const VIEW_CONFIG_BUNDLE_SIZE_NAME = 'bundle_size';
     /**#@-*/
 
-    /**
-     * @var ListInterface
-     */
+    /**#@-*/
     protected $themeList;
 
     /**
@@ -106,7 +109,6 @@ class Config implements Bundle\ConfigInterface
 
     /**
      * @return ThemeProviderInterface
-     * @deprecated
      */
     private function getThemeProvider()
     {

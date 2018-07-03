@@ -10,28 +10,22 @@ use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Api\Data\CategoryInterface;
 
 /**
- * Map that holds data for category ids and its subcategories ids.
+ * Map that holds data for category ids and its subcategories ids
  */
 class DataCategoryHashMap implements HashMapInterface
 {
     /**
-     * Holds data for categories and its subcategories.
-     *
      * @var int[]
      */
     private $hashMap = [];
 
     /**
-     * Category repository.
-     *
-     * @var CategoryRepository
+     * @var \Magento\Catalog\Model\CategoryRepository
      */
     private $categoryRepository;
 
     /**
-     * Resource category factory.
-     *
-     * @var CategoryFactory
+     * @var \Magento\Catalog\Model\ResourceModel\CategoryFactory
      */
     private $categoryResourceFactory;
 
@@ -48,7 +42,7 @@ class DataCategoryHashMap implements HashMapInterface
     }
 
     /**
-     * Returns an array of categories ids that includes category identified by $categoryId and all its subcategories.
+     * Returns an array of categories ids that includes category identified by $categoryId and all its subcategories
      *
      * @param int $categoryId
      * @return array
@@ -59,7 +53,6 @@ class DataCategoryHashMap implements HashMapInterface
             $category = $this->categoryRepository->get($categoryId);
             $this->hashMap[$categoryId] = $this->getAllCategoryChildrenIds($category);
         }
-
         return $this->hashMap[$categoryId];
     }
 
@@ -72,12 +65,11 @@ class DataCategoryHashMap implements HashMapInterface
         if (isset($categorySpecificData[$key])) {
             return $categorySpecificData[$key];
         }
-
         return [];
     }
 
     /**
-     * Queries the database for sub-categories ids from a category.
+     * Queries the database for sub-categories ids from a category
      *
      * @param CategoryInterface $category
      * @return int[]
@@ -90,7 +82,6 @@ class DataCategoryHashMap implements HashMapInterface
             ->from($categoryResource->getEntityTable(), 'entity_id')
             ->where($connection->quoteIdentifier('path') . ' LIKE :c_path');
         $bind = ['c_path' => $category->getPath() . '%'];
-
         return $connection->fetchCol($select, $bind);
     }
 

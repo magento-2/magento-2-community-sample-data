@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 namespace Zend\Code\Generator;
@@ -21,22 +21,22 @@ class TraitUsageGenerator extends AbstractGenerator
     /**
      * @var array Array of trait names
      */
-    protected $traits = array();
+    protected $traits = [];
 
     /**
      * @var array Array of trait aliases
      */
-    protected $traitAliases = array();
+    protected $traitAliases = [];
 
     /**
      * @var array Array of trait overrides
      */
-    protected $traitOverrides = array();
+    protected $traitOverrides = [];
 
     /**
      * @var array Array of string names
      */
-    protected $uses = array();
+    protected $uses = [];
 
     public function __construct(ClassGenerator $classGenerator)
     {
@@ -48,6 +48,8 @@ class TraitUsageGenerator extends AbstractGenerator
      */
     public function addUse($use, $useAlias = null)
     {
+        $this->removeUse($use);
+
         if (! empty($useAlias)) {
             $use .= ' as ' . $useAlias;
         }
@@ -62,6 +64,70 @@ class TraitUsageGenerator extends AbstractGenerator
     public function getUses()
     {
         return array_values($this->uses);
+    }
+
+    /**
+     * @param $use
+     * @return bool
+     */
+    public function hasUse($use)
+    {
+        foreach ($this->uses as $key => $value) {
+            $parts = explode(' ', $value);
+            if ($parts[0] === $use) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $use
+     * @return bool
+     */
+    public function hasUseAlias($use)
+    {
+        foreach ($this->uses as $key => $value) {
+            $parts = explode(' as ', $value);
+            if ($parts[0] === $use and count($parts) == 2) {
+                return true;
+            }
+        };
+
+        return false;
+    }
+
+    /**
+     * @param $use
+     * @return TraitUsageGenerator
+     */
+    public function removeUse($use)
+    {
+        foreach ($this->uses as $key => $value) {
+            $parts = explode(' ', $value);
+            if ($parts[0] === $use) {
+                unset($this->uses[$value]);
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param $use
+     * @return TraitUsageGenerator
+     */
+    public function removeUseAlias($use)
+    {
+        foreach ($this->uses as $key => $value) {
+            $parts = explode(' as ', $value);
+            if ($parts[0] === $use and count($parts) == 2) {
+                unset($this->uses[$value]);
+            }
+        };
+
+        return $this;
     }
 
     /**
@@ -183,10 +249,10 @@ class TraitUsageGenerator extends AbstractGenerator
             throw new Exception\InvalidArgumentException('Invalid trait: Trait does not exists on this class');
         }
 
-        $this->traitAliases[$traitAndMethod] = array(
+        $this->traitAliases[$traitAndMethod] = [
             'alias'      => $alias,
             'visibility' => $visibility
-        );
+        ];
 
         return $this;
     }
@@ -205,7 +271,7 @@ class TraitUsageGenerator extends AbstractGenerator
     public function addTraitOverride($method, $traitsToReplace)
     {
         if (false === is_array($traitsToReplace)) {
-            $traitsToReplace = array($traitsToReplace);
+            $traitsToReplace = [$traitsToReplace];
         }
 
         $traitAndMethod = $method;
@@ -234,7 +300,7 @@ class TraitUsageGenerator extends AbstractGenerator
         }
 
         if (! array_key_exists($traitAndMethod, $this->traitOverrides)) {
-            $this->traitOverrides[$traitAndMethod] = array();
+            $this->traitOverrides[$traitAndMethod] = [];
         }
 
         foreach ($traitsToReplace as $traitToReplace) {
@@ -267,7 +333,7 @@ class TraitUsageGenerator extends AbstractGenerator
         }
 
         $overridesToRemove = (! is_array($overridesToRemove))
-            ? array($overridesToRemove)
+            ? [$overridesToRemove]
             : $overridesToRemove;
         foreach ($overridesToRemove as $traitToRemove) {
             $key = array_search($traitToRemove, $this->traitOverrides[$method]);

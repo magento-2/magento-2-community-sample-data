@@ -23,13 +23,6 @@ class Sidebar extends Block
     private $subtotal = '.subtotal .price';
 
     /**
-     * Quantity input selector.
-     *
-     * @var string
-     */
-    private $qty = '//*[@class="product"]/*[@title="%s"]/following-sibling::*//*[contains(@class,"item-qty")]';
-
-    /**
      * Mini cart link selector.
      *
      * @var string
@@ -41,10 +34,10 @@ class Sidebar extends Block
      *
      * @var string
      */
-    protected $braintreePaypalCheckoutButton = './/button[contains(@id, "braintree-paypal-mini-cart")]';
+    protected $braintreePaypalCheckoutButton = 'button[id^="braintree-paypal-mini-cart"]';
 
     /**
-     * Locator value for "Proceed to Checkout".
+     * Locator value for "Proceed to Checkout" button.
      *
      * @var string
      */
@@ -58,11 +51,9 @@ class Sidebar extends Block
     protected $productCounter = './/*[@class="counter-number"]';
 
     /**
-     * Visible minicart items quantity.
-     * 
      * @var string
      */
-    private $visibleProductCounter = './/*[@class="items-total"]';
+    protected $visibleProductCounter = './/*[@class="items-total"]';
 
     /**
      * Empty minicart message
@@ -133,8 +124,16 @@ class Sidebar extends Block
      */
     public function clickBraintreePaypalButton()
     {
-        $this->_rootElement->find($this->braintreePaypalCheckoutButton, Locator::SELECTOR_XPATH)
+        // Button can be enabled/disabled few times.
+        sleep(2);
+
+        $windowsCount = count($this->browser->getWindowHandles());
+        $this->_rootElement->find($this->braintreePaypalCheckoutButton)
             ->click();
+        $browser = $this->browser;
+        $this->browser->waitUntil(function () use ($browser, $windowsCount) {
+            return count($browser->getWindowHandles()) === ($windowsCount + 1) ? true: null;
+        });
     }
 
     /**
@@ -196,23 +195,9 @@ class Sidebar extends Block
     }
 
     /**
-     * Get product quantity.
+     * Returns message with count of visible items
      *
-     * @param string $productName
      * @return string
-     */
-    public function getProductQty($productName)
-    {
-        $this->openMiniCart();
-        $productQty = sprintf($this->qty, $productName);
-
-        return $this->_rootElement->find($productQty, Locator::SELECTOR_XPATH)->getValue();
-    }
-
-    /**
-     * Returns message with count of visible items.
-     *
-     * @return array|string
      */
     public function getVisibleItemsCounter()
     {
@@ -295,7 +280,7 @@ class Sidebar extends Block
      * @param string $currency [optional]
      * @return string
      */
-    private function escapeCurrency($price, $currency = '$')
+    protected function escapeCurrency($price, $currency = '$')
     {
         return str_replace($currency, '', $price);
     }

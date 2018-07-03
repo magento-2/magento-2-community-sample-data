@@ -69,6 +69,43 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addColumnBaseGrandTotal($installer);
             $this->addIndexBaseGrandTotal($installer);
         }
+        if (version_compare($context->getVersion(), '2.0.4', '<')) {
+            $tables = [
+                'sales_invoice_grid',
+                'sales_order',
+                'sales_shipment_grid',
+            ];
+            foreach ($tables as $table) {
+                $salesConnection = $setup->getConnection(self::$connectionName);
+                $salesConnection->modifyColumn(
+                    $installer->getTable($table, self::$connectionName),
+                    'customer_group_id',
+                    ['type' => 'integer']
+                );
+            }
+        }
+        if (version_compare($context->getVersion(), '2.0.5', '<')) {
+            $connection = $installer->getConnection(self::$connectionName);
+            $connection->modifyColumn(
+                $installer->getTable('sales_order_payment', self::$connectionName),
+                'cc_number_enc',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 128
+                ]
+            );
+        }
+        if (version_compare($context->getVersion(), '2.0.7', '<')) {
+            $connection = $installer->getConnection(self::$connectionName);
+            $connection->modifyColumn(
+                $installer->getTable('sales_order', self::$connectionName),
+                'shipping_method',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 120
+                ]
+            );
+        }
     }
 
     /**

@@ -9,6 +9,9 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Interface CreditmemoCommentCreationInterface
+ *
+ * @api
+ * @since 100.1.3
  */
 interface CreditmemoCommentCreationInterface extends ExtensibleDataInterface, CommentInterface
 {
@@ -16,6 +19,7 @@ interface CreditmemoCommentCreationInterface extends ExtensibleDataInterface, Co
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Magento\Sales\Api\Data\CreditmemoCommentCreationExtensionInterface|null
+     * @since 100.1.3
      */
     public function getExtensionAttributes();
 
@@ -24,6 +28,7 @@ interface CreditmemoCommentCreationInterface extends ExtensibleDataInterface, Co
      *
      * @param \Magento\Sales\Api\Data\CreditmemoCommentCreationExtensionInterface $extensionAttributes
      * @return $this
+     * @since 100.1.3
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\CreditmemoCommentCreationExtensionInterface $extensionAttributes

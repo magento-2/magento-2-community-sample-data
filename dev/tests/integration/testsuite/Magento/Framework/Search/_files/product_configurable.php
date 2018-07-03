@@ -15,8 +15,6 @@ use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Eav\Api\Data\AttributeOptionInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-Bootstrap::getInstance()->reinitialize();
-
 require __DIR__ . '/configurable_attribute.php';
 
 /** @var ProductRepositoryInterface $productRepository */
@@ -33,7 +31,7 @@ $options = $attribute->getOptions();
 $attributeValues = [];
 $attributeSetId = $installer->getAttributeSetId('catalog_product', 'Default');
 $associatedProductIds = [];
-$productIds = [10010, 10020];
+$productIds = [1010, 1020];
 array_shift($options); //remove the first option which is empty
 
 $isFirstOption = true;
@@ -48,7 +46,7 @@ foreach ($options as $option) {
         ->setName('Configurable Option' . $option->getLabel())
         ->setSku('simple_' . $productId)
         ->setPrice($productId)
-        ->setTestConfigurableSearchable($option->getValue())
+        ->setTestConfigurable($option->getValue())
         ->setVisibility(Visibility::VISIBILITY_NOT_VISIBLE)
         ->setStatus(Status::STATUS_ENABLED)
         ->setStockData(
@@ -69,7 +67,6 @@ foreach ($options as $option) {
     if (!$stockItem->getProductId()) {
         $stockItem->setProductId($productId);
     }
-
     $stockItem->setUseConfigManageStock(1);
     $stockItem->setQty(1000);
     $stockItem->setIsQtyDecimal(0);
@@ -110,11 +107,11 @@ $extensionConfigurableAttributes->setConfigurableProductLinks($associatedProduct
 $product->setExtensionAttributes($extensionConfigurableAttributes);
 
 $product->setTypeId(Configurable::TYPE_CODE)
-    ->setId(10001)
+    ->setId(1001)
     ->setAttributeSetId($attributeSetId)
     ->setWebsiteIds([1])
     ->setName('Configurable Product')
-    ->setSku('configurable_searchable')
+    ->setSku('configurable')
     ->setVisibility(Visibility::VISIBILITY_BOTH)
     ->setStatus(Status::STATUS_ENABLED)
     ->setStockData(['use_config_manage_stock' => 1, 'is_in_stock' => 1]);

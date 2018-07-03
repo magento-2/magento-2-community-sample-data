@@ -9,27 +9,29 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Ui\Component\Form;
 use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Framework\Locale\CurrencyInterface;
 
 /**
  * Data provider for main panel of product page
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 101.0.0
  */
 class General extends AbstractModifier
 {
     /**
      * @var LocatorInterface
+     * @since 101.0.0
      */
     protected $locator;
 
     /**
      * @var ArrayManager
+     * @since 101.0.0
      */
     protected $arrayManager;
 
     /**
-     * @var CurrencyInterface
+     * @var \Magento\Framework\Locale\CurrencyInterface
      */
     private $localeCurrency;
 
@@ -47,6 +49,7 @@ class General extends AbstractModifier
 
     /**
      * {@inheritdoc}
+     * @since 101.0.0
      */
     public function modifyData(array $data)
     {
@@ -66,6 +69,7 @@ class General extends AbstractModifier
      *
      * @param array $data
      * @return array
+     * @since 101.0.0
      */
     protected function customizeWeightFormat(array $data)
     {
@@ -90,6 +94,7 @@ class General extends AbstractModifier
      *
      * @param array $data
      * @return array
+     * @since 101.0.0
      */
     protected function customizeAdvancedPriceFormat(array $data)
     {
@@ -110,6 +115,7 @@ class General extends AbstractModifier
 
     /**
      * {@inheritdoc}
+     * @since 101.0.0
      */
     public function modifyMeta(array $meta)
     {
@@ -127,6 +133,7 @@ class General extends AbstractModifier
      *
      * @param array $meta
      * @return array
+     * @since 101.0.0
      */
     protected function prepareFirstPanel(array $meta)
     {
@@ -149,6 +156,7 @@ class General extends AbstractModifier
      *
      * @param array $meta
      * @return array
+     * @since 101.0.0
      */
     protected function customizeStatusField(array $meta)
     {
@@ -174,6 +182,7 @@ class General extends AbstractModifier
      *
      * @param array $meta
      * @return array
+     * @since 101.0.0
      */
     protected function customizeWeightField(array $meta)
     {
@@ -242,6 +251,7 @@ class General extends AbstractModifier
      *
      * @param array $meta
      * @return array
+     * @since 101.0.0
      */
     protected function customizeNewDateRangeField(array $meta)
     {
@@ -254,23 +264,36 @@ class General extends AbstractModifier
         if ($fromFieldPath && $toFieldPath) {
             $fromContainerPath = $this->arrayManager->slicePath($fromFieldPath, 0, -2);
             $toContainerPath = $this->arrayManager->slicePath($toFieldPath, 0, -2);
+            $commonFieldsMeta = [
+                'outputDateTimeToISO' => false,
+                'inputDateTimeFormat' => 'YYYY-MM-DD h:mm',
+                'options' => [
+                    'showsTime' => true,
+                ]
+            ];
 
             $meta = $this->arrayManager->merge(
                 $fromFieldPath . self::META_CONFIG_PATH,
                 $meta,
-                [
-                    'label' => __('Set Product as New From'),
-                    'additionalClasses' => 'admin__field-date',
-                ]
+                array_merge(
+                    [
+                        'label' => __('Set Product as New From'),
+                        'additionalClasses' => 'admin__field-date',
+                    ],
+                    $commonFieldsMeta
+                )
             );
             $meta = $this->arrayManager->merge(
                 $toFieldPath . self::META_CONFIG_PATH,
                 $meta,
-                [
-                    'label' => __('To'),
-                    'scopeLabel' => null,
-                    'additionalClasses' => 'admin__field-date',
-                ]
+                array_merge(
+                    [
+                        'label' => __('To'),
+                        'scopeLabel' => null,
+                        'additionalClasses' => 'admin__field-date',
+                    ],
+                    $commonFieldsMeta
+                )
             );
             $meta = $this->arrayManager->merge(
                 $fromContainerPath . self::META_CONFIG_PATH,
@@ -299,6 +322,7 @@ class General extends AbstractModifier
      *
      * @param array $meta
      * @return array
+     * @since 101.0.0
      */
     protected function customizeNameListeners(array $meta)
     {
@@ -318,17 +342,6 @@ class General extends AbstractModifier
             $importsConfig = [
                 'mask' => $this->locator->getStore()->getConfig('catalog/fields_masks/' . $listener),
                 'component' => 'Magento_Catalog/js/components/import-handler',
-                'imports' => [
-                    'handleNameChanges' => '${$.provider}:data.product.name',
-                    'handleDescriptionChanges' => '${$.provider}:data.product.description',
-                    'handleSkuChanges' => '${$.provider}:data.product.sku',
-                    'handleColorChanges' => '${$.provider}:data.product.color',
-                    'handleCountryChanges' => '${$.provider}:data.product.country_of_manufacture',
-                    'handleGenderChanges' => '${$.provider}:data.product.gender',
-                    'handleMaterialChanges' => '${$.provider}:data.product.material',
-                    'handleShortDescriptionChanges' => '${$.provider}:data.product.short_description',
-                    'handleSizeChanges' => '${$.provider}:data.product.size'
-                ],
                 'allowImport' => !$this->locator->getProduct()->getId(),
             ];
 
@@ -364,12 +377,13 @@ class General extends AbstractModifier
      *
      * @return \Magento\Framework\Locale\CurrencyInterface
      *
-     * @deprecated
+     * @deprecated 101.0.0
      */
     private function getLocaleCurrency()
     {
         if ($this->localeCurrency === null) {
-            $this->localeCurrency = \Magento\Framework\App\ObjectManager::getInstance()->get(CurrencyInterface::class);
+            $this->localeCurrency = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\Locale\CurrencyInterface::class);
         }
         return $this->localeCurrency;
     }
@@ -379,6 +393,7 @@ class General extends AbstractModifier
      *
      * @param mixed $value
      * @return string
+     * @since 101.0.0
      */
     protected function formatPrice($value)
     {
@@ -398,6 +413,7 @@ class General extends AbstractModifier
      *
      * @param mixed $value
      * @return string
+     * @since 101.0.0
      */
     protected function formatNumber($value)
     {

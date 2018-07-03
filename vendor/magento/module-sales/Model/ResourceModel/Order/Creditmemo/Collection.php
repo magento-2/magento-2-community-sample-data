@@ -11,7 +11,9 @@ use Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection;
 /**
  * Flat sales order creditmemo collection
  *
+ * @api
  * @author      Magento Core Team <core@magentocommerce.com>
+ * @since 100.0.2
  */
 class Collection extends AbstractCollection implements CreditmemoSearchResultInterface
 {
@@ -50,7 +52,10 @@ class Collection extends AbstractCollection implements CreditmemoSearchResultInt
      */
     protected function _construct()
     {
-        $this->_init('Magento\Sales\Model\Order\Creditmemo', 'Magento\Sales\Model\ResourceModel\Order\Creditmemo');
+        $this->_init(
+            \Magento\Sales\Model\Order\Creditmemo::class,
+            \Magento\Sales\Model\ResourceModel\Order\Creditmemo::class
+        );
     }
 
     /**

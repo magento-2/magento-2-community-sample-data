@@ -121,7 +121,6 @@ class ContentUploader extends Uploader implements \Magento\Downloadable\Api\Data
         unset($result['path']);
         $result['status'] = 'new';
         $result['name'] = substr($result['file'], strrpos($result['file'], '/') + 1);
-
         return $result;
     }
 

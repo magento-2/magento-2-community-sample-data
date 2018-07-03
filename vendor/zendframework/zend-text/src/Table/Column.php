@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-text for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-text/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Text\Table;
@@ -49,7 +47,7 @@ class Column
      *
      * @var array
      */
-    protected $allowedAligns = array(self::ALIGN_LEFT, self::ALIGN_CENTER, self::ALIGN_RIGHT);
+    protected $allowedAligns = [self::ALIGN_LEFT, self::ALIGN_CENTER, self::ALIGN_RIGHT];
 
     /**
      * Create a column for a Zend\Text\Table\Row object.
@@ -201,7 +199,7 @@ class Column
         $outputCharset = Table::getOutputCharset();
         $strWrapper    = StringUtils::getWrapper($outputCharset);
         $lines         = explode("\n", $strWrapper->wordWrap($this->content, $columnWidth, "\n", true));
-        $paddedLines   = array();
+        $paddedLines   = [];
 
         foreach ($lines as $line) {
             $paddedLines[] = str_repeat(' ', $padding)

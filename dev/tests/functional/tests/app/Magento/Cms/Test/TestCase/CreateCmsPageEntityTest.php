@@ -6,6 +6,7 @@
 
 namespace Magento\Cms\Test\TestCase;
 
+use Magento\Config\Test\Fixture\ConfigData;
 use Magento\Cms\Test\Fixture\CmsPage as CmsPageFixture;
 use Magento\Cms\Test\Page\Adminhtml\CmsPageIndex;
 use Magento\Cms\Test\Page\Adminhtml\CmsPageNew;
@@ -21,15 +22,15 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save CMS Page.
  * 6. Verify created CMS Page.
  *
- * @group CMS_Content_(PS)
+ * @group CMS_Content
  * @ZephyrId MAGETWO-25580
  */
 class CreateCmsPageEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const DOMAIN = 'PS';
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
+    const SEVERITY = 'S1';
     /* end tags */
 
     /**

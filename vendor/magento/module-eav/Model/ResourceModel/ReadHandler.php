@@ -5,45 +5,18 @@
  */
 namespace Magento\Eav\Model\ResourceModel;
 
-use Magento\Eav\Api\AttributeRepositoryInterface as AttributeRepository;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\App\ResourceConnection as AppResource;
-use Magento\Framework\Model\Entity\ScopeResolver;
-use Magento\Framework\Model\Entity\ScopeInterface;
 use Magento\Framework\EntityManager\Operation\AttributeInterface;
-use Magento\Eav\Model\Entity\AttributeCache;
+use Magento\Framework\Model\Entity\ScopeInterface;
+use Magento\Framework\Model\Entity\ScopeResolver;
 use Psr\Log\LoggerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ReadHandler implements AttributeInterface
 {
-    /**
-     * @var AttributeCache
-     */
-    private $attributeCache;
-
-    /**
-     * @var AttributeRepository
-     */
-    protected $attributeRepository;
-
     /**
      * @var MetadataPool
      */
     protected $metadataPool;
-
-    /**
-     * @var AppResource
-     */
-    protected $appResource;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
 
     /**
      * @var ScopeResolver
@@ -56,63 +29,42 @@ class ReadHandler implements AttributeInterface
     private $logger;
 
     /**
+     * @var \Magento\Eav\Model\Config
+     */
+    private $config;
+
+    /**
      * ReadHandler constructor.
      *
-     * @param AttributeRepository $attributeRepository
      * @param MetadataPool $metadataPool
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param AppResource $appResource
      * @param ScopeResolver $scopeResolver
-     * @param AttributeCache $attributeCache
+     * @param LoggerInterface $logger
+     * @param \Magento\Eav\Model\Config $config
      */
     public function __construct(
-        AttributeRepository $attributeRepository,
         MetadataPool $metadataPool,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        AppResource $appResource,
         ScopeResolver $scopeResolver,
-        AttributeCache $attributeCache
+        LoggerInterface $logger,
+        \Magento\Eav\Model\Config $config
     ) {
-        $this->attributeRepository = $attributeRepository;
         $this->metadataPool = $metadataPool;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->appResource = $appResource;
         $this->scopeResolver = $scopeResolver;
-        $this->attributeCache = $attributeCache;
+        $this->logger = $logger;
+        $this->config = $config;
     }
 
     /**
-     * Get Logger
+     * Get attribute of given entity type
      *
-     * @return LoggerInterface
-     * @deprecated
-     */
-    private function getLogger()
-    {
-        if ($this->logger === null) {
-            $this->logger = \Magento\Framework\App\ObjectManager::getInstance()->create(LoggerInterface::class);
-        }
-        return $this->logger;
-    }
-
-    /**
      * @param string $entityType
      * @return \Magento\Eav\Api\Data\AttributeInterface[]
-     * @throws \Exception
+     * @throws \Exception if for unknown entity type
      */
     protected function getAttributes($entityType)
     {
-        $attributes = $this->attributeCache->getAttributes($entityType);
-        if ($attributes) {
-            return $attributes;
-        }
         $metadata = $this->metadataPool->getMetadata($entityType);
-        $searchResult = $this->attributeRepository->getList(
-            $metadata->getEavEntityType(),
-            $this->searchCriteriaBuilder->create()
-        );
-        $attributes = $searchResult->getItems();
-        $this->attributeCache->saveAttributes($entityType, $attributes);
+        $eavEntityType = $metadata->getEavEntityType();
+        $attributes = (null === $eavEntityType) ? [] : $this->config->getAttributes($eavEntityType);
         return $attributes;
     }
 
@@ -185,8 +137,8 @@ class ReadHandler implements AttributeInterface
                 if (isset($attributesMap[$attributeValue['attribute_id']])) {
                     $entityData[$attributesMap[$attributeValue['attribute_id']]] = $attributeValue['value'];
                 } else {
-                    $this->getLogger()->warning(
-                        "Attempt to load value of nonexistent EAV attribute '{$attributeValue['attribute_id']}'
+                    $this->logger->warning(
+                        "Attempt to load value of nonexistent EAV attribute '{$attributeValue['attribute_id']}' 
                         for entity type '$entityType'."
                     );
                 }

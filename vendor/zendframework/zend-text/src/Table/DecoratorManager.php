@@ -1,15 +1,15 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-text for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-text/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Text\Table;
 
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\Exception\InvalidServiceException;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 /**
  * Plugin manager implementation for text table decorators
@@ -25,14 +25,46 @@ class DecoratorManager extends AbstractPluginManager
      *
      * @var array
      */
-    protected $invokableClasses = array(
-        'ascii'   => 'Zend\Text\Table\Decorator\Ascii',
-        'blank'   => 'Zend\Text\Table\Decorator\Blank',
-        'unicode' => 'Zend\Text\Table\Decorator\Unicode',
-    );
+    protected $aliases = [
+        'ascii'   => Decorator\Ascii::class,
+        'Ascii'   => Decorator\Ascii::class,
+        'blank'   => Decorator\Blank::class,
+        'Blank'   => Decorator\Blank::class,
+        'unicode' => Decorator\Unicode::class,
+        'Unicode' => Decorator\Unicode::class,
+    ];
+
+
+    protected $factories = [
+        Decorator\Ascii::class          => InvokableFactory::class,
+        Decorator\Unicode::class        => InvokableFactory::class,
+        Decorator\Blank::class          => InvokableFactory::class,
+        'zendtexttabledecoratorascii'   => InvokableFactory::class,
+        'zendtexttabledecoratorblank'   => InvokableFactory::class,
+        'zendtexttabledecoratorunicode' => InvokableFactory::class,
+    ];
+
+    protected $instanceOf = Decorator\DecoratorInterface::class;
 
     /**
-     * Validate the plugin
+     * {@inheritdoc} (v3)
+     */
+    public function validate($instance)
+    {
+        if ($instance instanceof $this->instanceOf) {
+            // we're okay
+            return;
+        }
+
+        throw new InvalidServiceException(sprintf(
+            'Plugin of type %s is invalid; must implement %s\Decorator\DecoratorInterface',
+            (is_object($instance) ? get_class($instance) : gettype($instance)),
+            __NAMESPACE__
+        ));
+    }
+
+    /**
+     * Validate the plugin (v2)
      *
      * Checks that the decorator loaded is an instance of Decorator\DecoratorInterface.
      *
@@ -42,15 +74,10 @@ class DecoratorManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if ($plugin instanceof Decorator\DecoratorInterface) {
-            // we're okay
-            return;
+        try {
+            $this->validate($plugin);
+        } catch (InvalidServiceException $e) {
+            throw new Exception\InvalidDecoratorException($e->getMessage(), $e->getCode(), $e);
         }
-
-        throw new Exception\InvalidDecoratorException(sprintf(
-            'Plugin of type %s is invalid; must implement %s\Decorator\DecoratorInterface',
-            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
-            __NAMESPACE__
-        ));
     }
 }

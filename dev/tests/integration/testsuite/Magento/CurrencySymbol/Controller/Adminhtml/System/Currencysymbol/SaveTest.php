@@ -7,7 +7,6 @@ namespace Magento\CurrencySymbol\Controller\Adminhtml\System\Currencysymbol;
 
 class SaveTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
-
     /**
      * Test save action
      *
@@ -20,7 +19,7 @@ class SaveTest extends \Magento\TestFramework\TestCase\AbstractBackendController
     {
         /** @var \Magento\CurrencySymbol\Model\System\Currencysymbol $currencySymbol */
         $currencySymbol = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\CurrencySymbol\Model\System\Currencysymbol'
+            \Magento\CurrencySymbol\Model\System\Currencysymbol::class
         );
 
         $currencySymbolOriginal = $currencySymbol->getCurrencySymbol($currencyCode);

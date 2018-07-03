@@ -99,7 +99,7 @@ class Value extends AbstractDb
     }
 
     /**
-     * Save option value price data.
+     * Save option value price data
      *
      * @param AbstractModel $object
      * @return void
@@ -437,10 +437,10 @@ class Value extends AbstractDb
     }
 
     /**
-     * Get FormatInterface to convert price from string to number format.
+     * Get FormatInterface to convert price from string to number format
      *
      * @return FormatInterface
-     * @deprecated
+     * @deprecated 101.0.8
      */
     private function getLocaleFormatter()
     {
@@ -448,7 +448,6 @@ class Value extends AbstractDb
             $this->localeFormat = ObjectManager::getInstance()
                 ->get(FormatInterface::class);
         }
-
         return $this->localeFormat;
     }
 }

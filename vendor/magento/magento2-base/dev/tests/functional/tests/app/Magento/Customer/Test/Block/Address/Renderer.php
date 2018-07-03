@@ -58,6 +58,11 @@ class Renderer
                     . "{{lastname}}{{depend}} {{suffix}}{{/depend}}\n{{/depend}}{{street}}\n"
                     . "{{city}}, {{{$region}}} {{postcode}}\n{{country_id}}\n{{depend}}{{telephone}}{{/depend}}";
                 break;
+            case "html_for_select_element":
+                $outputPattern = "{{depend}}{{prefix}} {{/depend}}{{firstname}} {{depend}}{{middlename}} {{/depend}}"
+                    . "{{lastname}}{{depend}} {{suffix}}{{/depend}}, {{/depend}}{{street}}, "
+                    . "{{city}}, {{{$region}}} {{postcode}}, {{country_id}}";
+                break;
             case "oneline":
             default:
                 $outputPattern = "{{depend}}{{prefix}} {{/depend}}{{firstname}} {{depend}}{{middlename}} {{/depend}}"

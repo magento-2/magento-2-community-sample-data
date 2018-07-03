@@ -43,7 +43,7 @@ class SwitchPriceAttributeScopeOnConfigChange implements ObserverInterface
         ReinitableConfigInterface $config,
         ProductAttributeRepositoryInterface $productAttributeRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    ){
+    ) {
         $this->config = $config;
         $this->productAttributeRepository = $productAttributeRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
@@ -55,6 +55,7 @@ class SwitchPriceAttributeScopeOnConfigChange implements ObserverInterface
      *
      * @param EventObserver $observer
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function execute(EventObserver $observer)
     {

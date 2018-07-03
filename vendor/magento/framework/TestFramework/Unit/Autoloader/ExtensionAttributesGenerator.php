@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ *  Copyright © Magento, Inc. All rights reserved.
+ *  See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\TestFramework\Unit\Autoloader;
@@ -31,11 +31,9 @@ class ExtensionAttributesGenerator implements GeneratorInterface
             return false;
         }
         $classGenerator = new ClassGenerator();
-        $implementedInterface = '\\' . ltrim("{$className}Interface", '\\');
         $classGenerator->setName($className)
-            ->setImplementedInterfaces([$implementedInterface]);
+            ->setImplementedInterfaces(["{$className}Interface"]);
         return $classGenerator->generate();
-
     }
 
     /**

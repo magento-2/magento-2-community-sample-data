@@ -42,8 +42,13 @@ class Validate extends \Magento\Customer\Controller\Adminhtml\Index
             $this->dataObjectHelper->populateWithArray(
                 $customer,
                 $data,
-                '\Magento\Customer\Api\Data\CustomerInterface'
+                \Magento\Customer\Api\Data\CustomerInterface::class
             );
+            $submittedData = $this->getRequest()->getParam('customer');
+            if (isset($submittedData['entity_id'])) {
+                $entity_id = $submittedData['entity_id'];
+                $customer->setId($entity_id);
+            }
             $errors = $this->customerAccountManagement->validate($customer)->getMessages();
         } catch (\Magento\Framework\Validator\Exception $exception) {
             /* @var $error Error */

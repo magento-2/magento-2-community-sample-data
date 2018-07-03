@@ -10,7 +10,7 @@ use Magento\Sales\Model\Order;
 /**
  * Class StateTest
  */
-class StateTest extends \PHPUnit_Framework_TestCase
+class StateTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Handler\State
@@ -24,9 +24,7 @@ class StateTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->orderMock = $this->getMock(
-            'Magento\Sales\Model\Order',
-            [
+        $this->orderMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, [
                 '__wakeup',
                 'getId',
                 'hasCustomerNoteNotify',
@@ -42,28 +40,14 @@ class StateTest extends \PHPUnit_Framework_TestCase
                 'getTotalRefunded',
                 'hasForcedCanCreditmemo',
                 'getIsInProcess',
-                'getConfig'
-            ],
-            [],
-            '',
-            false
-        );
+                'getConfig',
+            ]);
         $this->orderMock->expects($this->any())
             ->method('getConfig')
             ->willReturnSelf();
-        $this->addressMock = $this->getMock(
-            'Magento\Sales\Model\Order\Address',
-            [],
-            [],
-            '',
-            false
-        );
-        $this->addressCollectionMock = $this->getMock(
-            'Magento\Sales\Model\ResourceModel\Order\Address\Collection',
-            [],
-            [],
-            '',
-            false
+        $this->addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+        $this->addressCollectionMock = $this->createMock(
+            \Magento\Sales\Model\ResourceModel\Order\Address\Collection::class
         );
         $this->state = new \Magento\Sales\Model\ResourceModel\Order\Handler\State();
     }

@@ -11,18 +11,22 @@ namespace Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\Framework\App\ResourceConnection;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Option\Value\Collection as ProductOptionValueCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Option\Value\CollectionFactory as ProductOptionValueCollectionFactory;
+use Magento\Store\Model\Store;
 
 /**
  * Entity class which provide possibility to import product custom options
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @todo Need to explode this class because of several responsibilities
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
+ * @since 100.0.2
  */
 class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
 {
@@ -106,6 +110,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
         'radio' => true,
         'checkbox' => true,
         'multiple' => true,
+        'file' => ['sku', 'file_extension', 'image_size_x', 'image_size_y'],
     ];
 
     /**
@@ -248,11 +253,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
 
     /**#@-*/
 
-    /**
-     * Collection by pages iterator
-     *
-     * @var \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator
-     */
+    /**#@-*/
     protected $_byPagesIterator;
 
     /**
@@ -348,7 +349,9 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $dateTime
      * @param ProcessingErrorAggregatorInterface $errorAggregator
      * @param array $data
-     * @param ProductOptionValueCollectionFactory|null $productOptionValueCollectionFactory
+     * @param ProductOptionValueCollectionFactory $productOptionValueCollectionFactory
+     * @throws \Magento\Framework\Exception\LocalizedException
+     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -375,7 +378,6 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
         $this->_colIteratorFactory = $colIteratorFactory;
         $this->_scopeConfig = $scopeConfig;
         $this->dateTime = $dateTime;
-
         $this->productOptionValueCollectionFactory = $productOptionValueCollectionFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(ProductOptionValueCollectionFactory::class);
 
@@ -762,7 +764,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
             ksort($newOptionTitles);
             $existingOptions = $this->_oldCustomOptions[$productId];
             foreach ($existingOptions as $optionId => $optionData) {
-                if ($optionData['type'] == $newOptionData['type'] && $optionData['titles'] == $newOptionTitles) {
+                if ($optionData['type'] == $newOptionData['type'] && $optionData['titles'][0] == $newOptionTitles[0]) {
                     return $optionId;
                 }
             }
@@ -1125,13 +1127,19 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
     {
         $result = [
             self::COLUMN_TYPE => $name ? $optionRow['type'] : '',
-            self::COLUMN_IS_REQUIRED => $optionRow['required'],
-            self::COLUMN_ROW_SKU => $optionRow['sku'],
-            self::COLUMN_PREFIX . 'sku' => $optionRow['sku'],
             self::COLUMN_ROW_TITLE => '',
             self::COLUMN_ROW_PRICE => ''
         ];
-
+        if (isset($optionRow['_custom_option_store'])) {
+            $result[self::COLUMN_STORE] = $optionRow['_custom_option_store'];
+        }
+        if (isset($optionRow['required'])) {
+            $result[self::COLUMN_IS_REQUIRED] = $optionRow['required'];
+        }
+        if (isset($optionRow['sku'])) {
+            $result[self::COLUMN_ROW_SKU] = $optionRow['sku'];
+            $result[self::COLUMN_PREFIX . 'sku'] = $optionRow['sku'];
+        }
         if (isset($optionRow['option_title'])) {
             $result[self::COLUMN_ROW_TITLE] = $optionRow['option_title'];
         }
@@ -1150,11 +1158,34 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
             $result[$this->columnMaxCharacters] = $optionRow['max_characters'];
         }
 
+        $result = $this->addFileOptions($result, $optionRow);
+
         return $result;
     }
 
     /**
-     * Import data rows
+     * Add file options
+     *
+     * @param array $result
+     * @param array $optionRow
+     * @return array
+     */
+    private function addFileOptions($result, $optionRow)
+    {
+        foreach (['file_extension', 'image_size_x', 'image_size_y'] as $fileOptionKey) {
+            if (!isset($optionRow[$fileOptionKey])) {
+                continue;
+            }
+
+            $result[self::COLUMN_PREFIX . $fileOptionKey] = $optionRow[$fileOptionKey];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Import data rows.
+     * Additional store view data (option titles) will be sought in store view specified import file rows
      *
      * @return boolean
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -1168,7 +1199,8 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
             $this->_tables['catalog_product_option_type_value']
         );
         $prevOptionId = 0;
-
+        $optionId = null;
+        $valueId = null;
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             $products = [];
             $options = [];
@@ -1179,13 +1211,23 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
             $typeTitles = [];
             $parentCount = [];
             $childCount = [];
+            $optionsToRemove = [];
 
             foreach ($bunch as $rowNumber => $rowData) {
-
+                if (isset($optionId, $valueId) && empty($rowData[PRODUCT::COL_STORE_VIEW_CODE])) {
+                    $nextOptionId = $optionId;
+                    $nextValueId = $valueId;
+                }
+                $optionId = $nextOptionId;
+                $valueId = $nextValueId;
                 $multiRowData = $this->_getMultiRowFormat($rowData);
-
+                if (!empty($rowData[self::COLUMN_SKU]) && isset($this->_productsSkuToId[$rowData[self::COLUMN_SKU]])) {
+                    $this->_rowProductId = $this->_productsSkuToId[$rowData[self::COLUMN_SKU]];
+                    if (array_key_exists('custom_options', $rowData) && trim($rowData['custom_options']) === "") {
+                        $optionsToRemove[] = $this->_rowProductId;
+                    }
+                }
                 foreach ($multiRowData as $optionData) {
-
                     $combinedData = array_merge($rowData, $optionData);
 
                     if (!$this->isRowAllowedToImport($combinedData, $rowNumber)) {
@@ -1197,7 +1239,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
                     $optionData = $this->_collectOptionMainData(
                         $combinedData,
                         $prevOptionId,
-                        $nextOptionId,
+                        $optionId,
                         $products,
                         $prices
                     );
@@ -1207,7 +1249,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
                     $this->_collectOptionTypeData(
                         $combinedData,
                         $prevOptionId,
-                        $nextValueId,
+                        $valueId,
                         $typeValues,
                         $typePrices,
                         $typeTitles,
@@ -1218,37 +1260,23 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
                 }
             }
 
-            // Save prepared custom options data !!!
+            // Remove all existing options if import behaviour is APPEND
+            // in other case remove options for products with empty "custom_options" row only
             if ($this->getBehavior() != \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND) {
                 $this->_deleteEntities(array_keys($products));
+            } elseif (!empty($optionsToRemove)) {
+                // Remove options for products with empty "custom_options" row
+                $this->_deleteEntities($optionsToRemove);
             }
 
+            // Save prepared custom options data
             if ($this->_isReadyForSaving($options, $titles, $typeValues)) {
-                if ($this->getBehavior() == \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND) {
-                    $this->_compareOptionsWithExisting($options, $titles, $prices, $typeValues);
-
-                    $optionsForRestore = $this->getRestoreOriginalOptionTypeIds($typeValues, $typeTitles);
-
-                    $typeValues = $this->restoreTypeValues($typeValues, $optionsForRestore);
-                    $typePrices = $this->restoreOptionTypesData($typePrices, $optionsForRestore);
-                    $typeTitles = $this->restoreOptionTypesData($typeTitles, $optionsForRestore);
-                }
-
-                $this->_saveOptions(
-                    $options
-                )->_saveTitles(
-                    $titles
-                )->_savePrices(
-                    $prices
-                )->_saveSpecificTypeValues(
-                    $typeValues
-                )->_saveSpecificTypePrices(
-                    $typePrices
-                )->_saveSpecificTypeTitles(
-                    $typeTitles
-                )->_updateProducts(
-                    $products
-                );
+                $types = [
+                    'values' => $typeValues,
+                    'prices' => $typePrices,
+                    'titles' => $typeTitles
+                ];
+                $this->savePreparedCustomOptions($products, $options, $titles, $prices, $types);
             }
         }
 
@@ -1295,15 +1323,12 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
         $optionData = null;
 
         if ($this->_rowIsMain) {
-            $optionData = $this->_getOptionData($rowData, $this->_rowProductId, $nextOptionId, $this->_rowType);
+            $optionData = empty($rowData[Product::COL_STORE_VIEW_CODE])
+                ? $this->_getOptionData($rowData, $this->_rowProductId, $nextOptionId, $this->_rowType)
+                : '';
 
-            if (!$this->_isRowHasSpecificType(
-                    $this->_rowType
-                ) && ($priceData = $this->_getPriceData(
-                    $rowData,
-                    $nextOptionId,
-                    $this->_rowType
-                ))
+            if (!$this->_isRowHasSpecificType($this->_rowType)
+                && ($priceData = $this->_getPriceData($rowData, $nextOptionId, $this->_rowType))
             ) {
                 $prices[$nextOptionId] = $priceData;
             }
@@ -1331,6 +1356,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
      * @param array &$childCount
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _collectOptionTypeData(
         array $rowData,
@@ -1349,39 +1375,27 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
                 $typeValues[$prevOptionId][] = $specificTypeData['value'];
 
                 // ensure default title is set
-                if (!isset($typeTitles[$nextValueId][\Magento\Store\Model\Store::DEFAULT_STORE_ID])) {
-                    $typeTitles[$nextValueId][\Magento\Store\Model\Store::DEFAULT_STORE_ID] = $specificTypeData['title'];
+                if (!isset($typeTitles[$nextValueId][Store::DEFAULT_STORE_ID])) {
+                    $typeTitles[$nextValueId][Store::DEFAULT_STORE_ID] = $specificTypeData['title'];
                 }
 
                 if ($specificTypeData['price']) {
                     if ($this->_isPriceGlobal) {
-                        $typePrices[$nextValueId][\Magento\Store\Model\Store::DEFAULT_STORE_ID] = $specificTypeData['price'];
+                        $typePrices[$nextValueId][Store::DEFAULT_STORE_ID] = $specificTypeData['price'];
                     } else {
                         // ensure default price is set
-                        if (!isset($typePrices[$nextValueId][\Magento\Store\Model\Store::DEFAULT_STORE_ID])) {
-                            $typePrices[$nextValueId][\Magento\Store\Model\Store::DEFAULT_STORE_ID] = $specificTypeData['price'];
+                        if (!isset($typePrices[$nextValueId][Store::DEFAULT_STORE_ID])) {
+                            $typePrices[$nextValueId][Store::DEFAULT_STORE_ID] = $specificTypeData['price'];
                         }
                         $typePrices[$nextValueId][$this->_rowStoreId] = $specificTypeData['price'];
                     }
                 }
-
                 $nextValueId++;
-                if (isset($parentCount[$prevOptionId])) {
-                    $parentCount[$prevOptionId]++;
-                } else {
-                    $parentCount[$prevOptionId] = 1;
-                }
             }
-
-            if (!isset($childCount[$this->_rowStoreId][$prevOptionId])) {
-                $childCount[$this->_rowStoreId][$prevOptionId] = 0;
-            }
-            $parentValueId = $nextValueId - $parentCount[$prevOptionId] + $childCount[$this->_rowStoreId][$prevOptionId];
-            $specificTypeData = $this->_getSpecificTypeData($rowData, $parentValueId, false);
+            $specificTypeData = $this->_getSpecificTypeData($rowData, 0, false);
             //For others stores
             if ($specificTypeData) {
-                $typeTitles[$parentValueId][$this->_rowStoreId] = $specificTypeData['title'];
-                $childCount[$this->_rowStoreId][$prevOptionId]++;
+                $typeTitles[$nextValueId++][$this->_rowStoreId] = $specificTypeData['title'];
             }
         }
     }
@@ -1396,7 +1410,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
      */
     protected function _collectOptionTitle(array $rowData, $prevOptionId, array &$titles)
     {
-        $defaultStoreId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+        $defaultStoreId = Store::DEFAULT_STORE_ID;
         if (!empty($rowData[self::COLUMN_TITLE])) {
             if (!isset($titles[$prevOptionId][$defaultStoreId])) {
                 // ensure default title is set
@@ -1437,73 +1451,34 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
     }
 
     /**
-     * Returns existing optionsTypes data for restoring original data
+     * Restore original IDs for existing option types.
+     *
+     * Warning: arguments are modified by reference
      *
      * @param array $typeValues
+     * @param array $typePrices
      * @param array $typeTitles
-     * @return array
+     * @return void
      */
-    private function getRestoreOriginalOptionTypeIds(array $typeValues, array $typeTitles)
+    private function restoreOriginalOptionTypeIds(array &$typeValues, array &$typePrices, array &$typeTitles)
     {
-        $optionsForRestore = [];
-        foreach ($typeValues as $optionId => $optionTypes) {
-            foreach ($optionTypes as $optionTypeKey => $optionType) {
+        foreach ($typeValues as $optionId => &$optionTypes) {
+            foreach ($optionTypes as &$optionType) {
                 $optionTypeId = $optionType['option_type_id'];
-                if (isset($typeTitles[$optionTypeId]) && is_array($typeTitles[$optionTypeId])) {
-                    foreach ($typeTitles[$optionTypeId] as $storeId => $optionTypeTitle) {
-                        $existingTypeId = $this->getExistingOptionTypeId($optionId, $storeId, $optionTypeTitle);
-                        if ($existingTypeId !== null) {
-                            $optionsForRestore[] = [
-                                'searchKey' => $existingTypeId,
-                                'replaceKey' => $optionTypeId,
-                                'optionTypeKey' => $optionTypeKey,
-                                'optionId' => $optionId,
-                            ];
-                            // If option type titles match at least in one store, consider current option type as existing
-                            break;
-                        }
+                foreach ($typeTitles[$optionTypeId] as $storeId => $optionTypeTitle) {
+                    $existingTypeId = $this->getExistingOptionTypeId($optionId, $storeId, $optionTypeTitle);
+                    if ($existingTypeId) {
+                        $optionType['option_type_id'] = $existingTypeId;
+                        $typeTitles[$existingTypeId] = $typeTitles[$optionTypeId];
+                        unset($typeTitles[$optionTypeId]);
+                        $typePrices[$existingTypeId] = $typePrices[$optionTypeId];
+                        unset($typePrices[$optionTypeId]);
+                        // If option type titles match at least in one store, consider current option type as existing
+                        break;
                     }
                 }
             }
         }
-        return $optionsForRestore;
-    }
-
-    /**
-     * Returns restored array of typeValues
-     *
-     * @param array $typeValues
-     * @param array $optionsForRestore
-     * @return array
-     */
-    private function restoreTypeValues(array $typeValues, array $optionsForRestore)
-    {
-        foreach ($optionsForRestore as $restoreValues) {
-            if (isset($typeValues[$restoreValues['optionId']][$restoreValues['optionTypeKey']])) {
-                $typeValues[$restoreValues['optionId']][$restoreValues['optionTypeKey']]['option_type_id'] = $restoreValues['searchKey'];
-            }
-        }
-        return $typeValues;
-    }
-
-    /**
-     * Restores optionTypes data
-     *
-     * @param array $optionDataArray
-     * @param array $optionsForRestore
-     * @return array
-     */
-    private function restoreOptionTypesData(array $optionDataArray, array $optionsForRestore)
-    {
-        foreach ($optionsForRestore as $restoreValues) {
-            $replaceKey = $restoreValues['replaceKey'];
-            $searchKey = $restoreValues['searchKey'];
-            if (isset($optionDataArray[$replaceKey])) {
-                $optionDataArray[$searchKey] = $optionDataArray[$replaceKey];
-                unset($optionDataArray[$replaceKey]);
-            }
-        }
-        return $optionDataArray;
     }
 
     /**
@@ -1546,12 +1521,9 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
      */
     protected function _parseRequiredData(array $rowData)
     {
-        if ($rowData[self::COLUMN_SKU] != '' && isset($this->_productsSkuToId[$rowData[self::COLUMN_SKU]])) {
-            $this->_rowProductId = $this->_productsSkuToId[$rowData[self::COLUMN_SKU]];
-        } elseif (!isset($this->_rowProductId)) {
+        if (!isset($this->_rowProductId)) {
             return false;
         }
-
         // Init store
         if (!empty($rowData[self::COLUMN_STORE])) {
             if (!isset($this->_storeCodeToId[$rowData[self::COLUMN_STORE]])) {
@@ -1559,7 +1531,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
             }
             $this->_rowStoreId = $this->_storeCodeToId[$rowData[self::COLUMN_STORE]];
         } else {
-            $this->_rowStoreId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+            $this->_rowStoreId = Store::DEFAULT_STORE_ID;
         }
         // Init option type and set param which tell that row is main
         if (!empty($rowData[self::COLUMN_TYPE])) {
@@ -1678,7 +1650,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
         ) {
             $priceData = [
                 'option_id' => $optionId,
-                'store_id' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
+                'store_id' => Store::DEFAULT_STORE_ID,
                 'price_type' => 'fixed',
             ];
 
@@ -1985,7 +1957,7 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
     {
         if (!$this->productEntityLinkField) {
             $this->productEntityLinkField = $this->getMetadataPool()
-                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
+                ->getMetadata(ProductInterface::class)
                 ->getLinkField();
         }
         return $this->productEntityLinkField;
@@ -2000,9 +1972,49 @@ class Option extends \Magento\ImportExport\Model\Import\Entity\AbstractEntity
     {
         if (!$this->productEntityIdentifierField) {
             $this->productEntityIdentifierField = $this->getMetadataPool()
-                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
+                ->getMetadata(ProductInterface::class)
                 ->getIdentifierField();
         }
         return $this->productEntityIdentifierField;
+    }
+
+    /**
+     * Save prepared custom options
+     *
+     * @param array $products
+     * @param array $options
+     * @param array $titles
+     * @param array $prices
+     * @param array $types
+     *
+     * @return void
+     */
+    private function savePreparedCustomOptions(
+        array $products,
+        array $options,
+        array $titles,
+        array $prices,
+        array $types
+    ) {
+        if ($this->getBehavior() == \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND) {
+            $this->_compareOptionsWithExisting($options, $titles, $prices, $types['values']);
+            $this->restoreOriginalOptionTypeIds($types['values'], $types['prices'], $types['titles']);
+        }
+
+        $this->_saveOptions(
+            $options
+        )->_saveTitles(
+            $titles
+        )->_savePrices(
+            $prices
+        )->_saveSpecificTypeValues(
+            $types['values']
+        )->_saveSpecificTypePrices(
+            $types['prices']
+        )->_saveSpecificTypeTitles(
+            $types['titles']
+        )->_updateProducts(
+            $products
+        );
     }
 }

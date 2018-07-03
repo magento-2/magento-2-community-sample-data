@@ -8,7 +8,8 @@ namespace Magento\Backend\Block\Widget;
 /**
  * Magento_Backend accordion widget
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Accordion extends \Magento\Backend\Block\Widget
 {
@@ -38,7 +39,7 @@ class Accordion extends \Magento\Backend\Block\Widget
     public function addItem($itemId, $config)
     {
         $this->_items[$itemId] = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Accordion\Item',
+            \Magento\Backend\Block\Widget\Accordion\Item::class,
             $this->getNameInLayout() . '-' . $itemId
         )->setData(
             $config

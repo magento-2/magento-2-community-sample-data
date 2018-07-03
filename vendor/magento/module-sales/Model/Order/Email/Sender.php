@@ -10,6 +10,12 @@ use Magento\Sales\Model\Order\Email\Container\IdentityInterface;
 use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Address\Renderer;
 
+/**
+ * Class Sender
+ * @api
+ *
+ * @since 100.0.2
+ */
 abstract class Sender
 {
     /**
@@ -78,6 +84,8 @@ abstract class Sender
             $sender->sendCopyTo();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
+
+            return false;
         }
 
         return true;

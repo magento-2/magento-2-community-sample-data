@@ -51,7 +51,9 @@
     <event name="store_add">
         <observer name="magento_sequence" instance="Magento\SalesSequence\Observer\SequenceCreatorObserver" />
     </event>
-    <event name="sales_order_payment_collection_load_after">
-        <observer name="convert_additional_info" instance="Magento\Sales\Observer\ConvertAdditionalInfoObserver" />
+    <event name="customer_save_after_data_object">
+        <observer
+                name="sales_assign_order_to_customer"
+                instance="Magento\Sales\Observer\AssignOrderToCustomerObserver" />
     </event>
 </config>

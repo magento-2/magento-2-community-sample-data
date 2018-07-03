@@ -5,6 +5,9 @@
  */
 namespace Magento\Framework\App\Http;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json;
+
 /**
  * Context data for requests
  */
@@ -26,6 +29,23 @@ class Context
      * @var array
      */
     protected $default = [];
+
+    /**
+     * @var Json
+     */
+    private $serializer;
+
+    /**
+     * @param array $data
+     * @param array $default
+     * @param Json|null $serializer
+     */
+    public function __construct(array $data = [], array $default = [], Json $serializer = null)
+    {
+        $this->data = $data;
+        $this->default = $default;
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
+    }
 
     /**
      * Data setter
@@ -95,8 +115,21 @@ class Context
         $data = $this->getData();
         if (!empty($data)) {
             ksort($data);
-            return sha1(serialize($data));
+            return sha1($this->serializer->serialize($data));
         }
         return null;
+    }
+
+    /**
+     * Get data and default data in "key-value" format
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'data' => $this->data,
+            'default' => $this->default
+        ];
     }
 }

@@ -28,24 +28,15 @@ class MassEnableTest extends AbstractMassActionTest
     {
         parent::setUp();
 
-        $this->collectionFactoryMock = $this->getMock(
-            'Magento\Cms\Model\ResourceModel\Page\CollectionFactory',
-            ['create'],
-            [],
-            '',
-            false
+        $this->collectionFactoryMock = $this->createPartialMock(
+            \Magento\Cms\Model\ResourceModel\Page\CollectionFactory::class,
+            ['create']
         );
 
-        $this->pageCollectionMock = $this->getMock(
-            'Magento\Cms\Model\ResourceModel\Page\Collection',
-            [],
-            [],
-            '',
-            false
-        );
+        $this->pageCollectionMock = $this->createMock(\Magento\Cms\Model\ResourceModel\Page\Collection::class);
 
         $this->massEnableController = $this->objectManager->getObject(
-            'Magento\Cms\Controller\Adminhtml\Page\MassEnable',
+            \Magento\Cms\Controller\Adminhtml\Page\MassEnable::class,
             [
                 'context' => $this->contextMock,
                 'filter' => $this->filterMock,
@@ -95,12 +86,9 @@ class MassEnableTest extends AbstractMassActionTest
      */
     protected function getPageMock()
     {
-        $pageMock = $this->getMock(
-            'Magento\Cms\Model\ResourceModel\Page\Collection',
-            ['setIsActive', 'save'],
-            [],
-            '',
-            false
+        $pageMock = $this->createPartialMock(
+            \Magento\Cms\Model\ResourceModel\Page\Collection::class,
+            ['setIsActive', 'save']
         );
         $pageMock->expects($this->once())->method('setIsActive')->with(true)->willReturn(true);
         $pageMock->expects($this->once())->method('save')->willReturn(true);

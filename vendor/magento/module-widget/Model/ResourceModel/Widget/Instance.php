@@ -4,24 +4,18 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * Widget Instance Resource Model
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 namespace Magento\Widget\Model\ResourceModel\Widget;
 
 use Magento\Framework\Model\AbstractModel;
 
+/**
+ * Widget Instance Resource Model
+ *
+ * @api
+ * @since 100.0.2
+ */
 class Instance extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    /**
-     * Fields that should be serialized before persistence
-     *
-     * @var array
-     */
-    protected $_serializableFields = ['widget_parameters' => [[], []]];
-
     /**
      * Define main table
      *

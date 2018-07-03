@@ -14,8 +14,10 @@ use Magento\Framework\View\Element\Template;
  * @method $this setTitleClass($titleClass)
  * @method string getTitleId()
  * @method string getTitleClass()
+ * @api
+ * @since 100.0.2
  */
-class Title extends \Magento\Framework\View\Element\Template
+class Title extends Template
 {
     /**
      * Own page title to display on the page

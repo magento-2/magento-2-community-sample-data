@@ -7,11 +7,16 @@
  */
 namespace Magento\Framework\Event;
 
+/**
+ * Interface \Magento\Framework\Event\ObserverInterface
+ *
+ * @api
+ */
 interface ObserverInterface
 {
     /**
      * @param Observer $observer
      * @return void
      */
-    public function execute(\Magento\Framework\Event\Observer $observer);
+    public function execute(Observer $observer);
 }

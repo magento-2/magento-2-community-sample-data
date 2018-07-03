@@ -9,6 +9,9 @@
  */
 namespace Magento\Catalog\Controller;
 
+use Magento\Framework\App\ActionInterface;
+use Magento\TestFramework\ObjectManager;
+
 /**
  * @magentoAppIsolation enabled
  */
@@ -25,9 +28,9 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
     public function assert404NotFound()
     {
         parent::assert404NotFound();
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        /** @var $objectManager ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->assertNull($objectManager->get('Magento\Framework\Registry')->registry('current_product'));
+        $this->assertNull($objectManager->get(\Magento\Framework\Registry::class)->registry('current_product'));
     }
 
     protected function _getProductImageFile()
@@ -36,7 +39,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
         /**
          * @var $repository \Magento\Catalog\Model\ProductRepository
          */
-        $repository = $objectManager->create('Magento\Catalog\Model\ProductRepository');
+        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
         $product = $repository->get('simple_product_1');
         $images = $product->getMediaGalleryImages()->getItems();
         $image = reset($images);
@@ -49,22 +52,22 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testViewAction()
     {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        /** @var $objectManager ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /**
          * @var $repository \Magento\Catalog\Model\ProductRepository
          */
-        $repository = $objectManager->create('Magento\Catalog\Model\ProductRepository');
+        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
         $product = $repository->get('simple_product_1');
         $this->dispatch(sprintf('catalog/product/view/id/%s', $product->getEntityId()));
 
         /** @var $currentProduct \Magento\Catalog\Model\Product */
-        $currentProduct = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
-        $this->assertInstanceOf('Magento\Catalog\Model\Product', $currentProduct);
+        $currentProduct = $objectManager->get(\Magento\Framework\Registry::class)->registry('current_product');
+        $this->assertInstanceOf(\Magento\Catalog\Model\Product::class, $currentProduct);
         $this->assertEquals($product->getEntityId(), $currentProduct->getEntityId());
 
         $lastViewedProductId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            'Magento\Catalog\Model\Session'
+            \Magento\Catalog\Model\Session::class
         )->getLastViewedProductId();
         $this->assertEquals($product->getEntityId(), $lastViewedProductId);
 
@@ -79,11 +82,19 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->assertContains('Add to Cart', $responseBody);
         /* Meta info */
         $this->assertContains('<title>Simple Product 1 Meta Title</title>', $responseBody);
-        $this->assertSelectCount('meta[name="keywords"][content="Simple Product 1 Meta Keyword"]', 1, $responseBody);
-        $this->assertSelectCount(
-            'meta[name="description"][content="Simple Product 1 Meta Description"]',
+        $this->assertEquals(
             1,
-            $responseBody
+            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
+                '//meta[@name="keywords" and @content="Simple Product 1 Meta Keyword"]',
+                $responseBody
+            )
+        );
+        $this->assertEquals(
+            1,
+            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
+                '//meta[@name="description" and @content="Simple Product 1 Meta Description"]',
+                $responseBody
+            )
         );
     }
 
@@ -92,16 +103,22 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testViewActionConfigurable()
     {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        /** @var $objectManager ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /**
          * @var $repository \Magento\Catalog\Model\ProductRepository
          */
-        $repository = $objectManager->create('Magento\Catalog\Model\ProductRepository');
+        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch(sprintf('catalog/product/view/id/%s', $product->getEntityId()));
         $html = $this->getResponse()->getBody();
-        $this->assertSelectCount('#product-options-wrapper', 1, $html);
+        $this->assertEquals(
+            1,
+            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
+                '//*[@id="product-options-wrapper"]',
+                $html
+            )
+        );
     }
 
     public function testViewActionNoProductId()
@@ -122,12 +139,12 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testGalleryAction()
     {
-        /** @var $objectManager \Magento\TestFramework\ObjectManager */
+        /** @var $objectManager ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /**
          * @var $repository \Magento\Catalog\Model\ProductRepository
          */
-        $repository = $objectManager->create('Magento\Catalog\Model\ProductRepository');
+        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
         $product = $repository->get('simple_product_1');
         $this->dispatch(sprintf('catalog/product/gallery/id/%s', $product->getEntityId()));
 
@@ -171,5 +188,28 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->dispatch('catalog/product/image/');
 
         $this->assert404NotFound();
+    }
+
+    /**
+     * Test changing Store View on Product page.
+     *
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture Magento/Catalog/_files/enable_using_store_codes.php
+     * @magentoDataFixture Magento/Catalog/_files/product_simple_multistore.php
+     */
+    public function testChangeStoreView()
+    {
+        /** @var $objectManager ObjectManager */
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
+        /** @var $repository \Magento\Catalog\Model\ProductRepository */
+        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $product = $repository->get('simple');
+        $this->getRequest()->setMethod('POST');
+        $this->getRequest()->setPostValue([ActionInterface::PARAM_NAME_URL_ENCODED => 1]);
+        $this->dispatch(sprintf('fixturestore/catalog/product/view/id/%s?___from_store=default', $product->getId()));
+        $html = $this->getResponse()->getBody();
+        $this->assertContains('<span>Fixture Store</span>', $html);
     }
 }

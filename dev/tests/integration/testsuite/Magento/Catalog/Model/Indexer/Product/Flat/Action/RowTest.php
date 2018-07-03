@@ -33,18 +33,18 @@ class RowTest extends \Magento\TestFramework\Indexer\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Product'
+            \Magento\Catalog\Model\Product::class
         );
         $this->_category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Category'
+            \Magento\Catalog\Model\Category::class
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Indexer\Product\Flat\Processor'
+            \Magento\Catalog\Model\Indexer\Product\Flat\Processor::class
         );
     }
 
     /**
-     * @magentoDbIsolation enabled
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/row_fixture.php
      * @magentoConfigFixture current_store catalog/frontend/flat_catalog_product 1
      * @magentoAppArea frontend
@@ -52,9 +52,9 @@ class RowTest extends \Magento\TestFramework\Indexer\TestCase
     public function testProductUpdate()
     {
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create('Magento\Catalog\Model\CategoryFactory');
+            ->create(\Magento\Catalog\Model\CategoryFactory::class);
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create('Magento\Catalog\Block\Product\ListProduct');
+            ->create(\Magento\Catalog\Block\Product\ListProduct::class);
 
         $this->_processor->getIndexer()->setScheduled(false);
         $this->assertFalse(

@@ -5,13 +5,17 @@
  */
 namespace Magento\Catalog\Block\Adminhtml\Product\Attribute\Set;
 
-use Magento\Catalog\Model\Entity\Product\Attribute\Group\AttributeMapperInterface;
-
 /**
  * Adminhtml Catalog Attribute Set Main Block
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @author      Magento Core Team <core@magentocommerce.com>
+ */
+use Magento\Catalog\Model\Entity\Product\Attribute\Group\AttributeMapperInterface;
+
+/**
+ * @api
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Main extends \Magento\Backend\Block\Template
 {
@@ -128,7 +132,7 @@ class Main extends \Magento\Backend\Block\Template
                 \Magento\Backend\Block\Widget\Button::class,
                 [
                     'label' => __('Delete'),
-                    'onclick' => 'deleteConfirm(\'' . $this->escapeJsQuote(
+                    'onclick' => 'deleteConfirm(\'' . $this->escapeJs(
                         __(
                             'You are about to delete all products in this attribute set. '
                             . 'Are you sure you want to do that?'

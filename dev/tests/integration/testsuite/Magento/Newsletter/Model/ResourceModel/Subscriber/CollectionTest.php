@@ -6,7 +6,7 @@
 
 namespace Magento\Newsletter\Model\ResourceModel\Subscriber;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Newsletter\Model\ResourceModel\Subscriber\Collection
@@ -16,7 +16,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_collectionModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create('Magento\Newsletter\Model\ResourceModel\Subscriber\Collection');
+            ->create(\Magento\Newsletter\Model\ResourceModel\Subscriber\Collection::class);
     }
 
     /**

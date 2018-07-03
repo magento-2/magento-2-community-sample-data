@@ -3,11 +3,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Swatches\Model;
 
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Provide list of swatch attributes for product.
@@ -25,24 +28,35 @@ class SwatchAttributesProvider
     private $swatchAttributeCodes;
 
     /**
-     * @var [productId => Attribute[]]
+     * Key is productId, value is list of attributes
+     * @var Attribute[]
      */
     private $attributesPerProduct;
 
     /**
+     * @var SwatchAttributeType
+     */
+    private $swatchTypeChecker;
+
+    /**
      * @param Configurable $typeConfigurable
      * @param SwatchAttributeCodes $swatchAttributeCodes
+     * @param SwatchAttributeType|null $swatchTypeChecker
      */
     public function __construct(
         Configurable $typeConfigurable,
-        SwatchAttributeCodes $swatchAttributeCodes
+        SwatchAttributeCodes $swatchAttributeCodes,
+        SwatchAttributeType $swatchTypeChecker = null
     ) {
         $this->typeConfigurable = $typeConfigurable;
         $this->swatchAttributeCodes = $swatchAttributeCodes;
+        $this->swatchTypeChecker = $swatchTypeChecker
+            ?: ObjectManager::getInstance()->create(SwatchAttributeType::class);
     }
 
     /**
-     * Provide list of swatch attributes for product. If product is not configurable return empty array.
+     * Provide list of swatch attributes for product. If product is not configurable return empty array
+     * Key is productId, value is list of attributes
      *
      * @param Product $product
      * @return Attribute[]
@@ -54,12 +68,18 @@ class SwatchAttributesProvider
         }
         if (!isset($this->attributesPerProduct[$product->getId()])) {
             $configurableAttributes = $this->typeConfigurable->getConfigurableAttributes($product);
-            $swatchAttributeIds = array_keys($this->swatchAttributeCodes->getCodes());
+            $swatchAttributeCodeMap = $this->swatchAttributeCodes->getCodes();
+
             $swatchAttributes = [];
             foreach ($configurableAttributes as $configurableAttribute) {
-                if (in_array($configurableAttribute->getAttributeId(), $swatchAttributeIds)) {
-                    $swatchAttributes[$configurableAttribute->getAttributeId()]
-                        = $configurableAttribute->getProductAttribute();
+                if (array_key_exists($configurableAttribute->getAttributeId(), $swatchAttributeCodeMap)) {
+                    /** @var AbstractAttribute $productAttribute */
+                    $productAttribute = $configurableAttribute->getProductAttribute();
+                    if ($productAttribute !== null
+                        && $this->swatchTypeChecker->isSwatchAttribute($productAttribute)
+                    ) {
+                        $swatchAttributes[$configurableAttribute->getAttributeId()] = $productAttribute;
+                    }
                 }
             }
             $this->attributesPerProduct[$product->getId()] = $swatchAttributes;

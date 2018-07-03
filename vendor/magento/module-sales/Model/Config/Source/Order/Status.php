@@ -9,6 +9,11 @@
  */
 namespace Magento\Sales\Model\Config\Source\Order;
 
+/**
+ * Class Status
+ * @api
+ * @since 100.0.2
+ */
 class Status implements \Magento\Framework\Option\ArrayInterface
 {
     const UNDEFINED_OPTION_LABEL = '-- Please Select --';

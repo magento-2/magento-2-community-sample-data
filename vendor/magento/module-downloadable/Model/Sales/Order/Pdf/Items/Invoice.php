@@ -7,6 +7,8 @@ namespace Magento\Downloadable\Model\Sales\Order\Pdf\Items;
 
 /**
  * Order Invoice Downloadable Pdf Items renderer
+ * @api
+ * @since 100.0.2
  */
 class Invoice extends \Magento\Downloadable\Model\Sales\Order\Pdf\Items\AbstractItems
 {

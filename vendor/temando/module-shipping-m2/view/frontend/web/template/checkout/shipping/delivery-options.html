@@ -1,0 +1,28 @@
+<form id="delivery-options-fields-block" class="form form-shipping-address form-delivery-options">
+    <fieldset class="fieldset delivery-options">
+        <dl class="delivery-options">
+            <dt class="item-title"><span data-bind="i18n:'Delivery Options'"></span></dt>
+            <dd class="item-options">
+                <input type="radio" name="delivery-options"
+                       id="to-address"
+                       value="toAddress"
+                       data-bind="checked: radioSelectedOptionValue"
+                />
+                <label for="to-address" data-bind="i18n:'Send To Address'"></label>
+            </dd>
+            <dd>
+                <input type="radio" name="delivery-options"
+                       id="to-collection-point"
+                       value="toCollectionPoint"
+                       data-bind="checked: radioSelectedOptionValue"
+                />
+                <label for="to-collection-point" data-bind="i18n:'Send To Collection Point'"></label>
+            </dd>
+        </dl>
+    </fieldset>
+        <div data-bind="visible: collectionPointsVisible">
+            <!-- ko foreach: getRegion('collection-points-form') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+</form>

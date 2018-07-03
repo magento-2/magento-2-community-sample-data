@@ -9,8 +9,9 @@
  */
 namespace Magento\Framework\Config;
 
-use Magento\Framework\Config\Composer\Package;
-
+/**
+ * @api
+ */
 class Theme
 {
     /**
@@ -25,7 +26,9 @@ class Theme
      */
     protected $_data;
 
-    /** @var \Magento\Framework\Config\Dom\UrnResolver */
+    /**
+     * @var \Magento\Framework\Config\Dom\UrnResolver
+     */
     protected $urnResolver;
 
     /**

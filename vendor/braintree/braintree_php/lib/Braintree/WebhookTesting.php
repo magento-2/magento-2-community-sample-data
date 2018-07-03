@@ -3,9 +3,10 @@ namespace Braintree;
 
 class WebhookTesting
 {
-    public static function sampleNotification($kind, $id)
+    public static function sampleNotification($kind, $id, $sourceMerchantId = null)
     {
-        $payload = base64_encode(self::_sampleXml($kind, $id)) . "\n";
+        $xml = self::_sampleXml($kind, $id, $sourceMerchantId);
+        $payload = base64_encode($xml) . "\n";
         $signature = Configuration::publicKey() . "|" . Digest::hexDigestSha1(Configuration::privateKey(), $payload);
 
         return [
@@ -14,7 +15,7 @@ class WebhookTesting
         ];
     }
 
-    private static function _sampleXml($kind, $id)
+    private static function _sampleXml($kind, $id, $sourceMerchantId)
     {
         switch ($kind) {
             case WebhookNotification::SUB_MERCHANT_ACCOUNT_APPROVED:
@@ -25,6 +26,12 @@ class WebhookTesting
                 break;
             case WebhookNotification::TRANSACTION_DISBURSED:
                 $subjectXml = self::_transactionDisbursedSampleXml($id);
+                break;
+            case WebhookNotification::TRANSACTION_SETTLED:
+                $subjectXml = self::_transactionSettledSampleXml($id);
+                break;
+            case WebhookNotification::TRANSACTION_SETTLEMENT_DECLINED:
+                $subjectXml = self::_transactionSettlementDeclinedSampleXml($id);
                 break;
             case WebhookNotification::DISBURSEMENT_EXCEPTION:
                 $subjectXml = self::_disbursementExceptionSampleXml($id);
@@ -41,6 +48,12 @@ class WebhookTesting
             case WebhookNotification::PARTNER_MERCHANT_DECLINED:
                 $subjectXml = self::_partnerMerchantDeclinedSampleXml($id);
                 break;
+            case WebhookNotification::CONNECTED_MERCHANT_STATUS_TRANSITIONED:
+                $subjectXml = self::_connectedMerchantStatusTransitionedSampleXml($id);
+                break;
+            case WebhookNotification::CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED:
+                $subjectXml = self::_connectedMerchantPayPalStatusChangedSampleXml($id);
+                break;
             case WebhookNotification::DISPUTE_OPENED:
                 $subjectXml = self::_disputeOpenedSampleXml($id);
                 break;
@@ -56,15 +69,34 @@ class WebhookTesting
             case WebhookNotification::CHECK:
                 $subjectXml = self::_checkSampleXml();
                 break;
+            case WebhookNotification::ACCOUNT_UPDATER_DAILY_REPORT:
+                $subjectXml = self::_accountUpdaterDailyReportSampleXml($id);
+                break;
+            case WebhookNotification::IDEAL_PAYMENT_COMPLETE:
+                $subjectXml = self::_idealPaymentCompleteSampleXml($id);
+                break;
+            case WebhookNotification::IDEAL_PAYMENT_FAILED:
+                $subjectXml = self::_idealPaymentFailedSampleXml($id);
+                break;
+            case WebhookNotification::GRANTED_PAYMENT_INSTRUMENT_UPDATE:
+                $subjectXml = self::_grantedPaymentInstrumentUpdateSampleXml();
+                break;
             default:
                 $subjectXml = self::_subscriptionSampleXml($id);
                 break;
         }
         $timestamp = self::_timestamp();
+
+        $sourceMerchantIdXml = '';
+        if (!is_null($sourceMerchantId)) {
+            $sourceMerchantIdXml = "<source-merchant-id>{$sourceMerchantId}</source-merchant-id>";
+        }
+
         return "
         <notification>
             <timestamp type=\"datetime\">{$timestamp}</timestamp>
             <kind>{$kind}</kind>
+            {$sourceMerchantIdXml}
             <subject>{$subjectXml}</subject>
         </notification>
         ";
@@ -122,6 +154,48 @@ class WebhookTesting
             <disbursement-details>
                 <disbursement-date type=\"date\">2013-07-09</disbursement-date>
             </disbursement-details>
+        </transaction>
+        ";
+    }
+
+    private static function _transactionSettledSampleXml($id)
+    {
+        return "
+        <transaction>
+          <id>${id}</id>
+          <status>settled</status>
+          <type>sale</type>
+          <currency-iso-code>USD</currency-iso-code>
+          <amount>100.00</amount>
+          <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
+          <payment-instrument-type>us_bank_account</payment-instrument-type>
+          <us-bank-account>
+            <routing-number>123456789</routing-number>
+            <last-4>1234</last-4>
+            <account-type>checking</account-type>
+            <account-holder-name>Dan Schulman</account-holder-name>
+          </us-bank-account>
+        </transaction>
+        ";
+    }
+
+    private static function _transactionSettlementDeclinedSampleXml($id)
+    {
+        return "
+        <transaction>
+          <id>${id}</id>
+          <status>settlement_declined</status>
+          <type>sale</type>
+          <currency-iso-code>USD</currency-iso-code>
+          <amount>100.00</amount>
+          <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
+          <payment-instrument-type>us_bank_account</payment-instrument-type>
+          <us-bank-account>
+            <routing-number>123456789</routing-number>
+            <last-4>1234</last-4>
+            <account-type>checking</account-type>
+            <account-holder-name>Dan Schulman</account-holder-name>
+          </us-bank-account>
         </transaction>
         ";
     }
@@ -212,6 +286,7 @@ class WebhookTesting
           <transaction>
             <id>${id}</id>
             <amount>250.00</amount>
+            <next_billing-date type=\"date\">2020-02-10</next_billing-date>
           </transaction>
           <date-opened type=\"date\">2014-03-21</date-opened>
         </dispute>
@@ -260,6 +335,8 @@ class WebhookTesting
         return "
         <subscription>
             <id>{$id}</id>
+            <billing-period-start-date type=\"date\">2016-03-21</billing-period-start-date>
+            <billing-period-end-date type=\"date\">2017-03-31</billing-period-end-date>
             <transactions type=\"array\">
                 <transaction>
                     <status>submitted_for_settlement</status>
@@ -309,6 +386,92 @@ class WebhookTesting
         <partner-merchant>
           <partner-merchant-id>abc123</partner-merchant-id>
         </partner-merchant>
+        ";
+    }
+
+    private static function _accountUpdaterDailyReportSampleXml($id)
+    {
+        return "
+        <account-updater-daily-report>
+            <report-date type=\"date\">2016-01-14</report-date>
+            <report-url>link-to-csv-report</report-url>
+        </account-updater-daily-report>
+        ";
+    }
+
+    private static function _connectedMerchantStatusTransitionedSampleXml($id)
+    {
+        return "
+        <connected-merchant-status-transitioned>
+          <merchant-public-id>{$id}</merchant-public-id>
+          <status>new_status</status>
+          <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+        </connected-merchant-status-transitioned>
+        ";
+    }
+
+    private static function _connectedMerchantPayPalStatusChangedSampleXml($id)
+    {
+        return "
+        <connected-merchant-paypal-status-changed>
+          <merchant-public-id>{$id}</merchant-public-id>
+          <action>link</action>
+          <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+        </connected-merchant-paypal-status-changed>
+        ";
+    }
+
+    private static function _idealPaymentCompleteSampleXml($id)
+    {
+        return "
+        <ideal-payment>
+          <id>{$id}</id>
+          <status>COMPLETE</status>
+          <issuer>ABCISSUER</issuer>
+          <order-id>ORDERABC</order-id>
+          <currency>EUR</currency>
+          <amount>10.00</amount>
+          <created-at>2016-11-29T23:27:34.547Z</created-at>
+          <approval-url>https://example.com</approval-url>
+          <ideal-transaction-id>1234567890</ideal-transaction-id>
+        </ideal-payment>
+        ";
+    }
+
+    private static function _idealPaymentFailedSampleXml($id)
+    {
+        return "
+        <ideal-payment>
+          <id>{$id}</id>
+          <status>FAILED</status>
+          <issuer>ABCISSUER</issuer>
+          <order-id>ORDERABC</order-id>
+          <currency>EUR</currency>
+          <amount>10.00</amount>
+          <created-at>2016-11-29T23:27:34.547Z</created-at>
+          <approval-url>https://example.com</approval-url>
+          <ideal-transaction-id>1234567890</ideal-transaction-id>
+        </ideal-payment>
+        ";
+    }
+
+    private static function _grantedPaymentInstrumentUpdateSampleXml()
+	{
+        return "
+		<granted-payment-instrument-update>
+		  <grant-owner-merchant-id>vczo7jqrpwrsi2px</grant-owner-merchant-id>
+		  <grant-recipient-merchant-id>cf0i8wgarszuy6hc</grant-recipient-merchant-id>
+		  <payment-method-nonce>
+			<nonce>ee257d98-de40-47e8-96b3-a6954ea7a9a4</nonce>
+			<consumed type='boolean'>false</consumed>
+			<locked type='boolean'>false</locked>
+		  </payment-method-nonce>
+		  <token>abc123z</token>
+		  <updated-fields type='array'>
+			<item>expiration-month</item>
+			<item>expiration-year</item>
+		  </updated-fields>
+		</granted-payment-instrument-update>
         ";
     }
 

@@ -1,0 +1,71 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Rma\RmaShipment\Tracking $viewModel */
+$viewModel = $block->getData('viewModel');
+?>
+
+<div class="shipping-description-wrapper">
+    <?php if ($viewModel->hasReturnShipment()) : ?>
+        <p>
+            <?php
+                $popParams = sprintf(
+                    "'%s','%s','%s'",
+                    $block->escapeUrl($viewModel->getTrackingPopUrl()), // url
+                    'trackshipment', // win
+                    'width=800,height=600,resizable=yes,scrollbars=yes' // para
+                );
+            ?>
+            <a href="#" id="linkId" onclick="popWin(<?= /* @noEscape */ $popParams ?>)"
+               title="<?=  $block->escapeHtml(__('Track this shipment')) ?>">
+                <?= $block->escapeHtml(__('Track this shipment')) ?>
+            </a>
+        </p>
+    <?php endif; ?>
+    <div class="shipping-description-title">
+        <?= $block->escapeHtml($viewModel->getShippingDescription()) ?>
+    </div>
+</div>
+
+<?php if ($viewModel->getTrackingNumber()) : ?>
+    <div class="admin__control-table-wrapper">
+        <table class="data-table admin__control-table" id="shipment_tracking_info">
+            <thead>
+            <tr class="headings">
+                <th class="col-carrier"><?= $block->escapeHtml(__('Carrier')) ?></th>
+                <th class="col-title"><?= $block->escapeHtml(__('Title')) ?></th>
+                <th class="col-number"><?= $block->escapeHtml(__('Number')) ?></th>
+            </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td class="col-carrier"><?= $block->escapeHtml($viewModel->getCarrierName()) ?></td>
+                    <td class="col-title"><?= $block->escapeHtml($viewModel->getCarrierTitle()) ?></td>
+                    <td class="col-number">
+                        <a href="#" onclick="popWin('<?= $block->escapeUrl($viewModel->getTrackingPopUrl())?>',
+                            'trackorder','width=800,height=600,resizable=yes,scrollbars=yes')">
+                            <?= $block->escapeHtml($viewModel->getTrackingNumber()) ?>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>
+
+<script>
+    require(['prototype'], function(){
+
+//<![CDATA[
+        function popWin(url, win, para) {
+            var popup = window.open(url, win, para);
+            popup.focus();
+        }
+//]]>
+    });
+</script>

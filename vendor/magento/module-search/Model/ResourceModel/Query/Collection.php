@@ -10,6 +10,8 @@ use Magento\Store\Model\Store;
 /**
  * Search query collection
  *
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -66,7 +68,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Search\Model\Query', 'Magento\Search\Model\ResourceModel\Query');
+        $this->_init(\Magento\Search\Model\Query::class, \Magento\Search\Model\ResourceModel\Query::class);
     }
 
     /**

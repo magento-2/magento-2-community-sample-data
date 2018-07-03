@@ -7,7 +7,11 @@ namespace Magento\Framework\DB\Sql;
 
 /**
  * Class Column Value Expression
+ *
+ * Just a wrapper over Expression for implementing the specific type of expression.
+ * @api
+ * @since 100.2.0
  */
-class ColumnValueExpression extends \Zend_Db_Expr
+class ColumnValueExpression extends Expression
 {
 }

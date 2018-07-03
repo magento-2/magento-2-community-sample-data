@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_save_after">
+        <observer name="vertex_order_placed_observer" instance="Vertex\Tax\Observer\OrderSavedAfterObserver"/>
+    </event>
+    <event name="sales_order_invoice_save_after">
+        <observer name="vertex_invoice_created_observer" instance="Vertex\Tax\Observer\InvoiceSavedAfterObserver"/>
+    </event>
+    <event name="sales_order_creditmemo_refund">
+        <observer name="vertex_order_creditmemo_observer" instance="Vertex\Tax\Observer\CreditMemoObserver"/>
+    </event>
+    <event name="sales_quote_collect_totals_after">
+        <observer name="vertex_prepare_messages" instance="Vertex\Tax\Observer\QuoteCollectTotalsAfterObserver" />
+    </event>
+</config>

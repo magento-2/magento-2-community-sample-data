@@ -15,6 +15,7 @@ use Magento\Setup\Model\SearchTermManagerFactory;
 
 /**
  * Search term description generator factory
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SearchTermDescriptionGeneratorFactory
@@ -55,6 +56,8 @@ class SearchTermDescriptionGeneratorFactory
     private $searchTermManagerFactory;
 
     /**
+     * Constructor
+     *
      * @param ObjectManagerInterface $objectManager
      * @param FixtureConfig $fixtureConfig
      * @param DescriptionSentenceGeneratorFactory|null $descriptionSentenceGeneratorFactory
@@ -62,7 +65,6 @@ class SearchTermDescriptionGeneratorFactory
      * @param DescriptionGeneratorFactory|null $descriptionGeneratorFactory
      * @param DictionaryFactory|null $dictionaryFactory
      * @param SearchTermManagerFactory|null $searchTermManagerFactory
-     * @throws \RuntimeException
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -76,15 +78,15 @@ class SearchTermDescriptionGeneratorFactory
         $this->objectManager = $objectManager;
         $this->fixtureConfig = $fixtureConfig;
         $this->sentenceGeneratorFactory = $descriptionSentenceGeneratorFactory
-            ?: $objectManager->get(\Magento\Setup\Model\Description\DescriptionSentenceGeneratorFactory::class);
+            ?: $objectManager->get(DescriptionSentenceGeneratorFactory::class);
         $this->paragraphGeneratorFactory = $descriptionParagraphGeneratorFactory
-            ?: $objectManager->get(\Magento\Setup\Model\Description\DescriptionParagraphGeneratorFactory::class);
+            ?: $objectManager->get(DescriptionParagraphGeneratorFactory::class);
         $this->descriptionGeneratorFactory = $descriptionGeneratorFactory
-            ?: $objectManager->get(\Magento\Setup\Model\Description\DescriptionGeneratorFactory::class);
+            ?: $objectManager->get(DescriptionGeneratorFactory::class);
         $this->dictionaryFactory = $dictionaryFactory
-            ?: $objectManager->get(\Magento\Setup\Model\DictionaryFactory::class);
+            ?: $objectManager->get(DictionaryFactory::class);
         $this->searchTermManagerFactory = $searchTermManagerFactory
-            ?: $objectManager->get(\Magento\Setup\Model\SearchTermManagerFactory::class);
+            ?: $objectManager->get(SearchTermManagerFactory::class);
     }
 
     /**

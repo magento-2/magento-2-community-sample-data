@@ -14,7 +14,7 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
 {
     /**
      * @var \Magento\Quote\Api\BillingAddressManagementInterface
-     * @deprecated This call was substituted to eliminate extra quote::save call.
+     * @deprecated 100.2.0 This call was substituted to eliminate extra quote::save call
      */
     protected $billingAddressManagement;
 
@@ -39,15 +39,11 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
     protected $cartTotalsRepository;
 
     /**
-     * Logger instance.
-     *
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
-     * Provide active quote.
-     *
      * @var \Magento\Quote\Api\CartRepositoryInterface
      */
     private $cartRepository;
@@ -58,7 +54,6 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
      * @param \Magento\Quote\Api\CartManagementInterface $cartManagement
      * @param PaymentDetailsFactory $paymentDetailsFactory
      * @param \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalsRepository
-     * @param \Magento\Quote\Api\CartRepositoryInterface|null $cartRepository
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -66,16 +61,13 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement,
         \Magento\Quote\Api\CartManagementInterface $cartManagement,
         \Magento\Checkout\Model\PaymentDetailsFactory $paymentDetailsFactory,
-        \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalsRepository,
-        \Magento\Quote\Api\CartRepositoryInterface $cartRepository = null
+        \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalsRepository
     ) {
         $this->billingAddressManagement = $billingAddressManagement;
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->cartManagement = $cartManagement;
         $this->paymentDetailsFactory = $paymentDetailsFactory;
         $this->cartTotalsRepository = $cartTotalsRepository;
-        $this->cartRepository = $cartRepository ? : \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Quote\Api\CartRepositoryInterface::class);
     }
 
     /**
@@ -101,7 +93,6 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
                 $e
             );
         }
-
         return $orderId;
     }
 
@@ -114,8 +105,10 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         \Magento\Quote\Api\Data\AddressInterface $billingAddress = null
     ) {
         if ($billingAddress) {
+            /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+            $quoteRepository = $this->getCartRepository();
             /** @var \Magento\Quote\Model\Quote $quote */
-            $quote = $this->cartRepository->getActive($cartId);
+            $quote = $quoteRepository->getActive($cartId);
             $quote->removeAddress($quote->getBillingAddress()->getId());
             $quote->setBillingAddress($billingAddress);
             $quote->setDataChanges(true);
@@ -127,7 +120,6 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
             }
         }
         $this->paymentMethodManagement->set($cartId, $paymentMethod);
-
         return true;
     }
 
@@ -140,15 +132,14 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         $paymentDetails = $this->paymentDetailsFactory->create();
         $paymentDetails->setPaymentMethods($this->paymentMethodManagement->getList($cartId));
         $paymentDetails->setTotals($this->cartTotalsRepository->get($cartId));
-
         return $paymentDetails;
     }
 
     /**
-     * Get logger instance.
+     * Get logger instance
      *
      * @return \Psr\Log\LoggerInterface
-     * @deprecated
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {
@@ -156,5 +147,20 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
             $this->logger = \Magento\Framework\App\ObjectManager::getInstance()->get(\Psr\Log\LoggerInterface::class);
         }
         return $this->logger;
+    }
+
+    /**
+     * Get Cart repository
+     *
+     * @return \Magento\Quote\Api\CartRepositoryInterface
+     * @deprecated 100.2.0
+     */
+    private function getCartRepository()
+    {
+        if (!$this->cartRepository) {
+            $this->cartRepository = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Quote\Api\CartRepositoryInterface::class);
+        }
+        return $this->cartRepository;
     }
 }

@@ -10,13 +10,10 @@ use Magento\Framework\Data\Form\FormKey as DataFormKey;
 use Magento\PageCache\Observer\FlushFormKey;
 use Magento\Framework\Event\Observer;
 
-/**
- * Unit tests for Magento\PageCache\Observer\FlushFormKey class.
- */
-class FlushFormKeyTest extends \PHPUnit_Framework_TestCase
+class FlushFormKeyTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test case for deleting the form_key cookie when observer executes.
+     * Test case for deleting the form_key cookie when observer executes
      */
     public function testExecute()
     {
@@ -31,7 +28,7 @@ class FlushFormKeyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var Observer | \PHPUnit_Framework_MockObject_MockObject $observerObject */
-        $observerObject = $this->getMock(Observer::class);
+        $observerObject = $this->createMock(Observer::class);
         $observer = new FlushFormKey($cookieFormKey, $dataFormKey);
 
         $cookieFormKey->expects($this->once())

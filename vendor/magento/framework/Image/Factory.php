@@ -4,8 +4,6 @@
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
-
 namespace Magento\Framework\Image;
 
 use Magento\Framework\ObjectManagerInterface;
@@ -26,8 +24,10 @@ class Factory
      * @param ObjectManagerInterface $objectManager
      * @param AdapterFactory $adapterFactory
      */
-    public function __construct(ObjectManagerInterface $objectManager, AdapterFactory $adapterFactory)
-    {
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        AdapterFactory $adapterFactory
+    ) {
         $this->objectManager = $objectManager;
         $this->adapterFactory = $adapterFactory;
     }
@@ -42,6 +42,9 @@ class Factory
     public function create($fileName = null, $adapterName = null)
     {
         $adapter = $this->adapterFactory->create($adapterName);
-        return $this->objectManager->create('Magento\Framework\Image', ['adapter' => $adapter, 'fileName' => $fileName]);
+        return $this->objectManager->create(
+            \Magento\Framework\Image::class,
+            ['adapter' => $adapter, 'fileName' => $fileName]
+        );
     }
 }

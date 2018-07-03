@@ -11,17 +11,17 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\TestFramework\Helper\Bootstrap;
 
-require __DIR__ . '/../../../Magento/ConfigurableProduct/_files/product_configurable.php';
+require __DIR__ . '/product_configurable.php';
 
-/** @var \Magento\TestFramework\ObjectManager $objectManager */
+/** @var $objectManager \Magento\TestFramework\ObjectManager */
 $objectManager = Bootstrap::getObjectManager();
 
-/** @var \Magento\Catalog\Model\Product $product */
-/** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute */
+/** @var $product \Magento\Catalog\Model\Product */
+/** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
 $productRepository = $objectManager->create(ProductRepositoryInterface::class);
-$product = $productRepository->get('configurable');
+$product = $productRepository->get('configurable_express');
 
-/** @var Collection $options */
+/** @var $options Collection */
 $options = $objectManager->create(Collection::class);
 $option = $options->setAttributeFilter($attribute->getId())->getFirstItem();
 
@@ -29,18 +29,18 @@ $requestInfo = new \Magento\Framework\DataObject(
     [
         'product' => 1,
         'selected_configurable_option' => 1,
-        'qty' => 100,
+        'qty' => 1,
         'super_attribute' => [
-            $attribute->getId() => $option->getId(),
-        ],
+            $attribute->getId() => $option->getId()
+        ]
     ]
 );
 
-/** @var Cart $cart */
+/** @var $cart Cart */
 $cart = $objectManager->create(Cart::class);
 $cart->addProduct($product, $requestInfo);
 
-/** @var Rate $rate */
+/** @var $rate Rate */
 $rate = $objectManager->create(Rate::class);
 $rate->setCode('flatrate_flatrate');
 $rate->setPrice(1);

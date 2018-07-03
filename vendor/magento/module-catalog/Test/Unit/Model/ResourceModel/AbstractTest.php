@@ -11,7 +11,7 @@ namespace Magento\Catalog\Test\Unit\Model\ResourceModel;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class AbstractTest extends \PHPUnit_Framework_TestCase
+class AbstractTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Get attribute list
@@ -23,12 +23,9 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
         $attributes = [];
         $codes = ['entity_type_id', 'attribute_set_id', 'created_at', 'updated_at', 'parent_id', 'increment_id'];
         foreach ($codes as $code) {
-            $mock = $this->getMock(
-                'Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
-                ['isInSet', 'getBackend', '__wakeup'],
-                [],
-                '',
-                false
+            $mock = $this->createPartialMock(
+                \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
+                ['isInSet', 'getBackend', '__wakeup']
             );
 
             $mock->setAttributeId($code);
@@ -49,7 +46,7 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
         $set = 10;
         $storeId = 100;
 
-        $object = $this->getMock('Magento\Catalog\Model\Product', ['__wakeup'], [], '', false);
+        $object = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['__wakeup']);
 
         $object->setData('test_attr', 'test_attr');
         $object->setData('attribute_set_id', $set);
@@ -62,12 +59,9 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
 
         $attributes = $this->_getAttributes();
 
-        $attribute = $this->getMock(
-            'Magento\Eav\Model\Entity\Attribute\AbstractAttribute',
-            ['isInSet', 'getBackend', '__wakeup'],
-            [],
-            '',
-            false
+        $attribute = $this->createPartialMock(
+            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
+            ['isInSet', 'getBackend', '__wakeup']
         );
         $attribute->setAttributeId($code);
         $attribute->setAttributeCode($code);
@@ -85,12 +79,13 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
         $attributes[$code] = $attribute;
 
         /** @var $model \Magento\Catalog\Model\ResourceModel\AbstractResource */
-        $arguments = $objectManager->getConstructArguments('Magento\Catalog\Model\ResourceModel\AbstractResource');
-        $model = $this->getMock(
-            'Magento\Catalog\Model\ResourceModel\AbstractResource',
-            ['getAttributesByCode'],
-            $arguments
+        $arguments = $objectManager->getConstructArguments(
+            \Magento\Catalog\Model\ResourceModel\AbstractResource::class
         );
+        $model = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\AbstractResource::class)
+            ->setMethods(['getAttributesByCode'])
+            ->setConstructorArgs($arguments)
+            ->getMock();
 
         $model->expects($this->once())->method('getAttributesByCode')->will($this->returnValue($attributes));
 

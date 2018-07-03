@@ -8,6 +8,10 @@ namespace Magento\CatalogInventory\Model\ResourceModel\Indexer\Stock;
 
 use Magento\Framework\DB\Select;
 
+/**
+ * @api
+ * @since 100.1.0
+ */
 interface QueryProcessorInterface
 {
     /**
@@ -15,6 +19,7 @@ interface QueryProcessorInterface
      * @param null|array $entityIds
      * @param bool $usePrimaryTable
      * @return Select
+     * @since 100.1.0
      */
     public function processQuery(Select $select, $entityIds = null, $usePrimaryTable = false);
 }

@@ -12,6 +12,7 @@ use Magento\Payment\Gateway\ConfigInterface;
 /**
  * Class ConfigurableInfo
  * @api
+ * @since 100.0.2
  */
 class ConfigurableInfo extends \Magento\Payment\Block\Info
 {
@@ -67,7 +68,6 @@ class ConfigurableInfo extends \Magento\Payment\Block\Info
                     $field,
                     $payment->getAdditionalInformation($field)
                 );
-
             }
         }
 

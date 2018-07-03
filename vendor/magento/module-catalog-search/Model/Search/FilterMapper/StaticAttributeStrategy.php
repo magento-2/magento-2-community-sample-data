@@ -8,29 +8,24 @@ namespace Magento\CatalogSearch\Model\Search\FilterMapper;
 
 use Magento\CatalogSearch\Model\Adapter\Mysql\Filter\AliasResolver;
 use Magento\Eav\Model\Config as EavConfig;
+use Magento\Framework\DB\Select;
 
 /**
- * This strategy handles static attributes.
+ * This strategy handles static attributes
  */
 class StaticAttributeStrategy implements FilterStrategyInterface
 {
     /**
-     * Resource connection.
-     *
      * @var \Magento\Framework\App\ResourceConnection
      */
     private $resourceConnection;
 
     /**
-     * Resolving table alias for Search Request filter.
-     *
      * @var AliasResolver
      */
     private $aliasResolver;
 
     /**
-     * Eav attributes config.
-     *
      * @var EavConfig
      */
     private $eavConfig;
@@ -59,9 +54,11 @@ class StaticAttributeStrategy implements FilterStrategyInterface
     ) {
         $attribute = $this->getAttributeByCode($filter->getField());
         $alias = $this->aliasResolver->getAlias($filter);
+        $mainTableAlias = $this->extractTableAliasFromSelect($select);
+
         $select->joinInner(
             [$alias => $attribute->getBackendTable()],
-            'search_index.entity_id = '
+            sprintf('%s.entity_id = ', $mainTableAlias)
             . $this->resourceConnection->getConnection()->quoteIdentifier("$alias.entity_id"),
             []
         );
@@ -70,16 +67,30 @@ class StaticAttributeStrategy implements FilterStrategyInterface
     }
 
     /**
-     * Returns attribute by attribute_code.
-     *
      * @param string $field
-     *
      * @return \Magento\Catalog\Model\ResourceModel\Eav\Attribute
-     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function getAttributeByCode($field)
     {
         return $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $field);
+    }
+
+    /**
+     * Extracts alias for table that is used in FROM clause in Select
+     *
+     * @param Select $select
+     * @return string|null
+     */
+    private function extractTableAliasFromSelect(Select $select)
+    {
+        $fromArr = array_filter(
+            $select->getPart(Select::FROM),
+            function ($fromPart) {
+                return $fromPart['joinType'] === Select::FROM;
+            }
+        );
+
+        return $fromArr ? array_keys($fromArr)[0] : null;
     }
 }

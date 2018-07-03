@@ -8,7 +8,8 @@ namespace Magento\Payment\Block\Info;
 /**
  * Payment information container block
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 abstract class AbstractContainer extends \Magento\Framework\View\Element\Template
 {

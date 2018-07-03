@@ -9,7 +9,10 @@ namespace Magento\Reports\Block\Adminhtml\Filter;
 /**
  * Adminhtml report filter form
  *
+ * @api
  * @author     Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
 {
@@ -160,6 +163,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __('From'),
                 'title' => __('From'),
                 'required' => true,
+                'css_class' => 'admin__field-small',
                 'class' => 'admin__control-text'
             ]
         );
@@ -173,6 +177,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __('To'),
                 'title' => __('To'),
                 'required' => true,
+                'css_class' => 'admin__field-small',
                 'class' => 'admin__control-text'
             ]
         );

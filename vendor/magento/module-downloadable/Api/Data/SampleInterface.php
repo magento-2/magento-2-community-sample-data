@@ -5,15 +5,15 @@
  */
 namespace Magento\Downloadable\Api\Data;
 
-use \Magento\Downloadable\Api\Data\File\ContentInterface;
+use Magento\Downloadable\Api\Data\File\ContentInterface;
 
 /**
  * @codeCoverageIgnore
  * @api
+ * @since 100.0.2
  */
 interface SampleInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-
     /**
      * Product sample id
      *

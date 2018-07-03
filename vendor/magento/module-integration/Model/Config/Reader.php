@@ -8,7 +8,7 @@ namespace Magento\Integration\Model\Config;
 /**
  * Service config data reader.
  *
- * @deprecated
+ * @deprecated 100.1.0
  */
 class Reader extends \Magento\Framework\Config\Reader\Filesystem
 {
@@ -36,7 +36,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         \Magento\Framework\Config\ValidationStateInterface $validationState,
         $fileName = 'integration/config.xml',
         $idAttributes = [],
-        $domDocumentClass = 'Magento\Framework\Config\Dom',
+        $domDocumentClass = \Magento\Framework\Config\Dom::class,
         $defaultScope = 'global'
     ) {
         parent::__construct(

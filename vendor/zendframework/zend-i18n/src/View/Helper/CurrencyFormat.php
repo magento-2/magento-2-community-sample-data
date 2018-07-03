@@ -31,7 +31,7 @@ class CurrencyFormat extends AbstractHelper
      *
      * @var array
      */
-    protected $formatters = array();
+    protected $formatters = [];
 
     /**
      * Locale to use instead of the default
@@ -55,11 +55,21 @@ class CurrencyFormat extends AbstractHelper
     protected $showDecimals = true;
 
     /**
+     * Special condition to be checked due to ICU bug:
+     * http://bugs.icu-project.org/trac/ticket/10997
+     *
+     * @var bool
+     */
+    protected $correctionNeeded = false;
+
+
+
+    /**
      * @throws Exception\ExtensionNotLoadedException if ext/intl is not present
      */
     public function __construct()
     {
-        if (!extension_loaded('intl')) {
+        if (! extension_loaded('intl')) {
             throw new Exception\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -119,7 +129,7 @@ class CurrencyFormat extends AbstractHelper
     ) {
         $formatterId = md5($locale);
 
-        if (!isset($this->formatters[$formatterId])) {
+        if (! isset($this->formatters[$formatterId])) {
             $this->formatters[$formatterId] = new NumberFormatter(
                 $locale,
                 NumberFormatter::CURRENCY
@@ -132,11 +142,25 @@ class CurrencyFormat extends AbstractHelper
 
         if ($showDecimals) {
             $this->formatters[$formatterId]->setAttribute(NumberFormatter::FRACTION_DIGITS, 2);
+            $this->correctionNeeded = false;
         } else {
             $this->formatters[$formatterId]->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
+            $defaultCurrencyCode = $this->formatters[$formatterId]->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+            $this->correctionNeeded = $defaultCurrencyCode !== $currencyCode;
         }
 
-        return $this->formatters[$formatterId]->formatCurrency($number, $currencyCode);
+        $formattedNumber = $this->formatters[$formatterId]->formatCurrency($number, $currencyCode);
+
+        if ($this->correctionNeeded) {
+            $formattedNumber = $this->fixICUBugForNoDecimals(
+                $formattedNumber,
+                $this->formatters[$formatterId],
+                $locale,
+                $currencyCode
+            );
+        }
+
+        return $formattedNumber;
     }
 
     /**
@@ -229,5 +253,41 @@ class CurrencyFormat extends AbstractHelper
     public function shouldShowDecimals()
     {
         return $this->showDecimals;
+    }
+
+
+
+    /**
+     * @param string          $formattedNumber
+     * @param NumberFormatter $formatter
+     * @param string          $locale
+     * @param string          $currencyCode
+     *
+     * @return string
+     */
+    private function fixICUBugForNoDecimals($formattedNumber, NumberFormatter $formatter, $locale, $currencyCode)
+    {
+        $pattern = sprintf(
+            '/\%s\d+(\s?%s)?$/u',
+            $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL),
+            preg_quote($this->getCurrencySymbol($locale, $currencyCode))
+        );
+
+        return preg_replace($pattern, '$1', $formattedNumber);
+    }
+
+
+
+    /**
+     * @param string $locale
+     * @param string $currencyCode
+     *
+     * @return string
+     */
+    private function getCurrencySymbol($locale, $currencyCode)
+    {
+        $numberFormatter = new NumberFormatter($locale . '@currency=' . $currencyCode, NumberFormatter::CURRENCY);
+
+        return $numberFormatter->getSymbol(NumberFormatter::CURRENCY_SYMBOL);
     }
 }

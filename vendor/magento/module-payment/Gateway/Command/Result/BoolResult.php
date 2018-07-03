@@ -8,7 +8,10 @@ namespace Magento\Payment\Gateway\Command\Result;
 use Magento\Payment\Gateway\Command\ResultInterface;
 
 /**
- * Class BoolResult
+ * Container for boolean value that should be returned as command result.
+ *
+ * @api
+ * @since 100.0.2
  */
 class BoolResult implements ResultInterface
 {

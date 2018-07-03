@@ -23,9 +23,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 class Pdfinvoices extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocumentsMassAction
 {
     /**
-     * Authorization level of a basic admin session.
-     *
-     * @see _isAllowed()
+     * Authorization level of a basic admin session
      */
     const ADMIN_RESOURCE = 'Magento_Sales::invoice';
 
